@@ -149,6 +149,7 @@ public class PerspectiveSwitcher {
 	    IContributionItem item = findPerspectiveShortcut(perspective, page);
 		if (item != null) {
 			perspectiveBar.remove(item);
+			item.dispose();
 			perspectiveBar.update(false);
 			setCoolItemSize(coolItem);
 		}

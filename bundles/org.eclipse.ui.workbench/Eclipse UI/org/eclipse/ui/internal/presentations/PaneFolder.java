@@ -90,6 +90,15 @@ public final class PaneFolder {
 	private int lastWidth = 0;
 	// END OF HACK
 	
+	private DisposeListener tabFolderDisposeListener = new DisposeListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+		 */
+		public void widgetDisposed(DisposeEvent e) {
+			PaneFolder.this.widgetDisposed();
+		}
+	};
+	
 	/**
 	 * Listens for its children being disposed, and removes them if this happens (although this
 	 * may indicate a programming error, this behavior is consistent with SWT composites).
@@ -204,6 +213,8 @@ public final class PaneFolder {
 			tabFolder.addCTabFolder2Listener(expandListener);
 			
 			tabFolder.addMouseListener(mouseListener);
+			
+			tabFolder.addDisposeListener(tabFolderDisposeListener);
 		}
 		
 		// Initialize view form
@@ -530,6 +541,15 @@ public final class PaneFolder {
 		if (!SwtUtil.isDisposed(oldControl)) {
 			oldControl.removeDisposeListener(prematureDisposeListener);
 		}
+	}
+	
+	private void widgetDisposed() {
+		removeDisposeListener(topCenterCache.getControl());
+		topCenterCache.setControl(null);
+		removeDisposeListener(topRightCache.getControl());
+		topRightCache.setControl(null);
+		removeDisposeListener(topLeftCache.getControl());
+		topLeftCache.setControl(null);
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////

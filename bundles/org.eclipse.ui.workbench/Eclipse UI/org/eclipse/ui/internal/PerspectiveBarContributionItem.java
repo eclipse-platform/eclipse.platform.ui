@@ -17,8 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -81,13 +79,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     public void fill(ToolBar parent, int index) {
         if (toolItem == null && parent != null && !parent.isDisposed()) {
-        	
-        	parent.addDisposeListener(new DisposeListener(){
-				public void widgetDisposed(DisposeEvent e) {
-					toolItem.dispose();
-					toolItem = null;		
-				}});
- 
+
             if (index >= 0)
                 toolItem = new ToolItem(parent, SWT.CHECK, index);
             else
