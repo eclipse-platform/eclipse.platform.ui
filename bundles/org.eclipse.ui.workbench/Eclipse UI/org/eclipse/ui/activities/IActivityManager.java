@@ -14,10 +14,8 @@ package org.eclipse.ui.activities;
 import java.util.Set;
 
 /**
- * <p>
- * An instance of <code>IActivityManager</code> can be used to obtain
- * instances of <code>IActivity</code> and <code>ICategory</code>.
- * </p>
+ * An instance of this interface allows clients to manage activities, as
+ * defined by the extension point <code>org.eclipse.ui.activities</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -27,49 +25,46 @@ import java.util.Set;
  * 
  * @since 3.0
  * @see ActivityManagerFactory
- * @see IActivity
- * @see IActivityManagerListener
- * @see ICategory
  */
 public interface IActivityManager {
 
 	/**
 	 * Registers an instance of <code>IActivityManagerListener</code> to
-	 * listen for changes to attributes of this instance.
+	 * listen for changes to properties of this instance.
 	 * 
 	 * @param activityManagerListener
-	 *            the instance of <code>IActivityManagerListener</code> to
-	 *            register. Must not be <code>null</code>. If an attempt is
-	 *            made to register an instance of <code>IActivityManagerListener</code>
-	 *            which is already registered with this instance, no operation
-	 *            is performed.
+	 *            the instance to register. Must not be <code>null</code>.
+	 *            If an attempt is made to register an instance which is
+	 *            already registered with this instance, no operation is
+	 *            performed.
 	 */
 	void addActivityManagerListener(IActivityManagerListener activityManagerListener);
 
 	/**
-	 * Returns a handle to an activity given an identifier.
+	 * Returns an instance of <code>IActivity</code> given an identifier.
 	 * 
 	 * @param activityId
 	 *            an identifier. Must not be <code>null</code>
-	 * @return a handle to an activity.
+	 * @return an instance of <code>IActivity</code>.
 	 */
 	IActivity getActivity(String activityId);
 
 	/**
-	 * Returns a handle to an category given an identifier.
+	 * Returns an instance of <code>ICategory</code> given an identifier.
 	 * 
 	 * @param categoryId
 	 *            an identifier. Must not be <code>null</code>
-	 * @return a handle to an category.
+	 * @return an instance of <code>ICategory</code>.
 	 */
 	ICategory getCategory(String categoryId);
 
 	/**
+	 * TODO javadoc
 	 * <p>
 	 * Returns the set of identifiers to defined activities.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -81,11 +76,12 @@ public interface IActivityManager {
 	Set getDefinedActivityIds();
 
 	/**
+	 * TODO javadoc
 	 * <p>
 	 * Returns the set of identifiers to defined categories.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -97,12 +93,13 @@ public interface IActivityManager {
 	Set getDefinedCategoryIds();
 
 	/**
+	 * TODO javadoc
 	 * <p>
 	 * Returns the set of identifiers to enabled activities. This set is not
 	 * necessarily a subset of the set of identifiers to defined activities.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -114,40 +111,33 @@ public interface IActivityManager {
 	Set getEnabledActivityIds();
 
 	/**
-	 * Returns a handle to an identifier.
+	 * Returns an instance of <code>IIdentifier</code> given an identifier.
 	 * 
 	 * @param identifierId
 	 *            an identifier. Must not be <code>null</code>
-	 * @return a handle to an identifier.
+	 * @return an instance of <code>IIdentifier</code>.
 	 */
-	IIdentifier getIdentifier(String identifierId);	
-	
+	IIdentifier getIdentifier(String identifierId);
+
 	/**
-	 * This method is only included to fix compile errors in I20031125
-	 * @param string
-	 * @param activityIds
-	 * @return
 	 * @deprecated
 	 */
 	boolean isMatch(String string, Set activityIds);
-	
+
 	/**
-	 * TODO javadoc
-	 * 
 	 * @deprecated
 	 */
 	boolean match(String string, Set activityIds);
 
 	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code>
-	 * listening for changes to attributes of this instance.
+	 * listening for changes to properties of this instance.
 	 * 
 	 * @param activityManagerListener
-	 *            the instance of <code>IActivityManagerListener</code> to
-	 *            unregister. Must not be <code>null</code>. If an attempt
-	 *            is made to unregister an instance of <code>IActivityManagerListener</code>
-	 *            which is not already registered with this instance, no
-	 *            operation is performed.
+	 *            the instance to unregister. Must not be <code>null</code>.
+	 *            If an attempt is made to unregister an instance which is not
+	 *            already registered with this instance, no operation is
+	 *            performed.
 	 */
 	void removeActivityManagerListener(IActivityManagerListener activityManagerListener);
 }

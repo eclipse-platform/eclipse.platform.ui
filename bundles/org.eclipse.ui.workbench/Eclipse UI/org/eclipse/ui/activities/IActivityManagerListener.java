@@ -12,11 +12,8 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>IActivityManagerListener</code> can be used by
- * clients to receive notification of changes to one or more instances of
- * <code>IActivityManager</code>.
- * </p>
+ * An instance of this interface can be used by clients to receive notification
+ * of changes to one or more instances of <code>IActivityManager</code>.
  * <p>
  * This interface may be implemented by clients.
  * </p>
@@ -25,14 +22,13 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see ActivityManagerEvent
  * @see IActivityManager#addActivityManagerListener
  * @see IActivityManager#removeActivityManagerListener
  */
 public interface IActivityManagerListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>IActivityManager</code>
+	 * Notifies that one or more properties of an instance of <code>IActivityManager</code>
 	 * have changed. Specific details are described in the <code>ActivityManagerEvent</code>.
 	 * 
 	 * @param activityManagerEvent

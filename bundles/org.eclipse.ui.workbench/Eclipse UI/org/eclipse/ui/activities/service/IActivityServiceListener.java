@@ -32,7 +32,7 @@ package org.eclipse.ui.activities.service;
 public interface IActivityServiceListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>IActivityService</code>
+	 * Notifies that one or more properties of an instance of <code>IActivityService</code>
 	 * have changed. Specific details are described in the <code>ActivityServiceEvent</code>.
 	 * 
 	 * @param activityServiceEvent

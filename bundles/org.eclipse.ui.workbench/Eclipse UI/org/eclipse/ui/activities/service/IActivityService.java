@@ -31,7 +31,7 @@ public interface IActivityService {
 
 	/**
 	 * Registers an instance of <code>IActivityServiceListener</code> to
-	 * listen for changes to attributes of this instance.
+	 * listen for changes to properties of this instance.
 	 * 
 	 * @param activityServiceListener
 	 *            the instance of <code>IActivityServiceListener</code> to
@@ -47,7 +47,7 @@ public interface IActivityService {
 	 * Returns the set of identifiers to active activities.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -60,7 +60,7 @@ public interface IActivityService {
 
 	/**
 	 * Unregisters an instance of <code>IActivityServiceListener</code>
-	 * listening for changes to attributes of this instance.
+	 * listening for changes to properties of this instance.
 	 * 
 	 * @param activityServiceListener
 	 *            the instance of <code>IActivityServiceListener</code> to

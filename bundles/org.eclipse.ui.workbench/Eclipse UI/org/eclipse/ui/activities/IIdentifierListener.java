@@ -12,10 +12,8 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>IIdentifierListener</code> can be used by clients to
- * receive notification of changes to one or more instances of <code>IIdentifier</code>.
- * </p>
+ * An instance of this interface can be used by clients to receive notification
+ * of changes to one or more instances of <code>IIdentifier</code>.
  * <p>
  * This interface may be implemented by clients.
  * </p>
@@ -24,17 +22,16 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IdentifierEvent
  * @see IIdentifier#addIdentifierListener
  * @see IIdentifier#removeIdentifierListener
  */
 public interface IIdentifierListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>IIdentifier</code>
+	 * Notifies that one or more properties of an instance of <code>IIdentifier</code>
 	 * have changed. Specific details are described in the <code>IdentifierEvent</code>.
 	 * 
-	 * @param identifier
+	 * @param identifierEvent
 	 *            the identifier event. Guaranteed not to be <code>null</code>.
 	 */
 	void identifierChanged(IdentifierEvent identifierEvent);

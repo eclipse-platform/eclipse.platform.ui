@@ -23,9 +23,8 @@ import java.util.Set;
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
- * plugin activation and deactivation, which causes dynamic changes to the
- * extension registry, and therefore, potentially, dynamic changes to the set
- * of activity definitions.
+ * plugin activation and deactivation, which can cause dynamic changes to the
+ * extension registry.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -41,21 +40,21 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * Registers an instance of <code>IActivityListener</code> to listen for
-	 * changes to properties of this activity.
+	 * changes to properties of this instance.
 	 * 
 	 * @param activityListener
 	 *            the instance to register. Must not be <code>null</code>.
 	 *            If an attempt is made to register an instance which is
-	 *            already registered with this activity, no operation is
+	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */
 	void addActivityListener(IActivityListener activityListener);
 
 	/**
-	 * Returns the set of activity activity bindings for this activity.
+	 * Returns the set of activity activity bindings for this instance.
 	 * <p>
 	 * This method will return all activity activity bindings for this
-	 * activity, whether or not this activity is defined.
+	 * instance, whether or not this instance is defined.
 	 * </p>
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
@@ -69,10 +68,10 @@ public interface IActivity extends Comparable {
 	Set getActivityActivityBindings();
 
 	/**
-	 * Returns the set of activity pattern bindings for this activity.
+	 * Returns the set of activity pattern bindings for this instance.
 	 * <p>
-	 * This method will return all activity pattern bindings for this activity,
-	 * whether or not this activity is defined.
+	 * This method will return all activity pattern bindings for this instance,
+	 * whether or not this instance is defined.
 	 * </p>
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
@@ -86,71 +85,71 @@ public interface IActivity extends Comparable {
 	Set getActivityPatternBindings();
 
 	/**
-	 * Returns the description of this activity suitable for display to the
+	 * Returns the description of this instance suitable for display to the
 	 * user.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the description of this activity. Guaranteed not to be <code>null</code>.
+	 * @return the description of this instance. Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if this activity is not defined.
+	 *             if this instance is not defined.
 	 */
 	String getDescription() throws NotDefinedException;
 
 	/**
-	 * Returns the identifier of this activity.
+	 * Returns the identifier of this instance.
 	 * 
-	 * @return the identifier of this activity. Guaranteed not to be <code>null</code>.
+	 * @return the identifier of this instance. Guaranteed not to be <code>null</code>.
 	 */
 	String getId();
 
 	/**
-	 * Returns the name of this activity suitable for display to the user.
+	 * Returns the name of this instance suitable for display to the user.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the name of this activity. Guaranteed not to be <code>null</code>.
+	 * @return the name of this instance. Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if this activity is not defined.
+	 *             if this instance is not defined.
 	 */
 	String getName() throws NotDefinedException;
 
 	/**
-	 * Returns the identifier of the parent of this activity.
+	 * Returns the identifier of the parent of this instance.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the identifier of the parent of this activity. May be <code>null</code>.
+	 * @return the identifier of the parent of this instance. May be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if this activity is not defined.
+	 *             if this instance is not defined.
 	 */
 	String getParentId() throws NotDefinedException;
 
 	/**
-	 * Returns whether or not this activity is defined.
+	 * Returns whether or not this instance is defined.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return true, iff this activity is defined.
+	 * @return true, iff this instance is defined.
 	 */
 	boolean isDefined();
 
 	/**
-	 * Returns whether or not this activity is enabled.
+	 * Returns whether or not this instance is enabled.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return true, iff this activity is enabled.
+	 * @return true, iff this instance is enabled.
 	 */
 	boolean isEnabled();
 
@@ -166,12 +165,12 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
-	 * for changes to properties of this activity.
+	 * for changes to properties of this instance.
 	 * 
 	 * @param activityListener
 	 *            the instance to unregister. Must not be <code>null</code>.
 	 *            If an attempt is made to unregister an instance which is not
-	 *            already registered with this activity, no operation is
+	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */
 	void removeActivityListener(IActivityListener activityListener);

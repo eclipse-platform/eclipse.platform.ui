@@ -14,11 +14,8 @@ package org.eclipse.ui.activities;
 import java.util.Set;
 
 /**
- * <p>
- * An instance of <code>IMutableActivityManager</code> can be used to obtain
- * instances of <code>IActivity</code> and <code>ICategory</code>, as well
- * as manage whether or not those instances are enabled or disabled.
- * </p>
+ * An instance of this interface allows clients to manage activities, as
+ * defined by the extension point <code>org.eclipse.ui.activities</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -28,14 +25,11 @@ import java.util.Set;
  * 
  * @since 3.0
  * @see ActivityManagerFactory
- * @see IActivity
- * @see IActivityManagerListener
- * @see ICategory
  */
 public interface IMutableActivityManager extends IActivityManager {
 
 	/**
-	 * Sets the set of identifiers to enabled activities.
+	 * TODO javadoc Sets the set of identifiers to enabled activities.
 	 * 
 	 * @param enabledActivityIds
 	 *            the set of identifiers to enabled activities. This set may be
