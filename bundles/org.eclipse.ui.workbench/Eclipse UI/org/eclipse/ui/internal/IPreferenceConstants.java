@@ -88,6 +88,9 @@ public interface IPreferenceConstants {
 	//Eclipse.  Will improve startup time for editors that have a long open time.
 	public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
 	
+	//Boolean: true = keep cycle part dialog open when keys released
+	public static final String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
+	
 	//List of plugins but that extends "startup" extension point but are overriden by the user.
 	//String of plugin unique ids separated by ";"
 	public static final String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$

@@ -31,6 +31,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button refreshButton;
 	private Button showTasks;
+	private Button stickyCycleButton;
 	private Button exitPromptButton;
 	private IntegerFieldEditor saveInterval;
 
@@ -82,6 +83,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		showTasks.setText(WorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
 		showTasks.setFont(font);
 
+		stickyCycleButton = new Button(composite, SWT.CHECK);
+		stickyCycleButton.setText(WorkbenchMessages.getString("WorkbenchPreference.stickyCycleButton")); //$NON-NLS-1$
+		stickyCycleButton.setFont(composite.getFont());
+
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
 		
@@ -95,6 +100,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 		exitPromptButton.setSelection(store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
+		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
 		
 		return composite;
 	}
@@ -296,17 +302,20 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 		exitPromptButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
+		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
 		saveInterval.loadDefault();
 		
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
 		openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
+
 		singleClickButton.setSelection(openOnSingleClick);
 		doubleClickButton.setSelection(!openOnSingleClick);
 		selectOnHoverButton.setSelection(selectOnHover);
 		openAfterDelayButton.setSelection(openAfterDelay);
 		selectOnHoverButton.setEnabled(openOnSingleClick);
-		openAfterDelayButton.setEnabled(openOnSingleClick);		
+		openAfterDelayButton.setEnabled(openOnSingleClick);	
+		stickyCycleButton.setSelection( store.getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));	
 		
 		super.performDefaults();
 	}
@@ -343,6 +352,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		//store the preference for bringing task view to front on build
 		store.setValue(IPreferenceConstants.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
+
+		// store the keep cycle part dialogs sticky preference
+		store.setValue(IPreferenceConstants.STICKY_CYCLE, stickyCycleButton.getSelection());
 
 		long oldSaveInterval = description.getSnapshotInterval() / 60000;
 		long newSaveInterval = new Long(saveInterval.getStringValue()).longValue();

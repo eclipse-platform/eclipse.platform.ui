@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.util.Iterator;
 import java.util.SortedSet;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -379,7 +380,9 @@ public class CyclePartAction extends PageEventAction {
 				//printKeyEvent(e);
 				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");
 				
-				if ((firstKey || quickReleaseMode) && keyCode == stateMask)
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
+				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
 					ok(dialog, table);
 			}
 		});

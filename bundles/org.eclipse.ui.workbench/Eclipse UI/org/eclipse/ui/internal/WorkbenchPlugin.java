@@ -409,6 +409,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
+		store.setDefault(IPreferenceConstants.STICKY_CYCLE, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
