@@ -1,4 +1,4 @@
-<project name="org.eclipse.compare" default="export" basedir=".">
+<project name="org.eclipse.compare" default="export" basedir="..">
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
@@ -24,5 +24,8 @@
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />
 		</copy>
+		<zip zipfile="${dest}/comparesrc.zip">
+		    <fileset dir="Eclipse Compare" />
+  		</zip>				
 	</target>
 </project>
