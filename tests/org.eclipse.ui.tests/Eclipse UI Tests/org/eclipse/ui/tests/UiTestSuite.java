@@ -31,6 +31,7 @@ import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
+import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.presentations.PresentationsTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
@@ -77,5 +78,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new PresentationsTestSuite());
         addTest(new TestSuite(LeakTests.class));
         addTest(new ConcurrencyTestSuite());
+        addTest(new OperationsTestSuite());
     }
 }
