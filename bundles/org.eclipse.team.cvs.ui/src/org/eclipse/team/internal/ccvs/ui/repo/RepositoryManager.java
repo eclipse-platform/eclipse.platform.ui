@@ -116,7 +116,7 @@ public class RepositoryManager {
 	 */
 	public CVSTag[] getKnownTags(ICVSRepositoryLocation location, int tagType) {
 		Set result = new HashSet();
-		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation());
+		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation(false));
 		if (root != null) {
 			String[] paths = root.getKnownRemotePaths();
 			for (int i = 0; i < paths.length; i++) {
@@ -244,7 +244,7 @@ public class RepositoryManager {
 	 * Remove the tags defined for this root and notify any listeners
 	 */
 	public void rootRemoved(ICVSRepositoryLocation root) {
-		RepositoryRoot repoRoot = (RepositoryRoot)repositoryRoots.remove(root.getLocation());
+		RepositoryRoot repoRoot = (RepositoryRoot)repositoryRoots.remove(root.getLocation(false));
 		if (repoRoot != null)
 			broadcastRepositoryChange(repoRoot);
 	}
@@ -611,7 +611,7 @@ public class RepositoryManager {
 	}
 	
 	public RepositoryRoot getRepositoryRootFor(ICVSRepositoryLocation location) {
-		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation());
+		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation(false));
 		if (root == null) {
 			root = new RepositoryRoot(location);
 			add(root);
@@ -626,7 +626,7 @@ public class RepositoryManager {
 	 * @param currentRepositoryRoot
 	 */
 	public void add(RepositoryRoot root) {
-		repositoryRoots.put(root.getRoot().getLocation(), root);
+		repositoryRoots.put(root.getRoot().getLocation(false), root);
 		broadcastRepositoryChange(root);
 	}
 	
@@ -634,7 +634,7 @@ public class RepositoryManager {
 		if (notificationLevel == 0) {
 			broadcastRepositoriesChanged(new ICVSRepositoryLocation[] {root.getRoot()});
 		} else {
-			changedRepositories.put(root.getRoot().getLocation(), root.getRoot());
+			changedRepositories.put(root.getRoot().getLocation(false), root.getRoot());
 		}
 	}
 	

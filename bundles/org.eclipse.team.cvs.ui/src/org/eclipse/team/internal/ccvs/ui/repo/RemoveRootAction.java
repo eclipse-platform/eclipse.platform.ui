@@ -97,7 +97,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 			
 				// This will notify the RepositoryManager of the removal
 				if (!shared.isEmpty()) {
-					final String location = roots[i].getLocation();
+					final String location = roots[i].getLocation(true);
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(

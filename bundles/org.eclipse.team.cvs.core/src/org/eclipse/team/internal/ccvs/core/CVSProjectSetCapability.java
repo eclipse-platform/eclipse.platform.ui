@@ -92,7 +92,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 				
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		CVSWorkspaceRoot root = provider.getCVSWorkspaceRoot();
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
 		location.setUserMuteable(true);
 		String repoLocation = location.getLocation();
 		buffer.append(repoLocation);

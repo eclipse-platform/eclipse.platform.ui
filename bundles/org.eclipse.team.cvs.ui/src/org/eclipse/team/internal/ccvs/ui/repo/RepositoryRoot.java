@@ -463,7 +463,7 @@ public class RepositoryRoot extends PlatformObject {
 		HashMap attributes = new HashMap();
 
 		attributes.clear();
-		attributes.put(RepositoriesViewContentHandler.ID_ATTRIBUTE, root.getLocation());
+		attributes.put(RepositoriesViewContentHandler.ID_ATTRIBUTE, root.getLocation(false));
 		if (name != null) {
 			attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, name);
 		}

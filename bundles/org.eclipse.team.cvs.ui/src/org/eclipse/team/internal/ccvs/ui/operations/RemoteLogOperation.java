@@ -114,7 +114,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
          * all log entries for a file can be retrieved.
          */
         private String getFullPath(ICVSRemoteResource resource) {
-            return Util.appendPath(resource.getRepository().getLocation(), resource.getRepositoryRelativePath());
+            return Util.appendPath(resource.getRepository().getLocation(false), resource.getRepositoryRelativePath());
         }
 		
 		public synchronized void clearEntries() {

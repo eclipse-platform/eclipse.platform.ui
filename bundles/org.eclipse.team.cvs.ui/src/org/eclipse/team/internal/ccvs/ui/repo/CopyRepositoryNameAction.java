@@ -28,7 +28,7 @@ public class CopyRepositoryNameAction extends CVSAction {
 		ICVSRepositoryLocation[] locations = getSelectedRepositories();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.length; i++) {
-			buffer.append(locations[i].getLocation());
+			buffer.append(locations[i].getLocation(true));
 			if (i < locations.length - 1) buffer.append("\n"); //$NON-NLS-1$
 		}
 		copyToClipbard(Display.getDefault(), buffer.toString());

@@ -117,7 +117,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		if(shell == null) {
 			throw new CVSException(Policy.bind("WorkbenchUserAuthenticator.0")); //$NON-NLS-1$
 		}
-		String domain = location == null ? null : location.getLocation();
+		String domain = location == null ? null : location.getLocation(true);
 		UserValidationDialog dialog = new UserValidationDialog(shell, domain, (username==null)?"":username, message);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
 		dialog.open();	
@@ -168,7 +168,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	
 		Shell shell = Utils.findShell();
 		if(shell == null) return new String[0];
-		String domain = location == null ? null : location.getLocation();
+		String domain = location == null ? null : location.getLocation(true);
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
 										 domain,
 										 destination,

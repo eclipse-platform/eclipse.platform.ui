@@ -27,7 +27,7 @@ public class CommandLineCVSClient implements ICVSClient {
 	public void executeCommand(ICVSRepositoryLocation repositoryLocation,
 		IContainer localRoot, String command, String[] globalOptions,
 		String[] localOptions, String[] arguments) throws CVSException {
-		execute(repositoryLocation.getLocation(), localRoot.getLocation().toFile(), command,
+		execute(repositoryLocation.getLocation(false), localRoot.getLocation().toFile(), command,
 			globalOptions, localOptions, arguments);
 		try {
 			localRoot.refreshLocal(IResource.DEPTH_INFINITE, null);

@@ -56,7 +56,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * Returns the string representing the receiver. This string
 	 * should contain enough information to recreate the receiver.
 	 */
-	public String getLocation();
+	public String getLocation(boolean forDisplay);
 
 	/**
 	 * Returns the immediate children of this location. If tag is <code>null</code> the
@@ -154,4 +154,5 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * @since 3.0
 	 */
 	public void setEncoding(String encoding);
+
 }

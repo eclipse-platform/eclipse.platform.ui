@@ -55,9 +55,9 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 			IProject project = providerProjects[i];
 			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 			CVSWorkspaceRoot root = provider.getCVSWorkspaceRoot();
-			CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation());
+			CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
 			location.setUserMuteable(true);
-			String repoLocation = location.getLocation();
+			String repoLocation = location.getLocation(false);
 			buffer.append(repoLocation);
 			buffer.append(","); //$NON-NLS-1$
 			

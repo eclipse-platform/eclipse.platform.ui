@@ -90,7 +90,7 @@ public class KnownRepositories {
 	 */
 	public ICVSRepositoryLocation addRepository(final ICVSRepositoryLocation repository, boolean broadcast) {
 		// Check the cache for an equivalent instance and if there is one, just update the cache
-		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation());
+		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation(false));
 		if (existingLocation == null) {
 			// Store the location
 			store((CVSRepositoryLocation)repository);
@@ -115,7 +115,7 @@ public class KnownRepositories {
 	 */
 	public void disposeRepository(final ICVSRepositoryLocation repository) {
 		((CVSRepositoryLocation)repository).dispose();
-		if (getRepositoriesMap().remove(repository.getLocation()) != null) {
+		if (getRepositoriesMap().remove(repository.getLocation(false)) != null) {
 			fireNotification(new Notification() {
 				public void notify(ICVSListener listener) {
 					listener.repositoryRemoved(repository);

@@ -329,7 +329,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		useLocationAsLabel.setSelection(label == null);
 		useCustomLabel.setSelection(!useLocationAsLabel.getSelection());
 		if (label == null) {
-			label = location.getLocation();
+			label = location.getLocation(true);
 		}
 		labelText.setText(label);
 	}

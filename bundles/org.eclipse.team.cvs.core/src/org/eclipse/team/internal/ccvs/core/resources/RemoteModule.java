@@ -99,7 +99,7 @@ public class RemoteModule extends RemoteFolder {
 				}
 			} catch (NoSuchElementException e) {
 				// There is an invalid entry in the modules file. Log it and continue
-				CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation()), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation(true)), null); //$NON-NLS-1$
 				continue;
 			}
 			LocalOption[] localOptions = (LocalOption[]) localOptionsList.toArray(new LocalOption[localOptionsList.size()]);

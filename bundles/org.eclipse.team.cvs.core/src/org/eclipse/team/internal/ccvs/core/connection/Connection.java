@@ -126,7 +126,7 @@ public class Connection {
 		try {
 			serverConnection.open(monitor);
 		} catch (IOException e) {
-			throw new CVSCommunicationException(Policy.bind("Connection.0", fCVSRoot.getLocation(), CVSCommunicationException.getMessageFor(e)), e); //$NON-NLS-1$
+			throw new CVSCommunicationException(Policy.bind("Connection.0", fCVSRoot.getLocation(true), CVSCommunicationException.getMessageFor(e)), e); //$NON-NLS-1$
 		}
 		fIsEstablished= true;
 	}

@@ -285,7 +285,7 @@ public class RepositoriesView extends RemoteViewPart {
 					name = res.getRepositoryRelativePath();
 				} 
 			}
-			return Policy.bind("RepositoriesView.ResourceInRepository", name, res.getRepository().getLocation()); //$NON-NLS-1$
+			return Policy.bind("RepositoriesView.ResourceInRepository", name, res.getRepository().getLocation(true)); //$NON-NLS-1$
 		}
 		return Policy.bind("RepositoriesView.OneItemSelected"); //$NON-NLS-1$
 	}

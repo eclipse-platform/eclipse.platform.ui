@@ -444,7 +444,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
 
 		// Check if there is a differnece between the new and old roots	
-		final String root = location.getLocation();
+		final String root = location.getLocation(false);
 		if (root.equals(workspaceRoot.getRemoteLocation())) 
 			return;
 	

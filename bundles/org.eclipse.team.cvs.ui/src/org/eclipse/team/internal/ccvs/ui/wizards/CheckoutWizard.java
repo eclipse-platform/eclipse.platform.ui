@@ -270,7 +270,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 				KnownRepositories.getInstance().disposeRepository(location);
 			}
 			location = newLocation;
-			isNewLocation = !KnownRepositories.getInstance().isKnownRepository(newLocation.getLocation());
+			isNewLocation = !KnownRepositories.getInstance().isKnownRepository(newLocation.getLocation(false));
 			if (isNewLocation) {
 				// Add the location silently so we can work with it
 				location = KnownRepositories.getInstance().addRepository(location, false /* silently */);

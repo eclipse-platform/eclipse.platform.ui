@@ -370,7 +370,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				return status;
 			}
 			
-			manageFolders(targetFolders, repository.getLocation());
+			manageFolders(targetFolders, repository.getLocation(false));
 			
 			return OK;
 			

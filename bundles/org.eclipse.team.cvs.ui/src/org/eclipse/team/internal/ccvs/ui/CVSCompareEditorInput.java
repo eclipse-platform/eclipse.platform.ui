@@ -370,8 +370,8 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			return NODE_NOT_EQUAL;
 		}
 		
-		String leftLocation = leftEdition.getRepository().getLocation();
-		String rightLocation = rightEdition.getRepository().getLocation();
+		String leftLocation = leftEdition.getRepository().getLocation(false);
+		String rightLocation = rightEdition.getRepository().getLocation(false);
 		if (!leftLocation.equals(rightLocation)) {
 			return NODE_UNKNOWN;
 		}

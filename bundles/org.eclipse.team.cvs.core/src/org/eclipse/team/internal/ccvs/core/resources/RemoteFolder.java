@@ -74,7 +74,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag, boolean isStatic) {
 		super(parent, name);
 		if (repository != null) {
-			this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
+			this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(false), tag, isStatic);
 		}
 		this.repository = repository;	
 	}

@@ -96,7 +96,7 @@ public class RepositorySorter extends ViewerSorter {
 		}
 		
 		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {
-			return ((ICVSRepositoryLocation)o1).getLocation().compareTo(((ICVSRepositoryLocation)o2).getLocation());
+			return ((ICVSRepositoryLocation)o1).getLocation(false).compareTo(((ICVSRepositoryLocation)o2).getLocation(false));
 		}
 		
 		return super.compare(viewer, o1, o2);

@@ -38,14 +38,14 @@ public class CVSRepositoryRootElement extends CVSModelElement {
 			ICVSRepositoryLocation root = (ICVSRepositoryLocation)o;
 			o = CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(root);
 			if (o == null) {
-				return root.getLocation();
+				return root.getLocation(true);
 			}
 		}
 		if (o instanceof RepositoryRoot) {
 			RepositoryRoot root = (RepositoryRoot)o;
 			String name = root.getName();
 			if (name == null)
-				return root.getRoot().getLocation();
+				return root.getRoot().getLocation(true);
 			else
 				return name;
 		}

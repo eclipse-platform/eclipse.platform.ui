@@ -381,9 +381,9 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation())) {
+		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation(false))) {
 			// The location may have been replaced by the main properties page
-			MessageDialog.openInformation(getShell(), Policy.bind("RepositoryEncodingPropertyPage.0"), Policy.bind("RepositoryEncodingPropertyPage.1", location.getLocation())); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), Policy.bind("RepositoryEncodingPropertyPage.0"), Policy.bind("RepositoryEncodingPropertyPage.1", location.getLocation(true))); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 		encoding.store();
