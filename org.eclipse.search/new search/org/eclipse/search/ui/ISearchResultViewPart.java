@@ -10,8 +10,10 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IViewPart;
 /**
- * Interface for the search result view. This interface is not intended to be
- * implemented.
+ * Interface for the search result view. The search result view part is responsible
+ * for managing the set of search result and delegates display of search results
+ * to the appropriate <code>ISearchResultPage</code>.
+ * This insterface must not be implemented by clients.
  * 
  * This API is preliminary and subject to change at any time.
  * 

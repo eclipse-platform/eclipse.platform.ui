@@ -11,9 +11,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 /**
  * Represents a particular search query (e.g. "find all occurrences of 'foo' in
- * workspace"). When executed, the query must update its ISearchResult
- * with the results of the query. This interface must be implemented by
- * clients.
+ * workspace"). When run, the query must update its <code>ISearchResult</code>
+ * with the results of the query. 
+ * This interface may be implemented by clients.
  * 
  * This API is preliminary and subject to change at any time.
  * 
@@ -28,11 +28,12 @@ public interface ISearchQuery {
 	 */
 	IStatus run(IProgressMonitor monitor);
 	/**
-	 * Returns the a user readeable label for this query. This will be used, for example to
+	 * Returns the a user readable label for this query. This will be used, for example to
 	 * set the <code>Job</code> name if this query is executed in the
-	 * background.
+	 * background. Note that progress notification (for example, the number of matches
+	 * found) should be done via the progress monitor passed into the <code>run(IProgressMonitor)</code> method
 	 * 
-	 * @return The user readeable label of this query.
+	 * @return The user readable label of this query.
 	 */
 	String getLabel();
 	/**

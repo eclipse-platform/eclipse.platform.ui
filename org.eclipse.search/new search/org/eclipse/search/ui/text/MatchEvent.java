@@ -17,7 +17,8 @@ import org.eclipse.search.ui.SearchResultEvent;
  */
 public class MatchEvent extends SearchResultEvent {
 	private int fKind;
-	private Match fMatch;
+	private Match[] fMatches;
+	private Match[] fMatchContainer= new Match[1];
 	/**
 	 * Constant for a match being added.
 	 * 
@@ -30,6 +31,9 @@ public class MatchEvent extends SearchResultEvent {
 	 * @see MatchEvent#getKind()
 	 */
 	public static final int REMOVED= 2;
+	
+	private static final Match[] fgEmtpyMatches= new Match[0];
+	
 	public MatchEvent(ISearchResult searchResult) {
 		super(searchResult);
 	}
@@ -46,8 +50,13 @@ public class MatchEvent extends SearchResultEvent {
 	 * 
 	 * @return The match this event is about.
 	 */
-	public Match getMatch() {
-		return fMatch;
+	public Match[] getMatches() {
+		if (fMatches != null)
+			return fMatches;
+		else if (fMatchContainer[0] != null)
+			return fMatchContainer;
+		else 
+			return fgEmtpyMatches;
 	}
 	/**
 	 * @param kind The kind to set.
@@ -59,6 +68,13 @@ public class MatchEvent extends SearchResultEvent {
 	 * @param match The match to set.
 	 */
 	protected void setMatch(Match match) {
-		fMatch= match;
+		fMatchContainer[0]= match;
+		fMatches= null;
 	}
+
+	protected void setMatches(Match[] matches) {
+		fMatchContainer[0]= null;
+		fMatches= matches;
+	}
+
 }

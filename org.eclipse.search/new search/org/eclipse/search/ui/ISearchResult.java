@@ -13,8 +13,11 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Represents the result of a search. No assumptions about the
- * structure of these results is made at this level.
+ * Represents the result of a search. The class of an <code>ISearchResult</code> 
+ * is used to determine which <code>ISearchResultPage</code> is used
+ * to display it, by matching the <code>targetClass</code> attribute in the 
+ * <code>searchResultViewPages</code> extension point to the class of the seaarch 
+ * result.
  * Clients may implement this interface.
  *
  * This API is preliminary and subject to change at any time.
@@ -34,13 +37,13 @@ public interface ISearchResult {
 	 */
 	public void removeListener(ISearchResultListener l);
 	/**
-	 * Returns a user readeable label for this search result.
+	 * Returns a user readable label for this search result.
 	 * @return The label for this search result.
 	 */
 	String getLabel();
 	/**
 	 * Returns a tooltip for this  search result.
-	 * @return A user readeable String.
+	 * @return A user readable String.
 	 */
 	public String getTooltip();
 	/**

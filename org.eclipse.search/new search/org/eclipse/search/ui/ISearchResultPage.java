@@ -15,7 +15,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * When the user selects an <code>ISearchResult</code> in the search results
  * view, the corresponding (as configured in the extension) <code>ISearchResultPage</code>
  * will be used to display the search result.
- * 
+ * Clients may implement this interface.
  * 
  * This API is preliminary and subject to change at any time.
  * 

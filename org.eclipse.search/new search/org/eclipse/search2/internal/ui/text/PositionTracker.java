@@ -15,20 +15,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
-
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -79,18 +75,27 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	public void searchResultChanged(SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent evt= (MatchEvent)e;
-			ITextFileBuffer fb= getTrackedFileBuffer((AbstractTextSearchResult)evt.getSearchResult(), evt.getMatch().getElement());
-			if (fb != null) {
-				if (evt.getKind() == MatchEvent.ADDED) {
-					trackPosition((AbstractTextSearchResult) e.getSearchResult(), fb, evt.getMatch());
-				} else if (evt.getKind() == MatchEvent.REMOVED) {
-					untrackPosition(fb, evt.getMatch());
-				}
+			Match[] matches = evt.getMatches();
+			int kind = evt.getKind();
+			AbstractTextSearchResult result = (AbstractTextSearchResult) e.getSearchResult();
+			for (int i = 0; i < matches.length; i++) {
+				ITextFileBuffer fb= getTrackedFileBuffer(result, matches[i].getElement());
+				updateMatch(matches[i], fb, kind, result);				
 			}
 		} else if (e instanceof RemoveAllEvent) {
 			RemoveAllEvent evt= (RemoveAllEvent)e;
 			ISearchResult result= evt.getSearchResult();
 			untrackAll((AbstractTextSearchResult)result);
+		}
+	}
+
+	private void updateMatch(Match match, ITextFileBuffer fb, int kind, AbstractTextSearchResult result) {
+		if (fb != null) {
+			if (kind == MatchEvent.ADDED) {
+				trackPosition(result, fb, match);
+			} else if (kind == MatchEvent.REMOVED) {
+				untrackPosition(fb, match);
+			}
 		}
 	}
 

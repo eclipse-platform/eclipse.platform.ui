@@ -681,8 +681,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private synchronized void handleSearchResultsChanged(final SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent me= (MatchEvent) e;
-			Object element= me.getMatch().getElement();
-			postUpdate(element);
+			postUpdate(me.getMatches());
 			AbstractTextSearchResult result= (AbstractTextSearchResult) me.getSearchResult();
 			if (result.getMatchCount() == 1)
 				asyncExec(new Runnable() {
@@ -695,8 +694,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 	
-	private synchronized void postUpdate(final Object element) {
-		fBatchedUpdates.add(element);
+	private synchronized void postUpdate(Match[] matches) {
+		for (int i = 0; i < matches.length; i++) {
+			fBatchedUpdates.add(matches[i].getElement());			
+		}
 		if (fBatchedUpdates.size() == 1) {
 			asyncExec(new Runnable() {
 				public void run() {
@@ -705,6 +706,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			});
 		}
 	}
+
 	
 	private void runBatchedUpdates() {
 		synchronized(this) {

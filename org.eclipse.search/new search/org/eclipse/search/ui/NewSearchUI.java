@@ -13,8 +13,8 @@ import org.eclipse.jface.operation.IRunnableContext;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 /**
- * A facade for the new search ui. This API is preliminary and subject to
- * change at any time.
+ * A facade for access to the new search ui. 
+ * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0
  */
@@ -78,7 +78,7 @@ public class NewSearchUI {
 	}
 	
 	/**
-	 * Returns all search results know to the search ui.
+	 * Returns all search queries know to the search ui.
 	 * 
 	 * @return All search result.
 	 */
@@ -86,6 +86,14 @@ public class NewSearchUI {
 		return InternalSearchUI.getInstance().getQueries();
 	}
 	
+	/**
+	 * Returns whether the given query is currently running. Queries
+	 * may be run by client request or by actions in the search UI.
+	 * @see #runQuery(ISearchQuery)
+	 * @see #runQueryInForeground(IRunnableContext, ISearchQuery)
+	 * @param query
+	 * @return whether the given query is currently running.
+	 */
 	public static boolean isQueryRunning(ISearchQuery query) {
 		return InternalSearchUI.getInstance().isQueryRunning(query);
 	}

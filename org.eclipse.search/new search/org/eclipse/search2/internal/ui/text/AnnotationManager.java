@@ -9,26 +9,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.SearchUI;
@@ -36,6 +21,16 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class AnnotationManager implements ISearchResultListener, IPartListener {
 	private AbstractTextSearchResult fResult;
@@ -100,16 +95,23 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	public synchronized void searchResultChanged(SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent me= (MatchEvent) e;
-			if (fEditor != null
-					&& fResult.isShownInEditor(me.getMatch(), fEditor)) {
-				if (me.getKind() == MatchEvent.ADDED) {
-					addAnnotations(fEditor, new Match[]{me.getMatch()});
-				} else {
-					removeAnnotations(fEditor, new Match[]{me.getMatch()});
-				}
+			Match[] matches = me.getMatches();
+			int kind = me.getKind();
+			for (int i = 0; i < matches.length; i++) {
+				updateMatch(matches[i], kind);
 			}
 		} else if (e instanceof RemoveAllEvent)
 			removeAnnotations();
+	}
+
+	private void updateMatch(Match match, int kind) {
+		if (fEditor != null && fResult.isShownInEditor(match, fEditor)) {
+			if (kind == MatchEvent.ADDED) {
+				addAnnotations(fEditor, new Match[]{match});
+			} else {
+				removeAnnotations(fEditor, new Match[]{match});
+			}
+		}
 	}
 
 	public synchronized void partActivated(IWorkbenchPart part) {

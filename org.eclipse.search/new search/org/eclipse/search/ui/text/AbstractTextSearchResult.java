@@ -13,14 +13,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.ui.IEditorPart;
 public abstract class AbstractTextSearchResult implements ISearchResult {
 	private Map fElementsToMatches;
 	private List fListeners;
@@ -68,12 +67,36 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (hasAdded)
 			fireChange(getSearchResultEvent(match, MatchEvent.ADDED));
 	}
+	
+	public void addMatches(Match[] matches) {
+
+		Set reallyAdded= new HashSet();
+		for (int i = 0; i < matches.length; i++) {
+			synchronized (fElementsToMatches) {
+				if (doAddMatch(matches[i]))
+					reallyAdded.add(matches[i]);
+			}
+		}
+		if (reallyAdded.size() > 0)
+			fireChange(getSearchResultEvent(reallyAdded, MatchEvent.ADDED));
+	}
+	
 	private SearchResultEvent getSearchResultEvent(Match match, int eventKind) {
 		fMatchEvent.setKind(eventKind);
 		fMatchEvent.setMatch(match);
 		return fMatchEvent;
 	}
-	
+		
+
+
+	private MatchEvent getSearchResultEvent(Set matches, int eventKind) {
+		fMatchEvent.setKind(eventKind);
+		Match[] matchArray= new Match[matches.size()];
+		matches.toArray(matchArray);
+		fMatchEvent.setMatches(matchArray);
+		return fMatchEvent;
+	}
+
 	private boolean doAddMatch(Match match) {
 		List matches= (List) fElementsToMatches.get(match.getElement());
 		if (matches == null) {
@@ -107,12 +130,27 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	public void removeMatch(Match match) {
 		boolean existed= false;
 		synchronized (fElementsToMatches) {
-			existed= doRemoveMatch(match, existed);
+			existed= doRemoveMatch(match);
 		}
 		if (existed)
 			fireChange(getSearchResultEvent(match, MatchEvent.REMOVED));
 	}
-	private boolean doRemoveMatch(Match match, boolean existed) {
+	
+	public void removeMatches(Match[] matches) {
+		Set existing= new HashSet();
+		for (int i = 0; i < matches.length; i++) {
+			synchronized (fElementsToMatches) {
+				if (doRemoveMatch(matches[i]))
+					existing.add(matches[i]);
+			}
+		}
+		if (existing.size() > 0)
+			fireChange(getSearchResultEvent(existing, MatchEvent.REMOVED));
+	}
+
+	
+	private boolean doRemoveMatch(Match match) {
+		boolean existed= false;
 		List matches= (List) fElementsToMatches.get(match.getElement());
 		if (matches != null) {
 			existed= matches.remove(match);
