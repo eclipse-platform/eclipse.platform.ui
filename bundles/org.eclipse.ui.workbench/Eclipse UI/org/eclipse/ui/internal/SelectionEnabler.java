@@ -89,6 +89,7 @@ public boolean isEnabledForSelection(ISelection selection) {
 		return isEnabledFor((IStructuredSelection)selection);
 	}
 
+	// @issue temporary code to deal with dependency on JFace text (optional component of generic workbench)
 	// special case: text selections
 	// Code should read
 	// if (selection instanceof ITextSelection) {
@@ -97,32 +98,26 @@ public boolean isEnabledForSelection(ISelection selection) {
 	// }
 	// use Java reflection to avoid dependence of org.eclipse.jface.text
 	// which is in an optional part of the generic workbench
-	if (selection.getClass().getName().equals("org.eclipse.jface.text.ITextSelection")) { //$NON-NLS-1$
-		int count = 0;
-		try {
-			Class tselClass = Class.forName("org.eclipse.jface.text.ITextSelection"); //$NON-NLS-1$
+	try {
+		Class tselClass = Class.forName("org.eclipse.jface.text.ITextSelection"); //$NON-NLS-1$
+		if (tselClass.isInstance(selection)) {
 			Method m = tselClass.getDeclaredMethod("getLength", new Class[0]); //$NON-NLS-1$
 			Object r = m.invoke(selection, new Object[0]);
 			if (r instanceof Integer) {
-				count = ((Integer) r).intValue();
+				return isEnabledFor(selection, ((Integer) r).intValue());
 			} else {
 				// should not happen - but enable if it does
 				return true;
 			}
-		} catch (ClassNotFoundException e) {
-			// should not happen - but enable if it does
-			return true;
-		} catch (NoSuchMethodException e) {
-			// should not happen - but enable if it does
-			return true;
-		} catch (IllegalAccessException e) {
-			// should not happen - but enable if it does
-			return true;
-		} catch (InvocationTargetException e) {
-			// should not happen - but enable if it does
-			return true;
 		}
-		return isEnabledFor(selection, count);
+	} catch (ClassNotFoundException e) {
+		// JFace text is not present - fall through
+	} catch (NoSuchMethodException e) {
+		// should not happen - fall through if it does
+	} catch (IllegalAccessException e) {
+		// should not happen - fall through if it does
+	} catch (InvocationTargetException e) {
+		// should not happen - fall through if it does
 	}
 	
 	// all other cases
