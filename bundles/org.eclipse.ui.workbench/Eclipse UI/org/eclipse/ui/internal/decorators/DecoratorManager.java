@@ -374,8 +374,9 @@ public class DecoratorManager
 		//Do nothing as this is not viewer dependant
 	}
 
-	/*
-	 * @see IDecoratorManager.reset()
+	/**
+	 * Reset the cached values in the receiver and 
+	 * force an update on all listeners.
 	 */
 	public void reset() {
 		cachedFullDecorators = new HashMap();
