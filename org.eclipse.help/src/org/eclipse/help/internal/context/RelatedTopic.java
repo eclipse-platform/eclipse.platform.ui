@@ -24,7 +24,7 @@ public class RelatedTopic extends ContextsNode implements IHelpResource {
 		href = attrs.getValue(ContextsNode.RELATED_HREF);
 		this.label = attrs.getValue(ContextsNode.RELATED_LABEL);
 		if (this.label == null)
-			this.label = "undefined";
+			this.label = ""; //$NON-NLS-1$
 	}
 	public String getHref() {
 		return href;
