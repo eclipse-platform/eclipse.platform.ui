@@ -131,6 +131,10 @@ public abstract class CVSOperation extends TeamOperation {
 		statusCount = 0;
 	}
 	
+	protected IStatus[] getErrors() {
+		return (IStatus[]) errors.toArray(new IStatus[errors.size()]);
+	}
+	
 	/**
 	 * Get the last error taht occured. This can be useful when a method
 	 * has a return type but wants to signal an error. The method in question
@@ -304,7 +308,16 @@ public abstract class CVSOperation extends TeamOperation {
 	protected boolean errorsOccurred() {
 		for (Iterator iter = errors.iterator(); iter.hasNext();) {
 			IStatus status = (IStatus) iter.next();
-			if (status.getSeverity() == IStatus.ERROR) return true;
+			if (isReportableError(status)) return true;
+			if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				for (int j = 0; j < children.length; j++) {
+					IStatus child = children[j];
+					if (isReportableError(child)) {
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
