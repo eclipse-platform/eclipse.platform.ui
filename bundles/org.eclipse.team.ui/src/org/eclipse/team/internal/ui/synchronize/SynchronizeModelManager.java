@@ -16,6 +16,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
@@ -75,10 +76,17 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		}
 	}
 	
-	public SynchronizeModelManager(StructuredViewerAdvisor advisor, ISynchronizePageConfiguration configuration) {
-		this.advisor = advisor;
+	public SynchronizeModelManager(ISynchronizePageConfiguration configuration) {
+		Assert.isNotNull(configuration, "configuration cannot be null"); //$NON-NLS-1$
 		this.configuration = configuration;
 		configuration.addActionContribution(this);
+	}
+	
+	/**
+	 * Initialize the model manager to be used with the provided advisor.
+	 */
+	public void setViewerAdvisor(StructuredViewerAdvisor advisor) {
+		this.advisor = advisor;
 	}
 	
 	/**

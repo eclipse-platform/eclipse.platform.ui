@@ -244,15 +244,15 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		viewer.getControl().setLayoutData(data);
 		initializeViewer(viewer);		
 	}
-	
+
 	/**
 	 * Create the model manager to be used by this advisor
 	 * @param configuration
 	 */
 	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
-		return new HierarchicalModelManager(this, configuration);
+		return new HierarchicalModelManager(configuration);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#navigate(boolean)
 	 */

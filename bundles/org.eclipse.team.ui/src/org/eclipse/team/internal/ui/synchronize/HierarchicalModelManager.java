@@ -14,7 +14,6 @@ import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.StructuredViewerAdvisor;
 
 /**
  * Manager for hierarchical models
@@ -24,8 +23,8 @@ public class HierarchicalModelManager extends SynchronizeModelManager {
 	/**
 	 * @param configuration
 	 */
-	public HierarchicalModelManager(StructuredViewerAdvisor advisor, ISynchronizePageConfiguration configuration) {
-		super(advisor, configuration);
+	public HierarchicalModelManager(ISynchronizePageConfiguration configuration) {
+		super(configuration);
 	}
 	
 	/* (non-Javadoc)

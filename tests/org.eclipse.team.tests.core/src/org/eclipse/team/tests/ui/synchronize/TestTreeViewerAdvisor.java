@@ -26,7 +26,7 @@ public class TestTreeViewerAdvisor extends TreeViewerAdvisor {
 	 * @see org.eclipse.team.ui.synchronize.TreeViewerAdvisor#createModelManager(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
-		return  new SynchronizeModelManager(this, configuration) {
+		SynchronizeModelManager manager =  new SynchronizeModelManager(configuration) {
 			protected ISynchronizeModelProvider createModelProvider(String id) {
 				return new HierarchicalModelProvider(getSyncInfoSet());
 			}
@@ -38,5 +38,7 @@ public class TestTreeViewerAdvisor extends TreeViewerAdvisor {
 				return (SyncInfoTree)getConfiguration().getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
 			}
 		};
+		manager.setViewerAdvisor(this);
+		return manager;
 	}
 }

@@ -112,7 +112,15 @@ public abstract class StructuredViewerAdvisor {
 	public StructuredViewerAdvisor(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
 		configuration.setProperty(SynchronizePageConfiguration.P_ADVISOR, this);
-		modelManager = createModelManager(configuration);
+		
+		// Allow the configuration to provide it's own model manager but if one isn't initialized, then
+		// simply use the default provided by the advisor.
+		modelManager = (SynchronizeModelManager)configuration.getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
+		if(modelManager == null) {
+			modelManager = createModelManager(configuration);
+		}
+		Assert.isNotNull(modelManager, "model manager must be set");
+		modelManager.setViewerAdvisor(this);
 	}
 	
 	/**

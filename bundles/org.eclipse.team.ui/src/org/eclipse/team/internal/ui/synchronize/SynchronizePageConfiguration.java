@@ -56,6 +56,14 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 * set.
 	 */
 	public static final String P_ADVISOR = TeamUIPlugin.ID  + ".P_ADVISOR"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant for the page's model  manager which is 
+	 * an instance of <code>SynchronizeModelManager</code>.
+	 * This property can be queried by clients but should not be
+	 * set.
+	 */
+	public static final String P_MODEL_MANAGER = TeamUIPlugin.ID  + ".P_MODEL_MANAGER"; //$NON-NLS-1$
 
 	/**
 	 * Property that gives access to a set the
