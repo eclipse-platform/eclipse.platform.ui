@@ -587,16 +587,16 @@ private void applyInternalPluginDefaultOverrides() {
 	
 	// Now get the translation file for these preferences (if one
 	// exists).
-	ResourceBundle bundle = null;
+	Properties props = null;
 	if (!overrides.isEmpty()) {
-		bundle = InternalPlatform.getPreferenceTranslator(pluginDescriptor, PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
+		props = InternalPlatform.getPreferenceTranslator(pluginDescriptor, PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
 	}
 
 	for (Iterator it = overrides.entrySet().iterator(); it.hasNext(); ) {
 		Map.Entry entry = (Map.Entry) it.next();
 		String key = (String) entry.getKey();
 		String value = (String) entry.getValue();
-		value = InternalPlatform.translatePreference(value, bundle);
+		value = InternalPlatform.translatePreference(value, props);
 		preferences.setDefault(key, value);
 	}
 	if (InternalPlatform.DEBUG_PREFERENCES) {

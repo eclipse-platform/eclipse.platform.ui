@@ -877,11 +877,7 @@ public static void clearRegIndex() {
  * ".properties" file first.  This companion file can be in an
  * nl-specific directory for this plugin or any of its fragments or 
  * it can be in the root of this plugin or the root of any of the
- * plugin's fragments. If one is found, a new class loader 
- * is created with a single element in its class path (the parent 
- * directory of the ".properties" file we found previously).  This
- * new class loader is used to find a resource bundle which is
- * passed back to the caller.  This bundle can be used to translate
+ * plugin's fragments. This properties file can be used to translate
  * preference values.
  * 
  * @param pluginDescriptor the descriptor of the plugin
@@ -893,40 +889,32 @@ public static void clearRegIndex() {
  *   the preferences are in "plugin_customization.ini" and
  *   the translations are found in
  *   "plugin_customization.properties".
- * @return the resource bundle
+ * @return the properties file
  * 
  * @since 2.0
  */
-public static ResourceBundle getPreferenceTranslator (IPluginDescriptor pluginDescriptor, String basePrefFileName) {
+public static Properties getPreferenceTranslator (IPluginDescriptor pluginDescriptor, String basePrefFileName) {
 	URL pluginExternalURL = pluginDescriptor.find(new Path("$nl$").append(basePrefFileName + ".properties")); //$NON-NLS-1$ //$NON-NLS-2$
-	// We know the file for externalizing string exists.  Now
-	// we need to pick it up as a resource bundle.
-	ResourceBundle bundle = null;
-	if (pluginExternalURL != null) {
-		// We need to play with this to get just the parent.
-		// Use the class 'Path' since 'URL' doesn't have a
-		// mechanism to get to the parent.
-		URL[] newcp = new URL[1];
-		Path externalPath = new Path(InternalBootLoader.decode(pluginExternalURL.getPath()));
+	if (pluginExternalURL == null)
+		return null;
+
+	Properties propFile = new Properties();
+	try {
+		InputStream input = new BufferedInputStream(new FileInputStream(pluginExternalURL.getFile()));
 		try {
-			newcp[0] = new URL("file:" + externalPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
-		} catch (MalformedURLException badURL) {
-			if (DEBUG_PREFERENCES) {
-				System.out.println("Bad URL formed for " + "file:" + externalPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return null;
+			propFile.load(input);
+		} finally {
+			if (input != null)
+				input.close();
 		}
-		ClassLoader resourceLoader = new URLClassLoader(newcp, null);
-		try {
-			bundle = ResourceBundle.getBundle(basePrefFileName, Locale.getDefault(), resourceLoader);
-		} catch (MissingResourceException cantFind) {
-			bundle = null;
-			if (DEBUG_PREFERENCES) {
-				System.out.println("Unable to find resource bundle for " + pluginExternalURL.getPath()); //$NON-NLS-1$
-			}
+	} catch (IOException e) {
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Exception loading preference translations from file: " + pluginExternalURL); //$NON-NLS-1$
+			e.printStackTrace();
 		}
 	}
-	return bundle;
+
+	return propFile;
 }
 
 /**
@@ -938,23 +926,16 @@ public static ResourceBundle getPreferenceTranslator (IPluginDescriptor pluginDe
  * 
  * @since 2.0
  */
-public static String translatePreference (String value, ResourceBundle bundle) {
+public static String translatePreference (String value, Properties props) {
 	value = value.trim();
-	if (bundle != null &&
-		value.startsWith(KEY_PREFIX) &&
-		!value.startsWith(KEY_DOUBLE_PREFIX)) {
+	if (props == null || value.startsWith(KEY_DOUBLE_PREFIX))
+		return value;
+	if (value.startsWith(KEY_PREFIX)) {
 			
 		int ix = value.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? value : value.substring(0,ix);
 		String dflt = ix == -1 ? value : value.substring(ix+1);
-		
-		try {
-			value = bundle.getString(key.substring(1));
-		} catch (MissingResourceException e) {
-			// Just return the value (% and all) if we
-			// can't find a translation for it.
-			value = dflt;
-		}
+		return props.getProperty(key.substring(1), dflt);
 	}
 	return value;
 }
@@ -1014,9 +995,9 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	}
 	// Now see if we have a file with externalized strings for
 	// this preference file
-	ResourceBundle bundle = getPreferenceTranslator(primaryFeatureDescriptor, PLUGIN_CUSTOMIZATION_BASE_NAME);
+	Properties props = getPreferenceTranslator(primaryFeatureDescriptor, PLUGIN_CUSTOMIZATION_BASE_NAME);
 	// apply any defaults for the given plug-in
-	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences, bundle);
+	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences, props);
 }
 
 /**
@@ -1078,7 +1059,7 @@ private static void applyPluginDefaultOverrides(
 	URL propertiesURL,
 	String id,
 	Preferences preferences,
-	ResourceBundle bundle) {
+	Properties props) {
 	
 	// read the java.io.Properties file at the given URL
 	Properties overrides = new Properties();
@@ -1145,7 +1126,7 @@ private static void applyPluginDefaultOverrides(
 			// plig-in-specified property name is non-empty string after "/" 
 			String propertyName = qualifiedKey.substring(s + 1);
 			String value = (String) entry.getValue();
-			value = translatePreference(value, bundle);
+			value = translatePreference(value, props);
 			preferences.setDefault(propertyName, value);
 		}
 	}
