@@ -4,9 +4,6 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 
-
-import java.lang.*;
-
 /**
  * Interface for holding UI constants
  */
