@@ -85,7 +85,7 @@ public class UIBuildListener implements AntRunnerListener {
 	}
 	private void handleBuildException(Throwable t) {
 		if (console != null)
-			console.append(Policy.bind("exception.buildException", t.toString()) + "\n");
+			console.append(Policy.bind("exception.buildException", t.toString()) + "\n", Project.MSG_ERR);
 			
 		if (t instanceof BuildException) {
 			BuildException bex= (BuildException)t;
@@ -100,13 +100,13 @@ public class UIBuildListener implements AntRunnerListener {
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();
         if (console != null && event.getPriority() <= msgOutputLevel)
-			console.append(event.getMessage() + "\n");
+			console.append(event.getMessage() + "\n", event.getPriority());
 	}
 
 	public void messageLogged(String message,int priority) {
 		checkCanceled();
         if ((console != null) && priority <= msgOutputLevel)
-			console.append(message + "\n");
+			console.append(message + "\n", priority);
 	}
 	private void removeMarkers() {
 		try {
