@@ -162,10 +162,12 @@
             id="org.eclipse.ui.tests.api.StickyViewRight2">
       </view>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewRight1">
+            id="org.eclipse.ui.tests.api.StickyViewRight1"
+            location="RIGHT">
       </stickyView>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewRight2">
+            id="org.eclipse.ui.tests.api.StickyViewRight2"
+            location="RIGHT">
       </stickyView>
 
       <view
@@ -175,16 +177,18 @@
             id="org.eclipse.ui.tests.api.StickyViewLeft1">
       </view>
       <view
-            name="StickyViewLeft1"
+            name="StickyViewLeft2"
             icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.StickyViewLeft2">
       </view>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewLeft1">
+            id="org.eclipse.ui.tests.api.StickyViewLeft1"
+            location="LEFT">
       </stickyView>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewLeft2">
+            id="org.eclipse.ui.tests.api.StickyViewLeft2"
+            location="LEFT">
       </stickyView>
       
       <view
@@ -194,16 +198,18 @@
             id="org.eclipse.ui.tests.api.StickyViewTop1">
       </view>
       <view
-            name="StickyViewTop1"
+            name="StickyViewTop2"
             icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.StickyViewTop2">
       </view>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewTop1">
+            id="org.eclipse.ui.tests.api.StickyViewTop1"
+            location="TOP">
       </stickyView>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewTop2">
+            id="org.eclipse.ui.tests.api.StickyViewTop2"
+            location="TOP">
       </stickyView>      
       
       <view
@@ -213,16 +219,18 @@
             id="org.eclipse.ui.tests.api.StickyViewBottom1">
       </view>
       <view
-            name="StickyViewBottom1"
+            name="StickyViewBottom2"
             icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.StickyViewBottom2">
       </view>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewBottom1">
+            id="org.eclipse.ui.tests.api.StickyViewBottom1"
+            location="BOTTOM">
       </stickyView>
       <stickyView
-            id="org.eclipse.ui.tests.api.StickyViewBottom2">
+            id="org.eclipse.ui.tests.api.StickyViewBottom2"
+            location="BOTTOM">
       </stickyView>      
             
    </extension>
