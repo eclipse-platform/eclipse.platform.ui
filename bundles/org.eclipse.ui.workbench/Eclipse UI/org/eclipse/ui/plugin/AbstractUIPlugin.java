@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -164,8 +165,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * org.eclipse.core.runtime.compatibility plug-in (or, as in this case,
      * subclasses which might).
      */
-    public AbstractUIPlugin(
-            org.eclipse.core.runtime.IPluginDescriptor descriptor) {
+    public AbstractUIPlugin(IPluginDescriptor descriptor) {
         super(descriptor);
     }
 
