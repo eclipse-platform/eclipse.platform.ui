@@ -54,10 +54,14 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 						return;
 					}
 					break;
+				case DebugEvent.RESUME:
+					if (!event.isStepStart() && !event.isEvaluation()) {
+						// Clear existing variables from the view
+						getViewer().setInput(null);
+					}
 			}
 		}
 	}
-
 
 	protected VariablesView getVariablesView() {
 		return (VariablesView)getView();
