@@ -47,18 +47,20 @@ public final class InternalPlatform implements IPlatform {
 
 	// registry index - used to store last modified times for
 	// registry caching
-	// ASSUMPTION:  Only the plugin registry in 'registry' above
-	// will be cached
+	// ASSUMPTION:  Only the plugin registry in 'registry' above will be cached
 	private static Map regIndex = null;
 
 	private static ArrayList logListeners = new ArrayList(5);
 	private static Map logs = new HashMap(5);
 	private static PlatformLogWriter platformLog = null;
-	private static PlatformMetaArea metaArea;
+	private static DataArea metaArea;
 	private static boolean initialized;
 	private static Runnable endOfInitializationHandler = null;
-	private static IPath location;
-
+	private static IPath location;	//The location as set on the command line - this is just used as a temporary location
+	private static String password = "";
+	private static String keyringFile;
+	private static boolean noData = false;
+	private static boolean noDefaultData = false;
 	private ServiceTracker debugTracker;
 	private DebugOptions options = null;
 
@@ -69,18 +71,14 @@ public final class InternalPlatform implements IPlatform {
 	private static String[] frameworkArgs = new String[0];
 
 	// the default workspace directory name
-	private static final String WORKSPACE = "workspace"; //$NON-NLS-1$	
+	static final String WORKSPACE = "workspace"; //$NON-NLS-1$	
 
 	private static boolean consoleLogEnabled = false;
 	private static ILogListener consoleLog = null;
-	private static AuthorizationDatabase keyring = null;
-	private static String keyringFile = null;
-	private static String password = ""; //$NON-NLS-1$
+
 	private static boolean splashDown = false;
 	private static String pluginCustomizationFile = null;
 	private static URL installLocation = null;
-
-	private static PlatformMetaAreaLock metaAreaLock = null;
 
 	/**
 	 * Whether to perform the workspace metadata version check.
@@ -144,7 +142,9 @@ public final class InternalPlatform implements IPlatform {
 	private static final int METADATA_VERSION_VALUE = 1;
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-
+	private static final String NO_DATA = "eclipse.noData"; //$NON-NLS-1$
+	private static final String NO_DEFAULT_DATA = "eclipse.noDefaultData"; //$NON-NLS-1$
+	
 	private static final InternalPlatform singleton = new InternalPlatform();
 
 	private IPath configMetadataLocation;
@@ -160,13 +160,7 @@ public final class InternalPlatform implements IPlatform {
 		return singleton;
 	}
 
-	/**
-	 * @see Platform
-	 */
-	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		keyring.addAuthorizationInfo(serverUrl, realm, authScheme, new HashMap(info));
-		keyring.save();
-	}
+
 	/**
 	 * @see Platform#addLogListener
 	 */
@@ -178,13 +172,6 @@ public final class InternalPlatform implements IPlatform {
 			logListeners.remove(listener);
 			logListeners.add(listener);
 		}
-	}
-	/**
-	 * @see Platform
-	 */
-	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		keyring.addProtectionSpace(resourceUrl, realm);
-		keyring.save();
 	}
 	/**
 	 * @see Platform
@@ -240,35 +227,6 @@ public final class InternalPlatform implements IPlatform {
 			Assert.isTrue(false, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
 	}
 	/**
-	 * Closes the open lock file handle, and makes a silent best
-	 * attempt to delete the file.
-	 */
-	private static synchronized void clearLockFile() {
-		if (metaAreaLock != null)
-			metaAreaLock.release();
-	}
-	/**
-	 * Creates a lock file in the meta-area that indicates the meta-area
-	 * is in use, preventing other eclipse instances from concurrently
-	 * using the same meta-area.
-	 */
-	private static synchronized void createLockFile() throws CoreException {
-		if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
-			return;
-		String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();
-		metaAreaLock = new PlatformMetaAreaLock(new File(lockLocation));
-		try {
-			if (!metaAreaLock.acquire()) {
-				String message = Policy.bind("meta.inUse", lockLocation); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
-			}
-		} catch (IOException e) {
-			String message = Policy.bind("meta.failCreateLock", lockLocation); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, e));
-		}
-	}
-
-	/**
 	 * @see Platform
 	 */
 	public void endSplash() {
@@ -288,14 +246,7 @@ public final class InternalPlatform implements IPlatform {
 		splashDown = true;
 		run(endOfInitializationHandler);
 	}
-
-	/**
-	 * @see Platform
-	 */
-	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		keyring.flushAuthorizationInfo(serverUrl, realm, authScheme);
-		keyring.save();
-	}
+	
 	/**
 	 * @see Platform#getAdapterManager
 	 */
@@ -304,14 +255,6 @@ public final class InternalPlatform implements IPlatform {
 		if (adapterManager == null)
 			adapterManager = new AdapterManager();
 		return adapterManager;
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		Map info = keyring.getAuthorizationInfo(serverUrl, realm, authScheme);
-		return info == null ? null : new HashMap(info);
 	}
 
 	public boolean getBooleanOption(String option, boolean defaultValue) {
@@ -362,10 +305,23 @@ public final class InternalPlatform implements IPlatform {
 	/**
 	 * @see Platform#getLocation
 	 */
-	public IPath getLocation() {
+	public IPath getLocation() throws IllegalStateException {
 		assertInitialized();
-		return location;
+		if (! metaArea.isInstanceDataLocationInitiliazed()) {
+			if (noData) 
+				throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
+			if (noDefaultData)
+				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified"));
+			try {
+				metaArea.initializeLocation();
+			} catch (CoreException e) {
+				throw new IllegalStateException(e.getLocalizedMessage());
+			} 
+		}
+		return metaArea.getInstanceDataLocation();
 	}
+
+
 	/**
 	 * Returns a log for the given plugin or <code>null</code> if none exists.
 	 */
@@ -381,14 +337,24 @@ public final class InternalPlatform implements IPlatform {
 	 * Returns the object which defines the location and organization
 	 * of the platform's meta area.
 	 */
-	public PlatformMetaArea getMetaArea() {
+	public DataArea getMetaArea() {
+		if (metaArea != null) 
+			return metaArea;
+		
+		if (noData) {
+			metaArea = new NoDataArea();
+			return metaArea;
+		}
+		
+		if (noDefaultData) {
+			metaArea = new NoDefaultDataArea();
+		} else {
+			metaArea = new DataArea();
+			metaArea.setInstanceDataLocation(location);
+		}
+		metaArea.setKeyringFile(keyringFile);
+		metaArea.setPasswork(password);			
 		return metaArea;
-	}
-	/**
-	 * @see Platform
-	 */
-	public String getProtectionSpace(URL resourceUrl) {
-		return keyring.getProtectionSpace(resourceUrl);
 	}
 	private  void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
@@ -485,26 +451,31 @@ public final class InternalPlatform implements IPlatform {
 
 	public void start(BundleContext context) throws Exception {
 		this.context = context;
-		// TODO figure out how to do the splash.  This really should be something 
-		// that is in the OSGi implementation
+		// TODO figure out how to do the splash.  This really should be something that is in the OSGi implementation
 		endOfInitializationHandler = getSplashHandler();
 		processCommandLine(infoService.getAllArgs());
-		setupMetaArea();
-		createLockFile();
+		processSystemProperties();
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
 		options = (DebugOptions) debugTracker.getService(); //TODO This is not good, but is avoids problems
 		initializeDebugFlags();
 		initialized = true;
-		platformLog = new PlatformLogWriter(metaArea.getLogLocation().toFile());
+		platformLog = new PlatformLogWriter(getMetaArea().getLogLocation().toFile());
 		addLogListener(platformLog);
 		if (consoleLogEnabled) {
 			consoleLog = new PlatformLogWriter(System.out);
 			addLogListener(consoleLog);
 		}
-		loadKeyring();
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
 	}
+	/**
+	 * 
+	 */
+	private void processSystemProperties() {
+		noData = "true".equalsIgnoreCase(System.getProperties().getProperty(NO_DATA));
+		noDefaultData = "true".equalsIgnoreCase(System.getProperties().getProperty(NO_DEFAULT_DATA));
+	}
+
 	private Runnable getSplashHandler() {
 		ServiceReference[] ref;
 		try {
@@ -560,7 +531,6 @@ public final class InternalPlatform implements IPlatform {
 		debugTracker.close();
 		if (writeVersion)
 			writeVersion();
-		clearLockFile();
 		if (platformLog != null)
 			platformLog.shutdown();
 		initialized = false;
@@ -572,12 +542,12 @@ public final class InternalPlatform implements IPlatform {
 	 * @return <code>true</code> if they match, <code>false</code> if not
 	 */
 	private boolean checkVersionNoPrompt() {
-		File pluginsDir = metaArea.getLocation().append(PlatformMetaArea.F_PLUGIN_DATA).toFile();
+		File pluginsDir = getMetaArea().getMetadataLocation().append(DataArea.F_PLUGIN_DATA).toFile();
 		if (!pluginsDir.exists())
 			return true;
 
 		int version = -1;
-		File versionFile = metaArea.getVersionPath().toFile();
+		File versionFile = getMetaArea().getVersionPath().toFile();
 		if (versionFile.exists()) {
 			try {
 				// Although the version file is not spec'ed to be a Java properties file,
@@ -612,7 +582,7 @@ public final class InternalPlatform implements IPlatform {
 	 * any existing file contents.
 	 */
 	private void writeVersion() {
-		File versionFile = metaArea.getVersionPath().toFile();
+		File versionFile = getMetaArea().getVersionPath().toFile();
 		try {
 			OutputStream output = new BufferedOutputStream(new FileOutputStream(versionFile));
 			try {
@@ -626,29 +596,6 @@ public final class InternalPlatform implements IPlatform {
 			// want to fail execution.
 			log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, Policy.bind("meta.writeVersion", versionFile.toString()), e)); //$NON-NLS-1$
 		}
-	}
-	/**
-	 * Opens the password database (if any) initally provided to the platform at startup.
-	 */
-	private void loadKeyring() {
-		if (keyringFile != null) {
-			try {
-				keyring = new AuthorizationDatabase(keyringFile, password);
-			} catch (CoreException e) {
-				log(e.getStatus());
-			}
-			if (keyring == null) {
-				//try deleting the file and loading again - format may have changed
-				new java.io.File(keyringFile).delete();
-				try {
-					keyring = new AuthorizationDatabase(keyringFile, password);
-				} catch (CoreException e) {
-					//don't bother logging a second failure
-				}
-			}
-		}
-		if (keyring == null)
-			keyring = new AuthorizationDatabase();
 	}
 	/*
 	 * Finds and loads the options file 
@@ -867,30 +814,6 @@ public final class InternalPlatform implements IPlatform {
 		if (options != null)
 			options.setOption(option, value);
 	}
-	private void setupMetaArea() throws CoreException {
-		// if a platform location was not found in the arguments, compute one.		
-		if (location == null) {
-			// Default location for the workspace is <user.dir>/workspace/
-			location = new Path(System.getProperty("user.dir")).append(WORKSPACE); //$NON-NLS-1$
-		}
-		if (!location.isAbsolute())
-			location = new Path(System.getProperty("user.dir")).append(location); //$NON-NLS-1$
-		// must create the meta area first as it defines all the other locations.
-		if (location.toFile().exists()) {
-			if (!location.toFile().isDirectory()) {
-				String message = Policy.bind("meta.notDir", location.toString()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME, FAILED_WRITE_METADATA, message, null));
-			}
-		}
-		//try infer the device if there isn't one (windows)
-		if (location.getDevice()==null)
-			location = new Path(location.toFile().getAbsolutePath());
-		metaArea = new PlatformMetaArea(location);
-		metaArea.createLocation();
-		if (keyringFile == null)
-			keyringFile = metaArea.getLocation().append(PlatformMetaArea.F_KEYRING).toOSString();
-	}
-
 	public void addLastModifiedTime(String pathKey, long lastModTime) {
 		if (regIndex == null)
 			regIndex = new HashMap(30);
@@ -1207,19 +1130,14 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IPlatform#getConfigurationMetadataLocation()
-	 */
 	public IPath getConfigurationMetadataLocation() {
 		if (configMetadataLocation == null)
 			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area")); //$NON-NLS-1$
 		return configMetadataLocation;
 	}
-
-	public IPath getStateLocation(Bundle bundle, boolean create) {
+	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertInitialized();
-		IPath result = metaArea.getStateLocation(bundle);
+		IPath result = getMetaArea().getStateLocation(bundle);
 		if (create)
 			result.toFile().mkdirs();
 		return result;
@@ -1285,5 +1203,32 @@ public final class InternalPlatform implements IPlatform {
 		if (platformAdminReference == null)
 			return null;
 		return (PlatformAdmin) context.getService(platformAdminReference);
+	}
+	public void lockInstanceData() throws CoreException {
+		getMetaArea().createLockFile();
+	}
+	public void unlockInstanceData() {
+		getMetaArea().clearLockFile();
+	}
+	public boolean hasInstanceData() {
+		return getMetaArea().hasInstanceData();
+	}
+	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+		getMetaArea().addAuthorizationInfo(serverUrl, realm, authScheme, info);	
+	}
+	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
+		getMetaArea().addProtectionSpace(resourceUrl, realm);
+	}
+	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+		getMetaArea().flushAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+		return getMetaArea().getAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+	public String getProtectionSpace(URL resourceUrl) {
+		return getMetaArea().getProtectionSpace(resourceUrl);
+	}
+	public void setKeyringLocation(String keyringFile) {
+		getMetaArea().setKeyringFile(keyringFile);
 	}
 }

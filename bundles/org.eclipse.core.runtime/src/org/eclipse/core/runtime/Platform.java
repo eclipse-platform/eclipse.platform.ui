@@ -315,14 +315,18 @@ public final class Platform {
 	 * was started.
 	 *
 	 * @return the location of the platform
+	 * @deprecated Use @see #getInstanceLocation()
 	 */
-	public static IPath getLocation() {
+	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
 	}
 	/**
 	 * Returns the location of the platform log file.  This file may contain information
 	 * about errors that have previously occurred during this invocation of the Platform.
 	 * 
+	 * It is recommended not to keep this value, as the log location may vary when an instance
+	 * location is being set.
+	 * s
 	 * Note: it is very important that users of this method do not leave the log
 	 * file open for extended periods of time.  Doing so may prevent others
 	 * from writing to the log file, which could result in important error messages
@@ -856,7 +860,66 @@ public final class Platform {
 		return InternalPlatform.getDefault().getApplicationArgs();
 	}
 	
-	public PlatformAdmin getPlatformAdmin() {
+	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
+	}
+	/**
+	 * Returns the location of the platform working directory (also known as instance data).  
+	 * This corresponds to the <i>-data</i> command line argument if
+	 * present or, to the value set using @see #setInstanceLocation(IPath), or if 
+	 * none of these has been specified, the current working directory when the platform
+	 * was started.
+	 * The method throws an IllegalStateException if no instance data has been specified.  
+	 *
+	 * @return the location of the platform
+	 * @since 3.0
+	 */
+	public static IPath getInstanceLocation() throws IllegalStateException {
+		return InternalPlatform.getDefault().getLocation();
+	}
+	
+	/**
+	 * Set the location of the platform working directory.
+	 * The method throws an IllegalStateException if an instance data as already been set.  
+	 * @since 3.0
+	 */
+	public static void setInstanceLocation(IPath location) throws IllegalStateException {
+		InternalPlatform.getDefault().getMetaArea().setInstanceDataLocation(location);		
+	}
+	
+	/**
+	 * Indicate if an instance data has been set.
+	 * 
+	 * @return true if an instance data location has been specified. Return false otherwise. 
+	 * @since 3.0
+	 */
+	public static boolean hasInstanceData() {
+		return InternalPlatform.getDefault().hasInstanceData();
+	}
+	
+	/**
+	 * Lock the instance data. 
+	 * The method throws a CoreException if the lock can not be acquired or 
+	 * an IllegalStateException if no instance data has been specified.
+	 * @since 3.0
+	 */
+	public static void lockInstanceData() throws CoreException, IllegalStateException{
+		InternalPlatform.getDefault().lockInstanceData();
+	}
+	/**
+	 * Unlock the instance data. 
+	 * @since 3.0
+	 */
+	public static void unlockInstanceData() throws IllegalStateException{
+		InternalPlatform.getDefault().unlockInstanceData();
+	}
+	/**
+	 * Set the location of the keyring file. 
+	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
+	 * @param keyringFile, the location of the keyring file
+	 * @since 3.0
+	 */
+	public static void setKeyringLocation(String keyringFile) throws IllegalStateException {
+		InternalPlatform.getDefault().setKeyringLocation(keyringFile);
 	}
 }

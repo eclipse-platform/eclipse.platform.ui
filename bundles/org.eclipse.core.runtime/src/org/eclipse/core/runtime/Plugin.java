@@ -360,7 +360,7 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @return a local file system path
 	 */
-	public final IPath getStateLocation() {
+	public final IPath getStateLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getStateLocation(bundle,true);
 	}
 
