@@ -34,7 +34,7 @@ function mouseout(img)
 </head>
 
 
-<body style="background-color: Window;" >
+<body onloadHandler="adjustMargins()" >
  
 <%
 	// Generate the links

@@ -200,11 +200,7 @@ function selectTopic(topic)
 	return false;
 }
 
-
-/**
- * Handles the onload event
- */
-function onloadHandler(title)
+function adjustMargins()
 {
 	// little change for mozilla margins
 	if (isMozilla)
@@ -214,6 +210,16 @@ function onloadHandler(title)
 			if (ul[i].tagName == "UL")
 				ul[i].style.marginLeft = -18;
 	}
+}
+	
+/**
+ * Handles the onload event
+ */
+function onloadHandler(title)
+{
+	// little change for mozilla margins
+	if (isMozilla)
+		adjustMargins();
  		
 	parent.tocTitle=title;
 	if(parent.currentNavFrame=="toc")
