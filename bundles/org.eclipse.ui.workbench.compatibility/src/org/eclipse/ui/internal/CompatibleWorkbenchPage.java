@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,11 @@ import org.eclipse.ui.PartInitException;
  * name declared in the Workbench proper. This class implements
  * IWorkbenchPage that existed in 2.1 but were removed in 3.0 because they
  * referenced resource API.
+ * <p>
+ * Plug-ins should not refer to this type or its containing fragment from their class path.
+ * It is intended only to provide binary compatibility for pre-3.0 plug-ins, and 
+ * should not be referenced at development time.
+ * </p>  
  * 
  * @since 3.0
  */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,12 @@ import org.eclipse.ui.PartInitException;
  * name declared in the Workbench proper. This interface declares 
  * IWorkbenchPage that existed in 2.1 but were removed in 3.0 because they
  * referenced resource API.
- * 
+ * <p>
+ * Plug-ins should not refer to this type or its containing fragment from their class path.
+ * It is intended only to provide binary compatibility for pre-3.0 plug-ins, and 
+ * should not be referenced at development time.
+ * </p>  
+ *  
  * @since 3.0
  */
 public interface ICompatibleWorkbenchPage {
@@ -47,8 +52,12 @@ public interface ICompatibleWorkbenchPage {
 	 * </p>
 	 *
 	 * @param input the file to edit
-	 * @return an open and active editor, or null if a system editor was opened
+	 * @return an open and active editor, or <code>null</code> if a system editor was opened
 	 * @exception PartInitException if the editor could not be initialized
+	 * @deprecated In 3.0 this resource-specific method moved from this interface to
+	 * <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IFile)</code>.
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public IEditorPart openEditor(IFile input) throws PartInitException;
 
@@ -72,6 +81,10 @@ public interface ICompatibleWorkbenchPage {
 	 * @param activate if <code>true</code> the editor will be activated
 	 * @return an open and active editor
 	 * @exception PartInitException if the editor could not be initialized
+	 * @deprecated In 3.0 this resource-specific method moved from this interface to
+	 * <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IFile,String,boolean)</code>.
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public IEditorPart openEditor(IFile input, String editorId, boolean activate)
 	throws PartInitException;
@@ -94,6 +107,10 @@ public interface ICompatibleWorkbenchPage {
 	 * @param input the file to edit
 	 * @return an open and active editor
 	 * @exception PartInitException if the editor could not be initialized
+	 * @deprecated In 3.0 this resource-specific method moved from this interface to
+	 * <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IFile,String)</code>.
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public IEditorPart openEditor(IFile input, String editorId)
 	throws PartInitException;
@@ -114,6 +131,10 @@ public interface ICompatibleWorkbenchPage {
 	 * @return an open and active editor, or null if a system editor was opened
 	 * @exception PartInitException if the editor could not be initialized
 	 * @see IEditorPart#gotoMarker
+	 * @deprecated In 3.0 this resource-specific method moved from this interface to
+	 * <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IMarker)</code>.
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public IEditorPart openEditor(IMarker marker) throws PartInitException;
 
@@ -136,6 +157,10 @@ public interface ICompatibleWorkbenchPage {
 	 * @return an open editor, or null if a system editor was opened
 	 * @exception PartInitException if the editor could not be initialized
 	 * @see IEditorPart#gotoMarker
+	 * @deprecated In 3.0 this resource-specific method moved from this interface to
+	 * <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IMarker,boolean)</code>.
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public IEditorPart openEditor(IMarker marker, boolean activate) 
 	throws PartInitException;
@@ -148,6 +173,11 @@ public interface ICompatibleWorkbenchPage {
 	 *
 	 * @param input the file to edit
 	 * @exception PartInitException if the editor could not be opened.
+	 * @deprecated In 3.0 this resource-specific method was removed.
+	 * Use <code>openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)</code> 
+	 * instead.  
+	 * This method should not be referenced at development time.
+	 * See the class comment for more details.
 	 */
 	public void openSystemEditor(IFile input) throws PartInitException;
 }
