@@ -47,7 +47,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Default console document paritioner. Partitions a document into
+ * Default console document partitioner. Partitions a document into
  * color regions for standard in, out, err.
  */
 public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsole {
