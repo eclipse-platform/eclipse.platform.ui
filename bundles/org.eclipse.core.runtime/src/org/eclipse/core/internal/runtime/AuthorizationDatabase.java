@@ -244,9 +244,11 @@ private void load() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
+		String message = Policy.bind(e.getMessage(), null);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	} catch (ClassNotFoundException e) {
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
+		String message = Policy.bind(e.getMessage(), null);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	}
 }
 private void load(InputStream is) throws IOException, ClassNotFoundException {
@@ -267,7 +269,8 @@ public void save() throws CoreException {
 		file.createNewFile();
 		save(new FileOutputStream(file));
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
+		String message = Policy.bind(e.getMessage(), null);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	}
 	needsSaving = false;
 }
