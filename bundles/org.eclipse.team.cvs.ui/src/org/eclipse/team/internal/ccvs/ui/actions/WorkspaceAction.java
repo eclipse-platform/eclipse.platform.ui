@@ -29,9 +29,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -119,10 +121,24 @@ public abstract class WorkspaceAction extends CVSAction {
 	/*
 	 * Recursively check for and handle orphaned CVS folders
 	 */
-	private void handleOrphanedSubtree(ICVSFolder folder) throws CVSException {
+	private void handleOrphanedSubtree(final ICVSFolder folder) throws CVSException {
 		if (folder.getIResource().getType() == IResource.PROJECT) return;
 		if (CVSWorkspaceRoot.isOrphanedSubtree((IContainer)folder.getIResource())) {
-			folder.unmanage(null);
+			try {
+				run(new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							folder.unmanage(null);
+						} catch (CVSException e) {
+							CVSProviderPlugin.log(e);
+						}
+					}
+				}, true, PROGRESS_WORKBENCH_WINDOW);
+			} catch (InvocationTargetException e) {
+				// Ignore this since we logged the one we care about above
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
 		}
 		handleOrphanedSubtree(folder.getParent());
 	}

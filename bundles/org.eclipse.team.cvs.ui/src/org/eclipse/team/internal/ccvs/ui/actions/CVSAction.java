@@ -244,6 +244,16 @@ abstract public class CVSAction extends TeamAction {
 		};
 		
 		switch (progressKind) {
+			case PROGRESS_WORKBENCH_WINDOW :
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
+				} catch (InterruptedException e1) {
+					exceptions[0] = null;
+					e1.printStackTrace();
+				} catch (InvocationTargetException e) {
+					exceptions[0] = e;
+				}
+				break;
 			case PROGRESS_BUSYCURSOR :
 				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 					public void run() {

@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -67,6 +68,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	// pass one of these values to the run method.
 	public final static int PROGRESS_DIALOG = 1;
 	public final static int PROGRESS_BUSYCURSOR = 2;
+	public final static int PROGRESS_WORKBENCH_WINDOW = 3;
 
 	private IWorkbenchPart targetPart;
 
@@ -185,6 +187,16 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	final protected void run(final IRunnableWithProgress runnable, final String problemMessage, int progressKind) {
 		final Exception[] exceptions = new Exception[] {null};
 		switch (progressKind) {
+			case PROGRESS_WORKBENCH_WINDOW :
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
+				} catch (InterruptedException e1) {
+					exceptions[0] = null;
+					e1.printStackTrace();
+				} catch (InvocationTargetException e) {
+					exceptions[0] = e;
+				}
+				break;
 			case PROGRESS_BUSYCURSOR :
 				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 					public void run() {
