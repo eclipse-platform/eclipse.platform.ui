@@ -65,6 +65,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="supportsArgument" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether this variable supports an argument. When unspecified, the implied value is &lt;code&gt;true&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -94,7 +101,7 @@
 &lt;/pre&gt;
       </documentation>
    </annotation>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.variables;
 
 import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -34,6 +33,12 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariable#getValue(java.lang.String)
 	 */
 	public String getValue(String argument) throws CoreException {
+		if (!supportsArgument()) {
+			// check for an argument - not supported
+			if (argument != null && argument.length() > 0) {
+				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("DynamicVariable.0"), new String[]{argument, getName()}), null)); //$NON-NLS-1$
+			}
+		}
 		if (fResolver == null) {
 			String name = getConfigurationElement().getAttribute("resolver"); //$NON-NLS-1$
 			if (name == null) {
@@ -60,4 +65,12 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 		super(name, description, configurationElement);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.variables.IDynamicVariable#supportsArgument()
+	 */
+	public boolean supportsArgument() {
+		String arg = getConfigurationElement().getAttribute("supportsArgument"); //$NON-NLS-1$
+		return arg == null || arg.equals("true"); //$NON-NLS-1$
+	}
+	
 }

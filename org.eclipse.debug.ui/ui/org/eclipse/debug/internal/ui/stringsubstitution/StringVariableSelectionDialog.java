@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -234,18 +235,23 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	protected void handleSelectionChanged() {
 		super.handleSelectionChanged();
 		Object[] objects = getSelectedElements();
-		boolean enabled = false;
+		boolean buttonEnabled = false;
+		boolean argEnabled = false;
 		String text = null;
 		if (objects.length == 1) {
-			 IStringVariable variable = (IStringVariable)objects[0];
+			IStringVariable variable = (IStringVariable)objects[0];
 			 IArgumentSelector selector = StringVariablePresentationManager.getDefault().getArgumentSelector(variable);
-			 enabled = selector != null;
+			 if (variable instanceof IDynamicVariable) {
+			 	argEnabled = ((IDynamicVariable)variable).supportsArgument();
+			 }
+			 buttonEnabled = argEnabled && selector != null;
 			 text = variable.getDescription();
 		}
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}
-		fArgumentButton.setEnabled(enabled);
+		fArgumentText.setEnabled(argEnabled);
+		fArgumentButton.setEnabled(buttonEnabled);
 		fDescriptionText.setText(text);
 	}
 

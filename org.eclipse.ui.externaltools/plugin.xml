@@ -196,7 +196,8 @@
       <variable
             name="build_type"
             resolver="org.eclipse.ui.externaltools.internal.variables.BuildTypeResolver"
-            description="%build_type.description">
+            description="%build_type.description"
+            supportsArgument="false">
       </variable>
        <variable
             name="build_project"

@@ -22,8 +22,9 @@ import org.eclipse.core.runtime.CoreException;
  *  &lt;extension point="org.eclipse.core.variables.dynamicVariables"&gt;
  *    &lt;variable 
  *       name="resource_name"
- *       expanderClass="com.example.ResourceNameExpander"
- *       description="The name of the selected resource"&gt;
+ *       resolver="com.example.ResourceNameResolver"
+ *       description="The name of the selected resource"
+ *       supportsArgument="false"&gt;
  *    &lt;/variable&gt;
  *  &lt;/extension&gt;
  * </pre>
@@ -44,4 +45,12 @@ public interface IDynamicVariable extends IStringVariable {
 	 * @throws CoreException if unable to resolve a value for this variable
 	 */
 	public String getValue(String argument) throws CoreException;
+	
+	/**
+	 * Returns whether this variable supports an argument, as specified
+	 * by this variable's extension definition in plug-in XML.
+	 * 
+	 * @return whether this variable supports an argument
+	 */
+	public boolean supportsArgument();
 }
