@@ -421,14 +421,17 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		} catch (SAXException e) {
 			log(e);
 		}
-		if (problems.getSeverity() != IStatus.OK) {
-			// output something to the log file
-			ResourcesPlugin.getPlugin().getLog().log(problems);
+		switch (problems.getSeverity()) {
+			case IStatus.ERROR:
+				ResourcesPlugin.getPlugin().getLog().log(problems);
+				return null;
+			case IStatus.WARNING:
+			case IStatus.INFO:
+				ResourcesPlugin.getPlugin().getLog().log(problems);
+			case IStatus.OK:
+			default:
+				return projectDescription;
 		}
-
-		if (problems.getSeverity() == IStatus.ERROR)
-			return null;
-		return projectDescription;
 	}
 	public ProjectDescription read(IPath location) throws IOException {
 		BufferedInputStream file = null;
