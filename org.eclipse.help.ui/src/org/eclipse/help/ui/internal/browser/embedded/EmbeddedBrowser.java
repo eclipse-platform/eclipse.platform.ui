@@ -11,7 +11,6 @@
 package org.eclipse.help.ui.internal.browser.embedded;
 import java.net.*;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;
@@ -23,6 +22,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.osgi.framework.*;
+import org.eclipse.core.runtime.Path; 
 /**
  * Help browser employing SWT Browser widget
  */

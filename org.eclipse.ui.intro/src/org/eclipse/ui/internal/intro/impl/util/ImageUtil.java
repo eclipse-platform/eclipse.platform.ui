@@ -17,6 +17,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.osgi.framework.*;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Convenience class for Images.
