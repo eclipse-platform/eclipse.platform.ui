@@ -459,11 +459,13 @@ public final class WorkbenchKeyboard {
             }
         }
 
-        if (command.isDefined() && command.isHandled() && isEnabled(command)) {
+        final boolean commandDefined = command.isDefined();
+        final boolean commandHandled = command.isHandled();
+        if (commandDefined && commandHandled && isEnabled(command)) {
             command.execute(event);
         }
 
-        return (command.isDefined() && command.isHandled());
+        return (commandDefined && commandHandled);
     }
 
     /**
