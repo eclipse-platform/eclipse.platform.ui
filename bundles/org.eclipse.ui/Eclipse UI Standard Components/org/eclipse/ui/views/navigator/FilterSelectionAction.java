@@ -6,9 +6,12 @@ package org.eclipse.ui.views.navigator;
  */
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.FilterDialog;
 
 /**
  * The FilterSelectionAction opens the filters dialog.
@@ -35,12 +38,13 @@ public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
  * Implementation of method defined on <code>IAction</code>.
  */
 public void run() {
-
-	ResourcePatternFilter filter = getNavigator().getPatternFilter();
+	IResourceNavigatorPart navigator = getNavigator();
+	ResourcePatternFilter filter = navigator.getPatternFilter();
 	FiltersContentProvider contentProvider = new FiltersContentProvider(filter);
+	IWorkingSet workingSet = navigator.getWorkingSet();
 
-	ListSelectionDialog dialog =
-		new ListSelectionDialog(
+	FilterDialog dialog =
+		new FilterDialog(
 			getShell(),
 			getResourceViewer(),
 			contentProvider,
@@ -49,17 +53,31 @@ public void run() {
 
 	dialog.setTitle(FILTER_TITLE_MESSAGE);
 	dialog.setInitialSelections(contentProvider.getInitialSelections());
+	dialog.setWorkingSet(workingSet);
 	dialog.open();
 	if (dialog.getReturnCode() == dialog.OK) {
 		Object[] results = dialog.getResult();
 		String[] selectedPatterns = new String[results.length];
+		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+
 		System.arraycopy(results, 0, selectedPatterns, 0, results.length);
 		filter.setPatterns(selectedPatterns);
-		getNavigator().setFiltersPreference(selectedPatterns);
+		workingSet = dialog.getWorkingSet();			
+		navigator.setWorkingSet(workingSet);
+		if (workingSet != null) {
+			workingSetManager.addRecentWorkingSet(workingSet);
+		}
+
+		navigator.setFiltersPreference(selectedPatterns);
 		Viewer viewer = getResourceViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.refresh();
 		viewer.getControl().setRedraw(true);
+	}
+	else
+	if (navigator.getWorkingSet() != workingSet) {
+		navigator.setWorkingSet(workingSet);
+		navigator.getResourceViewer().refresh();
 	}
 }
 

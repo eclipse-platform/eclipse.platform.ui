@@ -25,6 +25,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -59,7 +60,8 @@ public class ResourceNavigator
 
 	/** Property store constant for sort order. */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE"; //$NON-NLS-1$
-	//$NON-NLS-1$
+	private static final String STORE_WORKING_SET = "ResourceWorkingSetFilter.STORE_WORKING_SET"; //$NON-NLS-1$
+	
 
 	/**
 	 * No longer used but preserved to avoid an api change.
@@ -111,12 +113,13 @@ public class ResourceNavigator
 		public void propertyChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			Object newValue = event.getNewValue();
+			Object oldValue = event.getOldValue();			
 			IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
 			
-			if (IWorkbenchPage.CHANGE_WORKING_SET_REPLACE.equals(property)) {
-				workingSetFilter.setWorkingSet((IWorkingSet) newValue);
+			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && 
+				oldValue == filterWorkingSet) {
+				setWorkingSet(null);
 				getResourceViewer().refresh();
-				updateTitle();
 			}
 			else
 			if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && 
@@ -179,12 +182,6 @@ public class ResourceNavigator
 		viewer.addFilter(this.patternFilter);
 		viewer.addFilter(workingSetFilter);
 		
-		IWorkingSet workingSet = getSite().getPage().getWorkingSet();
-		if (workingSet != null) {
-			workingSetFilter.setWorkingSet(workingSet);		
-		}		
-		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
-		workingSetManager.addPropertyChangeListener(propertyChangeListener);				
 		if (memento != null)
 			restoreFilters();
 		viewer.setInput(getInitialInput());
@@ -205,6 +202,7 @@ public class ResourceNavigator
 
 		makeActions();
 		initResourceSorter();
+		initWorkingSetFilter();
 
 		// Fill the action bars and update the global action handlers'
 		// enabled state to match the current selection.
@@ -236,10 +234,9 @@ public class ResourceNavigator
 		});
 
 		getSite().setSelectionProvider(viewer);
-
-		IWorkbenchPage page = getSite().getPage();
-		page.addPartListener(partListener);
-		page.addPropertyChangeListener(propertyChangeListener);
+		getSite().getPage().addPartListener(partListener);
+		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+		workingSetManager.addPropertyChangeListener(propertyChangeListener);				
 
 		if (memento != null)
 			restoreState(memento);
@@ -253,10 +250,7 @@ public class ResourceNavigator
 	 * Method declared on IWorkbenchPart.
 	 */
 	public void dispose() {
-		IWorkbenchPage page = getSite().getPage();
-		
-		page.removePartListener(partListener);
-		page.removePropertyChangeListener(propertyChangeListener);
+		getSite().getPage().removePartListener(partListener);
 
 		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
 		workingSetManager.removePropertyChangeListener(propertyChangeListener);
@@ -341,6 +335,15 @@ public class ResourceNavigator
 	public ResourcePatternFilter getPatternFilter() {
 		return this.patternFilter;
 	}
+	/**
+	 * Returns the working set for this view.
+	 *
+	 * @return the working set
+	 * @since 2.0
+	 */
+	public IWorkingSet getWorkingSet() {
+		return workingSetFilter.getWorkingSet();
+	}	
 	/**
 	 * Returns the navigator's plugin.
 	 */
@@ -547,6 +550,22 @@ public class ResourceNavigator
 		setResourceSorter(new ResourceSorter(sortType));
 	}
 	/**
+	 * Restores the working set filter from the persistence store.
+	 */
+	void initWorkingSetFilter() {
+		String workingSetName = settings.get(STORE_WORKING_SET);
+		
+		if (workingSetName != null && workingSetName.equals("") == false) {
+			IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+			
+			if (workingSet != null) {
+				setWorkingSet(workingSet);
+				getResourceViewer().refresh();
+			}
+		}
+	}
+	/**
 	 * Returns whether the preference to link navigator selection to active editor is enabled.
 	 * @since 2.0
 	 */
@@ -715,6 +734,26 @@ public class ResourceNavigator
 		}
 	}
 	/**
+ 	* Set the values of the filter preference to be the 
+ 	* strings in preference values
+ 	*/
+
+	public void setFiltersPreference(String[] patterns){
+	
+		StringWriter writer = new StringWriter();
+
+		for (int i = 0; i < patterns.length; i++) {
+			if (i != 0)
+				writer.write(ResourcePatternFilter.COMMA_SEPARATOR);
+			writer.write(patterns[i]);
+		}
+
+		getPlugin().getPreferenceStore().setValue(
+			ResourcePatternFilter.FILTERS_TAG,
+			writer.toString());
+	
+	}
+	/**
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
@@ -749,7 +788,22 @@ public class ResourceNavigator
 		// update the sort actions' checked state
 		updateActionBars((IStructuredSelection) viewer.getSelection());
 	}
-
+	/**
+	 * Implements IResourceNavigatorPart
+	 * 
+	 * @see org.eclipse.ui.views.navigator.IResourceNavigatorPart#setWorkingSet(IWorkingSet)
+	 * @since 2.0
+	 */
+	public void setWorkingSet(IWorkingSet workingSet) {
+		workingSetFilter.setWorkingSet(workingSet);
+		if (workingSet != null) {
+			settings.put(STORE_WORKING_SET, workingSet.getName());
+		}
+		else {
+			settings.put(STORE_WORKING_SET, "");
+		}
+		updateTitle();		
+	}
 	/**
 	 * Updates the action bar actions for the given selection.
 	 * 
@@ -777,7 +831,7 @@ public class ResourceNavigator
 		Object input = getResourceViewer().getInput();
 		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkingSet workingSet = getSite().getPage().getWorkingSet();
+		IWorkingSet workingSet = workingSetFilter.getWorkingSet();
 					
 		if (workingSet != null) {
 			setTitle(ResourceNavigatorMessages.format(
@@ -800,27 +854,6 @@ public class ResourceNavigator
 				new Object[] {viewName, labelProvider.getText(input)}));
 			setTitleToolTip(getToolTipText(input));
 		}
-	}
-
-	/**
- 	* Set the values of the filter preference to be the 
- 	* strings in preference values
- 	*/
-
-	public void setFiltersPreference(String[] patterns){
-	
-		StringWriter writer = new StringWriter();
-
-		for (int i = 0; i < patterns.length; i++) {
-			if (i != 0)
-				writer.write(ResourcePatternFilter.COMMA_SEPARATOR);
-			writer.write(patterns[i]);
-		}
-
-		getPlugin().getPreferenceStore().setValue(
-			ResourcePatternFilter.FILTERS_TAG,
-			writer.toString());
-	
 	}
 		
 }

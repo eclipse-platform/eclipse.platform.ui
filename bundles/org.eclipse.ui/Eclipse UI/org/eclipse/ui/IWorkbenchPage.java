@@ -140,6 +140,9 @@ public void activate(IWorkbenchPart part);
  * 
  * @param listener the property change listener to add
  * @since 2.0
+ * @deprecated individual views should store a working set if needed and
+ * 	register a property change listener directly with the working set manager
+ * 	to receive notification when the view working set is removed.
  */
 public void addPropertyChangeListener(IPropertyChangeListener listener);
 /**
@@ -255,6 +258,7 @@ public IWorkbenchWindow getWorkbenchWindow();
  * 
  * @return the working set of this page.
  * @since 2.0
+ * @deprecated individual views should store a working set if needed
  */
 public IWorkingSet getWorkingSet();
 /**
@@ -449,6 +453,9 @@ public void openSystemEditor(IFile input) throws PartInitException;
  * 
  * @param listener the property change listener to remove
  * @since 2.0
+ * @deprecated individual views should store a working set if needed and
+ * 	register a property change listener directly with the working set manager
+ * 	to receive notification when the view working set is removed.
  */
 public void removePropertyChangeListener(IPropertyChangeListener listener);
 /**

@@ -56,6 +56,16 @@ public interface IWorkingSetManager {
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 	/**
+	 * Adds a working set to the top of the list of most recently used 
+	 * working sets, making it the most recently used working set.
+	 * The last (oldest) item will be deleted if the list exceeds the 
+	 * size limit.
+	 * 
+	 * @param workingSet the working set to add to the list of most 
+	 * 	recently used working sets.
+	 */
+	public void addRecentWorkingSet(IWorkingSet workingSet);
+	/**
 	 * Adds a working set to the receiver. The working set must 
 	 * not exist yet.
 	 * 
@@ -92,6 +102,13 @@ public interface IWorkingSetManager {
 	 * @return a working set selection dialog
 	 */
 	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi);
+	/**
+	 * Returns the list of most recently used working sets.
+	 * The list is sorted by "age" in descending order.
+	 * 
+	 * @return the list of most recently used working sets
+	 */
+	public IWorkingSet[] getRecentWorkingSets();
 	/**
 	 * Returns the working set with the specified name.
 	 * Returns null if there is no working set with that name.

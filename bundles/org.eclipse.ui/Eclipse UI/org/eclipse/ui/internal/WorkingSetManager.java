@@ -29,8 +29,13 @@ import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 public class WorkingSetManager implements IWorkingSetManager, IResourceChangeListener, IResourceDeltaVisitor {
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
+	/**
+	 * Size of the list of most recently used working sets.
+	 */
+	private static final int MRU_SIZE = 5;
 
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
+	private List recentWorkingSets = new ArrayList();
 	private ListenerList propertyChangeListeners = new ListenerList();
 
 	/**
@@ -38,6 +43,19 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	 */
 	public WorkingSetManager() {
 		WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+	}
+	/**
+	 * Implements IWorkingSetManager.
+	 * 
+	 * @see org.eclipse.ui.IWorkingSetManager#addRecentWorkingSet(IWorkingSet)
+	 */
+	public void addRecentWorkingSet(IWorkingSet workingSet) {
+		recentWorkingSets.remove(workingSet);
+		recentWorkingSets.add(0, workingSet);
+		if (recentWorkingSets.size() > MRU_SIZE) {
+			recentWorkingSets.remove(MRU_SIZE);
+		}
+		saveState();
 	}
 	/**
 	 * Implements IWorkingSetManager.
@@ -108,6 +126,14 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		for (int i = 0; i < listeners.length; i++) {
 			((IPropertyChangeListener) listeners[i]).propertyChange(event);
 		}
+	}
+	/**
+	 * Implements IWorkingSetManager.
+	 * 
+	 * @see org.eclipse.ui.IWorkingSetManager#getRecentWorkingSets()
+	 */
+	public IWorkingSet[] getRecentWorkingSets() {
+		return (IWorkingSet[]) recentWorkingSets.toArray(new IWorkingSet[recentWorkingSets.size()]);
 	}
 	/**
 	 * Implements IWorkingSetManager.
@@ -185,6 +211,47 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		}
 	}
 	/**
+	 * Restores the list of most recently used working sets from the 
+	 * persistence store.
+	 * 
+	 * @param memento the persistence store
+	 */
+	private void restoreMruList(IMemento memento) {
+		IMemento[] mruWorkingSets = memento.getChildren(IWorkbenchConstants.TAG_MRU_LIST);
+
+		for (int i = mruWorkingSets.length - 1; i >= 0; i--) {
+			String workingSetName = mruWorkingSets[i].getString(IWorkbenchConstants.TAG_NAME);
+			if (workingSetName != null) {
+				IWorkingSet workingSet = getWorkingSet(workingSetName);		
+				if (workingSet != null) {
+					addRecentWorkingSet(workingSet);		
+				}
+			}
+		}
+	}
+	/**
+	 * Reads the persistence store and creates the working sets 
+	 * stored in it.
+	 */
+	public void restoreState() {
+		File stateFile = getWorkingSetStateFile();
+
+		if (stateFile.exists()) {
+			try {
+				FileInputStream input = new FileInputStream(stateFile);
+				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+
+				IMemento memento = XMLMemento.createReadRoot(reader);
+				restoreWorkingSetState(memento);
+				restoreMruList(memento);
+				reader.close();
+			} catch (IOException e) {
+				MessageDialog.openError((Shell) null, WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
+				WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
+			}
+		}
+	}
+	/**
 	 * Recreates a working set from the persistence store.
 	 * 
 	 * @param memento the persistence store
@@ -231,27 +298,6 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		}
 	}
 	/**
-	 * Reads the persistence store and creates the working sets 
-	 * stored in it.
-	 */
-	public void restoreState() {
-		File stateFile = getWorkingSetStateFile();
-
-		if (stateFile.exists()) {
-			try {
-				FileInputStream input = new FileInputStream(stateFile);
-				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
-
-				IMemento memento = XMLMemento.createReadRoot(reader);
-				restoreWorkingSetState(memento);
-				reader.close();
-			} catch (IOException e) {
-				MessageDialog.openError((Shell) null, WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
-			}
-		}
-	}
-	/**
 	 * Saves the working sets in the persistence store
 	 */
 	private void saveState() {
@@ -259,6 +305,7 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		File stateFile = getWorkingSetStateFile();
 
 		saveWorkingSetState(memento);
+		saveMruList(memento);
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
 			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
@@ -271,17 +318,20 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		}
 	}
 	/**
-	 * Saves all working sets and fires a property change event for 
-	 * the changed working set.
-	 * Should be called by org.eclipse.ui.internal.WorkingSet only.
+	 * Saves the list of most recently used working sets in the persistence 
+	 * store.
 	 * 
-	 * @param changedWorkingSet the working set that has changed
-	 * @param propertyChangeId the changed property. one of 
-	 * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
+	 * @param memento the persistence store
 	 */
-	public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId) {
-		saveState();
-		firePropertyChange(propertyChangeId, null, changedWorkingSet);
+	private void saveMruList(IMemento memento) {
+		Iterator iterator = recentWorkingSets.iterator();
+
+		while (iterator.hasNext()) {
+			IWorkingSet workingSet = (IWorkingSet) iterator.next();
+			IMemento mruMemento = memento.createChild(IWorkbenchConstants.TAG_MRU_LIST);
+			
+			mruMemento.putString(IWorkbenchConstants.TAG_NAME, workingSet.getName());
+		}
 	}
 	/**
 	 * Saves all persistable working sets in the persistence store.
@@ -350,5 +400,18 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 			}
 		}
 		return visitChildren;
+	}
+	/**
+	 * Saves all working sets and fires a property change event for 
+	 * the changed working set.
+	 * Should only be called by org.eclipse.ui.internal.WorkingSet.
+	 * 
+	 * @param changedWorkingSet the working set that has changed
+	 * @param propertyChangeId the changed property. one of 
+	 * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
+	 */
+	public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId) {
+		saveState();
+		firePropertyChange(propertyChangeId, null, changedWorkingSet);
 	}
 }
