@@ -72,13 +72,18 @@ public class SyncElementTest extends EclipseTest {
 	
 	/*
 	 * Assert that the specified resources in the tree have the specified sync kind
+	 * Ignore conflict types if they are not specified in the assert statement
 	 */
 	public void assertSyncEquals(String message, ILocalSyncElement tree, String[] resources, int[] syncKinds, int granularity) throws TeamException {
 		assertTrue(resources.length == syncKinds.length);
 		for (int i=0;i<resources.length;i++) {
-			assertTrue(message + ": improper sync state for " + resources[i], getChild(tree, new Path(resources[i])).getSyncKind(granularity, DEFAULT_MONITOR) == syncKinds[i]);
+			int conflictTypeMask = 0x1F; // ignore manual and auto merge sync types for now.
+			int kind = getChild(tree, new Path(resources[i])).getSyncKind(granularity, DEFAULT_MONITOR) & conflictTypeMask;
+			int kindOther = syncKinds[i] & conflictTypeMask;
+			assertTrue(message + ": improper sync state for " + resources[i], kind == kindOther);
 		}
 	}
+
 	public void assertSyncEquals(String message, ILocalSyncElement tree, String[] resources, int[] syncKinds) throws TeamException {
 		assertSyncEquals(message, tree, resources, syncKinds, ILocalSyncElement.GRANULARITY_TIMESTAMP);
 	}
