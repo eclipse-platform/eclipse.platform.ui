@@ -1,5 +1,13 @@
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,16 +15,19 @@ import java.util.Iterator;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 /**
- * Content provider that maintains a generic list of objects which
- * are shown in a table viewer.
+ * Content provider that maintains a list of URLs which are shown in a table
+ * viewer.
  */
 public class AntClasspathContentProvider extends ExternalToolsContentProvider {
 	public void add(Object o) {
 		URL newURL = (URL) o;
+		File newFile= new File(newURL.getFile());
 		Iterator itr = elements.iterator();
+		File existingFile;
 		while (itr.hasNext()) {
 			URL url = (URL) itr.next();
-			if (url.sameFile(newURL)) {
+			existingFile= new File(url.getFile());
+			if (existingFile.equals(newFile)) {
 				return;
 			}
 		}
