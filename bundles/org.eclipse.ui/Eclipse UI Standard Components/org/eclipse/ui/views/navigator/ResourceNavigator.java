@@ -39,7 +39,8 @@ public class ResourceNavigator
 	private IDialogSettings settings;
 	private IMemento memento;
 	private NavigatorFrameSource frameSource;
-	private FrameList frameList;
+	//@since 2.0
+	protected FrameList frameList;
 
 	protected PropertyDialogAction propertyDialogAction;
 	protected NewWizardAction newWizardAction;
@@ -232,8 +233,9 @@ public class ResourceNavigator
 	}
 	/**
 	 * Contributes actions to the local tool bar and local pulldown menu.
+	 * @since 2.0
 	 */
-	void fillActionBars() {
+	protected void fillActionBars() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		gotoFactory.fillToolBar(toolBar);
@@ -395,8 +397,9 @@ public class ResourceNavigator
 	/**
 	 * Handles double clicks in viewer.
 	 * Opens editor if file double-clicked.
+	 * @since 2.0
 	 */
-	void handleDoubleClick(DoubleClickEvent event) {
+	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 
@@ -410,8 +413,9 @@ public class ResourceNavigator
 	 * Handles selection changed in viewer.
 	 * Updates global actions.
 	 * Links to editor (if option enabled)
+	 * @since 2.0
 	 */
-	void handleSelectionChanged(SelectionChangedEvent event) {
+	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
 		updateGlobalActions(sel);
@@ -427,7 +431,7 @@ public class ResourceNavigator
 	/**
 	 * Adds drag and drop support to the navigator.
 	 */
-	void initDragAndDrop() {
+	protected void initDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers =
 			new Transfer[] {
@@ -455,7 +459,7 @@ public class ResourceNavigator
 		drillDownAdapter.addNavigationActions(
 			getViewSite().getActionBars().getToolBarManager());
 	}
-	void initFrameList() {
+	protected void initFrameList() {
 		frameSource = new NavigatorFrameSource(this);
 		frameList = new FrameList(frameSource);
 		frameSource.connectTo(frameList);
@@ -483,15 +487,17 @@ public class ResourceNavigator
 	}
 	/**
 	 * Returns whether the preference to link navigator selection to active editor is enabled.
+	 * @since 2.0
 	 */
-	boolean isLinkingEnabled() {
+	protected boolean isLinkingEnabled() {
 		IPreferenceStore store = getPlugin().getPreferenceStore();
 		return store.getBoolean(LINK_NAVIGATOR_TO_EDITOR);
 	}
 	/**
 	 * Links to editor (if option enabled)
+	 * @since 2.0
 	 */
-	void linkToEditor(IStructuredSelection selection) {
+	protected void linkToEditor(IStructuredSelection selection) {
 		if (!isLinkingEnabled())
 			return;
 
@@ -548,7 +554,14 @@ public class ResourceNavigator
 			getPatternFilter().setPatterns(new String[0]);
 		}
 	}
-	void restoreState(IMemento memento) {
+	
+	/**
+	 * Restore the state of the receiver to the state described in
+	 * momento.
+	 * @since 2.0
+	 */
+	
+	protected void restoreState(IMemento memento) {
 		IContainer container = ResourcesPlugin.getWorkspace().getRoot();
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
 		if (childMem != null) {
