@@ -365,7 +365,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
 			if (differ != null)
 				model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
-		} else if (differ instanceof DocumentLineDiffer)
+		} else if (differ instanceof DocumentLineDiffer && !fIsChangeInformationShown)
 			((DocumentLineDiffer)differ).resume();
 		
 		return differ;
