@@ -628,8 +628,37 @@ public class EclipseSynchronizer implements IFlushOperation {
 				rule = beginBatching(container, null);
 				try {
 					beginOperation();
+                    
+                    // Record the previous ignore pattterns
+                    FileNameMatcher oldIgnores = null;
+                    if (sessionPropertyCache.isFolderSyncInfoCached(container)) {
+                        oldIgnores = cacheFolderIgnores(container);
+                    }
+                    
+                    // Purge the cached state for direct children of the container
 					changed.addAll(Arrays.asList(
-						sessionPropertyCache.purgeCache(container, false /*don't flush children*/)));
+						sessionPropertyCache.purgeCache(container, oldIgnores == null /*flush deeply if the old patterns are not known*/)));
+                    
+                    // Purge the state for any children of previously ignored containers
+                    if (oldIgnores != null) {
+                        FileNameMatcher newIgnores = cacheFolderIgnores(container);
+                        try {
+                            IResource[] members = container.members();
+                            for (int j = 0; j < members.length; j++) {
+                                IResource resource = members[j];
+                                if (resource.getType() == IResource.FOLDER) {
+                                    String name = resource.getName();
+                                    if (oldIgnores.match(name) && !newIgnores.match(name)) {
+                                        changed.addAll(Arrays.asList(
+                                                sessionPropertyCache.purgeCache((IContainer)resource, true /*flush deeply*/)));
+                                    }
+                                }
+                            }
+                        } catch (CoreException e) {
+                            // Just log and continue
+                            CVSProviderPlugin.log(e);
+                        }
+                    }
 				} finally {
 					endOperation();
 				}

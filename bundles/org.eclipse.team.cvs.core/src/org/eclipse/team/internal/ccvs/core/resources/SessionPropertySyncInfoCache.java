@@ -77,6 +77,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		}
 		return matcher;
 	}
+    
+    /* package */ boolean isIgnoresCached(IContainer container) throws CVSException {
+        return safeGetSessionProperty(container, IGNORE_SYNC_KEY) != null;
+    }
 
 	/*package*/ boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
 		Object info = safeGetSessionProperty(container, FOLDER_SYNC_KEY);
