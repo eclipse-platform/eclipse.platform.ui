@@ -158,8 +158,9 @@ protected void doUpdateItem(Item item, Object element) {
 	    }
 	    else {
 		    if (column == 0) {
-			    text = lprov.getText(element);
-			    image = lprov.getImage(element);
+		    	CombinedLabel label  = getLabel(element,lprov);
+		    	text = label.getText();
+		    	image = label.getImage();		    	
 		    }
 	    }
 		ti.setText(column, text);

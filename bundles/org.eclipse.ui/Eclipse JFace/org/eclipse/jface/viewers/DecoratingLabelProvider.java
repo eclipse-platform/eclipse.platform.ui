@@ -13,8 +13,11 @@ import org.eclipse.jface.util.ListenerList;
  * a nested label provider and an optional decorator.
  * The decorator decorates the label text and image provided by the nested label provider.
  */
-public class DecoratingLabelProvider extends LabelProvider {
+public class DecoratingLabelProvider extends LabelProvider implements ICombinedLabelProvider{
 	private ILabelProvider provider;
+	
+	//A cached version of the decorator to prevent instanceof checks
+	private ICombinedLabelDecorator combinedDecorator;
 	private ILabelDecorator decorator;
 	// Need to keep our own list of listeners
 	private ListenerList listeners = new ListenerList();
@@ -29,6 +32,7 @@ public DecoratingLabelProvider(ILabelProvider provider, ILabelDecorator decorato
 	Assert.isNotNull(provider);
 	this.provider = provider;
 	this.decorator = decorator;
+	refreshCombinedDecorator();	
 }
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this <code>IBaseLabelProvider</code> method
@@ -156,6 +160,32 @@ public void setLabelDecorator(ILabelDecorator decorator) {
 			}
 		}
 		fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+		refreshCombinedDecorator();
 	}
 }
+
+/**
+ * @see ICombinedLabelProvider#getCombinedLabel(Object)
+ */
+public CombinedLabel getCombinedLabel(Object element) {
+	if(combinedDecorator == null)
+		return new CombinedLabel(getText(element),getImage(element));
+	else{
+		CombinedLabel result =
+			new CombinedLabel(provider.getText(element), provider.getImage(element));
+		combinedDecorator.decorateLabel(element,result);
+		return result;
+	}
+}
+/**
+ * Check to see if the current decorator is a combined one
+ */
+private void refreshCombinedDecorator(){
+	if(decorator instanceof ICombinedLabelDecorator)
+		//Cache the cast for effeciency sake
+		combinedDecorator = (ICombinedLabelDecorator) decorator;
+	else
+		combinedDecorator = null;
+}
+
 }

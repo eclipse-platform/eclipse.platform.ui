@@ -1032,4 +1032,18 @@ protected void updateSelection(ISelection selection) {
 protected boolean usingElementMap() {
 	return elementMap != null;
 }
+
+/**
+ * Get the text and image from the label provider supplied using the 
+ * ICombinedLabelProvider is possible.
+ */
+protected CombinedLabel getLabel(Object element, ILabelProvider lprov){
+
+	if(lprov instanceof ICombinedLabelProvider)
+		return ((ICombinedLabelProvider) lprov).getCombinedLabel(element);
+	else
+		return new CombinedLabel(lprov.getText(element),lprov.getImage(element));
+}	    
+
+
 }
