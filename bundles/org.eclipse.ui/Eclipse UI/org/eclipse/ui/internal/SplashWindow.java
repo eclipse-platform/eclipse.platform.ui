@@ -49,7 +49,7 @@ public void open() {
 	}
 
 	// Set shell position.
-	Rectangle displayBounds = Display.getDefault().getBounds();
+	Rectangle displayBounds = Display.getDefault().getClientArea();
 	int x = (displayBounds.width - width) / 2;
 	int y = (displayBounds.height - height) / 2;
 	shell.setBounds(x, y, width, height);

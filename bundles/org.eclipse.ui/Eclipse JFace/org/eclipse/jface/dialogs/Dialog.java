@@ -263,7 +263,7 @@ protected void constrainShellSize() {
 	super.constrainShellSize();
 	Shell shell = getShell();
 	Point size = shell.getSize();
-	Rectangle bounds = shell.getDisplay().getBounds();
+	Rectangle bounds = shell.getDisplay().getClientArea();
 	
 	// move the shell origin as required
 	Point loc = shell.getLocation();

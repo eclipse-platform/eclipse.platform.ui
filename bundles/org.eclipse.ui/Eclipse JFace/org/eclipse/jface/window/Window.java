@@ -257,7 +257,7 @@ protected void configureShell(Shell newShell) {
 protected void constrainShellSize() {
 	// limit the shell size to the display size
 	Point size = shell.getSize();
-	Rectangle bounds = shell.getDisplay().getBounds();
+	Rectangle bounds = shell.getDisplay().getClientArea();
 	int newX = Math.min(size.x, bounds.width);
 	int newY = Math.min(size.y, bounds.height);
 	if (size.x != newX || size.y != newY)
@@ -367,7 +367,7 @@ public static Image getDefaultImage() {
  */
 protected Point getInitialLocation(Point initialSize) {
 	Composite parentShell = shell.getParent();
-	Rectangle containerBounds = (parentShell != null) ? parentShell.getBounds() : shell.getDisplay().getBounds();
+	Rectangle containerBounds = (parentShell != null) ? parentShell.getBounds() : shell.getDisplay().getClientArea();
 	int x = Math.max(0, containerBounds.x + (containerBounds.width - initialSize.x) / 2);
 	int y = Math.max(0, containerBounds.y + (containerBounds.height - initialSize.y) / 3);
 	return new Point(x, y);

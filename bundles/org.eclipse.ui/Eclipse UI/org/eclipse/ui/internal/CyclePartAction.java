@@ -159,11 +159,9 @@ private void openDialog(WorkbenchPage page) {
 	});
 	
 	Rectangle dialogBounds = dialog.getBounds();
-	Rectangle displayBounds = display.getBounds();
-	dialogBounds.x = dialogBounds.width;
-	dialogBounds.x = (displayBounds.width - dialogBounds.x) / 2;
-	dialogBounds.y = dialog.getBounds().height;
-	dialogBounds.y = (display.getBounds().height - dialogBounds.y) / 2;
+	Rectangle displayBounds = display.getClientArea();
+	dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
+	dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
 	dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
 	
 	dialog.setBounds(dialogBounds);
