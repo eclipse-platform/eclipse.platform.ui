@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.SubActionBars;
@@ -62,8 +60,9 @@ public class ActionPresentation {
      */
     public void clearActionSets() {
         // Get all of the action sets -- both visible and invisible.
-        List oldList = copyActionSets(mapDescToRec);
-        oldList.addAll(copyActionSets(invisibleBars));
+        final List oldList = new ArrayList();
+        oldList.addAll(mapDescToRec.keySet());
+        oldList.addAll(invisibleBars.keySet());
 
         Iterator iter = oldList.iterator();
         while (iter.hasNext()) {
@@ -73,30 +72,14 @@ public class ActionPresentation {
     }
 
     /**
-     * Returns a copy of the visible action set.
-     */
-    private List copyActionSets(Map map) {
-        Set keys = map.keySet();
-        ArrayList list = new ArrayList(keys.size());
-        Iterator iter = keys.iterator();
-        while (iter.hasNext()) {
-            list.add(iter.next());
-        }
-        return list;
-    }
-
-    /**
      * Destroy an action set.
      */
     public void removeActionSet(IActionSetDescriptor desc) {
-        SetRec rec = (SetRec) mapDescToRec.get(desc);
+        SetRec rec = (SetRec) mapDescToRec.remove(desc);
         if (rec == null) {
-            rec = (SetRec) invisibleBars.get(desc);
+            rec = (SetRec) invisibleBars.remove(desc);
         }
         if (rec != null) {
-            mapDescToRec.remove(desc);
-            // Remove from the map that stores invisible bars
-            invisibleBars.remove(desc);
             IActionSet set = rec.set;
             SubActionBars bars = rec.bars;
             if (bars != null) {
@@ -114,7 +97,7 @@ public class ActionPresentation {
     public void setActionSets(IActionSetDescriptor[] newArray) {
         // Convert array to list.
         List newList = Arrays.asList(newArray);
-        List oldList = copyActionSets(mapDescToRec);
+        List oldList = new ArrayList(mapDescToRec.keySet());
 
         // Remove obsolete actions.
         Iterator iter = oldList.iterator();
