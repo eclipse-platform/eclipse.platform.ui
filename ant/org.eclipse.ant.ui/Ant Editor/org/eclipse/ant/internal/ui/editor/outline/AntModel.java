@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
@@ -33,6 +34,7 @@ import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
@@ -98,15 +100,22 @@ public class AntModel {
 	
 	private Preferences.IPropertyChangeListener fCorePropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
-			reconcileForPropertyChange();
+			if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED)) {
+				if (((Boolean)event.getNewValue()) == Boolean.TRUE) {
+					reconcileForPropertyChange();		
+				}
+			}
 		}
 	};
 	
 	private Preferences.IPropertyChangeListener fUIPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			String property= event.getProperty();
-			if (property.startsWith(AntEditorPreferenceConstants.PROBLEM)) {
+			if (property.equals(AntEditorPreferenceConstants.PROBLEM)) {
+				AntUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(fUIPropertyChangeListener);
 				reconcileForPropertyChange();
+				AntUIPlugin.getDefault().getPluginPreferences().setValue(AntEditorPreferenceConstants.PROBLEM, ""); //$NON-NLS-1$
+				AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 			}
 		}
 	};

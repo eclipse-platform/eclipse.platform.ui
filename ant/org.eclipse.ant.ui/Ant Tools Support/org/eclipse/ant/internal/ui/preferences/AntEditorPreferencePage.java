@@ -918,6 +918,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			String key = (String) iter.next();
 			store.putValue(key, (String)fWorkingValues.get(key));
 		}
+		if (store.needsSaving()) {
+			store.putValue(AntEditorPreferenceConstants.PROBLEM, "changed"); //$NON-NLS-1$
+		}
 		return super.performOk();
 	}
 }
