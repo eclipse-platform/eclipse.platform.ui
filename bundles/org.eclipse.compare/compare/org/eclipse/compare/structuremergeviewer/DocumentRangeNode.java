@@ -321,30 +321,15 @@ public class DocumentRangeNode
 			if (other instanceof IStreamContentAccessor) {
 				try {
 					InputStream is= ((IStreamContentAccessor)other).getContents();
-					//byte[] bytes= Utilities.readBytes(is);
-					//srcContents= new String(bytes, ResourcesPlugin.getEncoding());
 					srcContents= Utilities.readString(is);
 				} catch(CoreException ex) {
 				}
 			}
 		}
 
-		if (child != null) { // there is a destination
-			
-//			if (child instanceof DocumentRangeNode) {
-//				DocumentRangeNode drn= (DocumentRangeNode) child;
-//
-//				IDocument doc= drn.getDocument();
-//				Position range= drn.getRange();
-//				try {
-//					doc.replace(range.getOffset(), range.getLength(), srcContents);
-//				} catch (BadLocationException ex) {
-//				}
-//			}
-		} else {
-			// no destination: we have to add the contents into the parent
-			add(srcContents, null /*srcParentNode*/, src);
-		}
+		if (child == null) // no destination: we have to add the contents into the parent
+			add(srcContents, null, src);
+
 		return child;
 	}
 	
@@ -352,7 +337,6 @@ public class DocumentRangeNode
 	 * see IEditableContent.setContent
 	 */
 	public void setContent(byte[] content) {
-//		fBaseDocument.set(new String(content));
 	}
 }
 
