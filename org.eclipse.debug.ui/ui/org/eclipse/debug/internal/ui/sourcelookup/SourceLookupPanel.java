@@ -94,11 +94,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		fPathViewer.getControl().setLayoutData(gd);
 		fPathViewer.getControl().setFont(font);
 		
-		IWorkingSetManager workingSetMgr =
-			DebugUIPlugin
-			.getDefault()
-			.getWorkbench()
-			.getWorkingSetManager();
+		IWorkingSetManager workingSetMgr =DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 		//listen to changes user made to the working sets, if a working set is being removed
 		//check current list to validate working sets  
 		workingSetMgr.addPropertyChangeListener(this);
@@ -473,5 +469,16 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 */
 	public ISourceLookupDirector getDirector() {
 		return fLocator;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		IWorkingSetManager workingSetMgr =DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+		//listen to changes user made to the working sets, if a working set is being removed
+		//check current list to validate working sets  
+		workingSetMgr.removePropertyChangeListener(this);
 	}
 }
