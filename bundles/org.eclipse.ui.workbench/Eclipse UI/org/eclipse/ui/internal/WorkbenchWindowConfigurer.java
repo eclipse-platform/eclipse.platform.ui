@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
@@ -52,6 +53,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private WorkbenchWindow window;
 
+	/**
+	 * The shell style bits to use when the window's shell is being created.
+	 */
+	private int shellStyle = SWT.SHELL_TRIM;
+	
 	/**
 	 * The window title to set when the window's shell has been created,
 	 * or <code>null</code> if there is none to set.
@@ -451,4 +457,20 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		getActionBarConfigurer();
 		return actionBarConfigurer.containsCoolItem(id);
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public int getShellStyle() {
+        return shellStyle;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShellStyle(int shellStyle) {
+        this.shellStyle = shellStyle;
+    }
 }

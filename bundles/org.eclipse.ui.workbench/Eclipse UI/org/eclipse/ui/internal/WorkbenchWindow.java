@@ -439,6 +439,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// let the application do further configuration
 		getAdvisor().preWindowOpen(getWindowConfigurer());
+		
+		// set the shell style
+		setShellStyle(getWindowConfigurer().getShellStyle());
+		
 		// Fill the action bars	
 		getAdvisor().fillActionBars(
 			this,

@@ -199,6 +199,24 @@ public interface IWorkbenchWindowConfigurer {
 	public void setShowProgressIndicator(boolean show);
 
 	/**
+	 * Returns the style bits to use for the window's shell when it is created.
+	 * The default is <code>SWT.SHELL_TRIM</code>.
+	 *
+	 * @return the shell style bits
+	 */
+	public int getShellStyle();
+
+	/**
+	 * Sets the style bits to use for the window's shell when it is created.
+	 * This method has no effect after the shell is created.
+	 * That is, it must be called within the <code>preWindowOpen</code>
+	 * callback on <code>WorkbenchAdvisor</code>.
+	 *
+	 * @param newShellStyle the new shell style bits
+	 */
+	public void setShellStyle(int shellStyle);
+
+	/**
 	 * Returns the data associated with this workbench window at the given key.
 	 * 
 	 * @param key the key
