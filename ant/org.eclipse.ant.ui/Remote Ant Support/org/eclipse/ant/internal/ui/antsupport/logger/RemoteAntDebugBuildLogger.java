@@ -325,6 +325,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        String propertyValue;
 	        while (iter.hasNext()) {
 	            propertyName = (String) iter.next();
+	            if (propertyName.equals("line.separator")) {
+	            	continue;
+	            }
 	            if (fProperties == null || fProperties.get(propertyName) == null) { //new property
 	                propertiesRepresentation.append(propertyName.length());
 	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);

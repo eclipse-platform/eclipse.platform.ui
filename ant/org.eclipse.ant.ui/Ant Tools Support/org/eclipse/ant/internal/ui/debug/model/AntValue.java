@@ -31,7 +31,7 @@ public class AntValue extends AntDebugElement implements IValue  {
      * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
      */
     public String getReferenceTypeName() throws DebugException {
-        return null;
+        return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

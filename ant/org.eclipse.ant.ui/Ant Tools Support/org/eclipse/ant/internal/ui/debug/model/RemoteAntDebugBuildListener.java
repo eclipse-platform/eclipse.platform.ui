@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntBuildListener;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -29,7 +30,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 	// sockets to communicate with the remote Ant debug build logger
 	private Socket fRequestSocket;
 	private PrintWriter fRequestWriter;
-	private BufferedReader fRequestReader;
+	private BufferedReader fResponseReader;
 	
 	private int fRequestPort= -1;
 	
@@ -47,12 +48,13 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		public void run(){
 			try { 
 				String message= null; 
-				while (fRequestReader != null) { 
-					if ((message= fRequestReader.readLine()) != null) {
+				while (fResponseReader != null) { 
+					if ((message= fResponseReader.readLine()) != null) {
 						receiveMessage(message);
 					}
 				} 
 			} catch (Exception e) {
+				AntUIPlugin.log("Internal error processing remote response", e); //$NON-NLS-1$
 				RemoteAntDebugBuildListener.this.shutDown();
 			}
 		}
@@ -128,7 +130,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		try {
 			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
 			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
-			fRequestReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
+			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
 			
 			ReaderThread readerThread= new ReaderThread();
 			readerThread.start();
@@ -171,12 +173,13 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		if (fDebug) {
 			System.out.println("shutdown " + fRequestPort); //$NON-NLS-1$
 		}
+		
 		fLaunch= null;
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		try {
-			if (fRequestReader != null) {
-				fRequestReader.close();
-				fRequestReader= null;
+			if (fResponseReader != null) {
+				fResponseReader.close();
+				fResponseReader= null;
 			}
 		} catch(IOException e) {
 		}	
