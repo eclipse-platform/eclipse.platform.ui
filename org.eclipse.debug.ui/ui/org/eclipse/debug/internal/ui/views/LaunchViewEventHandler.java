@@ -256,7 +256,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * Helper method to update the buttons of the viewer - must be called in UI thread
 	 */
 	protected void updateButtons() {
-		getView().updateButtons();
+		getView().updateActions();
 	}
 
 	/**

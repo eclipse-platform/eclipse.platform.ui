@@ -181,6 +181,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			getViewer().removeDoubleClickListener(this);
 		}
 		setViewer(null);
+		if (fActionMap != null) {
+			fActionMap.clear();
+		}
 		super.dispose();
 	}
 	
@@ -345,23 +348,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			}
 		}
 	}
-	
-	/**
-	 * Updates all actions that are instances of 
-	 * <code>ISelectionChangedListener</code>.
-	 */
-	public void updateSelectionActions() {
-		ISelection selection = getViewer().getSelection();
-		SelectionChangedEvent event = new SelectionChangedEvent(getViewer(), selection);
-		Iterator actions = fActionMap.values().iterator();
-		while (actions.hasNext()) {
-			Object object = actions.next();
-			if (object instanceof ISelectionChangedListener) {
-				((ISelectionChangedListener)object).selectionChanged(event);
-			}
-		}
-	}
-	
 			
 	/**
 	 * Handles key events in viewer. Imvokes the 

@@ -7,11 +7,9 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -19,11 +17,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Enables or disables a breakpoint
  */
-public class EnableDisableBreakpointAction extends SelectionProviderAction implements IBreakpointListener {
+public class EnableDisableBreakpointAction extends SelectionProviderAction implements IUpdate {
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
@@ -89,22 +88,10 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 		setEnabled(true);
 	}
 
-	/** 
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	/**
+	 * @see IUpdate#update()
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
-	}
-
-	/** 
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-	}
-
-	/** 
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void update() {
 		Display display= Display.getDefault();
 		if (display.isDisposed()) {
 			return;

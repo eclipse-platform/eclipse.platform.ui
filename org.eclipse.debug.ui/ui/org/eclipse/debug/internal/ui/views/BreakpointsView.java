@@ -43,8 +43,6 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class BreakpointsView extends AbstractDebugView {
 	
-	private Vector fBreakpointListenerActions;
-	
 	private BreakpointsViewEventHandler fEventHandler;
 	
 	/**
@@ -74,7 +72,6 @@ public class BreakpointsView extends AbstractDebugView {
 	 */
 	public void dispose() {
 		super.dispose();
-		cleanupActions();
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
 		}
@@ -102,24 +99,7 @@ public class BreakpointsView extends AbstractDebugView {
 		
 		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer()));
 		
-		addBreakpointListenerAction(getAction("EnableDisableBreakpoint"));
-		addBreakpointListenerAction(getAction("RemoveAll"));
 	}
-
-	/**
-	 * Cleans up the actions when this part is disposed
-	 */
-	protected void cleanupActions() {
-		if (getBreakpointListenerActions() == null) {
-			return;
-		}
-		DebugPlugin dp= DebugPlugin.getDefault();
-		IBreakpointManager bm= dp.getBreakpointManager();
-		
-		for (int i=0; i < getBreakpointListenerActions().size(); i++) {
-			bm.removeBreakpointListener((IBreakpointListener)getBreakpointListenerActions().get(i));
-		} 
-	}	
 
 	/**
 	 * Adds items to the context menu
@@ -127,6 +107,7 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @param menu The menu to contribute to
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
+		updateActions();
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
 		menu.add(getAction("GotoMarker"));
@@ -140,16 +121,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(getAction("ShowQualifiedNames"));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
-	/**
-	 * Add an action to the contributed actions collection
-	 * 
-	 * @param action The action to add to the collection.
-	 */
-	public void addBreakpointListenerAction(IAction action) {
-		getBreakpointListenerActions().add(action);
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener((IBreakpointListener)action);		
-	}	
 
 	/**
 	 * Returns an editor part that is open on this breakpoint's
@@ -185,13 +156,6 @@ public class BreakpointsView extends AbstractDebugView {
 		tbm.add(getAction("RemoveAll"));
 		tbm.add(getAction("GotoMarker"));
 		tbm.add(getAction("ShowQualifiedNames"));
-	}
-		
-	protected Vector getBreakpointListenerActions() {
-		if(fBreakpointListenerActions == null) {
-			fBreakpointListenerActions= new Vector(2);
-		}
-		return fBreakpointListenerActions;
 	}
 
 	/**
@@ -246,6 +210,7 @@ public class BreakpointsView extends AbstractDebugView {
 				asyncExec(new Runnable() {
 					public void run() {
 						((TableViewer)getViewer()).add(breakpoint);
+						updateActions();
 					}
 				});
 			}
@@ -259,6 +224,7 @@ public class BreakpointsView extends AbstractDebugView {
 			asyncExec(new Runnable() {
 				public void run() {
 					((TableViewer)getViewer()).remove(breakpoint);
+					updateActions();
 				}
 			});
 		}
@@ -271,6 +237,7 @@ public class BreakpointsView extends AbstractDebugView {
 				asyncExec(new Runnable() {
 					public void run() {
 						((TableViewer)getViewer()).refresh(breakpoint);
+						updateActions();
 					}
 				});
 			}

@@ -5,6 +5,7 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IViewPart;
 
@@ -16,7 +17,6 @@ import org.eclipse.ui.IViewPart;
  * The following debug views support this adapter:
  * <ul>
  * <li>Debug view</li>
- * <li>Process view</li>
  * <li>Breakpoint view</li>
  * <li>Variable view</li>
  * <li>Inspector view</li>
@@ -53,5 +53,23 @@ public interface IDebugViewAdapter extends IViewPart {
 	 *     presentation is registered for the specified id
 	 */
 	public IDebugModelPresentation getPresentation(String id);
+	
+	/**
+	 * Installs the given action under the given action id.
+	 *
+	 * @param actionId the action id
+	 * @param action the action, or <code>null</code> to clear it
+	 * @see #getAction
+	 */
+	public void setAction(String actionID, IAction action);
+	
+	/**
+	 * Returns the action installed under the given action id.
+	 *
+	 * @param actionId the action id
+	 * @return the action, or <code>null</code> if none
+	 * @see #setAction
+	 */
+	public IAction getAction(String actionID);
 	
 }

@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -13,18 +12,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
  * breakpoints from processes
  */
-public class RemoveAllBreakpointsAction extends Action implements IBreakpointListener {
+public class RemoveAllBreakpointsAction extends Action implements IUpdate {
 	
 	public RemoveAllBreakpointsAction() {
 		super(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_&All_1")); //$NON-NLS-1$
@@ -64,21 +63,11 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),DebugUIMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), ms); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+	
 	/**
-	 * @see IBreakpointListener
+	 * @see IUpdate#update()
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
-		breakpointAltered();
-	}
-	/**
-	 * @see IBreakpointListener
-	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-	}
-	/**
-	 * @see IBreakpointListener
-	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void update() {
 		breakpointAltered();
 	}
 	

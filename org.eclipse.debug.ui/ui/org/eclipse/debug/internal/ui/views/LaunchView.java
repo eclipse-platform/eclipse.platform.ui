@@ -107,14 +107,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	/**
-	 * Updates the state of the buttons in the view
-	 */
-	protected void updateButtons() {
-		updateSelectionActions();
-		updateActions();
-	}
-
-	/**
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
@@ -246,7 +238,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		updateButtons();
+		updateActions();
 		showMarkerForCurrentSelection();
 	}
 			
