@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-
 import java.text.Collator;
 import java.util.*;
 
@@ -155,7 +154,6 @@ public class FontPreferencePage
 		layout.numColumns = 2;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		layout.makeColumnsEqualWidth = true;
 		mainColumn.setFont(defaultFont);
 		mainColumn.setLayout(layout);
 
@@ -163,7 +161,6 @@ public class FontPreferencePage
 
 		Composite previewColumn = new Composite(mainColumn, SWT.NULL);
 		layout = new GridLayout();
-		layout.numColumns = 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		previewColumn.setLayout(layout);
@@ -174,20 +171,6 @@ public class FontPreferencePage
 
 		createPreviewControl(previewColumn);
 		createValueControl(previewColumn);
-
-		Composite buttonColumn = new Composite(previewColumn, SWT.NULL);
-		layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonColumn.setLayout(layout);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		buttonColumn.setLayoutData(data);
-		buttonColumn.setFont(defaultFont);
-
-		createUseDefaultsControl(buttonColumn);
-		createChangeControl(buttonColumn);
-		createResetControl(buttonColumn);
 		createNoteControl(previewColumn);
 
 		createDescriptionControl(parent);
@@ -301,8 +284,7 @@ public class FontPreferencePage
 	 * Creates the change button.
 	 */
 	private void createChangeControl(Composite parent) {
-		changeFontButton =
-			createButton(parent, JFaceResources.getString("openChange")); //$NON-NLS-1$
+		changeFontButton = createButton(parent, JFaceResources.getString("openChange")); //$NON-NLS-1$
 
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -328,10 +310,7 @@ public class FontPreferencePage
 	 * Creates the change button.
 	 */
 	private void createResetControl(Composite parent) {
-		resetButton =
-			createButton(
-				parent,
-				WorkbenchMessages.getString("FontsPreference.reset")); //$NON-NLS-1$
+		resetButton = createButton(parent, WorkbenchMessages.getString("FontsPreference.reset")); //$NON-NLS-1$
 
 		resetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -348,10 +327,7 @@ public class FontPreferencePage
 	 */
 	private void createUseDefaultsControl(Composite parent) {
 
-		useSystemButton =
-			createButton(
-				parent,
-				WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
+		useSystemButton = createButton(parent, WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
 
 		useSystemButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -389,13 +365,34 @@ public class FontPreferencePage
 		label.setText(WorkbenchMessages.getString("FontsPreference.preview")); //$NON-NLS-1$
 		applyDialogFont(label);
 
-		previewer = new DefaultPreviewer(parent);
+		Composite previewColumn = new Composite(parent, SWT.NONE);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		previewColumn.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		previewColumn.setLayoutData(data);
+		previewColumn.setFont(parent.getFont());
+
+		previewer = new DefaultPreviewer(previewColumn);
 		Control control = previewer.getControl();
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
+		GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		gd.heightHint = previewer.getPreferredHeight();
 		control.setLayoutData(gd);
+
+		Composite buttonColumn = new Composite(previewColumn, SWT.NONE);
+		buttonColumn.setLayoutData(
+			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END));
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonColumn.setLayout(layout);
+		createUseDefaultsControl(buttonColumn);
+		createChangeControl(buttonColumn);
+		createResetControl(buttonColumn);
+
 	}
 
 	/**
