@@ -180,7 +180,9 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-				return (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+				if (part != null) {
+					return (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+				}
 			}
 		}
 		return null;
