@@ -603,8 +603,9 @@ protected void populateListViewer(final Object treeElement) {
 private void primeHierarchyForSelection(Object item, Set selectedNodes) {
 
 	//Only prime it if we haven't visited yet
-	if (!selectedNodes.contains(item))
-		checkedStateStore.put(item, new ArrayList());
+	if (selectedNodes.contains(item)) return;
+
+	checkedStateStore.put(item, new ArrayList());
 
 	//mark as expanded as we are going to populate it after this
 	expandedTreeNodes.add(item);

@@ -22,16 +22,24 @@ import java.util.*;
  * and navigation.
  */
 public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
-	protected List children = new ArrayList();
+	protected List children = null;
 /**
- * Creates a new adaptable list with the given children.
+ * Creates a new adaptable list.
  */
 public AdaptableList() {
+	children = new ArrayList();
+}
+/**
+ * Creates a new adaptable list with the given size.
+ */
+public AdaptableList(int size) {
+	children = new ArrayList(size);
 }
 /**
  * Creates a new adaptable list with the given children.
  */
 public AdaptableList(IAdaptable[] newChildren) {
+	this(newChildren.length);
 	for (int i = 0; i < newChildren.length; i++) {
 		children.add(newChildren[i]);
 	}

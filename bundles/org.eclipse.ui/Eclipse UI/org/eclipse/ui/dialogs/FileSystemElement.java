@@ -36,18 +36,25 @@ import java.util.*;
 public class FileSystemElement implements IAdaptable {
 	private String name;
 	private Object fileSystemObject;
-	private AdaptableList folders = new AdaptableList();
-	private AdaptableList files = new AdaptableList();
+
+	/* Wait until a child is added to initialize the receiver's lists.
+	 * Doing so minimizes the amount of memory that is allocated when
+	 * a large directory structure is being processed.
+	 */
+	private AdaptableList folders = null;
+	private AdaptableList files = null;
+
 	private boolean isDirectory = false;
 	private FileSystemElement parent;
+
+	private final static AdaptableList EMPTY_LIST = new AdaptableList(0);
 
 	private WorkbenchAdapter workbenchAdapter = new WorkbenchAdapter() {
 		/**
 		 *	Answer the children property of this element
 		 */
 		public Object[] getChildren(Object o) {
-			return folders.getChildren(o);
-			
+			return getFolders().getChildren(o);
 		}
 		/**
 		 * Returns the parent of this element
@@ -92,8 +99,10 @@ public FileSystemElement(String name,FileSystemElement parent,boolean isDirector
  */
 public void addChild(FileSystemElement child) {
 	if (child.isDirectory()) {
+		if (folders == null) folders = new AdaptableList(1);
 		folders.add(child);
 	} else {
+		if (files == null) files = new AdaptableList(1);
 		files.add(child);
 	}
 }
@@ -107,7 +116,7 @@ public Object getAdapter(Class adapter) {
 	//defer to the platform
 	return Platform.getAdapterManager().getAdapter(this, adapter);
 }
-/**
+/** 
  * Returns the extension of this element's filename.  Returns
  * The empty string if there is no extension.
  */
@@ -116,9 +125,14 @@ public String getFileNameExtension() {
 	return lastDot < 0 ? "" : name.substring(lastDot+1);	//$NON-NLS-1$
 }
 /**
- *	Answer the files property of this element
+ *	Answer the files property of this element.  Answer an empty list if the
+ *  files property is null. 
+ *  This method should not be used to add children
+ *  to the receiver. Use addChild(FileSystemElement) instead.
  */
 public AdaptableList getFiles() {
+	
+	if (files == null) return EMPTY_LIST;
 	return files;
 }
 /**
@@ -131,9 +145,12 @@ public Object getFileSystemObject() {
 }
 /**
  * Returns a list of the folders that are immediate children
- * of this folder.
+ * of this folder.  Answer an empty list if the folders property is null.
+ * This method should not be used to add children
+ * to the receiver. Use addChild(FileSystemElement) instead.
  */
 public AdaptableList getFolders() {
+	if (folders == null) return EMPTY_LIST;
 	return folders;
 }
 /**
@@ -155,6 +172,7 @@ public boolean isDirectory() {
  * Removes a sub-folder from this file system element.
  */
 public void removeFolder(FileSystemElement child) {
+	if (folders == null) return;
 	folders.remove(child);
 	child.setParent(null);
 }
