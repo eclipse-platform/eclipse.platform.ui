@@ -231,13 +231,6 @@ protected Control createContents(Composite parent) {
 	data.widthHint = Math.max(widthHint, defaultEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	defaultEditorButton.setLayoutData(data);
 
-	//Spacer
-	label = new Label(pageComponent, SWT.LEFT);
-	data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.horizontalSpan = 2;
-	label.setLayoutData(data);
-
 	fillResourceTypeTable();
 	if (resourceTypeTable.getItemCount() > 0) {
 		resourceTypeTable.setSelection(0);

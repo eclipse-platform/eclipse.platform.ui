@@ -35,6 +35,8 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Table editorTable;
 	private Button browseExternalEditorsButton;
 	private Button internalButton;
+	private Button okButton;
+	private Button cancelButton;
 	private static final String EditorSelectionDialog = "FileSystemExportPage1.CreateDirectoriesForSelectedContainers";//$NON-NLS-1$
 	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 	private String message = WorkbenchMessages.getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
@@ -44,6 +46,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Image[] externalEditorImages;
 	private Image[] internalEditorImages;
 	private static final String Executable_Filter;
+	private static final int TABLE_WIDTH = 200;
 	static {
 		if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
 			Executable_Filter = "*.exe";//$NON-NLS-1$
@@ -54,14 +57,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 public EditorSelectionDialog(Shell parentShell) {
 	super(parentShell);
 }
-	/**
-	 * Called just before Shell becomes visible.
-	 * It is ok to access SWT widgets because aboutToShow is always called from
-	 * within UI thread.
-	 */
-	protected void aboutToShow() {
-		updateEnableState();
-	}
+
 /**
  * This method is called if a button has been pressed.
  */
@@ -138,6 +134,7 @@ protected Control createDialogArea(Composite parent) {
 	editorTable.addListener(SWT.Selection, this);
 	editorTable.addListener(SWT.DefaultSelection, this);
 	data = new GridData();
+	data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
 	data.horizontalAlignment= data.FILL;
 	data.grabExcessHorizontalSpace= true;
 	data.verticalAlignment= data.FILL;
@@ -257,10 +254,11 @@ public void handleEvent(Event event) {
 	} else if (event.widget == browseExternalEditorsButton) {
 		promptForExternalEditor();
 	} else if (event.widget == editorTable) {
-		if (editorTable.getSelectionIndex() != -1) {
-			selectedEditor = (EditorDescriptor)editorTable.getSelection()[0].getData();
+		if (editorTable.getSelectionIndex() != -1){
+			selectedEditor = (EditorDescriptor)editorTable.getSelection()[0].getData();	
 		} else {
 			selectedEditor = null;
+			okButton.setEnabled(false);
 		}
 	}
 	updateEnableState();
@@ -343,5 +341,28 @@ public void setMessage(String aMessage) {
 public void updateEnableState() {
 	boolean enableExternal = externalButton.getSelection();
 	browseExternalEditorsButton.setEnabled(enableExternal);
+	updateOkButton();
+}
+protected void createButtonsForButtonBar(Composite parent) {
+	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	//initially there is no selection so OK button should not be enabled
+	okButton.setEnabled(false);
+	
+}
+/**
+ * Update the button enablement state.
+ */
+protected void updateOkButton() {
+	// Buttons are null during dialog creation
+	if (okButton == null) 
+		return;
+	// If there is no selection, do not enable OK button
+	if (editorTable.getSelectionCount() == 0){
+		okButton.setEnabled(false);
+		return;
+	}
+	// At this point, there is a selection
+	okButton.setEnabled(selectedEditor != null);	
 }
 }
