@@ -13,7 +13,6 @@ import java.io.*;
 import java.nio.channels.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
 

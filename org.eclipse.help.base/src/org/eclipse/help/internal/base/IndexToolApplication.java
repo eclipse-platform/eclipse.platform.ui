@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
-import org.eclipse.core.boot.*;
+
 import org.eclipse.core.runtime.*;
 
 /**
