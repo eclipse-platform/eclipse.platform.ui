@@ -75,19 +75,16 @@ public Object[] getElements(Object parent) {
  * Recursively walks over the resource delta and gathers all
  * root type marker deltas.
  */
-private void getMarkerDeltas(IResourceDelta delta, List list) {
-	IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
+private ArrayList getMarkerDeltas(IResourceChangeEvent event) {
+	IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
+	ArrayList list = new ArrayList(markerDeltas.length);
 	for (int i = 0; i < markerDeltas.length; i++) {
 		IMarkerDelta markerDelta = markerDeltas[i];
 		if (taskList.isRootType(markerDelta)) {
 			list.add(markerDelta);
 		}
 	}
-	//recurse on child deltas
-	IResourceDelta[] children = delta.getAffectedChildren();
-	for (int i = 0; i < children.length; i++) {
-		getMarkerDeltas(children[i], list);
-	}
+	return list;
 }
 
 /**
@@ -321,8 +318,7 @@ public void resourceChanged(final IResourceChangeEvent event) {
 	// gather all marker changes from the delta.
 	// be sure to do this in the calling thread, 
 	// as the delta is destroyed when this method returns
-	ArrayList markerDeltas = new ArrayList();
-	getMarkerDeltas(event.getDelta(), markerDeltas);
+	ArrayList markerDeltas = getMarkerDeltas(event);
 	
 	int oldTotal = totalMarkerCount;
 	updateTotalMarkerCount(markerDeltas);
