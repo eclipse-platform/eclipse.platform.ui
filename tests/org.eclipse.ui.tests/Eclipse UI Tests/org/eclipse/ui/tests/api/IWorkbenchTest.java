@@ -138,9 +138,7 @@ public class IWorkbenchTest extends UITestCase {
 					EmptyPerspective.PERSP_ID,
 					ResourcesPlugin.getWorkspace());
 			assertNotNull(win);
-			// PR 1GkD5O0 - Fails on linux.
-			String platform = SWT.getPlatform();
-			if (!platform.equals("motif")) {
+			if (!PlatformUtil.onLinux()) {
 				assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
 			}
 			assertEquals(
