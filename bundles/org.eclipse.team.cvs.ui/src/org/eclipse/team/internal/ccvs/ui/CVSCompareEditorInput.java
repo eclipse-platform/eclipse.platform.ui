@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSLocalSyncElement;
@@ -76,13 +77,18 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
 			try {
-				CVSTag tag = resource.getSyncInfo().getTag();
+				CVSTag tag = null;
+				if (edition.isContainer()) {
+					tag = ((ICVSRemoteFolder)edition).getTag();
+				} else {
+					tag = resource.getSyncInfo().getTag();
+				}
 				if (tag == null) {
 					return Policy.bind("CVSCompareEditorInput.inHead", edition.getName());
 				} else if (tag.getType() == CVSTag.BRANCH) {
 					return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()});
 				} else {
-					return Policy.bind("CVSCompareEditorInput.repsitory", new Object[] {edition.getName(), tag.getName()});
+					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()});
 				}
 			} catch (TeamException e) {
 				CVSUIPlugin.log(e.getStatus());
@@ -103,7 +109,12 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
 			try {
-				CVSTag tag = resource.getSyncInfo().getTag();
+				CVSTag tag = null;
+				if (edition.isContainer()) {
+					tag = ((ICVSRemoteFolder)resource).getTag();
+				} else {
+					tag = resource.getSyncInfo().getTag();
+				}
 				if (tag == null) {
 					return Policy.bind("CVSCompareEditorInput.headLabel");
 				} else if (tag.getType() == CVSTag.BRANCH) {
@@ -270,7 +281,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			IResource resource = ((ResourceNode)left).getResource();
 			// Hack
 			CVSLocalSyncElement element = new CVSLocalSyncElement(resource, null);
-			if (!element.isDirty()) {
+			if (element.isDirty()) {
+				return NODE_NOT_EQUAL;
+			} else {
 				leftEdition = (ICVSRemoteResource)element.getBase();
 			}
 		}
