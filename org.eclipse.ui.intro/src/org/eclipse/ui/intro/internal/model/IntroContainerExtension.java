@@ -14,63 +14,63 @@ package org.eclipse.ui.intro.internal.model;
 import org.eclipse.core.runtime.*;
 
 /**
- * An intro image element.
+ * An intro container extension.
  */
 public class IntroContainerExtension extends IntroElement {
 
-	protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
+    protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
 
-	private static final String PATH_ATTRIBUTE = "path";
-	private static final String STYLE_ATTRIBUTE = "style";
-	private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
+    private static final String PATH_ATTRIBUTE = "path";
+    private static final String STYLE_ATTRIBUTE = "style";
+    private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
 
-	private String path;
-	private String style;
-	private String altStyle;
+    private String path;
+    private String style;
+    private String altStyle;
 
-	IntroContainerExtension(IConfigurationElement element) {
-		super(element);
-		path = element.getAttribute(PATH_ATTRIBUTE);
-		style = element.getAttribute(STYLE_ATTRIBUTE);
-		altStyle = element.getAttribute(ALT_STYLE_ATTRIBUTE);
+    IntroContainerExtension(IConfigurationElement element) {
+        super(element);
+        path = element.getAttribute(PATH_ATTRIBUTE);
+        style = element.getAttribute(STYLE_ATTRIBUTE);
+        altStyle = element.getAttribute(ALT_STYLE_ATTRIBUTE);
 
-		// Resolve.
-		style = IntroModelRoot.getPluginLocation(style, element);
-		altStyle = IntroModelRoot.getPluginLocation(altStyle, element);
-	}
+        // Resolve.
+        style = IntroModelRoot.getPluginLocation(style, element);
+        altStyle = IntroModelRoot.getPluginLocation(altStyle, element);
+    }
 
-	/**
-	 * @return Returns the path.
-	 */
-	public String getPath() {
-		return path;
-	}
+    /**
+     * @return Returns the path.
+     */
+    public String getPath() {
+        return path;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.CONTAINER_EXTENSION;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.CONTAINER_EXTENSION;
+    }
 
-	protected IConfigurationElement[] getChildren() {
-		return getConfigurationElement().getChildren();
-	}
+    protected IConfigurationElement[] getChildren() {
+        return getConfigurationElement().getChildren();
+    }
 
-	/**
-	 * @return Returns the altStyle.
-	 */
-	protected String getAltStyle() {
-		return altStyle;
-	}
+    /**
+     * @return Returns the altStyle.
+     */
+    protected String getAltStyle() {
+        return altStyle;
+    }
 
-	/**
-	 * @return Returns the style.
-	 */
-	protected String getStyle() {
-		return style;
-	}
+    /**
+     * @return Returns the style.
+     */
+    protected String getStyle() {
+        return style;
+    }
 
 }

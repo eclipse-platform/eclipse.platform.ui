@@ -19,6 +19,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.internal.*;
+import org.eclipse.ui.intro.internal.extensions.*;
 import org.eclipse.ui.intro.internal.parts.*;
 import org.eclipse.ui.intro.internal.presentations.*;
 import org.eclipse.ui.intro.internal.util.*;
@@ -55,7 +56,8 @@ public class IntroURL {
     public static final String KEY_PLUGIN_ID = "pluginId";
     public static final String KEY_CLASS = "class";
     public static final String KEY_STANDBY = "standby";
-    public static final String KEY_INPUT_ID = "input";
+    public static final String KEY_PART_ID = "partId";
+    public static final String KEY_INPUT = "input";
 
     private String action = null;
     private Properties parameters = null;
@@ -92,8 +94,8 @@ public class IntroURL {
             setStandbyState(getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_STANDBY))
-            handleStandbyStateChanged(getParameter(KEY_PLUGIN_ID),
-                    getParameter(KEY_CLASS), getParameter(KEY_INPUT_ID));
+            handleStandbyStateChanged(getParameter(KEY_PART_ID),
+                    getParameter(KEY_INPUT));
 
         else if (action.equals(SHOW_HELP))
             // display the full Help System.
@@ -118,29 +120,43 @@ public class IntroURL {
                 PlatformUI.getWorkbench().findIntro());
     }
 
-    private void handleStandbyStateChanged(String pluginId,
-            String standbyContentClassName, String inputId) {
-
-        // set intro to standby mode.
+    /**
+     * Sets the into part to standby, ans shows the passed standby part, with
+     * the given input.
+     * 
+     * @param partId
+     * @param input
+     */
+    private void handleStandbyStateChanged(String partId, String input) {
+        // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = getCustomizableIntroPart();
         PlatformUI.getWorkbench().setIntroStandby(introPart, true);
-
-        // now handle standby content. we know we have a customizable part.
         StandbyPart standbyPart = introPart.getStandbyPart();
-        Object standbyContentObject = createClassInstance(pluginId,
-                standbyContentClassName);
 
-        if (standbyContentObject instanceof IStandbyContentPart) {
-            IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
-            standbyPart.addStandbyContentPart(contentPart);
-            standbyPart.setTopControl(contentPart.getClass().getName());
-        } else {
-            // we failed to instantiate part, show Context help part.
-            standbyPart.setTopControl(ContextHelpPart.class.getName());
+        // Get the StandbyPartContent that maps to the given partId.
+        StandbyPartContent standbyPartContent = ExtensionPointManager.getInst()
+                .getStandbyPart(partId);
+
+        if (standbyPartContent != null) {
+            String standbyContentClassName = standbyPartContent.getClassName();
+            String pluginId = standbyPartContent.getPluginId();
+
+            Object standbyContentObject = createClassInstance(pluginId,
+                    standbyContentClassName);
+            if (standbyContentObject instanceof IStandbyContentPart) {
+                IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
+                standbyPart.addStandbyContentPart(partId, contentPart);
+                standbyPart.setTopControl(partId);
+                standbyPart.setInput(input);
+                return;
+            }
         }
-        // set the input in all cases.
-        standbyPart.setInput(inputId);
+
+        // we do not have a valid partI or we failed to instantiate part, show
+        // Context help part.
+        standbyPart.setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
     }
+
 
 
     /**

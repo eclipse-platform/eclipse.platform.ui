@@ -102,6 +102,7 @@ public abstract class IntroElement {
     public static final int HEAD = 1 << 11;
 
 
+
     /**
      * Type constant which identifies any element in the Intro Model.
      */

@@ -20,6 +20,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.internal.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
 
@@ -140,8 +141,9 @@ public class StandbyPart {
 
     private void addContextHelpPart() {
         helpPart = new ContextHelpPart();
-        addStandbyContentPart(helpPart);
-        setTopControl(helpPart.getClass().getName());
+        addStandbyContentPart(IIntroConstants.HELP_CONTEXT_STANDBY_PART,
+                helpPart);
+        setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
     }
 
     public void setTopControl(String key) {
@@ -201,19 +203,22 @@ public class StandbyPart {
 
     /**
      * Creates a standbyContent part in the stack only if one is not already
-     * created.
+     * created. The partId is used as tke key in the cache. The value is an
+     * instance of ControlKey that wraps a control/StandbyPart pair. This is
+     * needed to retrive the control of a given standby part.
      * 
      * @param standbyContent
      */
-    public Control addStandbyContentPart(IStandbyContentPart standbyContent) {
-        String key = standbyContent.getClass().getName();
-        ControlKey controlKey = getCachedContent(key);
+    public Control addStandbyContentPart(String partId,
+            IStandbyContentPart standbyContent) {
+
+        ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
             standbyContent.init(introPart);
             standbyContent.createPartControl(content, toolkit);
             Control control = standbyContent.getControl();
             controlKey = new ControlKey(control, standbyContent);
-            cachedContentParts.put(key, controlKey);
+            cachedContentParts.put(partId, controlKey);
         }
         return controlKey.getControl();
     }

@@ -15,16 +15,19 @@ import org.eclipse.swt.graphics.*;
 
 public interface IIntroConstants {
 
-	// all attributes here are by default public static final.
+    // all attributes here are by default public static final.
 
-	// General consts.
-	String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
-	String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
+    // General consts.
+    String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
+    String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
-	// Form implementation consts.
-	// key to retrieve the into link model object from imageHyperlink widget.
-	// convention: actual string value is class name.
-	String INTRO_LINK = "IntroLink";
-	// default fonts
-	Font DEFAULT_FONT = JFaceResources.getBannerFont();
+    // Default Help Standby part. This is registered in this plugin, through
+    // markup.
+    String HELP_CONTEXT_STANDBY_PART = "org.eclipse.intro.contextHelp"; //$NON-NLS-1$
+    // Form implementation consts.
+    // key to retrieve the into link model object from imageHyperlink widget.
+    // convention: actual string value is class name.
+    String INTRO_LINK = "IntroLink";
+    // default fonts
+    Font DEFAULT_FONT = JFaceResources.getBannerFont();
 }

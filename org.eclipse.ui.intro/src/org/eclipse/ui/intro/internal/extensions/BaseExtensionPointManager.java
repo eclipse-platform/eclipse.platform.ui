@@ -41,6 +41,10 @@ public class BaseExtensionPointManager {
     protected Hashtable introModels = new Hashtable();
     protected IPluginRegistry registry;
 
+    // holds all standbyPart extensions. Key is id, value is
+    // IntroStandbyPartContent.
+    protected Hashtable standbyParts = new Hashtable();
+
     /*
      * Prevent creation.
      */
@@ -60,7 +64,8 @@ public class BaseExtensionPointManager {
         // there are no valid contribution, model stays null.
         if (introConfig != null) {
             // we found matching config. Get all configExtension contributed to
-            // this config and pass to model.
+            // this config and pass to model. Load generic config extensions as
+            // well.
             String configId = introConfig.getAttribute(ID_ATTRIBUTE);
             IConfigurationElement[] introConfigExtensions = null;
             if (configId == null)
@@ -77,6 +82,9 @@ public class BaseExtensionPointManager {
             // not null. They key is the model id, which is the id of the
             // config that defined this model.
             addCachedModel(model.getId(), model);
+
+            // now load all generic standbyPart contributions.
+            loadSharedExtensions();
             return model;
         }
         return null;
@@ -192,6 +200,37 @@ public class BaseExtensionPointManager {
 
         return filteredConfigElements;
     }
+
+    /**
+     * Loads all shared config extebnsions (ie: standby parts).
+     */
+    protected void loadSharedExtensions() {
+        // simply create model classes for all standbyPart elements under a
+        // configExtension.
+        IConfigurationElement[] configExtensionElements = registry
+                .getConfigurationElementsFor(CONFIG_EXTENSION);
+        for (int i = 0; i < configExtensionElements.length; i++) {
+            IConfigurationElement element = configExtensionElements[i];
+            if (!isValidElementName(element,
+                    StandbyPartContent.STANDBY_PART_ELEMENT))
+                continue;
+            StandbyPartContent standbyPartContent = new StandbyPartContent(
+                    element);
+            if (standbyPartContent.getId() == null)
+                continue;
+            standbyParts.put(standbyPartContent.getId(), standbyPartContent);
+        }
+    }
+
+    /**
+     * @return Returns a standbyPart basd on its registred id.
+     */
+    public StandbyPartContent getStandbyPart(String partId) {
+        if (partId == null)
+            return null;
+        return (StandbyPartContent) standbyParts.get(partId);
+    }
+
 
     // ========================================
     //   Util Methods for Extensions
