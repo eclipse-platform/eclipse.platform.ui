@@ -31,6 +31,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
 	private static String ATT_ICON = "icon"; //$NON-NLS-1$
 	private static String ATT_QUADRANT = "quadrant"; //$NON-NLS-1$
+	private static String ATT_LOCATION = "location"; //$NON-NLS-1$
 	private static String ATT_ENABLED = "state"; //$NON-NLS-1$
 	private static String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
 	private static String P_TRUE = "true"; //$NON-NLS-1$
@@ -101,7 +102,7 @@ class DecoratorRegistryReader extends RegistryReader {
 		if (P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT)) || noClass) {
 
 			int quadrant =
-				getQuadrantConstant(element.getAttribute(ATT_QUADRANT));
+				getLocationConstant(element.getAttribute(ATT_LOCATION),element);
 			String iconPath = element.getAttribute(ATT_ICON);
 			
 			if (noClass && iconPath == null) {
@@ -147,17 +148,22 @@ class DecoratorRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Get the constant value based on the quadrant supplied.
-	 * Default to bottom right.
+	 * Get the constant value based on the location supplied. Default to bottom
+	 * right.
 	 */
-	private int getQuadrantConstant(String quadrantDefinition) {
-		if (TOP_RIGHT_STRING.equals(quadrantDefinition))
+	private int getLocationConstant(String locationDefinition, IConfigurationElement element) {
+		
+		//Backwards compatibility
+		if(locationDefinition == null)
+			locationDefinition = element.getAttribute(ATT_QUADRANT);
+			
+		if (TOP_RIGHT_STRING.equals(locationDefinition))
 			return TOP_RIGHT;
-		if (TOP_LEFT_STRING.equals(quadrantDefinition))
+		if (TOP_LEFT_STRING.equals(locationDefinition))
 			return TOP_LEFT;
-		if (BOTTOM_LEFT_STRING.equals(quadrantDefinition))
+		if (BOTTOM_LEFT_STRING.equals(locationDefinition))
 			return BOTTOM_LEFT;
-		if (UNDERLAY_STRING.equals(quadrantDefinition))
+		if (UNDERLAY_STRING.equals(locationDefinition))
 			return UNDERLAY;
 		return BOTTOM_RIGHT;
 
