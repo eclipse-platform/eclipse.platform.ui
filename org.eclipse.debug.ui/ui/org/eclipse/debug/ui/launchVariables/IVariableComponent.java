@@ -35,14 +35,22 @@ public interface IVariableComponent {
 	public Control getControl();
 	
 	/**
+	 * Enables the receiver if the argument is <code>true</code>,
+ 	 * and disables it otherwise. A disabled component has all controls 
+     * typically not selectable from the user interface and draws with an
+     * inactive or "grayed" look.
+	 */
+	public void setEnabled(boolean enabled);
+	
+	/**
 	 * Creates the control to edit the variable. Does nothing
 	 * if no editing supported.
 	 * 
 	 * @param parent the composite to parent all controls to
-	 * @param varTag the variable tag name to create the controls for
+	 * @param varName the variable name to display as the name of this component
 	 * @param page the dialog page this visual component will be part of
 	 */
-	public void createContents(Composite parent, String varTag, IVariableComponentContainer page);
+	public void createContents(Composite parent, String varName, IVariableComponentContainer page);
 
 	/**
 	 * Returns the variable value as specified by

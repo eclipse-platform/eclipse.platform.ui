@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.ui.launchVariables.*;
+import org.eclipse.debug.ui.launchVariables.AbstractVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -82,6 +82,14 @@ public class ResourceComponent extends AbstractVariableComponent {
 		resourceList.setContentProvider(new WorkbenchContentProvider());
 		resourceList.setLabelProvider(new WorkbenchLabelProvider());
 		resourceList.setInput(ResourcesPlugin.getWorkspace().getRoot());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.launchVariables.IVariableComponent#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		mainGroup.setEnabled(enabled);
+		resourceList.getTree().setEnabled(enabled);
 	}
 	
 	/**

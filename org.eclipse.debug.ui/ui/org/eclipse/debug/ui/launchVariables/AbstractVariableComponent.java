@@ -37,6 +37,13 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.launchVariables.IVariableComponent#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		mainGroup.setEnabled(enabled);
+	}
+
 	/**
 	 * Returns this component's container, which can display messages
 	 * for this component.

@@ -15,7 +15,7 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.launchVariables.*;
+import org.eclipse.debug.ui.launchVariables.AbstractVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -44,7 +44,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 public class WorkingSetComponent extends AbstractVariableComponent {
 	
 	private ILabelProvider labelProvider;
-	
+	private Button chooseButton;
 	private IWorkingSet currentWorkingSet;
 
 	/**
@@ -63,7 +63,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		GridLayout layout= (GridLayout)mainGroup.getLayout();
 		layout.numColumns= 2;
 
-		Button chooseButton = new Button(mainGroup, SWT.PUSH);
+		chooseButton = new Button(mainGroup, SWT.PUSH);
 		GridData data= new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
@@ -151,5 +151,13 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		if (labelProvider != null) {
 			labelProvider.dispose();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.launchVariables.IVariableComponent#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		mainGroup.setEnabled(enabled);
+		chooseButton.setEnabled(enabled);
 	}
 }
