@@ -12,19 +12,30 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -232,7 +243,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		synchronized (getFamily()) {	
 			Subscriber subscriber = getSubscriber();
 			IResource[] roots = getResources();
-			MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, subscriber.getName(), null); //$NON-NLS-1$
 			
 			// if there are no resources to refresh, just return
 			if(subscriber == null || roots == null) {
@@ -246,22 +256,19 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				if(monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				try {
-					// Set-up change listener so that we can determine the changes found
-					// during this refresh.						
-					subscriber.addListener(changeListener);
-					// Pre-Notify
-					notifyListeners(STARTED, event);
-					// Perform the refresh		
-					monitor.setTaskName(getName());
-					NonblockingProgressMonitor wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
-					subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);					
-				} catch(TeamException e) {
-					status.merge(e.getStatus());
-				}
+				// Set-up change listener so that we can determine the changes found
+				// during this refresh.						
+				subscriber.addListener(changeListener);
+				// Pre-Notify
+				notifyListeners(STARTED, event);
+				// Perform the refresh		
+				monitor.setTaskName(getName());
+				NonblockingProgressMonitor wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
+				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
+				// Prepare the results
 				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isJobModal()));
 				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isJobModal()));
-				event.setStatus(status.isOK() ? calculateStatus(event) : (IStatus) status);
+				event.setStatus(calculateStatus(event));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
 					// The refresh was cancelled by the user
@@ -270,6 +277,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					// The refresh was cancelled due to a blockage
 					event.setStatus(POSTPONED);
 				}
+			} catch(TeamException e) {
+				event.setStatus(e.getStatus());
 			} finally {
 				event.setStopTime(System.currentTimeMillis());
 				subscriber.removeListener(changeListener);
