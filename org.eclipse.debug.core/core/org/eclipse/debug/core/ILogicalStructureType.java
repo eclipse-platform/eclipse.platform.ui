@@ -11,6 +11,7 @@
 package org.eclipse.debug.core;
 
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
 
 /**
  * Provides a value representing the logical structure of a raw implementation value
@@ -42,10 +43,15 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
  * <li>description - description of the logical structure provided</li>
  * </ul>
  * </p>
+ * <p>
+ * Clients are not intended to implement this interface. Instead clients
+ * providing logical strucutre types provide and implement an
+ * <code>ILogicalStructureTypeDelegate</code>.
+ * </p>
  * @since 3.0
  * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate
  */
-public interface ILogicalStructureType extends ILogicalStructureTypeDelegate{
+public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
 	
 	/**
 	 * Returns a simple description of the logical structure provided by this

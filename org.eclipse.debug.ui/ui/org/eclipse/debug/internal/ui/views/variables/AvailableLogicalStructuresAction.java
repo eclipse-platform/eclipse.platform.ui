@@ -103,7 +103,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
-				Action action = new SelectLogicalStructureAction(getView(), types, i);
+				Action action = new SelectLogicalStructureAction(getView(), types, getValue(), i);
 				StringBuffer label= new StringBuffer();
 				//add the numerical accelerator
 				if (i < 9) {

@@ -111,4 +111,16 @@ public class LogicalStructureType implements ILogicalStructureType {
 		}
 		return fDelegate;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
+	 */
+	public String getDescription(IValue value) {
+		ILogicalStructureTypeDelegate delegate = getDelegate();
+		if (delegate instanceof ILogicalStructureTypeDelegate2) {
+			ILogicalStructureTypeDelegate2 d2 = (ILogicalStructureTypeDelegate2) delegate;
+			return d2.getDescription(value);
+		}
+		return getDescription();
+	}
 }

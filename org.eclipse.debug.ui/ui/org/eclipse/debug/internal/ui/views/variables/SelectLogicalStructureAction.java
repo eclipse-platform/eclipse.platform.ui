@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 import org.eclipse.debug.core.ILogicalStructureType;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -31,10 +32,11 @@ public class SelectLogicalStructureAction extends Action {
 	 * 
 	 * @param view Variables view
 	 * @param group group of applicable structures
+	 * @param value the value for which logical structures are to be chosen
 	 * @param index the offset into the given group that this action enables
 	 */
-	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType[] group, int index) {
-		super(group[index].getDescription(), IAction.AS_CHECK_BOX);
+	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType[] group, IValue value, int index) {
+		super(group[index].getDescription(value), IAction.AS_CHECK_BOX);
 		setView(view);
 		fTypes = group;
 		fIndex = index;

@@ -9,14 +9,7 @@
          This extension point allows debuggers to present alternative logical structures of values. Often, complex data structures are more convenient to navigate in terms of their logical structure, rather than in terms of their implementation. For example, no matter how a list is implemented (linked, array, etc.), a user may simply want to see the elements in the list in terms of an ordered collection. This extension point allows the contribution of logical structure types, to provide translations from a raw implementation value to a logical value.
       </documentation>
    </annotation>
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -55,17 +48,17 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="description" type="string" use="required">
+         <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  a description of this logical structure
+                  a description of this logical structure. Since 3.1, this attribute is optional. When upspecified, a logical structure type delegate must also implement &lt;code&gt;ILogicalStructureTypeDelegate2&lt;/code&gt; to provide descriptions for values that logical structures are provided for.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualified name of a Java class that implements &lt;code&gt;ILogicalStructureTypeDelegate&lt;/code&gt;
+                  fully qualified name of a Java class that implements &lt;code&gt;ILogicalStructureTypeDelegate&lt;/code&gt;. The class may optionally implement &lt;code&gt;ILogicalStructureTypeDelegate2&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILogicalStructureTypeDelegate"/>
@@ -81,6 +74,15 @@
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
