@@ -64,7 +64,7 @@ public class FeatureGeneralPropertyPage
 		addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.provider"), feature.getProvider()); //$NON-NLS-1$
 		long size = feature.getInstallSize();
 		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.size"), new Long(size).toString() + " KB"); //$NON-NLS-1$ //$NON-NLS-2$
+			addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.size"), new Long(size).toString() + " " + UpdateUI.getString("FeatureGeneralPropertyPage.Kilobytes")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	}
 	
