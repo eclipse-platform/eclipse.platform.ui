@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,13 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		if (useDefault) {
 			List rtes = new ArrayList(10);
-			IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+			IVMInstall vm= null;
+			try {
+				vm= JavaRuntime.computeVMInstall(configuration);
+			} catch (CoreException ce) {
+				//likely in a non-Java project
+				vm= JavaRuntime.getDefaultVMInstall();
+			}
 			IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 			containerPath = containerPath.append(new Path(vm.getVMInstallType().getId()));
 			containerPath = containerPath.append(new Path(vm.getName()));

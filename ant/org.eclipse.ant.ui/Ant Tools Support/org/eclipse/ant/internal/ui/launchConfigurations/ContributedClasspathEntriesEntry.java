@@ -54,12 +54,14 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	 */
 	public void initializeFrom(Element memento) throws CoreException {
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
 	public String getTypeId() {
 		return TYPE_ID;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -81,7 +83,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 			String path = entry.getEntryURL().getPath();
 			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
 				haveToolsEntry= true;
-				//replace with dynamically resolved tools.jar based on
+				// replace with dynamically resolved tools.jar based on
 				// the JRE being used
 				addToolsJar(configuration, rtes, path);
 			} else {
@@ -94,7 +96,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
 	}
 	
-	private void addToolsJar(ILaunchConfiguration configuration, List rtes, String path) throws CoreException {
+	private void addToolsJar(ILaunchConfiguration configuration, List rtes, String path) {
 		IRuntimeClasspathEntry tools = getToolsJar(configuration);
 		if (tools == null) {
 			if (path != null) {
@@ -105,23 +107,27 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 			rtes.add(tools);
 		}
 	}
-
+	
 	/**
 	 * Returns the tools.jar to use for this launch configuration, or <code>null</code>
 	 * if none.
 	 * 
 	 * @param configuration configuration to resolve a tools.jar for
 	 * @return associated tools.jar archive, or <code>null</code>
-	 * @throws CoreException
 	 */
-	private IRuntimeClasspathEntry getToolsJar(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstall install = JavaRuntime.computeVMInstall(configuration);
-		if (install != null) {
-			IAntClasspathEntry entry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry(new Path(install.getInstallLocation().getAbsolutePath()));
-			if (entry != null) {
-				return JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath()));
+	private IRuntimeClasspathEntry getToolsJar(ILaunchConfiguration configuration) {
+		try {
+			IVMInstall install = JavaRuntime.computeVMInstall(configuration);
+			if (install != null) {
+				IAntClasspathEntry entry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry(new Path(install.getInstallLocation().getAbsolutePath()));
+				if (entry != null) {
+					return JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath()));
+				}
 			}
+		} catch (CoreException ce) {
+			//likely dealing with a non-j=Java project
 		}
+			
 		return null;
 	}
 	
