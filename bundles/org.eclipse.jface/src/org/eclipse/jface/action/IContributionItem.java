@@ -35,8 +35,11 @@ import org.eclipse.swt.widgets.*;
 public interface IContributionItem {
 
 	/**
-	 * Diposes of this contribution item. Clients should not call this method
-	 * directly. It is called by the parent contribution manager.
+	 * Disposes of this contribution item. Called by the parent
+	 * contribution manager when the manager is being disposed.
+	 * Clients should not call this method directly.
+	 * 
+	 * @since 2.1
 	 */
 	public void dispose();
 	/**
