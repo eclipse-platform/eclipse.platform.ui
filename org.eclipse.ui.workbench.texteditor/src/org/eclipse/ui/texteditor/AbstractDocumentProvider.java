@@ -497,8 +497,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			if (e instanceof CoreException)
 				throw (CoreException) e;
 			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
-		} catch (InterruptedException e) {
-			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+		} catch (InterruptedException x) {
+			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, x.getMessage(), x));
 		}
 	}
 		
@@ -735,16 +735,25 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IDocumentProviderExtension#validateState(Object, Object)
 	 * @since 2.0
 	 */
-	public void validateState(Object element, Object computationContext) throws CoreException {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		if (info == null)
+	public void validateState(final Object element, final Object computationContext) throws CoreException {
+		if (element == null)
 			return;
-
-		doValidateState(element, computationContext);
-
-		doUpdateStateCache(element);
-		info.fIsStateValidated= true;
-		fireElementStateValidationChanged(element, true);
+		
+		DocumentProviderOperation operation= new DocumentProviderOperation() {
+			protected void execute(IProgressMonitor monitor) throws CoreException {
+				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+				if (info == null)
+					return;
+				
+				doValidateState(element, computationContext);
+				
+				doUpdateStateCache(element);
+				info.fIsStateValidated= true;
+				fireElementStateValidationChanged(element, true);
+			}
+		};
+		
+		executeOperation(operation, getProgressMonitor());
 	}
 	
 	/**
