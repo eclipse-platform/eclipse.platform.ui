@@ -163,17 +163,18 @@ public class Help
 
 		};
 		
-		f.addWindowListener(new WindowAdapter()
-		{
+		f.addWindowListener(new WindowAdapter() {
 			/*
 			 * @see WindowListener#windowClosed(WindowEvent)
 			 */
-			public void windowClosed(WindowEvent e)
+			public void windowClosing(WindowEvent e)
 			{
 				f.dispose();
 				help.shutdown();
+				System.exit(0);
 			}
 		});
+	
 		
 		b1.addActionListener(a1);
 		b2.addActionListener(a2);
