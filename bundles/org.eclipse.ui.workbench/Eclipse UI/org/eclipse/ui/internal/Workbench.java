@@ -953,8 +953,8 @@ public final class Workbench implements IWorkbench {
 	 * Initializes the workbench fonts with the stored values. 
 	 */
 	private void initializeFonts() {
-	    FontDefinition[] colorDefinitions = FontDefinition.getDefinitions();
-		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), colorDefinitions, getPreferenceStore());
+	    FontDefinition[] fontDefinitions = FontDefinition.getDefinitions();
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), fontDefinitions, getPreferenceStore());
 	}
 	
 //	/**
