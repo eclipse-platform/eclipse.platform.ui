@@ -24,14 +24,6 @@
   </library> 
 </runtime>
 
-<extension id="app" point="org.eclipse.core.runtime.applications">
-  <application> 
-     <run class="org.eclipse.ant.tests.core.testplugin.TestWorkbench">
-		<parameter name="productInfo" value="product.ini"/>
-     </run>
-  </application>
-</extension>
-
 <extension point="org.eclipse.ant.core.extraClasspathEntries">
 		<extraClasspathEntry
 		library="lib/antTestsSupport.jar">
