@@ -40,6 +40,9 @@ public class BrowsersPreferencePage
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setText(WorkbenchResources.getString("select_browser"));
+		createSpacer(mainComposite);
+		Label tableDescription = new Label(mainComposite, SWT.NULL);
+		tableDescription.setText(WorkbenchResources.getString("current_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
 		browsersTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);
@@ -81,6 +84,7 @@ public class BrowsersPreferencePage
 				item.setChecked(true);
 			else
 				item.setChecked(false);
+			item.setGrayed(aDescs.length == 1);
 		}
 		return new Composite(parent, SWT.NULL);
 	}
@@ -108,4 +112,17 @@ public class BrowsersPreferencePage
 		}
 		return true;
 	}
+	/**
+	* Creates a horizontal spacer line that fills the width of its container.
+	*
+	* @param parent the parent control
+	*/
+	private void createSpacer(Composite parent) {
+		Label spacer = new Label(parent, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.BEGINNING;
+		spacer.setLayoutData(data);
+	}
+
 }
