@@ -18,6 +18,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
 import java.util.List;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
@@ -91,6 +92,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private static ViewerSorter fSorter;
 	
 	private static final Object[] EMPTY_ARRAY= new Object[0];
+	
+	private AntEditor fEditor;
 	
 	/**
 	 * A viewer filter that removes internal targets
@@ -413,7 +416,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**
 	 * Creates a new AntEditorContentOutlinePage.
 	 */
-	public AntEditorContentOutlinePage(XMLCore core) {
+	public AntEditorContentOutlinePage(XMLCore core, AntEditor editor) {
 		super();
 		fCore= core;
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
@@ -421,6 +424,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		fFilterProperties= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);
 		fFilterTopLevel= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);
 		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
+		fEditor= editor;
 	}
 
 	/* (non-Javadoc)
@@ -482,6 +486,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		tbm.add(new FilterPropertiesAction(this));
 		tbm.add(new FilterImportedElementsAction(this));
 		tbm.add(new FilterTopLevelAction(this));
+		tbm.add(new ToggleLinkWithEditorAction(fEditor));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
@@ -682,6 +687,20 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			return new ShowInContext(null, selection);
 		} else {
 			return null;
+		}
+	}
+	
+	public void select(AntElementNode node) {
+		if (getTreeViewer() != null) {
+			ISelection s= getTreeViewer().getSelection();
+			if (s instanceof IStructuredSelection) {
+				IStructuredSelection ss= (IStructuredSelection) s;
+				List nodes= ss.toList();
+				if (!nodes.contains(node)) {
+					s= (node == null ? StructuredSelection.EMPTY : new StructuredSelection(node));
+					getTreeViewer().setSelection(s, true);
+				}
+			}
 		}
 	}
 }

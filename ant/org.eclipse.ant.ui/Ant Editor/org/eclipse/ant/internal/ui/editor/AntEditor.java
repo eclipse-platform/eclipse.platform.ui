@@ -27,6 +27,7 @@ import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -52,8 +53,10 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
@@ -74,6 +77,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -88,6 +92,71 @@ public class AntEditor extends TextEditor {
 			handlePreferenceStoreChanged(event);
 		}
 	};
+	
+	/**
+	 * Updates the Ant outline page selection and this editor's range indicator.
+	 * 
+	 * @since 3.0
+	 */
+	private class EditorSelectionChangedListener implements ISelectionChangedListener  {
+		
+		/**
+		 * Installs this selection changed listener with the given selection provider. If
+		 * the selection provider is a post selection provider, post selection changed
+		 * events are the preferred choice, otherwise normal selection changed events
+		 * are requested.
+		 * 
+		 * @param selectionProvider
+		 */
+		public void install(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null) {
+				return;
+			}
+				
+			if (selectionProvider instanceof IPostSelectionProvider)  {
+				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+				provider.addPostSelectionChangedListener(this);
+			} else  {
+				selectionProvider.addSelectionChangedListener(this);
+			}
+		}
+
+		/**
+		 * Removes this selection changed listener from the given selection provider.
+		 * 
+		 * @param selectionProviderstyle
+		 */
+		public void uninstall(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null) {
+				return;
+			}
+			
+			if (selectionProvider instanceof IPostSelectionProvider)  {
+				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+				provider.removePostSelectionChangedListener(this);
+			} else  {
+				selectionProvider.removeSelectionChangedListener(this);
+			}			
+		}
+		
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			ISelection selection= event.getSelection();
+			AntElementNode node= null;
+			if (selection instanceof ITextSelection) {
+				ITextSelection textSelection= (ITextSelection)selection;
+				int offset= textSelection.getOffset();
+				node= getAntModel().getNode(offset);
+			}
+		
+			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
+				synchronizeOutlinePage(node, true);
+			}
+			setSelection(node, false);
+		}
+	}
 	
 	static class TabConverter {
 		
@@ -163,7 +232,8 @@ public class AntEditor extends TextEditor {
 				}
 			}
 		}
-	}	
+	}
+	
 	class StatusLineSourceViewer extends SourceViewer{
 		
 		private boolean fIgnoreTextConverters= false;
@@ -225,20 +295,26 @@ public class AntEditor extends TextEditor {
 	/**
 	 * Selection changed listener for the outline view.
 	 */
-    protected SelectionChangedListener selectionChangedListener = new SelectionChangedListener();
-    class SelectionChangedListener  implements ISelectionChangedListener {
+    protected ISelectionChangedListener fSelectionChangedListener = new ISelectionChangedListener(){
         public void selectionChanged(SelectionChangedEvent event) {
             doSelectionChanged(event);
         }
-    }
+    };
     
     /**
      * The page that shows the outline.
      */
-    protected AntEditorContentOutlinePage page;
+    protected AntEditorContentOutlinePage fOutlinePage;
     
     /** The editor's tab to spaces converter */
 	private TabConverter fTabConverter;
+	
+	/**
+	 * The editor selection changed listener.
+	 * 
+	 * @since 3.0
+	 */
+	private EditorSelectionChangedListener fEditorSelectionChangedListener;
   
     public AntEditor() {
         super();
@@ -298,16 +374,16 @@ public class AntEditor extends TextEditor {
     }
 
 	private AntEditorContentOutlinePage getOutlinePage() {
-		if (page == null) {
-			page= new AntEditorContentOutlinePage(XMLCore.getDefault());
-			page.addPostSelectionChangedListener(selectionChangedListener);
+		if (fOutlinePage == null) {
+			fOutlinePage= new AntEditorContentOutlinePage(XMLCore.getDefault(), this);
+			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
 			setOutlinePageInput(getEditorInput());
 		}
-		return page;
+		return fOutlinePage;
 	}
 
-    private void doSelectionChanged(SelectionChangedEvent aSelectionChangedEvent) {
-        IStructuredSelection selection= (IStructuredSelection)aSelectionChangedEvent.getSelection();
+    private void doSelectionChanged(SelectionChangedEvent selectionChangedEvent) {
+        IStructuredSelection selection= (IStructuredSelection)selectionChangedEvent.getSelection();
 
         if (!isActivePart() && AntUIPlugin.getActivePage() != null) {
 			AntUIPlugin.getActivePage().bringToTop(this);
@@ -320,9 +396,7 @@ public class AntEditor extends TextEditor {
     }
 
     private boolean isActivePart() {
-        IWorkbenchWindow window= getSite().getWorkbenchWindow();
-        IPartService service= window.getPartService();
-        IWorkbenchPart part= service.getActivePart();
+        IWorkbenchPart part= getActivePart();
         return part != null && part.equals(this);
     }
     
@@ -452,12 +526,12 @@ public class AntEditor extends TextEditor {
 	}
 
 	private void setOutlinePageInput(IEditorInput input) {
-		if (page != null) {
+		if (fOutlinePage != null) {
 			IDocumentProvider provider= getDocumentProvider();
 			if (provider instanceof AntEditorDocumentProvider) {
 				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
 				AntModel model= documentProvider.getAntModel(input);
-				page.setPageInput(model);
+				fOutlinePage.setPageInput(model);
 			}
 		}
 	}
@@ -601,6 +675,8 @@ public class AntEditor extends TextEditor {
 		if (isTabConversionEnabled()) {
 			startTabConversion();		
 		}
+		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
+		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
 	
 	private boolean isTabConversionEnabled() {
@@ -614,6 +690,10 @@ public class AntEditor extends TextEditor {
 	public void dispose() {
 		super.dispose();
 		JFaceResources.getColorRegistry().removeListener(fColorChangeListener);
+		if (fEditorSelectionChangedListener != null)  {
+			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
+			fEditorSelectionChangedListener= null;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -645,5 +725,57 @@ public class AntEditor extends TextEditor {
 				}
 			});
 		}
-	}	
+	}
+
+	public void synchronizeOutlinePage(boolean checkIfOutlinePageActive) {
+		AntElementNode node= null;
+		ISelection selection= getSelectionProvider().getSelection();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection)selection;
+			int offset= textSelection.getOffset();
+			node= getAntModel().getNode(offset);
+		}
+		synchronizeOutlinePage(node, checkIfOutlinePageActive);
+		
+	}
+	
+	protected void synchronizeOutlinePage(AntElementNode node, boolean checkIfOutlinePageActive) {
+		if (fOutlinePage != null && !(checkIfOutlinePageActive && isAntOutlinePageAction())) {
+			fOutlinePage.removePostSelectionChangedListener(fSelectionChangedListener);
+			fOutlinePage.select(node);
+			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
+		}
+	}
+	
+	public void reconciled() {
+		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
+			Shell shell= getSite().getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						synchronizeOutlinePage(true);
+					}
+				});
+			}
+		}
+	}
+	
+	private boolean isAntOutlinePageAction() {
+		IWorkbenchPart part= getActivePart();
+		return part instanceof ContentOutline && ((ContentOutline)part).getCurrentPage() == fOutlinePage;
+	}
+
+	private IWorkbenchPart getActivePart() {
+		IWorkbenchWindow window= getSite().getWorkbenchWindow();
+		IPartService service= window.getPartService();
+		return service.getActivePart();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	protected void doSetSelection(ISelection selection) {
+		super.doSetSelection(selection);
+		synchronizeOutlinePage(true);
+	}
 }
