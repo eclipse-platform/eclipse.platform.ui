@@ -30,7 +30,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 		for (int i =0; i<categories.length; i++){
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());
 		}
-System.out.println(remoteSite.getDescription().getURL().toExternalForm());
+		System.out.println(remoteSite.getDescription().getURL().toExternalForm());
 		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
@@ -55,7 +55,6 @@ System.out.println(remoteSite.getDescription().getURL().toExternalForm());
 			
 			url = feature.getDescription().getURL();
 			if (url!=null){
-System.err.println("$$$$$$$$$$$$$$$$$$$$$$$$ ->"+url.toExternalForm());				
 				assertTrue((new File(url.getFile())).exists());
 			}
 			
@@ -71,9 +70,9 @@ System.err.println("$$$$$$$$$$$$$$$$$$$$$$$$ ->"+url.toExternalForm());
 	private void print(IURLEntry info, String text){
 		System.out.print("->"+text+":");
 		if (info.getURL()!=null) 
-			System.err.println("<"+info.getURL().toExternalForm()+">");
+			System.out.println("<"+info.getURL().toExternalForm()+">");
 		else 
-			System.err.println(info.getAnnotation());
+			System.out.println(info.getAnnotation());
 	}
 } 
 
