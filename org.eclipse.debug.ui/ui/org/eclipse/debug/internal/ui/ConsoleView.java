@@ -117,7 +117,7 @@ public class ConsoleView extends ViewPart {
 		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, new ConsoleViewerAction(bundle, "copy_action.", fConsoleViewer, fConsoleViewer.COPY));
 		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, new ConsoleViewerAction(bundle, "paste_action.", fConsoleViewer, fConsoleViewer.PASTE));
 		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, new ConsoleViewerAction(bundle, "select_all_action.", fConsoleViewer, fConsoleViewer.SELECT_ALL));
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", getSite().getWorkbenchWindow()));				
+		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, new ConsoleGotoLineAction(bundle, "goto_line_action.", fConsoleViewer));				
 	
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
