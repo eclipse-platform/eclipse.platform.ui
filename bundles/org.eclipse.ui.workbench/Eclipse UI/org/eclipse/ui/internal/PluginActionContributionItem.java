@@ -11,9 +11,14 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.Collection;
+
 import org.eclipse.jface.action.ActionContributionItem;
+
 import org.eclipse.ui.IActionDelegate2;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.activities.IObjectContributionRecord;
 
 /**
  * Contribution item for actions provided by plugins via workbench
@@ -21,7 +26,8 @@ import org.eclipse.ui.internal.roles.RoleManager;
  */
 public class PluginActionContributionItem extends ActionContributionItem {
 
-	/**
+	private static final String PLUGIN_CONTRIBUTION_ITEM = "PLUGIN_CONTRIBUTION_ITEM"; //$NON-NLS-1$
+    /**
 	 * Creates a new contribution item from the given action.
 	 * The id of the action is used as the id of the item.
 	 *
@@ -29,9 +35,43 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 */
 	public PluginActionContributionItem(PluginAction action) {
 		super(action);
+        
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, true);
+        Object activityObject = getActivityObject(action);
+        if (activityObject != null) {
+            IObjectContributionRecord record = objectManager.addObject(
+                action.getConfigElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 
+                action.getId(), 
+                activityObject);
+            objectManager.applyPatternBindings(record);
+        }
 	}
 
-	/**
+    /**
+     * Temporary method that will generate a String that is an object that can 
+     * represent this ActionContributionItem.  This is the sum of the pluginId
+     * and the actionId in the given PluginAction.
+     * 
+     * TODO: determine if this object itself may be stored as the object of 
+     * interest.
+     *   
+     * @param action the PluginAction
+     * @return an Object representing the plugin/action combination or 
+     * <code>null</code> if either the plugin or action id was null.
+     * @since 3.0
+     */    
+    private Object getActivityObject(PluginAction action) {        
+        String pluginId = action.getConfigElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+        String actionId = action.getId();
+        if (pluginId == null || actionId == null) {
+            return null;
+        }
+        else {
+            return pluginId + '/' + actionId;
+        }
+    }
+
+    /**
 	 * The default implementation of this <code>IContributionItem</code>
 	 * method notifies the delegate if loaded and implements the
 	 * <code>IActionDelegate2</code> interface.
@@ -49,9 +89,22 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
 	 */
 	public boolean isVisible() {
-		if(RoleManager.getInstance().isEnabledItem(this))
-			return super.isVisible();
-		else
-			return false;
-	}
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, false);
+        Object activityObject = getActivityObject((PluginAction) getAction());
+
+        // if there was no manager or if an object for this contribution could 
+        // not be created, return isVisible().
+        if (objectManager == null || activityObject == null) {
+            return super.isVisible();
+        }
+
+        Collection activeObjects = objectManager.getActiveObjects();
+        // check for visibility only if the active objects contains this object.
+        if (activeObjects.contains(activityObject)) {
+            return super.isVisible();
+        }
+        else {
+            return false;   
+        }
+    }
 }

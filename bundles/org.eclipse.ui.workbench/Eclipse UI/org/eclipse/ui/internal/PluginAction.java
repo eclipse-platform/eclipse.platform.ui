@@ -338,4 +338,13 @@ public abstract class PluginAction extends Action
 	public String getOverrideActionId() {
 		return null;
 	}
+    
+    /**
+     * @return the IConfigurationElement used to create this PluginAction.
+     * 
+     * @since 3.0
+     */
+    protected IConfigurationElement getConfigElement() {
+        return configElement;
+    }
 }
