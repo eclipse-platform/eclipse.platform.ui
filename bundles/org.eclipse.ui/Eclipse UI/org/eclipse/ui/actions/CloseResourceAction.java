@@ -58,7 +58,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 			IWorkbenchPage[] pages = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
 				IWorkbenchPage page = pages[j];
-				IEditorPart[] editors = page.getEditors();
+				IEditorPart[] editors = page.getDirtyEditors();
 				for (int k = 0; k < editors.length; k++) {
 					IEditorPart editor = editors[k];
 					IEditorInput input = editor.getEditorInput();

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -353,7 +354,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 */
 	private void updateEditors(IWorkbenchPage[] pages) {
 		for (int j = 0; j < pages.length; j++) {
-			IEditorPart editors[] = pages[j].getEditors();
+			IEditorReference editors[] = pages[j].getEditorReferences();
 			for (int k = 0; k < editors.length; k++) {
 				elements.add(new Adapter(editors[k]));
 			}
@@ -383,7 +384,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			Adapter e = (Adapter) iterator.next();
 			TableItem item = new TableItem(editorsTable,SWT.NULL);
 			updateItem(item,e);
-			if((selection != null) && (selection == e.editor))
+			if((selection != null) && (selection == e.editorRef))
 				editorsTable.setSelection(new TableItem[]{item});
 		}
 		// update the buttons, because the selection may have changed
@@ -455,47 +456,47 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * in the same type.
 	 */
 	private class Adapter implements Comparable {
-		IEditorPart editor;
+		IEditorReference editorRef;
 		IEditorInput input;
 		IEditorDescriptor desc;
 		String text[];
 		Image images[];
-		Adapter(IEditorPart part) {
-			editor = part;
+		Adapter(IEditorReference ref) {
+			editorRef = ref;
 		}
 		Adapter(IEditorInput input,IEditorDescriptor desc) {
 			this.input = input;
 			this.desc = desc;
 		}
 		boolean isDirty() {
-			if(editor == null)
+			if(editorRef == null)
 				return false;
-			return editor.isDirty();
+			return editorRef.isDirty();
 		}
 		boolean isOpened() {
-			return editor != null;
+			return editorRef != null;
 		}
 		void close() {
-			if(editor == null)
+			if(editorRef == null)
 				return;
-			WorkbenchPage p = (WorkbenchPage)editor.getEditorSite().getPage();
-			p.closeEditor(editor,true);
+			WorkbenchPage p = ((WorkbenchPartReference)editorRef).getPane().getPage();
+			p.closeEditor(editorRef,true);
 		}
 		void save(IProgressMonitor monitor) {
-			if(editor == null)
+			if(editorRef == null)
 				return;
-			editor.doSave(monitor);
+			((IEditorPart)editorRef.getPart(true)).doSave(monitor);
 		}
 		String[] getText() {
 			if(text != null)
 				return text;
 			text = new String[2];
-			if(editor != null) {	
-				if(editor.isDirty())
-					text[0] = "*" + editor.getTitle(); //$NON-NLS-1$
+			if(editorRef != null) {	
+				if(editorRef.isDirty())
+					text[0] = "*" + editorRef.getTitle(); //$NON-NLS-1$
 				else
-					text[0] = editor.getTitle();
-				text[1] = editor.getTitleToolTip();
+					text[0] = editorRef.getTitle();
+				text[1] = editorRef.getTitleToolTip();
 			} else {	
 				text[0] = input.getName();
 				text[1] = input.getToolTipText();
@@ -506,9 +507,10 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			if(images != null)
 				return images;
 			images = new Image[2];
-			if(editor != null) {
-				images[0] = editor.getTitleImage();
-				IPerspectiveDescriptor persp = editor.getEditorSite().getPage().getPerspective();
+			if(editorRef != null) {
+				images[0] = editorRef.getTitleImage();
+  			    WorkbenchPage p = ((WorkbenchPartReference)editorRef).getPane().getPage();
+				IPerspectiveDescriptor persp = p.getPerspective();
 				ImageDescriptor image = persp.getImageDescriptor();
 				if(image == null)
 					image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
@@ -538,7 +540,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		}
 	
 		private void activate(){
-			if(editor != null) {
+			if(editorRef != null) {
+				IEditorPart editor = editorRef.getEditor(true);
 				WorkbenchPage p = (WorkbenchPage)editor.getEditorSite().getPage();
 				Shell s = p.getWorkbenchWindow().getShell();
 				if(s.getMinimized())

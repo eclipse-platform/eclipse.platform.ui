@@ -14,7 +14,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
 /**
  *	Closes all active editors
  */
-public class CloseAllSavedAction extends PartEventAction implements IPageListener {
+public class CloseAllSavedAction extends PartEventAction implements IPageListener, IPropertyListener{
 	private IWorkbenchWindow workbench;	
 /**
  *	Create an instance of this class
@@ -59,13 +59,33 @@ public void pageOpened(org.eclipse.ui.IWorkbenchPage page) {}
  * A part has been closed.
  */
 public void partClosed(IWorkbenchPart part) {
-	updateState();
+	if (part instanceof IEditorPart) {
+		part.removePropertyListener(this);
+		updateState();	
+	}
 }
 /**
  * A part has been opened.
  */
 public void partOpened(IWorkbenchPart part) {	
-	updateState();
+	if (part instanceof IEditorPart) {
+		part.addPropertyListener(this);
+		updateState();	
+	}
+}
+/**
+ * Indicates that a property has changed.
+ *
+ * @param source the object whose property has changed
+ * @param propID the property which has changed.  In most cases this property ID
+ * should be defined as a constant on the source class.
+ */
+public void propertyChanged(Object source, int propID) {
+	if (source instanceof IEditorPart) {
+		if (propID == IEditorPart.PROP_DIRTY) {
+			updateState();
+		}
+	}
 }
 /**
  *	The user has invoked this action
@@ -79,14 +99,16 @@ public void run() {
  * Enable the action if there at least one editor open.
  */
 private void updateState() {
-	IWorkbenchPage page = workbench.getActivePage();
-	if (page != null) {
-		IEditorPart editors[] = page.getEditors();
-		for (int i = 0; i < editors.length; i++) {
-			if(!editors[i].isDirty()) {
-				setEnabled(true);
-				return;
-			}
+	WorkbenchPage page = (WorkbenchPage)workbench.getActivePage();
+	if(page == null) {
+		setEnabled(false);
+		return;
+	}
+	IEditorReference editors[] = page.getSortedEditors();
+	for (int i = 0; i < editors.length; i++) {
+		if(!editors[i].isDirty()) {
+			setEnabled(true);
+			return;
 		}
 	}
 	setEnabled(false);

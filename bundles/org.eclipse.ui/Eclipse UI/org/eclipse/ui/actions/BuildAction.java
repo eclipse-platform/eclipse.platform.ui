@@ -235,16 +235,14 @@ void saveAllResources() {
 		IWorkbenchPage [] pages = windows[i].getPages();
 		for (int j = 0; j < pages.length; j++) {
 			IWorkbenchPage page = pages[j];
-			IEditorPart[] editors = page.getEditors();
+			IEditorPart[] editors = page.getDirtyEditors();
 			for (int k = 0; k < editors.length; k++) {
 				IEditorPart editor = editors[k];
-				if (editor.isDirty()) {
-					IEditorInput input = editor.getEditorInput();
-					if (input instanceof IFileEditorInput) {
-						IFile inputFile = ((IFileEditorInput)input).getFile();
-						if (projects.contains(inputFile.getProject())) {
-							page.saveEditor(editor, false);
-						}
+				IEditorInput input = editor.getEditorInput();
+				if (input instanceof IFileEditorInput) {
+					IFile inputFile = ((IFileEditorInput)input).getFile();
+					if (projects.contains(inputFile.getProject())) {
+						page.saveEditor(editor, false);
 					}
 				}
 			}

@@ -178,7 +178,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				for (int i = 0; i < windows.length; i++) {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
-						IEditorPart editors[] = pages[j].getEditors();
+						WorkbenchPage page = (WorkbenchPage)pages[j];
+						IEditorPart editors[] = page.getDirtyEditors();
 						for (int k = 0; k < editors.length; k++) {
 							IEditorPart editor = editors[k];
 							if(editor.isDirty()) {
@@ -250,20 +251,20 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Show the new updates dialog
 	 */
 	private void showUpdatesDialog() {
-		Shell shell = null;
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if (window != null) // should never be null
-			shell = window.getShell();
-		if (MessageDialog.openQuestion(
-				shell, 
-				WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
-			try {
-				SiteManager.handleNewChanges();
-			} catch (CoreException ex) {
-				WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
-			}
-		}
+//		Shell shell = null;
+//		IWorkbenchWindow window = getActiveWorkbenchWindow();
+//		if (window != null) // should never be null
+//			shell = window.getShell();
+//		if (MessageDialog.openQuestion(
+//				shell, 
+//				WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
+//				WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
+//			try {
+//				SiteManager.handleNewChanges();
+//			} catch (CoreException ex) {
+//				WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
+//			}
+//		}
 	}
 
 	/*
@@ -588,10 +589,47 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			openFirstTimeWindow();
 			
 		openWelcomeDialog();
-		
+		refreshFromLocal();
 		isStarting = false;
 		return true;
 	}
+	private void refreshFromLocal() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
+		if(!refresh)
+			return;
+		//Do not refresh if it was already done by core on startup.
+		for (int i = 0; i < commandLineArgs.length; i++)
+			if(commandLineArgs[i].equalsIgnoreCase("-refresh"))
+				return;
+		IWorkbenchWindow windows[] = getWorkbenchWindows();
+		Shell shell = windows[windows.length - 1].getShell();
+		ProgressMonitorDialog dlg = new ProgressMonitorDialog(shell);
+		final CoreException ex[] = new CoreException[1];
+		try {
+			dlg.run(true,true,new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+						root.refreshLocal(root.DEPTH_INFINITE,monitor);
+					} catch (CoreException e) {
+						ex[0] = e;
+					}
+				}
+			});
+			if(ex[0] != null) {
+				String errorTitle = WorkbenchMessages.getString("Workspace.problemsTitle"); //$NON-NLS-1$
+				String msg = WorkbenchMessages.getString("Workspace.problemMessage"); //$NON-NLS-1$
+				ErrorDialog.openError(shell,errorTitle,msg,ex[0].getStatus());
+			}
+		} catch (InterruptedException e) {
+			//Do nothing. Operation was canceled.
+		} catch (InvocationTargetException e) {
+			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
+			WorkbenchPlugin.getDefault().log(msg,new Status(Status.ERROR,PlatformUI.PLUGIN_ID,0,msg,e.getTargetException()));
+		}
+	}
+	
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);

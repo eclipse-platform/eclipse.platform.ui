@@ -24,10 +24,12 @@ import org.eclipse.ui.internal.*;
  * Note no views are allowed within this container.
  */
 public class EditorArea extends PartSashContainer {
+	
 	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
 	private IPartDropListener partDropListener;
 	private ArrayList editorWorkbooks = new ArrayList(3);
 	private EditorWorkbook activeEditorWorkbook;
+	
 public EditorArea(String editorId, IPartDropListener listener, Listener mouseDownListener) {
 	super(editorId);
 
@@ -38,9 +40,9 @@ public EditorArea(String editorId, IPartDropListener listener, Listener mouseDow
 /**
  * Add an editor to the active workbook.
  */
-public void addEditor(EditorPane part) {
+public void addEditor(EditorPane pane) {
 	EditorWorkbook workbook = getActiveWorkbook();
-	workbook.add(part);
+	workbook.add(pane);
 }
 /**
  * Notification that a child layout part has been

@@ -65,7 +65,10 @@ public void addView(String viewId) {
 
 	try {
 		// Create the part.
-		LayoutPart newPart = viewFactory.createView(viewId);
+		IViewReference ref = viewFactory.createView(viewId);
+		IViewPart view = (IViewPart)ref.getPart(true);
+		ViewSite site = (ViewSite)view.getSite();
+		LayoutPart newPart = site.getPane();		
 		linkPartToPageLayout(viewId, newPart);
 
 		// Add it to the folder.

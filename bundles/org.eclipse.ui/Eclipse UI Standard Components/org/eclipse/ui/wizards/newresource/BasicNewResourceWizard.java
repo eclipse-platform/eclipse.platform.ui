@@ -122,7 +122,11 @@ public static void selectAndReveal(IResource resource, IWorkbenchWindow window) 
 	// get all the view and editor parts
 	List parts = new ArrayList();
 	parts.addAll(Arrays.asList(page.getViews()));
-	parts.addAll(Arrays.asList(page.getEditors()));
+	IEditorReference refs[] = page.getEditorReferences();
+	for (int i = 0; i < refs.length; i++) {
+		if(refs[i].getPart(false) != null)
+			parts.add(refs[i].getPart(false));
+	}
 	
 	final ISelection selection = new StructuredSelection(resource);
 	Iterator enum = parts.iterator();

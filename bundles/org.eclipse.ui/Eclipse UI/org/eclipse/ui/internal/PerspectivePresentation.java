@@ -829,11 +829,11 @@ private void makeFast(LayoutPart part) {
 		LayoutPart[] children = ((PartTabFolder)part).getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof ViewPane)
-				page.addFastView(((ViewPane)children[i]).getViewPart());
+				page.addFastView((IViewPart)((ViewPane)children[i]).getViewReference().getPart(true));
 		}
 	}
 	else {
-		page.addFastView(((ViewPane)part).getViewPart());
+		page.addFastView((IViewPart)((ViewPane)part).getViewReference().getPart(true));
 	}
 }
 /**
@@ -921,7 +921,7 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 	Perspective persp = page.getActivePerspective();
 	if (persp.getActiveFastView() != null) {
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
+			IViewPart part = (IViewPart)((ViewPane)e.dragSource).getPartReference().getPart(true);
 			if (part == persp.getActiveFastView()) {
 				persp.setActiveFastView(null, 0);
 			}
@@ -983,7 +983,7 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		// If the drag source is a fast view, the shortcut bar is
 		// invalid drop target.
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
+			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPartReference().getPart(true);
 			if (isFastView(part)) {
 				e.dropTarget = null;
 				e.relativePosition = PartDragDrop.INVALID;
@@ -1168,7 +1168,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	if (e.relativePosition == PartDragDrop.INVALID) {
 		Perspective persp = page.getActivePerspective();
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
+			IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPartReference().getPart(true);
 			// If the view is a fast view, then it must have been the active fast view.
 			// Make it the active fast view again if it is dropped somewhere invalid.
 			if (isFastView(view)) 
@@ -1193,7 +1193,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	// If the drag source is a fast view, make it a regular view
 	// when it is dropped somewhere valid.
 	if (e.dragSource instanceof ViewPane) {
-		IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
+		IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPartReference().getPart(true);
 		if (isFastView(view)) {
 			page.removeFastView(view);
 		}
@@ -1285,7 +1285,7 @@ public boolean partChangeAffectsZoom(PartPane pane) {
 		return false;
 	if (pane.isZoomed())
 		return false;
-	if(isFastView(pane.getPart()))
+	if(isFastView(pane.getPartReference().getPart(true)))
 		return false;
 	if(pane instanceof EditorPane && getZoomPart() instanceof EditorPane) {
 		if(((EditorPane)pane).getWorkbook().equals(((EditorPane)getZoomPart()).getWorkbook()))
@@ -1532,10 +1532,12 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 		
 	LayoutPart selPart = null;
 	int topIndex = 0;
+	IWorkbenchPartReference sortedPartsArray[] = ((WorkbenchPage)page).getSortedParts();
+	List sortedParts = Arrays.asList(sortedPartsArray);
 	for (int i = 0; i < parts.length; i++) {
 		if (parts[i] instanceof PartPane) {
-			IWorkbenchPart part = ((PartPane) parts[i]).getPart();
-			int index = page.getActivationList().indexOf(part);
+			IWorkbenchPartReference part = ((PartPane) parts[i]).getPartReference();
+			int index = sortedParts.indexOf(part);
 			if (index >= topIndex) {
 				topIndex = index;
 				selPart = parts[i];

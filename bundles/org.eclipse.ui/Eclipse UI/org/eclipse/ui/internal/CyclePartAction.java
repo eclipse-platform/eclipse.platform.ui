@@ -79,7 +79,7 @@ protected void dispose() {
  * Updates the enabled state.
  */
 protected void updateState() {
-	IWorkbenchPage page = getActivePage();
+	WorkbenchPage page = (WorkbenchPage)getActivePage();
 	if (page == null) {
 		setEnabled(false);
 		return;
@@ -87,7 +87,7 @@ protected void updateState() {
 	// enable iff there is at least one other part to switch to
 	// (the editor area counts as one entry)
 	int count = page.getViews().length;
-	if (page.getEditors().length > 0) {
+	if (page.getSortedEditors().length > 0) {
 		++count;
 	}
 	setEnabled(count >= 1);
@@ -113,7 +113,7 @@ public void activate(IWorkbenchPage page,Object selection) {
 		if (selection instanceof IEditorPart) {
 			page.setEditorAreaVisible(true);
 		}
-		page.activate((IWorkbenchPart)selection);
+		page.activate(((IWorkbenchPartReference)selection).getPart(true));
 	}	
 }
 /*
@@ -193,14 +193,12 @@ protected String getTableHeader() {
  * Add all views to the dialog in the activation order
  */
 protected void addItems(Table table,WorkbenchPage page) {
-	IWorkbenchPart parts[] = page.getSortedParts();
-	IWorkbenchPart activeEditor = page.getActiveEditor();
+	IWorkbenchPartReference refs[] = page.getSortedParts();
 	boolean includeEditor = true;
-	for (int i = parts.length - 1; i >= 0 ; i--) {
-		if(parts[i] instanceof IEditorPart) {
+	for (int i = refs.length - 1; i >= 0 ; i--) {
+		if(refs[i] instanceof IEditorReference) {
 			if(includeEditor) {
-				if(activeEditor == null)
-					activeEditor = parts[i];
+				IEditorReference activeEditor = (IEditorReference)refs[i];
 				TableItem item = new TableItem(table,SWT.NONE);
 				item.setText(WorkbenchMessages.getString("CyclePartAction.editor")); //$NON-NLS-1$
 				item.setImage(activeEditor.getTitleImage());
@@ -209,9 +207,9 @@ protected void addItems(Table table,WorkbenchPage page) {
 			}
 		} else {
 			TableItem item = new TableItem(table,SWT.NONE);
-			item.setText(parts[i].getTitle());
-			item.setImage(parts[i].getTitleImage());
-			item.setData(parts[i]);
+			item.setText(refs[i].getTitle());
+			item.setImage(refs[i].getTitleImage());
+			item.setData(refs[i]);
 		}
 	}
 }

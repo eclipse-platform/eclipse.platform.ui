@@ -27,8 +27,6 @@ public class SaveAllAction extends PartEventAction
 	implements IPageListener, IPropertyListener
 {
 	private WorkbenchWindow window;
-	private IWorkbenchPage activePage = null;
-	private ArrayList targets = null;
 /**
  * The default constructor.
  */
@@ -46,17 +44,13 @@ public SaveAllAction(WorkbenchWindow window) {
  * Notifies the listener that a page has been activated.
  */
 public void pageActivated(IWorkbenchPage page) {
-	activePage = page;
-	refreshTargets();
-	testEnable();
+	updateState();
 }
 /**
  * Notifies the listener that a page has been closed
  */
 public void pageClosed(IWorkbenchPage page) {
-	activePage = null;
-	refreshTargets();
-	testEnable();
+	updateState();
 }
 /**
  * Notifies the listener that a page has been opened.
@@ -69,9 +63,7 @@ public void pageOpened(IWorkbenchPage page) {
 public void partClosed(IWorkbenchPart part) {
 	if (part instanceof IEditorPart) {
 		part.removePropertyListener(this);
-		if (targets != null)
-			targets.remove(part);
-		testEnable();	
+		updateState();	
 	}
 }
 /**
@@ -80,9 +72,7 @@ public void partClosed(IWorkbenchPart part) {
 public void partOpened(IWorkbenchPart part) {
 	if (part instanceof IEditorPart) {
 		part.addPropertyListener(this);
-		if (targets != null)
-			targets.add(part);
-		testEnable();	
+		updateState();	
 	}
 }
 /**
@@ -95,20 +85,7 @@ public void partOpened(IWorkbenchPart part) {
 public void propertyChanged(Object source, int propID) {
 	if (source instanceof IEditorPart) {
 		if (propID == IEditorPart.PROP_DIRTY) {
-			testEnable();
-		}
-	}
-}
-/**
- * Refresh the editor list from the active perspective.
- */
-protected void refreshTargets() {
-	targets = null;
-	if (activePage != null) {
-		IEditorPart [] array = activePage.getEditors();
-		targets = new ArrayList(array.length);
-		for (int nX = 0, length = array.length; nX < length; nX ++) {
-			targets.add(array[nX]);
+			updateState();
 		}
 	}
 }
@@ -125,16 +102,8 @@ public void run() {
  * Updates availability depending on number of
  * targets that need saving.
  */
-protected void testEnable() {
-	if (targets != null && targets.size() > 0) {
-		for (int i=0; i<targets.size(); i++) {
-			IEditorPart saveTarget = (IEditorPart)targets.get(i);
-			if (saveTarget.isDirty()) {
-				setEnabled(true);
-				return;
-			}
-		}
-	}
-	setEnabled(false);
+protected void updateState() {
+	IWorkbenchPage page = window.getActivePage();
+	setEnabled(page != null && page.getDirtyEditors().length > 0);
 }
 }

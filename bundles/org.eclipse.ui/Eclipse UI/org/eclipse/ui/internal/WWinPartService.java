@@ -93,7 +93,7 @@ public void pageClosed(IWorkbenchPage page) {
  * Notifies that a page has been opened.
  */
 public void pageOpened(IWorkbenchPage page) {
-	// Ignored.  Wait for activation.
+	pageActivated(page);
 }
 /**
  * Notifes that a part has been activated.

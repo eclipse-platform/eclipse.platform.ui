@@ -100,7 +100,7 @@ public void add(LayoutPart child) {
 	int index = getItemCount();
 	String label = "";//$NON-NLS-1$
 	if (child instanceof PartPane)
-		label = ((PartPane)child).getPart().getSite().getRegisteredName();
+		label = ((PartPane)child).getPartReference().getTitle();
 	add(label, index, child);
 }
 /**
@@ -678,7 +678,7 @@ private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 				oldChild.setContainer(null);
 				
 				if (newChild instanceof PartPane)
-					info.tabText = ((PartPane)newChild).getPart().getSite().getRegisteredName();
+					info.tabText = ((PartPane)newChild).getPartReference().getTitle();
 				CTabItem item = createPartTab(newChild, info.tabText, -1);
 				int index = tabFolder.indexOf(item);
 				setSelection(index);

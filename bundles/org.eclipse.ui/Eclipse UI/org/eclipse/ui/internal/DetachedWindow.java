@@ -128,14 +128,14 @@ public WorkbenchPage getWorkbenchPage() {
  * Close has been pressed.  Close all views.
  */
 protected void handleShellCloseEvent() {
-	List views = new ArrayList();
-	collectViewPanes(views, getChildren());
-	Iterator enum = views.iterator();
-	while (enum.hasNext()) {
-		ViewPane child = (ViewPane)enum.next();
-		page.hideView(child.getViewPart());
-	}
-	close();
+//	List views = new ArrayList();
+//	collectViewPanes(views, getChildren());
+//	Iterator enum = views.iterator();
+//	while (enum.hasNext()) {
+//		ViewPane child = (ViewPane)enum.next();
+//		page.hideView(child.getViewPart());
+//	}
+//	close();
 }
 protected void initializeBounds() {
 	if(bounds != null)

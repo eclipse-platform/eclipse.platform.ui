@@ -25,8 +25,8 @@ public class EditorPane extends PartPane {
 /**
  * Constructs an editor pane for an editor part.
  */
-public EditorPane(IEditorPart part, WorkbenchPage page, EditorWorkbook workbook) {
-	super(part, page);
+public EditorPane(IEditorReference ref, WorkbenchPage page, EditorWorkbook workbook) {
+	super(ref, page);
 	this.workbook = workbook;
 }
 protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
@@ -79,14 +79,13 @@ protected void createTitleBar() {
  * @see PartPane::doHide
  */
 public void doHide() {
-	IWorkbenchPage page = getPart().getSite().getPage();
-	page.closeEditor(getEditorPart(), true);
+	getPage().closeEditor(getEditorReference(), true);
 }
 /**
  * Answer the editor part child.
  */
-public IEditorPart getEditorPart() {
-	return (IEditorPart)getPart();
+public IEditorReference getEditorReference() {
+	return (IEditorReference)getPartReference();
 }
 /**
  * Answer the SWT widget style.
@@ -231,7 +230,7 @@ protected Sashes findSashes() {
  * Update the title attributes for the pane.
  */
 public void updateTitles() {
-	workbook.updateEditorTab(getEditorPart());
+	workbook.updateEditorTab(getEditorReference());
 }
 /**
  * Show a title label menu for this pane.

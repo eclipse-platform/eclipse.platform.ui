@@ -25,7 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  *
  * @see IEditorRegistry
  */
-public interface IEditorDescriptor{
+public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 /**
  * Returns the editor id.
  * <p>

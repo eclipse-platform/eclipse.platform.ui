@@ -32,6 +32,7 @@ public SafeRunnableAdapter(String message) {
 public void handleException(Throwable e) {
 	// Workaround to avoid interactive error dialogs during automated testing
 	if (!ignoreErrors) {
+		e.printStackTrace();
 		if(message == null)
 			message = WorkbenchMessages.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$

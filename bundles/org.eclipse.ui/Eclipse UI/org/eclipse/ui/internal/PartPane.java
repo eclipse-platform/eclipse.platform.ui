@@ -29,7 +29,7 @@ public abstract class PartPane extends LayoutPart
 {
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
-	protected IWorkbenchPart part;
+	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
 	protected ViewForm control;
 	
@@ -39,7 +39,7 @@ public abstract class PartPane extends LayoutPart
 		public Sash top;
 		public Sash bottom;
 	}
-	class PaneContribution extends ContributionItem {
+	private class PaneContribution extends ContributionItem {
 		public boolean isDynamic() {
 			return true;
 		}
@@ -47,8 +47,8 @@ public abstract class PartPane extends LayoutPart
 			MenuItem item; 
 		
 			// Get various view states.
-			WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
-			final boolean isFastView = (page.getActiveFastView() == getPart());
+			IWorkbenchPart part = partReference.getPart(true);
+			final boolean isFastView = (page.getActiveFastView() == part);
 			final boolean isZoomed = page.isZoomed();
 			boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
 		
@@ -101,29 +101,38 @@ public abstract class PartPane extends LayoutPart
 					doHide();
 				}
 			});			
-		}	
-		
-		
-		
+		}
 	}
 	
 /**
  * Construct a pane for a part.
  */
-public PartPane(IWorkbenchPart part, WorkbenchPage workbenchPage) {
-	super(part.getSite().getId());
-	this.part = part;
+public PartPane(IWorkbenchPartReference partReference, WorkbenchPage workbenchPage) {
+	super(partReference.getId());
+	this.partReference = partReference;
 	this.page = workbenchPage;
-	((PartSite)part.getSite()).setPane(this);
+	((WorkbenchPartReference)partReference).setPane(this);
 }
 /**
  * Factory method for creating the SWT Control hierarchy for this Pane's child.
  */
-protected void createChildControl(final Composite parent) {
-	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {part.getTitle()}); //$NON-NLS-1$
+protected void createChildControl() {
+	final IWorkbenchPart part = partReference.getPart(false);
+	if(part == null)
+		return;
+
+	if(control == null || control.getContent() != null)
+		return;
+	
+	final Composite content = new Composite(control, SWT.NONE);
+	content.setLayout(new FillLayout());
+	
+	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {partReference.getTitle()}); //$NON-NLS-1$
 	Platform.run(new SafeRunnableAdapter(error) {
-		public void run() {	
-			part.createPartControl(parent);
+		public void run() {
+			part.createPartControl(content);
+			control.setContent(content);
+			page.firePartOpened(part);
 		}
 		public void handleException(Throwable e) {
 			// Log error.
@@ -132,15 +141,16 @@ protected void createChildControl(final Composite parent) {
 				super.handleException(e);
 
 			// Dispose old part.
-			Control children[] = parent.getChildren();
+			Control children[] = content.getChildren();
 			for (int i = 0; i < children.length; i++){
 				children[i].dispose();
 			}
 			
 			// Create new part.
+			IWorkbenchPart part = partReference.getPart(true);
 			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part);
 			part.getSite().setSelectionProvider(null);
-			newPart.createPartControl(parent);
+			newPart.createPartControl(content);
 			part = newPart;
 		}
 	});
@@ -161,16 +171,12 @@ public void createControl(Composite parent) {
 	createTitleBar();
 
 	// Create content.
-	Composite content = new Composite(control, SWT.NONE);
-	content.setLayout(new FillLayout());
-	createChildControl(content);
-	control.setContent(content);
+	createChildControl();
 	
 	// When the pane or any child gains focus, notify the workbench.
 	control.addListener(SWT.Activate, this);
-
-	page.firePartOpened(part);
 }
+
 protected abstract WorkbenchPart createErrorPart(WorkbenchPart oldPart);
 /**
  * Create a title bar for the pane if required.
@@ -202,7 +208,7 @@ abstract public void doHide();
  */
 protected void doZoom() {
 	if (getWindow() instanceof IWorkbenchWindow)
-		page.toggleZoom(getPart());
+		page.toggleZoom(partReference.getPart(true));
 }
 /**
  * Gets the presentation bounds.
@@ -273,8 +279,8 @@ protected ViewForm getPane() {
 /**
  * Answer the part child.
  */
-public IWorkbenchPart getPart() {
-	return part;
+public IWorkbenchPartReference getPartReference() {
+	return partReference;
 }
 /**
  * Answer the SWT widget style.
@@ -322,7 +328,7 @@ public void moveAbove(Control refControl) {
  * been activated by the user.
  */
 protected void requestActivation() {
-	this.page.requestActivation(part);
+	this.page.requestActivation(partReference.getPart(true));
 }
 /**
  * Sets the parent for this part.
@@ -341,7 +347,7 @@ public void setContainer(ILayoutContainer container) {
  */
 public void setFocus() {
 	requestActivation();
-	part.setFocus();
+	partReference.getPart(true).setFocus();
 }
 /**
  * Sets the workbench page of the view. 
@@ -410,7 +416,7 @@ protected void moveSash(final Sash sash) {
 	final KeyListener listener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
 			if (e.character == SWT.ESC || e.character == '\r') {
-				getPart().setFocus();
+				partReference.getPart(true).setFocus();
 			}
 		}
 	};
@@ -438,6 +444,12 @@ protected void addSizeItem(Menu sizeMenu, String labelKey,final Sash sash) {
 		}
 	});
 	item.setEnabled(!isZoomed() && sash != null);
+}
+/**
+ * Returns the workbench page of this pane.
+ */
+public WorkbenchPage getPage() {
+	return page;
 }
 /**
  * Add the Left,Rigth,Up,Botton menu items to the Size menu.

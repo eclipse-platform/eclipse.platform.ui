@@ -51,7 +51,11 @@ import java.util.*;
  */
 public /*final*/ class WorkbenchImages {
 	private static Map descriptors = new HashMap();
-	private static ImageRegistry imageRegistry ;
+	private static ImageRegistry imageRegistry;
+	
+	//Key: ImageDescriptor
+	//Value: Image
+	private static ReferenceCounter imageCache = new ReferenceCounter();
 
 	/* Declare Common paths */
 
@@ -80,6 +84,13 @@ public /*final*/ class WorkbenchImages {
 	//private final static String PATH_STAT = ICONS_PATH+"stat/";
 	//private final static String PATH_MISC = ICONS_PATH+"misc/";
 	//private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
+	
+/**
+ * Returns the image cache used internally by the workbench.
+ */
+public static ReferenceCounter getImageCache() {
+	return imageCache;
+}
 /**
  * Declare an ImageDescriptor in the descriptor table.
  * @param key   The key to use when registering the image

@@ -51,12 +51,15 @@ public IViewPart createView() throws CoreException
 public String[] getCategoryPath() {
 	return categoryPath;
 }
-	public IConfigurationElement getConfigurationElement() {
-		return configElement;
-	}
-	public String getID() {
-		return id;
-	}
+public IConfigurationElement getConfigurationElement() {
+	return configElement;
+}
+public String getID() {
+	return id;
+}
+public String getId() {
+	return id;
+}
 public ImageDescriptor getImageDescriptor() {
 	if (imageDescriptor != null)
 		return imageDescriptor;

@@ -388,6 +388,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
+		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
 		store.setDefault(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, false);

@@ -165,8 +165,8 @@ public class ViewPane extends PartPane
 /**
  * Constructs a view pane for a view part.
  */
-public ViewPane(IViewPart part, WorkbenchPage page) {
-	super(part, page);
+public ViewPane(IViewReference ref, WorkbenchPage page) {
+	super(ref, page);
 }
 /**
  * Create control. Add the title bar.
@@ -186,7 +186,7 @@ public void createControl(Composite parent) {
 		public void run() { 
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
-			builder.readActionExtensions(getViewPart());
+			builder.readActionExtensions((IViewPart)getViewReference().getPart(true));
 			updateActionBars();
 		}
 		public void handleException(Throwable e) {
@@ -266,7 +266,7 @@ protected void createTitleBar() {
 	control.setTopLeft(titleLabel);
 
 	// Listen to title changes.
-	getViewPart().addPropertyListener(this);
+	getPartReference().addPropertyListener(this);
 	
 	// View toolbar
 	viewToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
@@ -297,29 +297,25 @@ protected void createTitleBar() {
  * @see PartPane#doHide
  */
 public void doHide() {
-	IWorkbenchPage page = getPart().getSite().getPage();
-	page.hideView(getViewPart());
+	getPage().hideView((IViewPart)getViewReference().getPart(true));
 }
 /**
  * Make this view pane a fast view
  */
 protected void doMakeFast() {
-	WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
-	page.addFastView(getViewPart());
+	getPage().addFastView((IViewPart)getViewReference().getPart(true));
 }
 /**
  * Hide the fast view
  */
 protected void doMinimize() {
-	WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
-	page.toggleFastView(getViewPart());
+	getPage().toggleFastView((IViewPart)getViewReference().getPart(true));
 }
 /**
  * Pin the view.
  */
 protected void doDock() {
-	WorkbenchPage page = (WorkbenchPage)getPart().getSite().getPage();
-	page.removeFastView(getViewPart());
+	getPage().removeFastView((IViewPart)getViewReference().getPart(true));
 }
 
 /**
@@ -396,8 +392,8 @@ public ToolBarManager getToolBarManager() {
 /**
  * Answer the view part child.
  */
-public IViewPart getViewPart() {
-	return (IViewPart)getPart();
+public IViewReference getViewReference() {
+	return (IViewReference)getPartReference();
 }
 /**
  * Indicates that a property has changed.
@@ -455,7 +451,7 @@ public void showFocus(boolean inFocus) {
  */
 public void showPaneMenu() {
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getPart()))
+	if(isFastView() && (page.getActiveFastView() != getViewReference().getPart(true)))
 		return;
 	Rectangle bounds = titleLabel.getBounds();
 	showPaneMenu(titleLabel,new Point(0,bounds.height));
@@ -464,7 +460,7 @@ public void showPaneMenu() {
  * Return true if this view is a fast view.
  */
 private boolean isFastView() {
-	return ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
+	return page.isFastView((IViewPart)getViewReference().getPart(true));
 }
 /**
  * Finds and return the sashes around this part.
@@ -571,7 +567,7 @@ public void showViewMenu() {
 		return;
 		
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getPart()))
+	if(isFastView() && (page.getActiveFastView() != getViewReference().getPart(true)))
 		return;
 				
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
@@ -620,7 +616,7 @@ public void updateActionBars() {
  * Update the title attributes.
  */
 public void updateTitles() {
-	IViewPart view = getViewPart();
+	IViewPart view = (IViewPart)getViewReference().getPart(true);
 	String text = view.getTitle();
 	if (text == null)
 		text = "";//$NON-NLS-1$
@@ -637,7 +633,6 @@ public void updateTitles() {
 
 	// notify the page that this view's title has changed
 	// in case it needs to update its fast view button
-	WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
 	page.updateTitle(view);
 }
 }

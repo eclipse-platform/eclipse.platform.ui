@@ -100,6 +100,8 @@ public IWorkbenchPage getPage() {
  * Gets the part pane.
  */
 public PartPane getPane() {
+	if(pane == null)
+		System.out.println("PART SITE: Pane should not be null");
 	return pane;
 }
 /**

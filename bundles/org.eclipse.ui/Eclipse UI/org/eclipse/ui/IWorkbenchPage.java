@@ -208,6 +208,13 @@ public IViewPart findView(String viewId);
  */
 public IEditorPart getActiveEditor();
 /**
+ * Returns the editor with the specified input. Returns null if there
+ * is no opened editor with that input.
+ *
+ * @return an editor with input equals to <code>input</code>
+ */
+public IEditorPart findEditor(IEditorInput input);
+/**
  * Returns a list of the editors open in this page.
  * <p>
  * Note that each page has its own editors; editors are never shared between
@@ -215,8 +222,26 @@ public IEditorPart getActiveEditor();
  * </p>
  *
  * @return a list of open editors
+ * 
+ * @deprecated use getEditorReferences() instead
  */
 public IEditorPart[] getEditors();
+/**
+ * Returns a array of references to open editors in this page.
+ * <p>
+ * Note that each page has its own editors; editors are never shared between
+ * pages.
+ * </p>
+ *
+ * @return a list of open editors
+ */
+public IEditorReference[] getEditorReferences();
+/**
+ * Returns a list of dirty editors in this page.
+ *
+ * @return a list of dirty editors
+ */
+public IEditorPart[] getDirtyEditors();
 /**
  * Returns the input for this page.
  *
@@ -239,12 +264,23 @@ public String getLabel();
  */
 public IPerspectiveDescriptor getPerspective();
 /**
+ * Returns a list of the reference to views visible on this page.
+ * <p>
+ * Note that each page has its own views; views are never shared between pages.
+ * </p>
+ *
+ * @return a list of references to visible views
+ */
+public IViewReference[] getViewReferences();
+/**
  * Returns a list of the views visible on this page.
  * <p>
  * Note that each page has its own views; views are never shared between pages.
  * </p>
  *
  * @return a list of visible views
+ * 
+ * @deprecated use getViewReferences() instead.
  */
 public IViewPart[] getViews();
 /**

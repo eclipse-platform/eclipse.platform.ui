@@ -58,12 +58,12 @@ public void run() {
  * Updates the enabled state.
  */
 public void updateState() {
-	IWorkbenchPage page = getActivePage();
+	WorkbenchPage page = (WorkbenchPage)getActivePage();
 	if (page == null) {
 		setEnabled(false);
 		return;
 	}
-	setEnabled(page.getEditors().length >= 1);
+	setEnabled(page.getSortedEditors().length >= 1);
 }
  
 }

@@ -63,7 +63,7 @@ public final class ComponentSupport {
 		}
 	}
 
-	private static boolean testForOleEditor(IFile input) {
+	public static boolean testForOleEditor(IFile input) {
 		String strName = input.getName();
 		int nDot = strName.lastIndexOf('.');
 		if (nDot >= 0) {

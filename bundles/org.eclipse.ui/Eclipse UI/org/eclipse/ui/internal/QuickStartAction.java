@@ -60,12 +60,10 @@ public void run() {
 	page.setEditorAreaVisible(true);
 
 	// see if we already have a welcome editor
-	IEditorPart[] editors = page.getEditors();
-	for (int i = 0; i < editors.length; i++){
-		if (editors[i] instanceof WelcomeEditor) {
-			page.bringToTop(editors[i]);
-			return;
-		}
+	IEditorPart editor = page.findEditor(new WelcomeEditorInput());
+	if(editor != null) {
+		page.bringToTop(editor);
+		return;
 	}
 
 	try {

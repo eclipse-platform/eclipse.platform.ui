@@ -79,9 +79,9 @@ public void run() {
  * Enable the action if there at least one editor open.
  */
 private void updateState() {
-	IWorkbenchPage page = workbench.getActivePage();
+	WorkbenchPage page = (WorkbenchPage)workbench.getActivePage();
 	if (page != null) {
-		setEnabled(page.getEditors().length >= 1);
+		setEnabled(page.getSortedEditors().length >= 1);
 	} else {
 		setEnabled(false);
 	}
