@@ -34,6 +34,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -282,6 +285,17 @@ public class ResourceInfoPage extends PropertyPage {
 		encodingEditor.setPreferencePage(this);
 		encodingEditor.load();
 		
+		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				  if (event.getProperty().equals(FieldEditor.IS_VALID))
+				  	 setValid(encodingEditor.isValid());
+
+			}
+		});
+		
 		return composite;
 	}
 
@@ -301,6 +315,7 @@ public class ResourceInfoPage extends PropertyPage {
 	 * Create the isEditable button and it's associated label as a child of
 	 * parent using the editableValue of the receiver. The Composite will be the
 	 * parent of the button.
+	 * @param composite the parent of the button
 	 */
 	private void createEditableButton(Composite composite) {
 
@@ -318,6 +333,7 @@ public class ResourceInfoPage extends PropertyPage {
 	 * Create the derived button and it's associated label as a child of parent
 	 * using the derived of the receiver. The Composite will be the parent of
 	 * the button.
+	 * @param composite the parent of the button
 	 */
 	private void createDerivedButton(Composite composite) {
 
@@ -333,6 +349,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 	/**
 	 * Create a separator that goes across the entire page
+	 * @param composite The parent of the seperator
 	 */
 	private void createSeparator(Composite composite) {
 
@@ -346,7 +363,6 @@ public class ResourceInfoPage extends PropertyPage {
 	/**
 	 * Create the group that shows the read only state and the timestamp.
 	 * 
-	 * @return the composite for the group
 	 * @param parent
 	 *            the composite the group will be created in
 	 * @param resource
@@ -411,9 +427,8 @@ public class ResourceInfoPage extends PropertyPage {
 	 * Return the value for the date String for the timestamp of the supplied
 	 * resource.
 	 * 
+	 * @param resource The resource to query
 	 * @return String
-	 * @param IResource -
-	 *            the resource to query
 	 */
 	private String getDateStringValue(IResource resource) {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
@@ -425,19 +440,22 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} else {
-			File localFile = location.toFile();
-			if (localFile.exists()) {
-				DateFormat format = DateFormat.getDateTimeInstance(
-						DateFormat.LONG, DateFormat.MEDIUM);
-				return format.format(new Date(localFile.lastModified()));
-			}
-			return NOT_EXIST_TEXT;
+		} 
+		
+		File localFile = location.toFile();
+		if (localFile.exists()) {
+			DateFormat format = DateFormat.getDateTimeInstance(
+					DateFormat.LONG, DateFormat.MEDIUM);
+			return format.format(new Date(localFile.lastModified()));
 		}
+		return NOT_EXIST_TEXT;
+		
 	}
 
 	/**
 	 * Get the location of a resource
+	 * @param resource
+	 * @return String the text to display the location
 	 */
 	private String getLocationText(IResource resource) {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
@@ -450,23 +468,26 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 		if (location == null) {
 			return NOT_EXIST_TEXT;
-		} else {
-			String locationString = location.toOSString();
-			if (resolvedLocation != null && !isPathVariable(resource)) {
-				// No path variable used. Display the file not exist message
-				// in the location. Fixes bug 33318.
-				File file = resolvedLocation.toFile();
-				if (!file.exists()) {
-					locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-				}
+		} 
+		
+		String locationString = location.toOSString();
+		if (resolvedLocation != null && !isPathVariable(resource)) {
+			// No path variable used. Display the file not exist message
+			// in the location. Fixes bug 33318.
+			File file = resolvedLocation.toFile();
+			if (!file.exists()) {
+				locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
 			}
-			return locationString;
 		}
+		return locationString;
+		
 	}
 
 	/**
 	 * Get the resolved location of a resource. This resolves path variables if
 	 * present in the resource path.
+	 * @param resource
+	 * @return String
 	 */
 	private String getResolvedLocationText(IResource resource) {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
@@ -478,19 +499,22 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} else {
-			String locationString = location.toOSString();
-			File file = location.toFile();
+		} 
+		
+		String locationString = location.toOSString();
+		File file = location.toFile();
 
-			if (!file.exists()) {
-				locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-			}
-			return locationString;
+		if (!file.exists()) {
+			locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
 		}
+		return locationString;
+		
 	}
 
 	/**
 	 * Return a String that indicates the size of the supplied file.
+	 * @param file
+	 * @return String
 	 */
 	private String getSizeString(IFile file) {
 		if (!file.isLocal(IResource.DEPTH_ZERO))
@@ -502,20 +526,23 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} else {
-			File localFile = location.toFile();
+		} 
+			
+		File localFile = location.toFile();
 
-			if (localFile.exists()) {
-				String bytesString = Long.toString(localFile.length());
-				return MessageFormat.format(BYTES_LABEL,
-						new Object[] { bytesString });
-			}
-			return NOT_EXIST_TEXT;
+		if (localFile.exists()) {
+			String bytesString = Long.toString(localFile.length());
+			return MessageFormat.format(BYTES_LABEL,
+					new Object[] { bytesString });
 		}
+		return NOT_EXIST_TEXT;
+		
 	}
 
 	/**
 	 * Get the string that identifies the type of this resource.
+	 * @param resource
+	 * @return String
 	 */
 	private String getTypeString(IResource resource) {
 

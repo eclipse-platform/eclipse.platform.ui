@@ -14,6 +14,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,9 +30,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Extends the Editors preference page with IDE-specific settings.
- *
- * Note: want IDE settings to appear in main Editors preference page (via subclassing),
- *   however the superclass, EditorsPreferencePage, is internal
+ * 
+ * Note: want IDE settings to appear in main Editors preference page (via
+ * subclassing), however the superclass, EditorsPreferencePage, is internal
  */
 public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
@@ -49,22 +52,32 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorReuseGroup(composite);
 
 		createSpace(composite);
-		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages
-				.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
-				.getWorkspace().getRoot());
+		encodingEditor = new ResourceEncodingFieldEditor(
+				IDEWorkbenchMessages.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
+						.getWorkspace().getRoot());
 
 		encodingEditor.setPreferencePage(this);
 		encodingEditor.load();
-		updateValidState();
+		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				  if (event.getProperty().equals(FieldEditor.IS_VALID))
+				  	updateValidState();
+
+			}
+		});
 
 		// @issue need IDE-level help for this page
-		//		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
+		//		WorkbenchHelp.setHelp(parent,
+		// IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
 
 		return composite;
 	}
 
-	/**
-	 * The default button has been pressed. 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.EditorsPreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 
@@ -76,9 +89,29 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		encodingEditor.loadDefault();
 
 		super.performDefaults();
+	
+	}
+	
+	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.dialogs.EditorsPreferencePage#updateValidState()
+	 */
+	protected void updateValidState() {
+		if (!encodingEditor.isValid()){
+			setValid(false);
+			return;
+		}
+		//Do the updating of super last we want to
+		//inherit the clearing code.
+		super.updateValidState();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage#performOk()
 	 */
 	public boolean performOk() {
