@@ -7,6 +7,7 @@ package org.eclipse.update.core;
 import java.io.*;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
@@ -77,12 +78,13 @@ public abstract class FeatureContentProvider
 	 * @param ref content reference
 	 * @param monitor progress monitor, can be <code>null</code>
 	 * @exception IOException
+	 * @exception CoreException
 	 * @since 2.0
 	 */
 	public ContentReference asLocalReference(
 		ContentReference ref,
 		InstallMonitor monitor)
-		throws IOException {
+		throws IOException,CoreException {
 
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
@@ -101,9 +103,9 @@ public abstract class FeatureContentProvider
 		
 			// 
 			// download the referenced file into local temporary area
-			localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);		
 			InputStream is = null;
 			OutputStream os = null;
+			localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);			
 			try {
 				if (monitor != null) {
 					monitor.saveState();
@@ -118,7 +120,7 @@ public abstract class FeatureContentProvider
 				Utilities.copy(is, os, monitor);
 			} catch (IOException e) {
 				Utilities.removeLocalFile(key);
-				throw e;
+				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);
 			} finally {
 				if (is != null)
 					try {
@@ -145,11 +147,12 @@ public abstract class FeatureContentProvider
 	 * 
 	 * @param ref content reference
 	 * @param monitor progress monitor, can be <code>null</code>
-	 * @exception IOException	  
+	 * @exception IOException	
+	 * @exception CoreException  
 	 * @since 2.0
 	 */
 	public File asLocalFile(ContentReference ref, InstallMonitor monitor)
-		throws IOException {
+		throws IOException,CoreException {
 		File file = ref.asFile();
 		if (file != null)
 			return file;

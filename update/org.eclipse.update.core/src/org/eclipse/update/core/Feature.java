@@ -376,7 +376,7 @@ public class Feature extends FeatureModel implements IFeature {
 				}	
 			
 				for (int i = 0; i < references.length; i++) {
-					setMonitorTaskName(subMonitor,msg+references[i].getIdentifier());
+					setMonitorTaskName(subMonitor,msg+" "+references[i].getIdentifier());
 					consumer.store(references[i], subMonitor);
 				}
 			} else {
