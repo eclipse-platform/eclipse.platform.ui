@@ -161,7 +161,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag (<code>value 2</code>) denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
-	private boolean fUpdateTracing;
 	
 	/**
 	 * This constructor must be passed a combination of layout flags combined
@@ -205,10 +204,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected AbstractTextSearchViewPage() {
 		this(FLAG_LAYOUT_FLAT | FLAG_LAYOUT_TREE);
-	}
-	
-	public void setUpdateTracing(boolean on) {
-		fUpdateTracing= on;
 	}
 
 	private void createLayoutActions() {
@@ -541,6 +536,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 					TreeViewer tv = (TreeViewer) event.getViewer();
 					Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
 					tv.setExpandedState(element, !tv.getExpandedState(element));
+					if (!hasCurrentMatch && getInput().getMatchCount(element) > 0)
+						gotoNextMatch();
 					return;
 				} else if (!hasCurrentMatch) {
 					gotoNextMatch();
@@ -835,14 +832,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			fBatchedUpdates.clear();
 		}
 		updateBusyLabel();
-	}
-
-	private void setSelectionIndex() {
-		if (fViewer instanceof TableViewer) {	
-			((TableViewer)fViewer).getTable().showSelection();
-		} else if (fViewer instanceof TreeViewer) {
-			((TreeViewer)fViewer).getTree().showSelection();
-		}
 	}
 
 	private void postClear() {
