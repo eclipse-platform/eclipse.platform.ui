@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class SuspendActionDelegate extends AbstractListenerActionDelegate {

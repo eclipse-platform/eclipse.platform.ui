@@ -1,7 +1,5 @@
 package org.eclipse.debug.ui;
 
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.operation.IRunnableContext;
 
 /*

@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.viewers.IStructuredSelection;
 

@@ -5,19 +5,10 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.ILineBreakpoint;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
-import org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -25,13 +16,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;

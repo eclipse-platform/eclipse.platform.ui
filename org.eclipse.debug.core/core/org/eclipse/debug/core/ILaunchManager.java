@@ -6,7 +6,6 @@ package org.eclipse.debug.core;
  */
  
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;

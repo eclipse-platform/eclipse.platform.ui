@@ -5,11 +5,9 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;

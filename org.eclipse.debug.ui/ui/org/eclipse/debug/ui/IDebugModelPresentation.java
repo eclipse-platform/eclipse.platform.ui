@@ -8,7 +8,6 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorInput;
 
 /**
  * A debug model presentation is responsible for providing labels, images,

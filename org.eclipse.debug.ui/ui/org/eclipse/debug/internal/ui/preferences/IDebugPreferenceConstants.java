@@ -1,6 +1,5 @@
 package org.eclipse.debug.internal.ui.preferences;
 
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /*

@@ -12,7 +12,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
