@@ -348,12 +348,12 @@
 		<consoleLineTracker
 			id = "org.eclipse.ui.externaltools.ant.javacLineTracker"
 			class = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.JavacLineTracker"
-			processType = "ant">
+			processType = "org.eclipse.ui.externaltools.ant">
 		</consoleLineTracker>
 		<consoleLineTracker
 			id = "org.eclipse.ui.externaltools.ant.taskLineTracker"
 			class = "org.eclipse.ui.externaltools.internal.ant.console.TaskLineTracker"
-			processType = "ant">
+			processType = "org.eclipse.ui.externaltools.ant">
 		</consoleLineTracker>		
 	</extension>	
 		
