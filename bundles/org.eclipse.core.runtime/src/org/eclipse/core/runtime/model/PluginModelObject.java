@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
 import org.eclipse.core.internal.runtime.Assert;
@@ -93,7 +93,8 @@ public int getStartLine() {
  * This value can only be set once, subsequent calls to this method will be
  * ignored.
  * 
- * @param lineNumber the line number of this object's declaration in the file */
+ * @param lineNumber the line number of this object's declaration in the file
+ */
 public void setStartLine(int lineNumber) {
 	if (getStartLine() == -1)
 		flags = (lineNumber + 1) | (flags & M_READ_ONLY);
@@ -102,7 +103,8 @@ public void setStartLine(int lineNumber) {
  * Return a string representation of this object. This value is not to be relied
  * on and can change at any time. To be used for debugging purposes only.
  * 
- * @see java.lang.Object#toString() */
+ * @see java.lang.Object#toString()
+ */
 public String toString() {
 	return this.getClass() + "(" + getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }

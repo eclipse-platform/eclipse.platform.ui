@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.core.internal.runtime;
 
@@ -16,8 +16,14 @@ package org.eclipse.core.internal.runtime;
  * platform:/plugin/<pluginId>/		maps to pluginDescriptor.getInstallURLInternal()
  */
 
-import java.io.IOException;import java.net.URL;import org.eclipse.core.internal.boot.PlatformURLConnection;import org.eclipse.core.internal.boot.PlatformURLHandler;import org.eclipse.core.internal.plugins.FragmentDescriptor;
-import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.model.*;
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.internal.boot.PlatformURLConnection;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.plugins.FragmentDescriptor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.model.*;
  
 public class PlatformURLPluginConnection extends PlatformURLConnection {
 
