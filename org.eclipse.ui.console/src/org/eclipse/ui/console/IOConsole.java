@@ -397,7 +397,6 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         partitioner.disconnect();
         try {
             inputStream.close();
-            //FIXME: should close output streams? Need to store references.
         } catch (IOException ioe) {
         }
         inputStream = null;
@@ -557,8 +556,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 								notifier.end = baseOffset + start;
 							}
 		        		} catch (BadLocationException e) {
-		        			// TODO:
-		            		e.printStackTrace();
+		        			ConsolePlugin.log(e);
 		            	}
 					}
 					prevBaseOffset = baseOffset;
