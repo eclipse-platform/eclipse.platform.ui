@@ -100,7 +100,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 			boolean exclusive = askForExclusive();
 			boolean failure = askForFailure();
 			for (int i = 0; i < jobCount; i ++) {
-				new TestJob(duration, exclusive, failure,false).schedule(DELAY);
+				new TestJob(duration, exclusive, failure,false, false, 0).schedule(DELAY);
 			}
 //			ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
 //			dialog.run(true, true, new IRunnableWithProgress() {

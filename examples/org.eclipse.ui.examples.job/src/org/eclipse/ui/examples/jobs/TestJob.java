@@ -31,18 +31,24 @@ public class TestJob extends Job {
 	 * Whether the job should report unknown progress.
 	 */
 	private boolean unknown;
+	private boolean reschedule;
+	private long rescheduleWait;
 	/**
 	 * Creates a new test job
 	 * @param duration Total time that the test job should sleep, in milliseconds.
 	 * @param lock Whether the job should use a workspace scheduling rule
 	 * @param failure Whether the job should fail
 	 * @param indeterminate Whether the job should report indeterminate progress
+	 * @param rescheduleWait
+	 * @param reschedule
 	 */
-	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate) {
+	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate, boolean reschedule, long rescheduleWait) {
 		super("Test job"); //$NON-NLS-1$
 		this.duration = duration;
 		this.failure = failure;
 		this.unknown = indeterminate;
+		this.reschedule = reschedule;
+		this.rescheduleWait = rescheduleWait;
 		if (lock)
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
@@ -50,6 +56,9 @@ public class TestJob extends Job {
 	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
 	 */
 	public boolean belongsTo(Object family) {
+		if(family instanceof TestJob) {
+			return true;
+		}
 		return family == FAMILY_TEST_JOB;
 	}
 	/* (non-Javadoc)
@@ -80,6 +89,8 @@ public class TestJob extends Job {
 				monitor.worked(1);
 			}
 		} finally {
+			if(reschedule) 
+				schedule(rescheduleWait);
 			monitor.done();
 		}
 		return Status.OK_STATUS;

@@ -1,14 +1,10 @@
 package org.eclipse.ui.examples.jobs.views;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -17,16 +13,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -35,8 +28,8 @@ import org.eclipse.ui.progress.IProgressService;
  */
 public class JobsView extends ViewPart {
 	private Combo durationField;
-	private Button lockField, failureField, threadField, systemField, userField, groupField, unknownField;
-	private Text quantityField, delayField;
+	private Button lockField, failureField, threadField, systemField, userField, groupField, rescheduleField, keepField, keepOneField, unknownField;
+	private Text quantityField, delayField, rescheduleDelay;
 
 	protected void busyCursorWhile() {
 		try {
@@ -68,6 +61,10 @@ public class JobsView extends ViewPart {
 		boolean useGroup = groupField.getSelection();
 		boolean unknown = unknownField.getSelection();
 		boolean user = userField.getSelection();
+		boolean reschedule = rescheduleField.getSelection();
+		final long rescheduleWait =  Long.parseLong(rescheduleDelay.getText());
+		boolean keep = keepField.getSelection();
+		boolean keepOne = keepOneField.getSelection();
 
 		int groupIncrement = IProgressMonitor.UNKNOWN;
 		IProgressMonitor group = new NullProgressMonitor();
@@ -79,7 +76,6 @@ public class JobsView extends ViewPart {
 		}
 
 		if (useGroup) {
-
 			group = Platform.getJobManager().createProgressGroup();
 			group.beginTask("Group", total); //$NON-NLS-1$
 		}
@@ -90,14 +86,19 @@ public class JobsView extends ViewPart {
 			if (ui)
 				result = new UITestJob(duration, lock, failure, unknown);
 			else
-				result = new TestJob(duration, lock, failure, unknown);
+				result = new TestJob(duration, lock, failure, unknown, reschedule, rescheduleWait);
 
+			if(keep) 
+				result.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+			
+			if(keepOne)
+				result.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
+			
 			result.setProgressGroup(group, groupIncrement);
 			result.setSystem(system);
 			result.setUser(user);
 			result.schedule(delay);
 		}
-
 	}
 
 	/**
@@ -270,7 +271,15 @@ public class JobsView extends ViewPart {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		quantityField.setLayoutData(data);
 		quantityField.setText("1"); //$NON-NLS-1$
-
+		
+		//reschedule delay
+		label = new Label(body, SWT.NONE);
+		label.setText("Reschedule Delay (ms):"); //$NON-NLS-1$
+		rescheduleDelay = new Text(body, SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		rescheduleDelay.setLayoutData(data);
+		rescheduleDelay.setText("1000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -312,6 +321,24 @@ public class JobsView extends ViewPart {
 		groupField.setText("Run in Group"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		groupField.setLayoutData(data);
+		
+		//	reschedule
+		rescheduleField = new Button(group, SWT.CHECK);
+		rescheduleField.setText("Reschedule"); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		rescheduleField.setLayoutData(data);
+		
+		//	keep
+		keepField = new Button(group, SWT.CHECK);
+		keepField.setText("Keep"); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		keepField.setLayoutData(data);
+		
+		//	keep one
+		keepOneField = new Button(group, SWT.CHECK);
+		keepOneField.setText("KeepOne"); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		keepOneField.setLayoutData(data);
 
 		//IProgressMonitor.UNKNOWN
 		unknownField = new Button(group, SWT.CHECK);
