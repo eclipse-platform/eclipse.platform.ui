@@ -1258,7 +1258,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 										IWorkbenchActionConstants.MB_ADDITIONS,
 										id,
 										coolBarMgr);
-							coolBarMgr.insertAfter(refItem.getId(), newItem);
+							if (refItem != null) {
+								coolBarMgr.insertAfter(refItem.getId(), newItem);
+							}else {
+								coolBarMgr.add(newItem);
+							}
 						}
 						// Set the current height and width
 						if (width != null) {
@@ -1477,7 +1481,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 								IWorkbenchActionConstants.MB_ADDITIONS,
 								id,
 								coolBarMgr);
-					coolBarMgr.insertAfter(refItem.getId(), newItem);
+					if (refItem != null) {
+						coolBarMgr.insertAfter(refItem.getId(), newItem);
+					}else {
+						coolBarMgr.add(newItem);
+					}
 				}
 				// Add new item into cool bar manager
 				if (newItem != null) {
@@ -1572,7 +1580,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 			insertIndex = i;
 		}
-
+		if ( insertIndex >= items.length) {
+			return null;
+		}
 		return items[insertIndex];
 	}
 

@@ -307,7 +307,11 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 				toolBarManager.add(new Separator(toolGroupId));
 			}
 			IContributionItem refItem = findAlphabeticalOrder(toolGroupId,contributingId,toolBarManager);
-			toolBarManager.insertAfter(refItem.getId(),actionContribution);
+			if (refItem != null) {
+				toolBarManager.insertAfter(refItem.getId(),actionContribution);
+			}else {
+				toolBarManager.add(actionContribution);
+			}
 			toolBarManager.update(false);
 			
 		}
@@ -425,7 +429,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 				}
 				insertIndex = i;
 			}
-			
+			if (insertIndex >= items.length) {
+				return null;
+			}
 			return items[insertIndex];
 		}
 		
