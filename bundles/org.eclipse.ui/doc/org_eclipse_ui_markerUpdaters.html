@@ -1,0 +1,72 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Eclipse Workbench Extension Point: Marker Updaters</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Marker Updaters</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.markerUpdaters
+<p><b><i>Description: </i></b>This extension point is used for registering
+marker update strategies with marker annotation models. A resource that
+is opened in a text editor is associated with a marker annotation model.
+For each marker attached to the resource this model manages a position
+that is updated with each change applied to the text in the editor. If
+the resource is saved, the text in the editor and the position managed
+for a marker are passed over to the registered marker update strategies.
+These strategies can then update the marker's attributes based on the text
+and the position. Marker update strategies are requested to implement the
+interface <i>org.eclipse.ui.texteditor.IMarkerUpdater</i>. The update strategies
+can be registered either for a particular marker type or all marker types.
+The latter by omitting any marker type in the extension.
+<p><b><i>Since:</i></b> Release 1.0
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT updater EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST updater</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul type=disc>
+<li>
+<b>markerType</b> - the name of the marker type</li>
+
+<li>
+<b>class</b> - the qualified name of the marker updater class</li>
+
+<li>
+<b>id</b> - the unique id of this provider</li>
+</ul>
+<b><i>Examples:</i></b><tt></tt>
+<p><tt>&lt;extension point= "org.eclipse.ui.markerUpdaters"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;updater</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.jdt.ui.markerUpdaters.JavaSearchMarkerUpdater"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType="org.eclipse.search.searchmarker"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/updater></tt>
+<br><tt>&lt;/extension></tt>
+<p>This example registers <i>org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater
+</i>as
+a marker updater for all markers of the
+<br>type <i>org.eclipse.search.searchmarker</i> including all its derived
+types..
+<p><tt>&lt;extension point= "org.eclipse.ui.markerUpdaters"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;updater</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.ui.texteditor.BasicMarkerUpdater"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.ui.texteditor.BasicMarkerUpdater"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/updater></tt>
+<br><tt>&lt;/extension></tt>
+<p>This example registers <i>org.eclipse.ui.texteditor.BasicMarkerUpdater</i>
+as a marker updater independent from the type of the marker.
+<p><b><i>API Information: </i></b>Registered marker updaters have to implement
+the interface <i>org.eclipse.ui.texteditor.IMarkerUpdater</i>.
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0 height=14 width=324></a>
+</body>
+</html>

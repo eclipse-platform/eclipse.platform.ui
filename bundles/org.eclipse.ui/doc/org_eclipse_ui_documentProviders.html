@@ -1,0 +1,72 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Eclipse Workbench Extension Point: Document Providers</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Document Providers</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.documentProviders
+<p><b><i>Description: </i></b>This extension point is used to define mappings
+between file types and document providers or between types of editor inputs
+and document providers that can be used by editors. Document providers
+must implement the interface <i>org.eclipse.ui.texteditor.IDocumentProvider</i>.
+Editor inputs must be instance of <i>org.eclipse.ui.IEditorInput</i>.
+<p><b><i>Since:</i></b> Release 1.0
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT provider EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST provider</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; inputTypes&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul type=disc>
+<li>
+<b>extensions</b> - a comma seperated list of file extensions</li>
+
+<li>
+<b>inputTypes</b> - a comma seperated list of qualified editor input class
+names</li>
+
+<li>
+<b>class</b> - the qualified name of the document provider class</li>
+
+<li>
+<b>id</b> - the unique id of this provider</li>
+</ul>
+<b><i>Examples:</i></b>
+<p><tt>&lt;extension point="org.eclipse.ui.documentProviders"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;provider</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions=".jav"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/provider></tt>
+<br><tt>&lt;/extension></tt>
+<p>This example registers <i>org.eclipse.ui.examples.javaeditor.JavaDocumentProvider
+</i>as
+the default provider for files with the extension ".jav".
+<p><tt>&lt;extension point="org.eclipse.ui.documentProviders"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;provider</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; inputTypes="org.eclipse.ui.IStorageEditorInput"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.ui.editors.text.FileDocumentProvider"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.ui.editors.text.FileDocumentProvider"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/provider></tt>
+<br><tt>&lt;/extension></tt>
+<p>This example registers <i>org.eclipse.ui.editors.text.FileDocumentProvider</i>
+as the default provider for all editor inputs that are instance of <i>org.eclipse.ui.IStorageEditorInput</i>.
+<p><b><i>API Information: </i></b>Document providers registered for a file
+extension have precedence over those registered for input types. Document
+providers must implement the interface <i>org.eclipse.ui.texteditor.IDocumentProvider</i>.
+Editor inputs must be instance of <i>org.eclipse.ui.IEditorInput</i>.
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0 height=14 width=324></a>
+</body>
+</html>
