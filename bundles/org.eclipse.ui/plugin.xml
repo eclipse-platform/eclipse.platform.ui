@@ -45,7 +45,7 @@
    <extension-point id="newWizards" name="%ExtPoint.newWizards" schema="schema/newWizards.exsd"/>
    <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions" schema="schema/perspectiveExtensions.exsd"/>
    <extension-point id="perspectives" name="%ExtPoint.perspectives" schema="schema/perspectives.exsd"/>
-   <extension-point id="popupMenus" name="%ExtPoint.popupMenus " schema="schema/popupMenus.exsd"/>
+   <extension-point id="popupMenus" name="%ExtPoint.popupMenus" schema="schema/popupMenus.exsd"/>
    <extension-point id="preferencePages" name="%ExtPoint.preferencePages" schema="schema/preferencePages.exsd"/>
    <extension-point id="presentationFactories" name="%ExtPoint.presentationFactories" schema="schema/presentationFactories.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
