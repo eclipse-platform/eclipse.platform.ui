@@ -40,6 +40,13 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * Last time the event loop was spun.
 	 */
 	private long lastTime = System.currentTimeMillis();
+	
+	/**
+	 * The task name is the name of the current task
+	 * in the event loop.
+	 */
+	private String taskName;
+	
 	/**
 	 * Constructs a new instance of the receiver and forwards to monitor.
 	 * @param monitor
@@ -52,6 +59,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 */
 	public void beginTask(String name, int totalWork) {
 		super.beginTask(name, totalWork);
+		taskName = name;
 		runEventLoop();
 	}
 	/* (non-Javadoc)
@@ -65,6 +73,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 */
 	public void done() {
 		super.done();
+		taskName = null;
 		runEventLoop();
 	}
 	/**
@@ -122,13 +131,14 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setBlocked(IStatus reason) {
-		Dialog.getBlockedHandler().showBlocked(this,reason,null);
+		Dialog.getBlockedHandler().showBlocked(this,reason,taskName);
 	}
 	/**
 	 * @see IProgressMonitor#setCanceled
 	 */
 	public void setCanceled(boolean b) {
 		super.setCanceled(b);
+		taskName = null;
 		runEventLoop();
 	}
 	/**
@@ -136,12 +146,16 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 */
 	public void setTaskName(String name) {
 		super.setTaskName(name);
+		taskName = name;
 		runEventLoop();
 	}
 	/**
 	 * @see IProgressMonitor#subTask
 	 */
 	public void subTask(String name) {
+		//Be prepared in case the first task was null
+		if(taskName == null)
+			taskName = name;
 		super.subTask(name);
 		runEventLoop();
 	}
