@@ -65,6 +65,9 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.BREAKPOINT_VIEW));
+			
+		// Necessary so that the PropertySheetView hears about selections in this view
+		getSite().setSelectionProvider(fViewer);
 	}
 
 	/**

@@ -23,6 +23,7 @@
 
 <!-- Extension points -->
 <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
+<extension-point id="breakpointPropertyAdapters" name="%BreakpointPropertyAdapterName"/>
 
 <!-- Extensions -->
 <extension

@@ -1,9 +1,8 @@
 package org.eclipse.debug.core.model;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.IDebugConstants;
 
 /**
@@ -13,7 +12,7 @@ import org.eclipse.debug.core.IDebugConstants;
  */
 
 public abstract class Breakpoint implements IBreakpoint {
-		
+				
 	/**
 	 * Underlying marker.
 	 */
@@ -68,6 +67,13 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public IMarker getMarker() {
 		return fMarker;
+	}
+	
+	/**
+	 * @see IAdaptable#getAdapter(Class adapter)
+	 */
+	public Object getAdapter(Class adapter) {		
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 }

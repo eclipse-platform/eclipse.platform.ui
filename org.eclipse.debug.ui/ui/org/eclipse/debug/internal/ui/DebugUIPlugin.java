@@ -698,6 +698,12 @@ public static Object createExtension(final IConfigurationElement element, final 
 		for (int i = 0; i < launches.length; i++) {
 			launchRegistered(launches[i]);
 		}
+
+		// Create & register the adapter factory that will dispense objects that 
+		// know about the properties that different breakpoint types support
+		IAdapterFactory factory = new BreakpointPropertiesAdapterFactory();
+		Platform.getAdapterManager().registerAdapters(factory, IBreakpoint.class);
+		
 	}
 
 	/**

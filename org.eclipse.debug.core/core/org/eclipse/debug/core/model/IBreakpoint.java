@@ -2,6 +2,7 @@ package org.eclipse.debug.core.model;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * A breakpoint is capable of suspending the execution of a
@@ -44,7 +45,7 @@ import org.eclipse.core.runtime.CoreException;
  * is then called to associated a marker with the breakpoint.
  */
 
-public interface IBreakpoint {
+public interface IBreakpoint extends IAdaptable {
 
 /**
  * Deletes this breakpoint's underlying marker, and removes
