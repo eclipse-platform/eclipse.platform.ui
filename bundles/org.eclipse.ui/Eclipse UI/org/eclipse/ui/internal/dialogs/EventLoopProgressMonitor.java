@@ -11,9 +11,29 @@ import org.eclipse.ui.internal.*;
 
 /**
  * Used to run an event loop whenever progress monitor methods
- * are invoked. 
+ * are invoked.  <p>
+ * This is needed since editor save operations are done in the UI thread.  
+ * Although save operations should be written to do the work in the non-UI thread, 
+ * this was not done for 1.0, so this was added to keep the UI live
+ * (including allowing the cancel button to work).
  */
 public class EventLoopProgressMonitor extends ProgressMonitorWrapper {
+	
+	/**
+	 * Threshold for how often the event loop is spun, in ms.
+	 */
+	private static int T_THRESH = 100;
+	
+	/**
+	 * Maximum amount of time to spend processing events, in ms.
+	 */
+	private static int T_MAX = 50;
+	
+	/**
+	 * Last time the event loop was spun.
+	 */
+	private long lastTime = System.currentTimeMillis();
+	
 /**
  * Constructs a new monitor.
  */
@@ -52,12 +72,29 @@ public boolean isCanceled() {
  * Runs an event loop.
  */
 private void runEventLoop() {
-	Display disp = Display.getDefault();
-	if (disp == null)
+	// Only run the event loop so often, as it is expensive on some platforms
+	// (namely Motif).
+	long t = System.currentTimeMillis();
+	if (t - lastTime < T_THRESH) {
 		return;
-	boolean run = true;
-	while (run) {
-		run = disp.readAndDispatch();	// Exceptions walk back to parent.
+	}
+	lastTime = t;
+	
+	// Run the event loop.
+	Display disp = Display.getDefault();
+	if (disp == null) {
+		return;
+	}
+	for (;;) {
+		if (!disp.readAndDispatch()) {	// Exceptions walk back to parent.
+			break;
+		}
+		// Only run the event loop for so long.
+		// Otherwise, this would never return if some other thread was 
+		// constantly generating events.
+		if (System.currentTimeMillis() - t > T_MAX) {
+			break;
+		}
 	}
 }
 /**
