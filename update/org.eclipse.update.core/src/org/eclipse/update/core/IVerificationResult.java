@@ -3,7 +3,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 /**
  * Verification result. An object implementing this interface represents
  * a token passed between the update framework and the verifier and verification
@@ -19,64 +19,75 @@ package org.eclipse.update.core;
  * @since 2.0
  */
 public interface IVerificationResult {
-	
+
 	/**
-	 * Indicates the file is not signed
+	 * Indicates the file type is recognized but the file is not signed
 	 * 
+	 * @see #TYPE_ENTRY_UNRECOGNIZED
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_NOT_SIGNED = 1;
-	
+
 	/**
 	 * Indicates the file has been modified since it was signed
 	 * 
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_CORRUPTED = 2;
-	
+
 	/**
-	 * Indicates the file was signed by a known signer
+	 * Indicates the file is signed by a known signer
 	 * 
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
-	
+
 	/**
-	 * Indicates the file was signed by a recognized signer and the user //VK
-	 * previously indicated the signer should be trusted
+	 * Indicates the file being verified resulted in a verification
+	 * condition that was already accepted for some other file
+	 * verified by the verifier instance. Specifically, this applies
+	 * to the following conditions:
+	 * <ul>
+	 * <li>unrecognized file type, @see #TYPE_ENTRY_UNRECOGNIZED
+	 * <li>unsigned file, @see #TYPE_ENTRY_NOT_SIGNED
+	 * <li>recognized signer, @see #TYPE_ENTRY_SIGNED_RECOGNIZED
+	 * <li>previously accepted but unrecognized signer, 
+	 * @see #TYPE_ENTRY_SIGNED_UNRECOGNIZED
+	 * </ul>
 	 * 
 	 * @since 2.0
 	 */
-	public static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;	
-	
+	public static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;
+
 	/**
-	 * Indicates the file was signed but the signer is not known
+	 * Indicates the file is signed but the signer is not known
 	 * 
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_SIGNED_UNRECOGNIZED = 5;
-	
+
 	/**
 	 * Error occurred during verification
 	 * 
 	 * @since 2.0
-	 */	
+	 */
 	public static final int UNKNOWN_ERROR = 6;
-	
+
 	/**
 	 * Verification was cancelled
 	 * 
 	 * @since 2.0
 	 */
 	public static final int VERIFICATION_CANCELLED = 7;
-	
+
 	/**
 	 * Could not perform verification due to unrecognized file
 	 * 
+	 * @see #TYPE_ENTRY_NOT_SIGNED
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_UNRECOGNIZED = 8;
-		
+
 	/**
 	 * Returns the content reference that is the target of the verification.
 	 * 
@@ -84,7 +95,7 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public ContentReference getContentReference();
-	
+
 	/**
 	 * Returns the feature the referenced file is part of.
 	 * 
@@ -92,7 +103,7 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public IFeature getFeature();
-		
+
 	/**
 	 * Returns the verification code.
 	 * 
@@ -102,13 +113,13 @@ public interface IVerificationResult {
 	public int getVerificationCode();
 
 	/**
-	 * Returns an exception caught during verification
+	 * Returns any exception caught during verification
 	 * 
-	 * @return exception,or <code>null</code>.
+	 * @return exception, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public Exception getVerificationException();
-	
+
 	/**
 	 * Returns display text describing the result of the verification.
 	 * 
@@ -116,7 +127,7 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public String getText();
-				
+
 	/**
 	 * Returns text describing the signer
 	 * 
@@ -124,7 +135,7 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public String getSignerInfo();
-			
+
 	/**
 	 * Returns text describing the authority that verified/ certified 
 	 * the signer
@@ -143,8 +154,5 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public boolean isFeatureVerification();
-	
-	
-	
-		
-	}
+
+}
