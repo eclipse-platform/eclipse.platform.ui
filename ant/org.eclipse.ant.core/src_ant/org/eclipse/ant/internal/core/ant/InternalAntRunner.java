@@ -622,7 +622,9 @@ public class InternalAntRunner {
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
 		this.buildFileLocation = buildFileLocation;
-		getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
+		if (getCurrentProject() != null) {
+			getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
+		}
 	}
 
 	protected String getBuildFileLocation() {
