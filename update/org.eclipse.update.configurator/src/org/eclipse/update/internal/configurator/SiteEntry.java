@@ -205,7 +205,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 						continue;
 					URL featureURL = featureXML.toURL();
 					FeatureEntry featureEntry = featureParser.parse(featureURL);
-					addFeatureEntry(featureEntry);
+					if (featureEntry != null)
+						addFeatureEntry(featureEntry);
 				} catch (MalformedURLException e) {
 					Utils.log(Messages.getString("InstalledSiteParser.UnableToCreateURLForFile", featuresDir.getAbsolutePath()));
 					//$NON-NLS-1$

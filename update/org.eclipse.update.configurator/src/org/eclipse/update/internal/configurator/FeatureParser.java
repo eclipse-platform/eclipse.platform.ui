@@ -13,9 +13,11 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
+import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
@@ -67,7 +69,7 @@ public class FeatureParser extends DefaultHandler {
 	 * @exception IOException
 	 * @since 2.0
 	 */
-	public FeatureEntry parse(URL featureURL) {
+	public FeatureEntry parse(URL featureURL){
 		try {
 			this.url = featureURL;
 			InputStream in = featureURL.openStream();
@@ -114,10 +116,12 @@ public class FeatureParser extends DefaultHandler {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
 //			String provider = attributes.getValue("provider-name"); //$NON-NLS-1$
 //			String imageURL = attributes.getValue("image"); //$NON-NLS-1$
-//			String os = attributes.getValue("os"); //$NON-NLS-1$
-//			String ws = attributes.getValue("ws"); //$NON-NLS-1$
-//			String nl = attributes.getValue("nl"); //$NON-NLS-1$
-//			String arch = attributes.getValue("arch"); //$NON-NLS-1$
+			String os = attributes.getValue("os"); //$NON-NLS-1$
+			String ws = attributes.getValue("ws"); //$NON-NLS-1$
+			String nl = attributes.getValue("nl"); //$NON-NLS-1$
+			String arch = attributes.getValue("arch"); //$NON-NLS-1$
+			if (!Utils.isValidEnvironment(os, ws, arch))
+				return;
 //			String exclusive = attributes.getValue("exclusive"); //$NON-NLS-1$
 //			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
 
@@ -139,5 +143,4 @@ public class FeatureParser extends DefaultHandler {
 				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
 		}
 	}
-
 }

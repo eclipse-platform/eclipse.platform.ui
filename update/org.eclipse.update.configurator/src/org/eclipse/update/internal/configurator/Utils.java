@@ -176,4 +176,30 @@ public class Utils {
 			return url;
 		}
 	}
+	
+
+	/**
+	 * 
+	 */
+	public static boolean isValidEnvironment(String os, String ws, String arch) {
+		if (os!=null && !isMatching(os, Platform.getOS())) return false;
+		if (ws!=null && !isMatching(ws, Platform.getWS())) return false;
+		if (arch!=null && !isMatching(arch, Platform.getOSArch())) return false;
+		return true;
+	}
+
+	/**
+	 * 
+	 */	
+	private static boolean isMatching(String candidateValues, String siteValues) {
+		if (siteValues==null) return false;
+		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		siteValues = siteValues.toUpperCase();		
+		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken().toUpperCase();
+			if (siteValues.indexOf(token)!=-1) return true;
+		}
+		return false;
+	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.configurator;
 
 import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
@@ -39,6 +40,8 @@ public class FeatureEntry
 	private boolean primary;
 	private String pluginIdentifier;
 	private String url;
+	private String provider;
+	private ArrayList plugins;
 	private AboutInfo branding;
 
 	public FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
@@ -159,7 +162,10 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getBundles()
 	 */
 	public Bundle[] getBundles() {
-		// TODO Auto-generated method stub
+		if (plugins == null) {
+			plugins = new ArrayList();
+		}
+		
 		return new Bundle[0];
 	}
 	/* (non-Javadoc)
