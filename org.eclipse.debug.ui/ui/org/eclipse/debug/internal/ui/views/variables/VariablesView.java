@@ -831,11 +831,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					val = ((IVariable)obj).getValue();
 				} else if (obj instanceof IExpression) {
 					val = ((IExpression)obj).getValue();
-					if (val == null) {
-						return;
-					}
 				}
-				
+				if (val == null) {
+					return;
+				}			
 				// workaroud for bug 12938
 				if (fValueSelection != null && fValueSelection.equals(selection)) {
 					return;
