@@ -6,6 +6,10 @@ package org.eclipse.jface.action;
  */
 import java.util.*;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 /**
  * Abstract base class for all contribution managers, and standard implementation 
  * of <code>IContributionManager</code>. This class provides functionality 
@@ -263,6 +267,17 @@ private void itemAdded(IContributionItem item) {
  * Marks the manager as dirty and updates the number of dynamic items.
  */
 private void itemRemoved(IContributionItem item) {
+	if (contributions.contains(item)) {
+		// temp code to log this case since it should not happen
+		Platform.getPlugin(Platform.PI_RUNTIME).getLog().log(
+			new Status(
+				IStatus.ERROR,
+				Platform.PI_RUNTIME,
+				0,
+				"Duplicate contribution item found during removal", //$NON-NLS-1$
+				new Exception()));
+	}
+	
 	markDirty();
 	if (item.isDynamic())
 		dynamicItems--;	
