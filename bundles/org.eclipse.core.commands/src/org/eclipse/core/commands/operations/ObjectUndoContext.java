@@ -31,8 +31,6 @@ import java.util.List;
  */
 public class ObjectUndoContext extends UndoContext {
 
-	private IContextOperationApprover approver = null;
-
 	private Object object;
 
 	private String label;
@@ -82,26 +80,6 @@ public class ObjectUndoContext extends UndoContext {
 	 */
 	public Object getObject() {
 		return object;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
-	 */
-	public IContextOperationApprover getOperationApprover() {
-		return approver;
-	}
-
-	/**
-	 * Set the IContextOperationApprover that approves the undo or redo of
-	 * operations that have this context.
-	 * 
-	 * @param approver -
-	 *            the operation approver to be used for this context
-	 */
-	public void setOperationApprover(IContextOperationApprover approver) {
-		this.approver = approver;
 	}
 
 	/**

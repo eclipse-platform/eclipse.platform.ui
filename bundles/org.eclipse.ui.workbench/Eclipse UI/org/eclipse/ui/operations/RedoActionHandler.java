@@ -15,7 +15,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -37,22 +36,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class RedoActionHandler extends OperationHistoryActionHandler {
 
-	/**
-	 * Construct an action handler that handles the labelling and enabling of
-	 * the redo action for a specified operation context.
-	 * 
-	 * @param window
-	 *            the workbench window that created the action.
-	 * @param context
-	 *            the context to be used for redoing.
-	 * @deprecated
-	 */
-	public RedoActionHandler(IWorkbenchWindow window, IUndoContext context) {
-		super(window, context);
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-
-	}
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the redo action for a specified operation context.

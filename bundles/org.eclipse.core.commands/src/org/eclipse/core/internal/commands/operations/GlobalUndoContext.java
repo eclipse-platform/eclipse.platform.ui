@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.commands.operations;
 
-import org.eclipse.core.commands.operations.IContextOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
@@ -36,13 +35,6 @@ public class GlobalUndoContext implements IUndoContext {
 	 */
 	public String getLabel() {
 		return "Global Undo Context"; //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
-	 */
-	public IContextOperationApprover getOperationApprover() {
-		return null;
 	}
 	
 	/* (non-Javadoc)

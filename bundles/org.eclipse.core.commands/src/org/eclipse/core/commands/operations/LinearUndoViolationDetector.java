@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Status;
  * @experimental
  */
 public abstract class LinearUndoViolationDetector implements
-		IContextOperationApprover {
+		IOperationApprover {
 
 	/*
 	 * Return whether a linear redo violation is allowable.  A linear redo violation
@@ -57,10 +57,15 @@ public abstract class LinearUndoViolationDetector implements
 	 *      org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.commands.operations.IOperationHistory, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus proceedRedoing(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable info) {
-		if (history.getRedoOperation(context) != operation)
-			return allowLinearRedoViolation(operation, context, history, info);
-
+			IOperationHistory history, IAdaptable info) {
+		IUndoContext [] contexts = operation.getContexts();
+		for (int i=0; i<contexts.length; i++) {
+			IUndoContext context = contexts[i];
+			if (history.getRedoOperation(context) != operation) {
+				IStatus status = allowLinearRedoViolation(operation, context, history, info);
+				if (!status.isOK()) return status;
+			}
+		}
 		return Status.OK_STATUS;
 	}
 	/*
@@ -71,11 +76,15 @@ public abstract class LinearUndoViolationDetector implements
 	 */
 
 	public IStatus proceedUndoing(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable info) {
-		if (history.getUndoOperation(context) != operation)
-			return allowLinearUndoViolation(operation, context, history, info);
-
+			IOperationHistory history, IAdaptable info) {
+		IUndoContext [] contexts = operation.getContexts();
+		for (int i=0; i<contexts.length; i++) {
+			IUndoContext context = contexts[i];
+			if (history.getUndoOperation(context) != operation) {
+				IStatus status = allowLinearUndoViolation(operation, context, history, info);
+				if (!status.isOK()) return status;
+			}
+		}
 		return Status.OK_STATUS;
 	}
-
 }

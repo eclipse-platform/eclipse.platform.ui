@@ -74,6 +74,21 @@ import org.eclipse.core.runtime.IStatus;
 public interface IOperationHistory {
 
 	/**
+	 * An operation is to be opened or closed for execution.
+	 */
+	public static final int EXECUTE = 0x0001;
+
+	/**
+	 * An operation is to be opened for undo.
+	 */
+	public static final int UNDO = 0x0002;
+
+	/**
+	 * An operation is to be opened for redo.
+	 */
+	public static final int REDO = 0x0004;
+
+	/**
 	 * An undo context that can be used to query the global undo history. This
 	 * context is not intended to be assigned to operations. Instead, it is used
 	 * for querying the history or performing an undo or redo on the global
@@ -113,24 +128,10 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Close the current operation. Send listeners a <code>DONE</code> and
-	 * <code>OPERATION_ADDED</code> notification for the operation.
-	 * <p>
-	 * Any operations that are executed and added will no longer be considered
-	 * part of this operation.
-	 * <p>
-	 * This method has no effect if the caller has not previously called
-	 * {@link #openOperation}.
-	 * 
-	 * @deprecated - use #closeOperation(operationOK, addToHistory) instead.
-	 */
-	void closeOperation();
-
-	/**
-	 * <p>
 	 * Close the current operation. If the operation has successfully completed,
-	 * send listeners a <code>DONE</code> notification. Otherwise send an
-	 * <code>OPERATION_NOT_OK</code> notification. Add the operation to the
+	 * send listeners a <code>DONE</code>, <code>UNDONE</code>, or
+	 * <code>REDONE</code> notification, depending on the mode. Otherwise send
+	 * an <code>OPERATION_NOT_OK</code> notification. Add the operation to the
 	 * history if specified and send an <code>OPERATION_ADDED</code>
 	 * notification.
 	 * </p>
@@ -149,7 +150,8 @@ public interface IOperationHistory {
 	 * 
 	 * @param operationOK -
 	 *            <code>true</code> if the operation successfully completed.
-	 *            Listeners should be notified with <code>DONE</code>.
+	 *            Listeners should be notified with <code>DONE</code>,
+	 *            <code>UNDONE</code>, or <code>REDONE</code>.
 	 *            <code>false</code> if the operation did not successfully
 	 *            complete. Listeners should be notified with
 	 *            <code>OPERATION_NOT_OK</code>.
@@ -158,8 +160,13 @@ public interface IOperationHistory {
 	 *            history, <code>false</code> if it should not. If the
 	 *            <code>operationOK</code> parameter is <code>false</code>,
 	 *            the operation will never be added to the history.
+	 * @param mode -
+	 *            the mode the operation was opened in. Can be one of
+	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
+	 *            <code>REDO</code>.  This determines what notifications are
+	 *            sent.
 	 */
-	void closeOperation(boolean operationOK, boolean addToHistory);
+	void closeOperation(boolean operationOK, boolean addToHistory, int mode);
 
 	/**
 	 * Return whether there is a redoable operation available in the given
@@ -184,23 +191,6 @@ public interface IOperationHistory {
 	 */
 	boolean canUndo(IUndoContext context);
 
-	/**
-	 * Dispose of the specified context in the history. All operations that have
-	 * only the given context will be disposed. References to the context in
-	 * operations that have more than one context will also be removed.
-	 * 
-	 * @param context -
-	 *            the context to be disposed
-	 * @param flushUndo -
-	 *            <code>true</code> if the context should be flushed from the
-	 *            undo history, <code>false</code> if it should not
-	 * @param flushRedo -
-	 *            <code>true</code> if the context should be flushed from the
-	 *            redo history, <code>false</code> if it should not.
-	 * @deprecated - use dispose(IUndoContext, boolean, boolean, boolean)
-	 */
-	void dispose(IUndoContext context, boolean flushUndo, boolean flushRedo);
-	
 	/**
 	 * Dispose of the specified context in the history. All operations that have
 	 * only the given context will be disposed. References to the context in
@@ -321,49 +311,48 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Open this operation and consider it the primary operation in a batch of
-	 * related operations. Consider all operations that are subsequently
-	 * executed (or added) to be part of this operation and assign the
-	 * context(s) of subsequent operations to this operation. When an operation
-	 * is opened, listeners will immediately receive an
-	 * <code>ABOUT_TO_EXECUTE</code>) notification for the operation.
-	 * Notifications for execution or adding subsequent operations will not be
-	 * sent as long as this operation is open.
+	 * Open this composite operation and consider it an operation that contains
+	 * other related operations. Consider all operations that are subsequently
+	 * executed or added to be part of this operation. When an
+	 * operation is opened, listeners will immediately receive a notification
+	 * depending on the mode in which the operation is opened. (<code>ABOUT_TO_EXECUTE</code>,
+	 * <code>ABOUT_TO_UNDO</code>, <code>ABOUT_TO_REDO</code>) for the
+	 * opened operation. Notifications for any other execute or add
+	 * while this operation is open will not occur. Instead, those operations
+	 * will be added to the current operation.
 	 * 
 	 * <p>
 	 * Note: This method is intended to be used by legacy undo frameworks that
-	 * do not expect related undo operations to appear in the same undo stack as
-	 * the triggering undo operation. When an operation is open, any subsequent
-	 * operations added or executed are assumed to be triggered by model change
-	 * events caused by the originating operation. Therefore, they will not be
-	 * considered as independent operations and will not be added to the
-	 * operation history. Instead, their contexts will be added to the open
-	 * operation and they will be disposed. Once the operation is closed,
-	 * requests to undo or redo it will result in only the originating (primary)
-	 * operation being undone or redone. The assumption is that the undos
-	 * corresponding to the original operation will be triggered by model change
-	 * notifications similar to those that triggered the original operations.
+	 * do not expect related undo operations to appear in the same undo history
+	 * as the triggering undo operation. When an operation is open, any
+	 * subsequent requests to execute, add, undo, or redo another operation will
+	 * result in that operation being added to the open operation. Once the
+	 * operation is closed, the composite will be considered an atomic
+	 * operation.
 	 * 
 	 * <p>
-	 * When an operation is open, operations that are added to the history will
-	 * be considered part of the open operation instead. Their contexts will be
-	 * assigned to the open operation and then they will be disposed. Operations
-	 * that are executed while an operation is open will first be executed and
-	 * then disposed.
+	 * When a composite is open, operations that are added to the history will
+	 * be considered part of the open operation instead. Operations that are
+	 * executed while a composite is open will first be executed and then added
+	 * to the composite.
 	 * 
 	 * <p>
 	 * Open operations cannot be nested. If this method is called when another
 	 * operation is open, that operation will be closed first.
 	 * 
 	 * @param operation -
-	 *            the operation to be considered as the primary operation for
-	 *            all subsequent operations.
+	 *            the composite operation to be considered as the parent for all
+	 *            subsequent operations.
+	 * @param mode -
+	 *            the mode the operation is executing in. Can be one of
+	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
+	 *            <code>REDO</code>.  This determines what notifications are sent.
 	 * 
 	 * <p>
 	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
 	 * or be removed before the final release.
 	 */
-	void openOperation(IUndoableOperation operation);
+	void openOperation(ICompositeOperation operation, int mode);
 
 	/**
 	 * <p>
@@ -489,6 +478,22 @@ public interface IOperationHistory {
 	 *            The IOperationHistoryListener to be removed
 	 */
 	void removeOperationHistoryListener(IOperationHistoryListener listener);
+
+	/**
+	 * Replace the specified operation in the undo or redo history with the
+	 * provided list of replacements. This protocol is typically used when a
+	 * composite is broken up into its atomic parts. The replacements will be
+	 * inserted so that the first replacement will be the first of the
+	 * replacements to be undone or redone. Listeners will be notified about the
+	 * removal of the replaceed element and the addition of each replacement.
+	 * 
+	 * @param operation -
+	 *            The IUndoableOperation to be replaced
+	 * @param replacements -
+	 *            the array of IUndoableOperation to replace the first operation
+	 */
+	void replaceOperation(IUndoableOperation operation,
+			IUndoableOperation[] replacements);
 
 	/**
 	 * Set the limit on the undo and redo history for a particular context.

@@ -39,15 +39,6 @@ public interface IUndoContext {
 	public String getLabel();
 
 	/**
-	 * Get the operation approver that is used to approve undo or redo
-	 * operations involving this context.
-	 * 
-	 * @return the operation approver for the context. A <code>null</code>
-	 *         return value indicates that no special approval is necessary.
-	 */
-	public IContextOperationApprover getOperationApprover();
-
-	/**
 	 * Return whether the specified context is considered a match for the
 	 * receiving context. When a context matches another context, objects that
 	 * have the context are considered to also have the matching context.

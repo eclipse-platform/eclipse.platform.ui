@@ -14,8 +14,8 @@ package org.eclipse.ui.tests.operations;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
+import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
@@ -25,6 +25,7 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,6 +41,7 @@ public class OperationsAPITest extends TestCase {
 	IOperationHistory history;
 
 	IUndoableOperation op1, op2, op3, op4, op5, op6, localA, localB, localC;
+	ICompositeOperation refactor;
 	
 	int preExec, postExec, preUndo, postUndo, preRedo, postRedo, add, remove, notOK, changed = 0;
 	IOperationHistoryListener listener;
@@ -198,32 +200,33 @@ public class OperationsAPITest extends TestCase {
 	public void testOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(op1);
+		ICompositeOperation batch = new TriggeredOperations(op1, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		op2.execute(null, null);
 		history.add(op2);
 		history.execute(op3, null, null);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("no operations should be in history yet", op == null);
-		history.closeOperation(true, true);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		assertTrue("Operation should be batching", op == op1);
+		assertTrue("Operation should be batching", op == batch);
 		op.removeContext(contextB);
 		assertFalse("Operation should not have context", op.hasContext(contextB));
-		assertTrue("Removal of open operation's context should not affect original operation", op2.hasContext(contextB));
 	}
 	
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(op1);
+		ICompositeOperation batch = new TriggeredOperations(op1, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		op2.execute(null, null);
 		history.add(op2);
 		history.execute(op3, null, null);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("no operations should be in history yet", op == null);
-		history.closeOperation(false, true);
+		history.closeOperation(false, true, IOperationHistory.EXECUTE);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertNull("Unsuccessful operation should not be added to history", op);
 		assertTrue("NOT_OK notification should have been received", notOK == 1);
@@ -234,14 +237,15 @@ public class OperationsAPITest extends TestCase {
 	public void testNotAddedOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(op1);
+		ICompositeOperation batch = new TriggeredOperations(op1, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		op2.execute(null, null);
 		history.add(op2);
 		history.execute(op3, null, null);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("no operations should be in history yet", op == null);
-		history.closeOperation(true, false);
+		history.closeOperation(true, false, IOperationHistory.EXECUTE);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertNull("Operation should not be added to history", op);
 		assertTrue("DONE notification should have been received", postExec == 1);
@@ -251,22 +255,23 @@ public class OperationsAPITest extends TestCase {
 	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(op1);
+		history.openOperation(new TriggeredOperations(op1, history), IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		op2.execute(null, null);
 		history.add(op2);
 		history.execute(op3, null, null);
-		history.openOperation(op4);
+		ICompositeOperation batch = new TriggeredOperations(op4, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertNull("Unexpected nested open should not add original", op);
-		history.closeOperation(true, true);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		assertSame("Second operation should be closed", op, op4);
+		assertSame("Second operation should be closed", op, batch);
 	}
 	
 	public void testAbortedOpenOperation() throws ExecutionException {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(op1);
+		history.openOperation(new TriggeredOperations(op1, history), IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		history.execute(op2, null, null);
 		// flush history while operation is open
@@ -274,31 +279,29 @@ public class OperationsAPITest extends TestCase {
 		// op3 should be added as its own op since we flushed while open
 		history.add(op3);
 		// should really have no effect
-		history.closeOperation(true, true);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("Open operation should be flushed", op == op3);
 	}
 
 	public void testOperationApproval() throws ExecutionException {
-		history.addOperationApprover(new ContextConsultingOperationApprover());
-		contextB.setOperationApprover(new LinearUndoEnforcer());
-		contextC.setOperationApprover(new LinearUndoEnforcer());
+		history.addOperationApprover(new LinearUndoEnforcer());
 		// the first undo should be fine
 		IStatus status = history.undo(contextB, null, null);
 		assertTrue(status.isOK());
 
-		// the second causes a linear violation on contextB
+		// the second causes a linear violation on C
 		assertTrue(history.canUndo(contextB));
 		status = history.undo(contextB, null, null);
 		assertFalse(status.isOK());
 
-		// undo the newer contextC items
+		// undo the newer C items
 		status = history.undo(contextC, null, null);
 		assertTrue(status.isOK());
 		status = history.undo(contextC, null, null);
 		assertTrue(status.isOK());
 
-		// now we should be okay in contextB
+		// now we should be okay in B
 		status = history.undo(contextB, null, null);
 		assertTrue(status.isOK());
 
@@ -390,5 +393,133 @@ public class OperationsAPITest extends TestCase {
 		history.operationChanged(op2);
 		history.operationChanged(new TestOperation("New op"));
 		assertTrue("should not notify about changes if not in the history", changed == 2);
+	}
+	
+	// the setup for the infamous (local conflict on top of composite and composite gets pruned) case
+	private void setup87675() throws ExecutionException {
+		// clear everything out.  special setup for this test case
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		contextA = new ObjectUndoContext("A");
+		contextB = new ObjectUndoContext("B");
+		contextC = new ObjectUndoContext("C");
+		contextW = new ObjectUndoContext("W");
+		history.addOperationApprover(new LinearUndoEnforcer());
+		
+		// local edits on A, B, C are added first
+		IUndoableOperation op = new TestOperation("op1a");
+		op.addContext(contextA);
+		history.execute(op, null, null);
+		op = new TestOperation("op1b");
+		op.addContext(contextB);
+		history.execute(op, null, null);
+		op = new TestOperation("op1c");
+		op.addContext(contextC);
+		history.execute(op, null, null);
+		
+		// now we create the "refactoring op" which touches them all
+		op = new TestOperation("Refactoring");
+		op.addContext(contextW);
+		op.execute(null, null);
+		refactor = new TriggeredOperations(op, history);
+		history.openOperation(refactor, IOperationHistory.EXECUTE);
+		localA = new TestOperation("op2a");
+		localA.addContext(contextA);
+		history.execute(localA, null, null);
+		localB = new TestOperation("op2b");
+		localB.addContext(contextB);
+		history.execute(localB, null, null);
+		localC = new TestOperation("op2c");
+		localC.addContext(contextC);
+		history.execute(localC, null, null);
+		
+		// close off the composite
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		
+		// subsequent local edit to C
+		op = new TestOperation("op3c");
+		op.addContext(contextC);
+		history.execute(op, null, null);
+	}
+	
+	public void test87675_split() throws ExecutionException {
+		setup87675();
+		IUndoableOperation op;
+		
+		// check setup
+		op = history.getUndoOperation(contextA);
+		assertTrue("Refactoring should be next op for context A", op == refactor);
+		op = history.getUndoOperation(contextB);
+		assertTrue("Refactoring should be next op for context B", op == refactor);
+		op = history.getUndoOperation(contextW);
+		assertTrue("Refactoring should be next op for context W", op == refactor);
+		op = history.getUndoOperation(contextC);
+		assertFalse("Refactoring should not be next op for context C", op == refactor);
+
+		// try a bogus undo
+		IStatus status = history.undo(contextW, null, null);
+		assertFalse("Undo should not be permitted due to linear conflict", status.isOK());
+		
+		// prune the history for contextW
+		history.dispose(contextW, true, true, false);
+		
+		// refactoring op should have been broken up into pieces
+		op = history.getUndoOperation(contextA);
+		assertTrue("Local edit A should be atomic", op == localA);
+		op = history.getUndoOperation(contextB);
+		assertTrue("Local edit B should be atomic", op == localB);
+		op = history.getUndoOperation(contextC);
+		assertFalse("Local edit C should not be refactoring edit", op == localC);
+		
+		// now the refactoring C edit should be the next one
+		history.undo(contextC, null, null);
+		op = history.getUndoOperation(contextC);
+		assertTrue("Local edit C should be refactoring edit", op == localC);
+	}
+	
+	public void test87675_undoredo() throws ExecutionException {
+		setup87675();
+		IUndoableOperation op;
+		
+		// undo the local edit to C
+		history.undo(contextC, null, null);
+		
+		// undo the refactoring operation via context C
+		history.undo(contextC, null, null);
+		
+		// check that there are no new operations in the undo list for A, B, C
+		op = history.getUndoOperation(contextC);
+		assertTrue("Local edit C should be original edit", op.getLabel().equals("op1c"));
+
+		op = history.getUndoOperation(contextB);
+		assertTrue("Local edit B should be original edit", op.getLabel().equals("op1b"));
+
+		op = history.getUndoOperation(contextA);
+		assertTrue("Local edit A should be original edit", op.getLabel().equals("op1a"));
+		
+		// test that the redo operation has all contexts
+		op = history.getRedoOperation(contextW);
+		assertTrue("operation should have context A", op.hasContext(contextA));
+		assertTrue("operation should have context B", op.hasContext(contextB));
+		assertTrue("operation should have context C", op.hasContext(contextC));
+		
+		// now redo the operation
+		history.redo(contextA, null, null);
+		
+		// test that the next undo is our refactoring operation
+		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("operation should have context W", op.hasContext(contextW));
+		
+		// undo again and check that no side effect ops were left on the undo stack
+		history.undo(contextW, null, null);
+
+		op = history.getUndoOperation(contextC);
+		assertTrue("Local edit C should be original edit", op.getLabel().equals("op1c"));
+
+		op = history.getUndoOperation(contextB);
+		assertTrue("Local edit B should be original edit", op.getLabel().equals("op1b"));
+
+		op = history.getUndoOperation(contextA);
+		assertTrue("Local edit A should be original edit", op.getLabel().equals("op1a"));
+		
 	}
 }

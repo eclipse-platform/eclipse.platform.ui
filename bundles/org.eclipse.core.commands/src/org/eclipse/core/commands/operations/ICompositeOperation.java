@@ -12,9 +12,9 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * A simple, lightweight operation context that can be used to tag any
- * operation. It does not provided a specialized label or operation approval
- * sequence.
+ * ICompositeOperation defines an undoable operation that is composed of
+ * child operations.  Requests to execute, undo, or redo result in the
+ * operation taking place on the composite as a whole.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -27,19 +27,22 @@ package org.eclipse.core.commands.operations;
  * @since 3.1
  * @experimental
  */
-public class UndoContext implements IUndoContext {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
-	 */
-	public String getLabel() {
-		return ""; //$NON-NLS-1$
-	}
+public interface ICompositeOperation extends IUndoableOperation {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
+	/**
+	 * Add the specified operation as a child of this operation.
+	 * 
+	 * @param operation - the operation to be added
 	 */
-	public boolean matches(IUndoContext context) {
-		return context == this;
-	}
+	void add(IUndoableOperation operation);
+
+	
+	/**
+	 * Remove the specified operation from this operation.
+	 * 
+	 * @param operation - the operation to be removed
+	 */
+	void remove(IUndoableOperation operation);
+
+
 }

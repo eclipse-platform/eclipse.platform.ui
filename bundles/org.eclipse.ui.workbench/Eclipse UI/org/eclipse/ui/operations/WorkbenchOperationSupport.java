@@ -15,12 +15,12 @@ import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Policy;
+
 /**
  * <p>
  * Provides operation support for the workbench.
@@ -76,7 +76,6 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 		if (undoContext == null) {
 			undoContext = new ObjectUndoContext(PlatformUI.getWorkbench(),
 					"Workbench Context"); //$NON-NLS-1$
-			undoContext.setOperationApprover(new LinearUndoEnforcer());
 		}
 		return undoContext;
 	}
@@ -94,11 +93,11 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 		 */
 		if (approver == null) {
 			/*
-			 * install an operation approver that consults an operation's
-			 * context prior to performing an operation
+			 * install an operation approver that prevents linear undo violations
+			 * in any context
 			 */
-			approver = new ContextConsultingOperationApprover();
-			history.addOperationApprover(new ContextConsultingOperationApprover());
+			approver = new LinearUndoEnforcer();
+			history.addOperationApprover(approver);
 			/*
 			 * set a limit for the workbench undo context
 			 */

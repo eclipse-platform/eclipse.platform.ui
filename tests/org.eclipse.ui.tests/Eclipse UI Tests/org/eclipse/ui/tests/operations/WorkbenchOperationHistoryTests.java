@@ -12,7 +12,6 @@
 package org.eclipse.ui.tests.operations;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IContextOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -105,7 +104,6 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	public void testMatchingContext() {
 		IUndoContext newContext = new IUndoContext() {
 			public String getLabel() { return "Matching Test Context"; }
-			public IContextOperationApprover getOperationApprover() { return null; }
 			public boolean matches(IUndoContext otherContext) { return false; }
 		};
 		assertFalse(newContext.matches(context));

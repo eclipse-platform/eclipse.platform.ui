@@ -126,12 +126,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	private List undoList = new ArrayList();
 	
 	/**
-	 * an operation that is "absorbing" all other operations while
+	 * An operation that is "absorbing" all other operations while
 	 * it is open.  When this is not null, other operations added or
-	 * executed are ignored and assumed to be triggered by the batching
+	 * executed are added to this composite. 
 	 * 
 	 */
-	private IUndoableOperation batchingOperation = null;
+	private ICompositeOperation openComposite = null;
 
 	
 	/*
@@ -149,12 +149,8 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * it to be triggered by the batching operation and assume that its undo will be triggered
 		 * by the batching operation undo.  
 		 */
-		if (batchingOperation != null && batchingOperation != operation) {
-			IUndoContext[] contexts = operation.getContexts();
-			for (int i = 0; i < contexts.length; i++) {
-				batchingOperation.addContext(contexts[i]);
-			}
-			operation.dispose();
+		if (openComposite != null && openComposite != operation) {
+			openComposite.add(operation);
 			return;
 		}
 		
@@ -167,7 +163,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 		for (int i = 0; i < contexts.length; i++) {
 			flushRedo(contexts[i]);
 		}
-
 	}
 
 	/*
@@ -236,17 +231,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#dispose(org.eclipse.core.commands.operations.IUndoContext, boolean, boolean, boolean)
-	 * @deprecated
-	 */
-	public void dispose(IUndoContext context, boolean flushUndo,
-			boolean flushRedo) {
-		// simulate the old behavior
-		dispose(context, flushUndo, flushRedo, false);
-	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -267,7 +251,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 			flushRedo(context);
 			return;
 		}
-		
 		if (flushUndo)
 			flushUndo(context);
 		if (flushRedo)
@@ -418,15 +401,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * triggered automatically by the undo of the batching operation.
 		 */
 		boolean merging = false;
-		if (batchingOperation != null) {
+		if (openComposite != null) {
 			// the composite shouldn't be executed explicitly while it is still open
-			if (batchingOperation == operation) {
+			if (openComposite == operation) {
 				return OPERATION_INVALID_STATUS;
 			}
-			IUndoContext[] contexts = operation.getContexts();
-			for (int i = 0; i < contexts.length; i++) {
-				batchingOperation.addContext(contexts[i]);
-			}
+			openComposite.add(operation);
 			merging = true;
 		}
 
@@ -441,19 +421,9 @@ public class DefaultOperationHistory implements IOperationHistory {
 			status = Status.CANCEL_STATUS;
 		} catch (ExecutionException e) {
 			notifyNotOK(operation);
-			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out.print("OPERATIONHISTORY >>> ExecutionException while executing "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
-			}
 			throw e;
 		} catch (Exception e) {
 			notifyNotOK(operation);
-			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out.print("OPERATIONHISTORY >>> Exception while executing "); //$NON-NLS-1$ 
-				System.out.print(operation);
-				System.out.println();
-			}
 			throw new ExecutionException(
 					"While executing the operation, an exception occurred", e); //$NON-NLS-1$
 		}
@@ -553,12 +523,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 				operation.removeContext(context);
 			}
 		}
-		// there may be an open batch.  Notify listeners that it did not complete.
+		// there may be an open composite.  Notify listeners that it did not complete.
 		// Since we did not add it, there's no need to notify of its removal.
-		if (batchingOperation != null) {
-			if (batchingOperation.hasContext(context)) {
-				notifyNotOK(batchingOperation);
-				batchingOperation = null;
+		if (openComposite != null) {
+			if (openComposite.hasContext(context)) {
+				notifyNotOK(openComposite);
+				openComposite = null;
 			} 
 		}
 	}
@@ -636,13 +606,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	protected IStatus getRedoApproval(IUndoableOperation operation, IAdaptable info) {
 		for (int i = 0; i < approvers.size(); i++) {
-			IStatus approval = ((IOperationApprover) approvers.get(i))
-					.proceedRedoing(operation, this, info);
+			IOperationApprover approver = (IOperationApprover)approvers.get(i);
+			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					System.out.print("OPERATIONHISTORY >>> Redo not approved for "); //$NON-NLS-1$ 
+					System.out.print("OPERATIONHISTORY >>> Redo not approved by "); //$NON-NLS-1$ 
+					System.out.print(approver);
+					System.out.print("for operation "); //$NON-NLS-1$ 
 					System.out.print(operation);
-					System.out.print(" with status "); //$NON-NLS-1$ 
 					System.out.print(approval);
 					System.out.println();
 				}
@@ -683,11 +654,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	protected IStatus getUndoApproval(IUndoableOperation operation, IAdaptable info) {
 		for (int i = 0; i < approvers.size(); i++) {
-			IStatus approval = ((IOperationApprover) approvers.get(i))
-					.proceedUndoing(operation, this, info);
+			IOperationApprover approver = (IOperationApprover)approvers.get(i);
+			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					System.out.print("OPERATIONHISTORY >>> Undo not approved for "); //$NON-NLS-1$ 
+					System.out.print("OPERATIONHISTORY >>> Undo not approved by "); //$NON-NLS-1$ 
+					System.out.print(approver);
+					System.out.print("for operation "); //$NON-NLS-1$ 
 					System.out.print(operation);
 					System.out.print(" with status "); //$NON-NLS-1$ 
 					System.out.print(approval);
@@ -1029,7 +1002,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return status;
 	}
 
-	/**
+	/*
 	 * Remove the specified operation from the undo and redo history
 	 */
 	private void remove(IUndoableOperation operation) {
@@ -1059,6 +1032,57 @@ public class DefaultOperationHistory implements IOperationHistory {
 	public void removeOperationHistoryListener(
 			IOperationHistoryListener listener) {
 		listeners.remove(listener);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#replaceOperation(org.eclipse.core.commands.operations.IUndoableOperation, org.eclipse.core.commands.operations.IUndoableOperation [])
+	 */
+	public void replaceOperation(IUndoableOperation operation, IUndoableOperation [] replacements) {
+		// check the undo history first.
+		int index = undoList.indexOf(operation);
+		if (index > -1) {
+			undoList.remove(operation);
+			internalRemove(operation);
+			ArrayList allContexts = new ArrayList(replacements.length);
+			for (int i=0; i<replacements.length; i++) {
+				IUndoContext [] opContexts = replacements[i].getContexts();
+				for (int j=0; j < opContexts.length; j++ ) {
+					allContexts.add(opContexts[j]);
+				}
+				undoList.add(index, replacements[i]);
+				notifyAdd(replacements[i]);
+			}
+			// recheck all the limits.  We do this at the end so the index doesn't change during replacement
+			for (int i=0; i<allContexts.size(); i++) {
+				IUndoContext context = (IUndoContext)allContexts.get(i);
+				forceUndoLimit(context, getLimit(context));
+			}
+			
+		// look in the redo history 
+		} else {
+			index = redoList.indexOf(operation);
+			if (index == -1) return;
+			ArrayList allContexts = new ArrayList(replacements.length);
+			redoList.remove(operation);
+			internalRemove(operation);
+			for (int i=0; i<replacements.length; i++) {
+				IUndoContext [] opContexts = replacements[i].getContexts();
+				for (int j=0; j < opContexts.length; j++ ) {
+					allContexts.add(opContexts[j]);
+				}	
+				redoList.add(index, replacements[i]);
+				notifyAdd(replacements[i]);
+			}
+			// recheck all the limits.  We do this at the end so the index doesn't change during replacement
+			for (int i=0; i<allContexts.size(); i++) {
+				IUndoContext context = (IUndoContext)allContexts.get(i);
+				forceRedoLimit(context, getLimit(context));
+			}
+	
+		}
+		
 	}
 
 	/*
@@ -1135,65 +1159,64 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#openOperation(org.eclipse.core.commands.operations.IUndoableOperation)
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#openOperation(org.eclipse.core.commands.operations.ICompositeOperation)
 	 */
-	public void openOperation(IUndoableOperation operation) {
-		if (batchingOperation != null) {
-			// unexpected nesting of operations.  The original batching operation
-			// will be closed and will be considered unsuccessful.
+	public void openOperation(ICompositeOperation operation, int mode) {
+		if (openComposite != null) {
+			/* unexpected nesting of operations.  The original composite operation
+			   will be closed and will be considered unsuccessful.  The third parameter
+			   does not matter in this case since the operation is a failure. */
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				System.out.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
-				System.out.print(batchingOperation);
+				System.out.print(openComposite);
 				System.out.print("new:  "); //$NON-NLS-1$
 				System.out.print(operation);
 				System.out.println();
 			}
-			closeOperation(false, false);	
+
+			closeOperation(false, false, EXECUTE);	
 		} 
-		batchingOperation = operation;
+		openComposite = operation;
 		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
 			System.out.print("OPERATIONHISTORY >>> Opening operation "); //$NON-NLS-1$ 
-			System.out.print(batchingOperation);
+			System.out.print(openComposite);
 			System.out.println();
 		}
-		notifyAboutToExecute(operation);	
+
+		if (mode == EXECUTE) {
+			notifyAboutToExecute(openComposite);
+		}
 	}
 	
-	/**
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation()
-	 * @deprecated
-	 */
-	public void closeOperation() {
-		closeOperation(true, true);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation(boolean, boolean)
 	 */
-	public void closeOperation(boolean operationOK, boolean addToHistory) {
+	public void closeOperation(boolean operationOK, boolean addToHistory, int mode) {
 		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-			if (batchingOperation == null) {
+			if (openComposite == null) {
 				System.out.print("OPERATIONHISTORY >>> Attempted to close operation when none was open "); //$NON-NLS-1$ 
 				System.out.println();
+				return;
 			}
 		}
-		if (batchingOperation != null) {
-			
+		if (openComposite != null) {
 			if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
 				System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
-				System.out.print(batchingOperation);
+				System.out.print(openComposite);
 				System.out.println();
 			}
-			
+			// any mode other than EXECUTE was triggered by a request to undo or
+			// redo something already in the history, so undo and redo notification will occur at
+			// the end of that sequence.
 			if (operationOK) {
-				notifyDone(batchingOperation);
-				if (addToHistory) add(batchingOperation);
+				if (mode == EXECUTE) notifyDone(openComposite);
+				if (addToHistory) add(openComposite);
 			} else {
-				notifyNotOK(batchingOperation);
+				if (mode == EXECUTE) notifyNotOK(openComposite);
 			}
-			batchingOperation = null;
+			openComposite = null;
 		}
 	}
 	

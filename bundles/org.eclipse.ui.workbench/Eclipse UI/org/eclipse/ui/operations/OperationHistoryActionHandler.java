@@ -107,29 +107,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	}
 	protected IUndoContext undoContext = null;
 	private boolean pruning = false;
-	// temporary
-	protected IWorkbenchWindow workbenchWindow;
-	protected IWorkbenchPartSite site;
-	private IPartListener partListener = new PartListener();
 
-	/**
-	 * Construct an operation history action for the specified workbench window
-	 * with the specified undo context.
-	 * 
-	 * @param window -
-	 *            the workbench window for the action.
-	 * @param context -
-	 *            the undo context to be used
-	 * @deprecated
-	 */
-	public OperationHistoryActionHandler(IWorkbenchWindow window,
-			IUndoContext context) {
-		// string will be reset inside action
-		super(""); //$NON-NLS-1$
-		workbenchWindow = window;
-		undoContext = context;
-		getHistory().addOperationHistoryListener(this);
-	}
+	private IPartListener partListener = new PartListener();
+	protected IWorkbenchPartSite site;
 	
 	/**
 	 * Construct an operation history action for the specified workbench window
@@ -217,11 +197,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the workbench window for this action handler
 	 */
 	private IWorkbenchWindow getWorkbenchWindow() {
-		if (site != null) {
-			return site.getWorkbenchWindow();
-		}
-		// temporary
-		return workbenchWindow;
+		return site.getWorkbenchWindow();
 	}
 
 	/**
