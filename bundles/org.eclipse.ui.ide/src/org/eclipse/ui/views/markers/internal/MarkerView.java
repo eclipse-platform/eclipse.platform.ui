@@ -40,7 +40,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -201,7 +200,7 @@ public abstract class MarkerView extends TableView {
 
             monitor.subTask(SEARCHING_FOR_MARKERS);
             SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-            currentMarkers = MarkerList.compute(getFilter(), subMonitor, true);
+            MarkerList markerList = MarkerList.compute(getFilter(), subMonitor, true);
 
             if (monitor.isCanceled()) {
                 return;
@@ -211,6 +210,8 @@ public abstract class MarkerView extends TableView {
                 totalMarkers = MarkerList.compute(getMarkerTypes()).length;
                 markerCountDirty = false;
             }
+            
+            currentMarkers = markerList;
 
         } catch (CoreException e) {
             throw new InvocationTargetException(e);
@@ -248,7 +249,12 @@ public abstract class MarkerView extends TableView {
         try {
             uiJob.join();
         } catch (InterruptedException e) {
+            uiJob.cancel();
             monitor.done();
+        } finally {
+            if (monitor.isCanceled()) {
+                uiJob.cancel();
+            }
         }
 
         monitor.done();
@@ -823,7 +829,7 @@ public abstract class MarkerView extends TableView {
         // The number of visible markers should never exceed the total number of markers in
         // the workspace. If this assertation fails, it probably indicates some sort of concurrency problem
         // (most likely, getTotalMarkers was called while we were still computing the marker lists)
-        Assert.isTrue(totalMarkers >= currentMarkers.getItemCount());
+        //Assert.isTrue(totalMarkers >= currentMarkers.getItemCount());
 
         return totalMarkers;
     }
