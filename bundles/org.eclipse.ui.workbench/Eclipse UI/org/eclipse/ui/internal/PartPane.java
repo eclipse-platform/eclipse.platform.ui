@@ -22,7 +22,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem2;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
