@@ -465,6 +465,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
         
         refreshPresentationSelection();
+        
+        Rectangle bounds = presentation.getControl().getBounds();
+        int minimumHeight = getMinimumHeight();
+
+        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
+                && bounds.height != minimumHeight) {
+            bounds.width = getMinimumWidth();
+            bounds.height = minimumHeight;
+            getPresentation().setBounds(bounds);
+        }
     }
 
     /**
