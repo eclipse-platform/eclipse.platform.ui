@@ -39,7 +39,7 @@ public class Rules {
 			return null;
 		}
 		public ISchedulingRule modifyRule(IResource resource) {
-			return resource.getType() == IResource.FILE ? parent(resource) : resource;
+			return resource;
 		}
 		public ISchedulingRule moveRule(IResource source, IResource destination) {
 			//move needs the parent of both source and destination
