@@ -126,7 +126,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
-		removeInstructionPointerAnnotations(element);
+		if (!event.isEvaluation()) {
+			removeInstructionPointerAnnotations(element);
+		}
 		if (event.isEvaluation() || event.isStepStart()) {
 			// Do not update for step starts and evaluation
 			// starts immediately. Instead, start the timer.
