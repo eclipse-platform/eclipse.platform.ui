@@ -60,12 +60,12 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * field should be returned.
 	 * <p>
 	 * This default implementation always returns the value of the <code>defaultFactory</code>
-	 * field. Subclasses may override.
+	 * field. Subclasses may override and provide a subclass of <code>ResourceRuleFactory</code>.
 	 * 
 	 * @param project the project to return scheduling rules for
 	 * @return the resource scheduling rules for a project
 	 * @see #setRuleFactory(IProject, IResourceRuleFactory)
-	 * @see IResourceRuleFactory
+	 * @see ResourceRuleFactory
 	 * @since 3.0
 	 */
 	public IResourceRuleFactory getRuleFactory(IProject project) {

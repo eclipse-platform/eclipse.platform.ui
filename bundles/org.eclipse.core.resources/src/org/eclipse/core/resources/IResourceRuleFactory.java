@@ -34,6 +34,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * Note that <code>null</code> is a valid scheduling rule (indicating that no
  * resources need to be locked), and thus all methods in this class may 
  * return <code>null</code>.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see WorkspaceJob
  * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
