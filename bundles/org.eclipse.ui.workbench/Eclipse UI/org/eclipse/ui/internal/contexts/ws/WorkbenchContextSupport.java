@@ -281,7 +281,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                  */
             }
 
-            System.out.println(enabledContextIds);
             mutableContextManager.setEnabledContextIds(enabledContextIds);
         }
     }

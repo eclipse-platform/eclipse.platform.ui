@@ -1985,7 +1985,6 @@ public final class Workbench implements IWorkbench {
 
         public final void commandManagerChanged(
                 final CommandManagerEvent commandManagerEvent) {
-            System.out.println("commandManagerChanged");
             updateActiveWorkbenchWindowMenuManager(false);
         }
     };
@@ -1994,7 +1993,6 @@ public final class Workbench implements IWorkbench {
 
         public final void contextManagerChanged(
                 final ContextManagerEvent contextManagerEvent) {
-            System.out.println("contextManagerChanged");
             getCommandSupport().getCommandManager().setActiveContextIds(
                     getContextSupport().getContextManager()
                             .getEnabledContextIds());
