@@ -237,7 +237,10 @@ public TargetInfo[] getAvailableTargets() throws CoreException {
  *    reporting and cancellation are not desired
  */
 public void run(IProgressMonitor monitor) throws CoreException {
-	long startTime = System.currentTimeMillis();
+	long startTime = 0;
+	if (Policy.DEBUG_BUILDFILE_TIMING) {
+		startTime = System.currentTimeMillis();
+	}
 	try {
 		ClassLoader loader = getClassLoader();
 		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
