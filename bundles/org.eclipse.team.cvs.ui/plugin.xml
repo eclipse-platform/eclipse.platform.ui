@@ -129,7 +129,7 @@
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IProjectContributions"
-			objectClass="org.eclipse.core.resources.IProject">
+			objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithTag"
@@ -146,7 +146,7 @@
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IFileContributions"
-			objectClass="org.eclipse.core.resources.IFile">
+			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.delete"
