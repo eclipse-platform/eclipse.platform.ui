@@ -13,11 +13,13 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,7 +49,7 @@ public class ReentrantLock {
 	private final static boolean DEBUG = Policy.DEBUG_THREADING;
 	
 	// This is a placeholder rule used to indicate that no scheduling rule is needed
-	private static final ISchedulingRule NULL_SCHEDULING_RULE= new ISchedulingRule() {
+	/* internal use only */ static final ISchedulingRule NULL_SCHEDULING_RULE= new ISchedulingRule() {
 		public boolean contains(ISchedulingRule rule) {
 			return false;
 		}
@@ -57,23 +59,61 @@ public class ReentrantLock {
 	};
 	
 	public class ThreadInfo {
-		private int nestingCount = 0;
 		private Set changedResources = new HashSet();
 		private Set changedFolders = new HashSet();
+		private Set changedIgnoreFiles = new HashSet();
 		private IFlushOperation operation;
 		private List rules = new ArrayList();
 		public ThreadInfo(IFlushOperation operation) {
 			this.operation = operation;
 		}
-		public void increment() {
-			nestingCount++;
+		/**
+		 * Push a scheduling rule onto the stack for this thread and
+		 * acquire the rule if it is not the workspace root.
+		 * @param resource
+		 */
+		public void pushRule(IResource resource) {
+			// The scheduling rule is either the project or the resource's parent
+			ISchedulingRule rule;
+			if (resource.getType() == IResource.ROOT) {
+				// Never lock the whole workspace
+				rule = NULL_SCHEDULING_RULE;
+			} else  if (resource.getType() == IResource.PROJECT) {
+				rule = resource;
+			} else {
+				rule = resource.getParent();
+			}
+			if (rule != NULL_SCHEDULING_RULE) {
+				Platform.getJobManager().beginRule(rule);
+			}
+			addRule(rule);
 		}
-		public int decrement() {
-			nestingCount--;
-			return nestingCount;
+		/**
+		 * Pop the scheduling rule from the stack and release it if it
+		 * is not the workspace root. Flush any changed sync info to 
+		 * disk if necessary. A flush is necessary if the stack is empty
+		 * or if the top-most non-null scheduling rule was popped as a result
+		 * of this operation.
+		 * @param monitor
+		 * @throws CVSException
+		 */
+		public void popRule(IProgressMonitor monitor) throws CVSException {
+			ISchedulingRule rule = removeRule();
+			if (isFlushRequired()) {
+				flush(monitor);
+			}
+			if (rule != NULL_SCHEDULING_RULE) {
+				Platform.getJobManager().endRule(rule);
+			}
 		}
-		public int getNestingCount() {
-			return nestingCount;
+		/**
+		 * Return <code>true</code> if we are still nested in
+		 * an acquire for this thread.
+		 * 
+		 * @return
+		 */
+		public boolean isNested() {
+			return !rules.isEmpty();
 		}
 		public void addChangedResource(IResource resource) {
 			changedResources.add(resource);
@@ -81,14 +121,20 @@ public class ReentrantLock {
 		public void addChangedFolder(IContainer container) {
 			changedFolders.add(container);
 		}
+		public void addChangedIgnoreFile(IFile resource) {
+			changedIgnoreFiles.add(resource);
+		}
 		public boolean isEmpty() {
-			return changedFolders.isEmpty() && changedResources.isEmpty();
+			return changedFolders.isEmpty() && changedResources.isEmpty() && changedIgnoreFiles.isEmpty();
 		}
 		public IResource[] getChangedResources() {
 			return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
 		}
 		public IContainer[] getChangedFolders() {
 			return (IContainer[]) changedFolders.toArray(new IContainer[changedFolders.size()]);
+		}
+		public IFile[] getChangedIgnoreFiles() {
+			return (IFile[]) changedIgnoreFiles.toArray(new IFile[changedIgnoreFiles.size()]);
 		}
 		public void flush(IProgressMonitor monitor) throws CVSException {
 			try {
@@ -105,14 +151,35 @@ public class ReentrantLock {
 			changedResources.clear();
 			changedFolders.clear();
 		}
+		private boolean isFlushRequired() {
+			return !isNested() || !isNoneNullRules();
+		}
+		private boolean isNoneNullRules() {
+			for (Iterator iter = rules.iterator(); iter.hasNext();) {
+				ISchedulingRule rule = (ISchedulingRule) iter.next();
+				if (rule != NULL_SCHEDULING_RULE) {
+					return true;
+				}
+			}
+			return false;
+		}
 		private void handleAbortedFlush(Throwable t) {
 			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("ReentrantLock.9"), t)); //$NON-NLS-1$
 		}
-		public void addRule(ISchedulingRule rule) {
+		private void addRule(ISchedulingRule rule) {
 			rules.add(rule);
 		}
-		public ISchedulingRule removeRule() {
+		private ISchedulingRule removeRule() {
 			return (ISchedulingRule)rules.remove(rules.size() - 1);
+		}
+		public boolean ruleContains(IResource resource) {
+			for (Iterator iter = rules.iterator(); iter.hasNext();) {
+				ISchedulingRule rule = (ISchedulingRule) iter.next();
+				if (rule != NULL_SCHEDULING_RULE) {
+					return rule.contains(resource);
+				}
+			}
+			return false;
 		}
 	}
 	
@@ -122,10 +189,6 @@ public class ReentrantLock {
 	
 	private Map infos = new HashMap();
 	
-	
-	public ReentrantLock() {
-	}
-	
 	private ThreadInfo getThreadInfo() {
 		Thread thisThread = Thread.currentThread();
 		ThreadInfo info = (ThreadInfo)infos.get(thisThread);
@@ -133,11 +196,6 @@ public class ReentrantLock {
 	}
 	
 	public synchronized void acquire(IResource resource, IFlushOperation operation) {
-		ISchedulingRule ruleUsed = lock(resource);	
-		incrementNestingCount(resource, ruleUsed, operation);
-	}
-	
-	private void incrementNestingCount(IResource resource, ISchedulingRule rule, IFlushOperation operation) {
 		ThreadInfo info = getThreadInfo();
 		if (info == null) {
 			info = new ThreadInfo(operation);
@@ -145,31 +203,7 @@ public class ReentrantLock {
 			infos.put(thisThread, info);
 			if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		info.addRule(rule);
-		info.increment();
-	}
-	
-	private ISchedulingRule lock(IResource resource) {
-		// The scheduling rule is either the project or the resource's parent
-		ISchedulingRule rule;
-		if (resource.getType() == IResource.ROOT) {
-			// Never lock the whole workspace
-			rule = NULL_SCHEDULING_RULE;
-		} else  if (resource.getType() == IResource.PROJECT) {
-			rule = resource;
-		} else {
-			rule = resource.getParent();
-		}
-		if (rule != NULL_SCHEDULING_RULE) {
-			Platform.getJobManager().beginRule(rule);
-		}
-		return rule;
-	}
-
-	private void unlock(ISchedulingRule rule) {
-		if (rule != NULL_SCHEDULING_RULE) {
-			Platform.getJobManager().endRule(rule);
-		}
+		info.pushRule(resource);
 	}
 	
 	/**
@@ -181,14 +215,13 @@ public class ReentrantLock {
 	public synchronized void release(IProgressMonitor monitor) throws CVSException {
 		ThreadInfo info = getThreadInfo();
 		Assert.isNotNull(info, "Unmatched acquire/release."); //$NON-NLS-1$
-		Assert.isTrue(info.getNestingCount() > 0, "Unmatched acquire/release."); //$NON-NLS-1$
-		if (info.decrement() == 0) {
+		Assert.isTrue(info.isNested(), "Unmatched acquire/release."); //$NON-NLS-1$
+		info.popRule(monitor);
+		if (!info.isNested()) {
 			Thread thisThread = Thread.currentThread();
 			if(DEBUG) System.out.println("[" + thisThread.getName() + "] released CVS lock"); //$NON-NLS-1$ //$NON-NLS-2$
 			infos.remove(thisThread);
-			info.flush(monitor);
 		}
-		unlock(info.removeRule());
 	}
 
 	public void folderChanged(IContainer folder) {
@@ -210,5 +243,27 @@ public class ReentrantLock {
 		ThreadInfo info = getThreadInfo();
 		Assert.isNotNull(info, "Flush requested outside of resource lock"); //$NON-NLS-1$
 		info.flush(monitor);
+	}
+
+	/**
+	 * Return <code>true</code> if the current thread is part of a CVS operation
+	 * and the given resource is contained the scheduling rule held by that operation.
+	 * @param resource
+	 * @return
+	 */
+	public synchronized boolean isWithinActiveThread(IResource resource) {
+		ThreadInfo info = getThreadInfo();
+		if (info == null) return false;
+		return info.ruleContains(resource);
+	}
+
+	/**
+	 * Record the ignore file change as part of the current operation.
+	 * @param resource
+	 */
+	public synchronized void recordIgnoreFileChange(IFile resource) {
+		ThreadInfo info = getThreadInfo();
+		Assert.isNotNull(info);
+		info.addChangedIgnoreFile(resource);
 	}
 }

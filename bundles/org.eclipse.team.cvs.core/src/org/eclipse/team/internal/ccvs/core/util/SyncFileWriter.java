@@ -380,7 +380,7 @@ public class SyncFileWriter {
 						cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
 						cvsSubDir.setTeamPrivateMember(true);
 					} 
-				}, null);
+				}, folder, null);
 			}
 			return cvsSubDir;
 		} catch (CoreException e) {
@@ -484,7 +484,7 @@ public class SyncFileWriter {
 						throw new CoreException(e.getStatus());
 					}
 				}
-			}, null);
+			}, file, null);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}

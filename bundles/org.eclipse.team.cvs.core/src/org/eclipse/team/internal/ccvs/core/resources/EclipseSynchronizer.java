@@ -516,7 +516,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * Flush the sync information from the in-memery cache to disk and purge
+	 * Flush the sync information from the in-memory cache to disk and purge
 	 * the entries from the cache.
 	 * <p>
 	 * Recursively flushes the sync information for all resources 
@@ -586,7 +586,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		try {
 			for (int i = 0; i < roots.length; i++) {
 				IContainer root = roots[i];
-				flush(root, false /*don't flush children*/, null);
+				sessionPropertyCache.purgeCache(root, false /*don't flush children*/);
 				List changedPeers = new ArrayList();
 				changedPeers.add(root);
 				changedPeers.addAll(Arrays.asList(root.members()));
@@ -891,6 +891,11 @@ public class EclipseSynchronizer implements IFlushOperation {
 			allChanges.addAll(Arrays.asList(changedResources));
 			allChanges.addAll(Arrays.asList(changedFolders));
 			allChanges.addAll(dirtyParents);	
+			try {
+				allChanges.addAll(Arrays.asList(getResourcesAffectedByChangedIgnoreFiles(threadInfo.getChangedIgnoreFiles())));
+			} catch (CVSException e) {
+				errors.add(e.getStatus());
+			}
 			IResource[] resources = (IResource[]) allChanges.toArray(
 				new IResource[allChanges.size()]);
 			broadcastResourceStateChanges(resources);
@@ -909,7 +914,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Broadcasts the resource state changes for the given resources to CVS Provider Plugin
 	 */
@@ -1435,6 +1440,44 @@ public class EclipseSynchronizer implements IFlushOperation {
 			return ICVSFile.CLEAN;
 		} else {
 			return ICVSFile.UNKNOWN;
+		}
+	}
+
+	/**
+	 * Return true if the given resource is contained by the scheduling rule
+	 * that is being used by the current thread.
+	 * @param resource
+	 * @return
+	 */
+	public boolean isWithinOperationScope(IResource resource) {
+		return resourceLock.isWithinActiveThread(resource);
+	}
+
+	/**
+	 * Record the changed ignore file so it can be handled at the
+	 * end of the operation associated with the current thread.
+	 * @param resource
+	 */
+	public void handleIgnoreFileChange(IResource resource) {
+		Assert.isTrue(resource.getType() == IResource.FILE);
+		resourceLock.recordIgnoreFileChange((IFile)resource);
+	}
+	
+	private IResource[] getResourcesAffectedByChangedIgnoreFiles(IFile[] files) throws CVSException {
+		try {
+			Set changedPeers = new HashSet();
+			for (int i = 0; i < files.length; i++) {
+				IContainer parent = files[i].getParent();
+				if (parent.exists()) {
+					// Include the parent
+					changedPeers.add(parent);
+					// Include all siblings
+					changedPeers.addAll(Arrays.asList(parent.members(false)));
+				}
+			}
+			return (IResource[]) changedPeers.toArray(new IResource[changedPeers.size()]);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 }

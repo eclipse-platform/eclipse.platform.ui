@@ -300,7 +300,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 						error[0] = e; 
 					}
 				}
-			}, monitor);
+			}, getIResource(), monitor);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		}

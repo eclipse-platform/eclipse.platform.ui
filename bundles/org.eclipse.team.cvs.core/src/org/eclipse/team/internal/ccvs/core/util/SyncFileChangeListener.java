@@ -120,10 +120,26 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 //							}
 //						}
 					}
-										
-					if(isMetaFile(resource)) {
+					
+					if(isChangedByActiveCVSOperation(resource)) {
+						// This resource is modified by an active CVS operation
+						// (i.e. this is an intermitant delta)
+						// Notification is not required (or possible) in this case
+						// as the operation will peform the necessary notifications
+						// when it completes
+						if (resource.isTeamPrivateMember()) {
+							// No need to look at meta-files in this case
+							return false;
+						} else if (isIgnoreFile(resource)) {
+							// Add the ignore file to the current operation 
+							// so it is handled when the operation completes
+							addIgnoreFileChangeToCVSOperation(resource);
+						}
+						// Must visit children in case there is an ignore file changed
+						return true;
+					} if(isMetaFile(resource)) {
 						toBeNotified = handleChangedMetaFile(resource, kind);
-					} else if(name.equals(SyncFileWriter.IGNORE_FILE)) {
+					} else if(isIgnoreFile(resource)) {
 						toBeNotified = handleChangedIgnoreFile(resource, kind);
 					} else if (isExternalDeletion(resource, kind)) {
 						toBeNotified = handleExternalDeletion(resource);
@@ -151,6 +167,21 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		}
 	}
 	
+	/**
+	 * @param resource
+	 */
+	protected void addIgnoreFileChangeToCVSOperation(IResource resource) {
+		EclipseSynchronizer.getInstance().handleIgnoreFileChange(resource);
+	}
+
+	/**
+	 * @param resource
+	 * @return
+	 */
+	protected boolean isChangedByActiveCVSOperation(IResource resource) {
+		return EclipseSynchronizer.getInstance().isWithinOperationScope(resource);
+	}
+
 	/**
 	 * @param resource
 	 * @return
@@ -230,6 +261,11 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				}
 			}
 		}
+	}
+	
+	protected boolean isIgnoreFile(IResource resource) {
+		return resource.getType() == IResource.FILE &&
+			resource.getName().equals(SyncFileWriter.IGNORE_FILE);
 	}
 	
 	/*

@@ -291,7 +291,7 @@ public class CVSWorkspaceRoot {
 							exception[0] = e;
 						}
 					}
-				}, monitor);
+				}, project, monitor);
 				if (exception[0] != null)
 					throw exception[0];
 			} catch (CoreException e) {
