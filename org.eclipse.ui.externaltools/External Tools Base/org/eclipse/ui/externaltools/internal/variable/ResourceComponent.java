@@ -66,7 +66,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	protected void createResourceList() {
 		Tree tree = new Tree(mainGroup, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = tree.getItemHeight() * getInitialVisibleItemCount();
+		data.heightHint = tree.getItemHeight();
 		tree.setLayoutData(data);
 		tree.setFont(mainGroup.getFont());
 		
@@ -138,14 +138,6 @@ public class ResourceComponent extends AbstractVariableComponent {
 		}
 		
 		return null;
-	}
-
-	/**
-	 * Returns the number of items to be visible in the
-	 * resource list. This will determine the initial height.
-	 */
-	private int getInitialVisibleItemCount() {
-		return 10;
 	}
 	
 	/**

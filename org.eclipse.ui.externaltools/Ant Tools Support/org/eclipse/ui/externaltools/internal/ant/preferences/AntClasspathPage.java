@@ -409,6 +409,7 @@ public class AntClasspathPage extends AntPage {
 			Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 			GridData data= new GridData(GridData.FILL_BOTH);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+			data.heightHint = table.getItemHeight();
 			data.horizontalSpan= 1;
 			table.setLayoutData(data);
 			table.setFont(parent.getFont());
