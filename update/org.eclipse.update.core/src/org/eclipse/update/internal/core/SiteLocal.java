@@ -196,7 +196,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 
 	/**
 	 * Saves the site into the config file.
-	 * @return true if changes were applied to the current configuration
+	 * @return true if changes restart is needed
 	 */
 	public boolean save() throws CoreException {
 

@@ -193,24 +193,16 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
-			String location1 = cachedBundles[i].getLocation();
+			String cachedBundleLocation = cachedBundles[i].getLocation();
 			boolean found = false;
 			for (int j=0; !found && j<newPlugins.length; j++) {
-				String location2 = newPlugins[j].toExternalForm();
-				location2 = "reference:" + location2.substring(0, location2.lastIndexOf('/'));
-				if (isWindows) {
-					if (location2.equalsIgnoreCase(location1))
-						found = true;
-					// may need to add a trailing /
-					else if ((location2+'/').equalsIgnoreCase(location1))
-						found = true;
-				} else {
-					if (location2.equals(location1))
-						found = true;
-					// may need to add a trailing /
-					else if ((location2+'/').equals(location1))
-						found = true;
-				}
+				String newPluginLocation = newPlugins[j].toExternalForm();
+				// TODO check for *.jar files when supported
+				newPluginLocation = "reference:" + newPluginLocation.substring(0, newPluginLocation.lastIndexOf('/')+1);
+				if (newPluginLocation.equals(cachedBundleLocation))
+					found = true;
+				else if (isWindows && newPluginLocation.equalsIgnoreCase(cachedBundleLocation))
+					found = true;
 			}
 			if (!found)
 				bundlesToUninstall.add(cachedBundles[i]);
@@ -282,25 +274,18 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		context.ungetService(packageAdminRef);
 	}
 
+	/*
+	 * location ends in /  (later we will support jar as well)
+	 */
 	private boolean isInstalled(String location) {
 		Bundle[] installed = context.getBundles();
 		for (int i = 0; i < installed.length; i++) {
 			Bundle bundle = installed[i];
 			String bundleLocation = bundle.getLocation();
-			// On Windows, do case insensitive test
-			if (isWindows) {
-				if (location.equalsIgnoreCase(bundleLocation))
-					return true;
-				// may need to add a trailing slash to the location
-				if ((location+'/').equalsIgnoreCase(bundleLocation))
-					return true;
-			} else {
-				if (location.equals(bundleLocation))
-					return true;
-				// may need to add a trailing slash to the location
-				if ((location+'/').equals(bundleLocation))
-					return true;
-			}
+			if (location.equals(bundleLocation))
+				return true;
+			else if (isWindows && location.equalsIgnoreCase(bundleLocation))
+				return true;
 		}
 		return false;
 	}

@@ -173,8 +173,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 * and validates existing features (they might have been removed)
 	 */
 	private void detectFeatures() {
-		// invalidate stamps ... we are doing discovery
-//		invalidateFeaturesChangeStamp();
 
 		if (featureEntries != null)
 			validateFeatureEntries();
@@ -222,8 +220,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 * and validates existing plugins (they might have been removed)
 	 */
 	private void detectPlugins() {
-		// invalidate stamps ... we are doing discovery
-//		invalidatePluginsChangeStamp();
 
 		if (pluginEntries != null)
 			validatePluginEntries();
@@ -556,5 +552,15 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (existingFeature != null)
 			featureEntries.remove(existingFeature.getFeatureIdentifier());
 		return existingFeature != null;
+	}
+	
+	/*
+	 * This is a bit of a hack.
+	 * When no features were added to the site, but the site is initialized from platform.xml 
+	 * we need to set the feature set to empty, so we don't try to detect them.
+	 */
+	void initialized() { 
+		if (featureEntries == null)
+			featureEntries = new HashMap();
 	}
 }

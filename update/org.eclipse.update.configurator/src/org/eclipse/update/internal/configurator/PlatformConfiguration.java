@@ -382,25 +382,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getApplicationIdentifier()
 	 */
 	public String getApplicationIdentifier() {
-
-//		if (cmdInitialize) {
-//			// we are running post-install initialization. Force
-//			// running of the reconciler
-//			return RECONCILER_APP;
-//		}
-//
-//		if (featuresChangeStamp != lastFeaturesChangeStamp) {
-//			// we have detected feature changes ... see if we need to reconcile
-//			boolean update = !cmdNoUpdate || cmdUpdate;
-//			if (update)
-//				return RECONCILER_APP;
-//		}
-
-		// "normal" startup ... run specified application
-		return getApplicationIdentifierInternal();
-	}
-
-	private String getApplicationIdentifierInternal() {
 		String feature = config.getDefaultFeature();
 
 		// lookup application for feature (specified or defaulted)

@@ -97,11 +97,6 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				return;
 			}
 
-//			if (tag.equalsIgnoreCase(ACTIVITY)) {
-//				processActivity(attributes);
-//				return;
-//			}
-
 		} catch (MalformedURLException e) {
 			throw new SAXException(Messages.getString("Parser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
 		} catch (CoreException e) {
@@ -170,24 +165,6 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 
 		SitePolicy sp = new SitePolicy(policyType, policyList);
 		SiteEntry site = (SiteEntry) new SiteEntry(url, sp);
-
-//		String stamp = attributes.getValue(CFG_FEATURE_STAMP); //$NON-NLS-1$
-//		if (stamp != null) {
-//			try {
-//				site.setLastFeaturesChangeStamp(Long.parseLong(stamp));
-//			} catch (NumberFormatException e) {
-//				// ignore bad attribute ...
-//			}
-//		}
-//
-//		stamp = loadAttribute(props, name + "." + CFG_PLUGIN_STAMP, null); //$NON-NLS-1$
-//		if (stamp != null) {
-//			try {
-//				site.setLastPluginsChangeStamp(Long.parseLong(stamp));
-//			} catch (NumberFormatException e) {
-//				// ignore bad attribute ...
-//			}
-//		}
 
 		String flag = attributes.getValue(CFG_UPDATEABLE); //$NON-NLS-1$
 		if (flag != null) {
@@ -272,43 +249,6 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 //		boolean configured = configuredString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
 	}
 
-//	/** 
-//	 * process the Activity info
-//	 */
-//	private void processActivity(Attributes attributes) {
-//
-//		// action
-//		String actionString = attributes.getValue("action"); //$NON-NLS-1$
-//		int action = Integer.parseInt(actionString);
-//
-//		// create
-//		ConfigurationActivityModel activity =
-//			new BaseSiteLocalFactory().createConfigurationActivityModel();
-//		activity.setAction(action);
-//
-//		// label
-//		String label = attributes.getValue("label"); //$NON-NLS-1$
-//		if (label != null)
-//			activity.setLabel(label);
-//
-//		// date
-//		String dateString = attributes.getValue("date"); //$NON-NLS-1$
-//		Date date = new Date(Long.parseLong(dateString));
-//		activity.setDate(date);
-//
-//		// status
-//		String statusString = attributes.getValue("status"); //$NON-NLS-1$
-//		int status = Integer.parseInt(statusString);
-//		activity.setStatus(status);
-//
-//		config.addActivityModel(activity);
-//
-//		// DEBUG:		
-//		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-//			UpdateCore.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-//		}
-//
-//	}
 
 	/** 
 	 * process the Config info
@@ -332,14 +272,6 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		} catch (Exception e) {
 			// could not load from shared install
 		}
-		
-//		//timeline
-//		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
-//		long timeline = date;
-//		if (timelineString!=null) {
-//			timeline = Long.parseLong(timelineString);
-//		}
-//		config.setTimeline(timeline);
 
 		// load simple properties
 		config.setDefaultFeature(attributes.getValue(CFG_FEATURE_ENTRY_DEFAULT));
@@ -372,5 +304,32 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			return false;
 		} else
 			return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void endElement(String uri, String localName, String qName)
+			throws SAXException {
+		// TODO Auto-generated method stub
+		super.endElement(uri, localName, qName);
+		
+		// DEBUG:		
+		Utils.debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		try {
+
+			String tag = localName.trim();
+
+			if (tag.equalsIgnoreCase(CFG)) {
+				 // This is a bit of a hack.
+				 // When no features were added to the site, but the site is initialized from platform.xml 
+				 // we need to set the feature set to empty, so we don't try to detect them.
+				SiteEntry[] sites = config.getSites();
+				for (int i=0; i<sites.length; i++)
+					sites[i].initialized();
+				return;
+			}
+		} catch (Exception e) {
+			// silent ignore
+		}
 	}
 }
