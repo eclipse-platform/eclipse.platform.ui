@@ -3,10 +3,7 @@
 
 	<property name="bootclasspath" value=""/>
 
-	<target name="build" description="Cleans, builds and refreshes the impacted resources">
-		<antcall target="clean"/>
-		<antcall target="lib/antsupportlib.jar"/>
-	</target>
+	<target name="build" description="Cleans, builds and refreshes the impacted resources" depends="clean, lib/antsupportlib.jar"/>
 
 	<target name="init" depends="properties">
 		<property name="temp.folder" value="${basedir}/temp.folder"/>

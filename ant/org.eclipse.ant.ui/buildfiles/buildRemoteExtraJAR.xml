@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build AntUI Ant support JAR" default="build" basedir="..">
 
-	<target name="build" description="Cleans, builds and refreshes">
-		<antcall target="clean"/>
-		<antcall target="lib/remoteAntLib.jar"/>
-	</target>
+	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/remoteAntLib.jar"/>
 
 	<target name="init" depends="properties">
 		<property name="bootclasspath" value=""/>

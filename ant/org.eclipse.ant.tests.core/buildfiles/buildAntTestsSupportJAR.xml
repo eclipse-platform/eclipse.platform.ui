@@ -3,10 +3,7 @@
 
 	<property name="bootclasspath" value=""/>
 
-	<target name="build" description="Removes all build artifacts, recreates the support jar, and refreshes this plugin's resources">
-		<antcall target="clean"/>
-		<antcall target="lib/antTestsSupport.jar"/>
-	</target>
+	<target name="build" description="Removes all build artifacts, recreates the support jar, and refreshes this plugin's resources" depends="clean, lib/antTestsSupport.jar"/>
 
 	<target name="init" depends="properties">
 		<property name="version.suffix" value="_3.0.0"/>
