@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui.views.expression;
  */
  
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
@@ -17,6 +17,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -96,21 +97,6 @@ public class ExpressionView extends VariablesView {
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		IStackFrame frame= null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel= (IStructuredSelection)selection;
-			if (ssel.size() == 1) {
-				Object input= ssel.getFirstElement();
-				if (input instanceof IStackFrame) {
-					getDetailViewer().setEditable(true);
-					frame= (IStackFrame)input;
-					setDebugModel(frame.getModelIdentifier());
-					return;
-				} 
-			}
-		}
-				
-		getDetailViewer().setEditable(false);
 		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
 	
@@ -122,4 +108,25 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void setViewerInput(IStructuredSelection ssel) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#treeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	protected void treeSelectionChanged(SelectionChangedEvent event) {
+		super.treeSelectionChanged(event);
+		IDebugElement element= null;
+		ISelection selection = event.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel= (IStructuredSelection)selection;
+			if (ssel.size() == 1) {
+				Object input= ssel.getFirstElement();
+				if (input instanceof IDebugElement) {
+					getDetailViewer().setEditable(true);
+					return;
+				} 
+			}
+		}
+		getDetailViewer().setEditable(false);
+	}
+
 }

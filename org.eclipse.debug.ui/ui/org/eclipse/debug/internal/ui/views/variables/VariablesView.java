@@ -795,11 +795,20 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 						}	
 						IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 						populateDetailPaneFromSelection(selection);
+						treeSelectionChanged(event);
 					}
 				}					
 			};
 		}
 		return fTreeSelectionChangedListener;
+	}
+	
+	/**
+	 * Selection in the variable tree changed. Perform any updates.
+	 * 
+	 * @param event
+	 */
+	protected void treeSelectionChanged(SelectionChangedEvent event) {
 	}
 	
 	/**
