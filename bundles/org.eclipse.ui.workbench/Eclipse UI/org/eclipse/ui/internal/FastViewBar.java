@@ -253,17 +253,19 @@ public class FastViewBar implements IWindowTrim {
 			.setDefaultColumn(Row.fixed())
 			.setColumn(newSide == SWT.BOTTOM ? 1 : 0, Row.growing());
 		control.setLayout(controlLayout);
+		String tip = WorkbenchMessages.getString("FastViewBar.0"); //$NON-NLS-1$
+		control.setToolTipText(tip);
 		
 		// When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view
 		// bar if there's nothing in it.
 		if (newSide == SWT.BOTTOM) {
-						
 			fastViewLabel = createFastViewSeparator(control);
+			fastViewLabel.setToolTipText(tip);
 		}
 		fastViewBar.createControl(control);
 		if (newSide == SWT.BOTTOM) {
-						
 			fastViewLabel2 = createFastViewSeparator(control);
+			fastViewLabel2.setToolTipText(tip);
 		}		
 
 		getToolBar().addListener(SWT.MenuDetect, menuListener);
