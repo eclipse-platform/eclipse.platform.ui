@@ -21,6 +21,7 @@ public interface IDocumentProviderExtension3 {
 	
 	/**
 	 * Returns whether the information provided for the given element is in sync with the element.
+	 * It tests whether document provider's input element has changed.
 	 * 
 	 * @param element the element
 	 * @return <code>true</code> if the information is in sync with the element, <code>false</code> otherwise
