@@ -131,6 +131,20 @@ protected void contributeMenu(IConfigurationElement menuElement, IMenuManager mn
 	if (newMenu == null)
 		newMenu = new MenuManager(label, id);
 	
+	// Add the menu
+	try {
+		insertAfter(parent, group, newMenu);
+	} catch (IllegalArgumentException e) {
+		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + id);//$NON-NLS-1$
+	}
+
+	// Get the menu again as it may be wrapped, otherwise adding
+	// the separators and group markers below will not be wrapped
+	// properly if the menu was just created.
+	newMenu = parent.findMenuUsingPath(id);
+	if (newMenu == null)
+		WorkbenchPlugin.log("Could not find new menu: " + id);//$NON-NLS-1$
+
 	// Create separators.
 	IConfigurationElement[] children = menuElement.getChildren();
 	for (int i = 0; i < children.length; i++) {
@@ -140,13 +154,6 @@ protected void contributeMenu(IConfigurationElement menuElement, IMenuManager mn
 		} else if(childName.equals(TAG_GROUP_MARKER)) {
 			contributeGroupMarker(newMenu, children[i]);
 		}
-	}
-
-	// Add new menu
-	try {
-		insertAfter(parent, group, newMenu);
-	} catch (IllegalArgumentException e) {
-		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + id);//$NON-NLS-1$
 	}
 }
 /**
@@ -200,7 +207,7 @@ protected void contributeSeparator(IMenuManager menu, IConfigurationElement elem
 	IContributionItem sep = menu.find(id);
 	if (sep != null)
 		return;
-	menu.add(new Separator(id));
+	insertMenuGroup(menu, new Separator(id));
 }
 /**
  * Creates a named menu group marker from the information in the configuration element.
@@ -213,7 +220,7 @@ protected void contributeGroupMarker(IMenuManager menu, IConfigurationElement el
 	IContributionItem marker = menu.find(id);
 	if (marker != null)
 		return;
-	menu.add(new GroupMarker(id));
+	insertMenuGroup(menu, new GroupMarker(id));
 }
 /**
  * Contributes action from the action descriptor into the provided tool bar manager.
@@ -256,6 +263,12 @@ protected abstract ActionDescriptor createActionDescriptor(IConfigurationElement
 protected String getTargetID(IConfigurationElement element) {
 	String value=element.getAttribute(ATT_TARGET_ID);
 	return value!=null? value : "???";//$NON-NLS-1$
+}
+/**
+ * Inserts the separator or group marker into the menu. Subclasses may override.
+ */
+protected void insertMenuGroup(IMenuManager menu, AbstractGroupMarker marker) {
+	menu.add(marker);
 }
 /**
  * Inserts an action after another named contribution item.

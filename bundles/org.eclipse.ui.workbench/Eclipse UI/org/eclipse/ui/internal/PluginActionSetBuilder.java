@@ -5,8 +5,12 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.AbstractGroupMarker;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.*;
 
 /**
@@ -186,6 +190,33 @@ public static IContributionItem findSubInsertionPoint(String startId, String sor
 	}
 	// Return item.
 	return items[insertIndex];
+}
+/*
+ * Insert a menu separator or group marker. Order is dependent on
+ * action set id.
+ */
+protected void insertMenuGroup(IMenuManager menu, AbstractGroupMarker marker) {
+	String actionSetId = actionSet.getDesc().getId();
+	if (actionSetId != null) {
+		IContributionItem[] items = menu.getItems();
+		// Loop thru all the current groups looking for the first
+		// group whose id > than the current action set id. Insert
+		// current marker just before this item then.
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			if (item.isSeparator() || item.isGroupMarker()) {
+				if (item instanceof IActionSetContributionItem) {
+					String testId = ((IActionSetContributionItem)item).getActionSetId();
+					if (actionSetId.compareTo(testId) < 0) {
+						menu.insertBefore(items[i].getId(), marker);
+						return;
+					}
+				}
+			}
+		}
+	}
+	
+	menu.add(marker);
 }
 /*
  * Inserts one action after another.  If there are any other extensions
