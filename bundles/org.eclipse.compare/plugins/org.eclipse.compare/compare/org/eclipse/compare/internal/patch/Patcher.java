@@ -10,8 +10,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.internal.ExceptionHandler;
-
 
 /**
  * A Patcher 

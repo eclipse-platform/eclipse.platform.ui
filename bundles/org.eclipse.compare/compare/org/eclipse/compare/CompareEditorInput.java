@@ -11,17 +11,14 @@ package org.eclipse.compare;
 
 import java.lang.reflect.InvocationTargetException;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IEditorInput;
@@ -35,7 +32,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 

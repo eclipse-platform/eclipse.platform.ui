@@ -10,7 +10,6 @@ import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;

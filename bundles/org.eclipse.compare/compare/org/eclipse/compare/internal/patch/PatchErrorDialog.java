@@ -4,10 +4,6 @@
  */
 package org.eclipse.compare.internal.patch;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-
-import org.eclipse.compare.internal.ListDialog;
-
 public class PatchErrorDialog {
 	
 	private PatchErrorDialog() {

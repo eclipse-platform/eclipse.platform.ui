@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
@@ -37,10 +35,8 @@ import org.eclipse.swt.custom.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,7 +46,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
@@ -59,12 +54,8 @@ import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.internal.BufferedCanvas;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.TokenComparator;
-import org.eclipse.compare.internal.ChangePropertyAction;
-import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.MergeViewerAction;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
 import org.eclipse.compare.internal.TimeoutContext;
@@ -158,7 +149,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
 	/** Use splines between diff ranges */
-	private static final boolean USE_SPLINES= false;
+	private static final boolean USE_SPLINES= true;
 
 	/** line width of change borders */
 	private static final int LW= 1;

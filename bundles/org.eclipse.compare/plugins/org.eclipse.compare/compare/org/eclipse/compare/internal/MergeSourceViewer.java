@@ -16,14 +16,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.text.source.*;
 
-import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.IWorkbenchActionConstants;
-
-import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
-
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */

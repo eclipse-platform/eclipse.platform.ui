@@ -7,16 +7,13 @@ package org.eclipse.compare.structuremergeviewer;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.jface.text.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.contentmergeviewer.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
-import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 
 
 /**

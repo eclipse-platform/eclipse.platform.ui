@@ -12,8 +12,6 @@ import org.eclipse.compare.*;
 
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.internal.ViewerActionBuilder;
-
 /**
  * Creates <code>Viewer</code>s from an <code>IConfigurationElement</code>.
  */

@@ -23,7 +23,6 @@ import java.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.widgets.Control;
@@ -42,8 +41,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.dialogs.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.internal.*;

@@ -22,9 +22,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.IStructureCreatorDescriptor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 
 
 /**

@@ -6,7 +6,6 @@ package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.jface.util.Assert;
 
 /**
  * An abstract base implementation of the <code>IDiffElement</code> interface.

@@ -5,7 +5,6 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 import java.text.MessageFormat;
 

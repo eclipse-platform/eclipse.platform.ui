@@ -4,9 +4,6 @@
  */
 package org.eclipse.compare.rangedifferencer;
 
-import org.eclipse.jface.*;
-import org.eclipse.jface.util.Assert;
-
 /**
  * Description of a change between two or three ranges of comparable entities.
  * <p>

@@ -9,9 +9,6 @@
  */
 package org.eclipse.compare.structuremergeviewer;
 
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.jface.text.IDocument;
-
 /**
  * Interface used to create a hierarchical structure of
  * <code>IStructureComparator</code>s for a given input object.

@@ -4,13 +4,10 @@
  */
 package org.eclipse.compare.internal;
 
-import java.io.IOException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.Document;
 

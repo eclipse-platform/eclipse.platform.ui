@@ -4,8 +4,6 @@
  */
 package org.eclipse.compare.structuremergeviewer;
 
-import java.util.Iterator;
-
 /**
  * <code>IDiffContainer</code> is a <code>IDiffElement</code> with children.
  * <p>

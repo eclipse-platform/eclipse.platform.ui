@@ -14,14 +14,12 @@ import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.*;

@@ -4,10 +4,7 @@
  */
 package org.eclipse.compare.structuremergeviewer;
 
-import java.util.Iterator;
 import java.util.ArrayList;
-import org.eclipse.swt.graphics.Image;
-
 
 /**
  * The standard implementation of a diff container element.

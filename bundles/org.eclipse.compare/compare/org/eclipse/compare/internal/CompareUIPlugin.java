@@ -11,20 +11,17 @@ import java.net.MalformedURLException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.*;

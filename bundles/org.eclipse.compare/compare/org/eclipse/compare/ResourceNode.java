@@ -6,7 +6,6 @@ package org.eclipse.compare;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -15,7 +14,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 
 /**

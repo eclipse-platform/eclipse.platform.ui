@@ -6,9 +6,6 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
-
-
 /**
  * A Hunk describes a range of changed lines and some context lines.
  */

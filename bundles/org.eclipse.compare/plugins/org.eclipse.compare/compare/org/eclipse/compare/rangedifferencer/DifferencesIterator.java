@@ -5,7 +5,6 @@
 package org.eclipse.compare.rangedifferencer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

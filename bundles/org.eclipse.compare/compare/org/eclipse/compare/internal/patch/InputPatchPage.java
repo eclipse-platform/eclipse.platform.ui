@@ -23,8 +23,6 @@ import org.eclipse.ui.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import org.eclipse.compare.internal.Utilities;
-
 
 /* package */ class InputPatchPage extends WizardPage {
 

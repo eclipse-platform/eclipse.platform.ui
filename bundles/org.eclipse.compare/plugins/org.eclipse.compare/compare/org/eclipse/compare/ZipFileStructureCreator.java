@@ -16,7 +16,6 @@ import java.util.zip.*;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.CoreException;

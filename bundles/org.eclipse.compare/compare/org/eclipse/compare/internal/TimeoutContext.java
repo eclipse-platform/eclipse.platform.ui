@@ -14,10 +14,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.compare.contentmergeviewer.*;
 
 /**
  * A modal dialog that displays progress during a long running operation.

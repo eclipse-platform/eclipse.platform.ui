@@ -4,10 +4,6 @@
  */
 package org.eclipse.compare.structuremergeviewer;
 
-import java.util.Iterator;
-
-import org.eclipse.compare.ITypedElement;
-
 /**
  * Interface used to compare hierarchical structures.
  * It is used by the differencing engine.
