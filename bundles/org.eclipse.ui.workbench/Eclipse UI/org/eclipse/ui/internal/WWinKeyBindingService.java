@@ -186,7 +186,6 @@ final class WWinKeyBindingService {
 	void pressed(Stroke stroke, Event event) { 
 		Manager manager = Manager.getInstance();
 		SequenceMachine keyMachine = manager.getKeyMachine();				
-		Sequence mode = keyMachine.getMode();					
 		List strokes = new ArrayList(keyMachine.getMode().getStrokes());
 		strokes.add(stroke);
 		Sequence childMode = Sequence.create(strokes);		
@@ -241,20 +240,15 @@ final class WWinKeyBindingService {
 		if (part == null)
 			return;
    		
-		String[] oldScopes = new String[] { "" }; //$NON-NLS-1$
-		
-		if (activeKeyBindingService != null)
-			oldScopes = activeKeyBindingService.getScopes();
-
 		activeKeyBindingService = (KeyBindingService) part.getSite().getKeyBindingService();
 		clear();
-		String[] newScopes = new String[] { "" }; //$NON-NLS-1$
+		String[] scopes = new String[] { "" }; //$NON-NLS-1$
 		
 		if (activeKeyBindingService != null)
-			newScopes = activeKeyBindingService.getScopes();
+			scopes = activeKeyBindingService.getScopes();
 		
 		try {
-			if (Manager.getInstance().getKeyMachine().setScopes(newScopes)) {
+			if (Manager.getInstance().getKeyMachine().setScopes(scopes)) {
 				MenuManager menuManager = workbenchWindow.getMenuManager();
 				menuManager.update(IAction.TEXT);				
 			}
