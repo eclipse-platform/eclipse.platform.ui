@@ -152,6 +152,16 @@ public class SyncInfo implements IAdaptable {
 	public IResource getLocal() {
 		return local;
 	}
+	
+	/**
+	 * Returns the content identifier for the local resource or <code>null</code> if
+	 * it doesn't have one. For example, in CVS this would be the revision number. 
+	 * 
+	 * @return String that could be displayed to the user to identify this resource. 
+	 */
+	public String getLocalContentIdentifier() {
+		return null;
+	}
 		
 	/**
 	 * Returns the remote resource handle  for the base resource,

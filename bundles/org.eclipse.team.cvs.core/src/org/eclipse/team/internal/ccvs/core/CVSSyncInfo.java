@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.core;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -323,5 +324,26 @@ public class CVSSyncInfo extends SyncInfo {
 			result.append(remote.toString());
 		}
 		return result.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.SyncInfo#getContentIdentifier()
+	 */
+	public String getLocalContentIdentifier() {
+		try {
+			IResource local = getLocal();
+			if (local != null || local.getType() == IResource.FILE) {
+				// it's a file, return the revision number if we can find one
+				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) local);
+				ResourceSyncInfo info = cvsFile.getSyncInfo();
+				if (info != null) {
+					return info.getRevision();
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
+		return null;
 	}
 }
