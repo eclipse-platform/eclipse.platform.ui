@@ -64,9 +64,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private static final String COMPARE_EDITOR= "org.eclipse.compare.CompareEditor";
 	
+	private static final String COMPARE= "Compare";
 	private static final String COMPARE_FAILED= "Compare failed";
 	private static final String PROBLEMS_OPENING_EDITOR= "Problems Opening Editor";
-	
+	private static final String NO_DIFFERENCES= "There are no differences between the selected inputs.";
+	private static final String CANT_FIND_WORKBENCH_PAGE= "Can't find active workbench page";
+
 	/** Maps type to icons */
 	private static Map fgImages= new Hashtable(10);
 	/** Maps type to ImageDescriptors */
@@ -263,7 +266,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					MessageDialog.openError(getShell(), PROBLEMS_OPENING_EDITOR, e.getMessage());
 				}
 			} else {
-				MessageDialog.openError(getShell(), PROBLEMS_OPENING_EDITOR, "Can't find active workbench page");
+				MessageDialog.openError(getShell(), PROBLEMS_OPENING_EDITOR, CANT_FIND_WORKBENCH_PAGE);
 			}
 		}
 	}
@@ -300,7 +303,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			}
 			
 			if (input.getCompareResult() == null) {
-				MessageDialog.openInformation(shell, COMPARE_FAILED, "There are no differences between the selected inputs");
+				MessageDialog.openInformation(shell, COMPARE, NO_DIFFERENCES);
 				return false;
 			}
 			
@@ -425,7 +428,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						try {
 							fgImages2.put(id, image);
 						} catch (NullPointerException ex) {
-							System.out.println("NPE in CompareUIPlugin.getImage");
 						}
 						fgDisposeOnShutdownImages.add(image);
 
