@@ -59,6 +59,7 @@ public interface IAntUIConstants {
 	 public static final String IMG_ANT_MACRODEF = PLUGIN_ID + ".antMacrodef"; //$NON-NLS-1$
      public static final String IMG_ANT_IMPORT = PLUGIN_ID + ".antImport"; //$NON-NLS-1$
      public static final String IMG_ANT_TASKDEF = PLUGIN_ID + ".antTaskdef"; //$NON-NLS-1$
+     public static final String IMG_ANT_ECLIPSE_RUNTIME_OBJECT = PLUGIN_ID + ".antEclipse";
      
      //editor toolbar
      public static final String IMG_SEGMENT_EDIT = PLUGIN_ID + ".segmentEdit"; //$NON-NLS-1$
