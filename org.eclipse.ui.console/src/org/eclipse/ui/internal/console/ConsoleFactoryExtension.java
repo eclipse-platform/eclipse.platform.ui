@@ -61,11 +61,10 @@ public class ConsoleFactoryExtension implements IPluginContribution {
             Expression enablementExpression = getEnablementExpression();
             if (enablementExpression == null) {
                 return true;
-            } else {
-		        EvaluationContext context = new EvaluationContext(null, this);
-	            EvaluationResult evaluationResult = enablementExpression.evaluate(context);
-		        return evaluationResult != EvaluationResult.FALSE;
-            }
+            } 
+            EvaluationContext context = new EvaluationContext(null, this);
+            EvaluationResult evaluationResult = enablementExpression.evaluate(context);
+            return evaluationResult != EvaluationResult.FALSE;
         } catch (CoreException e) {
             ConsolePlugin.log(e);
             return false;
