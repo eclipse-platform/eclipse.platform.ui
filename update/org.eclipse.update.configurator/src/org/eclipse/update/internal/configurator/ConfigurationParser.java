@@ -227,8 +227,8 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		if (pluginVersion == null || pluginVersion.trim().length() == 0)
 			pluginVersion = version;
 		String pluginIdentifier = attributes.getValue(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER); //$NON-NLS-1$
-		if (pluginIdentifier == null || pluginIdentifier.trim().length() == 0)
-			pluginIdentifier = id;
+		if (pluginIdentifier != null && pluginIdentifier.trim().length() == 0)
+			pluginIdentifier = null;
 		String application = attributes.getValue(CFG_FEATURE_ENTRY_APPLICATION); //$NON-NLS-1$
 		
 		// get install locations

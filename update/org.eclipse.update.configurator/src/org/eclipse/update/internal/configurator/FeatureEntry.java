@@ -347,4 +347,8 @@ public class FeatureEntry
 	public Bundle getDefiningBundle() {
 		return Platform.getBundle(getFeaturePluginIdentifier());
 	}
+	
+	public boolean hasBranding() {
+		return pluginIdentifier != null || Platform.getBundle(id) != null; 
+	}
 }

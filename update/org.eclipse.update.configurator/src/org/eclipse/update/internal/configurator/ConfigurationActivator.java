@@ -425,7 +425,14 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (configuration == null)
 			return new IBundleGroup[0];
 		else {
-			return (IBundleGroup[])configuration.getConfiguredFeatureEntries();
+			IPlatformConfiguration.IFeatureEntry[] features = configuration.getConfiguredFeatureEntries();
+			ArrayList bundleGroups = new ArrayList(features.length);
+			for (int i=0; i<features.length; i++) {
+				if (features[i] instanceof FeatureEntry 
+					&& ((FeatureEntry)features[i]).hasBranding())
+					bundleGroups.add(features[i]);
+			}
+			return (IBundleGroup[])bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
 		}
 	}
 
