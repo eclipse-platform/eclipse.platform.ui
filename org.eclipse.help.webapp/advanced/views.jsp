@@ -77,10 +77,13 @@ function showView(view)
  	var iframes = parent.ViewsFrame.document.body.getElementsByTagName("IFRAME");
  	for (var i=0; i<iframes.length; i++)
  	{			
-  		if (iframes[i].id != view)
+  		if (iframes[i].id != view){
    			iframes[i].className = "hidden";
-  		else
+   			iframes[i].style.visibility="hidden";
+  		}else{
    			iframes[i].className = "visible";
+   			iframes[i].style.visibility="visible";
+   		}
  	}
 }
 
