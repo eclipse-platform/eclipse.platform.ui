@@ -170,20 +170,32 @@ public class AntTaskNode extends AntElementNode {
         for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
             String key = (String) iter.next();
             String value= (String) attributeMap.get(key);
+			//the value stored in the attribute map seems to be modified to not contain control charactes
+			//new lines, carriage returns and these are replaced with spaces
+			//so if the line separator is greater than 1 in length we need to correct for this
+			String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
+			
             if (value.indexOf(modifiedIdentifier) != -1) {
                 int keyOffset= textToSearch.indexOf(key);
-                int valueOffset= textToSearch.indexOf(value, keyOffset);
+				while (keyOffset > 0 && !Character.isWhitespace(textToSearch.charAt(keyOffset - 1))) {
+					keyOffset= textToSearch.indexOf(key, keyOffset + 1);
+				}
+                int valueOffset= textToSearch.indexOf('"', keyOffset);
+				int valueLine= ((AntModel)getAntModel()).getLine(getOffset() + valueOffset);
+				
                 int valueEndOffset= textToSearch.indexOf('"', valueOffset);
                 valueEndOffset= textToSearch.indexOf('"', valueEndOffset);
                 int withinValueOffset= value.indexOf(modifiedIdentifier);
                 while(withinValueOffset != -1) {
-                    results.add(new Integer(getOffset() + valueEndOffset + withinValueOffset + 1));
+					int resultLine= ((AntModel)getAntModel()).getLine(getOffset() + valueOffset + withinValueOffset);
+					int resultOffset= getOffset() + valueOffset + withinValueOffset + 2 + ((resultLine- valueLine) * (lineSep.length() - 1));
+                    results.add(new Integer(resultOffset));
                     withinValueOffset= value.indexOf(modifiedIdentifier, withinValueOffset + 1);
                 }
             }
         }
         
-        StringBuffer text= wrapper.getText();
+        String text= wrapper.getText().toString().trim();
         if (text.length() > 0) {
             int offset= textToSearch.indexOf(text.toString());
             offset= textToSearch.indexOf(modifiedIdentifier, offset);

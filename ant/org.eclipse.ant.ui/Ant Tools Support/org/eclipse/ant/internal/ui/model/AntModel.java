@@ -953,7 +953,7 @@ public class AntModel implements IAntModel {
 		return offset;
 	}
 	
-	private int getLine(int offset) {
+	public int getLine(int offset) {
 		try {
 			return fDocument.getLineOfOffset(offset) + 1;
 		} catch (BadLocationException be) {
