@@ -125,17 +125,10 @@ public final class RefreshSubscriberJob extends Job {
         	return true;
         }
         public String getText() {
-            String text = null;
         	if(gotoAction != null) {
-        		text = gotoAction.getText();
+        		return gotoAction.getText();
         	}
-        	if (text == null || text.length() == 0) {
-        	    text = super.getText();
-	        	if (text == null || text.length() == 0) {
-	        	    text = getToolTipText();
-	        	}
-        	}
-        	return text;
+        	return null;
         }
         public String getToolTipText() {
             if (status != null && !status.isOK()) {
