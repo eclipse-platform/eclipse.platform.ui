@@ -11,13 +11,10 @@
 
 package org.eclipse.ui.presentations;
 
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.presentations.EditorPresentation;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
+import org.eclipse.ui.internal.presentations.StandalonePartTabFolderPresentation;
 
 /**
  * The default presentation factory for the Workbench.
@@ -31,23 +28,9 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public StackPresentation createPresentation(Composite parent,
-            IStackPresentationSite site, int role, 
-            String perspectiveId, String folderId) {
-        switch (role) {
-        case ROLE_EDITOR_WORKBOOK:
-            return new EditorPresentation(parent, site);
-        case ROLE_DOCKED_VIEW:
-            return new PartTabFolderPresentation(parent, site);
-        //case ROLE_FAST_VIEW:
-            // TODO 
-         //   return new PartTabFolderPresentation(parent, site, flags);
-        //case ROLE_DETACHED_VIEW:
-            // TODO
-            //return new PartTabFolderPresentation(parent, site, flags);
-        default:
-            throw new Error("not implemented"); //$NON-NLS-1$
-        }
+    public StackPresentation createEditorPresentation(Composite parent,
+            IStackPresentationSite site) {
+        return new EditorPresentation(parent, site);
     }
 
     /*
@@ -55,9 +38,9 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public Control createStatusLineControl(IStatusLineManager statusLine,
-            Composite parent) {
-        return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
+    public StackPresentation createViewPresentation(Composite parent,
+            IStackPresentationSite site) {
+        return new PartTabFolderPresentation(parent, site);
     }
 
     /*
@@ -65,7 +48,8 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public IStatusLineManager createStatusLineManager() {
-        return new StatusLineManager();
+    public StackPresentation createStandaloneViewPresentation(Composite parent,
+            IStackPresentationSite site, boolean showTitle) {
+        return new StandalonePartTabFolderPresentation(parent, site, showTitle);
     }
 }

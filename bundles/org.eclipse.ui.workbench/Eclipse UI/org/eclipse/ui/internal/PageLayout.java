@@ -316,7 +316,20 @@ public class PageLayout implements IPageLayout {
 		int relationship,
 		float ratio,
 		String refId) {
-		if (checkPartInLayout(viewId))
+	    addView(viewId, relationship, ratio, refId, false, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageLayout#addView(java.lang.String, int, float, java.lang.String)
+	 */
+	private void addView(
+		String viewId,
+		int relationship,
+		float ratio,
+		String refId,
+		boolean standalone,
+		boolean showTitle) {
+	    if (checkPartInLayout(viewId))
 			return;
 
 		try {
@@ -327,6 +340,7 @@ public class PageLayout implements IPageLayout {
 				LayoutHelper.addViewActivator(this, viewId);
 			} else {
 				PartTabFolder newFolder = new PartTabFolder(rootLayoutContainer.page);
+				newFolder.setStandalone(standalone, showTitle);
 				newFolder.add(newPart);
 				setFolderPart(viewId, newFolder);
 				addPart(newFolder, viewId, relationship, ratio, refId);
@@ -747,7 +761,7 @@ public class PageLayout implements IPageLayout {
 	 * @since 3.0
      */
     public void addStandaloneView(String viewId, boolean showTitle, int relationship, float ratio, String refId) {
-		addView(viewId, relationship, ratio, refId);
+		addView(viewId, relationship, ratio, refId, true, showTitle);
 	    ViewLayoutRec rec = getViewLayoutRec(viewId, true);
         rec.isStandalone = true;
         rec.showTitle = showTitle;

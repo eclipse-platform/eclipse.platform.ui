@@ -572,4 +572,8 @@ public final class PaneFolder {
 	public void setSingleTab(boolean b) {
 		tabFolder.setSingleTab(b);
 	}
+	
+	public void hideTitle() {
+	    tabFolder.setTabHeight(0);
+	}
 }

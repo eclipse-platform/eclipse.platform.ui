@@ -119,11 +119,8 @@ public class EditorWorkbook extends PartStack {
         AbstractPresentationFactory factory = ((WorkbenchWindow) page
                 .getWorkbenchWindow()).getWindowConfigurer()
                 .getPresentationFactory();
-        super.createControl(parent, factory.createPresentation(parent,
-                getPresentationSite(),
-                AbstractPresentationFactory.ROLE_EDITOR_WORKBOOK, page
-                        .getPerspective().getId(), getID()));
-
+        super.createControl(parent, factory.createEditorPresentation(parent,
+                getPresentationSite()));
     }
     
     protected void updateActions() {

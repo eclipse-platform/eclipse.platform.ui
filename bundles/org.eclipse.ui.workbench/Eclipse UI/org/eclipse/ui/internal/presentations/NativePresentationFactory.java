@@ -30,13 +30,30 @@ public class NativePresentationFactory extends WorkbenchPresentationFactory {
      * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public StackPresentation createPresentation(Composite parent,
-            IStackPresentationSite site, int role,
-            String perspectiveId, String folderId) {
-        switch (role) {
-        default:
-            return new NativeStackPresentation(parent, site);
-        }
+    public StackPresentation createEditorPresentation(Composite parent,
+            IStackPresentationSite site) {
+        return new NativeStackPresentation(parent, site);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.presentations.AbstractPresentationFactory
+     */
+    public StackPresentation createViewPresentation(Composite parent,
+            IStackPresentationSite site) {
+        return new NativeStackPresentation(parent, site);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.presentations.AbstractPresentationFactory
+     */
+    public StackPresentation createStandaloneViewPresentation(Composite parent,
+            IStackPresentationSite site, boolean showTitle) {
+        // TODO honour showTitle
+        return new NativeStackPresentation(parent, site);
+    }
+    
 }

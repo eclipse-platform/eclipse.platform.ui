@@ -357,8 +357,8 @@ public class FastViewPane {
 		// be independently pluggable.
 		AbstractPresentationFactory factory = ((WorkbenchWindow) pane.getWorkbenchWindow())
         	.getWindowConfigurer().getPresentationFactory();
-		StackPresentation presentation = factory.createPresentation(newClientComposite,
-				site, AbstractPresentationFactory.ROLE_DOCKED_VIEW, pane.getPage().getPerspective().getId(), pane.getID());
+		StackPresentation presentation = factory.createViewPresentation(
+                newClientComposite, site);
 		
 		site.setPresentation(presentation);
 		site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
