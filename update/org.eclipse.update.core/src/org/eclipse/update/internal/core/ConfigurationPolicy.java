@@ -16,7 +16,6 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * 
@@ -52,8 +51,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	/**
 	 * adds the feature to the list of features if the policy is USER_INCLUDE
 	 */
-	/*package*/
-	void configure(IFeatureReference featureReference, boolean callInstallHandler) throws CoreException {
+	public	void configure(IFeatureReference featureReference, boolean callInstallHandler) throws CoreException {
 
 		if (featureReference == null)
 			return;
@@ -108,8 +106,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * check if the plugins to unconfigure are required by other configured feature and
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
-	/*package*/
-	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
+	public	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
 
 		if (featureReference == null)
 			return false;
@@ -162,11 +159,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * It will include the include list providing the objects in the include list
 	 * are not 'unconfigured' if the type is Exclude or 'configured' if the type is Include
 	 */
-	/*package*/
-	String[] getPluginPath(ISite site, String[] include) throws CoreException {
-		String[] result = new String[0];
+	public String[] getPluginPath(ISite site, String[] pluginRead) throws CoreException {
 
-		// which features
+
+		// which features should we write based on the policy
 		IFeatureReference[] arrayOfFeatureRef = null;
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			if (getUnconfiguredFeatures() != null)
@@ -175,7 +171,35 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (getConfiguredFeatures() != null)
 				arrayOfFeatureRef = getConfiguredFeatures();
 		}
+		String[] pluginToWrite = getPluginString(site, arrayOfFeatureRef);
+		
 
+		// remove from include the plugins that should not be saved 
+		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			if (getConfiguredFeatures() != null)
+				arrayOfFeatureRef = getConfiguredFeatures();
+		} else {
+			if (getUnconfiguredFeatures() != null)
+				arrayOfFeatureRef = getUnconfiguredFeatures();
+		}
+		String[] pluginNotToWrite = getPluginString(site, arrayOfFeatureRef);
+
+		String[] included = delta(pluginNotToWrite, pluginRead);
+		String[] result = union(included, pluginToWrite);
+
+		return result;
+	}
+
+
+	/**
+	 * return an array of plugin path for the array of feature reference
+	 * 
+	 * 
+	 */
+	private String[] getPluginString(ISite site, IFeatureReference[] arrayOfFeatureRef) throws CoreException {
+	
+		String[] result = new String[0];
+			
 		// obtain path for each feature
 		if (arrayOfFeatureRef != null) {
 			List pluginsString = new ArrayList(0);
@@ -183,7 +207,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = element.getFeature();
 				IPluginEntry[] entries = (feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
-
+		
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
 					// obtain the path of the plugin directories on the site	
@@ -203,26 +227,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 					}
 				}
 			}
-
+		
 			// transform in String[]
 			if (!pluginsString.isEmpty()) {
 				result = new String[pluginsString.size()];
 				pluginsString.toArray(result);
 			}
 		}
-
-		// remove from include the plugins that should not be saved 
-		String[] toInclude = null;
-		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (getConfiguredFeatures() != null)
-				toInclude = delta(getConfiguredFeatures(), include);
-		} else {
-			if (getUnconfiguredFeatures() != null)
-				toInclude = delta(getUnconfiguredFeatures(), include);
-		}
-
-		result = union(toInclude, result);
-
 		return result;
 	}
 
@@ -284,48 +295,31 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	*	 remove them from include
 	*	 we can compare the String of the URL
 	*/
-	private String[] delta(IFeatureReference[] arrayOfFeatureRef, String[] include) {
-		if (arrayOfFeatureRef == null || arrayOfFeatureRef.length < 1)
-			return include;
-
-		if (include == null || include.length < 1)
-			return include;
-
-		// get array of String representing the plugins path
-		// of plugins that should not be saved
-		String[] featuresPlugins = new String[0];
-		if (arrayOfFeatureRef != null) {
-			int length = arrayOfFeatureRef.length;
-			featuresPlugins = new String[length];
-			for (int i = 0; i < length; i++) {
-				featuresPlugins[i] = arrayOfFeatureRef[i].getURL().toString();
-			}
+	private String[] delta(String[] pluginsToRemove, String[] allPlugins) {
+		// No plugins to remove, return allPlugins 
+		if (pluginsToRemove == null || pluginsToRemove.length == 0) {
+			return allPlugins;
 		}
 
-		// if a plugin that was in the include list
-		// is also on the list of plugins that should not be saved
-		List newInclude = new ArrayList();
-		for (int i = 0; i < include.length; i++) {
-			String currentInclude = include[i];
-			boolean found = false;
-			for (int j = 0; j < featuresPlugins.length; j++) {
-				if (featuresPlugins[j].endsWith(currentInclude)) {
-					found = true;
-					break;
-				}
-				if (!found) {
-					newInclude.add(currentInclude);
-				}
-			}
+		// We didn't read any plugins in platform.cfg
+		if (allPlugins == null || allPlugins.length == 0) {
+			return new String[0];
 		}
 
-		String[] result = new String[0];
-		if (newInclude.size()>0){
-			result = new String[newInclude.size()];
-			newInclude.toArray(result);
+		// if a String from pluginsToRemove IS in
+		// allPlugins, remove it from allPlugins
+		List list1 = new ArrayList();
+		list1.addAll(Arrays.asList(allPlugins));
+		for (int i = 0; i < pluginsToRemove.length; i++) {
+			if (list1.contains(pluginsToRemove[i]))
+				list1.remove(pluginsToRemove[i]);
 		}
 
-		return result;
+		String[] resultEntry = new String[list1.size()];
+		if (list1.size() > 0)
+			list1.toArray(resultEntry);
+
+		return resultEntry;
 	}
 
 	/**

@@ -80,7 +80,7 @@ public class UpdateManagerUtils {
 			if (rootURL.getPort()!=url.getPort())
 				return result;
 			
-			String rootString = url.getFile();
+			String rootString = rootURL.getFile();
 			rootString.replace(File.separatorChar,'/');
 			if (!rootString.endsWith("/")){
 				int index = rootString.lastIndexOf('/');

@@ -313,7 +313,7 @@ public class ConfiguredSite
 	}
 
 	/*
-	 * @see IConfiguredSite#configure(IFeature)
+	 * @see IConfiguredSite#configure(IFeature) 
 	 */
 	public void configure(IFeature feature) throws CoreException {
 		configure(feature, true /*callInstallHandler*/

@@ -39,15 +39,16 @@ public class SiteLocal
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
 
-		URL configXML = null;
 		SiteLocal localSite = new SiteLocal();
 
-		// obtain read/write location
+		// obtain platform configuration
 		IPlatformConfiguration currentPlatformConfiguration =
 			BootLoader.getCurrentPlatformConfiguration();
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
 
 		try {
+
+			// obtain LocalSite.xml location
 			URL location;
 			try {
 				location = getUpdateStateLocation(currentPlatformConfiguration);
@@ -56,48 +57,13 @@ public class SiteLocal
 					Policy.bind("Unable to retrieve update state location"),
 					exception);
 			}
-
-			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
-
-			// set it into the ILocalSite
+			URL configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			localSite.setLocationURLString(configXML.toExternalForm());
 			localSite.resolve(configXML, null);
 
-			//attempt to parse the SITE_LOCAL_FILE file	
-			URL resolvedURL = URLEncoder.encode(configXML);
-			try {
-				new SiteLocalParser(resolvedURL.openStream(), localSite);
-			} catch (FileNotFoundException exception) {
-				// file SITE_LOCAL_FILE doesn't exist, ok, log it 
-				// and reconcile
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().debug(
-						localSite.getLocationURLString()
-							+ " does not exist, there is no previous state or install history we can recover, we shall use default.");
-					//$NON-NLS-1$
-				}
-				long bootStamp = currentPlatformConfiguration.getChangeStamp();
-				localSite.setStamp(bootStamp);
-				localSite.reconcile();
-				localSite.save();
+			parseLocalSiteFile(localSite, currentPlatformConfiguration, configXML);
 
-			} catch (SAXException exception) {
-				Utilities.logException(
-					Policy.bind(
-						"SiteLocal.ErrorParsingSavedState",
-						localSite.getLocationURLString()),
-					exception);
-				//$NON-NLS-1$
-				recoverSiteLocal(resolvedURL, localSite);
-			} catch (IOException exception) {
-				Utilities.logException(
-					Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()),
-					exception);
-				//$NON-NLS-1$
-				recoverSiteLocal(resolvedURL, localSite);
-			}
-
-			// check if we have to reconcile
+			// check if we have to reconcile, if the timestamp has changed
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
 			if (localSite.getStamp() != bootStamp) {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -108,14 +74,13 @@ public class SiteLocal
 							+ localSite.getStamp());
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
-				localSite.setStamp(bootStamp);
+
 				localSite.reconcile();
-				localSite.save();
+
 			} else {
 				// no reconciliation, preserve the list of plugins from the platform anyway
 				localSite.preserveRuntimePluginPath();
 			}
-
 		} catch (MalformedURLException exception) {
 			throw Utilities.newCoreException(
 				Policy.bind(
@@ -128,6 +93,57 @@ public class SiteLocal
 		return localSite;
 	}
 
+	/**
+	 * Create the localSite object either by parsing, recovering from the file system, or reconciling with the platform configuration
+	 */
+	private static void parseLocalSiteFile(
+		SiteLocal localSite,
+		IPlatformConfiguration currentPlatformConfiguration,
+		URL configXML)
+		throws MalformedURLException, CoreException {
+
+		//attempt to parse the LocalSite.xml	
+		URL resolvedURL = URLEncoder.encode(configXML);
+		try {
+			new SiteLocalParser(resolvedURL.openStream(), localSite);
+		} catch (FileNotFoundException exception) {
+			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
+			// and reconcile with platform configuration
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(
+					localSite.getLocationURLString()
+						+ " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.");
+				//$NON-NLS-1$
+			}
+
+			localSite.reconcile();
+			
+		} catch (SAXException exception) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				Utilities.logException(
+					Policy.bind(
+						"SiteLocal.ErrorParsingSavedState",
+						localSite.getLocationURLString()),
+					exception);
+				//$NON-NLS-1$
+			}
+			recoverSiteLocal(resolvedURL, localSite);
+
+		} catch (IOException exception) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				Utilities.logException(
+					Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()),
+					exception);
+				//$NON-NLS-1$
+			}
+
+			recoverSiteLocal(resolvedURL, localSite);
+		}
+	}
+
+	/**
+	 * 
+	 */
 	private SiteLocal() {
 	}
 
@@ -246,18 +262,20 @@ public class SiteLocal
 	 */
 	public void write(int indent, PrintWriter w) {
 
+		// force the recalculation to avoid reconciliation
+		IPlatformConfiguration platformConfig =
+			BootLoader.getCurrentPlatformConfiguration();
+		platformConfig.refresh();
+		long changeStamp = platformConfig.getChangeStamp();
+		this.setStamp(changeStamp);
+
+
 		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
 			gap += " "; //$NON-NLS-1$
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
-
-		// force the recalculation to avoid reconciliation
-		IPlatformConfiguration platformConfig =
-			BootLoader.getCurrentPlatformConfiguration();
-		platformConfig.refresh();
-		long changeStamp = platformConfig.getChangeStamp();
 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
@@ -639,7 +657,7 @@ public class SiteLocal
 
 		// add the configuration as the currentConfig
 		this.addConfiguration(newDefaultConfiguration);
-
+		this.save();
 	}
 
 	/**
@@ -974,8 +992,6 @@ public class SiteLocal
 
 		for (int i = 0; i < configFiles.length; i++) {
 			URL configURL = configFiles[i].toURL();
-			String label = configFiles[i].getName();
-			//
 			InstallConfigurationModel config =
 				new BaseSiteLocalFactory().createInstallConfigurationModel();
 			config.setLocationURLString(configURL.toExternalForm());
@@ -993,7 +1009,6 @@ public class SiteLocal
 		// parse preserved configuration information
 		for (int i = 0; i < preservedFiles.length; i++) {
 			URL configURL = configFiles[i].toURL();
-			String label = configFiles[i].getName();
 			InstallConfigurationModel config =
 				new BaseSiteLocalFactory().createInstallConfigurationModel();
 			config.setLocationURLString(configURL.toExternalForm());
