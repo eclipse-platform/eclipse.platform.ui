@@ -287,6 +287,7 @@ public class TextViewer extends Viewer implements
 		public void documentChanged(final DocumentEvent e) {
 			if (fWidgetCommand.event == e)
 				updateTextListeners(fWidgetCommand);
+			fLastSentSelection= null;
 		}
 	};
 	
@@ -1056,8 +1057,6 @@ public class TextViewer extends Viewer implements
 		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
-			if (e.keyCode == SWT.MOD1 || e.keyCode == SWT.MOD2 || e.keyCode == SWT.MOD3 || e.keyCode == SWT.MOD4)
-				return;
 			if (fTextWidget.getSelectionCount() == 0)
 				sendEmptySelectionChangedEvent();
 		}
@@ -1185,8 +1184,6 @@ public class TextViewer extends Viewer implements
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
-	/** Cursor listener */
-	private CursorListener fCursorListener;
 	/** 
 	 * The viewer widget token keeper
 	 * @since 2.0
@@ -1227,7 +1224,17 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	private IRewriteTarget fRewriteTarget;
-	
+	/** 
+	 * The viewer's cursor listener.
+	 * @since 3.0
+	 */
+	private CursorListener fCursorListener;
+	/**
+	 * Last sent selection range.
+	 * @since 3.0
+	 */
+	private IRegion fLastSentSelection;
+
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1956,9 +1963,12 @@ public class TextViewer extends Viewer implements
 	protected void selectionChanged(int offset, int length) {
 		if (redraws()) {
 			IRegion r= widgetRange2ModelRange(new Region(offset, length));
-			ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
-			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-			fireSelectionChanged(event);
+			if (!r.equals(fLastSentSelection))  {
+				fLastSentSelection= r;
+				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
+				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+				fireSelectionChanged(event);
+			}
 		}
 	}
 	
@@ -2131,6 +2141,7 @@ public class TextViewer extends Viewer implements
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
+		fLastSentSelection= null;
 		fReplaceTextPresentation= false;
 	}
 	
@@ -2158,6 +2169,7 @@ public class TextViewer extends Viewer implements
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
+		fLastSentSelection= null;
 		fReplaceTextPresentation= false;
 	}
 	
