@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Control;
 public interface IMemoryRendering {
     
     /**
-     * Initializes this rendering to be hosted in the given view, displaying
+     * Initializes this rendering to be hosted in the given container, displaying
      * the given memory block. This method is called before this rendering's control
      * has been created.
      * 
@@ -84,7 +84,6 @@ public interface IMemoryRendering {
      * Implementors are responsible for ensuring that
      * the created control can be accessed via <code>getControl</code>
      * </p>
-     *
      * @param parent the parent composite
      */
     public Control createControl(Composite parent);
@@ -95,7 +94,6 @@ public interface IMemoryRendering {
      * May return <code>null</code> if the control
      * has not been created yet.
      * </p>
-     *
      * @return the top level control or <code>null</code>
      */
     public Control getControl();
@@ -106,7 +104,9 @@ public interface IMemoryRendering {
     public void dispose();
     
     /**
-     * Notification this rendering has become the active rendering.
+     * Notification this rendering has become the active rendering. Only one
+     * rendering can be active at once. Generally, the active rendering is
+     * visible and has focus.
      */
     public void activated();
     
@@ -127,12 +127,17 @@ public interface IMemoryRendering {
     public void becomesHidden();
     
     /**
-     * @return the memory block displayed by this rendering.
+     * Returns the memory block displayed by this rendering.
+     * 
+     * @return the memory block displayed by this rendering
      */
     public IMemoryBlock getMemoryBlock();
     
     /**
-     * @return the rendering id of this rendering.
+     * Returns the identifier associated with this rendering's type.
+     *  
+     * @return the identifier associated with this rendering's type
+     * @see IMemoryRenderingType
      */
     public String getRenderingId();
     
@@ -153,7 +158,9 @@ public interface IMemoryRendering {
     public void removePropertyChangeListener(IPropertyChangeListener listener);
     
     /**
-     * Returns an image for this rendering.
+     * Returns an image for this rendering. Clients should not dispose
+     * this image. This rendering will dispose the image if required when
+     * this rendering is disposed.
      * 
      * @return an image for this rendering
      */
@@ -168,6 +175,9 @@ public interface IMemoryRendering {
     
     /**
      * Refresh the content of this rendering.
+     * 
+     * TODO: why is this needed as API? shouldn't refresh be part of the
+     * internal implementation when a rendering becomes visible? 
      */
     public void refresh();
 }
