@@ -137,15 +137,13 @@ protected Control createControl(Composite parent) {
 	text = new Text(parent, getStyle());
     text.addSelectionListener(new SelectionAdapter() {
             public void widgetDefaultSelected(SelectionEvent e) {
-                // same with enter-key handling code in keyReleaseOccured(e);
-                fireApplyEditorValue();
-                deactivate();
+                handleDefaultSelection(e);
             }   
         });    
 	text.addKeyListener(new KeyAdapter() {
 		// hook key pressed - see PR 14201  
 		public void keyPressed(KeyEvent e) {
-            // do not call keyReleaseOccured(e) as per PR 39074
+            keyReleaseOccured(e);
             
 			// as a result of processing the above call, clients may have
 			// disposed this cell editor
@@ -263,6 +261,20 @@ private ModifyListener getModifyListener() {
 	}
 	return modifyListener;
 }
+
+/**
+ * Handles a default selection event from the text control by applying the editor
+ * value and deactivating this cell editor.
+ * 
+ * @param event the selection event
+ * 
+ * @since 3.0
+ */
+protected void handleDefaultSelection(SelectionEvent event) {
+    // same with enter-key handling code in keyReleaseOccured(e);
+    fireApplyEditorValue();
+    deactivate();
+}
 /**
  * The <code>TextCellEditor</code>  implementation of this 
  * <code>CellEditor</code> method returns <code>true</code> if 
@@ -330,6 +342,29 @@ public boolean isSelectAllEnabled() {
 		return false;
 	return text.getCharCount() > 0;
 }
+
+/**
+ * Processes a key release event that occurred in this cell editor.
+ * <p>
+ * The <code>TextCellEditor</code> implementation of this framework method 
+ * ignores when the RETURN key is pressed since this is handled in 
+ * <code>handleDefaultSelection</code>.
+ * </p>
+ *
+ * @param keyEvent the key event
+ */
+protected void keyReleaseOccured(KeyEvent keyEvent) {
+	if (keyEvent.character == '\r') { // Return key
+	    if (text != null && !text.isDisposed() && (text.getStyle() & SWT.MULTI) != 0) {
+	        if ((keyEvent.stateMask & SWT.CTRL) != 0) {
+	            super.keyReleaseOccured(keyEvent);
+	        }
+	    }
+	    return;
+	}
+	super.keyReleaseOccured(keyEvent);
+}
+
 /**
  * The <code>TextCellEditor</code> implementation of this
  * <code>CellEditor</code> method copies the
