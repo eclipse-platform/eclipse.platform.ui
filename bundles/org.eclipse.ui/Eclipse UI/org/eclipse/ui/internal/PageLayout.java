@@ -8,6 +8,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
+  Dan Rubel <dan_rubel@instantiations.com> 
+    - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
 **********************************************************************/
  
 import java.util.*;
@@ -51,6 +53,7 @@ public class PageLayout implements IPageLayout {
 	private RootLayoutContainer rootLayoutContainer;
 	private Map mapIDtoPart = new HashMap(10);
 	private Map mapIDtoFolder = new HashMap(10);
+	private Map mapFastViewToWidthRatio = new HashMap(10);
 	private ArrayList actionSets = new ArrayList(3);
 	private ArrayList newWizardActionIds = new ArrayList(3);
 	private ArrayList showViewActionIds = new ArrayList(3);
@@ -99,6 +102,12 @@ public void addActionSet(String actionSetID) {
  * @see IPageLayout
  */
 public void addFastView(String id) {
+	addFastView(id, INVALID_RATIO);
+}
+/**
+ * @see IPageLayout
+ */
+public void addFastView(String id, float ratio) {
 	if (checkPartInLayout(id))
 		return;
 	if (id != null) {
@@ -106,6 +115,8 @@ public void addFastView(String id) {
 			ViewPane pane = viewFactory.createView(id);
 			IViewPart part = pane.getViewPart();
 			fastViews.add(part);
+			if(ratio >= IPageLayout.RATIO_MIN && ratio <= IPageLayout.RATIO_MAX)
+				mapFastViewToWidthRatio.put(id, new Float(ratio));
 		} catch(PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());	
 		}
@@ -277,6 +288,12 @@ public ArrayList getFastViews() {
 	return fastViews;
 }
 /**
+ * Returns a map of fast view ids to width ratios.
+ */
+/*package*/ Map getFastViewToWidthRatioMap() {
+	return mapFastViewToWidthRatio;
+}
+/**
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
@@ -395,22 +412,12 @@ public void setEditorAreaVisible(boolean showEditorArea) {
 	LayoutPart tabFolder = container.getRealContainer();
 	mapIDtoFolder.put(viewId, tabFolder);
 }
+// stackPart(Layoutpart, String, String) added by dan_rubel@instantiations.com
 /**
- * Stack one view on top of another.
+ * Stack a part on top of another.
  */
-public void stackView(String viewId, String refId) {
-	if (checkPartInLayout(viewId))
-		return;
-	
-	// Create the new part.
-	LayoutPart newPart;	
-	try {
-		newPart = createView(viewId);
-		setRefPart(viewId, newPart);
-	} catch (PartInitException e) {
-		WorkbenchPlugin.log(e.getMessage());
-		return;
-	}
+private void stackPart(LayoutPart newPart, String viewId, String refId) {
+	setRefPart(viewId, newPart);
 
 	// If ref part is in a folder than just add the
 	// new view to that folder.
@@ -437,6 +444,34 @@ public void stackView(String viewId, String refId) {
 	// If ref part is not found then just do add.
 	WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
 	rootLayoutContainer.add(newPart);
+}
+// stackPlaceholder(String, String) added by dan_rubel@instantiations.com
+/**
+ * Stack a placeholder on top of another.
+ */
+public void stackPlaceholder(String viewId, String refId) {
+	if (checkPartInLayout(viewId))
+		return;
+			
+	// Create the placeholder.
+	PartPlaceholder newPart = new PartPlaceholder(viewId);
+	stackPart(newPart, viewId, refId);
+}
+// stackView(String, String) modified by dan_rubel@instantiations.com
+/**
+ * Stack one view on top of another.
+ */
+public void stackView(String viewId, String refId) {
+	if (checkPartInLayout(viewId))
+		return;
+	
+	// Create the new part.
+	try {
+		LayoutPart newPart = createView(viewId);
+		stackPart(newPart, viewId, refId);
+	} catch (PartInitException e) {
+		WorkbenchPlugin.log(e.getMessage());
+	}
 }
 /**
  * @see IPageLayout
