@@ -10,16 +10,15 @@ package org.eclipse.ui.internal;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The PlatformUIPreferenceListener is a class that listens to 
@@ -49,14 +48,8 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 			.DEFAULT_PERSPECTIVE_ID
 			.equals(propertyName)) {
 			IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
-			AbstractUIPlugin uiPlugin =
-				(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-
-			String newValue =
-				uiPlugin.getPreferenceStore().getString(
-					IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
-
-			workbench.getPerspectiveRegistry().setDefaultPerspective(newValue);
+			
+			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
 		}
 
 		//Collect the names if required
