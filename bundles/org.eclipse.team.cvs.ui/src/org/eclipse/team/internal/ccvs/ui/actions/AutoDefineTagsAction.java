@@ -91,8 +91,8 @@ public class AutoDefineTagsAction extends TeamAction {
 							manager.addBranchTag(root, new BranchTag(tag.getName(), root));
 						} else {
 							// Problem: need to get the root remote project. Can't do this without
-							// additional API.
-							//manager.addVersionTag(root, new Tag(tag.getName(), false, root));
+							// additional API to get parent.
+							//manager.addVersionTag(resource, tag.getName());
 						}
 					}
 				}
