@@ -919,9 +919,9 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 			
 			// Create a new folder and add both items
 			PartTabFolder folder = new PartTabFolder();
+			sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
 			folder.add(part);
 			folder.enableDrag((ViewPane)part, partDropListener);
-			sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
 		} else {
 			//Move the part to its new position but keep its bounds if possible.
 			sashContainer.move(part,relativePosition,relativePart);			
