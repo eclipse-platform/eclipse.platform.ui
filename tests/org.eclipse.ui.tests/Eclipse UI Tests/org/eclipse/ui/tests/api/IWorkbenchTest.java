@@ -1,11 +1,11 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
 import org.eclipse.jdt.junit.util.*;
+import org.eclipse.jface.preference.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * Tests the IWorkbench interface.
@@ -148,6 +148,89 @@ public class IWorkbenchTest extends UITestCase {
 			assertEquals(win.getActivePage().getPerspective().getId(), defaultID);
 
 		} finally {
+			if (win != null)
+				win.close();
+		}
+	}
+	
+	public void testOpenPage1() throws Throwable {
+		IWorkbenchWindow win = null;
+		IWorkbenchPage page1, page2;
+		try {
+			// Open test window.
+			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			assertNotNull(win);
+
+			// Set platform pref for openPage.
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+				true);
+			
+			// Call openPage twice with the same input.
+			// Verify that we get the same page back both times.
+			page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			assertNotNull(page1);
+			page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			assertNotNull(page2);
+			assertEquals("Pages should be equal", page1, page2);
+
+			// Reset platform pref for openPage.
+			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+				false);
+			
+			// Call openPage twice with the same input.
+			// Verify that we get two different pages back.
+			page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			assertNotNull(page1);
+			page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			assertNotNull(page2);
+			assertTrue("Pages should be not equal", page1 != page2);
+			
+		} finally {
+			// Close test window.
+			if (win != null)
+				win.close();
+		}
+	}
+
+	public void testOpenPage2() throws Throwable {
+		IWorkbenchWindow win = null;
+		IWorkbenchPage page1, page2;
+		try {
+			// Open test window.
+			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			assertNotNull(win);
+
+			// Set platform pref for openPage.
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+				true);
+			
+			// Call openPage twice with the same input.
+			// Verify that we get the same page back both times.
+			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
+				ResourcesPlugin.getWorkspace());
+			assertNotNull(page1);
+			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+				ResourcesPlugin.getWorkspace());
+			assertNotNull(page2);
+			assertEquals("Pages should be equal", page1, page2);
+
+			// Reset platform pref for openPage.
+			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+				false);
+			
+			// Call openPage twice with the same input.
+			// Verify that we get two different pages back.
+			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
+				ResourcesPlugin.getWorkspace());
+			assertNotNull(page1);
+			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+				ResourcesPlugin.getWorkspace());
+			assertTrue("Pages should be not equal", page1 != page2);
+			
+		} finally {
+			// Close test window.
 			if (win != null)
 				win.close();
 		}
