@@ -1,13 +1,10 @@
 package org.eclipse.update.internal.ui;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.program.Program;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.update.internal.ui.views.DetailsView;
 
 
 public class GoToWebsiteAction extends Action {
@@ -28,22 +25,14 @@ public class GoToWebsiteAction extends Action {
 						UpdateUI.getDefault().startWebApp();
 					showURL(bookmark.getURL().toString());
 				} catch (CoreException e) {
+					UpdateUI.logException(e);
 				}
 			}
 		});		
 	}
 	
 	private void showURL(String url) {
-		if (SWT.getPlatform().equals("win32")) {
-			Program.launch(url);
-		} else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			try {
-				browser.displayURL(url);
-			} catch (Exception e) {
-				UpdateUI.logException(e);
-			}
-		}
+		DetailsView.showURL(url, false);
 	}
 
 }

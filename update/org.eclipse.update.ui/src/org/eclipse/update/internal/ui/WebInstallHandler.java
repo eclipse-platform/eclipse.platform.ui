@@ -48,9 +48,11 @@ public abstract class WebInstallHandler {
 	}
 
 	public static String getEncodedURLName(String urlName) {
+		/*
 		if (AppServerPreferencePage.getUseApplicationServer() == false
 			|| AppServerPreferencePage.getEncodeURLs() == false)
 			return urlName;
+		*/
 		return encode(urlName);
 	}
 
