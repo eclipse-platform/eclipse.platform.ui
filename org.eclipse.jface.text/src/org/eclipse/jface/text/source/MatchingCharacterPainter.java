@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
@@ -127,8 +127,8 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		if (length < 1)
 			return;
 			
-		if (fSourceViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			IRegion widgetRange= extension.modelRange2WidgetRange(new Region(offset, length));
 			if (widgetRange == null)
 				return;

@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 
 /**
  * Default implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code>
@@ -112,8 +112,8 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ITextViewer viewer, int offset) {
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.modelOffset2WidgetOffset(offset) >= 0;
 		} else {
 			IRegion region= viewer.getVisibleRegion();

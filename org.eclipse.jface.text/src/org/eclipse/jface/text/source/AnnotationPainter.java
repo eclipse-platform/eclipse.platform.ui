@@ -38,7 +38,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension2;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
@@ -766,8 +766,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					continue;
 				
 				Position p= pp.fPosition;
-				if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length))
+				if (fSourceViewer instanceof ITextViewerExtension5) {
+					ITextViewerExtension5 extension3= (ITextViewerExtension5) fSourceViewer;
+					if (null == extension3.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength())))
+						continue;
+				} else if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length)) {
 					continue;
+				}
 	
 				if (p.getOffset() + p.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > p.getOffset())
 					tp.mergeStyleRange(new StyleRange(p.getOffset(), p.getLength(), null, pp.fColor));
@@ -1099,9 +1104,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (p == null || p.offset == Integer.MAX_VALUE)
 			return null;
 		
-		if (fSourceViewer instanceof ITextViewerExtension3) {
+		if (fSourceViewer instanceof ITextViewerExtension5) {
 			
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			return extension.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength()));
 		
 		} else {

@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlCreatorExtension;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.Annotation;
@@ -222,8 +222,8 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		if (fVerticalRulerInfo instanceof IVerticalRulerExtension) {
 			StyledText st= viewer.getTextWidget();
 			if (st != null && !st.isDisposed()) {
-				if (viewer instanceof ITextViewerExtension3) {
-					int widgetLine= ((ITextViewerExtension3)viewer).modelLine2WidgetLine(line);
+				if (viewer instanceof ITextViewerExtension5) {
+					int widgetLine= ((ITextViewerExtension5)viewer).modelLine2WidgetLine(line);
 					Point loc= st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
 					((IVerticalRulerExtension)fVerticalRulerInfo).setLocationOfLastMouseButtonActivity(0, loc.y);
 				} else if (viewer instanceof TextViewer) {

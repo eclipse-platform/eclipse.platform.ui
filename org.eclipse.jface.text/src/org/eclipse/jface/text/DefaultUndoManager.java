@@ -127,8 +127,8 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @since 2.1
 		 */
 		protected IRegion widgetRange2ModelRange(int offset, int length) {
-			if (fTextViewer instanceof ITextViewerExtension3) {
-				ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+			if (fTextViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 				return extension.widgetRange2ModelRange(new Region(offset, length));
 			}
 			

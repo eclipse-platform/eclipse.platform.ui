@@ -39,7 +39,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -297,7 +297,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			gc.setBackground(fCanvas.getBackground());
 			gc.fillRectangle(0, 0, size.x, size.y);
 			
-			if (fCachedTextViewer instanceof ITextViewerExtension3)
+			if (fCachedTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
 				doPaint(gc);
@@ -347,12 +347,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight;
 		
-		if (fCachedTextViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 			IRegion coverage= extension.getModelCoverage();
 			bottomRight= coverage.getOffset() + coverage.getLength();
 		} else if (fCachedTextViewer instanceof TextViewer) {
-			// TODO remove once TextViewer implements ITextViewerExtension3
+			// TODO remove once TextViewer implements ITextViewerExtension5
 			TextViewer extension= (TextViewer) fCachedTextViewer;
 			IRegion coverage= extension.getModelCoverage();
 			bottomRight= coverage.getOffset() + coverage.getLength();
@@ -447,7 +447,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background. Implementation based
-	 * on <code>ITextViewerExtension3</code>. Will replace <code>doPaint(GC)</code>.
+	 * on <code>ITextViewerExtension5</code>. Will replace <code>doPaint(GC)</code>.
 	 * 
 	 * @param gc the gc to draw into
 	 */
@@ -460,7 +460,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
 			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
 
-		ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int lineheight= fCachedTextWidget.getLineHeight();

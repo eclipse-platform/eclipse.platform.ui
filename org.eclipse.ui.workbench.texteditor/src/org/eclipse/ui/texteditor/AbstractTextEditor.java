@@ -97,7 +97,7 @@ import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
@@ -129,12 +129,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
+
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -4037,17 +4038,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/*
 	 * @see ITextEditor#setHighlightRange(int, int, boolean)
 	 */
-	public void setHighlightRange(int start, int length, boolean moveCursor) {
+	public void setHighlightRange(int offset, int length, boolean moveCursor) {
 		if (fSourceViewer == null)
 			return;
 			
 		if (fShowHighlightRangeOnly) {
-			if (moveCursor)
-				fSourceViewer.setVisibleRegion(start, length);
+			if (moveCursor) {
+				if (fSourceViewer instanceof ITextViewerExtension5) {
+					ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+					extension.setExposedModelRange(new Region(offset, length));
+				} else {
+					fSourceViewer.setVisibleRegion(offset, length);
+				}
+			}
 		} else {
 			IRegion rangeIndication= fSourceViewer.getRangeIndication();
-			if (rangeIndication == null || start != rangeIndication.getOffset() || length != rangeIndication.getLength())
-				fSourceViewer.setRangeIndication(start, length, moveCursor);
+			if (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
+				fSourceViewer.setRangeIndication(offset, length, moveCursor);
 		}
 	}
 	
@@ -4071,9 +4078,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		if (fShowHighlightRangeOnly)
-			fSourceViewer.resetVisibleRegion();
-		else
+		if (fShowHighlightRangeOnly) {
+			if (fSourceViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+				extension.setExposedModelRange(null);
+			} else {
+				fSourceViewer.resetVisibleRegion();
+			}
+		} else
 			fSourceViewer.removeRangeIndication();
 	}
 	
@@ -4090,8 +4102,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		if (!isVisible(fSourceViewer, offset, length))
-			fSourceViewer.resetVisibleRegion();
+		if (!isVisible(fSourceViewer, offset, length)) {
+			if (fSourceViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+				extension.exposeModelRange(new Region(offset, length));
+			} else {
+				fSourceViewer.resetVisibleRegion();
+			}
+		}
 	}
 	
 	/*
@@ -4573,8 +4591,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected final static int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
 		}
 		return widgetOffset + viewer.getVisibleRegion().getOffset();
@@ -4590,8 +4608,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	protected final static int modelOffset2WidgetOffset(ISourceViewer viewer, int modelOffset) {
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.modelOffset2WidgetOffset(modelOffset);
 		}
 		return modelOffset - viewer.getVisibleRegion().getOffset();
@@ -4605,8 +4623,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected final static IRegion getCoverage(ISourceViewer viewer) {
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.getModelCoverage();
 		}
 		return viewer.getVisibleRegion();
@@ -4621,8 +4639,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ISourceViewer viewer, int offset, int length) {
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			IRegion overlap= extension.modelRange2WidgetRange(new Region(offset, length));
 			return overlap != null;
 		}

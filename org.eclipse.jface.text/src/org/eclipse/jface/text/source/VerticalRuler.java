@@ -38,7 +38,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -227,7 +227,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			gc.setBackground(fCanvas.getBackground());
 			gc.fillRectangle(0, 0, size.x, size.y);
 			
-			if (fTextViewer instanceof ITextViewerExtension3)
+			if (fTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
 				doPaint(gc);
@@ -359,7 +359,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background. Uses
-	 * <code>ITExtViewerExtension3</code> for its implementation. Will replace
+	 * <code>ITextViewerExtension5</code> for its implementation. Will replace
 	 * <code>doPaint(GC)</code>.
 	 * 
 	 * @param gc  the gc to draw into
@@ -373,7 +373,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
 			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
 
-		ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+		ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 		StyledText textWidget= fTextViewer.getTextWidget();
 		
 		fScrollPos= textWidget.getTopPixel();
@@ -520,8 +520,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 		
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.widgetlLine2ModelLine(widgetLine);
 		}
 		

@@ -37,7 +37,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
 
@@ -289,7 +289,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			gc.setBackground(getBackground(fCanvas.getDisplay()));
 			gc.fillRectangle(0, 0, size.x, size.y);
 			
-			if (fCachedTextViewer instanceof ITextViewerExtension3)
+			if (fCachedTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
 				doPaint(gc);
@@ -369,7 +369,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 	
 	/**
-	 * Draws the ruler column. Uses <code>ITextViewerExtension3</code> for the
+	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
 	 * 
 	 * @param gc the gc to draw into
@@ -379,7 +379,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		if (fCachedTextViewer == null)
 			return;
 
-		ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 
 		int firstLine= 0;
 

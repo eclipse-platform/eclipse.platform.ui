@@ -48,6 +48,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -829,8 +830,12 @@ public class LinkedUIControl {
 
 	private void select() {
 		ITextViewer viewer= fCurrentTarget.getViewer();
-		if (!viewer.overlapsWithVisibleRegion(fFramePosition.offset, fFramePosition.length))
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension5= (ITextViewerExtension5) viewer;
+			extension5.exposeModelRange(new Region(fFramePosition.offset, fFramePosition.length));
+		} else if (!viewer.overlapsWithVisibleRegion(fFramePosition.offset, fFramePosition.length)) {
 			viewer.resetVisibleRegion();
+		}
 		viewer.revealRange(fFramePosition.offset, fFramePosition.length);
 		viewer.setSelectedRange(fFramePosition.offset, fFramePosition.length);
 	}

@@ -2348,7 +2348,7 @@ public class TextViewer extends Viewer implements
 	/*
 	 * @see ITextViewer#setDocument(IDocument, int, int)
 	 */
-	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
+	public void setDocument(IDocument document, int modelRangeOffset, int modelRangeLength) {
 		
 		fReplaceTextPresentation= true;
 		fireInputDocumentAboutToBeChanged(fDocument, document);
@@ -2359,7 +2359,7 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			IDocument visibleDocument= createSlaveDocument(document);
-			updateVisibleDocument(visibleDocument, visibleRegionOffset, visibleRegionLength);
+			updateVisibleDocument(visibleDocument, modelRangeOffset, modelRangeLength);
 			setVisibleDocument(visibleDocument);
 		
 		} catch (BadLocationException x) {
@@ -2392,23 +2392,23 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Sets the given slave document to the specified range of its master document.
+	 * Updates the given slave document to show the specified range of its master document.
 	 * 
-	 * @param visibleDocument the slave document
-	 * @param visibleRegionOffset the offset of the master document range
-	 * @param visibleRegionLength the length of the master document range
+	 * @param slaveDocument the slave document
+	 * @param modelRangeOffset the offset of the master document range
+	 * @param modelRangeLength the length of the master document range
 	 * @return <code>true</code> if the slave has been adapted successfully
 	 * @throws BadLocationException in case the specified range is not valid in the master document
 	 * @since 2.1
 	 */
-	protected boolean  updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
-		if (visibleDocument instanceof ChildDocument) {
-			ChildDocument childDocument= (ChildDocument) visibleDocument;
+	protected boolean  updateVisibleDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
+		if (slaveDocument instanceof ChildDocument) {
+			ChildDocument childDocument= (ChildDocument) slaveDocument;
 
 			IDocument document= childDocument.getParentDocument();
-			int line= document.getLineOfOffset(visibleRegionOffset);
+			int line= document.getLineOfOffset(modelRangeOffset);
 			int offset= document.getLineOffset(line);
-			int length= (visibleRegionOffset - offset) + visibleRegionLength;
+			int length= (modelRangeOffset - offset) + modelRangeLength;
 			
 			Position parentRange= childDocument.getParentDocumentRange();
 			if (offset != parentRange.getOffset() || length != parentRange.getLength()) {

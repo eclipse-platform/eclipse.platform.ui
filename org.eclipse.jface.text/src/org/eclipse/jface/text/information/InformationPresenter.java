@@ -36,7 +36,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
@@ -395,8 +395,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @since 2.1
 	 */
 	private IRegion modelRange2WidgetRange(IRegion region) {
-		if (fTextViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 			return extension.modelRange2WidgetRange(region);
 		}
 

@@ -37,7 +37,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 
 
 /**
@@ -334,8 +334,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @throws BadLocationException if <code>line</code> is not valid in the viewer's document
 	 */
 	private int getWidgetLineNumber(int line) throws BadLocationException {
-		if (fSourceViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			return extension.modelLine2WidgetLine(line);
 		}
 		

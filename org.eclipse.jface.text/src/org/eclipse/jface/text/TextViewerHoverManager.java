@@ -249,8 +249,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			StyledText styledText= fTextViewer.getTextWidget();
 			int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
 			
-			if (fTextViewer instanceof ITextViewerExtension3) {
-				ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+			if (fTextViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
 			
@@ -311,8 +311,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @since 2.1
 	 */
 	private IRegion modelRange2WidgetRange(IRegion region) {
-		if (fTextViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 			return extension.modelRange2WidgetRange(region);
 		}
 		

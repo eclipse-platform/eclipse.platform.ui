@@ -23,7 +23,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.projection.ProjectionDocument;
 import org.eclipse.jface.text.projection.ProjectionDocumentManager;
@@ -32,7 +32,6 @@ import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -50,7 +49,7 @@ import org.eclipse.jface.text.source.SourceViewer;
  * 
  * @since 3.0
  */
-public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITextViewerExtension3 {
+public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
 	/**
 	 * Internal implementer of <code>IProjectionAnnotationModel</code>.
@@ -110,7 +109,12 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#updateVisibleDocument(org.eclipse.jface.text.IDocument, int, int)
 	 */
-	protected boolean updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
+	protected boolean updateVisibleDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
+		if (slaveDocument instanceof ProjectionDocument) {
+			ProjectionDocument document= (ProjectionDocument) slaveDocument;
+			document.replaceMasterDocumentRanges(modelRangeOffset, modelRangeLength);
+			return true;
+		}
 		return false;
 	}
 	
@@ -208,34 +212,8 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 		IRegion modelRange= event2ModelRange(e);
-		if (ensureVisibility(modelRange.getOffset(), modelRange.getLength()))
+		if (exposeModelRange(modelRange))
 			e.doit= false;
-	}
-	
-	/**
-	 * Ensures that the given region is visible in this viewer. Returns whether
-	 * action has been taken to fullfil the request.
-	 * 
-	 * @param offset offset of the requested visible region
-	 * @param length length of the requested visible region
-	 * @return <code>true</code> if action has been taken, <code>false</code> otherwise
-	 */
-	public boolean ensureVisibility(int offset, int length) {
-		IAnnotationModel model= getProjectionAnnotationModel();
-		if (model != null) {
-			Iterator iterator= model.getAnnotationIterator();
-			while (iterator.hasNext()) {
-				ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-				if (annotation.isFolded()) {
-					Position position= model.getPosition(annotation);
-					if (position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
-						annotation.run(this);
-						return true;
-					}
-				}
-			}	
-		}
-		return false;
 	}
 
 	/**
@@ -251,6 +229,65 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 		}
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension5#exposeModelRange(org.eclipse.jface.text.IRegion)
+	 */
+	public boolean exposeModelRange(IRegion modelRange) {
+		IAnnotationModel model= getProjectionAnnotationModel();
+		if (model != null) {
+			Iterator iterator= model.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
+				if (annotation.isFolded()) {
+					Position position= model.getPosition(annotation);
+					if (position.overlapsWith(modelRange.getOffset(), modelRange.getLength()) /* || is a delete at the boundary */ ) {
+						annotation.run(this);
+						return true;
+					}
+				}
+			}	
+		}
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension5#setExposedModelRange(org.eclipse.jface.text.IRegion)
+	 */
+	public void setExposedModelRange(IRegion modelRange) {
+		try {
+			
+			if (modelRange != null) {
+				ProjectionDocument projection= null;
+				
+				IDocument visibleDocument= getVisibleDocument();
+				if (visibleDocument instanceof ProjectionDocument)
+					projection= (ProjectionDocument) visibleDocument;
+				else {
+					IDocument master= getDocument();
+					IDocument slave= createSlaveDocument(getDocument());
+					if (slave instanceof ProjectionDocument) {
+						projection= (ProjectionDocument) slave;
+						projection.addMasterDocumentRange(0, master.getLength());
+						replaceVisibleDocument(projection);
+					}
+				}
+				
+				if (projection != null) {
+					projection.replaceMasterDocumentRanges(modelRange.getOffset(), modelRange.getLength());
+					invalidateTextPresentation();
+				}
+				
+			} else {
+				IDocument slave= getVisibleDocument();
+				replaceVisibleDocument(getDocument());
+				freeSlaveDocument(slave);
+			}
+			
+		} catch (BadLocationException x) {
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.ITextViewer#getVisibleRegion()
 	 */
@@ -277,15 +314,5 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 	 */
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
 		throw new UnsupportedOperationException("Visible Region support has been removed.");
-	}
-	
-	/*
-	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
-	 */
-	public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
-		if (visibleRegionOffset != -1 && visibleRegionLength != -1)
-			throw new UnsupportedOperationException("Visible Region support has been removed.");
-		
-		super.setDocument(document, annotationModel, -1, -1);
 	}
 }

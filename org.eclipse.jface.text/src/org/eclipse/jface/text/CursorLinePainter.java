@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 
 
@@ -133,9 +133,9 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getModelCaret() {
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
-		if (fViewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fViewer;
-			return extension.modelOffset2WidgetOffset(widgetCaret);
+		if (fViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
+			return extension.widgetOffset2ModelOffset(widgetCaret);
 		} else {
 			IRegion visible= fViewer.getVisibleRegion();
 			return widgetCaret + visible.getOffset();
@@ -154,9 +154,9 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			return;
 			
 		int widgetOffset= 0;
-		if (fViewer instanceof ITextViewerExtension3) {
+		if (fViewer instanceof ITextViewerExtension5) {
 			
-			ITextViewerExtension3 extension= (ITextViewerExtension3) fViewer;
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 			widgetOffset= extension.modelOffset2WidgetOffset(position.getOffset());
 			if (widgetOffset == -1)
 				return;

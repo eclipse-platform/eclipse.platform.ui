@@ -34,7 +34,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
@@ -229,8 +229,8 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @since 2.1
 		 */
 		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
-			if (fViewer instanceof ITextViewerExtension3) {
-				ITextViewerExtension3 extension= (ITextViewerExtension3) fViewer;
+			if (fViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 				return extension.widgetRange2ModelRange(new Region(e.getOffset(), e.getLength()));
 			}
 			

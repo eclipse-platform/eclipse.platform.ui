@@ -50,7 +50,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 
 
 /**
@@ -734,8 +734,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 
-		if (viewer instanceof ITextViewerExtension3) {
-			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.widgetlLine2ModelLine(widgetLine);
 		}
 

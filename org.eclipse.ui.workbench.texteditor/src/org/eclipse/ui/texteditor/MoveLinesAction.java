@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
@@ -228,8 +228,8 @@ public class MoveLinesAction extends TextEditorAction {
 		IDocument document= viewer.getDocument();
 		
 		IRegion visible;
-		if (viewer instanceof ITextViewerExtension3)
-			visible= ((ITextViewerExtension3) viewer).getModelCoverage();
+		if (viewer instanceof ITextViewerExtension5)
+			visible= ((ITextViewerExtension5) viewer).getModelCoverage();
 		else
 			visible= viewer.getVisibleRegion();
 		
@@ -442,7 +442,11 @@ public class MoveLinesAction extends TextEditorAction {
 			// move the selection along
 			int selOffset= movingArea.getOffset() + deviation;
 			int selLength= movingArea.getLength() + (fAddDelimiter ? delim.length() : 0);
-			selLength= Math.min(selLength, viewer.getVisibleRegion().getOffset() + viewer.getVisibleRegion().getLength() - selOffset);
+			if (! (viewer instanceof ITextViewerExtension5))
+				selLength= Math.min(selLength, viewer.getVisibleRegion().getOffset() + viewer.getVisibleRegion().getLength() - selOffset);
+			else {
+				// TODO need to check what is necessary in the projection case
+			}
 			selectAndReveal(viewer, selOffset, selLength);
 		} catch (BadLocationException x) {
 			// won't happen without concurrent modification - bail out
