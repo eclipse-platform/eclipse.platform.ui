@@ -16,7 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 
 /**
  * An input that can be used with both {@link } and 
@@ -61,7 +61,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * @param container
 	 * @return
 	 */
-	protected IDiffElement[] createModelObjects(SynchronizeModelElement container) {
+	protected IDiffElement[] createModelObjects(ISynchronizeModelElement container) {
 		IResource resource = null;
 		if (container == getModelRoot()) {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
@@ -71,7 +71,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		if(resource != null) {
 			SyncInfoTree infoTree = getSyncInfoTree();
 			IResource[] children = infoTree.members(resource);
-			SynchronizeModelElement[] nodes = new SynchronizeModelElement[children.length];
+			ISynchronizeModelElement[] nodes = new ISynchronizeModelElement[children.length];
 			for (int i = 0; i < children.length; i++) {
 				nodes[i] = createModelObject(container, children[i]);
 			}
@@ -80,7 +80,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		return new IDiffElement[0];
 	}
 
-	protected SynchronizeModelElement createModelObject(SynchronizeModelElement parent, IResource resource) {
+	protected ISynchronizeModelElement createModelObject(ISynchronizeModelElement parent, IResource resource) {
 		SyncInfo info = getSyncInfoTree().getSyncInfo(resource);
 		SynchronizeModelElement newNode;
 		if(info != null) {
@@ -112,9 +112,9 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * @param diffNode the diff node to be changed
 	 * @param info the new sync info for the diff node
 	 */
-	protected void handleChange(SynchronizeModelElement diffNode, SyncInfo info) {
+	protected void handleChange(ISynchronizeModelElement diffNode, SyncInfo info) {
 		IResource local = info.getLocal();
-		// TODO: Get any additional sync bits
+
 		if(diffNode instanceof SyncInfoModelElement) {
 			boolean wasConflict = isConflicting(diffNode);
 			// The update preserves any of the additional sync info bits
@@ -130,20 +130,19 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 			removeFromViewer(local);
 			addResources(new IResource[] {local});
 		}
-		// TODO: set any additional sync info bits
 	}
 
 	protected void addResources(IResource[] added) {
 		for (int i = 0; i < added.length; i++) {
 			IResource resource = added[i];
-			SynchronizeModelElement node = getModelObject(resource);
+			ISynchronizeModelElement node = getModelObject(resource);
 			if (node != null) {
 				// Somehow the node exists. Remove it and read it to ensure
 				// what is shown matches the contents of the sync set
 				removeFromViewer(resource);
 			}
 			// Build the sub-tree rooted at this node
-			SynchronizeModelElement parent = getModelObject(resource.getParent());
+			ISynchronizeModelElement parent = getModelObject(resource.getParent());
 			if (parent != null) {
 				node = createModelObject(parent, resource);
 				buildModelObjects(node);
@@ -154,12 +153,12 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#buildModelObjects(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
-	protected IDiffElement[] buildModelObjects(SynchronizeModelElement node) {
+	protected IDiffElement[] buildModelObjects(ISynchronizeModelElement node) {
 		IDiffElement[] children = createModelObjects(node);
 		for (int i = 0; i < children.length; i++) {
 			IDiffElement element = children[i];
-			if (element instanceof SynchronizeModelElement) {
-				buildModelObjects((SynchronizeModelElement) element);
+			if (element instanceof ISynchronizeModelElement) {
+				buildModelObjects((ISynchronizeModelElement) element);
 			}
 		}
 		return children;
@@ -168,7 +167,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doAdd(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement, org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
-	protected void doAdd(SynchronizeModelElement parent, SynchronizeModelElement element) {
+	protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
 		viewer.add(parent, element);		
 	}
@@ -176,7 +175,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doRemove(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
-	protected void doRemove(SynchronizeModelElement element) {
+	protected void doRemove(ISynchronizeModelElement element) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
 		viewer.remove(element);		
 	}
@@ -198,7 +197,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
 			IResource local = info.getLocal();
-			SynchronizeModelElement diffNode = getModelObject(local);
+			ISynchronizeModelElement diffNode = getModelObject(local);
 			if (diffNode != null) {
 				handleChange(diffNode, info);
 			}
@@ -220,7 +219,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		for (int i = 0; i < removedResources.length; i++) {
 			IResource resource = removedResources[i];
 			if (resource.getType() != IResource.FILE) {
-				SynchronizeModelElement node = getModelObject(resource);
+				ISynchronizeModelElement node = getModelObject(resource);
 				if (node != null) {
 					removeFromViewer(resource);
 					addResources(new IResource[] {resource});

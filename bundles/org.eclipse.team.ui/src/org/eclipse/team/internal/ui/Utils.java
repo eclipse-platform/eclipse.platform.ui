@@ -32,7 +32,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -413,8 +413,8 @@ public class Utils {
 			IResource resource = null;
 			if (element instanceof IResource) {
 				resource = (IResource)element;
-			} else if (element instanceof SynchronizeModelElement){
-				resource = ((SynchronizeModelElement) element).getResource();
+			} else if (element instanceof ISynchronizeModelElement){
+				resource = ((ISynchronizeModelElement) element).getResource();
 			} else {
 				resource = (IResource)getAdapter(element, IResource.class);
 			}

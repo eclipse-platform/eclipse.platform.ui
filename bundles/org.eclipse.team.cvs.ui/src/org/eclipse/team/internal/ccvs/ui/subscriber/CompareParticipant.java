@@ -21,7 +21,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
+import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 
 public class CompareParticipant extends SubscriberParticipant {
 	
@@ -60,13 +60,6 @@ public class CompareParticipant extends SubscriberParticipant {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#doCreatePage(org.eclipse.team.ui.synchronize.ISynchronizeView)
-	 */
-	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
-		return new CompareParticipantPage(this, view);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#updateMode(int)
 	 */
 	protected void updateMode(int mode) {
@@ -79,5 +72,13 @@ public class CompareParticipant extends SubscriberParticipant {
 	protected void preCollectingChanges() {
 		super.preCollectingChanges();
 		getSubscriberSyncInfoCollector().setFilter(contentComparison);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
+	 */
+	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
+		return new CVSSynchronizeViewerAdvisor(view, this);
 	}
 }

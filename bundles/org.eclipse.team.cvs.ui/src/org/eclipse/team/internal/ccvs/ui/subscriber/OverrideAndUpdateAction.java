@@ -14,8 +14,8 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberAction;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberOperation;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * changes to files that have non-mergeable conflicts. All the prompting logic
  * is in the super class.
  */
-public class OverrideAndUpdateAction extends SubscriberAction {
+public class OverrideAndUpdateAction extends SynchronizeModelAction {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
@@ -32,7 +32,7 @@ public class OverrideAndUpdateAction extends SubscriberAction {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
 	
-	protected SubscriberOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
+	protected SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
 		return new OverrideAndUpdateSubscriberOperation(part, elements);
 	}
 }

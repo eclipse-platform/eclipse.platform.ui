@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -103,7 +103,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			if (set != null && !shutdown) {
-				final SynchronizeModelElement[] nodes = calculateRoots(getSyncInfoSet(), monitor);				
+				final ISynchronizeModelElement[] nodes = calculateRoots(getSyncInfoSet(), monitor);				
 				UIJob updateUI = new UIJob("updating change log viewers") {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						StructuredViewer tree = getViewer();	
@@ -126,7 +126,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#buildModelObjects(org.eclipse.compare.structuremergeviewer.DiffNode)
 	 */
-	protected IDiffElement[] buildModelObjects(SynchronizeModelElement node) {
+	protected IDiffElement[] buildModelObjects(ISynchronizeModelElement node) {
 		if(node == getModelRoot()) {
 			if(fetchLogEntriesJob == null) {
 				fetchLogEntriesJob = new FetchLogEntriesJob();
@@ -144,7 +144,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		return new IDiffElement[0];
 	}
 
-	private SynchronizeModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
+	private ISynchronizeModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		commentRoots.clear();
 		SyncInfo[] infos = set.getSyncInfos();
 		monitor.beginTask("fetching from server", set.size() * 100);
@@ -160,7 +160,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 					changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
 					commentRoots.put(dateComment, changeRoot);
 				}
-				SynchronizeModelElement element = new FullPathSyncInfoElement(changeRoot, infos[i]);
+				ISynchronizeModelElement element = new FullPathSyncInfoElement(changeRoot, infos[i]);
 				associateDiffNode(element);
 			}
 			monitor.worked(100);
@@ -233,7 +233,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doAdd(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement, org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
-	protected void doAdd(SynchronizeModelElement parent, SynchronizeModelElement element) {
+	protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
 		viewer.add(parent, element);		
 	}
@@ -241,7 +241,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doRemove(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
-	protected void doRemove(SynchronizeModelElement element) {
+	protected void doRemove(ISynchronizeModelElement element) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
 		viewer.remove(element);		
 	}

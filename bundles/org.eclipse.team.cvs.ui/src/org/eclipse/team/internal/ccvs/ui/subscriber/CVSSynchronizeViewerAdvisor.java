@@ -10,28 +10,36 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.subscriber.SynchronizeViewerAdvisor;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElementLabelProvider;
+import org.eclipse.team.ui.synchronize.viewers.*;
 
-public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor {
+public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implements ISynchronizeModelChangeListener {
 
 	private boolean isGroupIncomingByComment = false;
+	
+	private List delegates = new ArrayList(2);
+	private CVSSynchronizeViewerAdvisor config;
+	private Action groupByComment;
+	private ActionDelegateManager delegateManager;
 
 	private static class CVSLabelDecorator extends LabelProvider implements ILabelDecorator  {
 		public String decorateText(String input, Object element) {
 			String text = input;
-			if (element instanceof SynchronizeModelElement) {
-				IResource resource =  ((SynchronizeModelElement)element).getResource();
+			if (element instanceof ISynchronizeModelElement) {
+				IResource resource =  ((ISynchronizeModelElement)element).getResource();
 				if(resource != null && resource.getType() != IResource.ROOT) {
 					CVSLightweightDecorator.Decoration decoration = new CVSLightweightDecorator.Decoration();
 					CVSLightweightDecorator.decorateTextLabel(resource, decoration, false, true);
@@ -56,13 +64,21 @@ public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor {
 	public CVSSynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(view, participant);
 		participant.addPropertyChangeListener(this);
+		
+		// Sync changes are used to update the action state for the update/commit buttons.
+		addInputChangedListener(this);
+		
+		// Listen for decorator changed to refresh the viewer's labels.
+		CVSUIPlugin.addPropertyChangeListener(this);
+		this.delegateManager = new ActionDelegateManager();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.TreeViewerAdvisor#getLabelProvider()
 	 */
 	protected ILabelProvider getLabelProvider() {
-		return new SynchronizeModelElementLabelProvider.DecoratingColorLabelProvider(new SynchronizeModelElementLabelProvider(), new CVSLabelDecorator());
+		ILabelProvider oldProvider = super.getLabelProvider();
+		return new DecoratingColorLabelProvider(oldProvider, new CVSLabelDecorator());
 	}
 	
 	public boolean isGroupIncomingByComment() {
@@ -91,6 +107,31 @@ public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor {
 				});				
 			}
 		}
+		if(property.equals(CVSUIPlugin.P_DECORATORS_CHANGED) && getViewer() != null && getSyncInfoSet() != null) {
+			((StructuredViewer)getViewer()).refresh(true /* update labels */);
+		}
 		super.propertyChange(event);
+	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeParticipant#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		removeInputChangedListener(this);
+		CVSUIPlugin.removePropertyChangeListener(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.presentation.ISynchronizeModelChangeListener#inputChanged(org.eclipse.team.ui.synchronize.presentation.SynchronizeModelProvider)
+	 */
+	public void modelChanged(ISynchronizeModelElement root) {
+		delegateManager.updateActionEnablement(root);
+	}
+	
+	protected ActionDelegateManager getDelegateManager() {
+		return delegateManager;
 	}
 }

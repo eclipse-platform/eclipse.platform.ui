@@ -12,19 +12,19 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.text.DateFormat;
 
-import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 
 public class ChangeLogDiffNode extends SynchronizeModelElement {
 
 	private ILogEntry logEntry;
 
-	public ChangeLogDiffNode(DiffNode parent, ILogEntry logEntry) {
+	public ChangeLogDiffNode(ISynchronizeModelElement parent, ILogEntry logEntry) {
 		super(parent);
 		this.logEntry = logEntry;
 	}

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 
 public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 
@@ -156,10 +156,10 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#createModelObject(org.eclipse.compare.structuremergeviewer.DiffNode, org.eclipse.core.resources.IResource)
 	 */
-	protected SynchronizeModelElement createModelObject(SynchronizeModelElement parent, IResource resource) {
+	protected ISynchronizeModelElement createModelObject(ISynchronizeModelElement parent, IResource resource) {
 		if (resource.getType() == IResource.FOLDER) {
 			SyncInfo info = getSyncInfoTree().getSyncInfo(resource);
-			SynchronizeModelElement newNode;
+			ISynchronizeModelElement newNode;
 			if(info != null) {
 				newNode = new CompressedFolderDiffNode(parent, info);
 			} else {
@@ -187,12 +187,12 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	
 	private void addResource(SyncInfo info) {
 		IResource local = info.getLocal();
-		SynchronizeModelElement existingNode = getModelObject(local);
+		ISynchronizeModelElement existingNode = getModelObject(local);
 		if (existingNode == null) {
 			if (local.getType() == IResource.FILE) {
-				SynchronizeModelElement parentNode = getModelObject(local.getParent());
+				ISynchronizeModelElement parentNode = getModelObject(local.getParent());
 				if (parentNode == null) {
-					SynchronizeModelElement projectNode = getModelObject(local.getProject());
+					ISynchronizeModelElement projectNode = getModelObject(local.getProject());
 					if (projectNode == null) {
 						projectNode = createModelObject(getModelRoot(), local.getProject());
 					}
@@ -204,7 +204,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 				}
 				createModelObject(parentNode, local);
 			} else {
-				SynchronizeModelElement projectNode = getModelObject(local.getProject());
+				ISynchronizeModelElement projectNode = getModelObject(local.getProject());
 				if (projectNode == null) {
 					projectNode = createModelObject(getModelRoot(), local.getProject());
 				}

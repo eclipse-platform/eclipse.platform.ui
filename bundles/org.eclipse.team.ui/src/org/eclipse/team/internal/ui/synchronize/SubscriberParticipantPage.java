@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.runtime.IAdaptable;
@@ -22,10 +22,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.ChangesSection;
-import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberRefreshWizard;
 import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 import org.eclipse.ui.*;
@@ -42,7 +42,7 @@ import org.eclipse.ui.part.*;
  * </p> 
  * @since 3.0
  */
-public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
+public final class SubscriberParticipantPage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
 	// Parent composite of this view. It is remembered so that we can dispose of its children when 
 	// the viewer type is switched.
 	private Composite composite = null;
@@ -64,14 +64,15 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	private Action collapseAll;
 	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
-	private SynchronizeViewerAdvisor viewerAdvisor;
+	private StructuredViewerAdvisor viewerAdvisor;
 		
 	/**
 	 * Constructs a new SynchronizeView.
 	 */
-	public SubscriberParticipantPage(SubscriberParticipant page, ISynchronizeView view) {
+	public SubscriberParticipantPage(SubscriberParticipant page, ISynchronizeView view, StructuredViewerAdvisor viewerAdvisor) {
 		this.participant = page;
 		this.view = view;
+		this.viewerAdvisor = viewerAdvisor;
 	}
 	
 	/* (non-Javadoc)
@@ -253,6 +254,9 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 			
 			// status line
 			statusLine.fillActionBars(actionBars);
+			
+			// allow the advisor to contribute
+			getViewerConfiguration().setActionBars(actionBars);
 		}		
 	}
 
@@ -310,7 +314,6 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	}
 	
 	private Viewer createChangesViewer(Composite parent) {
-		viewerAdvisor = createSynchronizeViewerAdvisor();
 		TreeViewer viewer = new TreeViewerAdvisor.NavigableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
@@ -319,19 +322,15 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		return viewer;
 	}
 	
-	public StructuredViewerAdvisor getViewerAdviser() {
+	public StructuredViewerAdvisor getViewerConfiguration() {
 		return viewerAdvisor;
 	}
 	
 	public Viewer getViewer() {
 		return changesViewer;
 	}
-	
-	protected SynchronizeViewerAdvisor createSynchronizeViewerAdvisor() {
-		return new SynchronizeViewerAdvisor(getSynchronizeView(), getParticipant());
-	}
 
 	public void setSelection(Object[] objects, boolean reveal) {
-		getViewerAdviser().setSelection(objects, reveal);
+		getViewerConfiguration().setSelection(objects, reveal);
 	}
 }

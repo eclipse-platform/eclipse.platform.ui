@@ -14,7 +14,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
+import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -23,18 +23,19 @@ public class WorkspaceSynchronizeParticipant extends SubscriberParticipant {
 	public final static String ID = "org.eclipse.team.cvs.ui.cvsworkspace-participant"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#doCreatePage(org.eclipse.team.ui.synchronize.ISynchronizeView)
-	 */
-	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
-		return new WorkspaceSynchronizePage(this, view);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
 	public void init(IMemento memento) throws PartInitException {
 		super.init(memento);
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
 		setSubscriber(subscriber);
-	}		
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
+	 */
+	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
+		return new WorkspaceSynchronizeAdvisor(view, this);
+	}
 }

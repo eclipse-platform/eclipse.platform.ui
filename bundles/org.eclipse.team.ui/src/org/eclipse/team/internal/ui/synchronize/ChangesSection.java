@@ -18,15 +18,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
 import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelChangeListener;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -76,7 +76,7 @@ public class ChangesSection extends Composite {
 	 * Listen to sync set changes so that we can update message to user and totals.
 	 */
 	private ISynchronizeModelChangeListener changedListener = new ISynchronizeModelChangeListener() {
-		public void modelChanged(SynchronizeModelElement root) {
+		public void modelChanged(ISynchronizeModelElement root) {
 			calculateDescription();
 		}
 	};

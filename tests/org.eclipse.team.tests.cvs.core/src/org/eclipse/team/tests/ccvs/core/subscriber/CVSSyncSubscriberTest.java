@@ -24,9 +24,9 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
 import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedOperation;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
 
 /**
  * Provides test methods common to CVS sync subscribers

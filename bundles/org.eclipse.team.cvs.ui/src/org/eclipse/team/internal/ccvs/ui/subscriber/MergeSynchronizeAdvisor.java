@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager.WrappedActionDelegate;
 import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.DirectionFilterActionGroup;
@@ -20,19 +24,28 @@ import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.IActionBars;
 
 
-public class MergeSynchronizePage extends CVSSynchronizeViewPage {
+public class MergeSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 
 	private RemoveSynchronizeParticipantAction removeAction;
 	private DirectionFilterActionGroup modes;
-	private Action updateAdapter;
+	private WrappedActionDelegate updateAdapter;
 	
-	public MergeSynchronizePage(SubscriberParticipant participant, ISynchronizeView view) {
-		super(participant, view);		
+	public MergeSynchronizeAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
+		super(view, participant);		
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SynchronizeViewerAdvisor#initializeActions(org.eclipse.jface.viewers.StructuredViewer)
+	 */
+	protected void initializeActions(StructuredViewer treeViewer) {
+		super.initializeActions(treeViewer);
+		
 		removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
 		modes = new DirectionFilterActionGroup(getParticipant(), SubscriberParticipant.INCOMING_MODE | SubscriberParticipant.CONFLICTING_MODE);
 		MergeUpdateAction action = new MergeUpdateAction();
 		action.setPromptBeforeUpdate(true);
-		updateAdapter = new CVSActionDelegate(action);
+		updateAdapter = new ActionDelegateManager.WrappedActionDelegate(action, getSynchronizeView(), treeViewer);
+		getDelegateManager().addDelegate(updateAdapter);
 		
 		Utils.initAction(updateAdapter, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
 		getParticipant().setMode(SubscriberParticipant.INCOMING_MODE);
@@ -45,11 +58,13 @@ public class MergeSynchronizePage extends CVSSynchronizeViewPage {
 		super.setActionBars(actionBars);
 		if(actionBars != null) {
 			IToolBarManager toolbar = actionBars.getToolBarManager();
-			toolbar.add(new Separator());
-			modes.fillToolBar(toolbar);
-			toolbar.add(new Separator());
-			toolbar.add(updateAdapter);
-			toolbar.add(removeAction);
+			if(toolbar != null) {
+				toolbar.add(new Separator());
+				modes.fillToolBar(toolbar);
+				toolbar.add(new Separator());
+				toolbar.add(updateAdapter);
+				toolbar.add(removeAction);
+			}
 		}		
 	}	
 }

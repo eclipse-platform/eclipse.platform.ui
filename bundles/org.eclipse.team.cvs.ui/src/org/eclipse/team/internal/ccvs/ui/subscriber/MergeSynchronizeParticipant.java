@@ -24,7 +24,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
+import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -46,6 +46,14 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	public MergeSynchronizeParticipant(CVSMergeSubscriber subscriber) {
 		super();
 		setSubscriber(subscriber);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
+	 */
+	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
+		return new MergeSynchronizeAdvisor(view, this);
 	}
 	
 	/* (non-Javadoc)
@@ -99,13 +107,6 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	public void dispose() {
 		super.dispose();
 		((CVSMergeSubscriber)getSubscriber()).cancel();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createPage(org.eclipse.team.ui.synchronize.ISynchronizeView)
-	 */
-	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
-		return new MergeSynchronizePage(this, view);
 	}
 	
 	/* (non-Javadoc)
