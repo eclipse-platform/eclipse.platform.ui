@@ -20,13 +20,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.internal.variables.StringVariableManager;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
@@ -39,6 +37,7 @@ import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -56,9 +55,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -69,7 +67,6 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * A console for a system process
@@ -704,28 +701,62 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
         
         public void linkActivated() {
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            IFile file = root.getFile(new Path(fFilePath));
-            FileEditorInput input = new FileEditorInput(file);
+            File file = new File(fFilePath);
+            LocalFileStorage lfs = new LocalFileStorage(file);
+            StorageEditorInput input = new StorageEditorInput(lfs, file);
             IWorkbenchPage activePage = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
             try {
-                activePage.openEditor(input, getEditorId(new File(fFilePath)), true);
+                activePage.openEditor(input, EditorsUI.DEFAULT_TEXT_EDITOR_ID, true);
             } catch (PartInitException e) {
             }
         }
-
-        private String getEditorId(File file) {
-            IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
-            IEditorRegistry editorRegistry = workbench.getEditorRegistry();
-            IEditorDescriptor descriptor = editorRegistry.getDefaultEditor(file.getName());
-            if (descriptor != null)
-                return descriptor.getId();
-            return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
-        }
-        
         public void linkEntered() {
         }
         public void linkExited() {
         }
     }
+    
+    class StorageEditorInput extends PlatformObject implements IStorageEditorInput {
+        private File fFile;
+        private IStorage fStorage;
+        
+        public StorageEditorInput(IStorage storage, File file) {
+            fStorage = storage;
+            fFile = file;
+        }
+        
+        public IStorage getStorage() {
+            return fStorage;
+        }
+
+        public ImageDescriptor getImageDescriptor() {
+            return null;
+        }
+
+        public String getName() {
+            return getStorage().getName();
+        }
+
+        public IPersistableElement getPersistable() {
+            return null;
+        }
+
+        public String getToolTipText() {
+            return getStorage().getFullPath().toOSString();
+        }
+        
+        public boolean equals(Object object) {
+            return object instanceof StorageEditorInput &&
+             getStorage().equals(((StorageEditorInput)object).getStorage());
+        }
+        
+        public int hashCode() {
+            return getStorage().hashCode();
+        }
+
+        public boolean exists() {
+            return fFile.exists();
+        }
+    }
+
 }
