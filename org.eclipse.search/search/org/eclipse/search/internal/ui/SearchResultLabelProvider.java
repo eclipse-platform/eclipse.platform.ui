@@ -6,53 +6,39 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
-import org.eclipse.core.resources.IResource;
-
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
+
 class SearchResultLabelProvider extends LabelProvider implements ILabelProvider {
-	
-	private static class FileLabelProvider extends LabelProvider {
 
-		private WorkbenchLabelProvider fWorkbenchLabelProvider= new WorkbenchLabelProvider();
-		
-		public String getText(Object element) {
-			if (!(element instanceof ISearchResultViewEntry))
-				return ""; //$NON-NLS-1$
-			IResource resource= ((ISearchResultViewEntry) element).getResource();
-			// PR 1G47GDO
-			if (resource == null)
-				return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
-			return fWorkbenchLabelProvider.getText(resource);
-		}
+	private static SearchResultLabelProvider fgInstance= new SearchResultLabelProvider();
+	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider(FileLabelProvider.SHOW_PATH_LABEL);
+	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+	private static ILabelProvider fLabelProvider= DEFAULT_LABEL_PROVIDER;
 
-		public Image getImage(Object element) {
-			if (!(element instanceof ISearchResultViewEntry))
-				return null; //$NON-NLS-1$
-			return fWorkbenchLabelProvider.getImage(((ISearchResultViewEntry) element).getResource());
-		}
+	private SearchResultLabelProvider() {
 	}
 
-	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider();
-	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-	private static ILabelProvider fgLabelProvider= DEFAULT_LABEL_PROVIDER;
+	public static SearchResultLabelProvider getInstance () {
+		return fgInstance;
+	}
 	
 	public ILabelProvider getLabelProvider() {
-		return fgLabelProvider;
+		return fLabelProvider;
 	}
 	
 	public void setLabelProvider(ILabelProvider provider) {
 		if (provider == null)
 			provider= DEFAULT_LABEL_PROVIDER;
-		fgLabelProvider= provider;
+		fLabelProvider= provider;
 	}
 	
 	public String getText(Object rowElement) {
-		StringBuffer text= new StringBuffer(fgLabelProvider.getText(rowElement));
+		StringBuffer text= new StringBuffer(fLabelProvider.getText(rowElement));
 		int count= ((ISearchResultViewEntry)rowElement).getMatchCount();
 		if (count > 1) {
 			text.append(" ("); //$NON-NLS-1$
@@ -63,6 +49,6 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	}
 	
 	public Image getImage(Object rowElement) {
-		return fgLabelProvider.getImage(rowElement);	
+		return fLabelProvider.getImage(rowElement);	
 	}
 }
