@@ -1147,7 +1147,6 @@ protected final void updateItem(Widget widget, Object element) {
  * <code>super.updateSelection</code> must be invoked.
  * </p>
  * @param selection the selection, or <code>null</code> if none
- * @param allowVeto whether veto is allowed
  */
 protected void updateSelection(ISelection selection) {
 	SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
