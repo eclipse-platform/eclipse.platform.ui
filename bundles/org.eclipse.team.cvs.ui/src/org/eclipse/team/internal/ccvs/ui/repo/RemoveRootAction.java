@@ -46,7 +46,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 	 */
 	protected ICVSRepositoryLocation[] getSelectedRemoteRoots() {
 		ArrayList resources = null;
-		if (!selection.isEmpty()) {
+		if (selection!=null && !selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {

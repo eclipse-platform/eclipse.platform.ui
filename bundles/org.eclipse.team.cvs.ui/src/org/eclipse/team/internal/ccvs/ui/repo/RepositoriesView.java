@@ -143,6 +143,9 @@ public class RepositoriesView extends RemoteViewPart {
 			}
 		});
 		removeRootAction = new RemoveRootAction(viewer.getControl().getShell());
+		removeRootAction.selectionChanged((IStructuredSelection)null);
+		IActionBars bars = getViewSite().getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
 		super.contributeActions();
 	}
 	
@@ -171,8 +174,6 @@ public class RepositoriesView extends RemoteViewPart {
 		if (newAnonAction != null)
 			sub.add(newAnonAction);
 		manager.add(removeRootAction);
-		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
 	}
 	
 	/*
