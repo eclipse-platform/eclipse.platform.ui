@@ -210,36 +210,24 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 		int l= line;
 		ILineDiffInfo info= differ.getLineInfo(l);
-		// if this is a special case, we'll start the search one above line
-		if (l >= min && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesAbove() > 0) {
-			info= differ.getLineInfo(--l);
-		}
-
 		// search backwards until a line has no changes to itself
 		while (l >= min && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(--l);
 		}
 		
-		// correct overrun
-//		int first= l < line ? l + 1 : l;
-		int first= l + 1;
+		int first= Math.min(l + 1, line);
 
 		// forward search
 
 		l= line;
 		info= differ.getLineInfo(l);
-		// if this is a special case, we'll start the search one below line
-		if (l <= max && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0) {
-			info= differ.getLineInfo(++l);
-		}
 		// search forward until a line has no changes to itself
 		while (l <= max && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(++l);
 		}
 		
-		// correct overrun
-		int last= l - 1;
-
+		int last= Math.max(l - 1, line);
+		
 		return new Point(first, last);
 	}
 
@@ -254,9 +242,47 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
 	 */
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
-		int last= lineRange.getStartLine() + lineRange.getNumberOfLines() - 1;
-		String content= computeContent(sourceViewer, lineRange.getStartLine(), last, visibleLines);
+		int first= adaptFirstLine(sourceViewer, lineRange.getStartLine());
+		int last= adaptLastLine(sourceViewer, lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
+		String content= computeContent(sourceViewer, first, last, visibleLines);
 		return formatSource(content);	
+	}
+
+	/**
+	 * Adapts the start line to the implementation of <code>ILineDiffInfo</code>.
+	 * 
+	 * @param startLine the line to adapt
+	 * @return <code>startLine - 1</code> if that line exists and is an
+	 *         unchanged line followed by deletions, <code>startLine</code>
+	 *         otherwise
+	 */
+	private int adaptFirstLine(ISourceViewer viewer, int startLine) {
+		ILineDiffer differ= getDiffer(viewer);
+		if (differ != null && startLine > 0) {
+			int l= startLine - 1;
+			ILineDiffInfo info= differ.getLineInfo(l);
+			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
+				return l;
+		}
+		return startLine;
+	}
+
+	/**
+	 * Adapts the last line to the implementation of <code>ILineDiffInfo</code>.
+	 * 
+	 * @param lastLine the line to adapt
+	 * @return <code>lastLine - 1</code> if that line exists and is an
+	 *         unchanged line followed by deletions, <code>startLine</code>
+	 *         otherwise
+	 */
+	private int adaptLastLine(ISourceViewer viewer, int lastLine) {
+		ILineDiffer differ= getDiffer(viewer);
+		if (differ != null && lastLine > 0) {
+			ILineDiffInfo info= differ.getLineInfo(lastLine);
+			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED)
+				return lastLine - 1;
+		}
+		return lastLine;
 	}
 
 	/*

@@ -81,11 +81,19 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			if (fCachedTextViewer!= null) {
 				int line= toDocumentLineNumber(e.y);
 				ILineDiffInfo info= getDiffInfo(line);
-				Cursor cursor;
-				if (info != null && info.hasChanges())
-					cursor= fHitDetectionCursor;
-				else
-					cursor= null;
+				Cursor cursor= null;
+				if (info != null) {
+					int type= info.getChangeType();
+					if (type == ILineDiffInfo.ADDED || type == ILineDiffInfo.CHANGED)
+						cursor= fHitDetectionCursor;
+					else if (info.getRemovedLinesAbove() > 0) {
+						if (line > 0) {
+							info= getDiffInfo(line - 1);
+							if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED)
+								cursor= fHitDetectionCursor;
+						}
+					}
+				}
 				if (cursor != fLastCursor) {
 					fCanvas.setCursor(cursor);
 					fLastCursor= cursor;
