@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
  * Utility for dealing with variables
@@ -181,7 +182,7 @@ public class VariableUtil {
 	
 			// Invalid variable format
 			if (varDef.end == -1 || varDef.name == null || varDef.name.length() == 0) {
-				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format("Invalid variable format: {0}.", new String[] {argument.substring(varDef.start)}), null));
+				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.Invalid_variable_format__{0}_1"), new String[] {argument.substring(varDef.start)}), null)); //$NON-NLS-1$
 				return null;
 			}
 	
@@ -195,7 +196,7 @@ public class VariableUtil {
 			LaunchConfigurationVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
 			LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
-				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format("The variable named \''{0}\'' does not exist.", new Object[] {varDef.name}), null));
+				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.The_variable_named_____{0}_____does_not_exist._2"), new Object[] {varDef.name}), null)); //$NON-NLS-1$
 				return null;
 			}
 			
@@ -239,7 +240,7 @@ public class VariableUtil {
 		while (varDef.start >= 0) {
 			// Invalid variable format
 			if (varDef.name == null || varDef.name.length() == 0 || varDef.end == -1) {
-				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format("Invalid variable format: {0}.", new String[] {locationText.substring(varDef.start)}), null));
+				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.Invalid_variable_format__{0}_3"), new String[] {locationText.substring(varDef.start)}), null)); //$NON-NLS-1$
 				return null;
 			}
 			
@@ -251,7 +252,7 @@ public class VariableUtil {
 			registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
 			LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
-				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format("The variable named ''{0}'' does not exist.", new Object[] {varDef.name}), null));
+				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.The_variable_named_____{0}_____does_not_exist._4"), new Object[] {varDef.name}), null)); //$NON-NLS-1$
 				return null;
 			}
 			
