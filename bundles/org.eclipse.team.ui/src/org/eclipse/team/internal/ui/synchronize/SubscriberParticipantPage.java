@@ -123,7 +123,7 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizePage#reset()
+	 * @see org.eclipse.team.internal.ui.synchronize.SyncInfoSetSynchronizePage#reset()
 	 */
 	public void reset() {
 		getParticipant().reset();

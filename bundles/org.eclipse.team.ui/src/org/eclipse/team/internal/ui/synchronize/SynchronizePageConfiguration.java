@@ -29,6 +29,8 @@ import org.eclipse.ui.actions.ActionContext;
  * Concrete implementation of the ISynchronizePageConfiguration. It 
  * extends SynchronizePageActionGroup in order to delegate action group
  * operations.
+ * 
+ * @since 3.0
  */
 public class SynchronizePageConfiguration extends SynchronizePageActionGroup implements ISynchronizePageConfiguration {
 
