@@ -15,14 +15,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.variables.ExpandVariableContext;
+import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.ExpandVariableContext;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
-import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsRefreshTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
