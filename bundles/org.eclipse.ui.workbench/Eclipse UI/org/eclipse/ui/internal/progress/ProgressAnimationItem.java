@@ -121,11 +121,11 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 
 	private void refresh() {
 		
-		//Abort the refresh if we are in the process of shutting down
-		if(!PlatformUI.isWorkbenchRunning())
+		// Abort the refresh if we are in the process of shutting down
+		if (!PlatformUI.isWorkbenchRunning())
 			return;
 		
-		if (toolbar == null && toolbar.isDisposed())
+		if (toolbar == null || toolbar.isDisposed())
 			return;
 		
 		lastJobInfo= null;
