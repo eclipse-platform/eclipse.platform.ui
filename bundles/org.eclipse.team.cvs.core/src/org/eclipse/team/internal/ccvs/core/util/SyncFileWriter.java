@@ -567,6 +567,9 @@ public class SyncFileWriter {
 			if (target.exists()) {
 				// XXX Should ensure that we haven't already copied it
 				// XXX write the revision to the CVS/Baserev file
+				if (target.isReadOnly()) {
+					target.setReadOnly(false);
+				}
 				target.delete(true, Policy.subMonitorFor(monitor, 10));
 			}
 			// Copy the file so the timestamp is maintained
@@ -616,6 +619,9 @@ public class SyncFileWriter {
 			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(file.getName()));
 			if (source.exists()) {
+				if (source.isReadOnly()) {
+					source.setReadOnly(false);
+				}
 				source.delete(false, false, Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (CoreException e) {
