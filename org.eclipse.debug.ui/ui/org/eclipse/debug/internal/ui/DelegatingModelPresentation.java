@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -345,23 +346,16 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		}
 	}
 	
-	/**
-	 * @see IDebugModelPresentation#getDetail(IValue)
+	/*
+	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
-	public String getDetail(IValue value) {
+	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IDebugModelPresentation lp= getConfiguredPresentation(value);
 		if (lp != null) {
-			String detail= lp.getDetail(value);
-			if (detail != null) {
-				return detail;
-			} else {
-				detail = lp.getText(value);
-			}
-			if (detail != null) {
-				return detail;
-			}
+			lp.computeDetail(value, listener);			
+		} else {
+			listener.detailComputed(value, getText(value));
 		}
-		return getText(value);
 	}	
 
 	/**

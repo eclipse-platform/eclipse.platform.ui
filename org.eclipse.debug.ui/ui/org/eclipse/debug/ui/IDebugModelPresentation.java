@@ -170,6 +170,6 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * @return detailed description, or <code>null</code> if none
 	 *  is available
 	 */
-	String getDetail(IValue value);	
+	void computeDetail(IValue value, IValueDetailListener listener);	
 
 }

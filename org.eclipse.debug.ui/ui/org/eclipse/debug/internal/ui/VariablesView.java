@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -64,7 +65,8 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class VariablesView extends AbstractDebugView implements ISelectionListener, 
 																	IDoubleClickListener, 
-																	IPropertyChangeListener {
+																	IPropertyChangeListener,
+																	IValueDetailListener {
 
 	/**
 	 * Actions hosted in this view, either in the toolbar, or in one of the 
@@ -470,14 +472,25 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			if (!selection.isEmpty()) {
 				IVariable var = (IVariable)selection.getFirstElement();
 				IValue val = var.getValue();
-				String detail = getModelPresentation().getDetail(val);
-				getDetailDocument().set(detail);
+				getModelPresentation().computeDetail(val, this);
 			} else {
 				getDetailDocument().set(""); //$NON-NLS-1$
 			}
 		} catch (DebugException de) {
 			DebugUIPlugin.logError(de);
 		}				
+	}
+	
+	/*
+	 * @see IValueDetailListener#detailComputed(IValue, String)
+	 */
+	public void detailComputed(IValue value, final String result) {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				getDetailDocument().set(result);
+			}
+		};
+		getViewer().getControl().getDisplay().asyncExec(runnable);		
 	}
 	
 	/**
