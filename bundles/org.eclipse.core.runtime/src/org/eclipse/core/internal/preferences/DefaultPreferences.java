@@ -147,6 +147,7 @@ public class DefaultPreferences extends EclipsePreferences {
 		AbstractPreferenceInitializer initializer = null;
 		try {
 			initializer = (AbstractPreferenceInitializer) element.createExecutableExtension(ATTRIBUTE_CLASS);
+			initializer.initializeDefaultPreferences();
 		} catch (ClassCastException e) {
 			String message = Policy.bind("preferences.invalidExtensionSuperclass"); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
@@ -154,7 +155,6 @@ public class DefaultPreferences extends EclipsePreferences {
 		} catch (CoreException e) {
 			log(e.getStatus());
 		}
-		initializer.initializeDefaultPreferences();
 	}
 
 	public IEclipsePreferences node(String childName, Plugin context) {
