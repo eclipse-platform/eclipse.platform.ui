@@ -363,7 +363,7 @@ public class TextUtilities {
 			try {
 				return extension3.getContentType(partitioning, offset);
 			} catch (BadPartitioningException x) {
-				return null;
+				return IDocument.DEFAULT_CONTENT_TYPE;
 			}
 		} else {
 			return document.getContentType(offset);
@@ -386,7 +386,7 @@ public class TextUtilities {
 			try {
 				return extension3.getPartition(partitioning, offset);
 			} catch (BadPartitioningException x) {
-				return null;
+				return new TypedRegion(0, document.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 			}
 		} else {
 			return document.getPartition(offset);
