@@ -92,19 +92,16 @@ FORM {
 	padding:0px;
 }
 
-/* this works in Mozilla. IE5 does not seem to recognize it */
-input[type="checkbox"] {
-	border:2px solid black;
-	margin:0xp;
-	padding:0px;
-	height:12px;
-	width:12px;
-}
-
 </style>
 
 <script language="JavaScript">
 
+ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+ var extraStyle = "";
+  if (isMozilla)
+  	 document.write( '<style type="text/css">input[type="checkbox"] {border:2px solid black; margin:0xp; padding:0px;	height:12px;width:12px;}</style>');
+
+ 
 function doAdvancedSearch()
 {
 	var form = document.forms["searchForm"];
