@@ -1,6 +1,4 @@
-doc
-library
-core104.dll
-libcore104.so
-plugin.jars
-plugin.xml
+build.includes=library,core104.dll,libcore104.so,plugin.xml,plugin.jars,doc
+
+bin.includes=core104.dll,libcore104.so,plugin.xml,*.jar
+javadoc.packages=org.eclipse.core.resources.*
