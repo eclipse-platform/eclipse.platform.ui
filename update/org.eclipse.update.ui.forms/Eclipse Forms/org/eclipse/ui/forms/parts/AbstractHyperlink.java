@@ -16,8 +16,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.FormsResources;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.internal.parts.FormsResources;
 
 /**
  * This is the base class for custom hyperlink widget.

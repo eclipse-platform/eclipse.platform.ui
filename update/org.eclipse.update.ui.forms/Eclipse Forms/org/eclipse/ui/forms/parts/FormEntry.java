@@ -12,6 +12,8 @@ package org.eclipse.ui.forms.parts;
 
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.events.*;
+
 import java.util.*;
 
 public class FormEntry {

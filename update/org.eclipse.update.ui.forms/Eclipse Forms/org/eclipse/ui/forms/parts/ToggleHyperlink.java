@@ -16,13 +16,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 
 /**
- * A custom selectable control that can be used to control areas that can be
- * expanded or collapsed. The control control can be toggled between selected
- * and deselected state with a mouse or by pressing 'Enter' while the control
- * has focus.
+ * A custom selectable control that can be used to control 
+ * areas that can be
+ * expanded or collapsed. 
  * <p>
- * The control is rendered as a triangle that points to the right in the
- * collapsed and down in the expanded state. Triangle color can be changed.
+ * This is an abstract class. Subclasses are responsible
+ * for rendering the control using decoration and
+ * active decoration color. Control should be
+ * rendered based on the current expansion state.
  */
 
 public abstract class ToggleHyperlink extends AbstractHyperlink {

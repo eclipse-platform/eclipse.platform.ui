@@ -15,8 +15,8 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.FormsResources;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.internal.parts.FormsResources;
 
 /**
  * This composite is capable of expanding or collapsing a single client that is

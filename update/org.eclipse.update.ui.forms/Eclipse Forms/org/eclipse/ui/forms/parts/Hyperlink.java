@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Hyperlink is a concrete implementation of the
- * abstract hyperlink that draws text in its client area.
+ * abstract base class that draws text in the client area.
  * Text can be wrapped and underlined.
  * 
  * @see org.eclipse.ui.forms.HyperlinkGroup
