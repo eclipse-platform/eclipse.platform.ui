@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
