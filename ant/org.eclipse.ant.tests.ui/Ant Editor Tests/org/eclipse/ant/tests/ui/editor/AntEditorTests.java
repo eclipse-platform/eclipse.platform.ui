@@ -43,6 +43,28 @@ public class AntEditorTests extends AbstractAntUITest {
         }
     }
     
+    public void testTaskdefOpenDeclaration() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("taskdef.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            int offset = getOffsetWithinLine(editor, 9, 3);
+            editor.selectAndReveal(offset, 0);
+            
+            editor.openReferenceElement();
+            ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+            assertTrue("Selection is not correct: " + selection.getText(), "taskdef".equals(selection.getText()));
+            
+            offset = getOffsetWithinLine(editor, 9, 10);
+            editor.selectAndReveal(offset, 3);
+            
+            editor.openReferenceElement();
+            selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+            assertTrue("Selection is not correct: " + selection.getText(), "taskdef".equals(selection.getText()));
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
     public void testMacroDefOpenDeclaration() throws PartInitException, BadLocationException {
     	try {
     		IFile file= getIFile("macrodef.xml");
