@@ -84,9 +84,6 @@ public class DefaultPartPresentation extends StackPresentation {
 	private MenuManager systemMenuManager = new MenuManager();
 	private Label titleLabel;
 	private Listener dragListener;
-	private List activationList = new ArrayList(10);
-	private boolean activationListChange = true;
-	static private String ACTIV_ID = "activationNum";
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab
@@ -348,24 +345,12 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		for (int idx = 0; idx < parts.length; idx++) {
 			String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
-			String activNumString = parts[idx].getString(ACTIV_ID);
-			int activNum = 0;
-			if (activNumString != null)
-				activNum = Integer.parseInt(activNumString);
 			
 			if (id != null) {
 				IPresentablePart part = serializer.getPart(id);
 				
 				if (part != null) {
-					try {
-						activationListChange = false;
-						addPart(part, tabFolder.getItemCount());
-						int activListSize = activationList.size();
-						activationList.add(activNum <= activListSize ? activNum : activListSize, part);
-					}
-					finally {
-						activationListChange = true;
-					}
+					addPart(part, tabFolder.getItemCount());
 				}
 			} 
 		}
@@ -386,8 +371,6 @@ public class DefaultPartPresentation extends StackPresentation {
 			
 			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PART);
 			childMem.putString(IWorkbenchConstants.TAG_ID, context.getId(next));
-			int idx = activationList.indexOf(next);
-			childMem.putString(ACTIV_ID, Integer.toString(idx));
 		}
 	}
 	
@@ -734,9 +717,7 @@ public class DefaultPartPresentation extends StackPresentation {
         PlatformUI
         .getWorkbench()
         .getThemeManager()
-        .removePropertyChangeListener(themeListener); 
-        
-        activationList = null;
+        .removePropertyChangeListener(themeListener);   
 	}
 	
 	/* (non-Javadoc)
@@ -805,121 +786,18 @@ public class DefaultPartPresentation extends StackPresentation {
 	public void addPart(IPresentablePart newPart, Object cookie) {
 		
 		int idx;
-		List lruList = null;
 		
 		if (cookie instanceof Integer) {
 			idx = ((Integer)cookie).intValue();
-			addPart(newPart, idx);
-			return;
 		} else {
-			if (cookie != null && cookie instanceof List) {
-				// When adding a part, the LRU list and index are being passed
-				// from #selectPart(...).  In selectPart, when the item is invisible on 
-				// the left hand side of the tab folder and the user selects it from the chevron, 
-				// save the LRU list of visible items, get the position at which we should re-insert
-				// the item, then remove the item and call addPart(...) with this information.
-				// All this to support resize of the CTabFolder pushing tabs off the left and 
-				// retaining the ability for them to come back from the left during resize, when
-				// possible
-				List list = (List)cookie;
-				lruList = (List)list.get(0);
-				idx = ((Integer)list.get(1)).intValue();
-			}
-			else {
-				// just calling addPart(...) and the item is inserted in the default location
-				idx = getItemInsertionIndex();
-				lruList = getVisibleItemsLRUList();
-			}
+			// Select a location for newly inserted parts
+			// Insert at the begining
+			idx = 0;
 		}
 		
 		addPart(newPart, idx);
-		
-		// after adding, need to check if the part is showing, as there are cases where 
-		// the part can be added at the given index and not appear (for example, when the list
-		// becomes more constrained due to the addition of a chevron)
-		if (tabFolder.getItemCount() > 1) {
-			CTabItem myItem = tabFolder.getItem(idx);
-			// make sure the part is showing
-			while (!myItem.isShowing()) {
-				IPresentablePart lruPart = null;
-				CTabItem lruItem = null;
-				
-				// get the least recently used item that is showing
-				// and remove it
-				for (int i = 0; i < lruList.size(); i++) {
-					lruItem = (CTabItem)lruList.get(i);
-					if (!myItem.equals(lruItem)) {
-						lruItem = (CTabItem)lruList.remove(i);
-						break;
-					}
-				}
-				if (myItem.equals(lruItem) || lruItem == null)
-					break;
-				
-				lruPart = getPartForTab(lruItem);
-				removePart(lruPart);
-				// decrement the index of the item being added as the removal 
-				// is always of an item with a lower index then the item being added on the right
-				addPart(lruPart, --idx+1);
-			}
-		}
 	}
 	
-	/**
-	 * @return a list containing the CTabItem items that are
-	 * visible in the CTabFolder
-	 */
-	private List getVisibleItemsLRUList() {
-		List lruList = new ArrayList(10);
-		// save current visible items in the least recently used order
-		
-		// Sort the items whose tabs are showing based on activation order.
-		// for each item in the CTabFolder, cross index that in the activation
-		// list to come up with a LRU ordered list of CTabItems.
-		// NOTE: the activation list is not always a complete list of all items 
-		// for example on startup it can be empty
-		for (int i = 0; i < tabFolder.getItemCount(); i++) {
-			CTabItem item = tabFolder.getItem(i);
-			// only care about items that are showing
-			if (item.isShowing()) {
-				int lruListSize = lruList.size();
-				if (lruListSize == 0)
-					lruList.add(item);
-				else {
-					int j = 0;
-					// any item that is NOT in the activation list, returns -1 as an
-					// index hence the item will be inserted at the begining of the LRU 
-					// list make it the least recently used 
-					for (j = 0; j < lruListSize; j++) {
-						if (activationList.indexOf(getPartForTab(item)) <
-								activationList.indexOf(getPartForTab((CTabItem)lruList.get(j))))
-							break;
-					}
-					lruList.add(j, item);
-				}
-			}
-		}
-		return lruList;
-	}
-
-	/**
-	 * @return the index at which a new item
-	 * should be inserted
-	 */
-	private int getItemInsertionIndex() {
-		// Select a location for newly inserted parts
-		// Insert after the last showing item on the right
-		int idx = tabFolder.getItemCount();
-		for (int i = 0; i < idx; i++) {
-			CTabItem item = tabFolder.getItem(i);
-			// make sure the item is not showing and it is on the right
-			if (!item.isShowing() && item.getBounds().x >= 0) {
-				return i;
-			}
-		}
-		return idx;
-	}
-
 	/**
 	 * Adds the given presentable part to this presentation at the given index.
 	 * Does nothing if a tab already exists for the given part. 
@@ -927,7 +805,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @param newPart
 	 * @param index
 	 */
-	public void addPart(IPresentablePart newPart, int index) { 
+	public void addPart(IPresentablePart newPart, int index) {
 		// If we already have a tab for this part, do nothing
 		if (getTab(newPart) != null) {
 			return;
@@ -935,11 +813,6 @@ public class DefaultPartPresentation extends StackPresentation {
 		createPartTab(newPart, index);
 		
 		setControlSize();
-		// in some cases we don't want addPart to affect the activation list
-		// such as when we are moving an items location because it was 
-		// the least recently used
-		if (activationListChange)
-			activationList.add(newPart);
 	}
 
 	/* (non-Javadoc)
@@ -955,12 +828,6 @@ public class DefaultPartPresentation extends StackPresentation {
 		}
 		oldPart.setVisible(false);		
 		
-		// in some cases we don't want removePart to affect the activation list
-		// such as when we are moving an items location because it was 
-		// the least recently used
-		if (activationListChange)
-			activationList.remove(oldPart);
-		
 		item.dispose();
 	}
 	
@@ -971,7 +838,6 @@ public class DefaultPartPresentation extends StackPresentation {
 		if (toSelect == current) {
 			return;
 		}
-		
 		IPresentablePart oldPart = current;
 		
 		current = toSelect;
@@ -980,49 +846,17 @@ public class DefaultPartPresentation extends StackPresentation {
 			CTabItem item = getTab(toSelect);
 			if (item != null)
 				// If the item is not currently visible, move it
-				// to the last visible position on the right
+				// to the beginning
 				if (!item.isShowing() && tabFolder.getItemCount() > 1)
 				{
-					try {
-						activationListChange = false;
-						// Save a list of the visible items in LRU order
-						List lruList = getVisibleItemsLRUList();
-						int idx = getItemInsertionIndex();
-						// If we remove an item from the left
-						// decrement the index by 1
-						if (item.getBounds().x < 0)
-							idx--;
-						
-						removePart(toSelect);
-						
-						// pass the LRU list and insertion index
-						// to addPart, as it was before the remove happened
-						List cookie = new ArrayList(2);
-						cookie.add(lruList);	
-						cookie.add(new Integer(idx));
-						
-						addPart(toSelect, cookie);
-					}
-					finally {
-						activationListChange = true;
-					}
+					removePart(toSelect);
+					addPart(toSelect, 0);
+					current = toSelect;
 				}
-			current = toSelect;
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
-			setControlSize();	
-			// update the newly selected item in the activation order
-			if (activationListChange) {
-				activationList.remove(toSelect);
-				activationList.add(toSelect);
-			}
-		} else {
-			// Remove any references to the old widget
-			tabFolder.setTopLeft(null);
-			tabFolder.setTopCenter(null);
-			tabFolder.setTopRight(null);
+			setControlSize();		
 		}
-		
 		if (oldPart != null) {
 			oldPart.setVisible(false);
 		}
