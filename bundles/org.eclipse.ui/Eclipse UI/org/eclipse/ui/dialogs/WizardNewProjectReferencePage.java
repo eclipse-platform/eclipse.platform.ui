@@ -14,7 +14,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.model.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * Standard project reference page for a wizard that creates a 
@@ -53,12 +54,9 @@ public void createControl(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	composite.addHelpListener(new HelpListener() {
-		public void helpRequested(HelpEvent event) {
-			performHelp();
-		}
-	});
 
+	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE));
+	
 	Label referenceLabel = new Label(composite, SWT.NONE);
 	referenceLabel.setText(REFERENCED_PROJECTS_TITLE);
 

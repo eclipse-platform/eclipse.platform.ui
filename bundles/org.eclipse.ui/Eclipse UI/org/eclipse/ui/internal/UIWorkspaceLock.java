@@ -33,12 +33,14 @@ void addPendingWork(Semaphore work) {
  * Should always be called from the UI thread.
  */
 void doPendingWork() {
-	if (pendingWork == null)
+	Semaphore temp = pendingWork;
+	if (temp == null)
 		return;
 	try {
-		pendingWork.getRunnable().run();
+		temp.getRunnable().run();
 	} finally {
-		Semaphore temp = pendingWork;
+		// null pending work BEFORE releasing temp
+		// to prevent race conditions
 		pendingWork = null;
 		temp.release();
 	}

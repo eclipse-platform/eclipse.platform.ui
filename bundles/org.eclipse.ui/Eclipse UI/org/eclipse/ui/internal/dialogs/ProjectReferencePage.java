@@ -6,8 +6,8 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -45,6 +45,8 @@ public ProjectReferencePage() {
  * @see PreferencePage#createContents
  */
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE));
 
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayout(new GridLayout());

@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,6 +23,7 @@ protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc) {
 	super(desc.getLabel());
 	setImageDescriptor(desc.getImageDescriptor());
 	setToolTipText(desc.getLabel());
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SHOW_VIEW_ACTION});
 	this.window = window;
 	this.desc = desc;
 }

@@ -49,7 +49,6 @@ public IWorkbench getWorkbench() {
  * Returns the workbench window.
  */
 public IWorkbenchWindow getWorkbenchWindow() {
-	// TBD: Yuck - huge path
 	return getNavigator().getSite().getWorkbenchWindow();
 }
 }

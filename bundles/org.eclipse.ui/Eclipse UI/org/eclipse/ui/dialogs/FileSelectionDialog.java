@@ -4,7 +4,8 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
@@ -111,6 +112,13 @@ private void checkInitialSelections() {
 		else
 			selectionGroup.initialCheckListItem(currentElement);
 	}
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.FILE_SELECTION_DIALOG});
 }
 public void create() {
 	super.create();

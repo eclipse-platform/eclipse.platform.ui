@@ -87,10 +87,10 @@ public void layout(Composite c, boolean flush) {
 	Table table = (Table) c;
 	int width = table.getClientArea().width;
 
-	// XXX: Layout is being called with a bogus value the first time
+	// XXX: Layout is being called with an invalid value the first time
 	// it is being called on Linux. This method resets the
 	// Layout to null so we make sure we run it only when
-	// the value is not bogus.
+	// the value is OK.
 	if (width <= 1)
 		return;
  

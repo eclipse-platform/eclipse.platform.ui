@@ -6,6 +6,7 @@ package org.eclipse.ui.wizards.datatransfer;
  */
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.*;
 import org.eclipse.jface.dialogs.*;
@@ -61,6 +62,13 @@ public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
 	this("zipFileExportPage1", selection);//$NON-NLS-1$
 	setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
 	setDescription(DataTransferMessages.getString("ZipExport.description")); //$NON-NLS-1$
+}
+/** (non-Javadoc)
+ * Method declared on IDialogPage.
+ */
+public void createControl(Composite parent) {
+	super.createControl(parent);
+	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE));
 }
 /**
  *	Create the export options specification widgets.

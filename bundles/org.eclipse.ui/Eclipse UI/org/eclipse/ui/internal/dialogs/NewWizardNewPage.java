@@ -6,7 +6,6 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.Workbook;
 import org.eclipse.ui.internal.misc.WorkbookPage;
 import org.eclipse.ui.*;

@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.EditorPresentation;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import java.util.*;
 
 /**

@@ -11,6 +11,7 @@ import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.swt.widgets.*;
 
@@ -28,6 +29,7 @@ public class QuickStartAction extends PartEventAction {
 public QuickStartAction(IWorkbench aWorkbench) {
 	super(WorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.QUICK_START_ACTION});
 	this.workbench = aWorkbench;
 }
 /**
@@ -35,6 +37,8 @@ public QuickStartAction(IWorkbench aWorkbench) {
  */
 public void run() {
 	WorkbenchPage page = (WorkbenchPage)workbench.getActiveWorkbenchWindow().getActivePage();
+	if (page == null)
+		return;
 	page.setEditorAreaVisible(true);
 
 	// see if we already have a welcome editor

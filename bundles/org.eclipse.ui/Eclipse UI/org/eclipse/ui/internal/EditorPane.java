@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

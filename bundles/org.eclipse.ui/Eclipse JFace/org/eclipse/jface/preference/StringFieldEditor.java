@@ -315,7 +315,9 @@ public Text getTextControl(Composite parent) {
 				textField = null;
 			}
 		});
-		textField.setTextLimit(textLimit);
+		if(textLimit > 0){//Only set limits above 0 - see SWT spec
+			textField.setTextLimit(textLimit);
+		}
 	} else {
 		checkParent(textField, parent);
 	}

@@ -91,6 +91,10 @@ protected Control createControl(Composite parent) {
 	text.addKeyListener(new KeyAdapter() {
 		public void keyReleased(KeyEvent e) {
 			keyReleaseOccured(e);
+			// as a result of processing the above call, clients may have
+			// disposed this cell editor
+			if ((getControl() == null) || getControl().isDisposed())
+				return;
 			checkSelection(); // see explaination below
 			checkDeleteable();
 			checkSelectable();
@@ -204,6 +208,8 @@ private ModifyListener getModifyListener() {
  * the current selection is not empty.
  */
 public boolean isCopyEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return text.getSelectionCount() > 0;
 }
 /**
@@ -212,6 +218,8 @@ public boolean isCopyEnabled() {
  * the current selection is not empty.
  */
 public boolean isCutEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return text.getSelectionCount() > 0;
 }
 /**
@@ -221,6 +229,8 @@ public boolean isCutEnabled() {
  * at the end of the text.
  */
 public boolean isDeleteEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return text.getSelectionCount() > 0 || text.getCaretPosition() < text.getCharCount();
 }
 /**
@@ -228,6 +238,8 @@ public boolean isDeleteEnabled() {
  * <code>CellEditor</code> method always returns <code>true</code>.
  */
 public boolean isPasteEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return true;
 }
 /**
@@ -235,6 +247,8 @@ public boolean isPasteEnabled() {
  * <code>CellEditor</code> method always returns <code>true</code>.
  */
 public boolean isSaveAllEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return true;
 }
 /**
@@ -251,6 +265,8 @@ public boolean isSaveAllEnabled() {
  *  <code>false</code> otherwise
  */
 public boolean isSelectAllEnabled() {
+	if (text == null || text.isDisposed())
+		return false;
 	return text.getText().length() > 0;
 }
 /**

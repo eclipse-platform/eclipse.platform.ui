@@ -355,10 +355,6 @@ public IEditorDescriptor[] getSortedEditorsFromOS() {
 
 	List localNames = new ArrayList();
 	for (int i = 0; i < programs.length; i++){
-		
-		
-
-		UIHackFinder.fixPR();
 		//1FPLRL2: ITPUI:WINNT - NOTEPAD editor cannot be launched
 		//Some entries start with %SystemRoot%
 		//For such cases just use the file name as they are generally
@@ -556,7 +552,7 @@ private boolean loadAssociations() {
  * 
  */
 private String mappingKeyFor(String type) {
-	UIHackFinder.fixUI(); //Unix issue
+	//Unix issue
 	return type.toLowerCase();
 }
 /**

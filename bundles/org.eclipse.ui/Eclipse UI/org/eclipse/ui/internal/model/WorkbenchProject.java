@@ -4,11 +4,15 @@ package org.eclipse.ui.internal.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
+import java.util.HashMap;
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.OverlayIcon;
 
 /**
  * An IWorkbenchAdapter that represents IProject.
@@ -16,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class WorkbenchProject extends WorkbenchResource
 	implements IProjectActionFilter
 {
+	HashMap imageCache = new HashMap(11);
 /**
  *	Answer the appropriate base image to use for the passed resource, optionally
  *	considering the passed open status as well iff appropriate for the type of
@@ -23,8 +28,32 @@ public class WorkbenchProject extends WorkbenchResource
  */
 protected ImageDescriptor getBaseImage(IResource resource) {
 	IProject project = (IProject) resource;
-	String key = project.isOpen() ? ISharedImages.IMG_OBJ_PROJECT : ISharedImages.IMG_OBJ_PROJECT_CLOSED;
-	return WorkbenchImages.getImageDescriptor(key);
+	boolean isOpen = project.isOpen();
+	String baseKey = isOpen ? ISharedImages.IMG_OBJ_PROJECT : ISharedImages.IMG_OBJ_PROJECT_CLOSED;
+	if (isOpen) {
+		try {
+			String[] natureIds = project.getDescription().getNatureIds();
+			for (int i = 0; i < natureIds.length; ++i) {
+				// Have to use a cache because OverlayIcon does not define its own equality criteria,
+				// so WorkbenchLabelProvider would always create a new image otherwise.
+				String imageKey = natureIds[i];
+				ImageDescriptor overlayImage = (ImageDescriptor) imageCache.get(imageKey);
+				if (overlayImage != null) {
+					return overlayImage;
+				}
+				ImageDescriptor natureImage = WorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
+				if (natureImage != null) {
+					ImageDescriptor baseImage = WorkbenchImages.getImageDescriptor(baseKey);
+					overlayImage = new OverlayIcon(baseImage, new ImageDescriptor[][] {{ natureImage }}, new Point(16, 16));
+					imageCache.put(imageKey, overlayImage);
+					return overlayImage;
+				}
+			}
+		}
+		catch (CoreException e) {
+		}
+	}
+	return WorkbenchImages.getImageDescriptor(baseKey);
 }
 /**
  * Returns the children of this container.

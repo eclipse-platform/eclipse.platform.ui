@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 
 /**
@@ -21,6 +22,7 @@ public QuitAction(IWorkbench workbench) {
 	setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.QUIT);
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.QUIT_ACTION});
 	this.workbench = workbench;
 }
 /**

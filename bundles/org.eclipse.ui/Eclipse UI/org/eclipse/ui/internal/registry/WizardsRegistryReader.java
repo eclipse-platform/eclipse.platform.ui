@@ -13,7 +13,6 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.dialogs.*;
 import java.util.*;
 
-import org.eclipse.ui.internal.misc.UIHackFinder;
 /**
  *  Instances access the registry that is provided at creation time
  *  in order to determine the contained Wizards

@@ -415,7 +415,6 @@ public WindowManager getWindowManager() {
  * Handles a runtime exception or error which was caught in runEventLoop().
  */
 private void handleExceptionInEventLoop(Throwable e) {
-	//TBD: It is using the Platform plugin log. Should it use the desktop?
 	
 	// For the status object, use the exception's message, or 
 	// the exception name if no message.
@@ -427,8 +426,6 @@ private void handleExceptionInEventLoop(Throwable e) {
 	msg = e.getMessage() == null ? e.toString() : e.getMessage();
 	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, e));
 
-	//TBD: Need a debug option to print the stack trace
-	//e.printStackTrace();
 	
 	// Open an error dialog, but don't reveal the internal exception name.
 	if (e.getMessage() == null) {
@@ -609,7 +606,7 @@ protected void setShellStyle(int newShellStyle) {
 public void setWindowManager(WindowManager manager) {
 	windowManager = manager;
 
-	// Temporary code to detect invalid usage
+	// Code to detect invalid usage
 
 	if (manager != null) {
 		Window[] windows = manager.getWindows();

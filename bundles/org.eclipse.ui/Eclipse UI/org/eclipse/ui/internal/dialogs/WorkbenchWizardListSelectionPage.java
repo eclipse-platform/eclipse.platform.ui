@@ -19,8 +19,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 
-import org.eclipse.ui.internal.misc.UIHackFinder;
-
 /**
  * Abstract implementation of a wizard selection page which simply displays
  * a list of specified wizard elements and allows the user to select one to
@@ -132,7 +130,6 @@ public void saveWidgetValues() {
 	// since the user is able to leave this page then exactly one wizard
 	// must be currently selected
 	IStructuredSelection sel = (IStructuredSelection)wizardSelectionViewer.getSelection();
-	UIHackFinder.fixUI();
 	// We are losing the selection going back
 	if (sel.size() > 0) {
 		WorkbenchWizardElement selectedWizard = (WorkbenchWizardElement) sel.getFirstElement();

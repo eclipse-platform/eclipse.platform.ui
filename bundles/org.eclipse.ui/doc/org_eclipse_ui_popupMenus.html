@@ -67,7 +67,7 @@ CDATA #REQUIRED</tt>
 <b>id</b> - a unique identifier that can be used to reference this contribution</li>
 
 <li>
-<b>targetID</b> - the unique ID of a popup menu inside a view, editor or
+<b>targetID</b> - the unique identifier of a popup menu inside a view, editor or
 viewer.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT filter EMPTY></tt>
@@ -310,7 +310,7 @@ may be implemented for object contributions.
 <p>Popup menu extension within a part is only possible when the target
 part publishes a menu for extension.&nbsp; This is heartily encouraged,
 as it improves the extensability of the product.&nbsp; To accomplish this
-each part should publish any popup menus which are defined by calling <tt>IWorkbenchPartSite.registerContextMenu</tt>.&nbsp;
+each part should publish any popup menus which are defined by calling <tt>IWorkbenchPartSite#registerContextMenu</tt>.&nbsp;
 Once this has been done the workbench will automatically insert any action
 extensions which exist.
 <p>A menu id must be provided for each registered menu.&nbsp; For consistency
@@ -320,8 +320,7 @@ across parts the following strategy should be adopted by all part implementors.
 If the target part has only one context menu it should be registered with
 <tt>id
 == part id</tt>.&nbsp; This can be done easily by calling <tt>registerContextMenu(MenuManager,
-ISelectionProvider)</tt>.&nbsp; Extenders may use the <tt>part id</tt>
-itself as the <tt>targetID</tt> for the action extension.</li>
+ISelectionProvider)</tt>.&nbsp; Extenders may use the <tt>part id</tt> itself as the <tt>targetID</tt> for the action extension.</li>
 
 <li>
 If the target part has more than one context menu a unique id should be
@@ -349,6 +348,6 @@ can contribute to these menus. If a viewer has reserved slots for these
 contributions and they are made public, slot names can be used as paths.
 Otherwise, actions and submenus will be added at the end of the pop-up
 menu.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

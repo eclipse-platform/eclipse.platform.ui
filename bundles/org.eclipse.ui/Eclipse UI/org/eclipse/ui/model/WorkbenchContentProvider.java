@@ -11,9 +11,7 @@ import org.eclipse.jface.viewers.*;
 
 /**
  * Provides tree contents for objects that have the IWorkbenchAdapter
- * adapter registered.  Note that this class currently implements a
- * couple of old JFace content providers.  This is purely for (temporary) 
- * backwards compatibility with those viewers still living in the past.
+ * adapter registered. 
  */
 public class WorkbenchContentProvider implements ITreeContentProvider, IResourceChangeListener {
 	protected Viewer viewer;

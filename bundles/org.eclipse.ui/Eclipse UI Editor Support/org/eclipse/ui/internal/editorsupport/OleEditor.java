@@ -39,6 +39,12 @@ public class OleEditor extends EditorPart {
 	 */
 	private boolean clientActive = false;
 
+	/**
+	 * Keep track of whether we have activated OLE or not as some applications
+	 * will only allow single activations.
+	 */
+	private boolean oleActivated = false;
+
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
 			activateClient(part);
@@ -68,8 +74,7 @@ public OleEditor() {
 }
 private void activateClient(IWorkbenchPart part) {
 	if (part == this) {
-		clientSite.doVerb(OLE.OLEIVERB_SHOW);
-		clientFrame.setFocus();
+		setFocus();
 		this.clientActive = true;
 	}
 }
@@ -101,6 +106,7 @@ private void deactivateClient(IWorkbenchPart part) {
 	if (part == this && clientActive){
 		clientSite.deactivateInPlaceClient();
 		this.clientActive = false;
+		this.oleActivated = false;
 	}
 }
 /**
@@ -396,8 +402,11 @@ public void setFocus() {
 	//If there was an OLE Error or nothing has been created yet
 	if (clientFrame == null || clientFrame.isDisposed())
 		return;
-		
-	clientSite.doVerb(OLE.OLEIVERB_SHOW);
+	
+	if(!oleActivated){
+		clientSite.doVerb(OLE.OLEIVERB_SHOW);
+		oleActivated = true;
+	}
 	clientFrame.setFocus();
 }
 /**
@@ -413,7 +422,7 @@ protected void setResource(IFile file) {
 */
 
 private static boolean usesStorageFiles(String progID) {
-	if (progID.startsWith("Word", 0)
+	if (progID.startsWith("Word.", 0)
 		|| progID.startsWith("MSGraph", 0)
 		|| progID.startsWith("PowerPoint", 0)
 		|| progID.startsWith("Excel", 0))

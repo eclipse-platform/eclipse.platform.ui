@@ -6,8 +6,9 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -25,7 +26,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 	implements ISelectionChangedListener, ModifyListener
 {
 	private Text text;
-	private ListViewer list;
+	private TableViewer list;
 	private Button okButton;
 	private PerspectiveRegistry perspReg;
 	private String perspName;
@@ -49,6 +50,7 @@ public SavePerspectiveDialog(Shell parentShell, PerspectiveRegistry perspReg) {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SavePerspective.shellTitle")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SAVE_PERSPECTIVE_DIALOG});
 }
 /**
  * Add buttons to the dialog's button bar.
@@ -117,14 +119,14 @@ protected Control createDialogArea(Composite parent) {
 	label.setFont(parent.getFont());
 
 	// Add perspective list.
-	list = new ListViewer(new org.eclipse.swt.widgets.List(composite, SWT.H_SCROLL 
-		| SWT.V_SCROLL | SWT.BORDER));
+	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
+	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
 
-	// Set pespective list size.
+	// Set perspective list size.
 	Control ctrl = list.getControl();
 	GridData spec = new GridData(
 		GridData.VERTICAL_ALIGN_FILL | 
@@ -136,8 +138,10 @@ protected Control createDialogArea(Composite parent) {
 	// Set the initial selection
 	if (initialSelection != null) {
 		StructuredSelection sel = new StructuredSelection(initialSelection);
-		list.setSelection(sel);
+		list.setSelection(sel, true);
 	}
+	text.selectAll();
+
 
 	// Return results.
 	return composite;

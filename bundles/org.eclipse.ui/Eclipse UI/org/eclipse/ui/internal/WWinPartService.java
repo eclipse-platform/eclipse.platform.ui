@@ -49,15 +49,13 @@ public void pageActivated(IWorkbenchPage newPage) {
 	if (newPage == activePage)
 		return;
 		
-	// Unhook selection from the old page.
-	if (activePage != null) {
-		activePage.removePartListener(this);
-	}
+	// Unhook listener from the old page.
+	reset();
 
 	// Update active page.
 	activePage = newPage;
 
-	// Hook selection on the new page.
+	// Hook listener on the new page.
 	if (activePage != null) {
 		activePage.addPartListener(this);
 		if (getActivePart() != null)
@@ -68,10 +66,9 @@ public void pageActivated(IWorkbenchPage newPage) {
  * Notifies that a page has been closed
  */
 public void pageClosed(IWorkbenchPage page) {
-	// Unhook selection from the old page.
+	// Unhook listener from the old page.
 	if (page == activePage) {
-		page.removePartListener(this);
-		activePage = null;
+		reset();
 	}
 }
 /**
@@ -120,5 +117,16 @@ public void partOpened(IWorkbenchPart part) {
  */
 public void removePartListener(IPartListener l) {
 	listeners.removePartListener(l);
+}
+/*
+ * Resets the part service.  The active page, part and selection are
+ * dereferenced.
+ */
+public void reset() {
+	if (activePage != null) {
+		activePage.removePartListener(this);
+		activePage = null;
+	}
+	selectionService.reset();
 }
 }

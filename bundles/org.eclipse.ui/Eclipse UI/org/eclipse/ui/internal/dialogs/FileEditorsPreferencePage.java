@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List;
 
-//
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * The file editors page presents the collection of file names and extensions
@@ -160,7 +158,8 @@ protected Control createContents(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, addResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addResourceTypeButton.setLayoutData(data);
 	
 	removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
@@ -169,7 +168,8 @@ protected Control createContents(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, removeResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	removeResourceTypeButton.setLayoutData(data);
 	
 	//Spacer
@@ -207,7 +207,8 @@ protected Control createContents(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, addEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addEditorButton.setLayoutData(data);
 	
 	removeEditorButton = new Button(groupComponent, SWT.PUSH);
@@ -216,7 +217,8 @@ protected Control createContents(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, removeEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	removeEditorButton.setLayoutData(data);
 	
 	defaultEditorButton= new Button(groupComponent, SWT.PUSH);
@@ -225,7 +227,8 @@ protected Control createContents(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, defaultEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	defaultEditorButton.setLayoutData(data);
 
 	//Spacer
@@ -371,6 +374,7 @@ protected boolean hasEditor(FileEditorMapping resourceType, EditorDescriptor edi
  */
 public void init(IWorkbench aWorkbench){
 	this.workbench = aWorkbench;
+	noDefaultAndApplyButton();
 }
 /*
  * Create a new <code>TableItem</code> to represent the resource

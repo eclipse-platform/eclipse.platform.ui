@@ -51,11 +51,10 @@ import org.eclipse.swt.widgets.*;
  */
 public class PropertySheet extends PageBookView implements ISelectionListener {
 	/**
-	 * Help context id used for the property sheet view
-	 * (value <code>"org.eclipse.ui.general_help_context"</code>).
+	 * No longer used but preserved to avoid api change
 	 */
-	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = "org.eclipse.ui.general_help_context";//$NON-NLS-1$
-
+	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW;
+	
 	/**
 	 * Register the adapters for the standard properties.
 	 */
@@ -88,7 +87,7 @@ protected IPage createDefaultPage(PageBook book) {
  */
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
-	WorkbenchHelp.setHelp(getPageBook(), new Object[] {HELP_CONTEXT_PROPERTY_SHEET_VIEW});
+	WorkbenchHelp.setHelp(getPageBook(), new Object[] {IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW});
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.

@@ -7,7 +7,6 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -93,14 +92,13 @@ void displayError(String message) {
  * @param monitor a progress monitor
  */
 final void execute(IProgressMonitor monitor) {
-	UIHackFinder.fixPR(); //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
+	//1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
 	List resources = getSelectedResources();
 	if (shouldPerformResourcePruning()) {
 		resources = pruneResources(resources);
 	}
 	Iterator resourcesEnum = resources.iterator();
 
-	UIHackFinder.fixPR();
 	// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
 	monitor.beginTask(getOperationMessage(), resources.size() * 1000);
 
@@ -109,7 +107,6 @@ final void execute(IProgressMonitor monitor) {
 			IResource resource = (IResource)resourcesEnum.next();
 
 			try {
-				UIHackFinder.fixPR();
 				// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
 				invokeOperation(resource,new SubProgressMonitor(monitor,1000));
 			} catch (CoreException e) {

@@ -661,11 +661,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			}
 		});
 		
-		fTextWidget.addHelpListener(new HelpListener() {
-			public void helpRequested(HelpEvent event) {
-				TextViewer.this.helpRequested(event);
-			}
-		});
+		/*
+		 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
+		 * Removed:
+		 
+			fTextWidget.addHelpListener(new HelpListener() {
+				public void helpRequested(HelpEvent event) {
+					TextViewer.this.helpRequested(event);
+				}
+			});
+		 */
 		
 		initializeViewportUpdate();
 	}
@@ -772,7 +777,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				deleteText();
 				break;
 			case SELECT_ALL:
-				setSelectedRange(0, getVisibleDocument().getLength());
+				/*
+				 * 1GETDON: ITPJUI:WIN2000 - Select All doesn't work in segmented view
+				 * setSelectedRange(0, getVisibleDocument().getLength());
+				 */
+				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
 			case SHIFT_RIGHT:
 				shift(false, true);
@@ -894,6 +903,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fChildDocumentManager= new ChildDocumentManager();
 		return fChildDocumentManager;
 	}
+	/*
+	 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
+	 * Removed:
+	 *
+	 * Circumvents visiblity issues by calling the actualli intended method.
+	 *
+		private void helpRequested(HelpEvent event) { 
+			super.handleHelpRequest(event);
+		}
+	 */
+	
 	/*
 	 * @see Viewer#getControl
 	 */
@@ -1203,12 +1223,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				fTextWidget.addVerifyListener(fVerifyListener);
 			}
 		}	
-	}
-	/*
-	 * Circumvents visiblity issues by calling the actualli intended method.
-	 */
-	private void helpRequested(HelpEvent event) { 
-		super.handleHelpRequest(event);
 	}
 	//---- Viewports	
 	

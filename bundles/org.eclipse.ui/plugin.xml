@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin
-   name="IBM Eclipse Workbench"
+   name="Eclipse Workbench"
    id="org.eclipse.ui"
-   version="1.0"
-   vendor-name="IBM"
+   version="0.9"
+   provider-name="Object Technology International, Inc."
    class="org.eclipse.ui.internal.WorkbenchPlugin">
    
    <requires>
@@ -31,22 +31,23 @@
 <!-- Workbench extension point definitions -->
 
 <extension-point name="Perspectives" id="perspectives"/>
-<extension-point name="PerspectiveExtensions" id="perspectiveExtensions"/>
-<extension-point name="Preferences" id="preferencePages"/>
-<extension-point name="Properties" id="propertyPages"/>
-<extension-point name="Resource Editors" id="editors"/>
-<extension-point name="Additional Workbench Views" id="views"/>
+<extension-point name="Perspective Extensions" id="perspectiveExtensions"/>
+<extension-point name="Preference Pages" id="preferencePages"/>
+<extension-point name="Property Pages" id="propertyPages"/>
+<extension-point name="Editors" id="editors"/>
+<extension-point name="Views" id="views"/>
 <extension-point name="Action Sets" id="actionSets"/>
 <extension-point name="View Menus and Actions" id="viewActions"/>
 <extension-point name="Editor Menus and Actions" id="editorActions"/>
 <extension-point name="Popup Menus" id="popupMenus"/>
-<extension-point name="Import wizards" id="importWizards"/>
-<extension-point name="Export wizards" id="exportWizards"/>
-<extension-point name="Resource creation" id="newWizards"/>
-<extension-point name="Element factory" id="elementFactories"/>
-<extension-point name="Drop actions" id="dropActions"/>
+<extension-point name="Import Wizards" id="importWizards"/>
+<extension-point name="Export Wizards" id="exportWizards"/>
+<extension-point name="Resource Creation Wizards" id="newWizards"/>
+<extension-point name="Element Factories" id="elementFactories"/>
+<extension-point name="Drop Actions" id="dropActions"/>
 <extension-point name="Resource Filters" id="resourceFilters"/>
-<extension-point name="Marker Image Provider" id="markerImageProviders"/>
+<extension-point name="Marker Image Providers" id="markerImageProviders"/>
+<extension-point name="Project Nature Images" id="projectNatureImages"/>
 
 <!-- Extensions -->
 
@@ -160,7 +161,7 @@
 	point="org.eclipse.ui.newWizards">
 	<category
 	   id="org.eclipse.ui.Basic"
-	   name="Basic">
+	   name="Simple">
 	</category>
 	<wizard 
 	   id="org.eclipse.ui.wizards.new.project"
@@ -255,7 +256,7 @@
     </editor>
 
     <editor id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
-      name="Getting Started"
+      name="Welcome"
       icon="icons/basic/obj16/welcome_editor.gif"
       class="org.eclipse.ui.internal.dialogs.WelcomeEditor">
     </editor>

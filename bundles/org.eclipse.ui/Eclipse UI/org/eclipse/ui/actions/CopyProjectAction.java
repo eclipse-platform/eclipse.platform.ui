@@ -199,6 +199,8 @@ final void recordError(CoreException error) {
  */
 public void run() {
 
+	errorStatus = null;
+	
 	IProject project = (IProject) getSelectedResources().get(0);
 
 	//Get the project name and location in a two element list
@@ -217,6 +219,7 @@ public void run() {
 	// If errors occurred, open an Error dialog
 	if (errorStatus != null) {
 		ErrorDialog.openError(this.shell, getErrorsTitle(), null, errorStatus);
+		errorStatus = null; 
 	}
 }
 /**

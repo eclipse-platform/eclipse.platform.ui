@@ -8,7 +8,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
 import org.eclipse.jface.viewers.*;
@@ -79,6 +80,13 @@ public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot, boole
 	else
 		setMessage(WorkbenchMessages.getString("ContainerSelectionDialog.message")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.CONTAINER_SELECTION_DIALOG});
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

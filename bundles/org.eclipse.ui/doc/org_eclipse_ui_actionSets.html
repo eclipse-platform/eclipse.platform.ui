@@ -4,14 +4,14 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <meta name="Author" content="Build">
-   <title>Eclipse Workbench Extension Point: Workbench Actions</title>
+   <title>Eclipse Workbench Extension Point: Action Sets</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
 <center>
 <h1>
 Action Sets</h1></center>
-<b><i>Identifier: </i></b>org.eclipse.ui.actionSet
+<b><i>Identifier: </i></b>org.eclipse.ui.actionSets
 <p><b><i>Description: </i></b>This extension point is used to add menus,
 menu items and toolbar buttons to the common areas in the workbench window.
 These contributions are collectively known as an <i>action set</i> and
@@ -19,12 +19,12 @@ appear within the workbench window by user preference.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT actionSet (menu)* (action)* (description?)></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST actionSet</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp; CDATA
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA
 #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp; CDATA #REQUIRED</tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible (</font>true
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible&nbsp;&nbsp; (true
 | false) #IMPLIED</tt>
-<br><tt><font color="#000000">&nbsp;</font>&nbsp;&nbsp; ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
 <li>
@@ -37,7 +37,7 @@ menu to represent this action set.</li>
 <li>
 <b>visible</b> - an optional attribute indicating whether the action set
 should be initially visible in the workbench window.&nbsp; The user may
-override this option from the "Action Sets Dialog".</li>
+override this option from the "Customize Perspective Dialog".</li>
 
 <li>
 <b>description</b> - an optional subelement whose body should contain text
@@ -248,7 +248,7 @@ path="additions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="&amp;amp;Run XYZ Tool"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-menubarPath="tools/com.xyz.xyzMenu/group1"</tt>
+menubarPath="com.xyz.xyzMenu/group1"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 toolbarPath="Normal/XYZ"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -300,6 +300,6 @@ to extend the window.&nbsp; For example, adding a new workbench view results
 in a new menu item appearing in the Perspective menu. Import, Export, and
 New Wizards extensions are also added automatically to the window.
 <br>&nbsp;
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

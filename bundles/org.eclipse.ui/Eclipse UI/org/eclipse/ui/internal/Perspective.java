@@ -654,8 +654,11 @@ private ViewPane restoreView(final IMemento memento,final String viewID) {
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() {
 			try {
-				IMemento partMem = memento.getChild(IWorkbenchConstants.TAG_PART);
-				pane[0] = getViewFactory().createView(viewID,partMem);
+				IMemento stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
+				if (stateMem == null)
+					pane[0] = getViewFactory().createView(viewID);
+				else
+					pane[0] = getViewFactory().createView(viewID,stateMem);
 			} catch (PartInitException e) {
 				WorkbenchPlugin.log(e.getMessage());
 			}
@@ -678,7 +681,7 @@ public void saveDesc() {
 public void saveDescAs(IPerspectiveDescriptor desc) {		
 	// Capture the layout state.	
 	XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
-	saveState(memento,(PerspectiveDescriptor)desc);
+	saveState(memento, (PerspectiveDescriptor)desc, false);
 
 	// Save it to a file.
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
@@ -700,12 +703,14 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
  */
 public void saveState(IMemento memento)
 {
-	saveState(memento,descriptor);
+	saveState(memento, descriptor, true);
 }
 /**
  * Save the layout.
  */
-private void saveState(IMemento memento,PerspectiveDescriptor p) {
+private void saveState(IMemento memento, PerspectiveDescriptor p,
+	boolean saveInnerViewState)
+{
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	p.saveState(memento);
@@ -755,7 +760,7 @@ private void saveState(IMemento memento,PerspectiveDescriptor p) {
 		IViewPart view = pane.getViewPart();
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, view.getSite().getId());
-		if(active)
+		if (active && saveInnerViewState)
 			if(!saveView(view,viewMemento))
 				errors++;
 	}
@@ -771,7 +776,7 @@ private void saveState(IMemento memento,PerspectiveDescriptor p) {
 			Integer width = (Integer)mapFastViewToWidth.get(id);
 			if (width != null)
 				viewMemento.putInteger(IWorkbenchConstants.TAG_WIDTH,width.intValue());
-			if(active)
+			if (active && saveInnerViewState)
 				if(!saveView(view,viewMemento))
 					errors++;
 		}
@@ -800,7 +805,7 @@ private boolean saveView(final IViewPart view, final IMemento memento) {
 	final boolean result[] = new boolean[1];
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() {
-			view.saveState(memento.createChild(IWorkbenchConstants.TAG_PART));
+			view.saveState(memento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
 			result[0] = true;
 		}
 		public void handleException(Throwable e) {

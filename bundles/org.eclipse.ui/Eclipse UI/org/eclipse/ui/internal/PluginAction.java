@@ -108,7 +108,7 @@ public boolean isOkToCreateDelegate() {
  * Runs the action.
  */
 public void run() {
-	UIHackFinder.fixHandler(); // this message dialog is problematic.
+	// this message dialog is problematic.
 	if (delegate == null) {
 		// High noon to load the delegate.
 		delegate = createDelegate();

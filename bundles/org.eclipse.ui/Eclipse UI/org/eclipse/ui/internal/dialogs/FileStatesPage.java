@@ -9,7 +9,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,13 +21,30 @@ import java.text.MessageFormat;
  */
 public class FileStatesPage
 	extends PreferencePage
-	implements IWorkbenchPreferencePage,Listener {
-	private static final String LONGEVITY_TITLE = WorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATES_TITLE = WorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATE_SIZE_TITLE = WorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
-	private static final String POSITIVE_MESSAGE = WorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
-	private static final String INVALID_VALUE_MESSAGE = WorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
-	private static final String SAVE_ERROR_MESSAGE = WorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
+	implements IWorkbenchPreferencePage, Listener {
+
+	private static final long defaultFileStateLongevity = 7;	// 7 days
+	private static final long defaultMaxFileStateSize = 1; // 1 Mb
+	private static final int defaultMaxFileStates = 50;
+
+	private static final String LONGEVITY_TITLE =
+		WorkbenchMessages.getString("FileHistory.longevity");
+	//$NON-NLS-1$
+	private static final String MAX_FILE_STATES_TITLE =
+		WorkbenchMessages.getString("FileHistory.entries");
+	//$NON-NLS-1$
+	private static final String MAX_FILE_STATE_SIZE_TITLE =
+		WorkbenchMessages.getString("FileHistory.diskSpace");
+	//$NON-NLS-1$
+	private static final String POSITIVE_MESSAGE =
+		WorkbenchMessages.getString("FileHistory.mustBePositive");
+	//$NON-NLS-1$
+	private static final String INVALID_VALUE_MESSAGE =
+		WorkbenchMessages.getString("FileHistory.invalid");
+	//$NON-NLS-1$
+	private static final String SAVE_ERROR_MESSAGE =
+		WorkbenchMessages.getString("FileHistory.exceptionSaving");
+	//$NON-NLS-1$
 
 	private static final int FAILED_VALUE = -1;
 
@@ -61,6 +79,35 @@ private Text addLabelAndText(String labelString, String textValue, Composite par
 	text.setText(textValue);
 	return text;
 }
+/**
+ * Recomputes the page's error state by validating all
+ * the fields.
+ */
+private void checkState() {
+	// Assume invalid if the controls not created yet
+	if (longevityText == null || maxStatesText == null || maxStateSizeText == null) {
+		setValid(false);
+		return;
+	}
+
+	if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
+		setValid(false);
+		return;
+	}
+	
+	if (validateIntegerTextEntry(maxStatesText) == FAILED_VALUE) {
+		setValid(false);
+		return;
+	}
+	
+	if (validateLongTextEntry(maxStateSizeText) == FAILED_VALUE) {
+		setValid(false);
+		return;
+	}
+
+	setValid(true);
+	setErrorMessage(null);
+}
 /* 
 * Create the contents control for the workspace file states.
 * @returns Control
@@ -68,6 +115,8 @@ private Text addLabelAndText(String labelString, String textValue, Composite par
 */
 
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.FILE_STATES_PREFERENCE_PAGE));
 
 	// button group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -101,6 +150,8 @@ protected Control createContents(Composite parent) {
 			String.valueOf(megabytes),
 			composite);
 
+	checkState();
+	
 	return composite;
 }
 /**
@@ -122,18 +173,8 @@ private IWorkspaceDescription getWorkspaceDescription() {
  *
  * @param event the event which occurred
  */
-public void handleEvent(org.eclipse.swt.widgets.Event event) {
-
-	Text text = (Text) event.widget;
-
-	if (text == maxStatesText) {
-		if (validateIntegerTextEntry(text) != FAILED_VALUE)
-			setErrorMessage(null);
-	} else {
-		if (validateLongTextEntry(text) != FAILED_VALUE)
-			setErrorMessage(null);
-	}
-
+public void handleEvent(Event event) {
+	checkState();
 }
 /**
  * Initializes this preference page for the given workbench.
@@ -145,6 +186,19 @@ public void handleEvent(org.eclipse.swt.widgets.Event event) {
  * @param workbench the workbench
  */
 public void init(org.eclipse.ui.IWorkbench workbench) {}
+/**
+ * Performs special processing when this page's Defaults button has been pressed.
+ * Reset the entries to thier default values.
+ */
+protected void performDefaults() {
+	super.performDefaults();
+
+	this.longevityText.setText(String.valueOf(defaultFileStateLongevity));
+	this.maxStatesText.setText(String.valueOf(defaultMaxFileStates));
+	this.maxStateSizeText.setText(String.valueOf(defaultMaxFileStateSize));
+
+	checkState();
+}
 /** 
  * Perform the result of the OK from the receiver.
  */

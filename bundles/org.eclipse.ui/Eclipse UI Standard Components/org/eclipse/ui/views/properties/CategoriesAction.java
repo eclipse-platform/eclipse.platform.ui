@@ -4,6 +4,7 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 
 /**
  * This action hides or shows categories in the <code>PropertySheetViewer</code>.
@@ -15,6 +16,7 @@ package org.eclipse.ui.views.properties;
  */
 public CategoriesAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
+	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.CATEGORIES_ACTION});
 }
 /**
  * Toggles the display of categories for the properties.

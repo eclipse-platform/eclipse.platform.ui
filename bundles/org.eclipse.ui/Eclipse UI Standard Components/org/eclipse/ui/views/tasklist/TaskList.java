@@ -7,6 +7,7 @@ package org.eclipse.ui.views.tasklist;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -81,11 +82,6 @@ public class TaskList extends ViewPart {
 	private static final String TAG_RESOURCE = "resource";
 	private static final String TAG_TOP_INDEX = "topIndex";
 
-	/**
-	 * Help context id used for the content outline view
-	 * (value <code>"org.eclipse.ui.general_help_context"</code>).
-	 */
-	static final String TASK_LIST_VIEW_HELP_ID = "org.eclipse.ui.general_help_context";	
 
 	static class TaskListLabelProvider
 		extends LabelProvider
@@ -352,7 +348,7 @@ public void createPartControl(Composite parent) {
 	memento = null;
 	
 	// Set help on the view itself
-	WorkbenchHelp.setHelp(viewer.getControl(), new Object[] { TASK_LIST_VIEW_HELP_ID });
+	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, ITaskListHelpContextIds.TASK_LIST_VIEW));
 
 	// Prime the status line and title.
 	updateStatusMessage();
@@ -523,7 +519,6 @@ TableViewer getTableViewer() {
  * Returns the workspace.
  */
 IWorkspace getWorkspace() {
-	// TBD: should not use globals
 	return ResourcesPlugin.getWorkspace();
 }
 /**

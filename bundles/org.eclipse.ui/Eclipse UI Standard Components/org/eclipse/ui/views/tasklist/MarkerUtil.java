@@ -123,11 +123,15 @@ public static Image getCompleteImage(IMarker marker) {
  * Returns the container name if it is defined, or empty string if not.
  */
 public static String getContainerName(IMarker marker) {
-	IResource container = marker.getResource().getParent();
-	if (container == null) 
-		return "";//$NON-NLS-1$
-	return container.getFullPath().makeRelative().toString();
+	// taking substring from resource's path string is 40x faster 
+	// than getting relative path string from resource's parent
+	String path = marker.getResource().getFullPath().toString();
+	int i = path.lastIndexOf(IPath.SEPARATOR);
+	if (i == 0)
+		return "";
+	return path.substring(1, i);
 }
+	
 /**
  * Returns the image with the given key, or <code>null</code> if not found.
  */

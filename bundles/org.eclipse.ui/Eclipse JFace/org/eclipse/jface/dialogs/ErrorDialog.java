@@ -263,16 +263,27 @@ public static int openError(Shell parentShell, String title, String message, ISt
  *		status_path : status_message
  * If the status's path was null then it (and the colon)
  * are omitted.
- *
- *	@param list org.eclipse.swt.widgets.List
  */
 private void populateList(List list) {
 	Iterator enum = statusList.iterator();
 	while (enum.hasNext()) {
 		IStatus childStatus = (IStatus) enum.next();
-		if (childStatus.matches(displayMask)) {
-			list.add(childStatus.getMessage());
-		}
+		populateList(list, childStatus, 0);
+	}
+}
+private void populateList(List list, IStatus status, int nesting) {
+	if (!status.matches(displayMask)) {
+		return;
+	}
+	StringBuffer sb = new StringBuffer();
+	for (int i = 0; i < nesting; i++) {
+		sb.append("  ");
+	}
+	sb.append(status.getMessage());
+	list.add(sb.toString());
+	IStatus[] children = status.getChildren();
+	for (int i = 0; i < children.length; i++) {
+		populateList(list, children[i], nesting + 1);
 	}
 }
 /**

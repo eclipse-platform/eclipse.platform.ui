@@ -13,7 +13,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.preference.*;
 import java.util.*;
 import org.eclipse.ui.internal.misc.Sorter;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  *  Instances access the registry that is provided at creation time in order

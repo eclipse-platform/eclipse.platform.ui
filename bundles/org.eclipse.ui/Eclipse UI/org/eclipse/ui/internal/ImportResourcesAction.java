@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.*;
@@ -59,6 +58,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(parent, wizard);
 	dialog.create();
 	dialog.getShell().setSize(SIZING_WIZARD_WIDTH,SIZING_WIZARD_HEIGHT);
+	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.IMPORT_WIZARD});
 	dialog.open();
 }
 }

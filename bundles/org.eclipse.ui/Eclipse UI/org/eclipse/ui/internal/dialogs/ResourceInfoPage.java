@@ -7,6 +7,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.*;
@@ -109,6 +110,8 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	return basicInfoComposite;
 }
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE));
 
 	// layout the page
 	IResource resource = (IResource) getElement();

@@ -169,13 +169,13 @@ IMarker[] getMarkers() throws CoreException {
 	}
 	int depth = taskList.getResourceDepth();
 	String[] types = taskList.getMarkerTypes();
-	HashSet set = new HashSet();
+	ArrayList list = new ArrayList();
 	for (int i = 0; i < types.length; ++i) {
 		IMarker[] markers = res.findMarkers(types[i], true, depth);
-		set.addAll(Arrays.asList(markers));
+		list.addAll(Arrays.asList(markers));
 	}
-	IMarker[] result = new IMarker[set.size()];
-	set.toArray(result);
+	IMarker[] result = new IMarker[list.size()];
+	list.toArray(result);
 	return result;
 }
 /**

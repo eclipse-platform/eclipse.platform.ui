@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.actions.SimpleWildcardTester;

@@ -16,18 +16,18 @@ Views</h1></center>
 views for the workbench.&nbsp; A view is a visual component within a workbench
 page.&nbsp; It is typically used to navigate a hierarchy of information
 (like the workspace), open an editor,&nbsp; or display properties for the
-active editor.&nbsp; The user can make a view visible from the View menu
+active editor.&nbsp; The user can make a view visible from the View submenu
 or close it from the view local title bar.
-<p>In order to reduce the visual clutter in the Perspective menu, views
-should be grouped using categories. Each category will create a submenu.
+<p>In order to reduce the visual clutter in the Show View Dialog, views
+should be grouped using categories.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT category EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST category</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parentCategory CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parentCategory&nbsp;&nbsp; CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
@@ -68,7 +68,7 @@ IDs separated by '/'. Each referenced category must exist prior to being
 referenced in this attribute.</li>
 
 <li>
-<b>class</b> - a fully qualified name of the class the implements <tt>org.eclipse.ui.IViewPart</tt>.
+<b>class</b> - a fully qualified name of the class that implements <tt>org.eclipse.ui.IViewPart</tt>.
 A common practice is to subclass <tt>org.eclipse.ui.part.ViewPart</tt>
 in order to inherit the default functionality.</li>
 
@@ -98,10 +98,10 @@ when developing a new view.
 <p><b><i>Supplied Implementation</i></b>: The workbench provides a number
 of standard views including Navigator, Properties, Outline and Tasks. From
 the user point of view, these views are no different from any other view
-provided by the plug-ins. All the views can be shown from the View menu.
+provided by the plug-ins. All the views can be shown from the View submenu.
 The position of a view is persistent: it is saved when the view is closed
 and restored when the view is reopened in a single session.&nbsp; The position
 is also persisted between workbench sessions.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.help.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
 		Assert.isNotNull(page);
 		this.page = page;
 		setDescription(ResourceNavigatorMessages.getString("ShowInNavigator.toolTip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION});
 	}
 /**
  * Returns the resources in the given selection.

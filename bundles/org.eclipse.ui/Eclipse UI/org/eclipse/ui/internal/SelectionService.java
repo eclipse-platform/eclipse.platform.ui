@@ -74,11 +74,7 @@ public void partActivated(IWorkbenchPart newPart) {
 		return;
 		
 	// Unhook selection from the old part.
-	if (activeProvider != null) {
-		activeProvider.removeSelectionChangedListener(selListener);
-		activeProvider = null;
-	}
-	activePart = null;
+	reset();
 
 	// Update active part.
 	activePart = newPart;
@@ -105,11 +101,7 @@ public void partBroughtToTop(IWorkbenchPart newPart) {
 public void partClosed(IWorkbenchPart part) {
 	// Unhook selection from the part.
 	if (part == activePart) {
-		if (activeProvider != null) {
-			activeProvider.removeSelectionChangedListener(selListener);
-			activeProvider = null;
-		}
-		activePart = null;
+		reset();
 	}
 }
 /**
@@ -127,5 +119,16 @@ public void partOpened(IWorkbenchPart part) {
  */
 public void removeSelectionListener(ISelectionListener l) {
 	listeners.remove(l);
+}
+/**
+ * Resets the service.  The active part and selection provider are
+ * dereferenced.
+ */
+public void reset() {
+	if (activeProvider != null) {
+		activeProvider.removeSelectionChangedListener(selListener);
+		activeProvider = null;
+	}
+	activePart = null;
 }
 }

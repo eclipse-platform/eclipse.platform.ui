@@ -1,0 +1,24 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides a presentation reconciler add-on for an <tt>ITextViewer</tt>.
+A presentation reconciler keep the presentation (styles and colors) in
+sync with the content of the document serving as the <tt>ITextViewer</tt>'s
+input.
+<h2>
+Package Specification</h2>
+<tt>IPresentationReconciler</tt> defines the concept of a presentation
+reconciler. It collaborates with content type specific presentation damagers
+(<tt>IPresentationDamager</tt>) which for a given document change determine
+the region of the presentation which must be rebuild, and content type
+specific presentation repairers (<tt>IPresentationRepairer</tt>) which
+construct for a given damage region the document presentation. The package
+contains a default implementation of <tt>IPresentationReconciler </tt>(<tt>PresentationReconciler</tt>).
+</body>
+</html>

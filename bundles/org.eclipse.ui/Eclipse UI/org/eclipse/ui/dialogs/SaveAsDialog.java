@@ -9,7 +9,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,6 +56,7 @@ public SaveAsDialog(Shell parentShell) {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SAVE_AS_DIALOG});
 }
 public void create() {
 	super.create();

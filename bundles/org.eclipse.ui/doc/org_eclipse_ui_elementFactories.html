@@ -17,8 +17,8 @@ factories to the workbench.&nbsp; An element factory is used to recreate
 <tt>IAdaptable
 </tt>objects which are persisted during workbench shutdown.
 <p>As an example, the element factory is used to persist editor input.&nbsp;
-The input for an editor must implement <tt>org.eclipse.ui.EditorInput</tt>.&nbsp;
-The life cycle of an <tt>IEditorInput </tt>within an editor has a number
+The input for an editor must implement <tt>org.eclipse.ui.IEditorInput</tt>.&nbsp;
+The lifecycle of an <tt>IEditorInput </tt>within an editor has a number
 of phases.
 <ol>
 <li>
@@ -74,7 +74,7 @@ An instance of this class must create an <tt>IAdaptable</tt> object from
 a workbench memento.
 <p><b><i>Supplied Implementation: </i></b>The workbench provides an <tt>IResource</tt>
 factory.&nbsp; Additional factories should be added to recreate other <tt>IAdaptable</tt>
-types commonly found in other object models, such as the Java Model.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+types commonly found in other object models, such as the Java model.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

@@ -9,7 +9,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.dialogs.*;
 
 /*

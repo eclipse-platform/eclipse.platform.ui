@@ -4,10 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
 
 /**
  * The OpenNew action opens a new perspective depending on the open
@@ -22,6 +24,7 @@ public class OpenNewAction extends Action {
 public OpenNewAction(IWorkbenchWindow workbenchWindow) {
 	super(WorkbenchMessages.getString("Open")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("OpenNewAction.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_NEW_ACTION});
 	setImageDescriptor(
 		WorkbenchImages.getImageDescriptor(
 			IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));

@@ -234,22 +234,31 @@ protected void initializeDefaultPageImageDescriptor() {
 /* (non-Javadoc)
  * Opens a new page with a particular perspective and input.
  */
-private void openInNewPage(IPerspectiveDescriptor desc) {
+private static void openInNewPage(IPerspectiveDescriptor desc) {
 
-	IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	if (window == null)
 		return;
 
+	// If the active perspective is the same, then reuse it
 	IWorkbenchPage page = window.getActivePage();
 	if (page != null) {
-		//Do not open the perspective if it is already there
 		if (page.getPerspective().getId().equals(desc.getId()))
 			return;
 	}
 
+	// If the perspective is already open, then reuse it.
+	IWorkbenchPage[] pages = window.getPages();
+	for (int i = 0; i < pages.length; i++) {
+		if (pages[i].getPerspective().getId().equals(desc.getId())) {
+			window.setActivePage(pages[i]);
+			return;
+		}
+	}
+
 	// Open the page.
 	try {
-		window.openPage(desc.getId(), newProject.getWorkspace().getRoot());
+		window.openPage(desc.getId(), ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
 		MessageDialog.openError(window.getShell(), PAGE_PROBLEMS_TITLE, e.getMessage());
 	}
@@ -257,15 +266,15 @@ private void openInNewPage(IPerspectiveDescriptor desc) {
 /* (non-Javadoc)
  * Opens a new window with a particular perspective and input.
  */
-private void openInNewWindow(IPerspectiveDescriptor desc) {
-	IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+private static void openInNewWindow(IPerspectiveDescriptor desc) {
 
 	// Open the page.
 	try {
-		window.getWorkbench().openWorkbenchWindow(
+		PlatformUI.getWorkbench().openWorkbenchWindow(
 			desc.getId(),
-			newProject.getWorkspace().getRoot());
+			ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		MessageDialog.openError(
 			window.getShell(),
 			WINDOW_PROBLEMS_TITLE,
@@ -286,16 +295,16 @@ public boolean performFinish() {
 	
 	return true;
 }
-/**
- * Replace the current perspective with the new one.
+/* (non-Javadoc)
+ * Replaces the current perspective with the new one.
  */
-private void replaceCurrentPerspective(IPerspectiveDescriptor persp) {
+private static void replaceCurrentPerspective(IPerspectiveDescriptor persp) {
 
 	//Get the active page.
-	IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
-	if (dw == null)
+	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	if (window == null)
 		return;
-	IWorkbenchPage page = dw.getActivePage();
+	IWorkbenchPage page = window.getActivePage();
 	if (page == null)
 		return;
 
@@ -313,36 +322,67 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
  * Updates the perspective for the active page within the window.
  */
 protected void updatePerspective() {
-
-	AbstractUIPlugin plugin =
+	updatePerspective(configElement);
+}
+/**
+ * Update the perspective based on the current setting
+ * in the workbench preference page.
+ * <p>
+ * A new project wizard class will need to implement the
+ * <code>IExecutableExtension</code> interface so as to gain
+ * access to the wizard's <code>IConfigurationElement</code>.
+ * That is the configuration element to pass into this method.
+ * </p>
+ *
+ * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
+ * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
+ * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
+ * @see @IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
+ */
+public static void updatePerspective(IConfigurationElement configElement) {
+	// Do not change perspective if the configuration element is
+	// not specified.
+	if (configElement == null)
+		return;
+		
+	// Retrieve the new project open perspective preference setting
+	AbstractUIPlugin plugin = 
 		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-	String perspectiveSetting =
+	String perspSetting =
 		plugin.getPreferenceStore().getString(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 
-	//Do not switch perspectives if that is the setting
-	if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
+	// Return if do not switch perspective setting
+	if (perspSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
 		return;
 
-	// Read final persp from config.
+	// Read the requested perspective id to be opened.
 	String perspID = configElement.getAttribute("finalPerspective");//$NON-NLS-1$
 	if (perspID == null)
 		return;
-	// Map persp id to descriptor.
+
+	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor persp = reg.findPerspectiveWithId(perspID);
 	if (persp == null)
 		return;
 
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW))
+	// Open perspective in new window setting
+	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
 		openInNewWindow(persp);
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE))
-		openInNewPage(persp);
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
-		replaceCurrentPerspective(persp);
+		return;
+	}
 
+	// Open perspective in same window setting
+	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+		openInNewPage(persp);
+		return;
+	}
+
+	// Replace active perspective	setting
+	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
+		replaceCurrentPerspective(persp);
+		return;
+	}
 }
 }

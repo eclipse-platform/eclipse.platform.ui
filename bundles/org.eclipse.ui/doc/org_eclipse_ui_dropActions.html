@@ -4,7 +4,7 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <meta name="Author" content="Build">
-   <title>Eclipse Workbench Extension Point: Editor Actions</title>
+   <title>Eclipse Workbench Extension Point: Drop Actions</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
@@ -23,12 +23,12 @@ navigator.&nbsp; Since the resource navigator doesn’t know anything about
 Java content, it doesn’t know how to behave when java methods are dropped
 onto it.&nbsp; Similarly, an ISV may want to drop some of their content
 into one of the Java viewers.
-<p>The dropActions extension point is provided by the Platform to address
+<p>The org.eclipse.ui.dropActions extension point is provided by the Platform to address
 these situations. This mechanism delegates the drop behaviour back to the
 originator of the drag operation. This behaviour is contained in an action
 that must implement org.eclipse.ui.part.IDropActionDelegate.&nbsp;
 The viewer that is the source of the drag operation must support the org.eclipse.ui.part.PluginTransfer
-transfer type, and place a PluginTransferData object in the drag event.&nbsp;
+transfer type, and place a org.eclipse.ui.part.PluginTransferData object in the drag event.&nbsp;
 See org.eclipse.jface.viewers.StructuredViewer#addDragSupport to learn how
 to add drag support to a viewer.
 <p><b><i>Configuration Markup:</i></b>
@@ -49,14 +49,11 @@ CDATA #REQUIRED</tt>
 
 <p><br><b><i>Examples:</i></b>
 <p>The following is an example of a drop action extension:
-<p><tt>&nbsp; &lt;extension</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point="org.eclipse.ui.dropActions"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-id="my_drop_action"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-class="com.xyz.eclipse.TestDropAction"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action></tt>
+<p><tt>&nbsp; &lt;extension point="org.eclipse.ui.dropActions"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;action></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id="my_drop_action"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class="com.xyz.eclipse.TestDropAction"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/action></tt>
 <br><tt>&nbsp; &lt;/extension></tt><tt></tt>
 <p>Here is an example of a drag listener that makes use of the drop action
 defined above.
@@ -74,10 +71,15 @@ event.data = new PluginTransferData(</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; }</tt>
 <br><tt>}</tt><tt></tt>
-<p>For a more complete example, see the Platform readme example.&nbsp;
-In that example, a drop action is defined in ReadmeDropActionDelegate,
+<p>For a more complete example, see the Platform readme example
+where drop action is defined in ReadmeDropActionDelegate,
 and it is used by ReadmeContentOutlineDragListener.
-<br><tt></tt>&nbsp;
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
+must be a fully qualified name of a Java class that implements <tt>org.eclipse.ui.part.IDropActionDelegate</tt>.
+This class is loaded as late as possible to avoid loading the entire
+plug-in before it is really needed.
+<p><b><i>Supplied Implementation:</i></b> The workbench does not provide an implementation for this extension point.
+Plug-ins can contribute to this extension point to add drop behavior to views defined by other plugins.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

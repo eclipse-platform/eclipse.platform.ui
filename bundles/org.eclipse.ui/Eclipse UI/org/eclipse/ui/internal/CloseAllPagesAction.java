@@ -4,6 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
@@ -22,6 +23,7 @@ public class CloseAllPagesAction  extends Action {
 public CloseAllPagesAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("CloseAllPages.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("CloseAllPages.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_ALL_PAGES_ACTION});
 	setEnabled(false);
 	this.window = window;
 }

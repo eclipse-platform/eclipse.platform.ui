@@ -40,6 +40,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -146,6 +147,9 @@ class FindReplaceDialog extends Dialog {
 		
 		Shell shell= getShell();		
 		shell.addShellListener(fActivationListener);
+		
+		// set help context
+		WorkbenchHelp.setHelp(shell, new Object[] { IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG });
 
 		// fill in combo contents
 		updateCombo(fFindField, fFindHistory);
@@ -521,32 +525,18 @@ class FindReplaceDialog extends Dialog {
 	 * Returns the actual selection of the find replace target
 	 */
 	private String getSelectionString() {
+		
+		/*
+		 * 1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
+		 * Now uses TextUtilities rather than focussing on '\n'  
+		 */
 		String selection= fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {
-			int pos= selection.indexOf('\n');
-			if (pos > 0) {
-				return selection.substring(0, pos);
-			} else if (pos == -1) {
+			int[] info= TextUtilities.indexOf(TextUtilities.fgDelimiters, selection, 0);
+			if (info[0] > 0)
+				return selection.substring(0, info[0]);
+			else if (info[0] == -1)
 				return selection;
-			} else {
-				// first character is line delimiter:
-				// find first sequence of characters (length > 0)
-				// between ln-delimiters
-				pos++;
-				int nextpos= selection.indexOf('\n', pos);
-				while (nextpos == pos) {
-					pos= nextpos + 1;
-					nextpos= selection.indexOf('\n', pos);
-				}
-				if (nextpos == -1) {
-					if (pos == selection.length()) {
-						return null;
-					} else {
-						return selection.substring(pos);
-					}
-				}
-				return selection.substring(pos, nextpos);
-			}
 		}
 		return null;
 	}

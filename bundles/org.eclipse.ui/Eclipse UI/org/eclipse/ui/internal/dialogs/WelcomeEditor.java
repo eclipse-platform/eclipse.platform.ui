@@ -48,6 +48,7 @@ public class WelcomeEditor extends EditorPart {
 	private Composite editorComposite;
 
 	private Cursor handCursor;
+	private Cursor busyCursor;
 	
 	private IWorkbench workbench;
 	private WelcomeParser parser;
@@ -68,7 +69,11 @@ private void addListeners(StyledText styledText) {
 			StyledText text = (StyledText)e.widget;
 			WelcomeItem item = (WelcomeItem)e.widget.getData();
 			int offset = text.getCaretOffset();
-			item.triggerLinkAt(offset);
+			if (item.isLinkAt(offset)) {	
+				text.setCursor(busyCursor);
+				item.triggerLinkAt(offset);
+				text.setCursor(null);
+			}
 		}
 	});
 	styledText.addMouseMoveListener(new MouseMoveListener() {
@@ -129,6 +134,7 @@ private Composite createInfoArea(Composite parent) {
 		addListeners(styledText);
 	
 		Label spacer = new Label(infoArea, SWT.NONE);
+		spacer.setBackground(bg);
 		gd = new GridData(); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
@@ -159,9 +165,11 @@ private Composite createInfoArea(Composite parent) {
 		styledText.setData(items[i]);
 		addListeners(styledText);
 			
-		new Label(infoArea, SWT.NONE);
-
 		Label spacer = new Label(infoArea, SWT.NONE);
+		spacer.setBackground(bg);
+
+		spacer = new Label(infoArea, SWT.NONE);
+		spacer.setBackground(bg);
 		gd = new GridData(); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
@@ -201,6 +209,7 @@ public void createPartControl(Composite parent) {
 		return;
 
 	handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+	busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
 	
 	editorComposite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -217,6 +226,8 @@ public void createPartControl(Composite parent) {
 	titleBarSeparator.setLayoutData(gd);
 
 	createInfoArea(editorComposite);
+
+	WorkbenchHelp.setHelp(editorComposite, new String[] {IHelpContextIds.WELCOME_EDITOR});
 }
 /**
  * Creates the wizard's title area.
@@ -266,6 +277,8 @@ private Composite createTitleArea(Composite parent) {
  */
 public void dispose() {
 	super.dispose();
+	if (busyCursor != null)
+		busyCursor.dispose();
 	if (handCursor != null)
 		handCursor.dispose();
 }
@@ -318,8 +331,8 @@ private WelcomeItem[] getItems() {
  * Returns -1 if there is no offset at the location
  */
 private int getOffsetAtLocation(StyledText styledText, int x, int y) {
-	int charCount = styledText.getCharCount();
-	if (charCount == 0)
+		int charCount = styledText.getCharCount();
+	if (charCount == 0 || x < 0 || y < 0)
 		return -1;
 	
 	// get the line at the y coordinate

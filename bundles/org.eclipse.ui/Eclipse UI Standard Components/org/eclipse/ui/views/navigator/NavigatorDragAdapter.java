@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.widgets.Control;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +80,15 @@ public void dragSetData(DragSourceEvent event) {
  * All selection must be files or folders.
  */
 public void dragStart(DragSourceEvent event) {
+
+	// Workaround for 1GEUS9V
+	DragSource dragSource = (DragSource)event.widget;
+	Control control = dragSource.getControl();
+	if (control != control.getDisplay().getFocusControl()){
+		event.doit = false;
+		return;
+	}
+	
 	IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
 	for (Iterator i = selection.iterator(); i.hasNext();) {
 		Object next = i.next();

@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * Workbench-level composite for choosing a container.

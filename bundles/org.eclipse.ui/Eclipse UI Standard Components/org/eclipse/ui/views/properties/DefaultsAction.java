@@ -4,6 +4,7 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 
 /**
  * This action resets the <code>PropertySheetViewer</code> values back
@@ -19,6 +20,7 @@ package org.eclipse.ui.views.properties;
 public DefaultsAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
 	setToolTipText(PropertiesMessages.getString("DefaultAction.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.DEFAULTS_ACTION});
 }
 /**
  * Reset the properties to their default values.

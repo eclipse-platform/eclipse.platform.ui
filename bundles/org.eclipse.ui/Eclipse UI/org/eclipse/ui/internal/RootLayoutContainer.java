@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import java.util.*;
 
 /**
@@ -94,7 +93,7 @@ public void restoreState(IMemento memento)
 			placeholder.setRealContainer(folder);
 			part = placeholder;
 		}
-		UIHackFinder.fixFuture(); // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
+		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		part.setContainer(this);
 		
 		// Add the part to the layout

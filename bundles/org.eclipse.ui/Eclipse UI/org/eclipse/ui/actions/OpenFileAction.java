@@ -74,7 +74,6 @@ public OpenFileAction(IWorkbenchPage page, IEditorDescriptor descriptor) {
  *   it could not be made local for some reason
  */
 boolean ensureFileLocal(final IFile file) {
-	org.eclipse.ui.internal.misc.UIHackFinder.fixPR();
 	//Currently fails due to Core PR.  Don't do it for now
 	//1G5I6PV: ITPCORE:WINNT - IResource.setLocal() attempts to modify immutable tree
 	//file.setLocal(true, IResource.DEPTH_ZERO);

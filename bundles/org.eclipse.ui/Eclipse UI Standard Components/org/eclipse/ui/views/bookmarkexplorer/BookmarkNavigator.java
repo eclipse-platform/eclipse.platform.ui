@@ -8,6 +8,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
@@ -50,6 +52,7 @@ public class BookmarkNavigator extends ViewPart {
 	private static final String TAG_RESOURCE = "resource";//$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
+
 /**
  * Creates the bookmarks view.
  */
@@ -128,7 +131,9 @@ public void createPartControl(Composite parent) {
 	addContributions();
 
 	if(memento != null) restoreState(memento);
-	memento = null;	
+	memento = null;
+
+	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, IBookmarkHelpContextIds.BOOKMARK_VIEW));
 }
 /**
  * Notifies this listener that the menu is about to be shown by
@@ -173,7 +178,7 @@ static AbstractUIPlugin getPlugin() {
  * Returns the shell.
  */
 Shell getShell() {
-	return getViewer().getControl().getShell();
+	return getViewSite().getShell();
 }
 /**
  * Returns the viewer used to display bookmarks.

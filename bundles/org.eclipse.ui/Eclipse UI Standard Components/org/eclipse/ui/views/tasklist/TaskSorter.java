@@ -12,16 +12,14 @@ import java.text.Collator;
  * This is the abstract superclass of sorters in the task list.
  */
 /* package */ class TaskSorter extends ViewerSorter {
-	//This category is used ensure that the newly created marker is always on top.
-	public static final int TOP_CATEGORY = -10000;
-	protected TaskList tasklist;
+	private TaskList tasklist;
 	private boolean reversed = false;
 	private int columnNumber;
 	
-	private Collator collator = Collator.getInstance();
-
+	private static final int NUM_COLUMNS = 7;
+	
 	// column headings:	"","C", "!","Description","Resource Name", "In Folder", "Location"
-	private int[][] SORT_ORDERS_BY_COLUMN = {
+	private static final int[][] SORT_ORDERS_BY_COLUMN = {
 		{0, 2, 4, 5, 6, 3, 1},	/* category */ 
 		{1, 0, 2, 4, 5, 6, 3},	/* completed */
 		{2, 0, 4, 5, 6, 3, 1},	/* priority */
@@ -31,7 +29,7 @@ import java.text.Collator;
 		{6, 4, 5, 3, 0, 2, 1} 	/* location */
 	};
 /**
- * The constructor.
+ * Creates a new task sorter.
  */
 public TaskSorter(TaskList tasklist, int columnNumber) {
 	this.tasklist = tasklist;
@@ -49,7 +47,7 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 	IMarker m2 = (IMarker) e2;
 	int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 	int result = 0;
-	for (int i = 0; i < columnSortOrder.length; ++i) {
+	for (int i = 0; i < NUM_COLUMNS; ++i) {
 		result = compareColumnValue(columnSortOrder[i], m1, m2);
 		if (result != 0)
 			break;
@@ -64,7 +62,7 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 /**
  * Compares two markers, based only on the value of the specified column.
  */
-int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
+private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 	switch (columnNumber) {
 		case 0: /* category */
 			return getCategoryOrder(m1) - getCategoryOrder(m2);
@@ -75,8 +73,16 @@ int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 		case 3: /* description */
 			return collator.compare(MarkerUtil.getMessage(m1), MarkerUtil.getMessage(m2));
 		case 4: /* resource name */
+			// Optimization: if the markers' resources are equal, then their names are the same.
+			// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
+			if (m1.getResource() == m2.getResource())
+				return 0;
 			return collator.compare(MarkerUtil.getResourceName(m1), MarkerUtil.getResourceName(m2));
 		case 5: /* container name */
+			// Optimization: if the markers' resources are equal, then container names are the same.
+			// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
+			if (m1.getResource() == m2.getResource())
+				return 0;
 			return collator.compare(MarkerUtil.getContainerName(m1), MarkerUtil.getContainerName(m2));
 		case 6: /* line and location */
 			return compareLineAndLocation(m1, m2);
@@ -90,7 +96,7 @@ int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
  * If line number is not specified for either, this sorts by location.
  * Otherwise, if only one has a line number, this sorts by the combined text for line number and location.
  */
-int compareLineAndLocation(IMarker m1, IMarker m2) {
+private int compareLineAndLocation(IMarker m1, IMarker m2) {
 	int line1 = MarkerUtil.getLineNumber(m1);
 	int line2 = MarkerUtil.getLineNumber(m2);
 	if (line1 != -1 && line2 != -1) {
@@ -113,19 +119,10 @@ int compareLineAndLocation(IMarker m1, IMarker m2) {
 	return collator.compare(loc1, loc2);
 }
 /**
- * Compares two strings using a collator for the current locale.
- */
-protected int compareStrings(String str1, String str2) {
-	return collator.compare(str1, str2);
-}
-/* (non-Javadoc)
- * Method declared on ViewerSorter.
- */
-/**
  * Returns the sort order for the given marker based on its category.
  * Lower numbers appear first.
  */
-protected int getCategoryOrder(IMarker marker) {
+private int getCategoryOrder(IMarker marker) {
 	if (MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
 		switch (MarkerUtil.getSeverity(marker)) {
 			case IMarker.SEVERITY_ERROR:
@@ -146,24 +143,18 @@ protected int getCategoryOrder(IMarker marker) {
 public int getColumnNumber() {
 	return columnNumber;
 }
-/* (non-Javadoc)
- * Method declared on ViewerSorter.
- */
 /**
  * Returns the sort order for the given marker based on its completion status.
  * Lower numbers appear first.
  */
-protected int getCompletedOrder(IMarker marker) {
+private int getCompletedOrder(IMarker marker) {
 	return MarkerUtil.isComplete(marker) ? 0 : 1;
 }
-/* (non-Javadoc)
- * Method declared on ViewerSorter.
- */
 /**
  * Returns the sort order for the given marker based on its priority.
  * Lower numbers appear first.
  */
-protected int getPriorityOrder(IMarker marker) {
+private int getPriorityOrder(IMarker marker) {
 	// want HIGH to appear first
 	return IMarker.PRIORITY_HIGH - MarkerUtil.getPriority(marker);
 }

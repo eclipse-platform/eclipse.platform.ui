@@ -42,7 +42,7 @@ public CloseResourceAction(Shell shell) {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return WorkbenchMessages.getString("CloseResourceAction.operationMessage"); //$NON-NLS-1$
+	return ""; //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.

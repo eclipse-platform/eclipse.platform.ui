@@ -64,6 +64,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
 	dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FILE_WIZARD});
 	dialog.open();
 }
 /**

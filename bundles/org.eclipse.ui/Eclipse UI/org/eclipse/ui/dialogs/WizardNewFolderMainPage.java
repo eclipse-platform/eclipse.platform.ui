@@ -6,7 +6,8 @@ package org.eclipse.ui.dialogs;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.IWorkbench;
@@ -66,10 +67,15 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
+	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE));
+
 	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel")); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initializePage();
 	validatePage();
+	// Show description on opening
+	setErrorMessage(null);
+	setMessage(null);
 	setControl(composite);
 }
 /**
@@ -222,9 +228,10 @@ protected boolean validatePage() {
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently
 		if (resourceGroup.getProblemType() == resourceGroup.PROBLEM_RESOURCE_EMPTY
-			|| resourceGroup.getProblemType() == resourceGroup.PROBLEM_CONTAINER_EMPTY)
+			|| resourceGroup.getProblemType() == resourceGroup.PROBLEM_CONTAINER_EMPTY) {
 			setMessage(resourceGroup.getProblemMessage());
-		else
+			setErrorMessage(null);
+		} else
 			setErrorMessage(resourceGroup.getProblemMessage());
 		valid = false;
 	}

@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.jface.viewers.*;
 
 /**

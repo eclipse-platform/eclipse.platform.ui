@@ -4,8 +4,11 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * YesNoCancelListSelectionDialog is a list selection dialog that also allows the user
@@ -36,6 +39,13 @@ protected void buttonPressed(int buttonId) {
 			return;
 		}
 	}
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG});
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

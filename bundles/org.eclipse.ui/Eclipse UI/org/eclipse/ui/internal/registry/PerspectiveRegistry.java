@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.File;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.*;
 import java.util.*;
 
@@ -70,6 +69,7 @@ public void deletePerspective(IPerspectiveDescriptor in) {
 	if (!desc.isPredefined()) {
 		children.remove(desc);
 		desc.deleteCustomFile();
+		verifyDefaultPerspective();
 	}
 }
 /**
@@ -129,7 +129,8 @@ public void load() {
 	IDialogSettings dialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
 	String str = dialogSettings.get(ID_DEF_PERSP);
 	if (str != null)
-		setDefaultPerspective(str);
+		defPerspID = str;
+	verifyDefaultPerspective();
 }
 /**
  * Read children from the file system.
@@ -183,5 +184,29 @@ public boolean validateLabel(String label) {
 	if (label.length() <= 0) 
 		return false;
 	return true;
+}
+/**
+ * Verifies the id of the default perspective.  If the
+ * default perspective is invalid select another from the 
+ * product.ini or use workbench default.
+ */
+private void verifyDefaultPerspective() {
+	// Step 1: Try current defPerspId value.
+	IPerspectiveDescriptor desc = null;
+	if (defPerspID != null)
+		desc = findPerspectiveWithId(defPerspID);
+	if (desc != null)
+		return;
+
+	// Step 2. Read product info preference.
+	defPerspID = ((Workbench)PlatformUI.getWorkbench())
+		.getProductInfo().getDefaultPerspective();
+	if (defPerspID != null)
+		desc = findPerspectiveWithId(defPerspID);
+	if (desc != null)
+		return;
+
+	// Step 3. Use internal workbench default.
+	defPerspID = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
 }
 }

@@ -53,6 +53,18 @@ public interface IHelpContextIds {
 	public static final String GLOBAL_INCREMENTAL_BUILD_ACTION = PREFIX + "global_incremental_build_action_context";
 	public static final String GLOBAL_FULL_BUILD_ACTION = PREFIX + "global_full_build_action_context";
 	public static final String DELETE_RETARGET_ACTION = PREFIX + "delete_retarget_action_context";
+	public static final String CLOSE_ALL_PAGES_ACTION = PREFIX + "close_all_pages_action_context";
+	public static final String OPEN_NEW_PAGE_ACTION = PREFIX + "open_new_page_action_context";
+	public static final String OPEN_NEW_WINDOW_ACTION = PREFIX + "open_new_window_action_context";
+	public static final String OPEN_PREFERENCES_ACTION = PREFIX + "open_preferences_action_context";
+	public static final String OPEN_NEW_ACTION = PREFIX + "open_new_action_context";
+	public static final String NEXT_PAGE_ACTION = PREFIX + "next_page_action_context";
+	public static final String QUICK_START_ACTION = PREFIX + "quick_start_action_context";
+	public static final String QUIT_ACTION = PREFIX + "quit_action_context";
+	public static final String RESET_PERSPECTIVE_ACTION = PREFIX + "reset_perspective_action_context";
+	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context";
+	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context";
+	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context";
 
 	
 	// Dialogs
@@ -61,20 +73,54 @@ public interface IHelpContextIds {
 	public static final String EDITOR_SELECTION_DIALOG = PREFIX + "editor_selection_dialog_context";
 	public static final String FILE_EXTENSION_DIALOG = PREFIX + "file_extension_dialog_context";
 	public static final String PREFERENCE_DIALOG = PREFIX + "preference_dialog_context";
-	public static final String WELCOME_DIALOG = PREFIX + "welcome_dialog_context";
+	public static final String PROPERTY_DIALOG = PREFIX + "property_dialog_context";
+	public static final String SAVE_PERSPECTIVE_DIALOG = PREFIX + "save_perspective_dialog_context";
+	public static final String SELECT_PERSPECTIVE_DIALOG = PREFIX + "select_perspective_dialog_context";
+	public static final String PROJECT_LOCATION_SELECTION_DIALOG = PREFIX + "project_location_selection_dialog_context";
+	public static final String SHOW_VIEW_DIALOG = PREFIX + "show_view_dialog_context";
+	public static final String SAVE_AS_DIALOG = PREFIX + "save_as_dialog_context";
+	public static final String TYPE_FILTERING_DIALOG = PREFIX + "type_filtering_dialog_context";
+	public static final String CONTAINER_SELECTION_DIALOG = PREFIX + "container_selection_dialog_context";
+	public static final String FILE_SELECTION_DIALOG = PREFIX + "file_selection_dialog_context";
+	public static final String LIST_SELECTION_DIALOG = PREFIX + "list_selection_dialog_context";
+	public static final String YES_NO_CANCEL_LIST_SELECTION_DIALOG = PREFIX + "yes_no_cancel_list_selection_dialog_context";
+	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context";
+	
 
 	// Editors
+	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context";
 	
 	// Preference pages
+	public static final String BUILD_ORDER_PREFERENCE_PAGE = PREFIX + "build_order_preference_page_context";
 	public static final String FILE_EDITORS_PREFERENCE_PAGE = PREFIX + "file_editors_preference_page_context";
-	
+	public static final String FILE_STATES_PREFERENCE_PAGE = PREFIX + "file_states_preference_page_context";
+	public static final String PERSPECTIVES_PREFERENCE_PAGE = PREFIX + "perspectives_preference_page_context";
+	public static final String VIEWS_PREFERENCE_PAGE = PREFIX + "views_preference_page_context";
+	public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX + "workbench_preference_page_context";
+
+	// Property pages
+	public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX + "project_reference_property_page_context";
+	public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX + "resource_info_property_page_context";
+		
 	// Windows
 	public static final String DETACHED_WINDOW = PREFIX + "detached_window_context";
 	public static final String WORKBENCH_WINDOW = PREFIX + "workbench_window_context";
 
 	// Wizard pages
 	public static final String NEW_PROJECT_WIZARD_PAGE = PREFIX + "new_project_wizard_page_context";
+	public static final String NEW_PROJECT_REFERENCE_WIZARD_PAGE = PREFIX + "new_project_reference_wizard_page_context";
+	public static final String NEW_FOLDER_WIZARD_PAGE = PREFIX + "new_folder_wizard_page_context";
+	public static final String NEW_FILE_WIZARD_PAGE = PREFIX + "new_file_wizard_page_context";
+	public static final String NEW_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "new_wizard_selection_wizard_page_context";
+	public static final String EXPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "export_wizard_selection_wizard_page_context";
+	public static final String IMPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "import_wizard_selection_wizard_page_context";
 
 	// Wizards
 	public static final String NEW_WIZARD = PREFIX + "new_wizard_context";
+	public static final String NEW_WIZARD_SHORTCUT = PREFIX + "new_wizard_shortcut_context";
+	public static final String NEW_FILE_WIZARD = PREFIX + "new_file_wizard_context";
+	public static final String NEW_FOLDER_WIZARD = PREFIX + "new_folder_wizard_context";
+	public static final String NEW_PROJECT_WIZARD = PREFIX + "new_project_wizard_context";
+	public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context";
+	public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context";
 }

@@ -183,7 +183,13 @@ private static void initWorkbenchColors(Display d) {
 		new Color(d,106,128,158),
 		new Color(d,255,255,255),
 		new Color(d,0,0,0),
-		new Color(d,0,0,0)
+		new Color(d,0,0,0),
+		//Perspective 
+		new Color(d,132, 130, 132),
+		new Color(d,143, 141, 138),
+		new Color(d,171, 168, 165),
+		//PreferenceDialog and TitleAreaDialog
+		new Color(d,230, 226, 221)
 	};
 }
 /**

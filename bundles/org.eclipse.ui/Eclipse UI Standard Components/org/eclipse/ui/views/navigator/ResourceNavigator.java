@@ -72,9 +72,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";//$NON-NLS-1$
 
 	/**
-	 * Help context id used for the resource navigator view.
+	 * No longer used but preserved to avoid an api change.
 	 */
-	public static final String NAVIGATOR_VIEW_HELP_ID = "org.eclipse.ui.general_help_context";//$NON-NLS-1$
+	public static final String NAVIGATOR_VIEW_HELP_ID = INavigatorHelpContextIds.RESOURCE_VIEW;
 
 	/**
 	 * Preference name constant for linking editor switching to navigator selection.
@@ -157,7 +157,7 @@ public void createPartControl(Composite parent) {
 	viewer.addFilter(this.patternFilter);
 	if(memento != null) restoreFilters();
 	initResourceSorter();
-	viewer.setInput(getSite().getPage().getInput());
+	viewer.setInput(getInitialInput());
 	initFrameList();
 	initDragAndDrop();
 	initRefreshKey();
@@ -200,7 +200,7 @@ public void createPartControl(Composite parent) {
 	if(memento != null) restoreState(memento);
 	memento = null;	
 	// Set help for the view 
-	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, NAVIGATOR_VIEW_HELP_ID));
+	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, INavigatorHelpContextIds.RESOURCE_VIEW));
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.
@@ -367,6 +367,37 @@ void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
 	// Add the submenu.
 	menu.add(submenu);
 }
+/** 
+ * Returns the initial input for the viewer.
+ * Tries to convert the input to a resource, either directly or via IAdaptable.
+ * If the resource is a container, it uses that.
+ * If the resource is a file, it uses its parent folder.
+ * If a resource could not be obtained, it uses the workspace root.
+ */
+IContainer getInitialInput() {
+	IAdaptable input = getSite().getPage().getInput();
+	IResource resource = null;
+	if (input instanceof IResource) {
+		resource = (IResource) input;
+	}
+	else {
+		resource = (IResource) input.getAdapter(IResource.class);
+	}
+	if (resource != null) {
+		switch (resource.getType()) {
+			case IResource.FILE:
+				return resource.getParent();
+			case IResource.FOLDER:
+			case IResource.PROJECT:
+			case IResource.ROOT:
+				return (IContainer) resource;
+			default:
+				// Unknown resource type.  Fall through.
+				break;
+		}
+	}
+	return ResourcesPlugin.getWorkspace().getRoot();
+}
 /**
  * Returns the pattern filter for this view.
  *
@@ -398,7 +429,7 @@ TreeViewer getResourceViewer() {
  * Used in this class, and in the actions.
  */
 Shell getShell() {
-	return getResourceViewer().getTree().getShell();
+	return getViewSite().getShell();
 }
 /**
  * Returns the message to show in the status line.

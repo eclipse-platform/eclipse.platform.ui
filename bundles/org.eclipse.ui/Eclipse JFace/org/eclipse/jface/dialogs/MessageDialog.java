@@ -276,8 +276,8 @@ protected int getMinimumMessageWidth() {
  * Sets a return code of -1 since none of the dialog buttons were pressed to close the dialog.
  */
 protected void handleShellCloseEvent() {
-	setReturnCode(-1);
 	super.handleShellCloseEvent();
+	setReturnCode(-1);
 }
 /** 
  * Convenience method to open a simple confirm (OK/Cancel) dialog.

@@ -91,7 +91,9 @@ public void createControl(Composite parent) {
 	createProjectLocationGroup(composite);
 	projectNameField.setFocus();
 	validatePage();
-	
+	// Show description on opening
+	setErrorMessage(null);
+	setMessage(null);
 	setControl(composite);
 }
 /**

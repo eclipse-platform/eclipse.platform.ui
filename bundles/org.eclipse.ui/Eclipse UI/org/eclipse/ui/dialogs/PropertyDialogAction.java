@@ -143,10 +143,10 @@ public void run() {
 	} else
 		title = WorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
-	// TBD: don't use old selection; should be getSimpleSelection(), though we assume structured selection above.
 	PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager, getStructuredSelection()); 
 	propertyDialog.create();
 	propertyDialog.getShell().setText(title);
+	WorkbenchHelp.setHelp(propertyDialog.getShell(), new Object[]{IHelpContextIds.PROPERTY_DIALOG});
 	propertyDialog.open();
 }
 /**

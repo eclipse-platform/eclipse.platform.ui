@@ -214,7 +214,7 @@ public void createControl(Composite parent) {
 		defaultsButton.setText(labels[0]);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = heightHint;
-		data.widthHint = widthHint;
+		data.widthHint = Math.max(widthHint, defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		defaultsButton.setLayoutData(data);
 		defaultsButton.addSelectionListener(
 			new SelectionAdapter() {
@@ -230,7 +230,7 @@ public void createControl(Composite parent) {
 		applyButton.setText(labels[1]);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = heightHint;
-		data.widthHint = widthHint;
+		data.widthHint = Math.max(widthHint, applyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		applyButton.setLayoutData(data);
 		applyButton.addSelectionListener(
 			new SelectionAdapter() {

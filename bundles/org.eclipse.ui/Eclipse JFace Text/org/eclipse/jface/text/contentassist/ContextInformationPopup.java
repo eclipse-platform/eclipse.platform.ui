@@ -8,6 +8,7 @@ package org.eclipse.jface.text.contentassist;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -46,6 +47,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	private Shell fContextSelectorShell;
 	private Table fContextSelectorTable;
 	private IContextInformation[] fContextSelectorInput;
+	private String fLineDelimiter= null;
 
 	private Shell fContextInfoPopup;
 	private Label fContextInfoLabel;
@@ -140,13 +142,15 @@ class ContextInformationPopup implements IContentAssistListener {
 			e.doit= false;
 			return false;
 
-		} else {
+		} else if (key == 0x1B) {
 			hideContextSelector(); // Terminate on Esc
-			return true;
 		}
+		
+		return true;
 	}
 	private void contextSelectorProcessEvent(VerifyEvent e) {
-		if (e.start == e.end && e.text != null && e.text.indexOf('\n') >= 0) {
+		
+		if (e.start == e.end && e.text != null && e.text.equals(fLineDelimiter)) {
 			e.doit= false;
 			insertSelectedContext();
 		}
@@ -317,8 +321,8 @@ class ContextInformationPopup implements IContentAssistListener {
 		});
 	}
 	public String showContextProposals(final boolean beep) {
-		final Control control= fViewer.getTextWidget();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+		final StyledText styledText= fViewer.getTextWidget();
+		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
 				IContextInformation[] contexts= computeContextInformation();
 				int count = (contexts == null ? 0 : contexts.length);
@@ -327,12 +331,16 @@ class ContextInformationPopup implements IContentAssistListener {
 					showContextInformation(contexts[0]);
 				} else if (count > 0) {
 					// Precise context must be selected
+					
+					if (fLineDelimiter == null)
+						fLineDelimiter= styledText.getLineDelimiter();
+
 					createContextSelector();
 					setContexts(contexts);
 					displayContextSelector();
 					hideContextInfoPopup();
 				} else if (beep) {
-					control.getDisplay().beep();
+					styledText.getDisplay().beep();
 				}
 			}
 		});

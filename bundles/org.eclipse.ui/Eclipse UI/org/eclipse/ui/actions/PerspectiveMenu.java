@@ -104,11 +104,6 @@ public void fill(Menu menu, int index)
 {
 	int nAccelerator = 0;
 	
-	// If the menu is empty just return.
-	ArrayList persps = getShortcuts();
-	if (persps.size() == 0)
-		return;
-
 	// Get the checked persp.
 	String checkID = null;
 	if (showActive) {
@@ -118,6 +113,7 @@ public void fill(Menu menu, int index)
 	}
 
 	// Add shortcuts.
+	ArrayList persps = getShortcuts();
 	for (int i = 0; i < persps.size(); i++) {
 		IPerspectiveDescriptor desc = (IPerspectiveDescriptor)persps.get(i);
 		createMenuItem(menu, index, desc, nAccelerator, desc.getId().equals(checkID));
@@ -196,19 +192,6 @@ protected abstract void run(IPerspectiveDescriptor desc);
 protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
 	//Do a run without the descriptor by default
 	run(desc);
-}
-/* (non-Javadoc)
- * Show the "other" dialog, select a perspective, and run it.
- */
-void runOther() {
-	SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(window.getShell(), reg);
-	dlg.open();
-	if (dlg.getReturnCode() == Window.CANCEL)
-		return;
-	IPerspectiveDescriptor desc = dlg.getSelection();
-	if (desc != null) {
-		run(desc);
-	}
 }
 /* (non-Javadoc)
  * Show the "other" dialog, select a perspective, and run it. Pass on the selection

@@ -7,7 +7,6 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * A strategy to read view extensions from the registry.
@@ -69,7 +68,7 @@ protected void readView(IConfigurationElement element) {
  */
 public void readViews(IPluginRegistry in, ViewRegistry out)
 	throws CoreException {
-	UIHackFinder.fixHandler(); // this does not seem to really ever be throwing an the exception
+	// this does not seem to really ever be throwing an the exception
 	viewRegistry = out;
 	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
 	out.mapViewsToCategories();

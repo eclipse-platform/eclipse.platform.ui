@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -9,7 +13,8 @@ import java.util.ArrayList;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.dialogs.FileEditorMappingContentProvider;
 import org.eclipse.ui.dialogs.FileEditorMappingLabelProvider;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -95,13 +100,23 @@ private void addSelectionButtons(Composite composite) {
  * Add the currently-specified extensions.
  */
 private void addUserDefinedEntries(List result) {
-					
-	StringTokenizer tokenizer = new StringTokenizer(userDefinedText.getText(),TYPE_DELIMITER);
-	
+
+	StringTokenizer tokenizer =
+		new StringTokenizer(userDefinedText.getText(), TYPE_DELIMITER);
+
+	//Allow the *. and . prefix and strip out the extension
 	while (tokenizer.hasMoreTokens()) {
 		String currentExtension = tokenizer.nextToken().trim();
-		if (!currentExtension.equals(""))//$NON-NLS-1$
-			result.add(currentExtension);
+		if (!currentExtension.equals("")) { //$NON-NLS-1$
+			if (currentExtension.startsWith("*."))//$NON-NLS-1$
+				result.add(currentExtension.substring(2));
+			else {
+				if (currentExtension.startsWith("."))//$NON-NLS-1$
+					result.add(currentExtension.substring(1));
+				else
+					result.add(currentExtension);
+			}
+		}
 	}
 }
 /**
@@ -133,6 +148,13 @@ private void checkInitialSelections() {
 		}
 	}
 	this.userDefinedText.setText(entries.toString());
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.TYPE_FILTERING_DIALOG});
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -190,9 +212,19 @@ private void createUserEntryGroup(Composite parent) {
  * Return the input to the dialog.
  */
 private IFileEditorMapping[] getInput() {
-	if (currentInput == null)
-		currentInput =
+
+	//Filter the mappings to be just those with a wildcard extension
+	if (currentInput == null) {
+		List wildcardEditors = new ArrayList();
+		IFileEditorMapping [] allMappings =
 			PlatformUI.getWorkbench().getEditorRegistry().getFileEditorMappings();
+		for (int i = 0; i < allMappings.length; i++) {
+			if (allMappings[i].getName().equals("*"))//$NON-NLS-1$
+				wildcardEditors.add(allMappings[i]);
+		}
+		currentInput = new IFileEditorMapping[wildcardEditors.size()];
+		wildcardEditors.toArray(currentInput);
+	}
 
 	return currentInput;
 }

@@ -4,6 +4,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 
@@ -14,6 +15,7 @@ import org.eclipse.swt.widgets.*;
 public SelectAllAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("SelectAll.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("SelectAll.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION});
 	setEnabled(true);
 }
 public void run() {

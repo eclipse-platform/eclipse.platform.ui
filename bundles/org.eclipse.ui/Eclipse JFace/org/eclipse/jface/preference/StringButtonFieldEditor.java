@@ -76,7 +76,8 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	GridData gd = new GridData();
 	gd.horizontalAlignment = gd.FILL;
 	gd.heightHint = convertVerticalDLUsToPixels(changeButton, IDialogConstants.BUTTON_HEIGHT);
-	gd.widthHint = convertHorizontalDLUsToPixels(changeButton, IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(changeButton, IDialogConstants.BUTTON_WIDTH);
+	gd.widthHint = Math.max(widthHint, changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	changeButton.setLayoutData(gd);
 }
 /* (non-Javadoc)

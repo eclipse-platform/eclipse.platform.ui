@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -369,9 +368,6 @@ public LayoutPart[] getChildren() {
 	
 	return children;
 }
-/**
- * Hack.  Return the inner control.
- */
 public Control getControl() {
 	return tabFolder;
 }
@@ -595,7 +591,6 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 		return;
 	}
 
-	UIHackFinder.fixFuture(); // FUTURE - if required, allow replacement of a Placeholder with a Placeholder or a Part with a Part
 }
 private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 	

@@ -184,6 +184,16 @@ public final class VerticalRuler implements IVerticalRuler {
 					continue;
 				
 				Position position= fModel.getPosition(annotation);
+				
+				/*
+				 * 1GF5TZW: ITPJUI:WINNT - NPE discarding a package
+				 * As getAnnotationIterator() returns a robust iterator,
+				 * getPosition(annotation) might return null.
+				 */
+				if (position == null)
+					continue;
+					
+					
 				int offset= position.getOffset();
 				int length= position.getLength();
 				

@@ -111,7 +111,11 @@ public String getText(Object element) {
  * decorator returns <code>true</code>.
  */
 public boolean isLabelProperty(Object element, String property) {
-	return provider.isLabelProperty(element, property) || decorator.isLabelProperty(element, property);
+	if (provider.isLabelProperty(element, property))
+		return true;
+	if (decorator != null && decorator.isLabelProperty(element, property))
+		return true;
+	return false;
 }
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this <code>IBaseLabelProvider</code> method

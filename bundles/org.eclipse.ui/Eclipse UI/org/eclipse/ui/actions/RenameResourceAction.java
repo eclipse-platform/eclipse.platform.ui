@@ -199,7 +199,13 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 			return;
 		}
 	}
-	resource.move(newPath, false, new SubProgressMonitor(monitor, 50));
+	if (resource.getType() == IResource.PROJECT) {
+	    IProject project = (IProject) resource;
+		IProjectDescription description = project.getDescription();
+		description.setName(newPath.segment(0));
+		project.move(description, true, monitor);
+	} else
+		resource.move(newPath, false, new SubProgressMonitor(monitor, 50));
 }
 /**
  *	Return the new name to be given to the target resource.
@@ -283,8 +289,15 @@ private void queryNewResourceNameInline(final IResource resource) {
 	});
 	textEditor.addFocusListener(new FocusAdapter() {
 		public void focusLost(FocusEvent fe) {
-			//If the focus is lost then apply the rename
-			saveChangesAndDispose(resource);
+			// Workaround for 1GF7TXO
+			if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
+				saveChangesAndDispose(resource);
+			} else {
+				fe.widget.getDisplay ().asyncExec (new Runnable () {
+				public void run () {
+					saveChangesAndDispose(resource);
+				}});
+			}
 		}
 	});
 	textEditor.setText(resource.getName());

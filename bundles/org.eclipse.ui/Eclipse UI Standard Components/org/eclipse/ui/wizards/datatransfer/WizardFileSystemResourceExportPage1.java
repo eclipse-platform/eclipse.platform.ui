@@ -6,6 +6,7 @@ package org.eclipse.ui.wizards.datatransfer;
  */
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -75,6 +76,7 @@ protected void addDestinationItem(String value) {
 public void createControl(Composite parent) {
 	super.createControl(parent);
 	giveFocusToDestination();
+	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE));
 }
 /**
  *	Create the export destination specification widgets

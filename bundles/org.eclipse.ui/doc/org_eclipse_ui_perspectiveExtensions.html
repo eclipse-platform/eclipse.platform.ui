@@ -4,14 +4,14 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <meta name="Author" content="Build">
-   <title>Eclipse Workbench Extension Point: View Actions</title>
+   <title>Eclipse Workbench Extension Point: Perspective Extensions</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
 <center>
 <h1>
 Perspective Extensions</h1></center>
-<b><i>Identifier: </i></b>org.eclipse.ui.perspetiveExtensions
+<b><i>Identifier: </i></b>org.eclipse.ui.perspectiveExtensions
 <p><b><i>Description: </i></b>This extension point is used to extend perspectives
 registered by other plug-ins. A perspective defines the initial contents
 of the window action bars (menu and toolbar) and the initial set of views
@@ -28,7 +28,7 @@ initial definition.
 <br><tt>&nbsp;&nbsp; ></tt>
 <blockquote>
 <li>
-<b>targetID</b> - the ID of the perspective (as specified in the registry)
+<b>targetID</b> - the unique identifier of the perspective (as specified in the registry)
 into which the contribution is made.</li>
 </blockquote>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT actionSet EMPTY></tt>
@@ -38,7 +38,7 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the ID of the action set which will be added to the perspective.</li>
+<b>id</b> - the unique identifier of the action set which will be added to the perspective.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT viewAction EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST viewAction</tt>
@@ -47,8 +47,8 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the ID of the view which will be added to the perspective "Show
-View" menu.</li>
+<b>id</b> - the unique identifier of the view which will be added to the perspective "Show
+View" submenu of the "Perspective" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT newWizardAction EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST newWizardAction</tt>
@@ -57,8 +57,8 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the ID of the new wizard which will be added to the perspective
-"File New..." menu.</li>
+<b>id</b> - the unique identifier of the new wizard which will be added to the perspective
+"New" submenu of the "File" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveAction EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveAction</tt>
@@ -67,8 +67,8 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the ID of the perspective which will be added to the perspective
-"Open" menu.</li>
+<b>id</b> - the unique identifier of the perspective which will be added to the perspective
+"Open" submenu of the "Perspective" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT view EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST view</tt>
@@ -83,10 +83,10 @@ CDATA #OPTIONAL</tt>
 <br><font face="Courier New"><font size=-2>&nbsp;&nbsp;&nbsp; ></font></font>
 <ul>
 <li>
-<b>id</b> - the ID of the view which will be added to the perspective layout.</li>
+<b>id</b> - the unique identifier of the view which will be added to the perspective layout.</li>
 
 <li>
-<b>relative</b> - the ID of a view which already exists in the perspective.&nbsp;
+<b>relative</b> - the unique identifier of a view which already exists in the perspective.&nbsp;
 This will be used as a reference point for placement of the view.&nbsp;
 The relationship between these two views is defined by <tt>relationship</tt>.</li>
 
@@ -141,12 +141,12 @@ ratio="0.50"/></tt>
 <p>In the example above, an action set, view shortcut, new wizard shortcut,
 and perspective shortcut are contributed to the initial contents of the
 Resource Perspective.&nbsp; In addition, the Package Explorer view is stacked
-on the Resource Navigator and the Type Hierarchy View is added beside the
-Resource Navigator.
+on the Resource Navigator view and the Type Hierarchy view is added beside the
+Resource Navigator view.
 <p><b><i>Additional Notes: </i></b>The items defined within the perspective
 extension are contributed to the initial contents of the target perspective.&nbsp;
 Following this, the user may remove any contribution or add others to a
 perspective from within the workbench user interface.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

@@ -12,7 +12,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.part.*;

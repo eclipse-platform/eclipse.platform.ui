@@ -4,9 +4,8 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -70,6 +69,8 @@ private Composite createButtonGroup(Composite composite) {
  * @return the new control
  */
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.VIEWS_PREFERENCE_PAGE));
 
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	this.editorAlignment =

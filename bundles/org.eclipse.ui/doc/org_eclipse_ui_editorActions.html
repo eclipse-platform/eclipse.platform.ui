@@ -15,26 +15,26 @@ Editor Menus, Toolbars and Actions</h1></center>
 <p><b><i>Description: </i></b>This extension point is used to add actions
 to the menu and toolbar for editors registered by other plug-ins.
 <p>The initial contribution set for an editor is defined by another extension
-point (<a href="org_eclipse_ui_editor.html">org.eclipse.ui.editors</a>).
+point (<a href="org_eclipse_ui_editors.html">org.eclipse.ui.editors</a>).
 One set of actions is created and shared by all instances of the same editor
 type.&nbsp; When invoked, these action act upon the active editor.&nbsp;
 This extension point follows the same pattern.&nbsp; Each action extension
 is created and shared by all instances of the same editor type.&nbsp; The
 action class is required to implement <tt>org.eclipse.ui.IEditorActionDelegate</tt>.&nbsp;
-The active editor is passed to the delegate by invoking <tt>IEditorActionDelegate.setActiveEditor</tt>.
+The active editor is passed to the delegate by invoking <tt>IEditorActionDelegate#setActiveEditor</tt>.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT editorContribution (menu | action)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST editorContribution</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <blockquote>
 <li>
 <b>id</b> - a unique identifier that can be used to reference this contribution</li>
 
 <li>
-<b>editorID</b> - an ID of a previously registered editor that is the target
+<b>editorID</b> - a unique identifier of a previously registered editor that is the target
 of this contribution</li>
 </blockquote>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT menu (separator)+></tt>
@@ -258,9 +258,9 @@ attribute:
 Actions and menus added into these paths will only be shown while the associated
 editor is active. When the editor is closed, menus and actions will be
 removed.
-<p><b><i>Supplied Implementation:</i></b> The workbench does not provide
-built-in content editors. Plug-ins can contribute into editors provided
+<p><b><i>Supplied Implementation:</i></b> The workbench provides a
+built-in "Default Text Editor". Plug-ins can contribute into this default editor or editors provided
 by other plug-ins.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

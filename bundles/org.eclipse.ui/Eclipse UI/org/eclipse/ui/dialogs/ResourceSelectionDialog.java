@@ -9,7 +9,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.ControlEvent;
@@ -84,6 +85,13 @@ private void checkInitialSelections() {
  */
 public void checkStateChanged(CheckStateChangedEvent event) {
 	getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0);
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.RESOURCE_SELECTION_DIALOG});
 }
 public void create() {
 	super.create();

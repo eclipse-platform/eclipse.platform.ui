@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 
@@ -14,12 +15,19 @@ import org.eclipse.jface.dialogs.*;
 public class ResetPerspectiveAction extends Action {
 	private IWorkbenchWindow window;	
 /**
+ * This default constructor allows the the action to be called from the welcome page.
+ */
+public ResetPerspectiveAction() {
+	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+}
+/**
  *	Create an instance of this class
  */
 public ResetPerspectiveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.RESET_PERSPECTIVE_ACTION});
 	this.window = window;
 }
 /**

@@ -198,13 +198,14 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 
 	Button button = new Button(parent, SWT.PUSH);
 
+	button.setText(label);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
 	
 	button.setData(new Integer(id));
-	button.setText(label);
 	button.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			buttonPressed(((Integer) event.widget.getData()).intValue());

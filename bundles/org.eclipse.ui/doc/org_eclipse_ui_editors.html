@@ -4,7 +4,7 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <meta name="Author" content="Build">
-   <title>Eclipse Workbench Extension Point: Resource Content Editors</title>
+   <title>Eclipse Workbench Extension Point: Editors</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
@@ -13,7 +13,7 @@
 Internal and External Editors</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.ui.editors
 <p><b><i>Description</i>: </b>This extension point is used to add new editors
-to the workench.&nbsp; A editor is a visual component within a workbench
+to the workench.&nbsp; An editor is a visual component within a workbench
 page. It is typically used to edit or browse a document or input object.&nbsp;
 To open an editor, the user will typically invoke "Open" on an <tt>IFile</tt>.&nbsp;
 When this action is performed the workbench registry is consulted to determine
@@ -23,7 +23,7 @@ the editor.&nbsp; The workbench provides support for the creation of internal
 editors, which are tightly integrated into the workbench, and external
 editors, which are launched in a separate frame window.&nbsp; There are
 also various level of integration between these extremes.
-<p>In the case of an internal editor tight integration can be achieved
+<p>In the case of an internal editor, tight integration can be achieved
 between the workbench window and the editor part.&nbsp; The workbench menu
 and toolbar are pre-loaded with a number of common actions, such as cut,
 copy, and paste.&nbsp; The active part, view or editor, is expected to
@@ -37,26 +37,26 @@ any means except through the file system.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT editor EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST editor</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; launcher&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contributorClass
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;
-CDATA #OPTIONAL</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filenames&nbsp;&nbsp;
-CDATA #OPTIONAL</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA (true|false) "false"</font></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; launcher&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contributorClass&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filenames&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA (true|false) "false"</tt>
 <ul>
 <li>
 <b>id</b> - a unique name that will be used to identify this editor</li>
@@ -110,7 +110,7 @@ menu and tool bar which reflect the features of the editor type.</li>
 <b>default</b> - if true, this editor will be used as the default editor
 for the type. This is only relevant in a case where more than one editor
 is registered for the same type. If an editor is not the default for the
-type, it can still be launched using Open with... submenu for the selected
+type, it can still be launched using "Open With" submenu for the selected
 resource.</li>
 </ul>
 <b><i>Examples:</i></b>
@@ -145,7 +145,7 @@ when defining a new editor type.&nbsp; It is also necessary to define a
 add new actions to the workbench menu and tool bar which reflect the features
 of the editor type.
 <p>Within the workbench there may be more than one open editor of a particular
-type.&nbsp; For instance, there may be one or more open Java Editors.&nbsp;
+type.&nbsp; For instance, there may be one or more open Java editors.&nbsp;
 To avoid the creation of duplicate actions and action images the editor
 concept has been split into two.&nbsp; An <tt>IEditorActionBarContributor</tt>
 is responsable for the creation of actions.&nbsp; The editor is responsable
@@ -155,10 +155,10 @@ set of actions for one or more open editors.
 <p>The contributor will add new actions to the workbench menu and toolbar
 which reflect the editor type.&nbsp; These actions are shared and, when
 invoked, act upon the active editor.&nbsp; The active editor is passed
-to the contributor by invoking <tt>IEditorActionBarContributor.setActiveEditor</tt>.&nbsp;
+to the contributor by invoking <tt>IEditorActionBarContributor#setActiveEditor</tt>.&nbsp;
 The identifiers for actions and major groups within the workbench window
 are defined in <tt>org.eclipse.ui.IWorkbenchActionConstants</tt>.&nbsp;
-These should be used as a reference point for the addition of new actions.&nbsp;&nbsp;
+These should be used as a reference point for the addition of new actions.&nbsp;
 Top level menus are created by using the following values for the <tt>path</tt>
 attribute:
 <ul>
@@ -168,10 +168,10 @@ attribute:
 Actions and menus added into these paths will only be shown while the associated
 editor is active. When the editor is closed, menus and actions will be
 removed.
-<p><b><i>Supplied Implementation: </i></b>The workbench does not provide
-any built-in content editors, but the end user product may contain some
+<p><b><i>Supplied Implementation: </i></b>The workbench provides a "Default Text Editor".
+The end user product may contain other editors
 as part of the shipping bundle. In that case, editors will be registered
 as extensions using the syntax described above.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000, 2001" BORDER=0 height=12 width=195></a>
 </body>
 </html>

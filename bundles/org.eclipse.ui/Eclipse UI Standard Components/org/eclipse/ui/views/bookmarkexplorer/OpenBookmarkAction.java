@@ -6,6 +6,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
  */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -18,6 +19,7 @@ import java.util.*;
 public OpenBookmarkAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("OpenBookmark.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("OpenBookmark.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION});
 	setEnabled(false);
 }
 public void run() {

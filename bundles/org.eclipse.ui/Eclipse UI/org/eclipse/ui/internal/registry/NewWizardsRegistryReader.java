@@ -7,7 +7,6 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.part.*;
@@ -23,6 +22,8 @@ import java.util.*;
 public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	
 	private boolean projectsOnly;
+	private ArrayList deferWizards = null;
+	private ArrayList deferCategories = null;
 	
 	// constants
 	public final static String		BASE_CATEGORY = "Base";//$NON-NLS-1$
@@ -33,6 +34,28 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
+
+	private class CategoryNode {
+		private Category category;
+		private String path;
+		public CategoryNode(Category cat) {
+			category = cat;
+			path = ""; //$NON-NLS-1$
+			String[] categoryPath = category.getParentCategoryPath();
+			if (categoryPath != null) {
+				for (int nX = 0; nX < categoryPath.length; nX ++) {
+					path += categoryPath[nX] + '/'; //$NON-NLS-1$
+				}
+			}
+			path += cat.getID();
+		}
+		public String getPath() {
+			return path;
+		}
+		public Category getCategory() {
+			return category;
+		}
+	}
 /**
  * Constructs a new reader.  All wizards are read, including projects.
  */
@@ -48,39 +71,15 @@ public NewWizardsRegistryReader(boolean projectsOnly) {
 	super(IWorkbenchConstants.PL_NEW);
 	this.projectsOnly = projectsOnly;
 }
-/**
- *	Insert the passed wizard element into the wizard collection appropriately
- *	based upon its defining extension's CATEGORY tag value
- *
- *	@param element WorkbenchWizardElement
- *	@param extension 
- *	@param currentResult WizardCollectionElement
+/* (non-Javadoc)
+ * Method declared on WizardRegistryReader.  
+ * <p>
+ * This implementation uses a defering strategy.  For more info see
+ * <code>readWizards</code>.
+ * </p>
  */
 protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurationElement config, AdaptableList result) {
-	WizardCollectionElement currentResult = (WizardCollectionElement)result;
-	StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config),CATEGORY_SEPARATOR);
-
-	// use the period-separated sections of the current Wizard's category
-	// to traverse through the NamedSolution "tree" that was previously created
-	WizardCollectionElement currentCollectionElement = currentResult; // ie.- root
-	boolean moveToOther = false;
-	
-	while (familyTokenizer.hasMoreElements()) {
-		WizardCollectionElement tempCollectionElement =
-			getChildWithID(currentCollectionElement,familyTokenizer.nextToken());
-			
-		if (tempCollectionElement == null) {	// can't find the path; bump it to uncategorized
-			moveToOther = true;
-			break;
-		}
-		else
-			currentCollectionElement = tempCollectionElement;
-	}
-	
-	if (moveToOther)
-		moveElementToUncategorizedCategory(currentResult, element);
-	else
-		currentCollectionElement.add(element);
+	deferWizard(element);
 }
 /**
  *	Create and answer a new WizardCollectionElement, configured as a
@@ -117,6 +116,143 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
 			return null;
 	}
 	return super.createWizardElement(element);
+}
+/**
+ * Stores a category element for deferred addition.
+ */
+private void deferCategory(IConfigurationElement config) {
+	// Create category.
+	Category category = null;
+	try {
+		category = new Category(config);
+	} catch (CoreException e) {
+		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
+		return;
+	}
+
+	// Defer for later processing.
+	if (deferCategories == null)
+		deferCategories = new ArrayList(20);
+	deferCategories.add(category);
+}
+/**
+ * Stores a wizard element for deferred addition.
+ */
+private void deferWizard(WorkbenchWizardElement element) {
+	if (deferWizards == null)
+		deferWizards = new ArrayList(50);
+	deferWizards.add(element);
+}
+/**
+ * Finishes the addition of categories.  The categories are sorted and
+ * added in a root to depth traversal.
+ */
+private void finishCategories() {
+	// If no categories just return.
+	if (deferCategories == null)
+		return;
+
+	// Sort categories by flattened name.
+	CategoryNode [] flatArray = new CategoryNode[deferCategories.size()];
+	for (int i=0; i < deferCategories.size(); i++) {
+		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
+	}
+	Sorter sorter = new Sorter() {
+		public boolean compare(Object o1, Object o2) {
+			String s1 = ((CategoryNode)o1).getPath();
+			String s2 = ((CategoryNode)o2).getPath();
+			return s2.compareTo(s1) > 0;
+		}
+	};
+	Object [] sortedCategories = sorter.sort(flatArray);
+
+	// Add each category.
+	for (int nX = 0; nX < sortedCategories.length; nX ++) {
+		Category cat = ((CategoryNode)sortedCategories[nX]).getCategory();
+		finishCategory(cat);
+	}
+
+	// Cleanup.
+	deferCategories = null;
+}
+/**
+ * Save new category definition.
+ */
+private void finishCategory(Category category) {
+	WizardCollectionElement currentResult = (WizardCollectionElement) wizards;
+	
+	String[] categoryPath = category.getParentCategoryPath();
+	WizardCollectionElement parent = currentResult; 		// ie.- root
+
+	// Traverse down into parent category.	
+	if (categoryPath != null) {
+		for (int i = 0; i < categoryPath.length; i++) {
+			WizardCollectionElement tempElement = getChildWithID(parent,categoryPath[i]);
+			if (tempElement == null) {
+				// The parent category is invalid.  By returning here the
+				// category will be dropped and any wizard within the category
+				// will be added to the "Other" category.
+				return;
+			} else
+				parent = tempElement;
+		}
+	}
+
+	// If another category already exists with the same id ignore this one.
+	Object test = getChildWithID(parent, category.getID());
+	if (test != null)
+		return;
+		
+	if (parent != null)
+		createCollectionElement(parent, category.getID(), category.getLabel());
+}
+/**
+ *	Insert the passed wizard element into the wizard collection appropriately
+ *	based upon its defining extension's CATEGORY tag value
+ *
+ *	@param element WorkbenchWizardElement
+ *	@param extension 
+ *	@param currentResult WizardCollectionElement
+ */
+private void finishWizard(WorkbenchWizardElement element, IConfigurationElement config, AdaptableList result) {
+	WizardCollectionElement currentResult = (WizardCollectionElement)result;
+	StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config),CATEGORY_SEPARATOR);
+
+	// use the period-separated sections of the current Wizard's category
+	// to traverse through the NamedSolution "tree" that was previously created
+	WizardCollectionElement currentCollectionElement = currentResult; // ie.- root
+	boolean moveToOther = false;
+	
+	while (familyTokenizer.hasMoreElements()) {
+		WizardCollectionElement tempCollectionElement =
+			getChildWithID(currentCollectionElement,familyTokenizer.nextToken());
+			
+		if (tempCollectionElement == null) {	// can't find the path; bump it to uncategorized
+			moveToOther = true;
+			break;
+		}
+		else
+			currentCollectionElement = tempCollectionElement;
+	}
+	
+	if (moveToOther)
+		moveElementToUncategorizedCategory(currentResult, element);
+	else
+		currentCollectionElement.add(element);
+}
+/**
+ * Finishes the addition of wizards.  The wizards are processed and categorized.
+ */
+private void finishWizards() {
+	if (deferWizards != null) {
+		Iterator iter = deferWizards.iterator();
+		while (iter.hasNext()) {
+			WorkbenchWizardElement wizard = (WorkbenchWizardElement)iter.next();
+			IConfigurationElement config = wizard.getConfigurationElement();
+			finishWizard(wizard, config, wizards);
+		}
+		deferWizards = null;
+	}
 }
 /**
  *	Return the appropriate category (tree location) for this Wizard.
@@ -158,37 +294,6 @@ protected void moveElementToUncategorizedCategory(WizardCollectionElement root, 
 	otherCategory.add(element);
 }
 /**
- * Save new category definition.
- */
-private void processCategory(IConfigurationElement config) {
-	WizardCollectionElement currentResult = (WizardCollectionElement) wizards;
-	Category category = null;
-	
-	try {
-		category = new Category(config);
-	} catch (CoreException e) {
-		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
-		return;
-	}
-	
-	String[] categoryPath = category.getParentCategoryPath();
-	WizardCollectionElement element = currentResult; 		// ie.- root
-	
-	if (categoryPath != null) {
-		for (int i = 0; i < categoryPath.length; i++) {
-			WizardCollectionElement tempElement = getChildWithID(element,categoryPath[i]);
-			if (tempElement == null) {
-				element = null;
-				break;
-			} else
-				element = tempElement;
-		}
-	}
-	
-	if (element != null)
-		createCollectionElement(element, category.getID(), category.getLabel());
-}
-/**
  * Removes the empty categories from a wizard collection. 
  */
 private void pruneEmptyCategories(WizardCollectionElement parent) {
@@ -205,7 +310,7 @@ private void pruneEmptyCategories(WizardCollectionElement parent) {
  */
 protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_CATEGORY)) {
-		processCategory(element);
+		deferCategory(element);
 		return true;
 	} else {
 		return super.readElement(element);
@@ -213,9 +318,18 @@ protected boolean readElement(IConfigurationElement element) {
 }
 /**
  * Reads the wizards in a registry.  
+ * <p>
+ * This implementation uses a defering strategy.  All of the elements 
+ * (categories, wizards) are read.  The categories are created as the read occurs. 
+ * The wizards are just stored for later addition after the read completes.
+ * This ensures that wizard categorization is performed after all categories
+ * have been read.
+ * </p>
  */
 protected void readWizards() {
 	super.readWizards();
+	finishCategories();
+	finishWizards();
 	if (projectsOnly && wizards != null) {
 		WizardCollectionElement parent = (WizardCollectionElement)wizards;
 		pruneEmptyCategories(parent);

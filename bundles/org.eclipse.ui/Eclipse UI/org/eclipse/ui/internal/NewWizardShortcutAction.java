@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.actions.*;
@@ -76,6 +77,8 @@ public void run() {
 
 	Shell parent = workbench.getActiveWorkbenchWindow().getShell();
 	WizardDialog dialog = new WizardDialog(parent, wizard);
+	dialog.create();
+	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_WIZARD_SHORTCUT});
 	dialog.open();
 }
 }

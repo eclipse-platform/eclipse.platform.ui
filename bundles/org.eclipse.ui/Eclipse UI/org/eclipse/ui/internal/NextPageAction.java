@@ -4,6 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
@@ -20,6 +21,7 @@ public class NextPageAction extends PageEventAction {
 public NextPageAction(String label, int increment, IWorkbenchWindow window) {
 	super(label, window);
 	this.increment = increment;
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.NEXT_PAGE_ACTION});
 	setEnabled(false);
 }
 /* (non-Javadoc)

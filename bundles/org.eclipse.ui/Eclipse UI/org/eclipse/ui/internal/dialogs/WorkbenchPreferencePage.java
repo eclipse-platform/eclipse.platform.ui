@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.preference.*;
@@ -94,6 +95,9 @@ private Composite createComposite(Composite parent, int numColumns) {
  *	@param parent org.eclipse.swt.widgets.Composite
  */
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE));
+	
 	Composite composite = new Composite(parent, SWT.NULL);
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(
@@ -463,24 +467,27 @@ public boolean performOk() {
  */
 private void setTextValuesForPerspective() {
 
-	if (this.currentPerspectiveSetting
-		== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE) {
+	if (this
+		.currentPerspectiveSetting
+		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
 		this.openInNewWindowText.setText(SHIFT_LABEL);
 		this.replaceText.setText(ALT_LABEL);
-		this.openInNewPageText.setText("");//$NON-NLS-1$
+		this.openInNewPageText.setText(""); //$NON-NLS-1$
 	} else {
 
-		if (this.currentPerspectiveSetting
-			== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW) {
+		if (this
+			.currentPerspectiveSetting
+			.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
 			this.openInNewPageText.setText(SHIFT_LABEL);
 			this.replaceText.setText(ALT_LABEL);
-			this.openInNewWindowText.setText("");//$NON-NLS-1$
+			this.openInNewWindowText.setText(""); //$NON-NLS-1$
 		} else {
-			if (this.currentPerspectiveSetting
-				== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE) {
+			if (this
+				.currentPerspectiveSetting
+				.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
 				this.openInNewWindowText.setText(SHIFT_LABEL);
 				this.openInNewPageText.setText(ALT_LABEL);
-				this.replaceText.setText("");//$NON-NLS-1$
+				this.replaceText.setText(""); //$NON-NLS-1$
 			}
 		}
 

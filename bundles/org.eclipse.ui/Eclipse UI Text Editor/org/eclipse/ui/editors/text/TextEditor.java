@@ -60,21 +60,76 @@ public class TextEditor extends AbstractTextEditor {
 		super();
 		initializeEditor();
 	}
+	/** 
+	 * Returns the editor's resource bundle.
+	 *
+	 * @return the editor's resource bundle
+	 */
+	private ResourceBundle getResourceBundle() {
+		if (fResourceBundle == null)
+			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.editors.text.TextEditorResources");
+		return fResourceBundle;
+	}
+	/**
+	 * Convenience method for safely accessing resources.
+	 */
+	private String getResourceString(String key, String dfltValue) {
+		try {
+			/*
+			 * 1GEYOA9: ITPUI:ALL - Problem with externalized strings in save error dialog
+			 * Changed fResourceBundle to getResourceBundle to ensure initialization
+			 */
+			if (getResourceBundle() != null && key != null)
+				return getResourceBundle().getString(key);
+		} catch (MissingResourceException x) {
+		}
+		return dfltValue;
+	}
+	/**
+	 * Initializes this editor.
+	 */
+	protected void initializeEditor() {
+		setRangeIndicator(new DefaultRangeIndicator());
+		setEditorContextMenuId("#TextEditorContext");
+		setRulerContextMenuId("#TextRulerContext");
+		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
+		
+		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		if (plugin instanceof AbstractUIPlugin) {
+			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;		
+			setPreferenceStore(uiPlugin.getPreferenceStore());
+		}
+	}
 	/**
 	 * The <code>TextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method asks the user for the workspace path
+	 * <code>IEditorPart</code> method returns <code>true</code>.
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+	/**
+	 * The <code>TextEditor</code> implementation of this 
+	 * <code>AbstractTextEditor</code> method asks the user for the workspace path
 	 * of a file resource and saves the document there.
 	 */
-	public void doSaveAs() {
-		
+	protected void performSaveAs(IProgressMonitor progressMonitor) {
+		/*
+		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+		 * Changed Behavior to make sure that if called inside a regular save (because
+		 * of deletion of input element) there is a way to report back to the caller.
+		 */
+				 		
 		Shell shell= getSite().getShell();
 		
 		SaveAsDialog dialog= new SaveAsDialog(shell);
 		dialog.open();
 		IPath path= dialog.getResult();
 		
-		if (path == null)
+		if (path == null) {
+			if (progressMonitor != null)
+				progressMonitor.setCanceled(true);
 			return;
+		}
 			
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IFile file= workspace.getRoot().getFile(path);
@@ -82,7 +137,11 @@ public class TextEditor extends AbstractTextEditor {
 		
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
-				getDocumentProvider().saveDocument(monitor, newInput, getDocumentProvider().getDocument(getEditorInput()), false);
+				/* 
+				 * 1GF5YOX: ITPJUI:ALL - Save of delete file claims it's still there
+				 * Changed false to true.
+				 */
+				getDocumentProvider().saveDocument(monitor, newInput, getDocumentProvider().getDocument(getEditorInput()), true);
 			}
 		};
 		
@@ -103,47 +162,8 @@ public class TextEditor extends AbstractTextEditor {
 			if (success)
 				setInput(newInput);
 		}
-	}
-	/** 
-	 * Returns the editor's resource bundle.
-	 *
-	 * @return the editor's resource bundle
-	 */
-	private ResourceBundle getResourceBundle() {
-		if (fResourceBundle == null)
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.editors.text.TextEditorResources");
-		return fResourceBundle;
-	}
-	/**
-	 * Convenience method for safely accessing resources.
-	 */
-	private String getResourceString(String key, String dfltValue) {
-		try {
-			if (fResourceBundle != null && key != null)
-				return fResourceBundle.getString(key);
-		} catch (MissingResourceException x) {
-		}
-		return dfltValue;
-	}
-	/**
-	 * Initializes this editor.
-	 */
-	protected void initializeEditor() {
-		setRangeIndicator(new DefaultRangeIndicator());
-		setEditorContextMenuId("#TextEditorContext");
-		setRulerContextMenuId("#TextRulerContext");
 		
-		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		if (plugin instanceof AbstractUIPlugin) {
-			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;		
-			setPreferenceStore(uiPlugin.getPreferenceStore());
-		}
-	}
-	/**
-	 * The <code>TextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method returns <code>true</code>.
-	 */
-	public boolean isSaveAsAllowed() {
-		return true;
+		if (progressMonitor != null)
+			progressMonitor.setCanceled(!success);
 	}
 }

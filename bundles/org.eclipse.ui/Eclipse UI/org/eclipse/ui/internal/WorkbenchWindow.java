@@ -15,7 +15,6 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.actions.OpenNewWindowMenu;
 import org.eclipse.ui.actions.OpenNewPageMenu;
@@ -341,24 +340,29 @@ protected boolean closePage(IWorkbenchPage in, boolean save) {
 			return false;
 	}
 
+	// If old page is activate deactivate.
+	boolean oldIsActive = (oldPage == activePage);
+	if (oldIsActive)
+		setActivePage(null);
+		
 	// Close old page.
 	int nIndex = pageTable.indexOf(oldPage);
-	if (oldPage == activePage)
-		setActivePage(null);
 	pageTable.remove(oldPage);
 	removeShortcut(oldPage);
 	firePageClosed(oldPage);
 	oldPage.dispose();
 	
 	// Activate new page.
-	WorkbenchPage newPage = null;
-	int nMaxIndex = pageTable.size() - 1;
-	if (nIndex > nMaxIndex)
-		nIndex = nMaxIndex;
-	if (nIndex >= 0)
-		newPage = (WorkbenchPage)pageTable.get(nIndex);
-	if (newPage != null)
-		setActivePage(newPage);
+	if (oldIsActive) {
+		WorkbenchPage newPage = null;
+		int nMaxIndex = pageTable.size() - 1;
+		if (nIndex > nMaxIndex)
+			nIndex = nMaxIndex;
+		if (nIndex >= 0)
+			newPage = (WorkbenchPage)pageTable.get(nIndex);
+		if (newPage != null)
+			setActivePage(newPage);
+	}
 
 	return true;
 }

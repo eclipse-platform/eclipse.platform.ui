@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 /**
@@ -108,7 +107,10 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	if (tooltip != null)
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {
-		String fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;//$NON-NLS-1$
+		String fullID = helpContextId;
+		if (helpContextId.indexOf(".") == -1)
+			// For backward compatibility we auto qualify the id if it is not qualified)
+			fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;//$NON-NLS-1$
 		WorkbenchHelp.setHelp(action, new String[] {fullID});
 	}
 	if (description != null)

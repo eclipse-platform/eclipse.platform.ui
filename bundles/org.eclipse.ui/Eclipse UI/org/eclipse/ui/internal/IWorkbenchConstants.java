@@ -18,6 +18,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_VIEW_ACTIONS = "viewActions";
 	public static final String PL_EDITOR_ACTIONS = "editorActions";
 	public static final String PL_PERSPECTIVES ="perspectives";
+	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages";
 	public static final String PL_PERSPECTIVE_EXTENSIONS ="perspectiveExtensions";
 	public static final String PL_PREFERENCES ="preferencePages";
 	public static final String PL_PROPERTY_PAGES ="propertyPages";
@@ -112,4 +113,5 @@ public interface IWorkbenchConstants {
 	public static final String TAG_OPEN_IN_PLACE = "open_in_place";
 	public static final String TAG_PROGRAM_NAME = "program_name";
 	public static final String TAG_FAST_VIEWS = "fastViews";
+	public static final String TAG_VIEW_STATE = "viewState";
 }

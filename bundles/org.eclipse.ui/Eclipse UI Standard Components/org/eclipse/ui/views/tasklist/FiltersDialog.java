@@ -4,7 +4,7 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+import org.eclipse.ui.help.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -212,6 +212,7 @@ public void checkStateChanged(CheckStateChangedEvent event) {
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
 	newShell.setText(TaskListMessages.getString("TaskList.filter")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(newShell, new Object[] {ITaskListHelpContextIds.FILTERS_DIALOG});
 }
 /**
  * Creates the area showing filtering criteria on attribute values.

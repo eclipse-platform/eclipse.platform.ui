@@ -6,6 +6,7 @@ package org.eclipse.ui.wizards.datatransfer;
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -89,6 +90,13 @@ protected boolean closeZipFile(ZipFile file) {
 	}
 
 	return true;
+}
+/** (non-Javadoc)
+ * Method declared on IDialogPage.
+ */
+public void createControl(Composite parent) {
+	super.createControl(parent);
+	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE));
 }
 /**
  *	Create the import options specification widgets.
@@ -253,7 +261,6 @@ protected void handleSourceBrowseButtonPressed() {
 			if (sourceFile != null) {
 				closeZipFile(sourceFile);
 				setSourceName(selectedFile);
-				setAllSelections(true);
 			}
 		}
 	}
@@ -299,6 +306,14 @@ protected String queryZipFileToImport() {
 		dialog.setFilterPath(currentSourceString.substring(0,lastSeparatorIndex));
 		
 	return dialog.open();
+}
+/**
+ *	Repopulate the view based on the currently entered directory.
+ */
+protected void resetSelection() {
+
+	super.resetSelection();
+	setAllSelections(true);
 }
 /**
  *	Use the dialog store to restore widget values to the values that they held

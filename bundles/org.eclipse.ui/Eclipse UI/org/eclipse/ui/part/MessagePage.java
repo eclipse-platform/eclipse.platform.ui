@@ -29,7 +29,6 @@ public MessagePage() {
 public void createControl(Composite parent) {
 	text = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
 	text.setText(message);
-	text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	text.setMenu(new Menu(text));
 }
 /* (non-Javadoc)

@@ -20,7 +20,6 @@ import org.eclipse.ui.part.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -478,11 +477,27 @@ public void dispose() {
 	composite.dispose();
 }
 /**
- * Creates a new view set.  Return null on failure.
+ * Dispose a perspective.
  */
 private void disposePerspective(Perspective persp) {
+	// Get views.
+	IViewPart [] views = persp.getViews();
+	
+	// Get rid of perspective.
 	perspList.remove(persp);
 	persp.dispose();
+
+	// Loop through the views.
+	for (int nX = 0; nX < views.length; nX ++) {
+		IViewPart view = views[nX];
+		
+		// If the part is no longer reference then dispose it.
+		boolean exists = viewFactory.hasView(view.getSite().getId());
+		if (!exists) {
+			firePartClosed(view);
+			view.dispose();
+		}
+	}
 }
 /**
  * Edits the action sets.
@@ -1113,7 +1128,6 @@ private void restoreState(IMemento memento) {
 				activePerspective = persp;
 			perspList.add(persp);
 		} catch (WorkbenchException e) {
-			//TBD: What should be done here.
 		}
 	}
 	activePersp = activePerspective;
@@ -1367,6 +1381,19 @@ public void toggleZoom(IWorkbenchPart part) {
  */
 public void updateActionBars() {
 	window.updateActionBars();
+}
+/**
+ * The title of the given part has changed.
+ * For views, updates the fast view button if necessary.
+ */
+public void updateTitle(IWorkbenchPart part) {
+	if (part instanceof IViewPart) {
+		if (isFastView((IViewPart) part)) {
+			// Would be more efficient to just update label of single tool item
+			// but we don't have access to it from here.
+			window.getShortcutBar().update(true);
+		}
+	}
 }
 /**
  * Zooms out a zoomed in part.

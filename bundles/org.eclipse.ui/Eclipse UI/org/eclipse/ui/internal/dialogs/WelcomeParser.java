@@ -24,7 +24,8 @@ public class WelcomeParser extends DefaultHandler {
 	private static final String ATT_TITLE = "title"; //$NON-NLS-1$	
 	private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$	
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
-	private static final String ATT_ID = "id"; //$NON-NLS-1$	
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_HREF = "href"; //$NON-NLS-1$
 	
 	private SAXParser parser;
 
@@ -85,6 +86,7 @@ public class WelcomeParser extends DefaultHandler {
 		private ArrayList classes  = new ArrayList();
 		private ArrayList helpRanges  = new ArrayList();
 		private ArrayList helpIds  = new ArrayList();
+		private ArrayList helpHrefs  = new ArrayList();
 		private StringBuffer text = new StringBuffer();
 		private int offset = 0;
 		private int textStart;
@@ -116,8 +118,9 @@ public class WelcomeParser extends DefaultHandler {
 			}
 		}	
 		private class TopicHandler extends WelcomeContentHandler {
-			public TopicHandler(String helpId) {
+			public TopicHandler(String helpId, String href) {
 				helpIds.add(helpId);
+				helpHrefs.add(href);
 			}
 			public void characters(char[] ch, int start, int length) throws SAXException {
 				ItemHandler.this.characters(ch, start, length);
@@ -138,7 +141,8 @@ public class WelcomeParser extends DefaultHandler {
 				(String[])pluginIds.toArray(new String[pluginIds.size()]),
 				(String[])classes.toArray(new String[classes.size()]),
 				(int[][])helpRanges.toArray(new int[helpRanges.size()][2]),
-				(String[])helpIds.toArray(new String[helpIds.size()]));
+				(String[])helpIds.toArray(new String[helpIds.size()]),
+				(String[])helpHrefs.toArray(new String[helpHrefs.size()]));
 		}
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			for (int i = 0; i < length; i++) {
@@ -158,7 +162,7 @@ public class WelcomeParser extends DefaultHandler {
 				h.setParent(ItemHandler.this);
 				parser.setContentHandler(h);
 			} else if(localName.equals(TAG_TOPIC)) {
-				TopicHandler h = new TopicHandler(atts.getValue(ATT_ID));
+				TopicHandler h = new TopicHandler(atts.getValue(ATT_ID), atts.getValue(ATT_HREF));
 				h.setParent(ItemHandler.this);
 				parser.setContentHandler(h);
 			}

@@ -39,7 +39,6 @@ protected TaskList getTaskList() {
  * into the dialog store using action ID as a key.
  */
 protected void storeValue() {
-	// TBD: Don't refer to global WorkbenchPlugin
 	IDialogSettings workbenchSettings = TaskList.getPlugin().getDialogSettings();
 	IDialogSettings settings = workbenchSettings.getSection("TaskAction");//$NON-NLS-1$
 	if(settings == null)

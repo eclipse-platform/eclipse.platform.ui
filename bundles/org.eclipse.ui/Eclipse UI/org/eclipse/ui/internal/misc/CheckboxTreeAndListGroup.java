@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List;
 
-import org.eclipse.ui.internal.misc.UIHackFinder;
 /**
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
  *	All viewer selection-driven interactions are handled within this object

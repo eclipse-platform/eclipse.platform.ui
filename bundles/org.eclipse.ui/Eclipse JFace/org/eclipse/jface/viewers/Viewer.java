@@ -71,6 +71,16 @@ public abstract class Viewer implements IInputSelectionProvider {
 	private Object[] values;
 
 	/**
+	 * Remembers whether we've hooked the help listener on the control or not.
+	 */
+	private boolean helpHooked = false;
+
+	/**
+	 * Help listener for the control, created lazily when client's first help listener is added.
+	 */
+	private HelpListener helpListener = null;
+	
+	/**
 	 * Unique key for associating element data with widgets.
 	 * @see Widget#setData(String, Object)
 	 */
@@ -88,6 +98,20 @@ protected Viewer() {
  */
 public void addHelpListener(HelpListener listener) {
 	helpListeners.add(listener);
+	if (!helpHooked) {
+		Control control = getControl();
+		if (control != null && !control.isDisposed()) {
+			if (this.helpListener == null) {
+				this.helpListener = new HelpListener() {
+					public void helpRequested(HelpEvent event) {
+						handleHelpRequest(event);
+					}
+				};
+			}
+			control.addHelpListener(this.helpListener);
+			helpHooked = true;
+		}
+	}
 }
 /* (non-Javadoc)
  * Method declared on ISelectionProvider.
@@ -201,6 +225,13 @@ public abstract void refresh();
  */
 public void removeHelpListener(HelpListener listener) {
 	helpListeners.remove(listener);
+	if (helpListeners.size() == 0) {
+		Control control = getControl();
+		if (control != null && !control.isDisposed()) {
+			control.removeHelpListener(this.helpListener);
+			helpHooked = false;
+		}
+	}
 }
 /* (non-Javadoc)
  * Method declared on ISelectionProvider.

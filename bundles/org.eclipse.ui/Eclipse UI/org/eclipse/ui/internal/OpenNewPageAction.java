@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -22,6 +23,7 @@ public OpenNewPageAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("OpenNewPage.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("OpenNewPage.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_NEW_PAGE_ACTION});
 	this.window = window;
 }
 /**

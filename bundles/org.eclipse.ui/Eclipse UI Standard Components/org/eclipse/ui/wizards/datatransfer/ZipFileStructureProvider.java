@@ -60,14 +60,15 @@ protected void createContainer(IPath pathname) {
 /**
  * Creates a new file zip entry with the specified name.
  */
-protected void createFile(IPath pathname) {
+protected void createFile(ZipEntry entry) {
+	IPath pathname = new Path(entry.getName());
 	ZipEntry parent;
 	if (pathname.segmentCount() == 1)
 		parent = root;
 	else
-		parent = (ZipEntry)directoryEntryCache.get(pathname.removeLastSegments(1));
+		parent = (ZipEntry) directoryEntryCache.get(pathname.removeLastSegments(1));
 
-	addToChildren(parent,zipFile.getEntry(pathname.toString()));
+	addToChildren(parent, entry);
 }
 /* (non-Javadoc)
  * Method declared on IImportStructureProvider
@@ -133,7 +134,7 @@ protected void initialize() {
 			
 			for (int i = 1; i < pathSegmentCount; i++)
 				createContainer(path.uptoSegment(i));
-			createFile(path.removeTrailingSeparator());
+			createFile(entry);
 		}
 	}
 }

@@ -9,7 +9,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -36,6 +37,11 @@ public class PerspectivesPreferencePage extends PreferencePage
  * Creates the page's UI content.
  */
 protected Control createContents(Composite parent) {
+
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE));
+
+	noDefaultAndApplyButton();
+	
 	// define container & its gridding
 	Composite pageComponent = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
@@ -105,13 +111,14 @@ protected Control createContents(Composite parent) {
 protected Button createVerticalButton(Composite parent, String label, boolean defaultButton) {
 	Button button = new Button(parent, SWT.PUSH);
 
+	button.setText(label);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH + 10);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
 	
-	button.setText(label);
 	button.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			verticalButtonPressed(event.widget);
@@ -148,9 +155,14 @@ protected Control createVerticalButtonBar(Composite parent) {
 	composite.setLayout(layout);
 
 	// Add the buttons to the button bar.
-	setDefaultButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.setDefault"), false); //$NON-NLS-1$
-	revertButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.undoChanges"), false); //$NON-NLS-1$
-	deleteButton = createVerticalButton(composite, WorkbenchMessages.getString("Delete"), false); //$NON-NLS-1$
+	setDefaultButton = createVerticalButton(composite,WorkbenchMessages.getString("PerspectivesPreference.MakeDefault"), false);  //$NON-NLS-1$
+	setDefaultButton.setToolTipText(WorkbenchMessages.getString("PerspectivesPreference.MakeDefaultTip")); //$NON-NLS-1$
+	
+	revertButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.Reset"), false); //$NON-NLS-1$
+	revertButton.setToolTipText(WorkbenchMessages.getString("PerspectivesPreference.ResetTip")); //$NON-NLS-1$
+	
+	deleteButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.Delete"), false);  //$NON-NLS-1$
+	deleteButton.setToolTipText(WorkbenchMessages.getString("PerspectivesPreference.DeleteTip")); //$NON-NLS-1$
 	updateButtons();
 
 	return composite;

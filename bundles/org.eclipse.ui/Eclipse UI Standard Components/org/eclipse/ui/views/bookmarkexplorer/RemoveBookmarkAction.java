@@ -4,6 +4,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -17,6 +18,7 @@ import java.util.*;
 public RemoveBookmarkAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("RemoveBookmark.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("RemoveBookmark.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.REMOVE_BOOKMARK_ACTION});
 	setEnabled(false);
 }
 /**

@@ -110,6 +110,8 @@ boolean performMove(
  */
 public void run() {
 
+	errorStatus = null; 
+
 	IProject project = (IProject) getSelectedResources().get(0);
 
 	//Get the project name and location in a two element list
@@ -128,6 +130,7 @@ public void run() {
 	// If errors occurred, open an Error dialog
 	if (errorStatus != null) {
 		ErrorDialog.openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
+		errorStatus = null; 
 	}
 }
 }

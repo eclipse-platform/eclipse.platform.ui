@@ -12,7 +12,6 @@ import org.eclipse.swt.custom.*;
 import java.util.*;
 import java.util.List;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;

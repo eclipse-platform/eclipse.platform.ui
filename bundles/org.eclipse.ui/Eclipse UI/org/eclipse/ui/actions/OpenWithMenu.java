@@ -134,21 +134,6 @@ private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boole
 	menuItem.addListener(SWT.Dispose, listener);
 	menuItem.addListener(SWT.Selection, listener);
 }
-/**
- * Ensures that the contents of the given file resource are local.
- *
- * @param file the file resource
- * @return <code>true</code> if the file is local, and <code>false</code> if
- *   it could not be made local for some reason
- */
-private boolean ensureFileLocal(final IFile file) {
-	try {
-		file.setLocal(true, IResource.DEPTH_ZERO, null);
-	} catch (CoreException exception) {
-		return false;
-	}
-	return true;
-}
 /* (non-Javadoc)
  * Fills the menu with perspective items.
  */
@@ -218,20 +203,18 @@ public boolean isDynamic() {
  */
 private void openEditor(IEditorDescriptor editor) {
 	IFile file = getFileResource();
-	if (ensureFileLocal(file)) {
-		try {
-			if (editor == null) {
-				page.openSystemEditor(file);
-			} else {
-				page.openEditor(file, editor.getId());
-			}
-		} catch (PartInitException e) {
-			DialogUtil.openError(
-				page.getWorkbenchWindow().getShell(),
-				WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
-				e.getMessage(),
-				e);
+	try {
+		if (editor == null) {
+			page.openSystemEditor(file);
+		} else {
+			page.openEditor(file, editor.getId());
 		}
+	} catch (PartInitException e) {
+		DialogUtil.openError(
+			page.getWorkbenchWindow().getShell(),
+			WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+			e.getMessage(),
+			e);
 	}
 }
 }

@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
@@ -62,6 +63,7 @@ protected void cancelPressed() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SHOW_VIEW_DIALOG});
 }
 /**
  * Adds buttons to this dialog's button bar.

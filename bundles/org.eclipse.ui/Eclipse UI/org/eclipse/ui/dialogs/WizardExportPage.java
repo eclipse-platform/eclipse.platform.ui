@@ -10,7 +10,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -267,25 +266,14 @@ protected boolean ensureResourcesLocal(List resources) {
 	
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		protected void execute(IProgressMonitor monitor) {
-
-			UIHackFinder.fixPR();
 			// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
 			monitor.beginTask(WorkbenchMessages.getString("WizardExportPage.progressMessage"), nonLocalResources.size() * 1000); //$NON-NLS-1$
 			Iterator resourcesEnum = nonLocalResources.iterator();
-			UIHackFinder.fixPR(); //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
+			//1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
 
 			try {
 				while (resourcesEnum.hasNext()) {
 					IResource resource = (IResource)resourcesEnum.next();
-/*
-					try {
-						UIHackFinder.fixPR();
-						// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-						resource.ensureLocal(IResource.DEPTH_INFINITE,new SubProgressMonitor(monitor,1000));
-					} catch (CoreException e) {
-						errors.addElement(e.getStatus());
-					}
-*/
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
 				}
@@ -722,7 +710,6 @@ protected void selectAppropriateFolderContents(IContainer resource) {
 	}
 	} catch (CoreException e) {
 		//don't show children if there are errors -- should at least log this
-		UIHackFinder.fixFuture();
 	}
 }
 /**

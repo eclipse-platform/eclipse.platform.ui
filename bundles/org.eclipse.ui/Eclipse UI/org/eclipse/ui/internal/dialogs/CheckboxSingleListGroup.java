@@ -11,11 +11,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List;
-
 /**
  *	This class implements the identical API to CheckboxDoubleListGroup, but
- *	only displays a single checkbox list.  This class is temporary, and will
- *	disappear as soon as core provides versioning support.
+ *	only displays a single checkbox list. 
  */
 class CheckboxSingleListGroup extends Composite implements ICheckStateListener, ISelectionChangedListener {
 	private	Object			root;

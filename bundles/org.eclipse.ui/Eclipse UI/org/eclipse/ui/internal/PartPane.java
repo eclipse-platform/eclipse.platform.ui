@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -83,7 +82,6 @@ public void createControl(Composite parent) {
 	// Create view form.	
 	control = new ViewForm(parent, getStyle());
 	control.setFont(getFont());
-	UIHackFinder.fixPR(); // 1GAP46W: SWT:ALL - ViewForm activeBorder not always visible
 	control.marginWidth = 0;
 	control.marginHeight = 0;
 

@@ -16,9 +16,13 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
@@ -42,6 +46,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -73,10 +78,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
 
 
@@ -182,8 +189,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			IDocument document= fSourceViewer.getDocument();
 			int offset= selection.getOffset();
 			int length= selection.getLength();
-			if (offset + length <= document.getLength())
-				selectAndReveal(offset, length);
+			if (offset + length <= document.getLength()) {
+
+				try {
+					selectAndReveal(offset, length);
+				} catch (IllegalArgumentException x) {
+					/*
+					 * Catching IllegalArgumentException because of
+					 * 1GEUUH3 and 1GDXEKW.
+					 */
+				}
+			}
 		} 
 	};
 	
@@ -365,6 +381,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private String fEditorContextMenuId;
 	/** The ruler's context menu id */
 	private String fRulerContextMenuId;
+	/** The editor's help context id */
+	private String fHelpContextId;
 	/** The editor's presentation mode */
 	private boolean fShowHighlightRangeOnly;
 	/** The actions registered with the editor */	
@@ -409,6 +427,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		super();
 		fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
 		fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
+		fHelpContextId= null;
 	}
 	/**
 	 * Convenience method to add the action installed under the given action id
@@ -486,21 +505,67 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void createActions() {
 		
-		setAction(ITextEditorActionConstants.UNDO, new TextOperationAction(getResourceBundle(), "Undo.", this, ITextOperationTarget.UNDO));
-		setAction(ITextEditorActionConstants.REDO, new TextOperationAction(getResourceBundle(), "Redo.", this, ITextOperationTarget.REDO));
-		setAction(ITextEditorActionConstants.CUT, new TextOperationAction(getResourceBundle(), "Cut.", this, ITextOperationTarget.CUT));
-		setAction(ITextEditorActionConstants.COPY, new TextOperationAction(getResourceBundle(), "Copy.", this, ITextOperationTarget.COPY));
-		setAction(ITextEditorActionConstants.PASTE, new TextOperationAction(getResourceBundle(), "Paste.", this, ITextOperationTarget.PASTE));
-		setAction(ITextEditorActionConstants.DELETE, new TextOperationAction(getResourceBundle(), "Delete.", this, ITextOperationTarget.DELETE));
-		setAction(ITextEditorActionConstants.SELECT_ALL, new TextOperationAction(getResourceBundle(), "SelectAll.", this, ITextOperationTarget.SELECT_ALL));
-		setAction(ITextEditorActionConstants.SHIFT_RIGHT, new TextOperationAction(getResourceBundle(), "ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT));
-		setAction(ITextEditorActionConstants.SHIFT_LEFT, new TextOperationAction(getResourceBundle(), "ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT));
-		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(getResourceBundle(), "FindReplace.", this));
-		setAction(ITextEditorActionConstants.BOOKMARK, new AddMarkerAction(getResourceBundle(), "AddBookmark.", this, IMarker.BOOKMARK, true));
-		setAction(ITextEditorActionConstants.ADD_TASK, new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true));
-		setAction(ITextEditorActionConstants.SAVE, new SaveAction(getResourceBundle(), "Save.", this));
-		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, new RevertToSavedAction(getResourceBundle(), "Revert.", this));
-		setAction(ITextEditorActionConstants.GOTO_LINE, new GotoLineAction(getResourceBundle(), "GotoLine.", this));
+		ResourceAction action;
+		
+		action= new TextOperationAction(getResourceBundle(), "Undo.", this, ITextOperationTarget.UNDO);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+		setAction(ITextEditorActionConstants.UNDO, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "Redo.", this, ITextOperationTarget.REDO);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
+		setAction(ITextEditorActionConstants.REDO, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "Cut.", this, ITextOperationTarget.CUT);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
+		setAction(ITextEditorActionConstants.CUT, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "Copy.", this, ITextOperationTarget.COPY);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
+		setAction(ITextEditorActionConstants.COPY, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "Paste.", this, ITextOperationTarget.PASTE);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
+		setAction(ITextEditorActionConstants.PASTE, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "Delete.", this, ITextOperationTarget.DELETE);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
+		setAction(ITextEditorActionConstants.DELETE, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "SelectAll.", this, ITextOperationTarget.SELECT_ALL);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
+		setAction(ITextEditorActionConstants.SELECT_ALL, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
+		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
+		
+		action= new TextOperationAction(getResourceBundle(), "ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
+		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
+		
+		action= new FindReplaceAction(getResourceBundle(), "FindReplace.", this);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		setAction(ITextEditorActionConstants.FIND, action);
+		
+		action= new AddMarkerAction(getResourceBundle(), "AddBookmark.", this, IMarker.BOOKMARK, true);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
+		setAction(ITextEditorActionConstants.BOOKMARK, action);
+		
+		action= new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
+		setAction(ITextEditorActionConstants.ADD_TASK, action);
+		
+		action= new SaveAction(getResourceBundle(), "Save.", this);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
+		setAction(ITextEditorActionConstants.SAVE, action);
+		
+		action= new RevertToSavedAction(getResourceBundle(), "Revert.", this);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
+		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
+		
+		action= new GotoLineAction(getResourceBundle(), "GotoLine.", this);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
+		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
 		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(getResourceBundle(), "ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true));
 		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(getResourceBundle(), "ManageTasks.", fVerticalRuler, this, IMarker.TASK, true));
@@ -543,6 +608,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		StyledText styledText= fSourceViewer.getTextWidget();
 		initializeWidgetFont(styledText);
 		
+		if (getHelpContextId() != null)
+			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
+			
 		MenuManager manager= new MenuManager(fEditorContextMenuId, fEditorContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());
@@ -722,7 +790,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (isSaveAsAllowed()) {
 				
-				doSaveAs();
+				/*
+				 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+				 * Changed Behavior to make sure that if called inside a regular save (because
+				 * of deletion of input element) there is a way to report back to the caller.
+				 */
+				performSaveAs(progressMonitor);
 			
 			} else {
 				
@@ -742,6 +815,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>IEditorPart</code> method does nothing. Subclasses may reimplement.
 	 */
 	public void doSaveAs() {
+		/*
+		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+		 * Changed Behavior to make sure that if called inside a regular save (because
+		 * of deletion of input element) there is a way to report back to the caller.
+		 */
+		performSaveAs(null);
 	}
 	/**
 	 * Internal <code>setInput</code> method.
@@ -905,6 +984,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final String getEditorContextMenuId() {
 		return fEditorContextMenuId;
+	}
+	/** 
+	 * Returns the editor's help context id.
+	 *
+	 * @return the editor's help context id
+	 */
+	protected final String getHelpContextId() {
+		return fHelpContextId;
 	}
 	/*
 	 * @see ITextEditor#getHighlightRange
@@ -1121,13 +1208,33 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (getDocumentProvider().isDeleted(getEditorInput())) {
 			
-			title= getResourceString("Error.activated.deleted.title");
-			msg= getResourceString("Error.activated.deleted.message");
+			if (isSaveAsAllowed()) {
+			
+				title= getResourceString("Error.activated.deleted.save.title");
+				msg= getResourceString("Error.activated.deleted.save.message");
 				
-			if (MessageDialog.openQuestion(shell, title, msg))
-				doSaveAs();
-			else
-				close(false);
+				String[] buttons= {
+					getResourceString("Error.activated.deleted.save.button.save"),
+					getResourceString("Error.activated.deleted.save.button.close"),
+				};
+					
+				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
+				
+				if (dialog.open() == 0) {
+					NullProgressMonitor pm= new NullProgressMonitor();
+					performSaveAs(pm);
+					if (pm.isCanceled())
+						handleEditorInputChanged();
+				} else {
+					close(false);
+				}
+				
+			} else {
+				
+				title= getResourceString("Error.activated.deleted.close.title");
+				msg= getResourceString("Error.activated.deleted.close.message");
+				MessageDialog.openConfirm(shell, title, msg);
+			}
 			
 		} else {
 			
@@ -1168,11 +1275,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (MessageDialog.openQuestion(shell, title, msg))
 				performSaveOperation(createSaveOperation(true), progressMonitor);
-		
+			else {
+				/*
+				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
+				 * Set progress monitor to canceled in order to report back 
+				 * to enclosing operations. 
+				 */
+				progressMonitor.setCanceled(true);
+			}
 		} else {
+			
 			String title= getResourceString("Error.save.title");
 			String msg= getResourceString("Error.save.message");
 			ErrorDialog.openError(shell, title, msg, exception.getStatus());
+			
+			/*
+			 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
+			 * Set progress monitor to canceled in order to report back 
+			 * to enclosing operations. 
+			 */
+			progressMonitor.setCanceled(true);
 		}
 	}
 	/**
@@ -1290,6 +1412,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#isEditable
 	 */
 	public boolean isEditable() {
+		
+		/*
+		 * 1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in the repositories?
+		 * Checks the editor input whether it is editable. This is a layer breaker, as only the
+		 * concrete document providers know about the various kinds of editor input.
+		 * Should be something like: getDocumentProvider().isEditable(getEditorInput());
+		 */
+		IEditorInput input= getEditorInput();
+		if (input instanceof IStorageEditorInput) {
+			IStorageEditorInput storageInput= (IStorageEditorInput) input;
+			try {
+				IStorage storage= storageInput.getStorage();
+				return (storage != null && !storage.isReadOnly());
+			} catch (CoreException x) {
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				log.log(x.getStatus());
+			}
+		}
+		
 		return true;
 	}
 	/**
@@ -1334,6 +1475,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSelectionActions.add(actionId);
 		} else
 			fSelectionActions.remove(actionId);
+	}
+	/**
+	 * Performs a save as and reports the result state back to the 
+	 * given progress monitor. This default implementation does nothing.
+	 * Subclasses may reimplement.
+	 * 
+	 * @param progressMonitor the progress monitor for communicating result state or <code>null</code>
+	 */
+	protected void performSaveAs(IProgressMonitor progressMonitor) {
 	}
 	/**
 	 * Performs the given save operation and handles errors appropriatly.
@@ -1466,7 +1616,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets this editor's context menu id.
 	 *
-	 * @param contextMenuId the content menu id
+	 * @param contextMenuId the context menu id
 	 */
 	protected void setEditorContextMenuId(String contextMenuId) {
 		Assert.isNotNull(contextMenuId);
@@ -1478,6 +1628,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void setFocus() {
 		if (fSourceViewer != null)
 			fSourceViewer.getTextWidget().setFocus();
+	}
+	/**
+	 * Sets the editor's help context id.
+	 *
+	 * @param helpContextId the help context id
+	 */
+	protected void setHelpContextId(String helpContextId) {
+		Assert.isNotNull(helpContextId);
+		fHelpContextId= helpContextId;
 	}
 	/*
 	 * @see ITextEditor#setHighlightRange
@@ -1537,7 +1696,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets the ruler's context menu id.
 	 *
-	 * @param contextMenuId the content menu id
+	 * @param contextMenuId the context menu id
 	 */
 	protected void setRulerContextMenuId(String contextMenuId) {
 		Assert.isNotNull(contextMenuId);

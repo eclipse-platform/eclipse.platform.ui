@@ -48,7 +48,7 @@ public MarkerType[] getTypes() {
 }
 /**
  * Returns the label for the given marker type.
- * Temporary workaround until we have labels in XML.
+ * Workaround until we have labels in XML.
  */
 String getWellKnownLabel(String type) {
 	if (type.equals(IMarker.PROBLEM))

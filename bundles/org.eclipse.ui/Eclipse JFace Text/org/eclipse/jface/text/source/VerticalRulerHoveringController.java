@@ -203,8 +203,8 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 		Control control= fVerticalRuler.getControl();
 		
 		int height= visibleLine * text.getLineHeight() - text.getTopPixel();
-		x += control.getSize().x; // the size should mimic the cursor size,
-		                          // although there no relationship at all <g>
+		x += control.getSize().x; // the size should mimic the cursor size
+		                          // there is no API for asking it
 		
 		return control.toDisplay(new Point(x, height));
 	}

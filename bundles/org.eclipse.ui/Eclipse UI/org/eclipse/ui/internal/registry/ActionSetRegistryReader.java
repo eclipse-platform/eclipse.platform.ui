@@ -7,7 +7,6 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * A strategy to read view extensions from the registry.

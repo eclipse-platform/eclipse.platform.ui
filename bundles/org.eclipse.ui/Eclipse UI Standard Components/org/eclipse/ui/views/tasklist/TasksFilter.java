@@ -77,7 +77,6 @@ boolean containsSubstring(String string, String substring) {
 	return false;
 }
 public boolean equals(Object o) {
-	// TBD
 	return this == o;
 }
 public void reset() {

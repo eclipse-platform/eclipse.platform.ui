@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 
@@ -22,6 +23,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -49,6 +52,13 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
 			setPreferenceStore(uiPlugin.getPreferenceStore());
 		}
+	}
+	/*
+	 * @see IDialogPage#createControl(Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE));
 	}
 	/*
 	 * @see FieldEditorPreferencePage#createFieldEditors

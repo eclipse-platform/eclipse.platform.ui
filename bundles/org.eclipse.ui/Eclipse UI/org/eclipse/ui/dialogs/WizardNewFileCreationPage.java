@@ -8,8 +8,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -82,6 +82,8 @@ public void createControl(Composite parent) {
 	topLevel.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
+	WorkbenchHelp.setHelp(topLevel, new DialogPageContextComputer(this, IHelpContextIds.NEW_FILE_WIZARD_PAGE));
+
 	// resource and container group
 	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file")); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
@@ -90,6 +92,9 @@ public void createControl(Composite parent) {
 		resourceGroup.setResource(initialFileName);
 	resourceGroup.setFocus();
 	validatePage();
+	// Show description on opening
+	setErrorMessage(null);
+	setMessage(null);
 	setControl(topLevel);
 }
 /**
@@ -322,9 +327,10 @@ protected boolean validatePage() {
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently
 		if (resourceGroup.getProblemType() == resourceGroup.PROBLEM_RESOURCE_EMPTY
-			|| resourceGroup.getProblemType() == resourceGroup.PROBLEM_CONTAINER_EMPTY)
+			|| resourceGroup.getProblemType() == resourceGroup.PROBLEM_CONTAINER_EMPTY) {
 			setMessage(resourceGroup.getProblemMessage());
-		else
+			setErrorMessage(null);
+		} else
 			setErrorMessage(resourceGroup.getProblemMessage());
 		valid = false;
 	}

@@ -11,7 +11,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import java.util.Iterator;
 import java.util.ArrayList;
 
@@ -125,6 +126,13 @@ private void checkInitialSelections() {
 	
 	while (itemsToCheck.hasNext())
 		listViewer.setChecked(itemsToCheck.next(),true);
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.LIST_SELECTION_DIALOG});
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

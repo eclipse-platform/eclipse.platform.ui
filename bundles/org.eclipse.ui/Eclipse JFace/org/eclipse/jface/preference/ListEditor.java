@@ -134,11 +134,12 @@ protected abstract String createList(String[] items);
  */
 private Button createPushButton(Composite parent, String key) {
 	Button button = new Button(parent, SWT.PUSH);
+	button.setText(JFaceResources.getString(key));
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.heightHint = convertVerticalDLUsToPixels(button, IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(button, IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(button, IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
-	button.setText(JFaceResources.getString(key));
 	button.addSelectionListener(getSelectionListener());
 	return button;
 }

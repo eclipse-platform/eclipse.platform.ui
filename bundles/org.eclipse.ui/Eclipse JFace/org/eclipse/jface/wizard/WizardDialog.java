@@ -425,13 +425,14 @@ private Button createCancelButton(Composite parent) {
 
 	Button button = new Button(parent, SWT.PUSH);
 
+	button.setText(IDialogConstants.CANCEL_LABEL);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
 	
 	button.setData(new Integer(IDialogConstants.CANCEL_ID));
-	button.setText(IDialogConstants.CANCEL_LABEL);
 	button.addSelectionListener(cancelListener);
 	return button;
 }

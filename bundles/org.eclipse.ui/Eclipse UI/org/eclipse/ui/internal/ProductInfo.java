@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -17,8 +18,8 @@ import java.util.*;
  * The product info class;
  * <p>
  * The information within this object is obtained from the product "ini" file".
- * This file resides within a plugin directory and must be a standard java
- * property file.  Here are the properties as read from the file:
+ * This file resides within an install configurations directory and must be a 
+ * standard java property file.  Here are the properties as read from the file:
  * </p>
  * <p>
  * <ul>
@@ -326,8 +327,15 @@ public void readINIFile(URL baseURL) throws CoreException {
 		
 	String fileName;
 	URL url;
-
-	if ((fileName = (String) ini.get("image") ) != null) {//$NON-NLS-1$
+	
+	String suffix = ""; //$NON-NLS-1$
+	if(Display.getCurrent().getIconDepth() <= 4)
+		suffix = "_basic"; //$NON-NLS-1$
+	
+	fileName = (String) ini.get("image" + suffix);//$NON-NLS-1$
+	if (fileName == null)
+		fileName = (String) ini.get("image");//$NON-NLS-1$
+	if (fileName != null) {
 		try {
 			url = new URL(baseURL, fileName);
 			productImage = ImageDescriptor.createFromURL(url);
@@ -335,7 +343,10 @@ public void readINIFile(URL baseURL) throws CoreException {
 		catch (MalformedURLException e) {}
 	}
 
-	if ((fileName = (String) ini.get("aboutImage") ) != null) {//$NON-NLS-1$
+	fileName = (String) ini.get("aboutImage" + suffix);//$NON-NLS-1$
+	if(fileName == null)
+		fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
+	if (fileName != null) {
 		try {
 			url = new URL(baseURL, fileName);
 			aboutImage = ImageDescriptor.createFromURL(url);

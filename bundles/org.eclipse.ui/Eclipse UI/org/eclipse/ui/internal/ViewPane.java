@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -138,10 +137,14 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		public void setSite(IWorkbenchPartSite site) {
 			super.setSite(site);
 		}
+		public void setTitle(String title) {
+			super.setTitle(title);
+		}
 	}   
 	ErrorViewPart newPart = new ErrorViewPart();
 	PartSite site = (PartSite)oldPart.getSite();
 	newPart.setSite(site);
+	newPart.setTitle(site.getRegisteredName());
 	site.setPart(newPart);
 	return newPart;
 }
@@ -519,5 +522,10 @@ public void updateTitles() {
 	titleLabel.setToolTipText(view.getTitleToolTip());
 	// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
 	titleLabel.update();
+
+	// notify the page that this view's title has changed
+	// in case it needs to update its fast view button
+	WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
+	page.updateTitle(view);
 }
 }

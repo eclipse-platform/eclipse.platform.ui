@@ -5,6 +5,7 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
@@ -22,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public GotoTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
+	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.GOTO_TASK_ACTION});
 }
 /**
  * Performs this action. This action works only for single selection.

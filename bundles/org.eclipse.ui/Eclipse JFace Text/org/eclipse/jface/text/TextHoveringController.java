@@ -174,7 +174,11 @@ class TextHoveringController extends MouseTrackAdapter {
 	private Shell fWindowShell;
 	/** The label shown in the popup window shell */
 	private Label fWindowLabel;
+	/** Remembers the previous mouse hover location */
+	private Point fHoverLocation= new Point(-1, -1);
 	
+	/** The radius of the circle in which mouse hover locations are considered equal. */
+	private final static int EPSILON= 5;
 	
 	
 	/**
@@ -205,7 +209,7 @@ class TextHoveringController extends MouseTrackAdapter {
 	 */
 	private Rectangle computeCoveredArea(IRegion region) {
 		
-		// This is a hack - area too big/small - should be three rectangles and should consider line breaks
+		// The computed area is too big/small - should be three rectangles and should consider line breaks
 		
 		int offset= fTextViewer.getVisibleRegionOffset();
 		
@@ -296,15 +300,39 @@ class TextHoveringController extends MouseTrackAdapter {
 	public void install() {
 		fTextViewer.getTextWidget().addMouseTrackListener(this);
 	}
+	/**
+	 * Returns whether the given event ocurred within a cicle of <code>EPSILON</code>
+	 * pixels of the previous mouse hover location. In addition, the location of
+	 * the mouse event is remembered as the previous mouse hover location.
+	 * 
+	 * @param event the event to check
+	 * @return <code>false</code> if the event occured too close to the previous location
+	 */
+	private boolean isPreviousMouseHoverLocation(MouseEvent event) {
+
+		boolean tooClose= false;
+				
+		if (fHoverLocation.x != -1 && fHoverLocation.y != -1) {
+			tooClose= Math.abs(fHoverLocation.x - event.x) <= EPSILON;
+			tooClose= tooClose && (Math.abs(fHoverLocation.y - event.y) <= EPSILON);
+		}
+		
+		fHoverLocation.x= event.x;
+		fHoverLocation.y= event.y;
+		return tooClose;
+	}
 	/*
 	 * @see MouseTrackAdapter#mouseHover
 	 */
 	public void mouseHover(MouseEvent event) {
 		
+		if (isPreviousMouseHoverLocation(event))
+			return;
+		
 		int offset= computeOffsetAtLocation(event.x, event.y);
 		if (offset == -1)
 			return;
-			
+				
 		ITextHover hover= fTextViewer.getTextHover(offset);
 		if (hover == null)
 			return;

@@ -4,6 +4,7 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 public RemoveTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
+	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.REMOVE_TASK_ACTION});
 }
 /**
  * Removes all the tasks in the current selection from the task list.

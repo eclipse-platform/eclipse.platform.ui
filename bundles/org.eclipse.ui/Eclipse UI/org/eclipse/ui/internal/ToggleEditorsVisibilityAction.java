@@ -4,6 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.*;
 
@@ -19,6 +20,7 @@ public class ToggleEditorsVisibilityAction extends Action {
 public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION});
 	setEnabled(false);
 	this.workbenchWindow = window;
 

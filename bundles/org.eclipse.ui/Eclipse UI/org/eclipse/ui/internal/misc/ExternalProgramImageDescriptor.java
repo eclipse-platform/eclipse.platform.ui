@@ -54,9 +54,17 @@ public Image getImage() {
  */
 public ImageData getImageData() {
 	ImageData data = null;
-	if (program == null || ((data = program.getImageData()) == null)) {
-		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).getImageData();
-	}
+	ImageData defaultImage = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).getImageData();
+	if(defaultImage == null)
+		return null;
+		
+	if (program == null || ((data = program.getImageData()) == null))
+		return defaultImage;
+
+	//The images in GNOME are too big. Scaling them does not give nice result so return defaultImage;
+	if(data.height > defaultImage.height || data.width > defaultImage.width)
+		return defaultImage;
+		
 	return data;
 }
 /**

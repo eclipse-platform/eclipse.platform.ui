@@ -12,6 +12,8 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ui.help.WorkbenchHelp;
+
 
 /**
  * An action which configures its label, image, tooltip, and description from
@@ -85,5 +87,13 @@ public abstract class ResourceAction extends Action {
 		}
 		
 		return value;
+	}
+	/**
+	 * Sets the action's help context id.
+	 * 
+	 * @param contextId the help context id
+	 */
+	public final void setHelpContextId(String contextId) {
+		WorkbenchHelp.setHelp(this, new Object[] { contextId });
 	}
 }

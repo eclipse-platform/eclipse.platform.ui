@@ -4,11 +4,14 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.dialogs.*;
@@ -37,14 +40,19 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 * The shell in which to show any dialogs.
 	 */
 	private Shell shell;
+
+	/**
+	 * Whether or not we are deleting content for projects.
+	 */
+	private boolean deleteContent;
 /**
  * Creates a new delete resource action.
  *
  * @param shell the shell for any dialogs
  */
 public DeleteResourceAction(Shell shell) {
-	super(WorkbenchMessages.getString("DeleteAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("DeleteAction.toolTip")); //$NON-NLS-1$
+	super(WorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.DELETE_RESOURCE_ACTION});
 	setId(ID);
 	Assert.isNotNull(shell);
@@ -59,7 +67,13 @@ public DeleteResourceAction(Shell shell) {
  */
 boolean canDelete() {
 	if (getSelectedNonResources().size() > 0) return false;
-
+	int types = getSelectedResourceTypes();
+	// allow only projects or only non-projects to be selected; 
+	// note that the selection may contain multiple types of resource
+	if (!(types == IResource.PROJECT || (types & IResource.PROJECT) == 0)) {
+		return false;
+	}
+	
 	List resources = getSelectedResources();
 	if (resources.size() == 0) return false;	
 	// Return true if everything in the selection exists.
@@ -78,10 +92,99 @@ boolean canDelete() {
  *  if the deletion should be abandoned
  */
 boolean confirmDelete() {
-	return
-		MessageDialog.openQuestion(shell,
-		WorkbenchMessages.getString("Question"),  //$NON-NLS-1$
-		WorkbenchMessages.getString("DeleteAction.confirmDelete")); //$NON-NLS-1$
+	if ((getSelectedResourceTypes() & IResource.PROJECT) != 0) {
+		return confirmDeleteProjects();
+	}
+	else {
+		return confirmDeleteNonProjects();
+	}
+}
+/**
+ * Asks the user to confirm a delete operation,
+ * where the selection contains no projects.
+ *
+ * @return <code>true</code> if the user says to go ahead, and <code>false</code>
+ *  if the deletion should be abandoned
+ */
+boolean confirmDeleteNonProjects() {
+	List resources = getSelectedResources();
+	String title = WorkbenchMessages.getString("DeleteResourceAction.title");  //$NON-NLS-1$
+	String msg;
+	if (resources.size() == 1) {
+		IResource resource = (IResource) resources.get(0);
+		msg = WorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
+	}
+	else {
+		msg = WorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+	}
+	return MessageDialog.openQuestion(shell, title, msg);
+}
+/**
+ * Asks the user to confirm a delete operation,
+ * where the selection contains only projects.
+ * Also remembers whether project content should be deleted.
+ *
+ * @return <code>true</code> if the user says to go ahead, and <code>false</code>
+ *  if the deletion should be abandoned
+ */
+boolean confirmDeleteProjects() {
+	String title = WorkbenchMessages.getString("DeleteResourceAction.titleProject");
+	List resources = getSelectedResources();
+	String msg;
+	if (resources.size() == 1) {
+		IProject project = (IProject) resources.get(0);
+		msg = WorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName(), project.getLocation().toOSString() });  //$NON-NLS-1$
+	}
+	else {
+		msg = WorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+	}
+	MessageDialog dialog = new MessageDialog(
+		shell,
+		title, 
+		null,	// accept the default window icon
+		msg, 
+		MessageDialog.QUESTION, 
+		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL},
+		0); 	// yes is the default
+	int code = dialog.open();
+	switch (code) {
+		case 0: // YES
+			deleteContent = true;
+			return true;
+		case 1: // NO
+			deleteContent = false;
+			return true;
+		default: // CANCEL and close dialog
+			return false;
+	}
+}
+/**
+ * Deletes the given resources.
+ */
+void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
+	monitor.beginTask("", resourcesToDelete.length);
+	for (int i = 0; i < resourcesToDelete.length; ++i) {
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+		delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+	}
+	monitor.done();
+}
+/**
+ * Deletes the given resource.
+ */
+void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
+	boolean force = false; // don't force deletion of out-of-sync resources
+	if (resourceToDelete.getType() == IResource.PROJECT) {
+		// if it's a project, ask whether content should be deleted too
+		IProject project = (IProject) resourceToDelete;
+		project.delete(deleteContent, force, monitor);
+	}
+	else {
+		// if it's not a project, just delete it
+		resourceToDelete.delete(force, monitor);
+	}
 }
 /**
  *	Return an array of the currently selected resources.
@@ -96,6 +199,17 @@ IResource[] getSelectedResourcesArray() {
 		resources[i++] = (IResource) e.next();
 	return resources;
 }
+/**
+ * Returns a bit-mask containing the types of resources in the selection.
+ */
+int getSelectedResourceTypes() {
+	int types = 0;
+	for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
+		IResource r = (IResource) i.next();
+		types |= r.getType();
+	}
+	return types;
+}
 /* (non-Javadoc)
  * Method declared on IAction.
  */
@@ -106,33 +220,34 @@ public void run() {
 	ReadOnlyStateChecker checker =
 		new ReadOnlyStateChecker(
 			this.shell,
-			WorkbenchMessages.getString("DeleteResource.checkDelete"), //$NON-NLS-1$
-			WorkbenchMessages.getString("DeleteResource.readOnlyQuestion")); //$NON-NLS-1$
+			WorkbenchMessages.getString("DeleteResourceAction.checkDelete"), //$NON-NLS-1$
+			WorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
 
 	final IResource[] resourcesToDelete =
 		checker.checkReadOnlyResources(getSelectedResourcesArray());
 
 	try {
-		new ProgressMonitorDialog(
-			shell).run(true, true, new WorkspaceModifyOperation() {
+		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
-				WorkbenchPlugin.getPluginWorkspace().delete(resourcesToDelete, false, monitor);
+				delete(resourcesToDelete, monitor);
 			}
-		});
+		};
+		new ProgressMonitorDialog(shell).run(true, true, op);
 	} catch (InvocationTargetException e) {
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {
-			ErrorDialog.openError(shell, WorkbenchMessages.getString("DeleteAction.errorTitle"), null, // no special message //$NON-NLS-1$
+			ErrorDialog.openError(shell, WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), null, // no special message //$NON-NLS-1$
 			 ((CoreException) t).getStatus());
 		} else {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
 			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}));//$NON-NLS-1$
 			MessageDialog.openError(
 				shell,
-				WorkbenchMessages.getString("DeleteAction.messageTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("DeleteResourceAction.messageTitle"), //$NON-NLS-1$
 				WorkbenchMessages.format("DeleteResourceAction.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 		}
 	} catch (InterruptedException e) {
+		// just return
 	}
 }
 /**

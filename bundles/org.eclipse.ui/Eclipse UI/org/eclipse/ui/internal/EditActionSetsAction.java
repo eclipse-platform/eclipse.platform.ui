@@ -22,6 +22,12 @@ import java.util.*;
 public class EditActionSetsAction  extends Action {
 	private IWorkbenchWindow window;
 /**
+ * This default constructor allows the the action to be called from the welcome page.
+ */
+public EditActionSetsAction() {
+	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+}
+/**
  * 
  */
 public EditActionSetsAction(IWorkbenchWindow window) {

@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 
 /**
  * Implementation of the view sorting actions.
@@ -25,6 +26,7 @@ public SortViewAction(ResourceNavigator navigator, boolean sortByType) {
 	}
 	setEnabled(true);
 	this.sort = sortByType;
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.SORT_VIEW_ACTION});
 }
 public void run() {
 	if (sort)

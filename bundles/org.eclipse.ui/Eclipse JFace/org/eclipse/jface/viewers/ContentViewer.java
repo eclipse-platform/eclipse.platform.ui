@@ -163,8 +163,8 @@ protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
  * first established.
  * </p> 
  * <p>
- * The <code>ContentViewer</code> implementation of this method hooks help requests
- * and dispose events for the given control.
+ * The <code>ContentViewer</code> implementation of this method hooks 
+ * dispose events for the given control.
  * Subclasses may override if they need to add other control hooks;
  * however, <code>super.hookControl</code> must be invoked.
  * </p>
@@ -172,11 +172,6 @@ protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
  * @param control the control
  */
 protected void hookControl(Control control) {
-	control.addHelpListener(new HelpListener() {
-		public void helpRequested(HelpEvent event) {
-			handleHelpRequest(event);
-		}
-	});
 	control.addDisposeListener(new DisposeListener() {
 		public void widgetDisposed(DisposeEvent event) {
 			handleDispose(event);

@@ -186,9 +186,7 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 					image = lprov.getImage(element);
 				}
 			}
-			if (!ti.getText(column).equals(text)) {
-				ti.setText(column, text);
-			}
+			ti.setText(column, text);
 			if (ti.getImage(column) != image) {
 				ti.setImage(column, image);
 			}

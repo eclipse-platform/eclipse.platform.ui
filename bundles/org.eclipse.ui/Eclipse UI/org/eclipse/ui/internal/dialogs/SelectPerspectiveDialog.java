@@ -7,7 +7,8 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -21,7 +22,7 @@ import java.util.*;
 public class SelectPerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 	implements ISelectionChangedListener
 {
-	private ListViewer list;
+	private TableViewer list;
 	private IPerspectiveRegistry perspReg;
 	private IViewDescriptor selection;
 	private IPerspectiveDescriptor perspDesc;
@@ -50,6 +51,7 @@ protected void cancelPressed() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SELECT_PERSPECTIVE_DIALOG});
 }
 /**
  * Adds buttons to this dialog's button bar.
@@ -80,7 +82,7 @@ protected Control createDialogArea(Composite parent) {
 	layout.numColumns = 2;
 
 	// Add perspective list.
-	list = new ListViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
 	list.setSorter(new ViewerSorter() {});

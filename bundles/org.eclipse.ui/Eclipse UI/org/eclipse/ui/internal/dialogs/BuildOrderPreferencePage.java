@@ -9,7 +9,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -119,6 +120,8 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
  */
 protected Control createContents(Composite parent) {
 
+	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE));
+
 	//The main composite
 	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
@@ -172,7 +175,6 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 
 	//Create an intermeditate composite to keep the buttons in the same column
 	this.buttonComposite = new Composite(composite, SWT.RIGHT);
-	this.buttonComposite.setEnabled(enableComposite);
 	GridLayout layout = new GridLayout();
 	this.buttonComposite.setLayout(layout);
 	GridData gridData = new GridData();
@@ -381,7 +383,6 @@ private void removeSelection() {
  */
 private void setBuildOrderWidgetsEnablement(boolean value) {
 
-	this.buttonComposite.setEnabled(value);
 	this.buildList.setEnabled(value);
 	Control[] children = this.buttonComposite.getChildren();
 	for (int i = 0; i < children.length; i++) {
@@ -399,7 +400,8 @@ private void setButtonGridData(Button button) {
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
 }
 /**

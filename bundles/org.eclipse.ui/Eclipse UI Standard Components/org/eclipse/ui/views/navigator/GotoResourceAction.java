@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
@@ -20,6 +21,7 @@ public class GotoResourceAction extends ResourceNavigatorAction {
  */
 /*package */ GotoResourceAction(ResourceNavigator navigator, String label) {
 	super(navigator, label);
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_ACTION});
 }
 /**
  * Collect all resources in the workbench and add them to the <code>resources</code>
@@ -35,7 +37,6 @@ private void collectAllResources(IContainer container,ArrayList resources) {
 				collectAllResources((IContainer)r,resources);
 		}
 	} catch (CoreException e) {
-		//TBD: What to do here.
 	}
 }
 /**

@@ -4,6 +4,7 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.help.*;
 
 /**
  * This action hides or shows expert properties in the <code>PropertySheetViewer</code>.
@@ -16,6 +17,7 @@ package org.eclipse.ui.views.properties;
 public FilterAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
 	setToolTipText(PropertiesMessages.getString("Filter.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.FILTER_ACTION});
 }
 /**
  * Toggle the display of expert properties.

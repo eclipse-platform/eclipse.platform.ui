@@ -18,13 +18,23 @@ public class WelcomeItem {
 	private int[][] boldRanges;
 	private int[][] helpRanges;
 	private String[] helpIds;
+	private String[] helpHrefs;
 	private int[][] actionRanges;
 	private String[] actionPluginIds;
 	private String[] actionClasses;
 /**
  * Creates a new welcome item
  */
-public WelcomeItem(String text, int[][] boldRanges, int[][] actionRanges, String[] actionPluginIds, String[] actionClasses, int[][] helpRanges, String[] helpIds) {
+public WelcomeItem(
+	String text,
+	int[][] boldRanges,
+	int[][] actionRanges,
+	String[] actionPluginIds,
+	String[] actionClasses,
+	int[][] helpRanges,
+	String[] helpIds,
+	String[] helpHrefs) {
+	    
 	this.text = text;
 	this.boldRanges = boldRanges;
 	this.actionRanges = actionRanges;
@@ -32,6 +42,7 @@ public WelcomeItem(String text, int[][] boldRanges, int[][] actionRanges, String
 	this.actionClasses = actionClasses;
 	this.helpRanges = helpRanges;
 	this.helpIds = helpIds;
+	this.helpHrefs = helpHrefs;
 }
 /**
  * Returns the action ranges (character locations)
@@ -85,10 +96,14 @@ public void logActionLinkError(String actionPluginId, String actionClass) {
 /**
  * Open a help topic
  */
-private void openHelpTopic(String topic) {
+private void openHelpTopic(String topic, String href) {
 	IHelp helpSupport = WorkbenchHelp.getHelpSupport();
-	if (helpSupport != null)
-		helpSupport.displayHelp(topic);
+	if (helpSupport != null) {
+		if (href != null) 
+			helpSupport.displayHelp(topic, href);
+		else
+			helpSupport.displayHelp(topic);
+	}
 }
 /**
  * Run an action
@@ -125,12 +140,7 @@ public void triggerLinkAt(int offset) {
 	for (int i = 0; i < helpRanges.length; i++){
 		if (offset > helpRanges[i][0] && offset <= helpRanges[i][0] + helpRanges[i][1]) {
 			// trigger the link
-			final String id = helpIds[i];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					openHelpTopic(id);
-				}
-			});
+			openHelpTopic(helpIds[i], helpHrefs[i]);
 			return;
 		}
 	}
@@ -139,13 +149,7 @@ public void triggerLinkAt(int offset) {
 	for (int i = 0; i < actionRanges.length; i++){
 		if (offset > actionRanges[i][0] && offset <= actionRanges[i][0] + actionRanges[i][1]) {
 			// trigger the link
-			final String id = actionPluginIds[i];
-			final String className = actionClasses[i];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					runAction(id, className);
-				}
-			});
+			runAction(actionPluginIds[i], actionClasses[i]);
 			return;
 		}
 	}

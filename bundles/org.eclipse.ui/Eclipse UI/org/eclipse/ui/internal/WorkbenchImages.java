@@ -103,10 +103,6 @@ private final static void declareImage(String key,String path) {
 }
 private final static void declareImages() {
 
-	
-	UIHackFinder.fixUI();   
-	// This code will need to support 16x16 and 20x20 toolbar (the 20x20 is out of ctool20)
-
 							
 	// toolbar buttons for wizards
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ, PATH_ETOOL+"new_wiz.gif");//$NON-NLS-1$

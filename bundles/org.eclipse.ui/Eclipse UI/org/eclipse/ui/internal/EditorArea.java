@@ -15,7 +15,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * Represents the area set aside for editor workbooks.
@@ -213,7 +212,7 @@ public void restoreState(IMemento memento) {
 		// Create the part.
 		EditorWorkbook workbook = new EditorWorkbook(this);
 		workbook.setID(partID);
-		UIHackFinder.fixFuture(); // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
+		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		workbook.setContainer(this);
 		
 		// Add the part to the layout

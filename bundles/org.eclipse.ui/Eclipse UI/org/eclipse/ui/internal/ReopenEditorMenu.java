@@ -70,13 +70,7 @@ public void fill(Menu menu, int index) {
 		mi.setText(calcText(i, item));
 		mi.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IWorkbenchPage page = fWindow.getActivePage();
-				if (page != null) {
-					try {
-						page.openEditor(item.input, item.desc.getId());
-					} catch (PartInitException e2) {
-					}
-				}
+				open(item);
 			}
 		});
 	}
@@ -86,5 +80,33 @@ public void fill(Menu menu, int index) {
  */
 public boolean isDynamic() {
 	return true;
+}
+/**
+ * Reopens the editor for the given history item.
+ */
+void open(EditorHistoryItem item) {
+	IWorkbenchPage page = fWindow.getActivePage();
+	if (page != null) {
+		try {
+			// Fix for 1GF6HQ1: ITPUI:WIN2000 - NullPointerException: opening a .ppt file
+			// Descriptor is null if opened on OLE editor.  .
+			IEditorInput input = item.input;
+			IEditorDescriptor desc = item.desc;
+			if (desc == null) {
+				// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
+				// doesn't allow null id.
+				// However, if id is null, the editor input must be an IFileEditorInput,
+				// so we can use openEditor(IFile).  
+				// Do nothing if for some reason input was not an IFileEditorInput.
+				if (input instanceof IFileEditorInput) {
+					page.openEditor(((IFileEditorInput) input).getFile());
+				}
+			}
+			else {
+				page.openEditor(input, desc.getId());
+			}
+		} catch (PartInitException e2) {
+		}
+	}
 }
 }

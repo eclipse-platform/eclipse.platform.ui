@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import java.util.*;

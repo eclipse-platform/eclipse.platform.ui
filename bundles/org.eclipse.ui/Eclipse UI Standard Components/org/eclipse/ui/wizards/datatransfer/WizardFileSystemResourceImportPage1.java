@@ -7,6 +7,7 @@ package org.eclipse.ui.wizards.datatransfer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -199,9 +200,9 @@ protected final void createButtonsGroup(Composite parent) {
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
-
 	super.createControl(parent);
 	validateSourceGroup();
+	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE));
 }
 /**
  *	Create the import options specification widgets.
@@ -356,7 +357,16 @@ public boolean finish() {
 			((FileSystemElement) resourcesEnum.next()).getFileSystemObject());
 	}
 
-	return importResources(fileSystemObjects);
+	if (fileSystemObjects.size() > 0)
+		return importResources(fileSystemObjects);
+
+	MessageDialog
+		.openInformation(
+			getContainer().getShell(),
+			DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
+			DataTransferMessages.getString("FileImport.noneSelected")); //$NON-NLS-1$
+
+	return false;
 }
 /**
  * Returns a content provider for <code>FileSystemElement</code>s that returns 

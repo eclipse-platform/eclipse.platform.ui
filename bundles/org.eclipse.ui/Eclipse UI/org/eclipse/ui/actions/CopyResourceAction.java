@@ -14,7 +14,6 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -514,6 +513,7 @@ public void run() {
 	if (errorStatus != null) {
 		ErrorDialog.openError(shell, getProblemsTitle(), null, // no special message
 		errorStatus);
+		errorStatus = null;
 	}
 }
 /**
@@ -545,14 +545,6 @@ protected boolean updateSelection(IStructuredSelection selection) {
 			return false;
 		}
 		if (!currentResource.getParent().equals(firstParent)) {
-			return false;
-		}
-	}
-	//finally check if resources are local
-	resourcesEnum = selectedResources.iterator();
-	while (resourcesEnum.hasNext()) {
-		IResource currentResource = (IResource) resourcesEnum.next();
-		if (!currentResource.isLocal(IResource.DEPTH_INFINITE)) {
 			return false;
 		}
 	}

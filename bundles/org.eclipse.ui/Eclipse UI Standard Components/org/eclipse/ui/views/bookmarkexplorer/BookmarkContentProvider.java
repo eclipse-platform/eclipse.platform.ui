@@ -148,7 +148,7 @@ public void resourceChanged(final IResourceChangeEvent event) {
 				if (ctrl == null || ctrl.isDisposed())
 					return;
 				
-				// TBD: Be conservative for now, and refresh once if there are any changes.
+				// Be conservative for now, and refresh once if there are any changes.
 				// Can improve once the following PRs are addressed:
 				//   1G8OUTD: ITPCORE:ALL - Marker deltas should be composed
 				//   1G8OU65: ITPCORE:ALL - IMarkerDelta.getType() doesn't allow subtype comparisons

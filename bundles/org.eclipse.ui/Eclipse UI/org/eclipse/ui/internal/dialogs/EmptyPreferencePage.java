@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /*
  * A page used as a filler for nodes in the preference tree

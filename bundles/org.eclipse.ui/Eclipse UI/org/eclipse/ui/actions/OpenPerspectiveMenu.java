@@ -90,7 +90,7 @@ private int alternateMask() {
 	if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
 		return SWT.CONTROL;
 	else
-		return SWT.ALT & SWT.SHIFT;
+		return SWT.ALT | SWT.SHIFT;
 }
 /**
  * Return whether or not the menu can be run. Answer true unless the current perspective
@@ -137,11 +137,12 @@ protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
 	String perspectiveSetting =
 		store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 
-	if ((event.stateMask & alternateMask()) > 0)
+	int stateMask = event.stateMask & (SWT.CONTROL | SWT.SHIFT | SWT.ALT);
+	if (stateMask == alternateMask())
 		perspectiveSetting =
 			store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
 	else {
-		if ((event.stateMask & SWT.SHIFT) > 0)
+		if (stateMask == SWT.SHIFT)
 			perspectiveSetting =
 				store.getString(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE);
 	}

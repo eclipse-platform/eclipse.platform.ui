@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import java.io.StringWriter;
@@ -29,6 +30,7 @@ import java.io.StringWriter;
 public FilterSelectionAction(Shell shell, ResourceNavigator navigator, String label) {
 	super(navigator, label);
 	setToolTipText(FILTER_TOOL_TIP);
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.FILTER_SELECTION_ACTION});
 	setEnabled(true);
 	this.shell = shell;
 }

@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -22,6 +23,7 @@ public class OpenNewWindowAction  extends Action {
 public OpenNewWindowAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("OpenNewWindowAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("OpenNewWindowAction.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_NEW_WINDOW_ACTION});
 	this.window = window;
 }
 /**

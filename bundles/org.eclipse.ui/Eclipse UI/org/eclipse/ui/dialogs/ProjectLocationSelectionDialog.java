@@ -13,7 +13,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -78,9 +79,18 @@ private void applyValidationResult(String errorMsg) {
 	}
 }
 /**
+ * Check whether the entries are valid. If so return null. Otherwise
+ * return a string that indicates the problem.
+ */
+private String checkValid() {
+	String valid = checkValidName();
+	if (valid != null)
+		return valid;
+	return checkValidLocation();
+}
+/**
  * Check if the entry in the widget location is valid. If it is valid return null. Otherwise
  * return a string that indicates the problem.
- * @return String
  */
 private String checkValidLocation() {
 
@@ -109,7 +119,6 @@ private String checkValidLocation() {
 /**
  * Check if the entries in the widget are valid. If they are return null otherwise
  * return a string that indicates the problem.
- * @return String
  */
 private String checkValidName() {
 
@@ -124,6 +133,13 @@ private String checkValidName() {
 	}
 
 	return null;
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG});
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -161,7 +177,7 @@ private void createLocationListener() {
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {
 
-			applyValidationResult(checkValidLocation());
+			applyValidationResult(checkValid());
 		}
 	};
 
@@ -175,7 +191,7 @@ private void createNameListener() {
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {
 			setLocationForSelection();
-			applyValidationResult(checkValidName());
+			applyValidationResult(checkValid());
 		}
 	};
 

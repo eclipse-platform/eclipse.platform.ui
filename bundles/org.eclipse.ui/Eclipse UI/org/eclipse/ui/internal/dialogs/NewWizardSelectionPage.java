@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.jface.*;
@@ -17,7 +18,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 /**
  *	New wizard selection tab that allows the user to either select a
  *	registered 'New' wizard to be launched, or to select a solution or
@@ -51,7 +51,10 @@ public void createControl(Composite parent) {
 	IDialogSettings settings = getDialogSettings();
 	newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
 	newResourcePage.setDialogSettings(settings);
-	setControl(newResourcePage.createControl(parent));
+
+	Control control = newResourcePage.createControl(parent);
+	WorkbenchHelp.setHelp(control, new DialogPageContextComputer(this, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE));
+	setControl(control);
 }
 /**
  * Since Finish was pressed, write widget values to the dialog store so that they

@@ -12,9 +12,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * Utility class to create status objects.
  *
- * This class is temporary and will be removed in the future.
- * It is a temporary workaround for 1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
- *
  * @private - This class is an internal implementation class and should
  * not be referenced or subclassed outside of the workbench
  *
@@ -69,7 +66,7 @@ protected static IStatus newStatus(
 	Assert.isTrue(message != null);
 	Assert.isTrue(message.trim().length() != 0);
 
-	UIHackFinder.fixPR(); 	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
+	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
 	return new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, 
 		stati, message, exception);
 }
@@ -91,7 +88,7 @@ public static IStatus newStatus(
 	Assert.isTrue(message != null);
 	Assert.isTrue(message.trim().length() != 0);
 
-	UIHackFinder.fixPR(); 	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
+	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
 	return new ResourceStatus(code, path, message, exception);
 }
 /**
@@ -113,7 +110,7 @@ public static IStatus newStatus(
 		String message, 
 		Throwable exception) {
 
-	UIHackFinder.fixPR(); 	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
+	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
 	
 	List flatStatusCollection = new ArrayList();
 	Iterator statusEnum = vector.iterator();

@@ -42,6 +42,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static WorkbenchPlugin inst;
 	// Manager that maps resources to descriptors of editors to use
 	private EditorRegistry editorRegistry;
+	// Manager that maps project nature ids to images
+	private ProjectImageRegistry projectImageRegistry;
 
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
@@ -246,6 +248,17 @@ public PreferenceManager getPreferenceManager() {
 	return preferenceManager;
 }
 /**
+ *Answers the manager that maps project nature ids to images
+ */
+
+public ProjectImageRegistry getProjectImageRegistry() {
+	if (projectImageRegistry == null) {
+		projectImageRegistry = new ProjectImageRegistry();
+		projectImageRegistry.load();
+	}
+	return projectImageRegistry;
+}
+/**
  * Returns the shared images for the workbench.
  *
  * @return the shared image manager
@@ -338,7 +351,7 @@ public static void log(String message) {
 			message,
 			null));
 	System.err.println(message);	
-	UIHackFinder.fixPR(); //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
+	//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 }
 /**
  * Log the given status to the ISV log.
@@ -370,7 +383,7 @@ public static void log(String message) {
  		
 public static void log(String message, IStatus status) {
 
-	UIHackFinder.fixPR(); //1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
+	//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
 	if (message != null) {
 		getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR,null,message,null));
@@ -380,7 +393,7 @@ public static void log(String message, IStatus status) {
 	getDefault().getLog().log(status);
 	System.err.println(status.getMessage());
 
-	UIHackFinder.fixPR(); //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
+	//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 }
 public void setWorkbench(IWorkbench aWorkbench) {
 	this.workbench = aWorkbench;

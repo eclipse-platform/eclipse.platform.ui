@@ -68,7 +68,14 @@ public class RuleBasedScanner implements ICharacterScanner {
 	 * @return the length of the last token read by this scanner
 	 */
 	public int getTokenLength() {
-		return fOffset - fTokenOffset;
+		/*
+		 * 1GEUXEA: ITPUI:WIN2000 - IllegalArgumentException: Manifest Editor
+		 * Ensure that token length never extends the range to be scanned.
+		 * return fOffset - fTokenOffset;
+		 */
+		if (fOffset < fRangeEnd)
+			return fOffset - fTokenOffset;
+		return fRangeEnd - fTokenOffset;
 	}
 	/**
 	 * Returns the offset of the last token read by this scanner.

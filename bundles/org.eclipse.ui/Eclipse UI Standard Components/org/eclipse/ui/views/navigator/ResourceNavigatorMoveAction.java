@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.help.*;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
@@ -29,6 +30,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public ResourceNavigatorMoveAction(Shell shell, TreeViewer treeViewer) {
 	super(shell);
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION});
 	this.viewer = treeViewer;
 }
 /* (non-Javadoc)

@@ -4,7 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
@@ -37,6 +36,9 @@ public class PerspectivePresentation {
 	private boolean detachable = false;
 	private Map dragParts = new HashMap();  // key is the LayoutPart object, value is the PartDragDrop object
 	private IPartDropListener partDropListener;
+
+	private static final int MIN_DETACH_WIDTH = 50;
+	private static final int MIN_DETACH_HEIGHT = 50;
 /**
  * Constructs a new object.
  */
@@ -424,10 +426,16 @@ private void detach(LayoutPart part, int x, int y) {
 	if (!detachable) 
 		return;
 		
-	// The detach window will have the same size as the part	
-	Point size = part.getControl().getSize();
-	int width = size.x;
-	int height = size.y;
+	// Calculate detached window size.
+	Point size = part.getSize();
+	if (size.x == 0 || size.y == 0) {
+		ILayoutContainer container = part.getContainer();
+		if (container instanceof LayoutPart) {
+			size = ((LayoutPart)container).getSize();
+		}
+	}
+	int width = Math.max(size.x, MIN_DETACH_WIDTH);
+	int height = Math.max(size.y, MIN_DETACH_HEIGHT);
 	
 	// Create detached window.
 	DetachedWindow window = new DetachedWindow(page);

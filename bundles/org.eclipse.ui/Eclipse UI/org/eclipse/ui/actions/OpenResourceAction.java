@@ -84,7 +84,7 @@ protected boolean updateSelection(IStructuredSelection s) {
 	if (!selectionIsOfType(IResource.PROJECT))
 		return false;
 
-	Iterator resources = s.iterator();
+	Iterator resources = getSelectedResources().iterator();
 	while (resources.hasNext()) {
 		IProject currentResource = (IProject)resources.next();
 		if (!currentResource.isOpen()) {

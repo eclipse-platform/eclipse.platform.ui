@@ -11,7 +11,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -83,8 +82,7 @@ protected Control createDialogArea(Composite parent) {
  * Validate the user input for a file type
  */
 private boolean fileTypeValid() {
-	UIHackFinder.fixPR();
-	// we need kernel api to validate the extension or a filename
+	// We need kernel api to validate the extension or a filename
 
 	int index = filename.indexOf('.');
 	if (index == -1) {
@@ -108,8 +106,7 @@ private boolean fileTypeValid() {
 	return true;
 }
 public String getExtension() {
-	UIHackFinder.fixPR();
-	// we need kernel api to validate the extension or a filename
+	// We need kernel api to validate the extension or a filename
 	
 	int index = filename.indexOf('.');
 	if (index == -1)
@@ -119,8 +116,7 @@ public String getExtension() {
 	return filename.substring(index + 1,filename.length());
 }
 public String getName() {
-	UIHackFinder.fixPR();
-	// we need kernel api to validate the extension or a filename
+	// We need kernel api to validate the extension or a filename
 	
 	int index = filename.indexOf('.');
 	if (index == -1)

@@ -20,8 +20,6 @@ import org.eclipse.jface.util.*;
 import java.util.*;
 import java.net.*;
 
-//debug
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * This is used to add actions to the workbench.
@@ -119,26 +117,23 @@ public void buildActions(WorkbenchWindow win) {
 	// listening so no need to do it here.
 	window.addPageListener(new IPageListener() {
 		public void pageActivated(IWorkbenchPage page) {
-			openPerspMenu.setReplaceEnabled(true);
-			hideShowEditorAction.setEnabled(true);
-			savePerspectiveAction.setEnabled(true);
-			resetPerspectiveAction.setEnabled(true);
-			editActionSetAction.setEnabled(true);
-			closePageAction.setEnabled(true);
-			closeAllPagesAction.setEnabled(true);
-			newWizardMenu.setEnabled(true);
+			enableActions(true);
 		}
 		public void pageClosed(IWorkbenchPage page) {
-			openPerspMenu.setReplaceEnabled(false);
-			hideShowEditorAction.setEnabled(false);
-			savePerspectiveAction.setEnabled(false);
-			resetPerspectiveAction.setEnabled(false);
-			editActionSetAction.setEnabled(false);
-			closePageAction.setEnabled(false);
-			closeAllPagesAction.setEnabled(false);
-			newWizardMenu.setEnabled(false);
+			enableActions(window.getActivePage() != null);
 		}
 		public void pageOpened(IWorkbenchPage page) {
+		}
+		private void enableActions(boolean value) {
+			openPerspMenu.setReplaceEnabled(value);
+			hideShowEditorAction.setEnabled(value);
+			savePerspectiveAction.setEnabled(value);
+			resetPerspectiveAction.setEnabled(value);
+			editActionSetAction.setEnabled(value);
+			closePageAction.setEnabled(value);
+			closeAllPagesAction.setEnabled(value);
+			newWizardMenu.setEnabled(value);
+			newWizardDropDownAction.setEnabled(value);
 		}
 	});
 }
@@ -329,7 +324,6 @@ public static boolean isContainerMenu(String menuId) {
  */
 private void makeActions() {
 
-	UIHackFinder.fixUI();
 	// The actions in jface do not have menu vs. enable, vs. disable vs. color
 	// There are actions in here being passed the workbench - problem 
 
@@ -358,7 +352,6 @@ private void makeActions() {
 	exportResourcesAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 	
 	rebuildAllAction = new GlobalBuildAction(workbench, IncrementalProjectBuilder.FULL_BUILD);
-	UIHackFinder.fixPR();
 	// 1G82IWC - a new icon is needed for Rebuild All or Build
 	//	rebuildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
 	//	rebuildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));

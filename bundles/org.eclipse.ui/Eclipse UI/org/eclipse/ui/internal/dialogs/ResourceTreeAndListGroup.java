@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List;
 
-import org.eclipse.ui.internal.misc.UIHackFinder;
 /**
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
  *	All viewer selection-driven interactions are handled within this object
@@ -472,7 +471,7 @@ public void initialCheckListItem(Object element) {
 	currentTreeSelection = parent;
 	//As this is not done from the UI then set the box for updating from the selection to false 
 	listItemChecked(element, true, false);
-	updateHierarchy(parent);
+	grayUpdateHierarchy(parent);
 }
 /**
  *	Set the initial checked state of the passed element to true,
@@ -521,8 +520,9 @@ protected void listItemChecked(
 		}
 	}
 
-	//Update the list
-	checkedStateStore.put(currentTreeSelection, checkedListItems);
+	//Update the list with the selections if there are any
+	if (checkedListItems.size() > 0)
+		checkedStateStore.put(currentTreeSelection, checkedListItems);
 	if (updatingFromSelection)
 		grayUpdateHierarchy(currentTreeSelection);
 }
@@ -619,6 +619,10 @@ public void selectionChanged(SelectionChangedEvent event) {
  * boolean. Be sure to update the displayed files as well.
  */
 public void setAllSelections(final boolean selection) {
+
+	//If there is no root there is nothing to select
+	if(root == null)
+		return;
 
 	//Potentially long operation - show a busy cursor
 	BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
@@ -817,9 +821,13 @@ public void updateSelections(final Map items) {
 				// proceed up the tree element hierarchy and make sure everything is in the table		
 				primeHierarchyForSelection(parent, selectedNodes);
 			}
-		} else
+		} else{
 			//If it is not in the check list then remove from the list
-			checkedStateStore.remove(key);
+			if (selectedNodes.contains(key))
+				checkedStateStore.put(key, selections);
+			else
+				checkedStateStore.remove(key);
+		}
 
 	}
 
@@ -831,7 +839,7 @@ public void updateSelections(final Map items) {
 		Object nextDeselection = checkedStateIterator.next();
 		if (!selectedNodes.contains(nextDeselection)) {
 			treeViewer.setChecked(nextDeselection, false);
-			treeViewer.setGrayed(nextDeselection,false);
+			treeViewer.setGrayed(nextDeselection, false);
 			setWhiteChecked(nextDeselection, false);
 			checkedStateStore.remove(nextDeselection);
 		}
@@ -841,7 +849,7 @@ public void updateSelections(final Map items) {
 	keyIterator = items.keySet().iterator();
 	while (keyIterator.hasNext()) {
 		Object key = keyIterator.next();
-		updateHierarchy(key);
+		grayUpdateHierarchy(key);
 		if (currentTreeSelection != null && currentTreeSelection.equals(key)) {
 			listViewer.setAllChecked(false);
 			Object displayItems = items.get(key);

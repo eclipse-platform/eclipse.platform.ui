@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.help.*;
 
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public ResourceNavigatorRenameAction(Shell shell, TreeViewer treeViewer) {
 	super(shell, treeViewer.getTree());
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION});
 	this.viewer = treeViewer;
 }
 /* (non-Javadoc)

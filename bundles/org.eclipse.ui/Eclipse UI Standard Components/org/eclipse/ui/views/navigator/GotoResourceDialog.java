@@ -13,13 +13,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.ui.dialogs.*;
 import java.util.*;
 import org.eclipse.ui.model.*;
+import org.eclipse.ui.help.*;
 
 /**
  * Shows a list of resources to the user with a text entry field
  * for a string pattern used to filter the list of resources.
  *
- * ISSUE: This implementation is not using viewer and content provider.
- * Should write an implementation using it and compare performance.
  */
 /*package*/ class GotoResourceDialog extends SelectionDialog {
 	Text pattern;
@@ -79,6 +78,13 @@ public boolean close() {
 	boolean r = super.close();
 	labelProvider.dispose();
 	return r;
+}
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
+protected void configureShell(Shell shell) {
+	super.configureShell(shell);
+	WorkbenchHelp.setHelp(shell, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG});
 }
 public void create() {
 	super.create();

@@ -25,10 +25,6 @@ import java.util.*;
 	private Item tableItem;
 	private int columnNumber;
 	private ICellEditorListener cellEditorListener;
-/**
- * Insert the method's description here.
- * Creation date: (12/21/00 6:43:47 PM)
- */
 TableViewerImpl() {
 	initCellEditorListener();
 }

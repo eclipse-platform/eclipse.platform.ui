@@ -9,7 +9,6 @@ import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -152,7 +151,8 @@ protected Control createDialogArea(Composite parent) {
 	browseExternalEditorsButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, browseExternalEditorsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	browseExternalEditorsButton.setLayoutData(data);
 	browseExternalEditorsButton.setFont(parent.getFont());
 	
