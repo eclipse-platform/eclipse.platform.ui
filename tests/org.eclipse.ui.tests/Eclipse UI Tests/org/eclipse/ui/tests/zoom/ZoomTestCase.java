@@ -23,6 +23,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorArea;
 import org.eclipse.ui.internal.EditorPane;
 import org.eclipse.ui.internal.EditorSite;
@@ -33,14 +34,12 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 public class ZoomTestCase extends UITestCase {
-	private static final String projectName = "Test";
-	private static final String file1Name = "TestFile1";
-	private static final String file2Name = "TestFile2";
 	protected static final String view1Id = IPageLayout.ID_RES_NAV;
 	protected static final String view2Id = IPageLayout.ID_OUTLINE;
 	
@@ -60,11 +59,11 @@ public class ZoomTestCase extends UITestCase {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		try {
-			project = FileUtil.createProject("IEditorPartTest");
-			file1 = FileUtil.createFile("Test1.java", project);
-			file2 = FileUtil.createFile("Test2.java", project);
-			editor1 = page.openEditor(file1, MockEditorPart.ID1);
-			editor2 = page.openEditor(file2, MockEditorPart.ID2);
+			project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$
+			file1 = FileUtil.createFile("Test1.java", project); //$NON-NLS-1$
+			file2 = FileUtil.createFile("Test2.java", project); //$NON-NLS-1$
+			editor1 = page.openEditor(new FileEditorInput(file1), MockEditorPart.ID1);
+			editor2 = page.openEditor(new FileEditorInput(file2), MockEditorPart.ID2);
 		} catch(PartInitException e) {
 		} catch(CoreException e) {
 		}
@@ -95,9 +94,9 @@ public class ZoomTestCase extends UITestCase {
 	protected void openEditor(IFile file) {
 		try {
 			if(file == file1) 
-				editor1 = page.openEditor(file);
+				editor1 = IDE.openEditor(page, file, true);
 			if(file == file2)
-				editor2 = page.openEditor(file);
+				editor2 = IDE.openEditor(page, file, true);
 		} catch(PartInitException e) {
 		}			
 	}
