@@ -5,32 +5,25 @@ package org.eclipse.ui.internal.dialogs;
  */
 import java.io.UnsupportedEncodingException;
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Hashtable;
+import java.util.*;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.editors.text.EncodingDefinition;
+import org.eclipse.ui.editors.text.EncodingDefinitionManager;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
 
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
@@ -61,6 +54,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setFont(parent.getFont());
 
 		WorkbenchPreferencePage.createSpace(composite);
 		createEditorHistoryGroup(composite);
@@ -102,7 +96,21 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		else {
 			String enc = encodingCombo.getText();
-			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
+			Iterator encodings = EncodingDefinitionManager.getEncodings().iterator();
+			boolean found = false;
+			while(encodings.hasNext()){
+				EncodingDefinition definition = (EncodingDefinition) encodings.next();
+				if(definition.getLabel().equals(enc)){
+					resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, definition.getValue());
+					found = true;
+					break;
+				}
+			}
+			//If there is a new one then make sure it is added to the encodings
+			if(!found){
+				resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
+				EncodingDefinitionManager.addEncoding(enc);
+			}
 		}
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -128,6 +136,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 		
 	private void createEncodingGroup(Composite parent) {
+		
+		Font font = parent.getFont();
 		Group group = new Group(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
@@ -135,6 +145,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setText(WorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
+		group.setFont(font);
 		
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -143,21 +154,27 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		};
 		
+		defaultEnc = EncodingDefinitionManager.getDefaultEncoding();
 		defaultEncodingButton = new Button(group, SWT.RADIO);
-		defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
-		defaultEncodingButton.setText(WorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		defaultEncodingButton.setText(
+			WorkbenchMessages.format(
+				"WorkbenchPreference.defaultEncoding", //$NON-NLS-1$
+				new String[] { defaultEnc })); 
 		data = new GridData();
 		data.horizontalSpan = 2;
 		defaultEncodingButton.setLayoutData(data);
 		defaultEncodingButton.addSelectionListener(buttonListener);
+		defaultEncodingButton.setFont(font);
 		
 		otherEncodingButton = new Button(group, SWT.RADIO);
 		otherEncodingButton.setText(WorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
 		otherEncodingButton.addSelectionListener(buttonListener);
+		otherEncodingButton.setFont(font);
 		
 		encodingCombo = new Combo(group, SWT.NONE);
 		data = new GridData();
 		data.widthHint = convertWidthInCharsToPixels(15);
+		encodingCombo.setFont(font);
 		encodingCombo.setLayoutData(data);
 		encodingCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -165,36 +182,17 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		ArrayList encodings = new ArrayList();
-		int n = 0;
-		try {
-			n = Integer.parseInt(WorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-		}
-		catch (NumberFormatException e) {
-			// Ignore;
-		}
-		for (int i = 0; i < n; ++i) {
-			String enc = WorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
-			if (enc != null) {
-				encodings.add(enc);
-			}
-		}
+		java.util.Collection encodings = EncodingDefinitionManager.getLabelSortedEncodings();
+		Iterator iterator = encodings.iterator();
 		
-		if (!encodings.contains(defaultEnc)) {
-			encodings.add(defaultEnc);
-		}
-
 		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
-		boolean isDefault = enc == null || enc.length() == 0;
-
-	 	if (!isDefault && !encodings.contains(enc)) {
-			encodings.add(enc);
-		}
-		Collections.sort(encodings);
-		for (int i = 0; i < encodings.size(); ++i) {
-			encodingCombo.add((String) encodings.get(i));
+		
+		while (iterator.hasNext()) {
+			encodingCombo.add(((EncodingDefinition) iterator.next()).getLabel());
 		}
 
+		boolean isDefault = enc == null;
+		
 		encodingCombo.setText(isDefault ? defaultEnc : enc);
 		
 		updateEncodingState(isDefault);
@@ -237,6 +235,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * accelerator configuration.
 	 */
 	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
+		
+		Font font = composite.getFont();
+		
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -247,6 +248,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);
+		groupComposite.setFont(font);
 		
 		Label configLabel = WorkbenchPreferencePage.createLabel(groupComposite, label);
 		accelConfigCombo = WorkbenchPreferencePage.createCombo(groupComposite);
@@ -302,6 +304,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
 	private void createEditorReuseGroup(Composite composite) {
+		
+		Font font = composite.getFont();
+		
 		editorReuseGroup = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -309,13 +314,15 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
-		editorReuseGroup.setLayoutData(gd);		
+		editorReuseGroup.setLayoutData(gd);	
+		editorReuseGroup.setFont(font);	
 		
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
 		GridData reuseEditorsData = new GridData();
 		reuseEditorsData.horizontalSpan = layout.numColumns;
 		reuseEditors.setLayoutData(reuseEditorsData);
+		reuseEditors.setFont(font);
 		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
@@ -356,6 +363,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
+		groupComposite.setFont(composite.getFont());
 		
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
 

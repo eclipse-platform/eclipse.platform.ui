@@ -52,6 +52,8 @@
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
    <extension-point id="startup" name="%ExtPoint.startup"/>
+   <extension-point id="fileEncodings" name="%ExtPoint.fileEncodings"/>
+   <extension-point id="fileEncodings" name="%ExtPoint.fileEncodings"/>
    
    <extension
          id="workbench"
@@ -1539,5 +1541,149 @@
             id="org.eclipse.ui.SystemSummaryEditorInputFactory">
       </factory>
    </extension>
+     
+    <extension
+         point="org.eclipse.ui.fileEncodings">
+       <fileEncoding
+            id="GB18030"
+            label= "%FileEncoding.GB18030"
+            value="GB18030"
+            helpContextId="GB18030_action_context"
+            description="%FileEncoding.GB18030.description"
+            tooltip="%FileEncoding.GB18030.tooltip"
+            locale="zh_CW">
+      </fileEncoding>
+      <fileEncoding
+            id="GBK"
+            label="%FileEncoding.GBK"
+            value="GBK"
+            helpContextId="GBK_action_context"
+            description="%FileEncoding.GBK.description"
+            tooltip="%FileEncoding.GBK.tooltip"
+            locale="zh">
+      </fileEncoding>
+      <fileEncoding
+            id="ISO-8859-1"
+            label="%FileEncoding.ISO-8859-1"
+            helpContextId="ISO-8859-1_action_context"
+            description="%FileEncoding.ISO-8859-1.description"
+            tooltip="%FileEncoding.ISO-8859-1.tooltip"
+            value="ISO-8859-1">
+      </fileEncoding>
+       <fileEncoding
+            id="UTF-8"
+            label="%FileEncoding.UTF-8"
+            helpContextId="UTF-8_action_context"
+            description="%FileEncoding.UTF-8.description"
+            tooltip="%FileEncoding.UTF-8.tooltip"
+            value="UTF-8">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16"
+            label="%FileEncoding.UTF-16"
+            helpContextId="UTF-16_action_context"
+            description="%FileEncoding.UTF-16.description"
+            tooltip="%FileEncoding.UTF-16.tooltip"
+            value="UTF-16">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16BE"
+            label="%FileEncoding.UTF-16BE"
+            helpContextId="UTF-16BE_action_context"
+            description="%FileEncoding.UTF-16BE.description"
+            tooltip="%FileEncoding.UTF-16BE.tooltip"
+            value="UTF-16BE">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16LE"
+            label="%FileEncoding.UTF-16LE"
+            helpContextId="UTF-16LE_action_context"
+            description="%FileEncoding.UTF-16LE.description"
+            tooltip="%FileEncoding.UTF-16LE.tooltip"
+            value="UTF-16LE">
+      </fileEncoding>
+      <fileEncoding
+            id="US-ASCII"
+            label="%FileEncoding.US-ASCII"
+            helpContextId="US-ASCII_action_context"
+            description="%FileEncoding.US-ASCII.description"
+            tooltip="%FileEncoding.US-ASCII.tooltip"
+            value="US-ASCII">
+      </fileEncoding>
+     
+   </extension>
+
+     
+    <extension
+         point="org.eclipse.ui.fileEncodings">
+       <fileEncoding
+            id="GB18030"
+            label= "%FileEncoding.GB18030"
+            value="GB18030"
+            helpContextId="GB18030_action_context"
+            description="%FileEncoding.GB18030.description"
+            tooltip="%FileEncoding.GB18030.tooltip"
+            locale="zh_CW">
+      </fileEncoding>
+      <fileEncoding
+            id="GBK"
+            label="%FileEncoding.GBK"
+            value="GBK"
+            helpContextId="GBK_action_context"
+            description="%FileEncoding.GBK.description"
+            tooltip="%FileEncoding.GBK.tooltip"
+            locale="zh">
+      </fileEncoding>
+      <fileEncoding
+            id="ISO-8859-1"
+            label="%FileEncoding.ISO-8859-1"
+            helpContextId="ISO-8859-1_action_context"
+            description="%FileEncoding.ISO-8859-1.description"
+            tooltip="%FileEncoding.ISO-8859-1.tooltip"
+            value="ISO-8859-1">
+      </fileEncoding>
+       <fileEncoding
+            id="UTF-8"
+            label="%FileEncoding.UTF-8"
+            helpContextId="UTF-8_action_context"
+            description="%FileEncoding.UTF-8.description"
+            tooltip="%FileEncoding.UTF-8.tooltip"
+            value="UTF-8">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16"
+            label="%FileEncoding.UTF-16"
+            helpContextId="UTF-16_action_context"
+            description="%FileEncoding.UTF-16.description"
+            tooltip="%FileEncoding.UTF-16.tooltip"
+            value="UTF-16">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16BE"
+            label="%FileEncoding.UTF-16BE"
+            helpContextId="UTF-16BE_action_context"
+            description="%FileEncoding.UTF-16BE.description"
+            tooltip="%FileEncoding.UTF-16BE.tooltip"
+            value="UTF-16BE">
+      </fileEncoding>
+      <fileEncoding
+            id="UTF-16LE"
+            label="%FileEncoding.UTF-16LE"
+            helpContextId="UTF-16LE_action_context"
+            description="%FileEncoding.UTF-16LE.description"
+            tooltip="%FileEncoding.UTF-16LE.tooltip"
+            value="UTF-16LE">
+      </fileEncoding>
+      <fileEncoding
+            id="US-ASCII"
+            label="%FileEncoding.US-ASCII"
+            helpContextId="US-ASCII_action_context"
+            description="%FileEncoding.US-ASCII.description"
+            tooltip="%FileEncoding.US-ASCII.tooltip"
+            value="US-ASCII">
+      </fileEncoding>
+     
+   </extension>
+
 
 </plugin>
