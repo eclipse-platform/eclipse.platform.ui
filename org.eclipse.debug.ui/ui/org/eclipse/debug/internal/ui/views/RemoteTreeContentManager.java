@@ -14,7 +14,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -23,6 +25,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Bundle;
 /**
@@ -36,6 +39,7 @@ import org.osgi.framework.Bundle;
 public class RemoteTreeContentManager extends DeferredTreeContentManager {
 
     private RemoteTreeViewer fViewer;
+    private IWorkbenchSiteProgressService progressService;
     
     /**
      * Contructs a new content manager.
@@ -47,6 +51,10 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
     public RemoteTreeContentManager(ITreeContentProvider provider, RemoteTreeViewer viewer, IWorkbenchPartSite site) {
         super(provider, viewer, site);
         fViewer = viewer;
+        Object siteService = site.getAdapter(IWorkbenchSiteProgressService.class);
+        if (siteService != null) {
+        	progressService = (IWorkbenchSiteProgressService) siteService;
+        }
     }
     
     /**
@@ -127,6 +135,9 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
      * @param monitor progress monitor
      */
     protected void replaceChildren(final Object parent, final Object[] children, final int offset, IProgressMonitor monitor) {
+    	if (monitor.isCanceled()) {
+    		return;
+    	}
         WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.getString("IncrementalDeferredTreeContentManager.0")) { //$NON-NLS-1$
             /*
              * (non-Javadoc)
@@ -238,4 +249,30 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
         return deferred;
     }	
 	
+    protected void startFetchingDeferredChildren(final Object parent,
+			final IDeferredWorkbenchAdapter adapter,
+			final PendingUpdateAdapter placeholder) {
+		final IElementCollector collector = createElementCollector(parent,
+				placeholder);
+
+		String jobName = getFetchJobName(parent, adapter);
+		Job job = new Job(jobName) {
+			public IStatus run(IProgressMonitor monitor) {
+				adapter.fetchDeferredChildren(parent, collector, monitor);
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				return Status.OK_STATUS;
+			}
+		};
+		job.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				runClearPlaceholderJob(placeholder);
+			}
+		});
+		job.setRule(adapter.getRule(parent));
+		if (progressService == null)
+			job.schedule();
+		else
+			progressService.schedule(job);
+	}
 }
