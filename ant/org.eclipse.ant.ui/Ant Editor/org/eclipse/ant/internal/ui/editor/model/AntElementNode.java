@@ -230,6 +230,9 @@ public class AntElementNode implements IAdaptable {
 	 * within.
 	 */
 	public void setFilePath(String path) {
+		if (path == null) {
+			return;
+		}
 		URL url= null;
 		try {		
 			url= new URL(path);
