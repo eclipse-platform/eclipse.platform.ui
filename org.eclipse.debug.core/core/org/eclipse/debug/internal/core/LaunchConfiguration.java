@@ -137,8 +137,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		ILaunch launch = getDelegate().launch(this, mode, montior);
 		if (launch != null) {
 			getLaunchManager().addLaunch(launch);
+			initializeSourceLocator(launch);
 		}
-		initializeSourceLocator(launch);
 		return launch;
 	}
 	
