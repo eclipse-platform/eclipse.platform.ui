@@ -13,6 +13,7 @@ Contributors:
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
@@ -30,6 +31,7 @@ class DecoratorRegistryReader extends RegistryReader {
 
 	//The registry values are the ones read from the registry
 	static Collection values;
+	static Collection ids;
 
 	private static String EXTENSION_ID = "decorators"; //$NON-NLS-1$
 	private static String ATT_LABEL = "label"; //$NON-NLS-1$
@@ -74,6 +76,11 @@ class DecoratorRegistryReader extends RegistryReader {
 		String name = element.getAttribute(ATT_LABEL);
 
 		String id = element.getAttribute(ATT_ID);
+		if(ids.contains(id)){
+			logDuplicateId(element);
+			return false;
+		}
+		ids.add(id);
 
 		String description = ""; //$NON-NLS-1$
 
@@ -150,6 +157,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	 */
 	Collection readRegistry(IPluginRegistry in) {
 		values = new ArrayList();
+		ids = new HashSet();
 		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
 		return values;
 	}
@@ -174,6 +182,13 @@ class DecoratorRegistryReader extends RegistryReader {
 			return UNDERLAY;
 		return BOTTOM_RIGHT;
 
+	}
+	
+	/**
+	 * Logs a registry error when the configuration element is unknown.
+	 */
+	protected void logDuplicateId(IConfigurationElement element) {
+		logError(element, "Duplicate id found: " + element.getAttribute(ATT_ID));//$NON-NLS-1$
 	}
 
 }
