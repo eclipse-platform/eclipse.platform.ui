@@ -110,6 +110,13 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  an optional menu path used to group launch shortcuts in menus. Launch shortcuts are grouped alphabetically based on the &lt;code&gt;path&lt;/code&gt; attribute, and then sorted alphabetically within groups based on the &lt;code&gt;label&lt;/code&gt; attribute. When unspecified, a shortcut appears in the last group. This attribute was added in the 3.0.1 release.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -737,21 +737,43 @@ class ShortcutComparator implements Comparator {
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(Object a, Object b) {
-		String labelA = ((LaunchShortcutExtension)a).getLabel();
-		String labelB = ((LaunchShortcutExtension)b).getLabel();
+		LaunchShortcutExtension shorcutA = (LaunchShortcutExtension)a;
+		String labelA = shorcutA.getLabel();
+		String pathA = shorcutA.getMenuPath();
+		LaunchShortcutExtension shortcutB = (LaunchShortcutExtension)b;
+		String labelB = shortcutB.getLabel();
+		String pathB = shortcutB.getMenuPath();
 		
-		// null labels sort last (i.e. highest)
-		if (labelA == labelB) {
-			return 0;
+		// group by path, then sort by label
+		// a null path sorts last (i.e. highest)
+		if (nullOrEqual(pathA, pathB)) {
+			// null labels sort last (i.e. highest)
+			if (labelA == labelB) {
+				return 0;
+			}
+			if (labelA == null) {
+				return 1;
+			}
+			if (labelB == null) {
+				return -1;
+			}
+			return labelA.compareToIgnoreCase(labelB);
 		}
-		if (labelA == null) {
+		// compare paths
+		if (pathA == null) {
 			return 1;
 		}
-		if (labelB == null) {
+		if (pathB == null) {
 			return -1;
 		}
-		
-		return labelA.compareToIgnoreCase(labelB);
+		return pathA.compareToIgnoreCase(pathB);
+	}
+	
+	private boolean nullOrEqual(String a, String b) {
+		if (a == null) {
+			return b == null;
+		}
+		return a.equals(b);
 	}
 
 }

@@ -358,6 +358,16 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 		return fModes;
 	}
 	
+	/**
+	 * Returns the menu path attribute this shortcut, or <code>null</code> if none
+	 * 
+	 * @return the menu path attribute this shortcut, or <code>null</code> if none
+	 * @since 3.0.1
+	 */
+	public String getMenuPath() {
+		return getConfigurationElement().getAttribute("path"); //$NON-NLS-1$
+	}	
+	
 	/*
 	 * Only for debugging
 	 * @see java.lang.Object#toString()
