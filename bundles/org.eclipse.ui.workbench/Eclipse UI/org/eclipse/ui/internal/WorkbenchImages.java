@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM - Initial implementation
 ************************************************************************/
+
 package org.eclipse.ui.internal;
 
 import java.net.MalformedURLException;
@@ -79,8 +80,6 @@ public /*final*/ class WorkbenchImages {
 	private final static String PATH_DTOOL = ICONS_PATH+"dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
 	
 	private final static String PATH_CLOCALTOOL = ICONS_PATH+"clcl16/"; //Colored local toolbar icons - hover.//$NON-NLS-1$
-	private final static String PATH_ELOCALTOOL = ICONS_PATH+"elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
-	private final static String PATH_DLOCALTOOL = ICONS_PATH+"dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
 	
 	private final static String PATH_CVIEW = ICONS_PATH+"cview16/"; //Colored view icons.//$NON-NLS-1$
 	private final static String PATH_EVIEW = ICONS_PATH+"eview16/"; //View icons//$NON-NLS-1$

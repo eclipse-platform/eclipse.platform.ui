@@ -1,17 +1,18 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+	Dan Rubel <dan_rubel@instantiations.com> 
+      - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-  Dan Rubel <dan_rubel@instantiations.com> 
-    - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
-**********************************************************************/
- 
 import java.util.*;
 
 import org.eclipse.ui.*;
@@ -364,20 +365,6 @@ public ArrayList getShowInPartIds() {
  */
 public ArrayList getShowViewActionIds() {
 	return showViewActionIds;
-}
-/**
- * Answer the label for a view.
- */
-private String getViewLabel(String partID) {
-	IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-	IViewDescriptor desc = reg.find(partID);
-	if (desc != null)
-		return desc.getLabel();
-	else {
-		// cannot safely open the dialog so log the problem
-		WorkbenchPlugin.log("Unable to find view label: " + partID);//$NON-NLS-1$
-		return partID;
-	}
 }
 /**
  * See IPageLayout.

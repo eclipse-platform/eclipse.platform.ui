@@ -28,7 +28,6 @@ public class EditorList {
 	private EditorWorkbook workbook;
 	private Table editorsTable;
 	private static List editorListViews = new ArrayList();
-	private Object selection;
 	private List elements = new ArrayList();
 
 	private SaveAction saveAction;

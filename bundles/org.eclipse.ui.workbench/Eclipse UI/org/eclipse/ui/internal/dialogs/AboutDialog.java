@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM - Initial implementation
 ************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
@@ -288,14 +289,6 @@ private AboutInfo[] getFeaturesInfo() {
 	}	
 	infoList.remove(aboutInfo);
 	return (AboutInfo[])infoList.toArray(new AboutInfo[infoList.size()]);
-}
-
-
-/**
- * Answer the product text to show on the right side of the dialog.
- */ 
-private String getAboutText() {
-	return aboutInfo.getAboutText();
 }
 
 }

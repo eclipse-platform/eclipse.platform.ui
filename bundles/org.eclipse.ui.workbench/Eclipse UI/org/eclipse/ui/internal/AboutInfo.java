@@ -30,7 +30,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class AboutInfo extends NewConfigurationInfo {
 
 	private String appName;
-	private String productName;
 	private ImageDescriptor windowImage;
 	private ImageDescriptor aboutImage;
 	private ImageDescriptor featureImage;

@@ -1,17 +1,22 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMarkerActionFilter;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.actions.SimpleWildcardTester;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -21,8 +26,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class WorkbenchMarker
 	extends WorkbenchAdapter
 	implements IMarkerActionFilter {
-	private static final ImageDescriptor image =
-		WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJS_BKMRK_TSK);
 /**
  * @see IWorkbenchAdapter#getImageDescriptor
  */

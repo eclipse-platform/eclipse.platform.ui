@@ -57,9 +57,7 @@ public class WelcomeEditor extends EditorPart {
 	private Cursor handCursor;
 	private Cursor busyCursor;
 	
-	private IWorkbench workbench;
 	private WelcomeParser parser;
-	private Image image;
 	
 	private ArrayList hyperlinkRanges = new ArrayList();
 	private ArrayList texts = new ArrayList();

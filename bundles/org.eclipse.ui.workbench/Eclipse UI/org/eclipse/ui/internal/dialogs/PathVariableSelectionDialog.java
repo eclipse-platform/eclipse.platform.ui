@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM - Initial implementation
 ************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
@@ -104,7 +105,7 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	createButton(parent, EXTEND_ID, WorkbenchMessages.getString("PathVariableSelectionDialog.extendButton"), false);	
+	createButton(parent, EXTEND_ID, WorkbenchMessages.getString("PathVariableSelectionDialog.extendButton"), false);//$NON-NLS-1$	
 	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	updateExtendButtonState();
 }

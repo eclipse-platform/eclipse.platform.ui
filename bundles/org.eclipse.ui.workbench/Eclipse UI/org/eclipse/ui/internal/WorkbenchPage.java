@@ -968,17 +968,6 @@ protected void removePart(IWorkbenchPartReference ref) {
 	activationList.remove(ref);
 }
 /**
- * Deactivate the last known active editor to force its
- * action items to be removed, not just disabled.
- */
-private void deactivateLastEditor() {
-	if (lastActiveEditor == null)
-		return;
-	PartSite site = (PartSite) lastActiveEditor.getSite();
-	SubActionBars actionBars = (SubActionBars) site.getActionBars();
-	actionBars.deactivate(true);
-}
-/**
  * Deactivates a part.  The pane is unhilighted.
  */
 private void deactivatePart(IWorkbenchPart part) {

@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.ui.internal.*;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
@@ -30,7 +37,6 @@ public class WelcomeParser extends DefaultHandler {
 	private static final String ATT_HREF = "href"; //$NON-NLS-1$
 	
 	private static final String FORMAT_WRAP = "wrap"; //$NON-NLS-1$
-	private static final String FORMAT_NOWRAP = "nowrap"; //$NON-NLS-1$
 	private static final char DELIMITER = '\n'; // sax parser replaces crlf with lf
 	
 	private SAXParser parser;

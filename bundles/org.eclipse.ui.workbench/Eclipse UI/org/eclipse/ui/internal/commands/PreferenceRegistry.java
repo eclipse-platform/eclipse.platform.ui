@@ -39,7 +39,6 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	private final static String DEPRECATED_TAG_KEY_SEQUENCE = "keysequence"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_KEY_STROKE = "keystroke"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_PLUGIN = "plugin"; //$NON-NLS-1$
-	private final static String DEPRECATED_TAG_RANK = "rank"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private final static String KEY = Persistence.PACKAGE_FULL;
 	private final static int RANK_PREFERENCE = 0;

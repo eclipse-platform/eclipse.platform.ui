@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.*;
 
 import org.eclipse.jface.action.*;
@@ -94,16 +101,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void addToMenu(ActionContributionItem item) {
 		coolBarMenuManager.add(item.getAction());
-	}
-	/**
-	 * Adds a contribution item to the start or end of the group 
-	 * with the given id.
-	 * 
-	 * Not valid for CoolBarManager.  Only CoolBarContributionItems are items
-	 * of this manager.
-	 */
-	private void addToGroup(String itemId, IContributionItem item, boolean append) {
-		Assert.isTrue(false);
 	}
 	/**
 	 */
@@ -389,17 +386,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			if (subItem != null) return item;
 		}
 		return null;
-	}
-	/**
-	 */
-	private ArrayList getContributionIds() {
-		IContributionItem[] items = getItems();
-		ArrayList ids = new ArrayList(items.length);
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
-			ids.add(item.getId());
-		}
-		return ids;
 	}
 	/**
 	 */

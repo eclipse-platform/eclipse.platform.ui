@@ -1,5 +1,3 @@
-package org.eclipse.ui.internal;
-
 /************************************************************************
 Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
@@ -8,8 +6,10 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM - Initial implementation
+	IBM - Initial implementation
 ************************************************************************/
+
+package org.eclipse.ui.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,10 +105,6 @@ public class Perspective
 	private Sash fastViewSash;
 	private CoolBarLayout toolBarLayout;
 	
-	//Number of open editors before reusing. If < 0, use the 
-	//user preference settings.
-	private int reuseEditors = -1;
-
 	// resize listener to update fast view height and width when
 	// window resized.
 	Listener resizeListener = new Listener() {

@@ -27,7 +27,6 @@ import org.eclipse.swt.SWT;
 
 public class Manager {
 
-	private final static String KEY_SEQUENCE_SEPARATOR = ", "; //$NON-NLS-1$
 	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 	private final static java.util.Locale SYSTEM_LOCALE = java.util.Locale.getDefault();
 	private final static String SYSTEM_PLATFORM = SWT.getPlatform(); // "carbon"
@@ -39,24 +38,6 @@ public class Manager {
 			instance = new Manager();
 			
 		return instance;	
-	}
-
-	private static SortedMap buildPathMapForGestureConfigurationMap(SortedMap gestureConfigurationMap) {
-		SortedMap pathMap = new TreeMap();
-		Iterator iterator = gestureConfigurationMap.keySet().iterator();
-
-		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
-			
-			if (id != null) {			
-				Path path = pathForGestureConfiguration(id, gestureConfigurationMap);
-			
-				if (path != null)
-					pathMap.put(id, path);
-			}			
-		}
-
-		return pathMap;		
 	}
 
 	private static SortedMap buildPathMapForKeyConfigurationMap(SortedMap keyConfigurationMap) {
@@ -93,31 +74,6 @@ public class Manager {
 		}
 
 		return pathMap;		
-	}
-
-	private static Path pathForGestureConfiguration(String id, Map gestureConfigurationMap) {
-		Path path = null;
-
-		if (id != null) {
-			List pathItems = new ArrayList();
-
-			while (id != null) {	
-				if (pathItems.contains(id))
-					return null;
-							
-				GestureConfiguration gestureConfiguration = (GestureConfiguration) gestureConfigurationMap.get(id);
-				
-				if (gestureConfiguration == null)
-					return null;
-							
-				pathItems.add(0, id);
-				id = gestureConfiguration.getParent();
-			}
-		
-			path = Path.create(pathItems);
-		}
-		
-		return path;			
 	}
 
 	private static Path pathForKeyConfiguration(String id, Map keyConfigurationMap) {
@@ -384,7 +340,6 @@ public class Manager {
 		List pathItems = new ArrayList();
 		pathItems.add(systemPlatform());
 		pathItems.add(systemLocale());
-		State state = State.create(pathItems);	
 
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
 		LocalRegistry localRegistry = LocalRegistry.getInstance();

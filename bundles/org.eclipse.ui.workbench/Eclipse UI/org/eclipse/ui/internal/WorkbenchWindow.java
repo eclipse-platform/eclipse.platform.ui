@@ -1,12 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-**********************************************************************/
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -99,7 +103,6 @@ public class WorkbenchWindow extends ApplicationWindow
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
-	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
 	private Label separator2;
@@ -659,7 +662,7 @@ protected MenuManager createMenuManager() {
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
-			} else if ("carbon".equals(SWT.getPlatform())) { 			
+			} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 			
 				Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
 				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		
@@ -694,7 +697,7 @@ protected MenuManager createMenuManager() {
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
-			} else if ("carbon".equals(SWT.getPlatform())) {
+			} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
 				Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
 				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		

@@ -1,14 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -226,13 +228,6 @@ public final class XMLMemento implements IMemento {
 			results[x] = new XMLMemento(factory, (Element) list.get(x));
 		}
 		return results;
-	}
-	
-	/**
-	 * Returns the XML element contained in this memento.
-	 */
-	private Element getElement() {
-		return element;
 	}
 	
 	/* (non-Javadoc)

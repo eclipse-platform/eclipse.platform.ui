@@ -1,14 +1,15 @@
-package org.eclipse.ui.views.properties;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-**********************************************************************/
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.views.properties;
 
 import java.text.Collator;
 import java.util.*;
@@ -320,14 +321,6 @@ public CellEditor getEditor(Composite parent) {
 	return editor;
 }
 /**
- * Returns the edited value of this entry.
- *
- * @return the edited value of this entry
- */
-private Object getEditValue() {
-	return editValue;
-}
-/**
  * Returns the edit value for the object at the given index.
  *
  * @param index the value object index
@@ -367,13 +360,6 @@ public Image getImage() {
 	if (provider == null)
 		return null;
 	return provider.getImage(editValue);
-}
-/**
- * Returns the parent. This can be another <code>PropertySheetEntry</code>
- * or <code>null</code>.
- */
-private PropertySheetEntry getParent() {
-	return parent;
 }
 /**
  * Returns an property source for the given object.

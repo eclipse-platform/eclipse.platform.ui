@@ -23,7 +23,6 @@ import org.eclipse.ui.part.MultiEditor;
 public class EditorPresentation {
 	private WorkbenchPage page;
 	private ArrayList editorTable = new ArrayList(4);
-	private Map mapEditorToPane = new HashMap(11);
 	private EditorArea editorArea;
 /**
  * Creates a new EditorPresentation.

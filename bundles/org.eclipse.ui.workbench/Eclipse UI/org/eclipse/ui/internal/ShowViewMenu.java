@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.text.Collator;
 import java.util.*;
 
@@ -23,8 +30,7 @@ import org.eclipse.ui.internal.registry.*;
 public class ShowViewMenu extends ContributionItem {
 	
 	private IWorkbenchWindow window;
-	private IMenuManager innerMgr;	
-	
+		
 	private Comparator actionComparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			if(collator == null)

@@ -565,21 +565,6 @@ public Composite getParent() {
 /**
  * Returns the tab for a part.
  */
-private CTabItem getTab(IEditorReference editorRef) {
-	Iterator tabs = mapTabToEditor.keySet().iterator();
-	PartPane pane = ((WorkbenchPartReference)editorRef).getPane();
-	while (tabs.hasNext()) {
-		CTabItem tab = (CTabItem) tabs.next();
-		PartPane p = (PartPane)mapTabToEditor.get(tab);
-		if (p != null && p == pane)
-			return tab;
-	}
-	
-	return null;
-}
-/**
- * Returns the tab for a part.
- */
 private CTabItem getTab(LayoutPart child) {
 	Iterator tabs = mapTabToEditor.keySet().iterator();
 	while (tabs.hasNext()) {

@@ -1,10 +1,17 @@
-package org.eclipse.ui.internal.dialogs;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
- * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
- * font should be activated and used by other components.
- */
+Contributors:
+	IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+	   activated and used by other components.
+************************************************************************/
+
+package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
 import java.text.Collator;
@@ -38,8 +45,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
 	
 	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
-	
-	private boolean webBrowserOpened = false;
 
 	private Table vendorInfo;
 	private Button moreInfo;
