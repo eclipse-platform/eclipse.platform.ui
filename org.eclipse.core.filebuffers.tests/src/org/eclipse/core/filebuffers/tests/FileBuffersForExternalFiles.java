@@ -56,4 +56,25 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	protected boolean isStateValidationSupported() {
 		return false;
 	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
+	 */
+	protected boolean deleteUnderlyingFile() throws Exception {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
+	 */
+	protected IPath moveUnderlyingFile() throws Exception {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
+	 */
+	protected boolean modifyUnderlyingFile() throws Exception {
+		return false;
+	}
 }

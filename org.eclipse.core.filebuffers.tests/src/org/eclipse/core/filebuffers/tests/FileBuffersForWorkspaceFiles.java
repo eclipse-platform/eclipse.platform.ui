@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -40,6 +44,42 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
 	 */
 	protected boolean isStateValidationSupported() {
+		return true;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
+	 */
+	protected boolean deleteUnderlyingFile() throws Exception {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		file.delete(true, false, null);
+		return file.exists();
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
+	 */
+	protected IPath moveUnderlyingFile() throws Exception {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		ResourceHelper.createFolder("project/folderA/folderB/folderC");
+		IPath path= new Path("/project/folderA/folderB/folderC/MovedWorkspaceFile");
+		file.move(path, true, false, null);
+		
+		file= FileBuffers.getWorkspaceFileAtLocation(path);
+		if (file != null && file.exists())
+			return path;
+		
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
+	 */
+	protected boolean modifyUnderlyingFile() throws Exception {
+		File file= FileBuffers.getSystemFileAtLocation(getPath());
+		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of workspace file"));
+		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return true;
 	}
 }

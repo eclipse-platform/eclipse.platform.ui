@@ -39,6 +39,12 @@ public abstract class FileBufferFunctions extends TestCase {
 	
 	protected abstract void markReadOnly() throws Exception;
 	
+	protected abstract boolean modifyUnderlyingFile() throws Exception;
+	
+	protected abstract boolean deleteUnderlyingFile() throws Exception;
+	
+	protected abstract IPath moveUnderlyingFile() throws Exception;
+	
 	protected abstract boolean isStateValidationSupported();
 	
 
@@ -311,9 +317,9 @@ public abstract class FileBufferFunctions extends TestCase {
 		
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
-		
-		fManager.connect(fPath, null);
 		try {
+			
+			fManager.connect(fPath, null);
 			
 			assertTrue(listener.count == 1);
 			assertNotNull(listener.buffer);
@@ -325,7 +331,11 @@ public abstract class FileBufferFunctions extends TestCase {
 			assertTrue(listener.buffer == fileBuffer);
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			try {
+				fManager.disconnect(fPath, null);
+			} finally {
+				fManager.removeFileBufferListener(listener);
+			}
 		}
 	}
 	
@@ -348,29 +358,34 @@ public abstract class FileBufferFunctions extends TestCase {
 		
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
-		
-		ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
-		assertTrue(listener.count == 0 && listener.buffer == null);
-		
-		fManager.connect(fPath, null);
 		try {
 			
-			fileBuffer= fManager.getTextFileBuffer(fPath);
-			IDocument document= fileBuffer.getDocument();
-			document.replace(0, 0, "prefix");
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
 			
-			assertTrue(listener.count == 1);
-			assertTrue(listener.buffer == fileBuffer);
-			assertTrue(listener.isDirty);
-			
-			fileBuffer.commit(null, true);
-			
-			assertTrue(listener.count == 2);
-			assertTrue(listener.buffer == fileBuffer);
-			assertFalse(listener.isDirty);
+			fManager.connect(fPath, null);
+			try {
+				
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IDocument document= fileBuffer.getDocument();
+				document.replace(0, 0, "prefix");
+				
+				assertTrue(listener.count == 1);
+				assertTrue(listener.buffer == fileBuffer);
+				assertTrue(listener.isDirty);
+				
+				fileBuffer.commit(null, true);
+				
+				assertTrue(listener.count == 2);
+				assertTrue(listener.buffer == fileBuffer);
+				assertFalse(listener.isDirty);
+				
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.removeFileBufferListener(listener);
 		}
 	}
 	
@@ -393,29 +408,629 @@ public abstract class FileBufferFunctions extends TestCase {
 		
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
-		
-		ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
-		assertTrue(listener.count == 0 && listener.buffer == null);
-		
-		fManager.connect(fPath, null);
 		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
 			
-			fileBuffer= fManager.getTextFileBuffer(fPath);
-			IDocument document= fileBuffer.getDocument();
-			document.replace(0, 0, "prefix");
-			
-			assertTrue(listener.count == 1);
-			assertTrue(listener.buffer == fileBuffer);
-			assertTrue(listener.isDirty);
-			
-			fileBuffer.revert(null);
-			
-			assertTrue(listener.count == 2);
-			assertTrue(listener.buffer == fileBuffer);
-			assertFalse(listener.isDirty);
+			fManager.connect(fPath, null);
+			try {
+				
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IDocument document= fileBuffer.getDocument();
+				document.replace(0, 0, "prefix");
+				
+				assertTrue(listener.count == 1);
+				assertTrue(listener.buffer == fileBuffer);
+				assertTrue(listener.isDirty);
+				
+				fileBuffer.revert(null);
+				
+				assertTrue(listener.count == 2);
+				assertTrue(listener.buffer == fileBuffer);
+				assertFalse(listener.isDirty);
+				
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
+	 */
+	public void test12_1() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer preBuffer, postBuffer;
+			public int preCount, postCount;
+			
+			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
+				++preCount;
+				preBuffer= buffer;
+			}
+			
+			public void bufferContentReplaced(IFileBuffer buffer) {
+				++postCount;
+				postBuffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
+			
+			fManager.connect(fPath, null);
+			try {
+				
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IDocument document= fileBuffer.getDocument();
+				document.replace(0, 0, "prefix");
+							
+				fileBuffer.revert(null);
+				
+				assertTrue(listener.preCount == 1);
+				assertTrue(listener.preBuffer == fileBuffer);
+				assertTrue(listener.postCount == 1);
+				assertTrue(listener.postBuffer == fileBuffer);
+				
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
+	 */
+	public void test12_2() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer preBuffer, postBuffer;
+			public int preCount, postCount;
+			
+			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
+				++preCount;
+				preBuffer= buffer;
+			}
+			
+			public void bufferContentReplaced(IFileBuffer buffer) {
+				++postCount;
+				postBuffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
+			
+			fManager.connect(fPath, null);
+			try {
+				
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+							
+				if (modifyUnderlyingFile()) {
+					assertTrue(listener.preCount == 1);
+					assertTrue(listener.preBuffer == fileBuffer);
+					assertTrue(listener.postCount == 1);
+					assertTrue(listener.postBuffer == fileBuffer);
+				}
+				
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateValidationChanged
+	 */
+	public void test13_1() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isStateValidated;
+			
+			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+				++count;
+				this.buffer= buffer;
+				this.isStateValidated= isStateValidated;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+			
+			fManager.connect(fPath, null);
+			try {
+				
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer.validateState(null, null);
+				
+				if (isStateValidationSupported()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+					assertTrue(listener.isStateValidated);
+				}
+				
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateValidationChanged
+	 */
+	public void test13_2() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isStateValidated;
+			
+			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+				++count;
+				this.buffer= buffer;
+				this.isStateValidated= isStateValidated;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				markReadOnly();
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer.validateState(null, null);
+
+				if (isStateValidationSupported()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+					assertTrue(listener.isStateValidated);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	/*
+	 * Test IFileBufferListener#stateValidationChanged
+	 */
+	public void test13_3() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isStateValidated;
+			
+			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+				++count;
+				this.buffer= buffer;
+				this.isStateValidated= isStateValidated;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer.validateState(null, null);
+				fileBuffer.resetStateValidation();
+				
+				if (isStateValidationSupported()) {
+					assertTrue(listener.count == 2);
+					assertTrue(listener.buffer == fileBuffer);
+					assertFalse(listener.isStateValidated);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateValidationChanged
+	 */
+	public void test13_4() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isStateValidated;
+			
+			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+				++count;
+				this.buffer= buffer;
+				this.isStateValidated= isStateValidated;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				markReadOnly();
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer.validateState(null, null);
+				fileBuffer.resetStateValidation();
+
+				if (isStateValidationSupported()) {
+					assertTrue(listener.count == 2);
+					assertTrue(listener.buffer == fileBuffer);
+					assertFalse(listener.isStateValidated);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#underlyingFileDeleted
+	 */
+	public void test14() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void underlyingFileDeleted(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				if (deleteUnderlyingFile()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#underlyingFileMoved
+	 */
+	public void test15() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public IPath newLocation;
+			
+			public void underlyingFileMoved(IFileBuffer buffer, IPath newLocation) {
+				++count;
+				this.buffer= buffer;
+				this.newLocation= newLocation;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IPath newLocation= moveUnderlyingFile();
+				if (newLocation != null) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(listener.newLocation, newLocation);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+
+	/*
+	 * Test IFileBufferListener#stateChanging for external changes
+	 */
+	public void test16_1() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				if (modifyUnderlyingFile()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateChanging for external changes
+	 */
+	public void test16_2() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				if (deleteUnderlyingFile()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+
+	/*
+	 * Test IFileBufferListener#stateChanging for external changes
+	 */
+	public void test16_3() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				if (moveUnderlyingFile() != null) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateChanging for internal changes
+	 */
+	public void test17_1() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer.validateState(null, null);
+				
+				if (isStateValidationSupported()) {
+					assertTrue(listener.count == 1);
+					assertTrue(listener.buffer == fileBuffer);
+				}
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	/*
+	 * Test IFileBufferListener#stateChanging for internal changes
+	 */
+	public void test17_2() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IDocument document= fileBuffer.getDocument();
+				document.replace(0, 0, "prefix");				
+				fileBuffer.revert(null);
+				
+				assertTrue(listener.count == 1);
+				assertTrue(listener.buffer == fileBuffer);
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#stateChanging for internal changes
+	 */
+	public void test17_3() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void stateChanging(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			assertTrue(listener.count == 0 && listener.buffer == null);
+
+			fManager.connect(fPath, null);
+			try {
+
+				fileBuffer= fManager.getTextFileBuffer(fPath);
+				IDocument document= fileBuffer.getDocument();
+				document.replace(0, 0, "prefix");				
+				fileBuffer.commit(null, true);
+				
+				assertTrue(listener.count == 1);
+				assertTrue(listener.buffer == fileBuffer);
+
+			} finally {
+				fManager.disconnect(fPath, null);
+			}
+			
+		} finally {
+			fManager.removeFileBufferListener(listener);
 		}
 	}
 }
