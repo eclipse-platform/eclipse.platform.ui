@@ -7,8 +7,7 @@ Bundle-ClassPath: antui.jar
 Bundle-Activator: org.eclipse.ant.internal.ui.AntUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: .,
- org.eclipse.ant.internal.ui,
+Export-Package: org.eclipse.ant.internal.ui,
  org.eclipse.ant.internal.ui.antsupport,
  org.eclipse.ant.internal.ui.antsupport.inputhandler,
  org.eclipse.ant.internal.ui.antsupport.logger,
