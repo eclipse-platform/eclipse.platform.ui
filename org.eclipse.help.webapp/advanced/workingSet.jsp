@@ -360,10 +360,10 @@ for (int i=0; i<data.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input id="searchButton" class='button'  type="button" onclick="doSubmit()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input class='button'  type="button" onclick="doSubmit()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

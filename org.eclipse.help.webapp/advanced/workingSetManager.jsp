@@ -71,11 +71,11 @@ function enableButtons() {
 	if (document.getElementById('selectws').checked){
 		document.getElementById("edit").disabled = (active == null);
 		document.getElementById("remove").disabled = (active == null);
-		document.getElementById("okButton").disabled = (active == null);	
+		document.getElementById("ok").disabled = (active == null);	
 	} else {
 		document.getElementById("edit").disabled = true;
 		document.getElementById("remove").disabled = true;
-		document.getElementById("okButton").disabled = false;
+		document.getElementById("ok").disabled = false;
 	}
 }
 
@@ -194,10 +194,10 @@ for (int i=0; i<wsets.length; i++)
 						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="editWorkingSet()"  type="button"  value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="editWorkingSet()" value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="removeWorkingSet()"  type="button"  value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="removeWorkingSet()" value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
 					</td>
 				</tr>
   			</table>
@@ -210,10 +210,10 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input id="okButton" class='button'  type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input class='button'  type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>
