@@ -315,6 +315,9 @@ public abstract class PlatformURLConnection extends URLConnection {
 	}
 
 	void setResolvedURL(URL url) throws IOException {
+		if (url == null) {
+			throw new IOException();
+		}
 		if (resolvedURL == null) {
 			int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 			isJar = -1 != ix;

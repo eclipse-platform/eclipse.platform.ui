@@ -48,13 +48,12 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		String id = getId(ref);
 		String vid = getVersion(ref);
 		target = PlatformActivator.getContext().getBundle(id);
-		URL result = target.getEntry("");
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
 		if (ix == -1 || (ix + 1) >= spec.length())
-			return result;
+			return target.getEntry("");
 		else
-			return new URL(result, spec.substring(ix + 1));
+			return target.getEntry(spec.substring(ix + 1));
 	}
 	public static void startup() {
 		// register connection type for platform:/plugin handling
