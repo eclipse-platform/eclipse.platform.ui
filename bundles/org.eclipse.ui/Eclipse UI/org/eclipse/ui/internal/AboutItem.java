@@ -15,7 +15,6 @@ import org.eclipse.swt.custom.BusyIndicator;
  */
 public class AboutItem {
 	private String text;
-	private int[][] boldRanges;
 	private int[][] linkRanges;
 	private String[] hrefs;
 /**
@@ -23,20 +22,12 @@ public class AboutItem {
  */
 public AboutItem(
 	String text,
-	int[][] boldRanges,
 	int[][] linkRanges,
 	String[] hrefs) {
 	    
 	this.text = text;
-	this.boldRanges = boldRanges;
 	this.linkRanges = linkRanges;
 	this.hrefs = hrefs;
-}
-/**
- * Returns the bold ranges (character locations)
- */
-public int[][] getBoldRanges() {
-	return boldRanges;
 }
 /**
  * Returns the link ranges (character locations)

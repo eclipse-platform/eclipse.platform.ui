@@ -40,7 +40,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.AboutItem;
-import org.eclipse.ui.internal.AboutParser;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.PlatformInfo;
 import org.eclipse.ui.internal.ProductInfo;
@@ -54,12 +53,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *		This class is internal to the workbench and must not be called outside the workbench
  */
 public class AboutDialog extends Dialog {
+	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 	private	Image 			image;	//image to display on dialog
 	private  	AboutInfo     	aboutInfo;
 	private	PlatformInfo 	platformInfo;	//the platform info
 	private	ProductInfo 	productInfo;	//the product info
 	private 	ArrayList images = new ArrayList();
-	private 	AboutParser parser;
 	private 	AboutItem item;
 	private	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
 	private    int ABOUT_TEXT_WIDTH = 70; // chars
@@ -175,13 +174,8 @@ protected Control createDialogArea(Composite parent) {
 		// show text
 		String aboutText = aboutInfo.getAboutText();
 		if (aboutText != null) {
-			StringBuffer buf = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><about>");  //$NON-NLS-1$
-			buf.append(aboutText);
-			buf.append("</about>");	//$NON-NLS-1$
 			// get an about item
-			parser = new AboutParser();
-			parser.parse(buf.toString());
-			item = parser.getAboutItem();
+			item = scan(aboutText);
 		}
 	}
 						
@@ -228,7 +222,6 @@ protected Control createDialogArea(Composite parent) {
 		styledText.setLayoutData(data);
 		styledText.setCursor(null);
 		styledText.setBackground(topContainer.getBackground());
-		setBoldRanges(styledText, item.getBoldRanges());
 		setLinkRanges(styledText, item.getLinkRanges());
 		addListeners(styledText);
 	}
@@ -321,9 +314,36 @@ protected Control createDialogArea(Composite parent) {
 			new AboutPluginsDialog(getShell()).open();
 		}
 	});
-
 	return outer;
 }
+
+/**
+ * Scan the contents of the about text
+ */
+private AboutItem scan(String s) {
+	int max = s.length();
+	int i = s.indexOf(ATT_HTTP);
+	ArrayList linkRanges = new ArrayList();
+	ArrayList links = new ArrayList();
+	while (i != -1) {
+		int start = i;
+		// look for the first whitespace character
+		boolean found = false;
+		i += ATT_HTTP.length();
+		while (!found && i < max) {
+			found = Character.isWhitespace(s.charAt(i++));
+		}
+		linkRanges.add(new int[] {start, i - start});
+		links.add(s.substring(start, i));
+		i = s.indexOf(ATT_HTTP, i);
+	}
+	return new AboutItem(
+			s,
+			(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
+			(String[])links.toArray(new String[links.size()]));
+}
+
+
 /**
  * Returns the feature infos ensuring that none have duplicate icons and
  * excluding the primary feature.

@@ -7,6 +7,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.AboutItem;
-import org.eclipse.ui.internal.AboutParser;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.ProductInfo;
 import org.eclipse.ui.internal.Workbench;
@@ -63,6 +63,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *		This class is internal to the workbench and must not be called outside the workbench
  */
 public class AboutFeaturesDialog extends Dialog {
+	
+	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 
 	/**
 	 * Table height in dialog units (value 150).
@@ -95,7 +97,6 @@ public class AboutFeaturesDialog extends Dialog {
 	private boolean reverseSort = false;	// initially sort ascending
 	private AboutInfo lastSelection = null;
 
-	private 	AboutParser parser;
 	private 	AboutItem item;
 
 	private    int ABOUT_TEXT_WIDTH = 70; // chars
@@ -268,23 +269,44 @@ public class AboutFeaturesDialog extends Dialog {
 		String aboutText = info.getAboutText();
 		item = null;
 		if (aboutText != null) {
-			StringBuffer buf = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><about>");  //$NON-NLS-1$
-			buf.append(aboutText);
-			buf.append("</about>");	//$NON-NLS-1$
 			// get an about item
-			parser = new AboutParser();
-			parser.parse(buf.toString());
-			item = parser.getAboutItem();
+			item = scan(aboutText);
 		}
 		if (item == null)
 			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation"));
 		else {
 			text.setText(item.getText());	
 			text.setCursor(null);
-			setBoldRanges(text, item.getBoldRanges());
 			setLinkRanges(text, item.getLinkRanges());
 		}
 	}
+	
+	/**
+	 * Scan the contents of the about text
+	 */
+	private AboutItem scan(String s) {
+		int max = s.length();
+		int i = s.indexOf(ATT_HTTP);
+		ArrayList linkRanges = new ArrayList();
+		ArrayList links = new ArrayList();
+		while (i != -1) {
+			int start = i;
+			// look for the first whitespace character
+			boolean found = false;
+			i += ATT_HTTP.length();
+			while (!found && i < max) {
+				found = Character.isWhitespace(s.charAt(i++));
+			}
+			linkRanges.add(new int[] {start, i - start});
+			links.add(s.substring(start, i));
+			i = s.indexOf(ATT_HTTP, i);
+		}
+		return new AboutItem(
+				s,
+				(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
+				(String[])links.toArray(new String[links.size()]));
+	}
+	
 	/** 
 	 * Select the initial selection
 	 * 
