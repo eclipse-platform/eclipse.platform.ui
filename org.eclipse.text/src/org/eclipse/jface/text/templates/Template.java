@@ -20,7 +20,6 @@ import org.eclipse.jface.text.Assert;
  * @since 3.0
  */
 public class Template {
-	/* XXX this class should be final and non-modifieable or implement Cloneable, or both. */
 
 	/** The name of this template */
 	private /*final*/ String fName;
