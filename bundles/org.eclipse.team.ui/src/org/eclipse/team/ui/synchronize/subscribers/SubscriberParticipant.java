@@ -195,8 +195,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 					boolean isModal = true;
 					if(modelProperty != null) {
 						isModal = modelProperty.booleanValue();
-						job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
 					}
+
 					Runnable runnable = listener.refreshDone(event);
 					// If the job is being run modally then simply prompt the user immediatly
 					boolean newProgressSupport = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS");
