@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,7 +181,7 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource and is appended
  * to this container's full path to form the full path of the resultant resource.
- * A trailing separator is ignored. The path of the resulting resource will 
+ * A trailing separator is ignored. The path of the resulting resource must 
  * have at least two segments.
  * </p>
  *
@@ -198,12 +198,12 @@ public IFile getFile(IPath path);
  * the result need exist in the workspace.
  * The validation check on the resource name/path is not done
  * when the resource handle is constructed; rather, it is done
- * automatically as the resource is created.
+ * automatically as the resource is created. 
  * <p>
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource and is appended
  * to this container's full path to form the full path of the resultant resource.
- * A trailing separator is ignored. The path of the resulting resource will 
+ * A trailing separator is ignored. The path of the resulting resource must
  * have at least two segments.
  * </p>
  *
