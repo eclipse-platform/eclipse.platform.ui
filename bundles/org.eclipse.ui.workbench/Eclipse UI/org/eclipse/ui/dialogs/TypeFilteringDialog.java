@@ -158,7 +158,9 @@ private void checkInitialSelections() {
 		String nextExtension = (String) initialIterator.next();
 		if(!selectedMappings.contains(nextExtension)){
 			entries.append(nextExtension);
-			entries.append(',');
+			//Only add a comma if we are not at the end
+			if(initialIterator.hasNext())
+				entries.append(',');
 		}
 	}
 	this.userDefinedText.setText(entries.toString());
