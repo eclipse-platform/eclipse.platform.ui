@@ -91,12 +91,6 @@ public boolean hasChildren(Object element) {
 public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 }
 /**
- * @see IContentProvider#isDeleted
- */
-public boolean isDeleted(Object element) {
-	return ((element instanceof IResource) && !((IResource) element).exists());
-}
-/**
  * Specify whether or not to show closed projects in the tree 
  * viewer.  Default is to show closed projects.
  * 
