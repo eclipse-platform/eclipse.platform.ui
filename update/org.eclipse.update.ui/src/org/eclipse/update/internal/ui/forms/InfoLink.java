@@ -34,6 +34,7 @@ public class InfoLink extends HyperlinkAdapter {
 	}
 
 	public void linkActivated(Control link) {
+		if (info==null) return;
 		URL url = info.getURL();
 		if (url!=null) {
 			view.showURL(url.toString());
