@@ -83,7 +83,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	//locally mark a command's enabled state so it can be processed correctly on performOK
 	private static final String COMMAND_ENABLED= "CommandEnabled"; //$NON-NLS-1$
 
-	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
+	private Button upButton, downButton, newButton, importButton, editButton, removeButton;
 	
 	private boolean userHasMadeChanges= false;
 	
@@ -294,7 +294,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		newButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
-		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
+		importButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Import..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
@@ -302,7 +302,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
 
 		newButton.setEnabled(true);
-		copyButton.setEnabled(true);
+		importButton.setEnabled(true);
 
 		//populate widget contents	
 		addBuildersToTable();
@@ -345,8 +345,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private void handleButtonPressed(Button button) {
 		if (button == newButton) {
 			handleNewButtonPressed();
-		} else if (button == copyButton) {
-			handleCopyButtonPressed();
+		} else if (button == importButton) {
+			handleImportButtonPressed();
 		} else if (button == editButton) {
 			handleEditButtonPressed();
 		} else if (button == removeButton) {
@@ -408,10 +408,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 
 	/**
-	 * The user has pressed the copy button. Prompt them to select a
-	 * configuration to copy.
+	 * The user has pressed the import button. Prompt them to select a
+	 * configuration to import from the workspace.
 	 */	
-	private void handleCopyButtonPressed() {
+	private void handleImportButtonPressed() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		List toolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY);
 		List configurations= new ArrayList();
