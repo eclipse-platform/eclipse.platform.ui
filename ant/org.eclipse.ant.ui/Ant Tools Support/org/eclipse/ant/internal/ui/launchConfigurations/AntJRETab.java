@@ -122,7 +122,7 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		return fWorkingDirectoryBlock.isValid(config);
+		return super.isValid(config) && fWorkingDirectoryBlock.isValid(config);
 	}
 	
 	/* (non-Javadoc)
