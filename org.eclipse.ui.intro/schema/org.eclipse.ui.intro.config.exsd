@@ -123,7 +123,14 @@ Note: do we really wanna expose this implementation detail?
          <attribute name="os" type="string">
             <annotation>
                <documentation>
-                  an optional os string to enable choosing of implementation based on current OS.
+                  an optional os string to enable choosing of implementation based on current OS. eg: win32;linux
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ws" type="string">
+            <annotation>
+               <documentation>
+                  an optional os string to enable choosing of implementation based on current WS. eg: win32;gtk
                </documentation>
             </annotation>
          </attribute>

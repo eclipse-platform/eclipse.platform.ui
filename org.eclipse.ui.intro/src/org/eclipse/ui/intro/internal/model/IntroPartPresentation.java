@@ -26,28 +26,37 @@ import org.eclipse.ui.intro.internal.util.*;
  * Rules:
  * <ul>
  * <li>There is no model class for the "implementation" markup element. This
- * presentation class inherits information from the implementation class that
- * is picked (based on OS, ...).</li>
+ * presentation class inherits information from the implementation class that is
+ * picked (based on OS, ...).</li>
  * <li>ID attribute of this model class is the id of the picked implementation
  * element.</li>
  * <li>Style attribute in this model class is the style of the picked
  * implementation element.</li>
- * <li>HTMLHeadContent in this model class is the HEAD element under the
- * picked implementation element, only if the implementation element is a
- * Browser implmenetation.</li>
+ * <li>HTMLHeadContent in this model class is the HEAD element under the picked
+ * implementation element, only if the implementation element is a Browser
+ * implmenetation.</li>
  * <ul>
  */
 public class IntroPartPresentation extends IntroElement {
 
     protected static final String PRESENTATION_ELEMENT = "presentation";
+
     private static final String IMPLEMENTATION_ELEMENT = "implementation";
+
     private static final String TITLE_ATTRIBUTE = "title";
+
     private static final String STYLE_ATTRIBUTE = "style";
+
     private static final String OS_ATTRIBUTE = "os";
+
+    private static final String WS_ATTRIBUTE = "ws";
+
     private static final String HOME_PAGE_ID_ATTRIBUTE = "home-page-id";
 
     private String title;
+
     private String style;
+
     private String homePageId;
 
     // config element representing the implementation element contributed in
@@ -59,6 +68,7 @@ public class IntroPartPresentation extends IntroElement {
     private IntroHead head;
 
     private AbstractIntroPartImplementation implementation;
+
     //private AbstractIntroPart implementation;
 
     // CustomizableIntroPart instance. Passed to the Implementation classes.
@@ -110,8 +120,6 @@ public class IntroPartPresentation extends IntroElement {
         }
     }
 
-
-
     /**
      * @param introPart
      * @throws PartInitException
@@ -158,8 +166,8 @@ public class IntroPartPresentation extends IntroElement {
      * Retruns the implementation element of the config. Choose correct
      * implementation element based on os atrributes. Rules: get current OS,
      * choose first contributrion, with os that matches OS. Otherwise, choose
-     * first contribution with no os. Returns null if no valid implementation
-     * is found.
+     * first contribution with no os. Returns null if no valid implementation is
+     * found.
      */
     private IConfigurationElement getImplementationElement(
             IConfigurationElement configElement) {
@@ -182,10 +190,25 @@ public class IntroPartPresentation extends IntroElement {
                 if (os == null)
                     // no os, no match.
                     continue;
-                if (os.equalsIgnoreCase(currentOS)) {
-                    // found implementation with correct OS.
-                    implementationElement = implementationElements[i];
-                    break;
+
+                if (listValueHasValue(os, currentOS)) {
+                    // found implementation with correct OS. Now try if WS
+                    // matches.
+                    String currentWS = Platform.getWS();
+                    String ws = implementationElements[i]
+                            .getAttribute(WS_ATTRIBUTE);
+                    if (ws == null) {
+                        // good OS, and they do not care about WS. we have a
+                        // match.
+                        implementationElement = implementationElements[i];
+                        break;
+                    }
+
+                    // valid OS, and we have WS.
+                    if (listValueHasValue(ws, currentWS)) {
+                        implementationElement = implementationElements[i];
+                        break;
+                    }
                 }
             }
 
@@ -209,6 +232,20 @@ public class IntroPartPresentation extends IntroElement {
             Util.handleException(e.getMessage(), e);
             return null;
         }
+    }
+
+    /**
+     * Util method that searches for the given value in a comma separated list
+     * of values. The list is retrieved as an attribute value of OS, WS.
+     *  
+     */
+    private boolean listValueHasValue(String stringValue, String value) {
+        String[] attributeValues = stringValue.split(";");
+        for (int i = 0; i < attributeValues.length; i++) {
+            if (attributeValues[i].equalsIgnoreCase(value))
+                return true;
+        }
+        return false;
     }
 
     /**
