@@ -2,7 +2,7 @@ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && pa
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 var framesLoaded = false;
-var args = parent.parseQueryString();
+var args = parseQueryString();
 
 /**
  * Notification when frames are loaded
