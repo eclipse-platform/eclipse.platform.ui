@@ -27,8 +27,6 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
 	 * creation and after disposal.
 	 */
 	private StatusLine statusLine = null;
-	
-	private boolean enabledAllowed = true;
 /**
  * Creates a new status line manager.
  * Use the <code>createControl</code> method to create the 
