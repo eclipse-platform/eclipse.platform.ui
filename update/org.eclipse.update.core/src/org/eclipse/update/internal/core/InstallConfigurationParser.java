@@ -27,6 +27,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 	public static final String CONFIGURATION = "configuration";
 	public static final String CONFIGURATION_SITE = "site";
 	public static final String FEATURE = "feature";
+	public static final String ACTIVITY = "activity";
 
 	private ResourceBundle bundle;
 
@@ -92,17 +93,22 @@ public class InstallConfigurationParser extends DefaultHandler {
 				processSite(attributes);
 				return;
 			}
-			
+
 			if (tag.equalsIgnoreCase(FEATURE)) {
 				processFeature(attributes);
 				return;
 			}
+
+			if (tag.equalsIgnoreCase(ACTIVITY)) {
+				processActivity(attributes);
+				return;
+			}
+
 		} catch (MalformedURLException e) {
 			throw new SAXException("error processing URL. Check the validity of the URLs", e);
-		}  catch (CoreException e) {
+		} catch (CoreException e) {
 			throw new SAXException("error retrieving the site. Check validity of teh URL, the site.xml and the connection", e);
 		}
-		
 
 	}
 
@@ -110,31 +116,30 @@ public class InstallConfigurationParser extends DefaultHandler {
 	 * process the Site info
 	 */
 	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
-		
+
 		//site url
 		String urlString = attributes.getValue("url");
 		URL siteURL = new URL(urlString);
 		ISite site = SiteManager.getSite(siteURL);
-		
+
 		// policy
 		String policyString = attributes.getValue("policy");
 		int policy = Integer.parseInt(policyString);
-		ConfigurationPolicy configPolicy = new ConfigurationPolicy(policy); 
-		
+
 		// confguration site
-		configSite = new ConfigurationSite(site,configPolicy);
-		
+		configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, policy);
+
 		// install
 		String installString = attributes.getValue("install");
-		boolean installable = installString.trim().equalsIgnoreCase("true" )?true:false;
+		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false;
 		configSite.setInstallSite(installable);
-		
+
 		// add to install configuration
 		config.addConfigurationSite(configSite);
-		
+
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString+" policy:"+policyString+" install:"+installString);
+			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString);
 		}
 
 	}
@@ -148,8 +153,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), attributes.getValue("url"), null);
 
 		if (url != null) {
-			IFeatureReference ref = ((Site)configSite.getSite()).getFeatureReferences(url);
-			if (ref!=null) ((ConfigurationPolicy)configSite.getConfigurationPolicy()).addFeatureReference(ref);
+			IFeatureReference ref = ((Site) configSite.getSite()).getFeatureReferences(url);
+			if (ref != null)
+				 ((ConfigurationPolicy) configSite.getConfigurationPolicy()).addFeatureReference(ref);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -162,7 +168,40 @@ public class InstallConfigurationParser extends DefaultHandler {
 		}
 
 	}
-	
+
+	/** 
+	 * process the Activity info
+	 */
+	private void processActivity(Attributes attributes) throws MalformedURLException {
+
+		// action
+		String action = attributes.getValue("action");
+
+		// create
+		ConfigurationActivity activity = new ConfigurationActivity(action);
+
+		// label
+		String label = attributes.getValue("label");
+		if (label != null)
+			activity.setLabel(label);
+
+		// date
+		String dateString = attributes.getValue("date");
+		Date date = new Date(Long.parseLong(dateString));
+		activity.setDate(date);
+
+		// status
+		String statusString = attributes.getValue("status");
+		int status = Integer.parseInt(statusString);
+		activity.setStatus(status);
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: activity:" + activity + " label: " + label + " date:" + dateString + " status" + statusString);
+		}
+
+	}
+
 	/** 
 	 * process the Config info
 	 */

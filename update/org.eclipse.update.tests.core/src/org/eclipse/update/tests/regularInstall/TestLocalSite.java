@@ -44,6 +44,26 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 	}
 	
+	public void testDefaultConfigFile() throws Exception {
+
+		//clean up
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+
+		ILocalSite site = SiteManager.getLocalSite();
+		assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
+		assertTrue("The local site does not contain an history of install configuration",site.getConfigurationHistory().length!=0);
+		assertTrue("The local site does not contain an current install configuration",site.getCurrentConfiguration()!=null);
+		assertTrue("The local site does not contain a default configuration site for the current install config",site.getCurrentConfiguration().getConfigurationSites().length!=0);
+		
+		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getURL().toExternalForm());
+		
+		// cleanup
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		
+
+	}
+	
 	public void testInstallFeatureSaveConfig() throws Exception {
 
 		// cleanup
@@ -55,11 +75,11 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.createConfiguration(null,"new Label");
+		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
 		configSite.install(feature,null);
-		site.addConfiguration(newConfig);
+		newConfig.addConfigurationSite(configSite);
 		site.save();
 		
 		// check

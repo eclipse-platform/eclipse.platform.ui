@@ -9,7 +9,13 @@ public interface IInstallConfigurationChangedListener {
 	void installSiteRemoved(IConfigurationSite site);
 	void linkedSiteAdded(IConfigurationSite site);
 	void linkedSiteRemoved(IConfigurationSite site);
+	/**
+	 * @deprecated should use getConfigurationSite().getSite()
+	 */
 	void featureAdded(IConfigurationSite site,IFeature feature);
+	/**
+	 * @deprecated should use getConfigurationSite().getSite()
+	 */
 	void featureRemoved(IConfigurationSite site, IFeature feature);
 }	
 

@@ -1,6 +1,7 @@
 package org.eclipse.update.core;
 
 import java.util.Date;
+import org.eclipse.core.runtime.CoreException;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -33,12 +34,12 @@ public interface IConfigurationPolicy {
 	/**
 	 * Configure the Feature to be available at next startup
 	 */
-	void configure(IFeatureReference feature);
+	void configure(IFeatureReference feature) throws CoreException;
 	
 	/**
 	 * Unconfigure the feature from the execution path
 	 */
-	void unconfigure(IFeatureReference feature);
+	void unconfigure(IFeatureReference feature) throws CoreException;
 
 }
 

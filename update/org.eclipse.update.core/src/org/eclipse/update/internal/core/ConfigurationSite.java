@@ -4,16 +4,11 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Date;
 
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.internal.boot.update.VersionIdentifier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
 
 /**
  * 
@@ -115,8 +110,19 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		if (!installable){
 			//FIXME: throw error
 		}
+		
+			//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
+		activity.setLabel("Installed feature: "+feature.getIdentifier().toString() +" in site "+site.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
 		IFeatureReference installedFeature = getSite().install(feature,monitor);
 		getConfigurationPolicy().configure(installedFeature);
+
+		
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
 		
 	}
 

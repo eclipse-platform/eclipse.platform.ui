@@ -21,14 +21,9 @@ public interface IActivity {
 	public static final int STATUS_REVERT = 2;
 	
 	/**
-	 * Return sthe name of the feature
+	 * Returns teh user description of teh action
 	 */
-	String getFeatureName();
-	
-	/**
-	 * Returns the version of teh feature
-	 */
-	String getFeatureVersion();
+	String getLabel();
 	
 	/**
 	 * Return the Action String for this activity

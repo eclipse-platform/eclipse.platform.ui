@@ -68,15 +68,20 @@ public interface ILocalSite {
 	IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException;
 	
 	/**
+	 * @deprecated use createNewCurrentConfiguration(URL,String);
+	 */
+	IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException;
+
+	/**
 	 * creates a new currentConfiguration based on the current configuration
-	 * The newly created configuration is not added to the local site
-	 * After the change have been made add it to the local site
+	 * The newly created configuration is added to the local site
 	 * 
 	 * If <code>name</code> is <code>null</code> we'll create a name based on the creation date
 	 * if <code>newFile</code> is <code>null</code> we'll create a new file based on the creation date 
 	 */
-	IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException;
+	IInstallConfiguration createNewCurrentConfiguration(URL newFile,String name) throws CoreException;
 	
+
 	/**
 	 * Adds a new configuration to the LocalSite
 	 * The new configuration becomes the current one

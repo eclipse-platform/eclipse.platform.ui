@@ -3,12 +3,11 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.update.core.IConfigurationPolicy;
-import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.*;
 
 /**
  * 
@@ -126,7 +125,12 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	/*
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
-	public void configure(IFeatureReference feature) {
+	public void configure(IFeatureReference feature) throws CoreException{
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
+		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
 		// FIXME:
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
 			if (featureReferences == null)
@@ -134,12 +138,22 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			featureReferences.add(feature);
 			addFeatureReference(feature);
 		}
+		
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		
 	}
 
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
-	public void unconfigure(IFeatureReference feature) {
+	public void unconfigure(IFeatureReference feature) throws CoreException {
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
 		// FIXME:
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			if (featureReferences == null)
@@ -147,6 +161,11 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			featureReferences.add(feature);
 			addFeatureReference(feature);
 		}
+		
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		
 	}
 
 }

@@ -11,7 +11,9 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IInstallConfiguration;
 import org.xml.sax.SAXException;
 
 /**
@@ -128,7 +130,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			//FIXME: location points to a file, not a directory, 
 			// check UpdateManagerUtils.getURL()
 			// use / and File.Separator, ATTN Linux/Unix issues ?
-			addConfiguration(createConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
+			addConfiguration(createNewCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
 
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
@@ -278,7 +280,11 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#createConfiguration(String)
 	 */
-	public IInstallConfiguration createConfiguration(URL newFile, String name) throws CoreException {
+	public IInstallConfiguration createNewCurrentConfiguration(URL newFile, String name) throws CoreException {
+		
+		// save previous current configuration
+		if (getCurrentConfiguration()!=null)	((InstallConfiguration)getCurrentConfiguration()).save();
+		
 		InstallConfiguration result = null;
 		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
 		try {
@@ -289,6 +295,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 				name = DEFAULT_CONFIG_LABEL + currentDate.toString();
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			result.setCreationDate(currentDate);
+			
+			// add as current 
+			addConfiguration(result);
+			
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:" + newFileName, e);
@@ -302,7 +312,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public void revertTo(IInstallConfiguration configuration) throws CoreException {
 		// create a configuration
-		IInstallConfiguration newConfiguration = createConfiguration(null, configuration.getLabel());
+		IInstallConfiguration newConfiguration = createNewCurrentConfiguration(null, configuration.getLabel());
 		// process delta
 		// the Configured featuresConfigured are the same as the old configuration
 		// the unconfigured featuresConfigured are the rest...
@@ -310,6 +320,13 @@ public class SiteLocal implements ILocalSite, IWritable {
 		// add to the stack which will set up as current
 		addConfiguration(newConfiguration);
 
+	}
+
+	/*
+	 * @see ILocalSite#createConfiguration(URL, String)
+	 */
+	public IInstallConfiguration createConfiguration(URL newFile, String name) throws CoreException {
+		return createNewCurrentConfiguration(newFile,name);
 	}
 
 }

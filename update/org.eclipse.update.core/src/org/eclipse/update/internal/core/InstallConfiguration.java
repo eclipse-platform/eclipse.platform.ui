@@ -18,6 +18,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	private URL location;
 	private Date date;
 	private String label;
+	private List activities;
 	private List configurationSites;
 	private List featuresConfigured;
 	private List featuresUnconfigured;
@@ -39,11 +40,16 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		this.location = newLocation;
 		this.label = label;
 		// do not copy list of listeners
-		// FIXME: incomplete
+		// FIXME: incomplete ?
+		// FIXME: istaht true that Arrays.asList returns a fixed size list, so I cannot modify it ? 
+		// so I have to do all this stuff to get a modifiable list ?
 		if (config!=null){
-			configurationSites = Arrays.asList(config.getConfigurationSites());
-			featuresConfigured = Arrays.asList(config.getConfiguredFeatures());
-			featuresUnconfigured = Arrays.asList(config.getUnconfiguredFeatures());
+			configurationSites = new ArrayList();
+			configurationSites.addAll(Arrays.asList(config.getConfigurationSites()));
+			featuresConfigured = new ArrayList();
+			featuresConfigured.addAll(Arrays.asList(config.getConfiguredFeatures()));
+			featuresUnconfigured = new ArrayList();
+			featuresUnconfigured.addAll(Arrays.asList(config.getUnconfiguredFeatures()));
 		}
 		this.isCurrent = false;
 	}
@@ -125,16 +131,27 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	public void addConfigurationSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
+			
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
+		activity.setLabel("Installed configuration site: "+site.getSite().getURL().toExternalForm());
+		activity.setDate(new Date());
+			
 		if (configurationSites == null) {
-			configurationSites = new ArrayList();
+			configurationSites = new ArrayList(0);
 		}
 		configurationSites.add(site);
+		
 
 		// notify listeners
 		Object[] configurationListeners = listeners.getListeners();
 		for (int i = 0; i < configurationListeners.length; i++) {
 			((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site);
 		}
+		
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		this.addActivity(activity);
 	}
 
 	/*
@@ -226,7 +243,21 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 * @see IInstallConfiguration#getActivities()
 	 */
 	public IActivity[] getActivities() {
-		return null;
+		IActivity[] result = new IActivity[0];
+		if (activities!=null && !activities.isEmpty()){
+			result = new IActivity[activities.size()];
+			activities.toArray(result);
+		}
+		return result;
+	}
+
+
+	/**
+	 * Adds an activity
+	 */
+	public void addActivity(IActivity activity) {
+		if (activities==null) activities = new ArrayList(0);
+		activities.add(activity);
 	}
 
 	/*
@@ -326,7 +357,13 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		}
 		
 		// activities
-		//FIXME
+		if (activities!=null && !activities.isEmpty()){
+			Iterator iter = activities.iterator();
+			while (iter.hasNext()) {
+				ConfigurationActivity element = (ConfigurationActivity) iter.next();
+				((IWritable)element).write(indent+IWritable.INDENT,w);				
+			}	
+		}
 		
 		// end
 		w.println(gap+"</"+InstallConfigurationParser.CONFIGURATION+">");
