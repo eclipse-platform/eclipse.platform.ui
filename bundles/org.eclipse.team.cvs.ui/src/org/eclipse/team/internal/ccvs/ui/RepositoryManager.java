@@ -25,18 +25,22 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.ui.sync.TeamFile;
@@ -113,13 +117,49 @@ public class RepositoryManager {
 	}
 	/**
 	 * Get the list of known version tags for a given project.
+	 * 
+	 * This list includes:
+	 * -All manually defined or auto-defined version tags
+	 * -All tags for the .vcm_meta file, if one exists
+	 * 
+	 * A server hit is incurred on each call to ensure up-to-date results.
 	 */
-	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource) {
+	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource, IProgressMonitor monitor) {
+		// Find tags in .vcm_meta file, optimization for Eclipse users
+		ICVSRemoteFile vcmMeta = getVCMMeta(resource);
+		if (vcmMeta == null) return new CVSTag[0];
+		CVSTag[] tags = getTags(vcmMeta, new NullProgressMonitor());
+		Set result = new HashSet();
+		for (int i = 0; i < tags.length; i++) {
+			if (tags[i].getType() == CVSTag.VERSION) {
+				result.add(tags[i]);
+			}
+		}
+		
 		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
-		if (table == null) return new CVSTag[0];
+		if (table == null) {
+			return (CVSTag[])result.toArray(new CVSTag[result.size()]);
+		}
 		Set set = (Set)table.get(resource.getName());
-		if (set == null) return new CVSTag[0];
-		return (CVSTag[])set.toArray(new CVSTag[0]);
+		if (set == null) {
+			return (CVSTag[])result.toArray(new CVSTag[result.size()]);
+		}
+		result.addAll(set);
+		return (CVSTag[])result.toArray(new CVSTag[0]);
+	}
+	private ICVSRemoteFile getVCMMeta(ICVSRemoteResource resource) {
+		// There should be a better way of doing this.
+		try {
+			IRemoteResource[] resources = resource.members(new NullProgressMonitor());
+			for (int i = 0; i < resources.length; i++) {
+				if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(".vcm_meta")) {
+					return (ICVSRemoteFile)resources[i];
+				}
+			}
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+		}
+		return null;
 	}
 	/**
 	 * Add the given branch tags to the list of known tags for the given
@@ -554,5 +594,66 @@ public class RepositoryManager {
 			list.add(elements[i]);
 		}
 		return result;
+	}
+
+	/**
+	 * Returns Branch and Version tags for the given files
+	 */	
+	public CVSTag[] getTags(ICVSRemoteFile file, IProgressMonitor monitor) {
+		ICVSRepositoryLocation root = file.getRepository();
+		Set tagSet = new HashSet();
+		ILogEntry[] entries = null;
+		try {
+			entries = file.getLogEntries(monitor);
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return null;
+		}
+		for (int j = 0; j < entries.length; j++) {
+			CVSTag[] tags = entries[j].getTags();
+			for (int k = 0; k < tags.length; k++) {
+				tagSet.add(tags[k]);
+			}
+		}
+		return (CVSTag[])tagSet.toArray(new CVSTag[0]);
+	}		
+
+	/**
+	 * Auto-define version and branch tags for the given files.
+	 */	
+	public void autoDefineTags(ICVSRemoteFile[] files, IProgressMonitor monitor) {
+		for (int i = 0; i < files.length; i++) {
+			ICVSRemoteFile file = files[i];
+			ICVSRepositoryLocation root = file.getRepository();
+			CVSTag[] tags = getTags(file, monitor);
+
+			// Break tags up into version tags and branch tags.
+			List branchTags = new ArrayList();
+			List versionTags = new ArrayList();
+			for (int j = 0; j < tags.length; j++) {
+				CVSTag tag = tags[j];
+				if (tag.getType() == CVSTag.BRANCH) {
+					branchTags.add(new BranchTag(tag, root));
+				} else {
+					versionTags.add(tag);
+				}
+			}
+			if (branchTags.size() > 0) {
+				addBranchTags(root, (BranchTag[])branchTags.toArray(new BranchTag[0]));
+			}
+			if (versionTags.size() > 0) {
+				// Current behaviour for version tags is to match the behaviour in VCM 1.0, 
+				// which is to attach them to the top-most folder in CVS. This may change in the future
+				// to allow a more flexible scheme of attaching 'project' semantics to arbitrary
+				// cvs folders. Get the top-most folder now to optimize.
+				ICVSRemoteResource current = file.getRemoteParent();
+				ICVSRemoteResource next = current.getRemoteParent();
+				while (next != null && next.getRemoteParent() != null) {
+					current = next;
+					next = current.getRemoteParent();
+				}
+				addVersionTags(current, (CVSTag[])versionTags.toArray(new CVSTag[0]));
+			}
+		}
 	}
 }
