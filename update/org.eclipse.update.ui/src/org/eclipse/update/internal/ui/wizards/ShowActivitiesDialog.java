@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
+import java.text.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -86,7 +88,9 @@ public class ShowActivitiesDialog extends Dialog {
 			Label targetLabel = new Label(container, SWT.NONE);
 			targetLabel.setText(UpdateUI.getString("ShowActivitiesDialog.date")); //$NON-NLS-1$
 			Label target = new Label(container, SWT.NONE);
-			target.setText(SiteManager.getLocalSite().getCurrentConfiguration().getLabel());
+			DateFormat df = DateFormat.getDateTimeInstance();
+			String localizedDate = df.format(SiteManager.getLocalSite().getCurrentConfiguration().getCreationDate());
+			target.setText(localizedDate);
 			
 			Label urlLabel = new Label(container, SWT.NONE);
 			urlLabel.setText(UpdateUI.getString("ShowActivitiesDialog.loc")); //$NON-NLS-1$
