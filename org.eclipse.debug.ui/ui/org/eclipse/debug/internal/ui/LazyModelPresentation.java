@@ -55,34 +55,44 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		fConfig = configElement;
 	}
 
+	/**
+	 * @see IDebugModelPresentation#getImage(Object)
+	 */
 	public Image getImage(Object element) {
 		return getPresentation().getImage(element);
 	}
 
+	/**
+	 * @see IDebugModelPresentation#getText(Object)
+	 */
 	public String getText(Object element) {
 		return getPresentation().getText(element);
 	}
 	
-	/*
+	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		getPresentation().computeDetail(value, listener);
 	}	
+	
 	/**
-	 * @see IDebugModelPresentaion
+	 * @see ISourcePresentation#getEditorInput(Object)
 	 */
 	public IEditorInput getEditorInput(Object element) {
 		return getPresentation().getEditorInput(element);
 	}
 	
 	/**
-	 * @see IDebugModelPresentaion
+	 * @see ISourcePresentation#getEditorId(IEditorInput, Object)
 	 */
 	public String getEditorId(IEditorInput input, Object inputObject) {
 		return getPresentation().getEditorId(input, inputObject);
 	}
 
+	/**
+	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
+	 */
 	public void addListener(ILabelProviderListener listener) {
 		if (fPresentation != null) {
 			getPresentation().addListener(listener);
@@ -90,6 +100,9 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		fListeners.add(listener);
 	}
 
+	/**
+	 * @see IBaseLabelProvider#dispose()
+	 */
 	public void dispose() {
 		if (fPresentation != null) {
 			getPresentation().dispose();
@@ -97,6 +110,9 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		fListeners = null;
 	}
 
+	/**
+	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
+	 */
 	public boolean isLabelProperty(Object element, String property) {
 		if (fPresentation != null) {
 			return getPresentation().isLabelProperty(element, property);
@@ -104,6 +120,9 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		return false;
 	}
 
+	/**
+	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
+	 */
 	public void removeListener(ILabelProviderListener listener) {
 		if (fPresentation != null) {
 			getPresentation().removeListener(listener);
@@ -152,7 +171,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	}
 
 	/**
-	 * @see IDebugModelPresentation
+	 * @see IDebugModelPresentation#setAttribute(String, Object)
 	 */
 	public void setAttribute(String id, Object value) {
 		if (value == null) {

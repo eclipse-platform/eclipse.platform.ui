@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * Variables viewer. As the user steps through code, the
- * variables view renders variables that have not changd
+ * variables view renders variables that have not changed
  * in value with a disabled image, thus drawing attention
  * to the values that have changed (which will appear with
  * their appropriate color image).
