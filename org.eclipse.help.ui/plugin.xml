@@ -60,6 +60,7 @@
 				label="%helpcontents"
 				class="org.eclipse.help.internal.ui.HelpContentsAction"
 				icon="icons/view.gif"
+				helpContextId="org.eclipse.help.ui.helpContentsMenu"
 				tooltip="%openhelpcontents"/>
 
 			<menu
@@ -73,6 +74,7 @@
 			<action id="org.eclipse.help.ui.OpenHelpSearchPage"
 				menubarPath="org.eclipse.search.menu/dialogGroup"
 				label="%openHelpSearchPageAction.label"
+				helpContextId="org.eclipse.help.ui.helpSearchMenu"
 	        	icon="icons/searchview.gif"
 				class="org.eclipse.help.internal.ui.OpenHelpSearchPageAction"/>
 

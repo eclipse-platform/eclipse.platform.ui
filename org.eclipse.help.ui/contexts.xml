@@ -19,9 +19,15 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 Click &lt;b&gt;Default&lt;/b&gt; to load the default product settings. Click &lt;b&gt;Apply&lt;/b&gt; to apply changes you have made without closing the dialog box.</description>
    </context>
 
-<!-- Logging options group -->
-   <context  id="loggingOptions" >
-      <description>Specify the level of information reported in the help log file. The errors, warnings, and other information (depending on the level you select) are logged in the file .metadata\.plugins\org.eclipse.help.ui\.log, where .metadata is the product&apos;s working directory. If the documentation is installed remotely, there will be a log file on the server as well.</description>
+<!-- Help Menu: Help Contents -->
+   <context  id="helpContentsMenu" >
+      <description>This command displays the help view. The help view contains help books, topics, and information related to the workbench and installed components.</description>
+      <topic label="Help Menu - Help Contents" href="/org.eclipse.platform.doc.user/reference/ref-61.htm"/>
+   </context>
+   
+<!-- Search Menu: Help -->   
+   <context  id="helpSearchMenu" >
+      <description>Type an expression for which you want to search the documentation. You can use the indicated boolean operators and wildcards, and/or search only the specific books as needed.</description>
    </context>
    
    <context  id="searchFilteringOpts" >
