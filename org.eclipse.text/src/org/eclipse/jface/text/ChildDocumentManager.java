@@ -88,6 +88,11 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		 * than kept stable.
 		 */
 		protected void adaptToInsert() {
+	
+			if (fLength != 0) {
+				super.adaptToInsert();
+				return;
+			}
 			
 			int myStart= fPosition.offset;
 			int myEnd=   fPosition.offset + fPosition.length;
