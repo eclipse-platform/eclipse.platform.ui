@@ -127,10 +127,12 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			} else if(element.equals("added.java")){ //$NON-NLS-1$
 				decoration.setResourceType(IResource.FILE);
 				decoration.setAdded(true);
+				decoration.setDirty(true);
 				decoration.setHasRemote(false);
 			} else if(element.equals("todo.txt")){ //$NON-NLS-1$
 				decoration.setResourceType(IResource.FILE);
 				decoration.setNewResource(true);
+				decoration.setDirty(true);
 			} else if(element.equals("bugs.txt")){ //$NON-NLS-1$
 				decoration.setResourceType(IResource.FILE);
 				decoration.setDirty(false);
