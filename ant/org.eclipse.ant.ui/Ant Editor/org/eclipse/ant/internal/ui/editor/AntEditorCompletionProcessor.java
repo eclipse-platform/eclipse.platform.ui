@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
@@ -57,7 +56,8 @@ import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
-import org.eclipse.ant.internal.ui.editor.templates.XMLContextType;
+import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
+import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -111,12 +111,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		}
  	};
 	
-	private final static int PROPOSAL_MODE_NONE = 0;
-	private final static int PROPOSAL_MODE_TASK_PROPOSAL = 1;
-	private final static int PROPOSAL_MODE_ATTRIBUTE_PROPOSAL = 2;
-	private final static int PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = 3;
-	private final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 4;
-	private final static int PROPOSAL_MODE_PROPERTY_PROPOSAL = 5;
+	protected final static int PROPOSAL_MODE_NONE = 0;
+	protected final static int PROPOSAL_MODE_BUILDFILE = 1;
+	protected final static int PROPOSAL_MODE_TASK_PROPOSAL = 2;
+	protected final static int PROPOSAL_MODE_PROPERTY_PROPOSAL = 3;
+	protected final static int PROPOSAL_MODE_ATTRIBUTE_PROPOSAL = 4;
+	protected final static int PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = 5;
+	protected final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 6;
 	
 	private final static ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
 	
@@ -175,6 +176,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	protected AntModel antModel;
 	
 	/**
+	 * The proposal mode for the current content assist
+     * @see determineProposalMode(IDocument, int, String)
+     */
+	private int currentProposalMode= -1;
+	
+	/**
 	 * Constructor for AntEditorCompletionProcessor.
 	 */
 	public AntEditorCompletionProcessor(AntModel model) {
@@ -206,30 +213,19 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	/**
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
      */
-	public ICompletionProposal[] computeCompletionProposals(
-            ITextViewer refViewer, int documentOffset) {
-        
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
         this.viewer = refViewer;
-        
-        return mergeProposals(super.computeCompletionProposals(refViewer,
-                documentOffset), determineProposals());
+        return mergeProposals(determineProposals(), super.computeCompletionProposals(refViewer, documentOffset));
     }
-	
-	/**
-     * @param proposals1
-     * @param proposals2
-     * @return
-     */
-    private ICompletionProposal[] mergeProposals(
-            ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
 
-        ICompletionProposal[] combinedProposals = new ICompletionProposal[proposals1.length
-                + proposals2.length];
+    private ICompletionProposal[] mergeProposals(ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
+
+        ICompletionProposal[] combinedProposals = new ICompletionProposal[proposals1.length + proposals2.length];
                 
-		System.arraycopy(proposals1,0,combinedProposals,0,proposals1.length);
-		System.arraycopy(proposals2,0,combinedProposals,proposals1.length,proposals2.length);		                
+		System.arraycopy(proposals1, 0, combinedProposals, 0, proposals1.length);
+		System.arraycopy(proposals2, 0, combinedProposals, proposals1.length, proposals2.length);		                
 
-		Arrays.sort(combinedProposals,proposalComparator);
+		Arrays.sort(combinedProposals, proposalComparator);
         return combinedProposals;
     }
 
@@ -286,7 +282,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		String prefix = getCurrentPrefix();
 		if (prefix == null || cursorPosition == -1) {
 			AntUIPlugin.getStandardDisplay().beep();
-			return null;
+			return NO_PROPOSALS;
 		}
 	
 		ICompletionProposal[] proposals = getProposalsFromDocument(doc, prefix);
@@ -300,8 +296,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
         String taskString = null;
 		ICompletionProposal[] proposals= null;
-        switch (determineProposalMode(document, cursorPosition, prefix)) {
-
+		currentProposalMode= determineProposalMode(document, cursorPosition, prefix);
+        switch (currentProposalMode) {
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
                 taskString = getTaskStringFromDocumentStringToPrefix(document.get().substring(0, cursorPosition-prefix.length()));
                 proposals= getAttributeProposals(taskString, prefix);
@@ -310,7 +306,19 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 }
                 break;
             case PROPOSAL_MODE_TASK_PROPOSAL:
-				proposals= getTaskProposals(document, getParentName(document, lineNumber, columnNumber), prefix);
+            	String parentName= getParentName(document, lineNumber, columnNumber);
+            	if (parentName.length() == 0) { //outside of any parent element
+            		 proposals= NO_PROPOSALS;
+            		 currentProposalMode= PROPOSAL_MODE_NONE;
+            	} else {
+            		proposals= getTaskProposals(document, parentName, prefix);
+            	}
+            	if (proposals.length == 0) {
+        			errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.29"); //$NON-NLS-1$
+        		}
+				break;
+            case PROPOSAL_MODE_BUILDFILE:
+				proposals= getBuildFileProposals(document, prefix);
             	if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.29"); //$NON-NLS-1$
             	}
@@ -351,7 +359,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 proposals= NO_PROPOSALS;
 				errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
         }
-        Arrays.sort(proposals, proposalComparator);
+        
         if (proposals.length > 0) {
         	errorMessage= ""; //$NON-NLS-1$
         }
@@ -676,25 +684,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * not known.
      * 
      * @param document the entire document 
-     * @param parentName name of the parent (surrounding) element or 
-     * <code>null</code> if completion should be done for the root element.
+     * @param parentName name of the parent (surrounding) element.
      * @param prefix the prefix that all proposals should start with. The prefix
      * may be an empty string.
      */
     protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
-       
-        ICompletionProposal proposal;
-        if (parentName == null) {
-            String rootElementName= "project"; //$NON-NLS-1$
-			IElement rootElement = dtd.getElement(rootElementName);
-			if (rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
-				proposal = newCompletionProposal(document, prefix, rootElementName);
-				return new ICompletionProposal[] {proposal};
-			} else {
-				return NO_PROPOSALS;
-			}
-       } 
        List proposals = new ArrayList(250);
+       ICompletionProposal proposal;
        if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
         	//use the definitions in the project as that includes more than what is defined in the DTD
 			Project project= antModel.getProjectNode().getProject();
@@ -748,6 +744,24 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
+    
+    /** 
+    * Returns all possible proposals that define the structure of a buildfile.
+    * 
+    * @param document the entire document 
+    * @param prefix the prefix that all proposals should start with. The prefix
+    * may be an empty string.
+    */
+   protected ICompletionProposal[] getBuildFileProposals(IDocument document, String prefix) {
+       String rootElementName= "project"; //$NON-NLS-1$
+       IElement rootElement = dtd.getElement(rootElementName);
+       if (rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
+       		ICompletionProposal proposal = newCompletionProposal(document, prefix, rootElementName);
+			return new ICompletionProposal[] {proposal};
+		} else {
+			return NO_PROPOSALS;
+		}
+   } 
 
     private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
 		Iterator keys= tasks.keySet().iterator();
@@ -980,10 +994,17 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      */
     protected int determineProposalMode(IDocument document, int aCursorPosition, String aPrefix) {
 
+    	if (document.getLength() == 0) {
+    		return PROPOSAL_MODE_BUILDFILE;
+    	}
+    	
         // String from beginning of document to the beginning of the prefix
     	String text= document.get();
         String stringToPrefix = text.substring(0, aCursorPosition - aPrefix.length());
-
+        if (stringToPrefix.length() == 0) {
+        	return PROPOSAL_MODE_BUILDFILE;
+        }
+        
         // Is trimmable from behind
         String trimmedString = stringToPrefix.trim();
         char lastChar = 0;
@@ -1378,23 +1399,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#extractPrefix(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	protected String extractPrefix(ITextViewer textViewer, int offset) {
-		IDocument document= textViewer.getDocument();
-		int i= offset;
-		if (i > document.getLength())
-			return ""; //$NON-NLS-1$
-		
-		try {
-			while (i > 0) {
-				char ch= document.getChar(i - 1);
-				if (ch != '<' && !Character.isJavaIdentifierPart(ch))
-					break;
-				i--;
-			}
-	
-			return document.get(i, offset - i);
-		} catch (BadLocationException e) {
-			return ""; //$NON-NLS-1$
-		}
+		return getPrefixFromDocument(textViewer.getDocument().get(), offset);
 	}
 
 	/**
@@ -1420,7 +1425,21 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	protected ContextType getContextType(ITextViewer textViewer, IRegion region) {
-		return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(XMLContextType.XML_CONTEXT_TYPE);
+		 switch (currentProposalMode) {
+            case PROPOSAL_MODE_TASK_PROPOSAL:
+            	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
+            case PROPOSAL_MODE_BUILDFILE:
+            	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
+			case PROPOSAL_MODE_NONE :
+            case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
+            case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
+            case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
+            case PROPOSAL_MODE_PROPERTY_PROPOSAL:
+            default :
+            	return null;
+                
+        }
+		
 	}
 
     /* (non-Javadoc)
