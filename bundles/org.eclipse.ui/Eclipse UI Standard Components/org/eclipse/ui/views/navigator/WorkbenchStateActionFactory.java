@@ -12,7 +12,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.navigator.SelectionUtil;
+import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 /**
  * The WorkbenchStateActionFactory is the 
@@ -64,7 +64,7 @@ public class WorkbenchStateActionFactory
 		
 		boolean onlyProjectsSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
 
 		if (onlyProjectsSelected) {
 			menu.add(openProjectAction);

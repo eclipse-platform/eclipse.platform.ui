@@ -86,20 +86,20 @@ public class RefactorActionFactory
 		
 		boolean anyResourceSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(
+				&& ResourceSelectionUtil.allResourcesAreOfType(
 					selection,
 					IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 		boolean onlyFilesSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
 		boolean onlyFoldersOrFilesSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(
+				&& ResourceSelectionUtil.allResourcesAreOfType(
 					selection,
 					IResource.FOLDER | IResource.FILE);
 		boolean onlyProjectsSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
 
 		if (onlyFoldersOrFilesSelected) {
 			menu.add(copyResourceAction);

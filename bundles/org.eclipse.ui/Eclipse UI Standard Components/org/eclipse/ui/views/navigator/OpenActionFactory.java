@@ -48,12 +48,12 @@ public class OpenActionFactory extends ActionFactory {
 
 		boolean anyResourceSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(
+				&& ResourceSelectionUtil.allResourcesAreOfType(
 					selection,
 					IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 		boolean onlyFilesSelected =
 			!selection.isEmpty()
-				&& SelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
 
 		if (onlyFilesSelected)
 			menu.add(openFileAction);

@@ -64,7 +64,7 @@ public class GotoActionFactory extends ActionFactory {
 	public void fillPopUpMenu(IMenuManager menu, IStructuredSelection selection) {
 
 		if (selection.size() == 1
-			&& SelectionUtil.allResourcesAreOfType(
+			&& ResourceSelectionUtil.allResourcesAreOfType(
 				selection,
 				IResource.PROJECT | IResource.FOLDER)) {
 			menu.add(goIntoAction);

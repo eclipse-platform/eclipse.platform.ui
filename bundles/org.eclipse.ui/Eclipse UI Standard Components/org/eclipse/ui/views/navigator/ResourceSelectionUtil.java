@@ -4,9 +4,12 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.Iterator;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Provides utilities for checking the validity of selections.
@@ -16,11 +19,11 @@ import java.util.Iterator;
  * @since 2.0
  * </p>
  */
-public class SelectionUtil {
+public class ResourceSelectionUtil {
 /* (non-Javadoc)
  * Private constructor to block instantiation.
  */
-private SelectionUtil(){
+private ResourceSelectionUtil(){
 }
 /**
  * Returns whether the types of the resources in the given selection are among 
@@ -45,6 +48,36 @@ public static boolean allResourcesAreOfType(IStructuredSelection selection, int 
 	}
 	return true;
 }
+
+/**
+ * Returns the selection adapted to IResource. Returns null
+ * if any of the entries are not adaptable.
+ * 
+ * @param selection the selection
+ * @param resourceMask resource mask formed by bitwise OR of resource type
+ *   constants (defined on <code>IResource</code>)
+ * @return IStructuredSelection or null if any of the entries are not adaptable.
+ * @see IResource#getType
+ */
+public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
+	Iterator adaptables = selection.iterator();
+	List result = new ArrayList();
+	while (adaptables.hasNext()) {
+		Object next = adaptables.next();
+		if(next instanceof IAdaptable){
+			Object resource = ((IAdaptable) next).getAdapter(IResource.class);
+			if(resource == null)
+				return null;
+			else
+				result.add(resource);
+		}
+		else	
+			return null;	
+	}
+	return new StructuredSelection(result);
+
+}
+
 /**
  * Returns whether the type of the given resource is among the specified 
  * resource types.
