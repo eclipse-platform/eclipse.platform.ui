@@ -132,6 +132,7 @@ public class DebugUITools {
 	 * Returns the variable component manager for the debug UI plugin.
 	 * 
 	 * @return variable component manager
+	 * @since 3.0
 	 */
 	public static ILaunchVariableComponentManager getVariableComponentManager() {
 		return DebugUIPlugin.getDefault().getVariableComponentManager();
