@@ -7,6 +7,8 @@ package org.eclipse.team.internal.ccvs.core.util;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -15,14 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -283,8 +280,9 @@ public class SyncFileWriter {
 	 * compatibility with other CVS clients.
 	 */
 	private static void writeLines(ICVSFile file, String[] contents) throws CVSException {
-		OutputStream os = new BufferedOutputStream(file.getOutputStream(ICVSFile.UPDATED, false));
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		writeLinesToStreamAndClose(os, contents);
+		file.setContents(new ByteArrayInputStream(os.toByteArray()), ICVSFile.UPDATED, false, Policy.monitorFor(null));
 	}
 	
 	private static void writeLinesToStreamAndClose(OutputStream os, String[] contents)

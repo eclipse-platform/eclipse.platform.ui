@@ -625,18 +625,9 @@ public class Session {
 		} catch (NumberFormatException e) {
 			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
 		}
-		// obtain an output stream for the file
-		OutputStream out = file.getOutputStream(responseType, true);
-		try {
-			transferWithProgress(connection.getInputStream(), out, size, SERVER_NEWLINE_BYTE,
-				isBinary ? null : PLATFORM_NEWLINE_BYTES, monitor, title);
-		} finally {
-			try {
-				out.close();
-			} catch (IOException e) {
-				throw CVSException.wrapException(e);
-			}
-		}
+		// Set the contents of the file using the stream wrapper
+		FileInputStreamWrapper wrapper = new FileInputStreamWrapper(connection.getInputStream(), size, isBinary, title, monitor);
+		file.setContents(wrapper.getInputStream(), responseType, true, monitor);
 	}
 	
 	/**

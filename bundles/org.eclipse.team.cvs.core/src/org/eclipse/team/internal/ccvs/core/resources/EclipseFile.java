@@ -38,6 +38,8 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 
 	private static final String TEMP_FILE_EXTENSION = ".tmp";//$NON-NLS-1$
 	
+	private static final IPath PROJECT_META_DATA_PATH = new Path(".project");//$NON-NLS-1$
+	
 	/**
 	 * Create a handle based on the given local resource.
 	 */
@@ -67,40 +69,6 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_accessing_resource", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
  		}
  	}
-	
-	public OutputStream getOutputStream(final int responseType, final boolean keepLocalHistory) throws CVSException {
-		return new ByteArrayOutputStream() {
-			public void close() throws IOException {
-				try {
-					IFile file = getIFile();
-					if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
-						if (resource.exists()) {
-							// Special handling for the .project meta-file
-							// XXX This behavior should be restricted to the meta file!
-							file.setContents(new ByteArrayInputStream(toByteArray()), true /*force*/, true /*keep history*/, null);
-						} else {
-							file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
-						}
-					} else if(responseType == UPDATE_EXISTING) {
-						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, keepLocalHistory /*keep history*/, null);
-					} else {
-						
-						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, keepLocalHistory /*keep history*/, null);
-						
-//						// Ensure we don't leave the file in a partially written state
-//						IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
-//						tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
-//						file.delete(false, true, null);
-//						tempFile.move(new Path(file.getName()), true, true, null);
-					}
-				} catch(CoreException e) {
-					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
-				} finally {
-					super.close();
-				}
-			}
-		};
-	}
 	
 	/*
 	 * @see ICVSFile#getAppendingOutputStream()
@@ -214,7 +182,42 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
 		return getParent().getRemoteLocation(stopSearching) + SEPARATOR + getName();
 	}
+		
+	/*
+	 * @see ICVSFile#setReadOnly()
+	 */
+	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException {
+		try {
+			IFile file = getIFile();
+			if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
+				try {
+					file.create(stream, false /*force*/, null);
+				} catch (CoreException e) {
+					if (resource.exists()) {
+						if (PROJECT_META_DATA_PATH.equals(file.getFullPath().removeFirstSegments(1))) {
+							// Special handling for the .project meta-file
+							file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
+							return;
+						}
+					}
+					throw new CVSException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage(), e.getStatus().getMessage()));  //$NON-NLS-1$
+				}
+			} else if(responseType == UPDATE_EXISTING) {
+				file.setContents(stream, false /*force*/, keepLocalHistory /*keep history*/, monitor);
+			} else {
+				file.setContents(stream, false /*force*/, keepLocalHistory /*keep history*/, monitor);
 				
+	//			// Ensure we don't leave the file in a partially written state
+	//			IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+	//			tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
+	//			file.delete(false, true, null);
+	//			tempFile.move(new Path(file.getName()), true, true, null);
+			}
+		} catch(CoreException e) {
+			throw new CVSException(Policy.bind("EclipseFile_Problem_writing_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$
+		}
+	}
+			
 	/*
 	 * @see ICVSFile#setReadOnly()
 	 */

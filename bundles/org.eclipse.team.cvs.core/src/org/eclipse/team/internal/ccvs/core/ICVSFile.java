@@ -38,10 +38,15 @@ public interface ICVSFile extends ICVSResource {
 	 * It is the responsibility of the caller to close the stream when finished.
  	 */
 	InputStream getInputStream() throws CVSException;
-
- 	/**
-	 * Gets an output stream for writing to the file.
+	
+	/**
+	 * Gets an appending output stream for writing to the file.
 	 * It is the responsibility of the caller to close the stream when finished.
+ 	 */
+	OutputStream getAppendingOutputStream() throws CVSException;
+
+	/**
+	 * Set the contents of the file to the contents of the provided input stream
 	 * 
 	 * @param responseType the type of reponse that was received from the server
 	 * 
@@ -49,14 +54,8 @@ public interface ICVSFile extends ICVSResource {
 	 *    MERGED - merging remote changes with local changes. Failure could result in loss of local changes
 	 *    CREATED - contents for a file that doesn't exist locally
 	 *    UPDATE_EXISTING - Replacing a local file with no local changes with remote changes.
- 	 */
-	OutputStream getOutputStream(int responseType, boolean keepLocalHistory) throws CVSException;
-	
-	/**
-	 * Gets an appending output stream for writing to the file.
-	 * It is the responsibility of the caller to close the stream when finished.
- 	 */
-	OutputStream getAppendingOutputStream() throws CVSException;
+	 */
+	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException;
 
 	/**
 	 * Sets the file's read-only permission.

@@ -89,17 +89,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		// use the contents of the file on disk so that the server can calculate the relative
 		// sync state. This is a trick to allow the server to calculate sync state for us.
 		InputStream is = managed.getInputStream();
-		OutputStream os = file.getOutputStream(ICVSFile.UPDATED, false);
-		try {		
-			FileUtil.transfer(is, os);
-		} catch(IOException e) {			
-		} finally {
-			try {
-				os.close();
-				is.close();
-			} catch(IOException e) {
-			}
-		}
+		file.setContents(is, ICVSFile.UPDATED, false, Policy.monitorFor(null));
 			
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		if( ! file.updateRevision(tag, monitor)) {
@@ -313,20 +303,24 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public InputStream getInputStream() throws CVSException {
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
 	}
-	
+
 	/*
-	 * @see ICVSFile#getOutputStream()
+	 * @see ICVSFile#setReadOnly()
 	 */
-	public OutputStream getOutputStream(int responseType, boolean keepLocalHistory) throws CVSException {
-		// stores the contents of the file when the stream is closed
-		// could perhaps be optimized in some manner to avoid excessive array copying
-		return new ByteArrayOutputStream() {
-			public void close() throws IOException {
-				contents = toByteArray();
-				super.close();
+	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException {
+		try {
+			byte[] buffer = new byte[1024];
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			int read;
+			while ((read = stream.read(buffer)) >= 0) {
+				Policy.checkCanceled(monitor);
+				out.write(buffer, 0, read);
 			}
-		};
- 	}
+			contents = out.toByteArray();
+		} catch(IOException e) {
+			throw new CVSException(Policy.bind("")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
  
 	public void setReadOnly(boolean readOnly) throws CVSException {
  	}
