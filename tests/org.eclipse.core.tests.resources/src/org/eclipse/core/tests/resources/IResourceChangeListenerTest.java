@@ -681,6 +681,35 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 			handleCoreException(e);
 		}
 	}
+	/**
+	 * Regression test for bug 42514
+	 */
+	public void testMoveFileDeleteFolder() {
+		try {
+			//file2 moved to file1, and colliding folder3 is deleted
+			file1.delete(IResource.NONE, null);
+			file2.create(getRandomContents(), IResource.NONE, null);
+			folder3.create(IResource.NONE, true, null);
+			verifier.reset();
+			verifier.addExpectedChange(file2, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file1.getFullPath());
+			int flags = IResourceDelta.MOVED_FROM | IResourceDelta.REPLACED | IResourceDelta.TYPE | IResourceDelta.CONTENT;
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, flags, file2.getFullPath(), null);
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor m) throws CoreException {
+					m.beginTask("Deleting and moving", 100);
+					try {
+						folder3.delete(IResource.FORCE, new SubProgressMonitor(m, 50));
+						file2.move(file1.getFullPath(), true, new SubProgressMonitor(m, 50));
+					} finally {
+						m.done();
+					}
+				}
+			}, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
 	public void testMoveFileAddMarker() {
 		try {
 			verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
