@@ -82,12 +82,9 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	}
 
 	void basicAdd(IRegistryElement element, boolean link) {
-		//TODO: this should be logged
-		if (elements.containsKey(element.getUniqueIdentifier())) {
-			if (DEBUG)
-				System.out.println("********* Element already added: " + element.getUniqueIdentifier() + " - ignored."); //$NON-NLS-1$//$NON-NLS-2$
-			return;
-		}
+		if (elements.containsKey(element.getUniqueIdentifier()))
+			// this could be caused by a bug on removal
+			throw new IllegalArgumentException("Element already added: " + element.getUniqueIdentifier()); //$NON-NLS-1$
 		elements.put(element.getUniqueIdentifier(), element);
 		((BundleModel) element).setParent(this);
 		if (!link)
@@ -202,8 +199,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	/**
 	 * Adds the given listener for registry change events on the given plug-in.
 	 */
-	// TODO This should be thread safe code.  May get called by multiple threads.
-	public void addRegistryChangeListener(IRegistryChangeListener listener, String filter) {
+	public synchronized void addRegistryChangeListener(IRegistryChangeListener listener, String filter) {
 		this.listeners.add(new ListenerInfo(listener, filter));
 	}
 
@@ -484,8 +480,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	 * Adds the given listener for registry change events related to this
 	 * plug-in's extension points.
 	 */
-	// TODO This should be thread safe code.  May get called by multiple threads.
-	public void removeRegistryChangeListener(IRegistryChangeListener listener) {
+	public synchronized void removeRegistryChangeListener(IRegistryChangeListener listener) {
 		this.listeners.remove(new ListenerInfo(listener, null));
 	}
 
