@@ -256,7 +256,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					// We do not want to delete the destination in case of failure. It might
 					// the case where we already had contents in the destination, so we would
 					// be deleting resources we don't know about and the user might lose data.
-					String message = Policy.bind("localstore.couldnotMove", source.getAbsolutePath()); //$NON-NLS-1$
+					String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
