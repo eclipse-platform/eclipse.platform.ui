@@ -190,6 +190,8 @@ private Class getCommonResourceClass(List objects) {
 		Object object = objects.get(i);
 		
 		if(object instanceof IAdaptable){
+			if(object instanceof IResource)
+				continue;
 			//Leave the resources out of this
 			if(object instanceof IResource)
 				break;
@@ -197,9 +199,9 @@ private Class getCommonResourceClass(List objects) {
 			IResource resource = getAdaptedResource((IAdaptable) object);
 			
 			if(resource == null)
+				//Not a resource and does not adapt. No common resource class
 				return null;
-			else
-				testList.add(resource);
+			testList.add(resource);
 		}
 		else
 			return null;
