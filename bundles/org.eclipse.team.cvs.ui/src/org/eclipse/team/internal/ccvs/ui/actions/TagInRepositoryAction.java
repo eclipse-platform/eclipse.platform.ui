@@ -100,6 +100,7 @@ public class TagInRepositoryAction extends TagAction {
 	 */
 	protected CVSTag promptForTag(ICVSFolder[] folders) {
 		String name = promptForTag(folders[0]);
+		if (name == null) return null;
 		return new CVSTag(name, CVSTag.VERSION);
 	}
 	
