@@ -31,6 +31,10 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * as synthetic. A synthetic composite changes might not be rendered
  * in the refactoring preview tree to save display real-estate.
  * <p>
+ * After a composite change has been executed the list of its children
+ * will be empty.
+ * </p>
+ * <p>
  * Clients may subclass this class.
  * </p>
  * 
@@ -268,6 +272,17 @@ public class CompositeChange extends Change {
 				// ensures that the memory consumption doesn't go up when
 				// producing the undo change tree.
 				iter.remove();
+				// Make sure we dispose the change since it will now longer be
+				// in the list of children when call CompositeChange#dispose()
+				final Change changeToDispose= change;
+				Platform.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						changeToDispose.dispose();
+					}
+					public void handleException(Throwable exception) {
+						RefactoringCorePlugin.log(exception);
+					}
+				});
 			}
 			if (undos != null) {
 				Collections.reverse(undos);

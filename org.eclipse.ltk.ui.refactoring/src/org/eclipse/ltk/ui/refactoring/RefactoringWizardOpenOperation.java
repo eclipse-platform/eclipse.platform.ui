@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -98,31 +99,45 @@ public class RefactoringWizardOpenOperation {
 	 * @throws InterruptedException if the initial condition checking got cancelled by
 	 *  the user.
 	 */
-	public int run(Shell parent, String dialogTitle) throws InterruptedException {
+	public int run(final Shell parent, final String dialogTitle) throws InterruptedException {
 		Assert.isNotNull(dialogTitle);
 		final Refactoring refactoring= fWizard.getRefactoring();
 		final IJobManager manager= Platform.getJobManager();
-		try {
-			// we are getting the block dialog for free if we pass in null
-			try {
-				manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
-			} catch(OperationCanceledException e) {
-				throw new InterruptedException(e.getMessage());
+		final int[] result= new int[1];
+		final InterruptedException[] canceled= new InterruptedException[1];
+		Runnable r= new Runnable() {
+			public void run() {
+				try {
+					// we are getting the block dialog for free if we pass in null
+					manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
+					
+					refactoring.setValidationContext(parent);
+					fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
+					if (fInitialConditions.hasFatalError()) {
+						String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
+						MessageDialog.openInformation(parent, dialogTitle, message);
+						result[0]= INITIAL_CONDITION_CHECKING_FAILED;
+						return;
+					} else {
+						fWizard.setInitialConditionCheckingStatus(fInitialConditions);
+						Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
+						result[0]= dialog.open();
+						return;
+					} 
+				} catch (InterruptedException e) {
+					canceled[0]= e;
+				} catch (OperationCanceledException e) {
+					canceled[0]= new InterruptedException(e.getMessage());
+				} finally {
+					manager.resume(ResourcesPlugin.getWorkspace().getRoot());
+					refactoring.setValidationContext(null);
+				}		
 			}
-			
-			fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
-			if (fInitialConditions.hasFatalError()) {
-				String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
-				MessageDialog.openInformation(parent, dialogTitle, message);
-				return INITIAL_CONDITION_CHECKING_FAILED;
-			} else {
-				fWizard.setInitialConditionCheckingStatus(fInitialConditions);
-				Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
-				return dialog.open();
-			} 
-		} finally {
-			manager.resume(ResourcesPlugin.getWorkspace().getRoot());
-		}		
+		};
+		BusyIndicator.showWhile(parent.getDisplay(), r);
+		if (canceled[0] != null)
+			throw canceled[0];
+		return result[0];
 	}
 	
 	//---- private helper methods -----------------------------------------------------------------

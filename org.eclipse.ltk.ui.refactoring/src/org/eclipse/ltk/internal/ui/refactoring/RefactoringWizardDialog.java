@@ -72,6 +72,14 @@ public class RefactoringWizardDialog extends WizardDialog {
 		setMinimumPageSize(width, height);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		getRefactoringWizard().getRefactoring().setValidationContext(newShell);
+	}
+	
 	/*
 	 * @see WizardDialog#finishPressed()
 	 */
@@ -106,5 +114,9 @@ public class RefactoringWizardDialog extends WizardDialog {
 	
 	public Button getCancelButton() {
 		return getButton(IDialogConstants.CANCEL_ID);
+	}
+	
+	private RefactoringWizard getRefactoringWizard() {
+		return (RefactoringWizard)getWizard();
 	}
 }

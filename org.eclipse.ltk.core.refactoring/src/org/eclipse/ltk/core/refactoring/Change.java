@@ -35,7 +35,8 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  *       results in an unspecified result. This method can be called multiple
  *       times.
  *   <li>then the method perform can be called. An disabled change should not
- *       be executed. The perform method can only be called once.</li>
+ *       be executed. The perform method can only be called once. After a change
+ *       as been executed only the method <code>dispose</code> must be called.</li>
  *   <li>the method dispose has to be called either after the perform method
  *       has been called or if a change is no longer needed. The second case
  *       for example occurs when the undo stack gets flushed and all change

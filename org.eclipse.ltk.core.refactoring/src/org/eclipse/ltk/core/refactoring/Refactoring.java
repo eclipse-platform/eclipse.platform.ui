@@ -60,7 +60,32 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 3.0
  */
 public abstract class Refactoring extends PlatformObject {
+	
+	private Object fValidationContext;
 
+	/**
+	 * Sets the validation context used when calling 
+	 * {@link org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)}.
+	 * 
+	 * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is
+	 * to be used to parent any dialogs with the user, or <code>null</code> if
+	 * there is no UI context (declared as an <code>Object</code> to avoid any
+	 * direct references on the SWT component)
+	 */
+	public final void setValidationContext(Object context) {
+		fValidationContext= context;
+	}
+	
+	/**
+	 * Returns the validation context
+	 * 
+	 * @return the validation context or <code>null</code> if no validation
+	 *  context has been set.
+	 */
+	public final Object getValidationContext() {
+		return fValidationContext;
+	}
+	
 	/**
 	 * Returns the refactoring's name.
 	 * 

@@ -496,6 +496,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(fWizard.getDefaultPageTitle());
+		fWizard.getRefactoring().setValidationContext(newShell);
 	}
 	
 	protected Control createContents(Composite parent) {
