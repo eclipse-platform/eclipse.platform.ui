@@ -113,8 +113,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 	
 	/**
-	 * Constructs a launch with the specified attributes. A launch must
-	 * have at least one of a process or debug target.
+	 * Constructs a launch with the specified attributes.
 	 *
 	 * @param launchConfiguration the configuration that was launched
 	 * @param mode the mode of this launch - run or debug (constants
