@@ -179,6 +179,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
                 .getString("ChooseWorkspaceDialog.workspaceEntryLabel")); //$NON-NLS-1$
 
         text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+        text.setFocus();
         text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL));
         setInitialTextValues(text);
