@@ -31,13 +31,13 @@ public class PreferencesAdapter implements IPreferenceStore {
 
 	/**
 	 * Property change listener. Listens for events of type
-	 * org.eclipse.core.runtime.Preferences.PropertyChangeEvent and fires
-	 * an event (of type org.eclipse.jface.util.PropertyChangeEvent) on the
+	 * {@link org.eclipse.core.runtime.Preferences.PropertyChangeEvent} and fires
+	 * a {@link org.eclipse.jface.util.PropertyChangeEvent} on the
 	 * adapter with arguments from the received event.
 	 */
 	private class PropertyChangeListener implements Preferences.IPropertyChangeListener {
-		/*
-		 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			firePropertyChangeEvent(event.getProperty(), event.getOldValue(), event.getNewValue());
@@ -71,8 +71,8 @@ public class PreferencesAdapter implements IPreferenceStore {
 		fPreferences= preferences;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners.size() == 0)
@@ -80,8 +80,8 @@ public class PreferencesAdapter implements IPreferenceStore {
 		fListeners.add(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
@@ -89,15 +89,15 @@ public class PreferencesAdapter implements IPreferenceStore {
 			fPreferences.removePropertyChangeListener(fListener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean contains(String name) {
 		return fPreferences.contains(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		if (!fSilent) {
@@ -108,106 +108,106 @@ public class PreferencesAdapter implements IPreferenceStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean getBoolean(String name) {
 		return fPreferences.getBoolean(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultBoolean(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean getDefaultBoolean(String name) {
 		return fPreferences.getDefaultBoolean(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultDouble(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public double getDefaultDouble(String name) {
 		return fPreferences.getDefaultDouble(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultFloat(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public float getDefaultFloat(String name) {
 		return fPreferences.getDefaultFloat(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultInt(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getDefaultInt(String name) {
 		return fPreferences.getDefaultInt(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultLong(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public long getDefaultLong(String name) {
 		return fPreferences.getDefaultLong(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultString(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getDefaultString(String name) {
 		return fPreferences.getDefaultString(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDouble(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public double getDouble(String name) {
 		return fPreferences.getDouble(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getFloat(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public float getFloat(String name) {
 		return fPreferences.getFloat(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getInt(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getInt(String name) {
 		return fPreferences.getInt(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getLong(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public long getLong(String name) {
 		return fPreferences.getLong(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getString(String name) {
 		return fPreferences.getString(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isDefault(String name) {
 		return fPreferences.isDefault(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean needsSaving() {
 		return fPreferences.needsSaving();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void putValue(String name, String value) {
 		try {
@@ -218,101 +218,94 @@ public class PreferencesAdapter implements IPreferenceStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, double value) {
 		fPreferences.setDefault(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, float value) {
 		fPreferences.setDefault(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, int)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, int value) {
 		fPreferences.setDefault(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, long)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, long value) {
 		fPreferences.setDefault(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, String defaultObject) {
 		fPreferences.setDefault(name, defaultObject);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, boolean value) {
 		fPreferences.setDefault(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setToDefault(String name) {
 		fPreferences.setToDefault(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, double value) {
 		fPreferences.setValue(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, float value) {
 		fPreferences.setValue(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, int value) {
 		fPreferences.setValue(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, long value) {
 		fPreferences.setValue(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, String value) {
 		fPreferences.setValue(name, value);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setValue(String name, boolean value) {
 		fPreferences.setValue(name, value);
-	}
-
-	/**
-	 * @return Returns the adapted Preferences.
-	 */
-	public Preferences getPreferences() {
-		return fPreferences;
 	}
 }
