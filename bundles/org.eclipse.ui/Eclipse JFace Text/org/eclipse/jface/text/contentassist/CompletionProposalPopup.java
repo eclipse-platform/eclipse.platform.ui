@@ -397,11 +397,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 					return true;
 
 				case SWT.ARROW_UP :
-					newSelection -= (newSelection > 0 ? 1 : 0);
+					newSelection -= 1;
+					if (newSelection < 0)
+						newSelection= fProposalTable.getItemCount() - 1;
 					break;
 
 				case SWT.ARROW_DOWN :
-					newSelection += (newSelection < fProposalTable.getItemCount() - 1 ? 1 : 0);
+					newSelection += 1;
+					if (newSelection > fProposalTable.getItemCount() - 1)
+						newSelection= 0;
 					break;
 					
 				case SWT.PAGE_DOWN :
