@@ -24,7 +24,8 @@ public interface ICharacterScanner {
 	public static final int EOF= -1;
 
 	/**
-	 * Provides rules access to the legal line delimiters.
+	 * Provides rules access to the legal line delimiters. The returned
+	 * object may not be modified by clients.
 	 *
 	 * @return the legal line delimiters
 	 */

@@ -434,7 +434,7 @@ public class TextUtilities {
 	 * given document or <code>null</code> if this was impossible.
 	 * 
 	 * @param document the document
-	 * @return the partition managing position categories
+	 * @return the partition managing position categories or <code>null</code>
 	 * @since 3.0
 	 */
 	public static String[] computePartitionManagingCategories(IDocument document) {
@@ -525,5 +525,37 @@ public class TextUtilities {
 			return left.getOffset() <= right.getOffset() && right.getOffset() < leftEnd;
 		
 		return left.getOffset() == right.getOffset();
+	}
+	
+	/**
+	 * Returns a copy of the given string array.
+	 *
+	 * @param array the string array to be copied
+	 * @return a copy of the given string array or <code>null</code> when <code>array</code> is <code>null</code>
+	 * @since 3.1
+	 */
+	public static String[] copy(String[] array) {
+		if (array != null) {
+			String[] copy= new String[array.length];
+			System.arraycopy(array, 0, copy, 0, array.length);
+			return copy;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a copy of the given integer array.
+	 *
+	 * @param array the integer array to be copied
+	 * @return a copy of the given integer array or <code>null</code> when <code>array</code> is <code>null</code>
+	 * @since 3.1
+	 */
+	public static int[] copy(int[] array) {
+		if (array != null) {
+			int[] copy= new int[array.length];
+			System.arraycopy(array, 0, copy, 0, array.length);
+			return copy;
+		}
+		return null;
 	}
 }

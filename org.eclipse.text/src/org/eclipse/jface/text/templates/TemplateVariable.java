@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.templates;
 
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.TextUtilities;
 
 /**
  * A <code>TemplateVariable</code> represents a set of positions into a
@@ -147,11 +148,12 @@ public class TemplateVariable {
 	 * @param offsets the new offsets of the variable
 	 */
 	public void setOffsets(int[] offsets) {
-	 	fOffsets= offsets; 
+	 	fOffsets= TextUtilities.copy(offsets); 
 	}
 	
 	/**
-	 * Returns the offsets of the variable.
+	 * Returns the offsets of the variable. The returned array is
+	 * owned by this variable and must not be modified.
 	 * 
 	 * @return the length of the variable
 	 */
@@ -166,7 +168,7 @@ public class TemplateVariable {
 	 * @param value the new default value
 	 */
 	public final void setValue(String value) {
-		setValues(new String[] { value });
+		fValues= new String[] { value };
 	}
 	
 	/**
@@ -177,7 +179,7 @@ public class TemplateVariable {
 	 */
 	public void setValues(String[] values) {
 		Assert.isTrue(values.length > 0);
-		fValues= values;
+		fValues= TextUtilities.copy(values);
 	}
 
 	/**

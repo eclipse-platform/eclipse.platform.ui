@@ -380,7 +380,11 @@ abstract public class AbstractInformationControlManager {
 	 * @param fallbackAnchors the list of anchors to be tried
 	 */
 	public void setFallbackAnchors(Anchor[] fallbackAnchors) {
-		fFallbackAnchors= fallbackAnchors;
+		if (fallbackAnchors != null) {
+			fFallbackAnchors= new Anchor[fallbackAnchors.length];
+			System.arraycopy(fallbackAnchors, 0, fFallbackAnchors, 0, fallbackAnchors.length);
+		} else
+			fFallbackAnchors= null;
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
 
@@ -95,7 +96,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 */
 	public DefaultPartitioner(IPartitionTokenScanner scanner, String[] legalContentTypes) {
 		fScanner= scanner;
-		fLegalContentTypes= legalContentTypes;
+		fLegalContentTypes= TextUtilities.copy(legalContentTypes);
 		fPositionCategory= CONTENT_TYPES_CATEGORY + hashCode();
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
@@ -494,7 +495,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @see IDocumentPartitioner#getLegalContentTypes()
 	 */
 	public String[] getLegalContentTypes() {
-		return fLegalContentTypes;
+		return TextUtilities.copy(fLegalContentTypes);
 	}
 	
 	/**

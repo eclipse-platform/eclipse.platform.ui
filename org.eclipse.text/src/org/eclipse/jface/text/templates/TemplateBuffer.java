@@ -50,7 +50,23 @@ public final class TemplateBuffer {
 		// XXX assert non-overlapping variable properties
 
 		fString= string;
-		fVariables= variables;
+		fVariables= copy(variables);
+	}
+	
+	/**
+	 * Returns a copy of the given array.
+	 *
+	 * @param array the array to be copied
+	 * @return a copy of the given array or <code>null</code> when <code>array</code> is <code>null</code>
+	 * @since 3.1
+	 */
+	private static TemplateVariable[] copy(TemplateVariable[] array) {
+		if (array != null) {
+			TemplateVariable[] copy= new TemplateVariable[array.length];
+			System.arraycopy(array, 0, copy, 0, array.length);
+			return copy;
+		}
+		return null;
 	}
 
 	/**
@@ -63,7 +79,8 @@ public final class TemplateBuffer {
 	}
 	
 	/**
-	 * Returns the variable positions of the template buffer.
+	 * Returns the variable positions of the template buffer. The returned array is
+	 * owned by this variable and must not be modified.
 	 * 
 	 * @return the variable positions of the template buffer
 	 */
