@@ -11,6 +11,8 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -130,7 +132,7 @@ protected IProgressMonitor getProgressMonitorDelegate() {
  */
 public IProgressMonitor getProgressMonitor() {
 	
-	return new IProgressMonitor(){
+	return new IProgressMonitorWithBlocking(){
 		
 		IProgressMonitor progressDelegate = getProgressMonitorDelegate();
 		
@@ -195,6 +197,20 @@ public IProgressMonitor getProgressMonitor() {
 		 */
 		public void worked(int work) {
 			progressDelegate.worked(work);
+		}  
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+		 */
+		public void clearBlocked() {
+			//Do nothing here as we let the modal context handle it
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+//			Do nothing here as we let the modal context handle it
 		}
 	};
 }
