@@ -195,12 +195,11 @@ public Plugin(IPluginDescriptor descriptor) {
 public final URL find(IPath path) {
 	URL install = getDescriptor().getInstallURL();
 	String first = path.segment(0);
-	if (first.charAt(0) != '$') {
-		try {
-			return new URL(install, path.toString());
-		} catch (MalformedURLException e) {
-			return null;
-		}
+	if (first.charAt(0) != '$') {		
+		URL result = findInPlugin(install, path.toString());
+		if (result != null)
+			return result;	
+		return findInFragments(path.toString());
 	}
 	IPath rest = path.removeFirstSegments(1);
 	if (first.equalsIgnoreCase("$nl$"))
@@ -215,55 +214,76 @@ public final URL find(IPath path) {
 }
 
 private URL findOS(URL install, IPath path) {
-	try {
-		return new URL(install, "os/" + BootLoader.getOS() + path.toString());
-	} catch (MalformedURLException e) {
-		return null;
-	}
+	String filePath = "os/" + BootLoader.getOS() + "/" + path.toString();	
+	URL result = findInPlugin(install, filePath);
+	if (result != null)
+		return result;	
+	return findInFragments(filePath);
 }
+
 private URL findWS(URL install, IPath path) {
-	try {
-		return new URL(install, "ws/" + BootLoader.getWS() + path.toString());
-	} catch (MalformedURLException e) {
-		return null;
-	}
+	String filePath = "ws/" + BootLoader.getWS() + "/" + path.toString();	
+	URL result = findInPlugin(install, filePath);
+	if (result != null)
+		return result;	
+	return findInFragments(filePath);
 }
+
 private URL findNL(URL install, IPath path) {
 	String nl = BootLoader.getNL();
 	URL result = null;
-	while (result == null && nl.length() > 0) {
-		try {
-			URL location = new URL(install, "nl/" + nl + "/" + path.toString());
-			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
-			if (file != null && new File(file).exists())
-				result = location;
-		} catch (MalformedURLException e) {
-			return null;
-		}
-		int i = nl.lastIndexOf('_');
-		if (i < 0)
-			nl = "";
-		else
-			nl = nl.substring(0, i);
-	}
-	return result;
-}
-
-private URL findFiles(URL install, IPath path) {
-	PluginFragmentModel[] fragments = ((PluginDescriptor)getDescriptor()).getFragments();
-	for (int i = 0; i < fragments.length; i++) {
-		try {
-			URL location = new URL(fragments[i].getLocation() + path.toString());
-			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
-			if (file != null && new File(file).exists())
-				return location;
-		} catch (MalformedURLException e) {
-			// skip malformed urls
+	boolean done = false;
+	
+	while (!done) {		
+		String filePath = "nl/" + (nl.equals("") ? nl : nl + "/") + path.toString();
+		result = findInPlugin(install, filePath);
+		if (result != null)
+			return result;
+		result = findInFragments(filePath);
+		if (result != null)
+			return result;
+		if (nl.length() == 0)
+			done = true;
+		else {
+			int i = nl.lastIndexOf('_');
+			if (i < 0)
+				nl = "";
+			else
+				nl = nl.substring(0, i);
 		}
 	}
 	return null;
 }
 
+private URL findInPlugin(URL install, String filePath) {
+	try {
+		URL result = new URL(install, filePath);
+		URL location = Platform.resolve(result);
+		String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+		if (file != null && new File(file).exists())
+			return result;						
+	} catch (IOException e) {
+	}
+	return null;
+}
+
+private URL findInFragments(String path) {
+	PluginFragmentModel[] fragments = ((PluginDescriptor)getDescriptor()).getFragments();
+	if (fragments == null)
+		return null;
+		
+	for (int i = 0; i < fragments.length; i++) {
+		try {
+			URL location = new URL(fragments[i].getLocation() + path);
+			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+			if (file != null && new File(file).exists())
+				return location;
+		} catch (IOException e) {
+			// skip malformed url and urls that cannot be resolved
+		}
+	}
+	return null;
+}
 
 private boolean exists(URL location) {
 	return true;
