@@ -184,7 +184,7 @@ public class AntRunner implements IPlatformRunnable {
 	}
 
 	/**
-	 * Returns the build file target information.
+	 * Returns the buildfile target information.
 	 * 
 	 * @return an array containing the target information
 	 * 
@@ -196,21 +196,11 @@ public class AntRunner implements IPlatformRunnable {
 		Object runner= null;
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
-			ClassLoader loader = getClassLoader();
-			Thread.currentThread().setContextClassLoader(loader);
-			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			classInternalAntRunner = getInternalAntRunner();
 			runner = classInternalAntRunner.newInstance();
-			// set build file
-			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
-			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
 			
-			setProperties(runner, classInternalAntRunner);
-			
-			if (arguments != null && arguments.length > 0) {
-				Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] { String[].class }); //$NON-NLS-1$
-				setArguments.invoke(runner, new Object[] { arguments });
-			}
-						
+			basicConfigure(classInternalAntRunner, runner);
+					
 			// get the info for each targets
 			Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
 			Object results = getTargets.invoke(runner, null);
@@ -250,6 +240,23 @@ public class AntRunner implements IPlatformRunnable {
 		}
 	}
 
+	private void basicConfigure(Class classInternalAntRunner, Object runner) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
+		setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
+		
+		if (antHome != null) {	
+			Method setAntHome = classInternalAntRunner.getMethod("setAntHome", new Class[] { String.class }); //$NON-NLS-1$
+			setAntHome.invoke(runner, new Object[] { antHome });
+		}
+		
+		setProperties(runner, classInternalAntRunner);
+		
+		if (arguments != null && arguments.length > 0) {
+			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] { String[].class }); //$NON-NLS-1$
+			setArguments.invoke(runner, new Object[] { arguments });
+		}
+	}
+
 	/**
 	 * Runs the build file. If a progress monitor is specified it will be
 	 * available during the script execution as a reference in the Ant Project
@@ -276,9 +283,7 @@ public class AntRunner implements IPlatformRunnable {
 		Class classInternalAntRunner= null;
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
-			ClassLoader loader = getClassLoader();
-			Thread.currentThread().setContextClassLoader(loader);
-			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			classInternalAntRunner = getInternalAntRunner();
 			runner = classInternalAntRunner.newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
@@ -310,18 +315,13 @@ public class AntRunner implements IPlatformRunnable {
 				setInputHandler.invoke(runner, new Object[] { inputHandlerClassName });
 			}
 			
-			if (antHome != null) {	
-				Method setAntHome = classInternalAntRunner.getMethod("setAntHome", new Class[] { String.class }); //$NON-NLS-1$
-				setAntHome.invoke(runner, new Object[] { antHome });
-			}
+			basicConfigure(classInternalAntRunner, runner);
 			
 			// add progress monitor
 			if (monitor != null) {
 				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
 				setProgressMonitor.invoke(runner, new Object[] { monitor });
 			}
-			
-			setProperties(runner, classInternalAntRunner);
 			
 			// set message output level
 			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
@@ -331,11 +331,7 @@ public class AntRunner implements IPlatformRunnable {
 				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
 				setExecutionTargets.invoke(runner, new Object[] { targets });
 			} 
-			// set extra arguments
-			if (arguments != null && arguments.length > 0) {
-				Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] { String[].class }); //$NON-NLS-1$
-				setArguments.invoke(runner, new Object[] { arguments });
-			}
+
 			// run
 			Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
 			run.invoke(runner, null);
@@ -353,6 +349,12 @@ public class AntRunner implements IPlatformRunnable {
 			buildRunning= false;
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
+	}
+
+	private Class getInternalAntRunner() throws ClassNotFoundException {
+		ClassLoader loader = getClassLoader();
+		Thread.currentThread().setContextClassLoader(loader);
+		return loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 	}
 
 	private void setProperties(Object runner, Class classInternalAntRunner)

@@ -188,6 +188,10 @@ public final class AntUtil {
 		}
 		runner.setCustomClasspath(getCustomClasspath(config));
 		
+		String antHome= getAntHome(config);
+		if (antHome != null) {
+			runner.setAntHome(antHome);
+		}
 		return runner.getAvailableTargets();
 	}
 	
