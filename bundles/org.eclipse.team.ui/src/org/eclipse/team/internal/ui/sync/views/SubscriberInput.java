@@ -17,6 +17,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
@@ -42,15 +43,10 @@ public class SubscriberInput implements IPropertyChangeListener {
 	 */
 	private SyncSetInputFromSyncSet filteredInput;
 	
-	/*
-	 * The subscriber 
-	 */
-	private TeamSubscriber subscriber;
-	
 	SubscriberInput(TeamSubscriber subscriber) {
-		this.subscriber = subscriber;
-		subscriberInput = new SyncSetInputFromSubscriberWorkingSet();
-		filteredInput = new SyncSetInputFromSyncSet();
+		Assert.isNotNull(subscriber);
+		subscriberInput = new SyncSetInputFromSubscriberWorkingSet(subscriber);
+		filteredInput = new SyncSetInputFromSyncSet();		
 		TeamUI.addPropertyChangeListener(this);
 	}
 	
@@ -61,7 +57,7 @@ public class SubscriberInput implements IPropertyChangeListener {
 	public void prepareInput(IProgressMonitor monitor) throws TeamException {
 		monitor.beginTask(null, 100);
 		try {			
-			subscriberInput.setSubscriber(getSubscriber(), Policy.subMonitorFor(monitor, 70));						
+			subscriberInput.initialize(Policy.subMonitorFor(monitor, 70));						
 			filteredInput.setInputSyncSet(subscriberInput.getSyncSet(), Policy.subMonitorFor(monitor, 30));
 		} finally {
 			monitor.done();
@@ -69,7 +65,7 @@ public class SubscriberInput implements IPropertyChangeListener {
 	}
 	
 	public TeamSubscriber getSubscriber() {
-		return subscriber;
+		return subscriberInput.getSubscriber();
 	}
 	
 	public SyncSet getFilteredSyncSet() {

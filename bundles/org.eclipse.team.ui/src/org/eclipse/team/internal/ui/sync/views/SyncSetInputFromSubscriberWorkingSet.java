@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkingSet;
 
@@ -29,6 +30,10 @@ import org.eclipse.ui.IWorkingSet;
 public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscriber {
 
 	private IWorkingSet workingSet;
+
+	public SyncSetInputFromSubscriberWorkingSet(TeamSubscriber subscriber) {
+		setSubscriber(subscriber);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.sync.views.SyncSetInputFromSubscriber#collect(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)

@@ -128,25 +128,25 @@ public class OpenInCompareAction extends Action {
 		return editor;
 	}
 	
-	public static void closeCompareEditorFor(SyncViewer viewer, IResource resource) {
-		final IWorkbenchPage page = viewer.getSite().getPage();
-		IEditorReference[] editorRefs = page.getEditorReferences();
-	
-		for (int i = 0; i < editorRefs.length; i++) {
-			final IEditorPart part = editorRefs[i].getEditor(true);
-			if(part != null) {
-				IEditorInput input = part.getEditorInput();
-				if(part != null && input instanceof SyncInfoCompareInput) {
-					SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
-					if(inputInfo.getLocal().equals(resource)) {
-						viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								page.closeEditor(part, true /*save changes if required */);
+	public static void closeCompareEditorFor(final SyncViewer viewer, final IResource resource) {
+		viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchPage page = viewer.getSite().getPage();
+				IEditorReference[] editorRefs = page.getEditorReferences();
+						
+				for (int i = 0; i < editorRefs.length; i++) {
+					final IEditorPart part = editorRefs[i].getEditor(false /* don't restore editor */);
+					if(part != null) {
+						IEditorInput input = part.getEditorInput();
+						if(part != null && input instanceof SyncInfoCompareInput) {
+							SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
+							if(inputInfo.getLocal().equals(resource)) {
+										page.closeEditor(part, true /*save changes if required */);
 							}
-						});
+						}
 					}
 				}
 			}
-		}
+		});				
 	}
 }

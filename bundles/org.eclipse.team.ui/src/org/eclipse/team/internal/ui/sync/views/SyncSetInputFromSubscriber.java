@@ -34,26 +34,33 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 public class SyncSetInputFromSubscriber extends SyncSetInput  implements IResourceChangeListener, ITeamResourceChangeListener {
 
 	private TeamSubscriber subscriber;
+	private boolean connected = false;
 
-	private void connect(TeamSubscriber s) {
-		if (this.subscriber != null) return;
-		this.subscriber = s;
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		s.addListener(this);
+	private void connect() {
+		if(! connected) {
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+			subscriber.addListener(this);
+			connected = true;
+		}
 	}
 	
 	public void disconnect() {
-		if (subscriber == null) return;
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		subscriber.removeListener(this);
-		subscriber = null;
+		if(connected) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+			subscriber.removeListener(this);
+			connected = false;
+		}
 	}
 	
-	/**
-	 * @return
-	 */
 	public TeamSubscriber getSubscriber() {
 		return subscriber;
+	}
+
+	public void setSubscriber(TeamSubscriber subscriber) {
+		if(this.subscriber != null) {
+			disconnect();
+		}
+		this.subscriber = subscriber;
 	}
 
 	/**
@@ -63,9 +70,8 @@ public class SyncSetInputFromSubscriber extends SyncSetInput  implements IResour
 	 * 
 	 * @param subscriber
 	 */
-	public void setSubscriber(TeamSubscriber subscriber, IProgressMonitor monitor) throws TeamException {
-		if (subscriber != null) disconnect();
-		connect(subscriber);
+	public void initialize(IProgressMonitor monitor) throws TeamException {
+		connect();
 		reset(monitor);
 	}
 	
