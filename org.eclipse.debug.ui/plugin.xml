@@ -1362,26 +1362,5 @@
             id="org.eclipse.debug.ui.workingSetComparator">
       </launchConfigurationComparator>
    </extension>
-<!-- Roles and Activities -->
-   <extension
-         point="org.eclipse.ui.activities">
-      <activity
-            name="Debugging"
-            description=""
-            id="org.eclipse.debugging">
-      </activity>
-      <patternBinding
-            inclusive="true"
-            activityId="org.eclipse.debugging"
-            pattern="org.eclipse.debug.*">
-      </patternBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.roles">
-      <activityBinding
-            activityId="org.eclipse.debugging"
-            roleId="org.eclipse.roles.javaRole">
-      </activityBinding>
-   </extension>
 
 </plugin>
