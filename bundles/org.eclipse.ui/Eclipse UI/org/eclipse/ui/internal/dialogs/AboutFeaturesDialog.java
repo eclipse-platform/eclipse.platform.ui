@@ -133,7 +133,7 @@ public class AboutFeaturesDialog extends Dialog {
 		WorkbenchHelp.setHelp(
 			newShell,
 			IHelpContextIds.ABOUT_FEATURES_DIALOG);
-	}
+	} 
 	/**
 	 * Add buttons to the dialog's button bar.
 	 *
@@ -201,6 +201,7 @@ public class AboutFeaturesDialog extends Dialog {
 		
 		// text on the right
 		text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		text.setCaret(null);
 		text.setFont(parent.getFont());
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
