@@ -341,8 +341,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 								return Status.OK_STATUS;
 							}
 						};
-						showJob.schedule();
 						showJob.setSystem(true);
+						showJob.schedule();						
 						return;
 					}
 				}
@@ -935,31 +935,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void showInDialog(Shell shell, Job job) {
-		final boolean[] done = new boolean[1];
-		done[0] = false;
-		JobChangeAdapter adapter = new JobChangeAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-				done[0] = true;
-			}
-		};
-		job.addJobChangeListener(adapter);
-		
 		final ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(shell);
-		dialog.setJob(job);
-		dialog.create();
-		
-		//show a busy cursor until the dialog opens
-		Runnable dialogWait = new Runnable() {
-			public void run() {
-				while (!(done[0] || dialog.getShell() == null))
-					PlatformUI.getWorkbench().getDisplay().readAndDispatch();
-			}
-		};
-		
-		busyCursorWhile(dialogWait, dialog);
+		dialog.show(job);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job, boolean)
