@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Ant Build Tool Core"
+  name="%pluginName"
   id="org.eclipse.ant.core"
   version="0.9"
   class="org.eclipse.ant.core.AntPlugin"
@@ -27,9 +27,9 @@
     </application>
   </extension>
 
-  <extension-point name="Ant Object Definitions" id="antObjects"/>
-  <extension-point name="Ant Task Definitions" id="antTasks"/>
-  <extension-point name="Ant Type Definitions" id="antTypes"/>
+  <extension-point name="%objectsName" id="antObjects"/>
+  <extension-point name="%tasksName" id="antTasks"/>
+  <extension-point name="%typesName" id="antTypes"/>
 
   <extension point="org.eclipse.ant.core.antTypes">
     <antType name="commapatternset" class="org.eclipse.ant.core.CommaPatternSet"/>
