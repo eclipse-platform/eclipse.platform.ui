@@ -60,6 +60,7 @@ public class ProjectReferencePage extends PropertyPage {
 	 * Creates a new ProjectReferencePage.
 	 */
 	public ProjectReferencePage() {
+		//Do nothing on creation
 	}
 	/**
 	 * @see PreferencePage#createContents
@@ -101,7 +102,7 @@ public class ProjectReferencePage extends PropertyPage {
 		listViewer.setSorter(new ViewerSorter());
 		listViewer.setInput(project.getWorkspace());
 		try {
-			listViewer.setCheckedElements(project.getReferencedProjects());
+			listViewer.setCheckedElements(project.getDescription().getReferencedProjects());
 		} catch (CoreException e) {
 			//don't initial-check anything
 		}
@@ -122,6 +123,8 @@ public class ProjectReferencePage extends PropertyPage {
 	 * the given project, plus any projects referenced
 	 * by the given project which do no exist in the
 	 * workspace.
+	 * @param project the project to provide content for
+	 * @return the content provider that shows the project content
 	 */
 	protected IStructuredContentProvider getContentProvider(final IProject project) {
 		return new WorkbenchContentProvider() {
@@ -144,12 +147,13 @@ public class ProjectReferencePage extends PropertyPage {
 
 				// Add any referenced that do not exist in the workspace currently
 				try {
-					projects = project.getReferencedProjects();
+					projects = project.getDescription().getReferencedProjects();
 					for (int i = 0; i < projects.length; i++) {
 						if (!referenced.contains(projects[i]))
 							referenced.add(projects[i]);
 					}
 				} catch (CoreException e) {
+					//Ignore core exceptions
 				}
 
 				return referenced.toArray();
@@ -173,7 +177,8 @@ public class ProjectReferencePage extends PropertyPage {
 
 	}
 	/**
-	 * @see PreferencePage#performOk
+	 * Handle the exception thrown when saving.
+	 * @param e the exception
 	 */
 	protected void handle(InvocationTargetException e) {
 		IStatus error;
@@ -230,6 +235,7 @@ public class ProjectReferencePage extends PropertyPage {
 				true,
 				runnable);
 		} catch (InterruptedException e) {
+			//Ignore interrupted exceptions
 		} catch (InvocationTargetException e) {
 			handle(e);
 			return false;
