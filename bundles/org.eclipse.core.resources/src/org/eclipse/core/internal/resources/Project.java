@@ -664,16 +664,16 @@ public IStatus reconcileLinks(ProjectDescription newDescription) {
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 	//walk over old linked resources and remove those that are no longer defined
 	for (int i = 0; i < children.length; i++) {
-		Resource oldMount = (Resource)children[i];
-		if (!oldMount.isLinked())
+		Resource oldLink = (Resource)children[i];
+		if (!oldLink.isLinked())
 			continue;
 		LinkDescription newLink = null;
 		if (newLinks != null) 
-			newLink = (LinkDescription)newLinks.get(oldMount.getName());
+			newLink = (LinkDescription)newLinks.get(oldLink.getName());
 		//if the new link is missing, or has different location or gender, then remove old link
-		if (newLink == null || !newLink.getLocation().equals(oldMount.getLocation()) || newLink.getType() != oldMount.getType()) { 
+		if (newLink == null || !newLink.getLocation().equals(oldLink.getLocation()) || newLink.getType() != oldLink.getType()) { 
 			try {
-				oldMount.delete(IResource.NONE, null);
+				oldLink.delete(IResource.NONE, null);
 			} catch (CoreException e) {
 				status.merge(e.getStatus());
 			}
