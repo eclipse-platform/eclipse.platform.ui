@@ -21,6 +21,13 @@ package org.eclipse.ui.editors.text;
  */
 public interface IEncodingActionsDefinitionIds  {
 	/**
+	 * Action definition id of the action to change the encoding into default.
+	 * Value is <code>"org.eclipse.ui.edit.text.encoding.default"</code>.
+	 * @since 3.0
+	 */
+	public static final String DEFAULT= "org.eclipse.ui.edit.text.encoding.default"; //$NON-NLS-1$
+	
+	/**
 	 * Action definition id of the action to change the encoding into US ASCII.
 	 * Value is <code>"org.eclipse.ui.edit.text.encoding.us-ascii"</code>.
 	 */

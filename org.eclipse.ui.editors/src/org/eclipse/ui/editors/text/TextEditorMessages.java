@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -28,6 +29,25 @@ class TextEditorMessages {
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Gets a string from the resource bundle and formats it with the given argument.
+	 * 
+	 * @param key the string used to get the bundle value, must not be null
+	 * @param arg the argument used to format the string
+	 * @return the formatted string
+	 */
+	public static String getFormattedString(String key, Object arg) {
+		String format= null;
+		try {
+			format= fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
+		if (arg == null)
+			arg= ""; //$NON-NLS-1$
+		return MessageFormat.format(format, new Object[] { arg });
 	}
 	
 	public static ResourceBundle getResourceBundle() {

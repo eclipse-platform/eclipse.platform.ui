@@ -16,17 +16,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentDescription;
+
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -34,7 +39,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
- * 
+ * @since 3.0
  */
 public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextFileBuffer {
 	
@@ -88,6 +93,19 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected IDocumentListener fDocumentListener= new DocumentListener();
 	/** The element's annotation model */
 	protected IAnnotationModel fAnnotationModel;
+	/**
+	 * The encoding which has explicitly been set on the file.
+	 */
+	private String fExplicitEncoding;
+	/**
+	 * BOM if encoding is UTF-8.
+	 * <p>
+	 * XXX:
+	 * This is a workaround for a corresponding bug in Java readers and writer,
+	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * </p>
+	 */
+	private byte[] fUTF8BOM;
 
 
 	public ResourceTextFileBuffer(TextFileBufferManager manager) {
@@ -120,8 +138,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
+		fExplicitEncoding= encoding;
 		try {
 			fFile.setCharset(encoding);
+			if (encoding == null)
+				fEncoding= fFile.getCharset();
+			readUTF8BOM();
 		} catch (CoreException x) {
 			handleCoreException(x);
 		}
@@ -209,6 +231,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
 		try {
 			fEncoding= null;
+			fExplicitEncoding= null;
 			try {
 				fEncoding= fFile.getPersistentProperty(ENCODING_KEY);
 			} catch (CoreException x) {
@@ -217,6 +240,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			if (fEncoding != null) {
 				// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
 				try {
+					fExplicitEncoding= fEncoding;
 					fFile.setCharset(fEncoding);
 					// if successful delete old property
 					fFile.setPersistentProperty(ENCODING_KEY, null);
@@ -225,8 +249,14 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					handleCoreException(ex);
 				}
 			} else {
-				fEncoding= fFile.getCharset();
+				fExplicitEncoding= fFile.getCharset(false);
+				if (fExplicitEncoding != null)
+					fEncoding= fExplicitEncoding;
+				else
+					fEncoding= fFile.getCharset();
 			}
+			
+			readUTF8BOM();
 			
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
@@ -236,6 +266,28 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			fStatus= x.getStatus();
+		}
+	}
+	
+	/**
+	 * Reads the file's UTF-8 BOM if any and stores it.
+	 * <p>
+	 * XXX:
+	 * This is a workaround for a corresponding bug in Java readers and writer,
+	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * </p>
+	 * @throws CoreException if
+	 * 			- reading of file's content description fails
+	 * 			- byte order mark is not valid for UTF-8
+	 */
+	protected void readUTF8BOM() throws CoreException {
+		if ("UTF-8".equals(fEncoding)) { //$NON-NLS-1$
+			IContentDescription description= fFile.getContentDescription();
+			if (description != null) {
+				fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+				if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
+					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -261,14 +313,24 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
+		String encoding= computeEncoding();
 		try {
 			
-			String encoding= getEncoding();
-			if (encoding == null)
-				encoding= fManager.getDefaultEncoding();
-				
-			InputStream stream= new ByteArrayInputStream(fDocument.get().getBytes(encoding));
-									
+			byte[] bytes= fDocument.get().getBytes(encoding);
+			
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 */
+			if (fUTF8BOM != null) {
+				byte[] bytesWithBOM= new byte[bytes.length + 3];
+				System.arraycopy(fUTF8BOM, 0, bytesWithBOM, 0, 3);
+				System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
+				bytes= bytesWithBOM;
+			}
+			
+			InputStream stream= new ByteArrayInputStream(bytes);
 			if (fFile.exists()) {
 								
 				if (!overwrite)
@@ -299,11 +361,57 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				}
 			}
 			
-		} catch (IOException x) {
-			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException x) {
+			String message= FileBuffersMessages.getFormattedString("ResourceTextFileBuffer.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		}	
+	}
+	
+	private String computeEncoding() {
+		// User-defined encoding has first priority
+		if (fExplicitEncoding != null)
+			return fExplicitEncoding;
+		try {
+		/*
+		 * FIXME
+		 * Check whether explicit encoding has been set via properties dialog.
+		 * This is needed because no notification is sent when this property
+		 * changes, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64077
+		 */ 
+		fExplicitEncoding= fFile.getCharset(false);
+		if (fExplicitEncoding != null)
+			return fExplicitEncoding;
+		} catch (CoreException e) {
+		}
+		
+		// Probe content
+		Reader reader= new BufferedReader(new StringReader(fDocument.get()));
+		try {
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+			String encoding= getCharset(description);
+			if (encoding != null)
+				return encoding;
+			else if (fUTF8BOM != null)
+				return "UTF-8"; //$NON-NLS-1$
+		} catch (IOException ex) {
+			// try next strategy
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
+			}
+		}
+		
+		// Use parent chain
+		try {
+			return fFile.getParent().getDefaultCharset();
+		} catch (CoreException ex) {
+			// Use global default
+			return fManager.getDefaultEncoding();
+		}
 	}
 	
 	/**
@@ -372,7 +480,18 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			
 			if (encoding == null)
 				encoding= fManager.getDefaultEncoding();
-				
+
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 */
+			if (fUTF8BOM != null) {
+				contentStream.read();
+				contentStream.read();
+				contentStream.read();
+			}
+			
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
 			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);
 			char[] readBuffer= new char[READER_CHUNK_SIZE];

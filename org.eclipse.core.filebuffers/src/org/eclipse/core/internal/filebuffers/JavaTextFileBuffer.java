@@ -20,12 +20,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
@@ -83,7 +88,19 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	protected String fEncoding;
 	/** Internal document listener */
 	protected IDocumentListener fDocumentListener= new DocumentListener();
-
+	/**
+	 * The encoding which has explicitly been set on the file.
+	 */
+	private String fExplicitEncoding;
+	/**
+	 * BOM if encoding is UTF-8.
+	 * <p>
+	 * XXX:
+	 * This is a workaround for a corresponding bug in Java readers and writer,
+	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * </p>
+	 */
+	private byte[] fUTF8BOM;
 
 
 	public JavaTextFileBuffer(TextFileBufferManager manager) {
@@ -236,6 +253,28 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
 		try {
 			fDocument= fManager.createEmptyDocument(getLocation());
+			
+			InputStream stream= getFileContents(monitor);
+			try {
+				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+				if (description != null) {
+					fEncoding= getCharset(description);
+					
+					fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+					if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
+						throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+				}
+			} catch (IOException e) {
+				fEncoding= null;
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException ex) {
+					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("JavaTextFileBuffer.error.closeStream"), ex)); //$NON-NLS-1$
+				}
+			}
+			
 			setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
@@ -247,13 +286,24 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
+		String encoding= computeEncoding();
 		try {
 			
-			String encoding= getEncoding();
-			if (encoding == null)
-				encoding= fManager.getDefaultEncoding();
-				
-			InputStream stream= new ByteArrayInputStream(fDocument.get().getBytes(encoding));
+			byte[] bytes= fDocument.get().getBytes(encoding);
+			
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 */
+			if (fUTF8BOM != null) {
+				byte[] bytesWithBOM= new byte[bytes.length + 3];
+				System.arraycopy(fUTF8BOM, 0, bytesWithBOM, 0, 3);
+				System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
+				bytes= bytesWithBOM;
+			}
+
+			InputStream stream= new ByteArrayInputStream(bytes);
 									
 			if (fFile.exists()) {
 								
@@ -283,11 +333,40 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 			}
 			
-		} catch (IOException x) {
-			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException x) {
+			String message= FileBuffersMessages.getFormattedString("ResourceTextFileBuffer.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		}	
+	}
+	
+	private String computeEncoding() {
+		// User-defined encoding has first priority
+		if (fExplicitEncoding != null)
+			return fExplicitEncoding;
+
+		// Probe content
+		Reader reader= new BufferedReader(new StringReader(fDocument.get()));
+		try {
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+			String encoding= getCharset(description);
+			if (encoding != null)
+				return encoding;
+			else if (fUTF8BOM != null)
+				return "UTF-8"; //$NON-NLS-1$
+		} catch (IOException ex) {
+			// try next strategy
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
+			}
+		}
+		
+		// Use global default
+		return fManager.getDefaultEncoding();
 	}
 	
 	/**
@@ -304,7 +383,19 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			
 			if (encoding == null)
 				encoding= fManager.getDefaultEncoding();
-				
+			
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 * </p>
+			 */
+			if (fUTF8BOM != null) {
+				contentStream.read();
+				contentStream.read();
+				contentStream.read();
+			}
+
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
 			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);
 			char[] readBuffer= new char[READER_CHUNK_SIZE];

@@ -33,6 +33,12 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            name="%command.defaultEncoding.name"
+            description="%command.defaultEncoding.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.encoding.default">
+      </command>
+      <command
             name="%command.us_ascii.name"
             description="%command.us_ascii.description"
             categoryId="org.eclipse.ui.category.edit"

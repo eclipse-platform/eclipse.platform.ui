@@ -24,6 +24,13 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 public interface IEncodingActionsHelpContextIds {
 	
 	/**
+	 * Help id of the action to change the encoding into default.
+	 * Default value: <code>"org.eclipse.ui.default_action_context"</code> 
+	 * @since 3.0
+	 */
+	public static final String DEFAULT= IAbstractTextEditorHelpContextIds.PREFIX + IEncodingActionsConstants.DEFAULT + IAbstractTextEditorHelpContextIds.ACTION_POSTFIX;
+	
+	/**
 	 * Help id of the action to change the encoding into US ASCII.
 	 * Default value: <code>"org.eclipse.ui.US-ASCII_action_context"</code> 
 	 */
