@@ -46,8 +46,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.progress.UIJob;
@@ -60,7 +62,8 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection listeners = Collections.synchronizedList(new ArrayList());
+	private Collection listeners = new ArrayList();
+	Object listenerKey = new Object();
 	private WorkbenchMonitorProvider monitorProvider;
 	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 
@@ -93,6 +96,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
 
 	Hashtable runnableMonitors = new Hashtable();
+
 
 	/**
 	 * Get the progress manager currently in use.
@@ -305,7 +309,9 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
-		listeners.add(listener);
+		synchronized(listenerKey){
+			listeners.add(listener);
+		}		
 	}
 
 	/**
@@ -315,7 +321,10 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
-		listeners.remove(listener);
+		synchronized(listenerKey){
+			listeners.remove(listener);
+		}
+		
 	}
 
 	/*
@@ -346,11 +355,17 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		if (event.getResult().getSeverity() == IStatus.ERROR) {
 			info.setError(event.getResult());
 				UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+				/*
+				 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+					
+					IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+					
+					//Abort on shutdown
+					if(workbench instanceof Workbench && ((Workbench)workbench).isClosing())
+						return Status.CANCEL_STATUS;
+					IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 
 					if (window == null)
 						return Status.CANCEL_STATUS;
@@ -401,7 +416,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 	public void refresh(JobInfo info) {
 
-		synchronized (listeners) {
+		synchronized (listenerKey) {
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
@@ -423,7 +438,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * @param info
 	 */
 	public void refreshAll() {
-		synchronized (listeners) {
+		synchronized (listenerKey) {
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
@@ -435,17 +450,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Refresh the content providers as a result of a deletion of info.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param info
 	 */
 	public void remove(JobInfo info) {
 
-		synchronized (listeners) {
+		synchronized (listenerKey) {
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
@@ -458,15 +467,10 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Refresh the content providers as a result of an addition of info.
 	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param info
 	 */
 	public void add(JobInfo info) {
-		synchronized (listeners) {
+		synchronized (listenerKey) {
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
