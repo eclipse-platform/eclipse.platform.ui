@@ -40,4 +40,18 @@ public class SearchMessages {
 			arg= ""; //$NON-NLS-1$
 		return MessageFormat.format(format, new Object[] { arg });
 	}
+	/**
+	 * Gets a string from the resource bundle and formats it with the argument
+	 * 
+	 * @param key	the string used to get the bundle value, must not be null
+	 */
+	public static String getFormattedString(String key, Object[] args) {
+		String format= null;
+		try {
+			format= fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
+		return MessageFormat.format(format, args);
+	}
 }

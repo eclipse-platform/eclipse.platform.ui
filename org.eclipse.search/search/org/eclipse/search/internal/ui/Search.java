@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceDescription;
+
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
@@ -17,9 +19,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
-
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuContributor;
@@ -57,20 +56,12 @@ class Search extends Object {
 		if (fDescription == null)
 			return ""; //$NON-NLS-1$
 
-		String text= fDescription;
+		// try to replace "{0}" with the match count
 		int i= fDescription.lastIndexOf("{0}"); //$NON-NLS-1$
-		if (i != -1) {
-			// replace "{0}" with the match count
-			int count= getItemCount();
-			text= fDescription.substring(0, i);
-			text += count;
-			// cut away last 's' if count is 1
-			if (count == 1 && fDescription.lastIndexOf('s') == (fDescription.length() - 1))
-				text += fDescription.substring(i + 3, fDescription.length() - 1);
-			else
-			 	text += fDescription.substring(i + 3);
-		}
-		return text;
+		if (i < 0)
+			return fDescription;
+		else
+			return fDescription.substring(0, i) + getItemCount()+ fDescription.substring(Math.min(i + 3, fDescription.length()));
 	}
 	/**
 	 * Returns a short description of the search.
@@ -81,36 +72,17 @@ class Search extends Object {
 	String getShortDescription() {
 		if (fDescription == null)
 			return ""; //$NON-NLS-1$
-
-		String text= fDescription;
-		int i= fDescription.lastIndexOf("{0}"); //$NON-NLS-1$
-		if (i != -1) {
-			// replace "{0}" with the match count
-			int count= getItemCount();
-			// minimize length infront of " - " to 20 and add ...
-			if (i > 20 + 3) {
-				if (fDescription.indexOf('"') == 0 && fDescription.indexOf('"', 1) == i - 4)
-					text= fDescription.substring(0, 21) + "\"... - "; //$NON-NLS-1$
-				else
-					text= fDescription.substring(0, 20) + "... - "; //$NON-NLS-1$
-			}
-			else
-				text= fDescription.substring(0, i);
-			text += count;
-			// cut away last 's' if count is 1
-			if (count == 1 && fDescription.lastIndexOf('s') == (fDescription.length() - 1))
-				text += fDescription.substring(i + 3, fDescription.length() - 1);
-			else
-			 	text += fDescription.substring(i + 3);
-		}
-		else {
-			// minimize length to 30 and add ...
-			if (fDescription.length() > 30)
-				text= fDescription.substring(0, 30) + "... "; //$NON-NLS-1$
-		}
-		return text;
+		String text= getFullDescription();
+		int separatorPos= text.indexOf(" - "); //$NON-NLS-1$
+		if (separatorPos < 1)
+			return text.substring(0, Math.min(50, text.length())) + "..."; // use first 50 characters //$NON-NLS-1$
+		if (separatorPos < 30)
+			return text;	// don't cut
+		if (text.charAt(0) == '"')  //$NON-NLS-1$
+			return text.substring(0, Math.min(30, text.length())) + "...\" - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
+		else
+			return text.substring(0, Math.min(30, text.length())) + "... - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
 	}
-
 	/** Image used when search is displayed in a list */
 	ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;

@@ -45,8 +45,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  */
 class SearchResultViewer extends TableViewer {
 	
-	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-	private SearchResultView fOuterPart;
+	private SearchResultView fOuterPart;
 	private boolean fFirstTime= true;
 	private ShowNextResultAction fShowNextResultAction;
 	private ShowPreviousResultAction fShowPreviousResultAction;
@@ -363,10 +362,15 @@ class SearchResultViewer extends TableViewer {
 	protected void updateTitle(boolean showZero) {
 		int count= SearchManager.getDefault().getCurrentItemCount();
 		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
-		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
-		if (showZero && (count > 0 || hasCurrentSearch))
-			title= title + " (" + count + MATCHES_POSTFIX; //$NON-NLS-1$
-		if (!title.equals(fOuterPart.getTitle()))
+		String title;
+		if (showZero && (count > 0 || hasCurrentSearch)) {
+			if (count == 1)
+				title= SearchMessages.getString("SearchResultView.titleWithOneMatch"); //$NON-NLS-1$
+			else
+				title= SearchMessages.getFormattedString("SearchResultView.titleWithMatches", new Integer(count)); //$NON-NLS-1$
+		} else
+			title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
+		if (title == null || !title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
 		String toolTip= null;
 		if (hasCurrentSearch)

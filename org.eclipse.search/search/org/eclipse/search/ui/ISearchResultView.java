@@ -43,7 +43,7 @@ public interface ISearchResultView extends IViewPart {
 	 * If every match should show up in the search result view then the match
 	 * itself can be used as key.	 
 	 *
-	 * @param	pageId			the id of the search page which started the search
+	 * @param	pageId				the id of the search page which started the search
  	 * @param	label				the label to be used for this search occurrence
  	 * @param	imageDescriptor		the image descriptor to be used for this search occurrence,
  	 *						or <code>null</code> if this search should not have an image
@@ -57,13 +57,13 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	operation			the runnable used by the view to repeat the search
 	 */
 	public void searchStarted(
-				String			pageId,
-				String			label,
-				ImageDescriptor		imageDescriptor,
+				String					pageId,
+				String					label,
+				ImageDescriptor			imageDescriptor,
 				IContextMenuContributor contributor,
-				ILabelProvider		labelProvider,
-				IAction			gotoAction,
-				IGroupByKeyComputer	groupByKeyComputer,
+				ILabelProvider			labelProvider,
+				IAction					gotoAction,
+				IGroupByKeyComputer		groupByKeyComputer,
 				IRunnableWithProgress	operation);
 	/**
 	 * Informs the view that the search has finished.

@@ -55,7 +55,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}	
 	
 	String getDescription() {
-		return "\"" + fPattern + "\"" + SearchMessages.getString("TextSearchOperation.descriptionPostfix"); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		return SearchMessages.getFormattedString("TextSearchOperation.descriptionPostfix", new String[] {fPattern, "{0}"}); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	ImageDescriptor getImageDescriptor() {
