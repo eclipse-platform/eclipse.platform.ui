@@ -338,7 +338,7 @@ public class DebugPlugin extends Plugin {
 		createLaunchers();	
 		fBreakpointManager.startup();
 		fLaunchManager.startup();
-		recoverState();
+		//recoverState();
 		initializeStatusHandlers();
 	}
 	
