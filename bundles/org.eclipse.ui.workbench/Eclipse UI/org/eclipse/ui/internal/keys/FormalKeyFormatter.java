@@ -13,8 +13,9 @@ package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 
-import org.eclipse.ui.keys.IKeyFormatter;
 import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 /**
  * Formats the keys in the internal key sequence grammar. This is used for
@@ -45,7 +46,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
-		return IKeyFormatter.KEY_DELIMITER;
+		return KeyStroke.KEY_DELIMITER;
 	}
 
 	/*
@@ -54,7 +55,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
 	protected String getKeyStrokeDelimiter() {
-		return IKeyFormatter.KEY_STROKE_DELIMITER;
+		return KeySequence.KEY_STROKE_DELIMITER;
 	}
 
 	/*

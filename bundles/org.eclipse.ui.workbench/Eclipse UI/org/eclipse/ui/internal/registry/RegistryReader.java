@@ -13,9 +13,13 @@ package org.eclipse.ui.internal.registry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -34,7 +38,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
-	protected static Hashtable extensionPoints = new Hashtable();
+	// for dynamic UI - remove this cache to avoid inconsistency
+	//protected static Hashtable extensionPoints = new Hashtable();
 /**
  * The constructor.
  */
@@ -149,15 +154,10 @@ protected void readExtension(IExtension extension) {
  * supplied plugin ID and extension point.
  */
 public void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
-	String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
-	IExtension[] extensions = (IExtension[])extensionPoints.get(pointId); 
-	if (extensions == null) {
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
-		if (point == null) return;
-		extensions = point.getExtensions();
-		extensions = orderExtensions(extensions);
-		extensionPoints.put(pointId, extensions);
-	} 
+	IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+	if (point == null) return;
+	IExtension[] extensions = point.getExtensions();
+	extensions = orderExtensions(extensions);
 	for (int i = 0; i < extensions.length; i++)
 		readExtension(extensions[i]);
 }

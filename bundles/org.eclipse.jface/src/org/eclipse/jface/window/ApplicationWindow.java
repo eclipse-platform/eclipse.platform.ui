@@ -130,9 +130,14 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 				if (getToolBarControl() == w) {
 					if (!toolBarChildrenExist()) {
 						hide= true;
-						result.y+= 23;	// REVISIT
+						result.y+= BAR_SIZE;	// REVISIT
 					} 
-				} else if (statusLineManager != null && statusLineManager.getControl() == w) {
+				}else if (getCoolBarControl() == w) {
+					if (!coolBarChildrenExist()) {
+						hide = true;
+						result.y+= BAR_SIZE;
+					}
+				}else if (statusLineManager != null && statusLineManager.getControl() == w) {
 				} else if (i > 0) { /* we assume this window is contents */
 					hide= false;
 				}

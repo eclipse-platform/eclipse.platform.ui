@@ -22,12 +22,24 @@ public class WorkingSetRegistryReader extends RegistryReader {
 	private static final String TAG="workingSet";	//$NON-NLS-1$
 	private WorkingSetRegistry registry;
 	
+//for dynamic UI
+public WorkingSetRegistryReader() {
+	super();
+}
+
+//for dynamic UI
+public WorkingSetRegistryReader(WorkingSetRegistry registry) {
+	super();
+	this.registry = registry;
+}
+
 /**
  * Overrides method in RegistryReader.
  * 
  * @see RegistryReader#readElement(IConfigurationElement)
  */
-protected boolean readElement(IConfigurationElement element) {
+// for dynamic UI - change access from protected to public
+public boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG)) {
 		try {
 			WorkingSetDescriptor desc = new WorkingSetDescriptor(element);

@@ -54,6 +54,6 @@ public abstract class ProgressContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
+		//No change when input changes
 	}
 }

@@ -43,6 +43,7 @@ import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.EditorWorkbook;
 import org.eclipse.ui.internal.EditorsDropDownAction;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -145,6 +146,8 @@ public final class WorkbenchActionBuilder {
 	private StatusLineContributionItem statusLineItem;
 	
 	private Preferences.IPropertyChangeListener prefListener;
+
+	private IWorkbenchAction introAction;
 	
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -558,10 +561,12 @@ public final class WorkbenchActionBuilder {
 	 */
 	private MenuManager createHelpMenu() {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
-		// See if a welcome page is specified
-		if (quickStartAction != null)
+		// See if a welcome or intro page is specified
+		if (introAction != null)
+			menu.add(introAction);
+		else if (quickStartAction != null)
 			menu.add(quickStartAction);
-
+		
         // See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
@@ -1184,6 +1189,11 @@ public final class WorkbenchActionBuilder {
 		if (EditorWorkbook.usingNewDropDown()) {
 			editorsDropDownAction = new EditorsDropDownAction(window);
 			registerGlobalAction(editorsDropDownAction);
+		}
+		
+		if (WorkbenchPlugin.getDefault().getIntroRegistry().getIntroCount() > 0) {
+			introAction = ActionFactory.INTRO.create(window);
+			registerGlobalAction(introAction);
 		}
 	}
 

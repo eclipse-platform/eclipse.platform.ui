@@ -43,6 +43,7 @@ public class PendingUpdateAdapter
 	 * Create a new instance of the receiver.
 	 */
 	public PendingUpdateAdapter() {
+		//No initial behavior
 	}
 
 	/* (non-Javadoc)

@@ -60,12 +60,7 @@ class ActivityPersistanceHelper {
 		// TODO kim: shouldn't you want to check for any activities (not
 		// categories)?
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-
-		if (support == null)
-			return;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		boolean noRoles =
 			support.getActivityManager().getDefinedCategoryIds().isEmpty();
@@ -99,12 +94,7 @@ class ActivityPersistanceHelper {
 		//        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
 		//            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-
-		if (support == null)
-			return;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IActivityManager activityManager = support.getActivityManager();
 
@@ -128,12 +118,7 @@ class ActivityPersistanceHelper {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return;
-
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = support.getActivityManager();
 		Iterator values = activityManager.getDefinedActivityIds().iterator();
 		while (values.hasNext()) {

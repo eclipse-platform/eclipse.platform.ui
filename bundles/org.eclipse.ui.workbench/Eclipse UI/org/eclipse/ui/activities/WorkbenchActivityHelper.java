@@ -51,11 +51,7 @@ public final class WorkbenchActivityHelper {
 			IPluginContribution contribution = (IPluginContribution) object;
 			if (contribution.getPluginId() != null) {
 				IWorkbenchActivitySupport workbenchActivitySupport =
-					(IWorkbenchActivitySupport) PlatformUI
-						.getWorkbench()
-						.getAdapter(
-						IWorkbenchActivitySupport.class);
-
+					PlatformUI.getWorkbench().getActivitySupport();
 				if (workbenchActivitySupport != null) {
 					IIdentifier identifier =
 						workbenchActivitySupport
@@ -76,8 +72,7 @@ public final class WorkbenchActivityHelper {
 	 */
 	public static final boolean isFiltering() {
 		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
+			PlatformUI.getWorkbench().getActivitySupport();
 		if (support == null)
 			return false;
 

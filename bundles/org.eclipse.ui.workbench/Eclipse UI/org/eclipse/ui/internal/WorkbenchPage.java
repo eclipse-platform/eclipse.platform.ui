@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+//for dynamic UI - add import HashMap
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -109,6 +111,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	private PerspectiveList perspList = new PerspectiveList();
 	private PerspectiveDescriptor deferredActivePersp;
 	private NavigationHistory navigationHistory = new NavigationHistory(this);
+	//for dynamic UI - saving state for editors, views and perspectives
+	private HashMap stateMap = new HashMap();
 	private IPropertyChangeListener propertyChangeListener =
 		new IPropertyChangeListener() {
 		/*
@@ -1403,7 +1407,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	/**
 	 * Answer the editor manager for this window.
 	 */
-	private EditorManager getEditorManager() {
+// for dynamic UI - change access from private to protected
+	protected EditorManager getEditorManager() {
 		return editorMgr;
 	}
 	/**
@@ -3301,5 +3306,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 			return getContextSupport();
 		else
 			return null;
+	}
+
+	//for dynamic UI
+	protected HashMap getStateMap() {
+		return stateMap;
+}
+	//for dynamic UI
+	protected void addPerspective(Perspective persp) {
+		perspList.add(persp);
 	}
 }

@@ -71,12 +71,7 @@ class LayoutHelper {
 		final IPerspectiveDescriptor partPerspective =
 			pageLayout.getDescriptor();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-
-		if (support == null)
-			return;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IViewDescriptor descriptor = viewFactory.getViewRegistry().find(viewId);
 		if (!(descriptor instanceof IPluginContribution))

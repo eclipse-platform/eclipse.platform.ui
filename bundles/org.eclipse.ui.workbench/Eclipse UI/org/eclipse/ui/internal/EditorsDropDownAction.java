@@ -16,7 +16,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The <code>EditorsDropDownAction</code> is used to show the
- * editors drop-down.
+ * editors drop-down. 
  */
 public class EditorsDropDownAction extends Action {
 	private IWorkbenchWindow window;

@@ -529,7 +529,7 @@ class AnimationManager {
 	 */
 	private void animationDone() {
 
-		UIJob animationDoneJob = new WorkbenchJob("Animation cleanup") {
+		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationCleanUp")) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -554,7 +554,7 @@ class AnimationManager {
 	 */
 	private void animationStarted() {
 		
-		UIJob animationDoneJob = new WorkbenchJob("Animation start") {
+		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationStart")) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */

@@ -196,7 +196,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 */
 	public void deletePerspective(IPerspectiveDescriptor in) {
 		PerspectiveDescriptor desc = (PerspectiveDescriptor) in;
-		if (!desc.isPredefined()) {
+		//for dynamic UI: allow the deletion of all perspectives
+		if (true) {
+			//if (!desc.isPredefined()) {
 			//indicate that the user is removing these perspectives
 			perspToRemove.add(desc.getId());
 			children.remove(desc);

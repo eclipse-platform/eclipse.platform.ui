@@ -28,6 +28,12 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -39,11 +45,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -52,7 +54,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.intro.IIntroRegistry;
+import org.eclipse.ui.internal.intro.IntroRegistry;
+import org.eclipse.ui.internal.intro.IntroRegistryReader;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -62,7 +69,6 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -123,6 +129,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	private AboutInfo aboutInfo = null;
+	private IntroRegistry introRegistry;
 	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
@@ -141,9 +148,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 *
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
-	 * @returns the extension object
+	 * @return the extension object
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
+		try {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
 		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
@@ -165,6 +173,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 				throw exc[0];
 			else
 				return ret[0];
+		}
+	}
+		catch (CoreException core) {
+			throw core;			
+		}
+		catch (Exception e) {
+			throw new CoreException(
+				new Status(
+						IStatus.ERROR, 
+						PI_WORKBENCH, 
+						IStatus.ERROR, 
+						WorkbenchMessages.getString("WorkbenchPlugin.extension"), //$NON-NLS-1$ 
+						e));
 		}
 	}
 	/**
@@ -289,6 +310,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return workingSetRegistry;
 	}
+	
+	/**
+	 * Returns the introduction registry.
+     *
+     * @return the introduction registry.
+	 * @since 3.0
+	 */
+	public IIntroRegistry getIntroRegistry() {
+		if (introRegistry == null) {
+			introRegistry = new IntroRegistry();
+			IntroRegistryReader reader = new IntroRegistryReader();
+			reader.readIntros(Platform.getPluginRegistry(), introRegistry);
+		}
+		return introRegistry;
+	}
+	
 	/*
 	 * Get the preference manager.
 	 */
@@ -384,7 +421,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
-		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1);
+		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
 		
 		store.setDefault(JFacePreferences.USE_DEFAULT_THEME, true);
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		

@@ -17,6 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.SpecialKey;
 
@@ -61,23 +63,23 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	static {
 		RESOURCE_BUNDLE = ResourceBundle.getBundle(NativeKeyFormatter.class.getName());
 
-		CARBON_KEY_LOOK_UP.put(CharacterKey.BS_NAME, Character.toString('\u232B'));
-		CARBON_KEY_LOOK_UP.put(CharacterKey.CR_NAME, Character.toString('\u21A9'));
-		CARBON_KEY_LOOK_UP.put(CharacterKey.DEL_NAME, Character.toString('\u2326'));
-		CARBON_KEY_LOOK_UP.put(CharacterKey.SPACE_NAME, Character.toString('\u2423'));
-		CARBON_KEY_LOOK_UP.put(ModifierKey.ALT_NAME, Character.toString('\u2325'));
-		CARBON_KEY_LOOK_UP.put(ModifierKey.COMMAND_NAME, Character.toString('\u2318'));
-		CARBON_KEY_LOOK_UP.put(ModifierKey.CTRL_NAME, Character.toString('\u2303'));
-		CARBON_KEY_LOOK_UP.put(ModifierKey.SHIFT_NAME, Character.toString('\u21E7'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_DOWN_NAME, Character.toString('\u2193'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_LEFT_NAME, Character.toString('\u2190'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_RIGHT_NAME, Character.toString('\u2192'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_UP_NAME, Character.toString('\u2191'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.END_NAME, Character.toString('\u2198'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.NUMPAD_ENTER_NAME, Character.toString('\u2324'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.HOME_NAME, Character.toString('\u2196'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_DOWN_NAME, Character.toString('\u21DF'));
-		CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_UP_NAME, Character.toString('\u21DE'));
+		CARBON_KEY_LOOK_UP.put(CharacterKey.BS.toString(), Character.toString('\u232B'));
+		CARBON_KEY_LOOK_UP.put(CharacterKey.CR.toString(), Character.toString('\u21A9'));
+		CARBON_KEY_LOOK_UP.put(CharacterKey.DEL.toString(), Character.toString('\u2326'));
+		CARBON_KEY_LOOK_UP.put(CharacterKey.SPACE.toString(), Character.toString('\u2423'));
+		CARBON_KEY_LOOK_UP.put(ModifierKey.ALT.toString(), Character.toString('\u2325'));
+		CARBON_KEY_LOOK_UP.put(ModifierKey.COMMAND.toString(), Character.toString('\u2318'));
+		CARBON_KEY_LOOK_UP.put(ModifierKey.CTRL.toString(), Character.toString('\u2303'));
+		CARBON_KEY_LOOK_UP.put(ModifierKey.SHIFT.toString(), Character.toString('\u21E7'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_DOWN.toString(), Character.toString('\u2193'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_LEFT.toString(), Character.toString('\u2190'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_RIGHT.toString(), Character.toString('\u2192'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_UP.toString(), Character.toString('\u2191'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.END.toString(), Character.toString('\u2198'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.NUMPAD_ENTER.toString(), Character.toString('\u2324'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.HOME.toString(), Character.toString('\u2196'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_DOWN.toString(), Character.toString('\u21DF'));
+		CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_UP.toString(), Character.toString('\u21DE'));
 	}
 
 	/**
@@ -121,7 +123,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			return Util.translateString(
 				RESOURCE_BUNDLE,
 				KEY_DELIMITER_KEY,
-				KEY_DELIMITER,
+				KeyStroke.KEY_DELIMITER,
 				false,
 				false);
 		}
@@ -138,14 +140,14 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			return Util.translateString(
 				RESOURCE_BUNDLE,
 				WIN32_KEY_STROKE_DELIMITER_KEY,
-				KEY_STROKE_DELIMITER,
+				KeySequence.KEY_STROKE_DELIMITER,
 				false,
 				false);
 		} else {
 			return Util.translateString(
 				RESOURCE_BUNDLE,
 				KEY_STROKE_DELIMITER_KEY,
-				KEY_STROKE_DELIMITER,
+				KeySequence.KEY_STROKE_DELIMITER,
 				false,
 				false);
 		}

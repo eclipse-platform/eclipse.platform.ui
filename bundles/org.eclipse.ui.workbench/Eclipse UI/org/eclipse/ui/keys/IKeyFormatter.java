@@ -20,20 +20,6 @@ package org.eclipse.ui.keys;
  * @since 3.0
  */
 public interface IKeyFormatter {
-
-	/**
-	 * The delimiter between multiple keys in a single key strokes -- expressed
-	 * in the formal key stroke grammar. This is not to be displayed to the
-	 * user. It is only intended as an internal representation.
-	 */
-	String KEY_DELIMITER = Character.toString('\u002B');
-
-	/**
-	 * The delimiter between multiple key strokes in a single key sequence --
-	 * expressed in the formal key stroke grammar. This is not to be displayed
-	 * to the user. It is only intended as an internal representation.
-	 */
-	String KEY_STROKE_DELIMITER = Character.toString('\u0020'); //$NON-NLS-1$
 	
 	/**
 	 * Formats an individual key into a human readable format. This uses an

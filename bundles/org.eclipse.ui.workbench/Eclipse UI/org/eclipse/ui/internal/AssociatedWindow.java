@@ -80,7 +80,7 @@ public class AssociatedWindow extends Window {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setTransparent(getTransparencyValue());
+		//newShell.setTransparent(getTransparencyValue());
 		this.associate(newShell);
 		newShell.setBackground(newShell.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 	}

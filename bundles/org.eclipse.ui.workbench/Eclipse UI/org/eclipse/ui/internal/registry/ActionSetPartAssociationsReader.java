@@ -32,6 +32,10 @@ public class ActionSetPartAssociationsReader extends RegistryReader {
 public ActionSetPartAssociationsReader() {
 	super();
 }
+//for dynamic UI
+public ActionSetPartAssociationsReader(ActionSetRegistry registry) {
+	this.registry = registry;
+}
 
 /**
  * Process an extension.
@@ -59,7 +63,8 @@ private boolean processExtension(IConfigurationElement element) {
 /**
  * Reads the given element.
  */
-protected boolean readElement(IConfigurationElement element) {
+//for dynamic UI - change access from protected to public
+public boolean readElement(IConfigurationElement element) {
 	String type = element.getName();
 	if (type.equals(TAG_EXTENSION)) {
 		return processExtension(element);

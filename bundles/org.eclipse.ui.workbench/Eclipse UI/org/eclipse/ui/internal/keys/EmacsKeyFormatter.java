@@ -16,6 +16,8 @@ import java.util.ResourceBundle;
 
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
 
 /**
@@ -69,7 +71,7 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
 		return Util.translateString(
 			RESOURCE_BUNDLE,
 			KEY_DELIMITER_KEY,
-			KEY_DELIMITER,
+			KeyStroke.KEY_DELIMITER,
 			false,
 			false);
 	}
@@ -83,7 +85,7 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
 		return Util.translateString(
 			RESOURCE_BUNDLE,
 			KEY_STROKE_DELIMITER_KEY,
-			KEY_STROKE_DELIMITER,
+			KeySequence.KEY_STROKE_DELIMITER,
 			false,
 			false);
 	}

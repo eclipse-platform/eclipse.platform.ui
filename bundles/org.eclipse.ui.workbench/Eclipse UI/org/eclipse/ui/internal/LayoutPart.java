@@ -295,4 +295,11 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	public void addDropTargets(Collection result) {
 		result.add(this);
 	}
+
+/**
+ * @return Returns the propertyListeners.
+ */
+protected ListenerList getPropertyListeners() {
+	return propertyListeners;
+}
 }

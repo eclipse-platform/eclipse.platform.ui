@@ -145,4 +145,9 @@ protected boolean readElement(IConfigurationElement element) {
 	editorRegistry.addEditorFromPlugin(editor, extensionsVector, filenamesVector, defaultEditor);
 	return true;
 }
+//for dynamic UI
+public void readElement(EditorRegistry editorRegistry, IConfigurationElement element) {
+	this.editorRegistry = editorRegistry;
+	readElement(element);
+}
 }

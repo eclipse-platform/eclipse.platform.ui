@@ -28,10 +28,15 @@ public class ActionSetRegistryReader extends RegistryReader {
 public ActionSetRegistryReader() {
 	super();
 }
+//for dynamic UI
+public ActionSetRegistryReader(ActionSetRegistry registry) {
+	this.registry = registry;
+}
 /**
  * readElement method comment.
  */
-protected boolean readElement(IConfigurationElement element) {
+//for dynamic UI: change access from protected to public
+public boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_SET)) {
 		try {
 			ActionSetDescriptor desc = new ActionSetDescriptor(element);

@@ -158,7 +158,11 @@ public class ActionSetActionBars extends SubActionBars2 {
 			
 			// Now add the  tool bar contribution Item to the cool bar manager
 			IContributionItem refItem = findAlphabeticalOrder(IWorkbenchActionConstants.MB_ADDITIONS,toolBarId,coolBarManager);
-			coolBarManager.insertAfter(refItem.getId(),toolBarContributionItem);
+			if (refItem != null) {
+				coolBarManager.insertAfter(refItem.getId(),toolBarContributionItem);
+			}else {
+				coolBarManager.add(toolBarContributionItem);
+			}
 		}	
 		return coolItemToolBarMgr;
 	}
@@ -258,8 +262,16 @@ public class ActionSetActionBars extends SubActionBars2 {
 			}
 			insertIndex = i;
 		}
-		
+		// Should be inserted at the end
+		if (insertIndex >= items.length) {
+			return null;
+		}
 		return items[insertIndex];
+	}
+	
+	//for dynamic UI
+	/* package */ void removeAdjunctContribution(ContributionItem item) {
+		adjunctContributions.remove(item);
 	}
 	
 }

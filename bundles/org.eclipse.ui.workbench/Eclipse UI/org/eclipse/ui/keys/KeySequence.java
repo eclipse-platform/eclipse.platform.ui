@@ -51,9 +51,17 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeySequence implements Comparable {
 
 	/**
+	 * The delimiter between multiple key strokes in a single key sequence --
+	 * expressed in the formal key stroke grammar. This is not to be displayed
+	 * to the user. It is only intended as an internal representation.
+	 */
+	public final static String KEY_STROKE_DELIMITER = Character.toString('\u0020'); //$NON-NLS-1$
+
+	/**
 	 * An empty key sequence instance for use by everyone.
 	 */
-	private final static KeySequence EMPTY_KEY_SEQUENCE = new KeySequence(Collections.EMPTY_LIST);
+	private final static KeySequence EMPTY_KEY_SEQUENCE =
+		new KeySequence(Collections.EMPTY_LIST);
 
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
@@ -63,13 +71,14 @@ public final class KeySequence implements Comparable {
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
 	 */
-	private final static int HASH_INITIAL = KeySequence.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		KeySequence.class.getName().hashCode();
 
 	/**
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed
 	 * during parsing of the formal string representation.
 	 */
-	public final static String KEY_STROKE_DELIMITERS = IKeyFormatter.KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
+	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**
 	 * Gets an instance of <code>KeySequence</code>.
@@ -93,7 +102,9 @@ public final class KeySequence implements Comparable {
 	 *         given key stroke appended to the end. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public static KeySequence getInstance(KeySequence keySequence, KeyStroke keyStroke) {
+	public static KeySequence getInstance(
+		KeySequence keySequence,
+		KeyStroke keyStroke) {
 		if (keySequence == null || keyStroke == null)
 			throw new NullPointerException();
 
@@ -153,12 +164,14 @@ public final class KeySequence implements Comparable {
 	 *             if the given formal string representation could not be
 	 *             parsed to a valid key sequence.
 	 */
-	public static KeySequence getInstance(String string) throws ParseException {
+	public static KeySequence getInstance(String string)
+		throws ParseException {
 		if (string == null)
 			throw new NullPointerException();
 
 		List keyStrokes = new ArrayList();
-		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_STROKE_DELIMITERS);
+		StringTokenizer stringTokenizer =
+			new StringTokenizer(string, KEY_STROKE_DELIMITERS);
 
 		while (stringTokenizer.hasMoreTokens())
 			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
@@ -218,6 +231,25 @@ public final class KeySequence implements Comparable {
 		KeySequence castedObject = (KeySequence) object;
 		int compareTo = Util.compare(keyStrokes, castedObject.keyStrokes);
 		return compareTo;
+	}
+
+	/**
+	 * Returns whether or not this key sequence ends with the given key
+	 * sequence.
+	 * 
+	 * @param keySequence
+	 *            a key sequence. Must not be <code>null</code>.
+	 * @param equals
+	 *            whether or not an identical key sequence should be considered
+	 *            as a possible match.
+	 * @return <code>true</code>, iff the given key sequence ends with this
+	 *         key sequence.
+	 */
+	public boolean endsWith(KeySequence keySequence, boolean equals) {
+		if (keySequence == null)
+			throw new NullPointerException();
+
+		return Util.endsWith(keyStrokes, keySequence.keyStrokes, equals);
 	}
 
 	/*

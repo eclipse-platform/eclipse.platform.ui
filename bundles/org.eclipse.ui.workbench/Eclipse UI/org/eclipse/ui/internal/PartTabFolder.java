@@ -21,7 +21,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.ColorSchemeService;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
@@ -37,18 +40,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.ColorSchemeService;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
-
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.progress.UIJob;
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {
 	private static int tabLocation = -1; // Initialized in constructor.
@@ -814,10 +811,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 				String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
 
-				IViewDescriptor descriptor =
-					(IViewDescriptor) WorkbenchPlugin.getDefault().getViewRegistry().find(partID);
-				if (descriptor != null)
+				IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
+					getViewRegistry().find(partID);
+			
+				if(descriptor != null) {
+					if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID)) 
+						continue; // ignore the intro view
 					tabText = descriptor.getLabel();
+				}
 
 				// Create the part.
 				LayoutPart part = new PartPlaceholder(partID);

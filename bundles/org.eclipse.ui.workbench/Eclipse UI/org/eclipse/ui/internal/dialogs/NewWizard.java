@@ -117,12 +117,7 @@ public class NewWizard extends Wizard {
 		//save our selection state
 		mainPage.saveWidgetValues();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return true;
-
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = support.getActivityManager();
 		if (mainPage.getSelectedNode() instanceof IPluginContribution) {
 			IIdentifier identifier =
