@@ -44,12 +44,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	Composite viewerComposite;
 	private Button detailsButton;
 
-	//These are booleans that are used to check if the runnable in
-	//the receiver is still progressing. When watchingTicks is true
-	//and change to task name or incrementing of values will set
-	//tickOccured to true.
-	private boolean watchingTicks = false;
-	private boolean tickOccured = false;
+	private long watchTime = -1;
 	
 	private boolean alreadyClosed = false;
 	private IProgressMonitor wrapperedMonitor;
@@ -263,23 +258,12 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	}
 
 	/**
-	 * Return true if bother watchingTicks and ticksOccured is true. If not
-	 * watchingTicks already start after this is called.
-	 * 
-	 * @return boolean <code>true</code> if tickOccured has been set.
+	 * Start watching the ticks. When the long operation time has 
+	 * passed open the dialog.
+	 * @param openJob The job to open when ticks are done.
 	 */
-	public boolean isTicking() {
-
-		if (watchingTicks) {
-			if (tickOccured) {//If we have the tick reset the state
-				watchingTicks = false;
-				tickOccured = false;
-				return true;
-			}
-			return false;
-		}
-		watchingTicks = true;
-		return false;
+	public void watchTicks(){
+		watchTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -303,11 +287,23 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			}
 
 			/**
-			 * Check if a tick occurred.
+			 * Check if we have ticked in the last 800ms.
 			 */
 			private void checkTicking() {
-				if (watchingTicks)
-					tickOccured = true;
+				if(watchTime < 0)
+					return;
+				if((System.currentTimeMillis() - watchTime) > ProgressManager.getInstance().getLongOperationTime()){
+					watchTime = -1;
+					getParentShell().getDisplay().syncExec(new Runnable(){
+						/* (non-Javadoc)
+						 * @see java.lang.Runnable#run()
+						 */
+						public void run() {
+							if(!alreadyClosed)
+								open();
+						}
+					});
+				}
 			}
 
 			/*
@@ -399,9 +395,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 			 */
 			public void setBlocked(IStatus reason) {
-				//Assume we are watching as we want the dialog to open
-				watchingTicks = true;
-				checkTicking();
+				//Just open if we get blocked
+				open();
 				if (superMonitor instanceof IProgressMonitorWithBlocking)
 					((IProgressMonitorWithBlocking) superMonitor)
 							.setBlocked(reason);
@@ -431,16 +426,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		boolean result = super.close();
 		if (result) {//As this sometimes delayed cache if it was already closed
 			alreadyClosed = true;
-			watchingTicks = false;
 		}
 		return result;
-	}
-	/**
-	 * Return <code>true</true> if the close() method was already called.
-	 * @return the closed state
-	 */
-	public boolean isAlreadyClosed() {
-		return alreadyClosed;
 	}
 
 }

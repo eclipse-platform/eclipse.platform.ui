@@ -317,6 +317,17 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		ProgressManager.getInstance().progressFor(job).addProgressListener(
 				getBlockingProgressMonitor());
 		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(true));
+		
+		//add a listener that will close the dialog when the job completes.
+		IJobChangeListener listener = createCloseListener();
+		job.addJobChangeListener(listener);
+		if (job.getState() == Job.NONE) {
+			//if the job completed before we had a chance to add
+			//the listener, just remove the listener and return
+			job.removeJobChangeListener(listener);
+			close();
+		}
+		
 		return result;
 	}
 	/**
@@ -348,7 +359,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					return Status.CANCEL_STATUS;
 				
 				//now open the progress dialog if nothing else is
-				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this,ProgressMonitorFocusJobDialog.this))
+				if(!ProgressManagerUtil.safeToOpen(ProgressMonitorFocusJobDialog.this))
 					return Status.CANCEL_STATUS;
 
 				//Do not bother if the parent is disposed
@@ -356,15 +367,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					return Status.CANCEL_STATUS;
 				
 				open();
-				// add a listener that will close the dialog when the job completes.
-				IJobChangeListener listener = createCloseListener();
-				job.addJobChangeListener(listener);
-				if (job.getState() == Job.NONE) {
-					//if the job completed before we had a chance to add
-					//the listener, just remove the listener and return
-					job.removeJobChangeListener(listener);
-					close();
-				}
+
 				return Status.OK_STATUS;
 			}
 		};

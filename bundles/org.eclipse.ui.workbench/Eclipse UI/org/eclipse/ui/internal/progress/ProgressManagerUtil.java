@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -42,9 +41,6 @@ public class ProgressManagerUtil {
 	 * too short to show progress.
 	 */
 	public static long SHORT_OPERATION_TIME = 250;
-
-	private static QualifiedName OPEN_SHELLS_PROPERTY = new QualifiedName(
-			WorkbenchPlugin.PI_WORKBENCH, "OPEN_SHELLS");
 	private static String ellipsis = ProgressMessages
 			.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 	/**
@@ -54,9 +50,10 @@ public class ProgressManagerUtil {
 	 * @return
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
-		return StatusUtil.newStatus(IStatus.ERROR,
-				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
-				exception);
+		return StatusUtil.newStatus(
+			IStatus.ERROR, 
+			exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
+			exception);
 	}
 	/**
 	 * Log the exception for debugging.
@@ -66,14 +63,14 @@ public class ProgressManagerUtil {
 	static void logException(Throwable exception) {
 		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
 	}
-	//	/**
-	//	 * Sets the label provider for the viewer.
-	//	 *
-	//	 * @param viewer
-	//	 */
-	//	static void initLabelProvider(ProgressTreeViewer viewer) {
-	//		viewer.setLabelProvider(new ProgressLabelProvider());
-	//	}
+//	/**
+//	 * Sets the label provider for the viewer.
+//	 * 
+//	 * @param viewer
+//	 */
+//	static void initLabelProvider(ProgressTreeViewer viewer) {
+//		viewer.setLabelProvider(new ProgressLabelProvider());
+//	}
 	/**
 	 * Return a viewer sorter for looking at the jobs.
 	 * 
@@ -123,7 +120,6 @@ public class ProgressManagerUtil {
 	 * the given width. The default implementation replaces characters in the
 	 * center of the original string with an ellipsis ("..."). Override if you
 	 * need a different strategy.
-	 * 
 	 * @param textValue
 	 * @param control
 	 * @return String
@@ -205,70 +201,39 @@ public class ProgressManagerUtil {
 	}
 	/**
 	 * If there are any modal shells open reschedule openJob to wait until they
-	 * are closed. If the operation in jobsDialog is running then open
-	 * regardless as it is not being blocked by the jobs dialog. Return true if
-	 * it rescheduled, false if there is nothing blocking it.
+	 * are closed. Return true if it rescheduled, false if there is nothing
+	 * blocking it.
 	 * 
 	 * @param openJob
-	 * @param jobsDialog
-	 *            The dialog that is running a job. If it is still ticking then
-	 *            open away as it is not being blocked by the open dialog. May
-	 *            be <code>null</code>.
-	 * @return boolean. true if the job was rescheduled due to modal dialogs or
-	 *         if it should not open at all as the operation is done.
+	 * @return boolean. true if the job was rescheduled due to modal dialogs.
 	 */
-	public static boolean rescheduleIfModalShellOpen(Job openJob,
-			ProgressMonitorJobsDialog jobsDialog) {
+	public static boolean rescheduleIfModalShellOpen(Job openJob) {
 		Shell modal = getModalShell();
-		if (modal == null) {
-			openJob.setProperty(OPEN_SHELLS_PROPERTY, null);
+		if (modal == null)
 			return false;
-		}
-
-		//If ticks are going on don't block.
-		if (jobsDialog != null) {
-			if (jobsDialog.isAlreadyClosed())//Just abort if it is closed
-				return true;
-
-			//Make sure nothing new got opened.
-			int currentShellCount = getModalShellCount();
-			boolean noNewShells = true;
-			Object lastShells = openJob.getProperty(OPEN_SHELLS_PROPERTY);
-			if (lastShells == null)
-				setShellCount(openJob, currentShellCount);
-			else {
-				int oldShells = ((Integer) lastShells).intValue();
-				if (oldShells < currentShellCount)
-					noNewShells = false;
-			}
-			if (noNewShells && jobsDialog.isTicking()){//open if it is still alive
-				openJob.setProperty(OPEN_SHELLS_PROPERTY, null);
-				return false;
-			}
-		}
 
 		//try again in a few seconds
 		openJob.schedule(PlatformUI.getWorkbench().getProgressService()
 				.getLongOperationTime());
 		return true;
 	}
-	/**
-	 * Set the shell count property on the job.
-	 * @param openJob
-	 * @param currentShellCount
-	 */
-	private static void setShellCount(Job openJob, int currentShellCount) {
-		openJob.setProperty(OPEN_SHELLS_PROPERTY, new Integer(
-				currentShellCount));
-	}
 	
 	/**
-	 * Set the shell count property on the job to the currently opened
-	 * shells.
-	 * @param openJob
+	 * Return whether or not it is safe to open this dialog. If so then
+	 * return <code>true</code>. If not then set it to open itself when it
+	 * has had ProgressManager#longOperationTime worth of ticks.
+	 * 
+	 * @param dialog ProgressMonitorJobsDialog that will be opening
+	 * @return boolean. <code>true</code> if it can open. Otherwise return
+	 * false and set the dialog to tick.
 	 */
-	public static void trackInitialShells(Job openJob) {
-		setShellCount(openJob,getModalShellCount());
+	public static boolean safeToOpen(ProgressMonitorJobsDialog dialog) {
+		Shell modal = getModalShell();
+		if (modal == null)
+			return true;
+
+		dialog.watchTicks();
+		return false;
 	}
 	
 	/**
@@ -295,30 +260,6 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Return the count of modal shells. Used to dertermine if another one has
-	 * opened.
-	 * 
-	 * @return int
-	 */
-	private static int getModalShellCount() {
-		int count = 0;
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		Shell[] shells = workbench.getDisplay().getShells();
-		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
-				| SWT.PRIMARY_MODAL;
-		for (int i = 0; i < shells.length; i++) {
-			//Do not worry about shells that will not block the user.
-			if (shells[i].isVisible()) {
-				int style = shells[i].getStyle();
-				if ((style & modal) != 0) {
-					count++;
-				}
-			}
-		}
-		return count;
-	}
-
-	/**
 	 * Utility method to get the best parenting possible for a dialog. If there
 	 * is a modal shell create it so as to avoid two modal dialogs. If not then
 	 * return the shell of the active workbench window. If neither can be found
@@ -335,8 +276,8 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Get the active non modal shell. If there isn't one return null.
-	 * 
+	 * Get the active non modal shell. If there isn't one return
+	 * null.
 	 * @return
 	 */
 	public static Shell getNonModalShell() {

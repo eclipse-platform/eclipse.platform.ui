@@ -201,7 +201,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					if (singleton == null)
 						return Status.CANCEL_STATUS;
-					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this,null))
+					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 						return Status.CANCEL_STATUS;
 					singleton.open();
 					return Status.OK_STATUS;

@@ -811,6 +811,8 @@ public class ProgressManager extends ProgressProvider
 	 */
 	private void scheduleProgressMonitorJob(
 			final ProgressMonitorJobsDialog dialog) {
+		
+		
 		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages
 				.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
 			/*
@@ -820,18 +822,14 @@ public class ProgressManager extends ProgressProvider
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				setUserInterfaceActive(true);
-
-				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this,dialog))
-					return Status.CANCEL_STATUS;
-				dialog.setOpenOnRun(true);
-				dialog.open();
+				if(ProgressManagerUtil.safeToOpen(dialog))
+					dialog.open();
 				return Status.OK_STATUS;
 			}
 		};
 		
-		//Keep track of the initial shells as we are delaying opening
-		ProgressManagerUtil.trackInitialShells(updateJob);
 		updateJob.schedule(getLongOperationTime());
+		
 	}
 	/**
 	 * Shutdown the receiver.
