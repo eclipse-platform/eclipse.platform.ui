@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Variables viewer. As the user steps through code, this
@@ -23,6 +24,8 @@ import org.eclipse.swt.widgets.TreeItem;
  * to the values that have changed.
  */
 public class VariablesViewer extends TreeViewer {
+
+	private Item fNewItem;
 	
 	/**
 	 * Constructor for VariablesViewer.
@@ -54,6 +57,8 @@ public class VariablesViewer extends TreeViewer {
 	 * update the foreground color for values that have changed
 	 * since the last refresh. Values that have not
 	 * changed are drawn with the default system foreground color.
+	 * If the viewer has no selection, ensure that new items
+	 * are visible.
 	 * 
 	 * @see Viewer#refresh()
 	 */
@@ -63,12 +68,19 @@ public class VariablesViewer extends TreeViewer {
 		
 		Item[] children = getChildren(getControl());
 		if (children != null) {
+			Color c= DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
 			for (int i = 0; i < children.length; i++) {
-				updateColor((TreeItem)children[i]);
+				updateColor((TreeItem)children[i], c);
 			}
 		}
 		
 		getControl().setRedraw(true);
+		
+		if (getSelection().isEmpty() && getNewItem() != null) {
+			//ensure that new items are visible
+			showItem(getNewItem());
+			setNewItem(null);
+		}
 	}
 	
 	/**
@@ -81,12 +93,11 @@ public class VariablesViewer extends TreeViewer {
 	 * 
 	 * @param item tree item
 	 */
-	protected void updateColor(TreeItem item) {
+	protected void updateColor(TreeItem item, Color c) {
 		if (item.getData() instanceof IVariable) {
 			IVariable var = (IVariable)item.getData();
 			try {
 				if (var.hasValueChanged()) {
-					Color c= DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
 					item.setForeground(c);
 				} else {
 					item.setForeground(null);
@@ -97,7 +108,27 @@ public class VariablesViewer extends TreeViewer {
 		}
 		TreeItem[] children = item.getItems();
 		for (int i = 0; i < children.length; i++) {
-			updateColor(children[i]);
+			updateColor(children[i], c);
 		}
+	}
+	
+	/**
+	 * @see AbstractTreeViewer#newItem(Widget, int, int)
+	 */
+	protected Item newItem(Widget parent, int style, int index) {
+		if (index != -1) {
+			//ignore the dummy items
+			setNewItem(super.newItem(parent, style, index));
+			return getNewItem();
+		} 
+		return	super.newItem(parent, style, index);
+	}
+	
+	protected Item getNewItem() {
+		return fNewItem;
+	}
+
+	protected void setNewItem(Item newItem) {
+		fNewItem = newItem;
 	}
 }
