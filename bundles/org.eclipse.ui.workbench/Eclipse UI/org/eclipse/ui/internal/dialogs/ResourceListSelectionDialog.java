@@ -56,18 +56,33 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			Display display = resourceNames.getDisplay();
 			final int itemIndex[] = {0};
 			final int itemCount[] = {0};
+			//Keep track of if the widget got disposed 
+			//so that we can abort if required
+			final boolean[] disposed = {false};
 			display.syncExec(new Runnable(){
 				public void run() {
+					//Be sure the widget still exists
+					if(resourceNames.isDisposed()){
+						disposed[0] = true;
+						return;
+					}
 			 		itemCount[0] = resourceNames.getItemCount();
 				}
 			});
+			
+			if(disposed[0])
+				return;
+				 
 			int last = lastMatch;
 			boolean setFirstMatch = true;
 			for (int i = firstMatch; i <= lastMatch;i++) {
 				if(i % 50 == 0) {
 					try { Thread.sleep(10); } catch(InterruptedException e){}
 				}
-				if(stop || resourceNames.isDisposed()) return;
+				if(stop || resourceNames.isDisposed()){
+					disposed[0] = true;
+					 return;
+				}
 				final int index = i;
 				if(match(descriptors[index].label)) {
 					if(setFirstMatch) {
@@ -84,9 +99,15 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 					});
 				}
 			}
+			
+			if(disposed[0])
+				return;
+				
 			lastMatch = last;
 			display.syncExec(new Runnable() {
 				public void run() {
+					if(resourceNames.isDisposed())
+						return;
 			 		itemCount[0] = resourceNames.getItemCount();
 			 		if(itemIndex[0] < itemCount[0]) {
 			 			resourceNames.setRedraw(false);
