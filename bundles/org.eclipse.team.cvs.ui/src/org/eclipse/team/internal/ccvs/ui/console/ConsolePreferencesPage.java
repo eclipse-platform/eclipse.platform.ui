@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.console;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -78,6 +79,7 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 			Policy.bind("ConsolePreferencePage.errorColor"), composite); //$NON-NLS-1$
 		addField(errorColorEditor);
 		
+		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 	}
 	
