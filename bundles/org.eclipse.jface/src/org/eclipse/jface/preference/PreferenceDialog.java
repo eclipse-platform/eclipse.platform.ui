@@ -393,7 +393,7 @@ private Composite createTitleArea(Composite parent) {
 	titleImage.setBackground(background);
 	titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
 	gd = new GridData(); 
-	gd.horizontalAlignment = gd.END;
+	gd.horizontalAlignment = GridData.END;
 	titleImage.setLayoutData(gd);
 
 	return titleArea;

@@ -179,14 +179,14 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 
 	list = getListControl(parent);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.verticalAlignment = gd.FILL;
+	gd.verticalAlignment = GridData.FILL;
 	gd.horizontalSpan = numColumns - 1;
 	gd.grabExcessHorizontalSpace = true;
 	list.setLayoutData(gd);
 
 	buttonBox = getButtonBoxControl(parent);
 	gd = new GridData();
-	gd.verticalAlignment = gd.BEGINNING;
+	gd.verticalAlignment = GridData.BEGINNING;
 	buttonBox.setLayoutData(gd);
 }
 /* (non-Javadoc)

@@ -214,7 +214,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 			gc.dispose();
 		}
 	} else {
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 	}
 	textField.setLayoutData(gd);

@@ -297,7 +297,7 @@ public class FontPreferencePage
 		previewer = new DefaultPreviewer(parent);
 		Control control = previewer.getControl();
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.heightHint = previewer.getPreferredHeight();
 		control.setLayoutData(gd);

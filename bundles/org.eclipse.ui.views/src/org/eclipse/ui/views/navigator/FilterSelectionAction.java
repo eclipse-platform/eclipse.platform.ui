@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.*;
@@ -55,7 +56,7 @@ public void run() {
 	dialog.setInitialSelections(contentProvider.getInitialSelections());
 	dialog.setWorkingSet(workingSet);
 	dialog.open();
-	if (dialog.getReturnCode() == dialog.OK) {
+	if (dialog.getReturnCode() == Dialog.OK) {
 		Object[] results = dialog.getResult();
 		String[] selectedPatterns = new String[results.length];
 		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();

@@ -6,9 +6,11 @@ package org.eclipse.ui.views.tasklist;
  */
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -52,7 +54,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 			return;
 		}	 
 		MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(getShell(), resolutions);
-		if (d.open() != d.OK)
+		if (d.open() != Dialog.OK)
 			return;
 		Object[] result = d.getResult();
 		if (result != null && result.length > 0)

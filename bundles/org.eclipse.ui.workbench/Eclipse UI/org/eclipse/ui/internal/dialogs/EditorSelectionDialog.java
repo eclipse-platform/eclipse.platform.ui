@@ -137,9 +137,9 @@ protected Control createDialogArea(Composite parent) {
 	editorTable.addListener(SWT.MouseDoubleClick, this);
 	data = new GridData();
 	data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
-	data.horizontalAlignment= data.FILL;
+	data.horizontalAlignment= GridData.FILL;
 	data.grabExcessHorizontalSpace= true;
-	data.verticalAlignment= data.FILL;
+	data.verticalAlignment= GridData.FILL;
 	data.grabExcessVerticalSpace= true;
 	data.horizontalSpan = 2;
 	editorTable.setLayoutData(data);

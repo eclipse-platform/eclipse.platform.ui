@@ -92,7 +92,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 	gd.grabExcessHorizontalSpace = true;
-	gd.horizontalAlignment = gd.FILL;
+	gd.horizontalAlignment = GridData.FILL;
 	pathValueText.setLayoutData(gd);
 	pathValueText.setFont(font);
 	
@@ -119,7 +119,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 	gd.grabExcessHorizontalSpace = true;
-	gd.horizontalAlignment = gd.FILL;
+	gd.horizontalAlignment = GridData.FILL;
 	locationValue.setLayoutData(gd);
 	locationValue.setFont(font);
 	
@@ -301,13 +301,13 @@ private String getSizeString(IFile file) {
  */
 private String getTypeString(IResource resource) {
 	
-	if(resource.getType() == resource.FILE)
+	if(resource.getType() == IResource.FILE)
 		return FILE_LABEL;
 
-	if(resource.getType() == resource.FOLDER)
+	if(resource.getType() == IResource.FOLDER)
 		return FOLDER_LABEL;
 
-	if(resource.getType() == resource.PROJECT)
+	if(resource.getType() == IResource.PROJECT)
 		return PROJECT_LABEL;
 
 	//Should not be possible

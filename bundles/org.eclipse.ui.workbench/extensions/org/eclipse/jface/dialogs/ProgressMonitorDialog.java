@@ -346,7 +346,7 @@ protected Control createDialogArea(Composite parent) {
 	progressIndicator= new ProgressIndicator(parent);
 	gd= new GridData();
 	gd.heightHint= convertVerticalDLUsToPixels(BAR_DLUS);
-	gd.horizontalAlignment= gd.FILL;
+	gd.horizontalAlignment= GridData.FILL;
 	gd.grabExcessHorizontalSpace= true;
 	gd.horizontalSpan= 2;
 	progressIndicator.setLayoutData(gd);

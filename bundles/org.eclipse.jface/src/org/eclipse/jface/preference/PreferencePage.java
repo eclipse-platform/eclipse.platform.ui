@@ -212,7 +212,8 @@ public void createControl(Composite parent) {
 	layout.marginHeight= 0; 
 	layout.marginWidth= 0;
 	buttonBar.setLayout(layout);
-	gd= new GridData(); gd.horizontalAlignment= gd.END;
+	gd= new GridData(); 
+	gd.horizontalAlignment= GridData.END;
 	buttonBar.setLayoutData(gd);
 
 	contributeButtons(buttonBar);

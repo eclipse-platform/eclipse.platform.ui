@@ -124,7 +124,7 @@ public class ListView extends MockViewPart
 	 * Tests that the menu mgr contains the expected actions.
 	 */
 	public void verifyActions(TestCase test, IMenuManager menuMgr) {
-		test.assertNotNull(menuMgr.find(ADD_ACTION_ID));
+		TestCase.assertNotNull(menuMgr.find(ADD_ACTION_ID));
 	}
 	
 	public void addStandardItems() {

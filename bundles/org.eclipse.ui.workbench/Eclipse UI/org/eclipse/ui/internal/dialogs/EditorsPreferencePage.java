@@ -269,7 +269,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.marginHeight = 0;
 		groupComposite.setLayout(layout);
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);
 		groupComposite.setFont(font);
@@ -336,7 +336,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		editorReuseGroup.setLayout(layout);
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		editorReuseGroup.setLayoutData(gd);	
 		editorReuseGroup.setFont(font);	
@@ -384,7 +384,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		groupComposite.setLayout(layout);
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
 		groupComposite.setFont(composite.getFont());

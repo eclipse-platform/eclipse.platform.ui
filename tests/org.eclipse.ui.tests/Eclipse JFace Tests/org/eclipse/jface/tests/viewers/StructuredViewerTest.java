@@ -147,7 +147,7 @@ public void processEvents() {
 	void sleep(int d) {
 		processEvents();
 		try {
-			Thread.currentThread().sleep(d*1000);
+			Thread.sleep(d*1000);
 		} catch(Exception e) {}
 	}
 public void tearDown() {

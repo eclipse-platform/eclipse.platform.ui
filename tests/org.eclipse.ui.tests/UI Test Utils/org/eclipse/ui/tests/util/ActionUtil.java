@@ -22,7 +22,7 @@ public class ActionUtil {
 	public static void runAction(TestCase test, 
 		IContributionItem item) 
 	{
-		test.assertTrue(item instanceof ActionContributionItem);
+		TestCase.assertTrue(item instanceof ActionContributionItem);
 		((ActionContributionItem)item).getAction().run();
 	}
 	
@@ -50,7 +50,7 @@ public class ActionUtil {
 				}
 			}
 		}
-		test.fail("Unable to find action: " + label);
+		TestCase.fail("Unable to find action: " + label);
 	}
 
 
@@ -82,7 +82,7 @@ public class ActionUtil {
 		IMenuManager mgr, String idPath) 
 	{
 		IContributionItem item = mgr.findUsingPath(idPath);
-		test.assertNotNull(item);
+		TestCase.assertNotNull(item);
 		runAction(test, item);
 	}
 	

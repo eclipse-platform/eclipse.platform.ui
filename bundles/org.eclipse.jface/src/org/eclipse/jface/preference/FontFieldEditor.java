@@ -142,7 +142,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 
 	changeFontButton = getChangeControl(parent);
 	gd = new GridData();
-	gd.horizontalAlignment = gd.FILL;
+	gd.horizontalAlignment = GridData.FILL;
 	gd.heightHint = convertVerticalDLUsToPixels(changeFontButton, IDialogConstants.BUTTON_HEIGHT);
 	int widthHint = convertHorizontalDLUsToPixels(changeFontButton, IDialogConstants.BUTTON_WIDTH);
 	gd.widthHint = Math.max(widthHint, changeFontButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -151,7 +151,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	control = getPreviewControl();
 	if (control != null) {
 		gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.horizontalSpan = numColumns;
 		gd.heightHint = previewer.getPreferredHeight();
 		control.setLayoutData(gd);

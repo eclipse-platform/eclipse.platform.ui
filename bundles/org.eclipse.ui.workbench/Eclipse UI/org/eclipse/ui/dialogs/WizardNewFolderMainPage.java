@@ -287,8 +287,8 @@ protected boolean validatePage() {
 
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently
-		if (resourceGroup.getProblemType() == resourceGroup.PROBLEM_RESOURCE_EMPTY
-			|| resourceGroup.getProblemType() == resourceGroup.PROBLEM_CONTAINER_EMPTY) {
+		if (resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_RESOURCE_EMPTY
+			|| resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_CONTAINER_EMPTY) {
 			setMessage(resourceGroup.getProblemMessage());
 			setErrorMessage(null);
 		} else

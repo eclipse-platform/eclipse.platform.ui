@@ -94,7 +94,7 @@ public class ReopenEditorMenu extends ContributionItem {
 						String segment = path.segment(i);
 						if (length + segment.length() < MAX_TEXT_LENGTH) {
 							sb.append(segment);
-							sb.append(path.SEPARATOR);
+							sb.append(IPath.SEPARATOR);
 							length += segment.length() + 1;
 							i++;
 						} else if (i == 0) {
@@ -114,7 +114,7 @@ public class ReopenEditorMenu extends ContributionItem {
 					while (i > 0 && length < MAX_TEXT_LENGTH) {			
 						String segment = path.segment(i);
 						if (length + segment.length() < MAX_TEXT_LENGTH) {
-							sb.append(path.SEPARATOR);
+							sb.append(IPath.SEPARATOR);
 							sb.append(segment);
 							length += segment.length() + 1;
 							i--;

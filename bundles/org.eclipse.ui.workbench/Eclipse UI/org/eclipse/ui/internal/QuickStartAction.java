@@ -6,23 +6,16 @@ package org.eclipse.ui.internal;
  */
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Locale;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 
 /**
  * Launch the quick start action.
@@ -114,7 +107,7 @@ public void run() {
 			shell,
 			features,
 			index);
-	if(d.open() != d.OK || d.getResult().length != 1)
+	if(d.open() != Dialog.OK || d.getResult().length != 1)
 		return;
 		
 	AboutInfo feature = (AboutInfo)d.getResult()[0];

@@ -6,6 +6,7 @@ package org.eclipse.ui.views.tasklist;
  */
 import org.eclipse.core.resources.IMarker;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -44,7 +45,7 @@ public void run() {
 	TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
 	dialog.setResource(getTaskList().getResource());
 	int result = dialog.open();
-	if (result == dialog.OK) {
+	if (result == Dialog.OK) {
 		showMarker(dialog.getMarker());
 	}
 }

@@ -5,26 +5,15 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Implementation class to perform the actual copying of project resources from the clipboard 
@@ -65,7 +54,7 @@ public class CopyProjectOperation {
 		ProjectLocationSelectionDialog dialog =
 			new ProjectLocationSelectionDialog(parentShell, project);
 		dialog.setTitle(WorkbenchMessages.getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
-		if (dialog.open() != dialog.OK) 
+		if (dialog.open() != Dialog.OK) 
 			return;
 			
 		Object[] destinationPaths = dialog.getResult();

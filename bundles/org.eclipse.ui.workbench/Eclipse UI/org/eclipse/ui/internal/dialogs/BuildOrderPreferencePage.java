@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -97,7 +98,7 @@ private void addProject() {
 			labelProvider,
 			PROJECT_SELECTION_MESSAGE);
 
-	if (dialog.open() != dialog.OK)
+	if (dialog.open() != Dialog.OK)
 		return;
 
 	Object[] result = dialog.getResult();

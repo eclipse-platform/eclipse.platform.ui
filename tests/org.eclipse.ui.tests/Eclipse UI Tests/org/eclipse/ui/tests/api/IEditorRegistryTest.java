@@ -206,12 +206,12 @@ public class IEditorRegistryTest extends TestCase {
 		FileEditorMapping[] maps = new FileEditorMapping[src.length];
 		System.arraycopy( src, 0, maps, 0, src.length);
 
-		MockPropertyListener listener = new MockPropertyListener( fReg, fReg.PROP_CONTENTS );
+		MockPropertyListener listener = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
 		fReg.addPropertyListener( listener );
 		CallHistory callTrace = listener.getCallHistory();
 
 		//multiple listener
-		MockPropertyListener listener2 = new MockPropertyListener( fReg, fReg.PROP_CONTENTS );
+		MockPropertyListener listener2 = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
 		fReg.addPropertyListener( listener2 );
 		CallHistory callTrace2 = listener2.getCallHistory();
 
@@ -242,7 +242,7 @@ public class IEditorRegistryTest extends TestCase {
 		FileEditorMapping[] maps = new FileEditorMapping[src.length];
 		System.arraycopy( src, 0, maps, 0, src.length);
 	
-		MockPropertyListener listener = new MockPropertyListener( fReg, fReg.PROP_CONTENTS );
+		MockPropertyListener listener = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
 		fReg.addPropertyListener( listener );
 		//remove the listener immediately after adding it
 		fReg.removePropertyListener( listener );

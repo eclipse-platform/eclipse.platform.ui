@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.InstallCapabilityStep.IProjectProvider;
@@ -45,7 +46,7 @@ public abstract class MultiStepCapabilityWizard extends MultiStepWizard implemen
 				ProjectPerspectiveChoiceDialog dialog;
 				dialog = new ProjectPerspectiveChoiceDialog(window, perspIds);
 				dialog.open();
-				if (dialog.getReturnCode() == dialog.OK)
+				if (dialog.getReturnCode() == Dialog.OK)
 					window = dialog.showChosenPerspective();
 			}
 			

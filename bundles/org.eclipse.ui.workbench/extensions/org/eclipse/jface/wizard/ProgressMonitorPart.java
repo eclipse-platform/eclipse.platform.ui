@@ -136,9 +136,9 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 		
 		fProgressIndicator= new ProgressIndicator(this);
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= true;
-		gd.verticalAlignment= gd.CENTER;
+		gd.verticalAlignment= GridData.CENTER;
 		gd.heightHint= progressIndicatorHeight;
 		fProgressIndicator.setLayoutData(gd);
 	}

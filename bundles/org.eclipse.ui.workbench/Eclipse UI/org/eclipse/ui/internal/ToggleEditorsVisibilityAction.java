@@ -35,7 +35,7 @@ public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
 				setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
 		}			
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-			if (changeId == page.CHANGE_RESET || changeId == page.CHANGE_EDITOR_AREA_HIDE || changeId == page.CHANGE_EDITOR_AREA_SHOW) {
+			if (changeId == IWorkbenchPage.CHANGE_RESET || changeId == IWorkbenchPage.CHANGE_EDITOR_AREA_HIDE || changeId == IWorkbenchPage.CHANGE_EDITOR_AREA_SHOW) {
 				if (page.isEditorAreaVisible())
 					setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 				else

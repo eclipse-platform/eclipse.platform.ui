@@ -291,7 +291,7 @@ private Composite createInfoArea(Composite parent) {
 		image.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_ITEM));
 		GridData gd = new GridData(); 
 		gd.horizontalIndent = 20;
-		gd.verticalAlignment = gd.VERTICAL_ALIGN_BEGINNING;
+		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		image.setLayoutData(gd);
 
 		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
@@ -304,7 +304,7 @@ private Composite createInfoArea(Composite parent) {
 		setLinkRanges(styledText, items[i].getActionRanges());
 		setLinkRanges(styledText, items[i].getHelpRanges());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalAlignment = gd.VERTICAL_ALIGN_BEGINNING;		
+		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;		
 		gd.verticalSpan = 2;
 		styledText.setLayoutData(gd);
 		styledText.setData(items[i]);
@@ -470,7 +470,7 @@ private Composite createTitleArea(Composite parent) {
 	titleImage.setBackground(background);
 	titleImage.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_BANNER));
 	gd = new GridData(); 
-	gd.horizontalAlignment = gd.END;
+	gd.horizontalAlignment = GridData.END;
 	titleImage.setLayoutData(gd);
 
 	return titleArea;

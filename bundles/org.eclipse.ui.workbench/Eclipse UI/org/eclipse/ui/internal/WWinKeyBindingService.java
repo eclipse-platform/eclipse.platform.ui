@@ -142,7 +142,7 @@ public class WWinKeyBindingService {
 				w.getActiveAcceleratorConfiguration().initializeScopes();
 			}
 			if(activeService != null) {
-				activeService.getActiveAcceleratorScope().resetMode(activeService);
+				AcceleratorScope.resetMode(activeService);
 				updateAccelerators(true);
 			}
 		}
@@ -179,8 +179,7 @@ public class WWinKeyBindingService {
    			oldScope = activeService.getActiveAcceleratorScope();
    			
     	activeService = (KeyBindingService)part.getSite().getKeyBindingService();
-    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-    	scope.resetMode(activeService);
+    	AcceleratorScope.resetMode(activeService);
 		updateAccelerators(true);
 
    		AcceleratorScope newScope = null;

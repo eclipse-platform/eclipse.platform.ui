@@ -62,38 +62,38 @@ public class SessionView extends MockViewPart {
 	public void testMementoState(TestCase testCase) {
 		// Verify that the memento was passed to us in
 		// constructor.
-		testCase.assertNotNull(memento);
+		TestCase.assertNotNull(memento);
 	
 		// Read float.	
 		Float bigFloat = memento.getFloat("float");
-		testCase.assertNotNull(bigFloat);
-		testCase.assertEquals(bigFloat.floatValue(), 0.50f, 0.0001);
+		TestCase.assertNotNull(bigFloat);
+		TestCase.assertEquals(bigFloat.floatValue(), 0.50f, 0.0001);
 		
 		// Read int.	
 		Integer bigInt = memento.getInteger("integer");
-		testCase.assertEquals(bigInt, new Integer(50));
+		TestCase.assertEquals(bigInt, new Integer(50));
 		
 		// Read string.
 		String str = memento.getString("string");
-		testCase.assertEquals(str, "50");
+		TestCase.assertEquals(str, "50");
 		
 		// Read single child.
 		IMemento child = memento.getChild("single");
-		testCase.assertNotNull(child);
+		TestCase.assertNotNull(child);
 		bigInt = child.getInteger("id");
-		testCase.assertEquals(bigInt, new Integer(1));
+		TestCase.assertEquals(bigInt, new Integer(1));
 		
 		// Read multiple children.
 		bigInt = memento.getInteger("multiple.count");
-		testCase.assertNotNull(bigInt);
+		TestCase.assertNotNull(bigInt);
 		int count = bigInt.intValue();
 		IMemento [] children = memento.getChildren("multiple");
-		testCase.assertEquals(count, children.length);
+		TestCase.assertEquals(count, children.length);
 		for (int nX = 0; nX < count; nX ++) {
 			child = children[nX];
-			testCase.assertNotNull(child);
+			TestCase.assertNotNull(child);
 			bigInt = child.getInteger("id");
-			testCase.assertEquals(bigInt, new Integer(nX));
+			TestCase.assertEquals(bigInt, new Integer(nX));
 		}
 	}
 }

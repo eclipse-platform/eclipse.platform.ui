@@ -4,26 +4,30 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List;
 
 
 /**
@@ -398,7 +402,7 @@ public void promptForEditor() {
 	EditorSelectionDialog dialog = new EditorSelectionDialog(getControl().getShell());
 	dialog.setEditorsToFilter(getAssociatedEditors());
 	dialog.setMessage(WorkbenchMessages.format("Choose_the_editor_for_file", new Object[] {getSelectedResourceType().getLabel()})); //$NON-NLS-1$
-	if (dialog.open() == dialog.OK) {
+	if (dialog.open() == Dialog.OK) {
 		EditorDescriptor editor = (EditorDescriptor)dialog.getSelectedEditor();
 		if (editor != null) {
 			int i = editorTable.getItemCount();
@@ -419,7 +423,7 @@ public void promptForEditor() {
 }
 public void promptForResourceType() {
 	FileExtensionDialog dialog = new FileExtensionDialog(getControl().getShell());
-	if (dialog.open() == dialog.OK) {
+	if (dialog.open() == Dialog.OK) {
 		String name = dialog.getName();
 		String extension = dialog.getExtension();
 		addResourceType(name, extension);

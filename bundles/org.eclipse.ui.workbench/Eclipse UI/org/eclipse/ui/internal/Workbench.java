@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -604,7 +605,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						IContainer root = ResourcesPlugin.getWorkspace().getRoot();
-						root.refreshLocal(root.DEPTH_INFINITE,monitor);
+						root.refreshLocal(IResource.DEPTH_INFINITE,monitor);
 					} catch (CoreException e) {
 						ex[0] = e;
 					}
@@ -619,7 +620,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			WorkbenchPlugin.getDefault().log(msg,new Status(Status.ERROR,PlatformUI.PLUGIN_ID,0,msg,e.getTargetException()));
+			WorkbenchPlugin.log(msg,new Status(Status.ERROR,PlatformUI.PLUGIN_ID,0,msg,e.getTargetException()));
 		}
 	}
 

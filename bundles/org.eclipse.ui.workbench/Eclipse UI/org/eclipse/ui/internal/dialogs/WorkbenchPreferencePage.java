@@ -208,7 +208,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		layout.numColumns = 2;
 		groupComposite.setLayout(layout);
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
+		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
 		groupComposite.setFont(composite.getFont());

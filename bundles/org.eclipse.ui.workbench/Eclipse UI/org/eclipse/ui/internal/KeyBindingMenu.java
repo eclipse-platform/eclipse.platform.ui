@@ -32,7 +32,7 @@ public class KeyBindingMenu extends ContributionItem {
 		public void handleEvent (Event event) {
 			if(event.type == SWT.Verify)
 				event.doit = false;
-			scope.resetMode(service);
+			AcceleratorScope.resetMode(service);
 		}
 	};
 
