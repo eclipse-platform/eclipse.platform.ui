@@ -405,7 +405,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/*/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
 	 */
-	public void pin(boolean pin) {
+	public void setPinned(boolean pin) {
         fPinned = pin;
 	    if (fPinAction != null) {
 			fPinAction.update();
@@ -622,4 +622,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         return fScrollLock;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
+     */
+    public void pin(IConsole console) {
+        if (console == null) {
+            setPinned(false);
+        } else {
+            if (isPinned()) {
+                setPinned(false);
+            }
+            display(console);
+            setPinned(true);
+        }
+    }
 }

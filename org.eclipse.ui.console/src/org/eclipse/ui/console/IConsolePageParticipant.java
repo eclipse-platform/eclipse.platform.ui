@@ -19,8 +19,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * also provide adapters for a page. Participants are contributed via the
  * <code>org.eclispe.ui.console.consolePageParticipants</code> extension point.
  * <p>
- * A page participant can add actions to a console's toolbar by
- * accessing a console's action bars.  
+ * Participant behavior is implementation dependent. For example, a page participant
+ * could add actions to a console's toolbar by accessing a its page's action bars.  
  * </p>
  * <p>
  * Following is an example extension definition.

@@ -39,7 +39,7 @@ public class PinConsoleAction extends Action implements IUpdate {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-        fView.pin(isChecked());
+        fView.setPinned(isChecked());
 	}
 		
 	/* (non-Javadoc)

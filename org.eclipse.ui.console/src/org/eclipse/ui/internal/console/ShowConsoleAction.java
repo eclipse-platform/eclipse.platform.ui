@@ -29,11 +29,11 @@ public class ShowConsoleAction extends Action {
 		if (!fConsole.equals(fView.getConsole())) {
             boolean pinned = fView.isPinned();
             if (pinned) {
-                fView.pin(false);
+                fView.setPinned(false);
             }
 		    fView.display(fConsole);
             if (pinned) {
-               fView.pin(true); 
+               fView.setPinned(true); 
             }
 		}
 	}

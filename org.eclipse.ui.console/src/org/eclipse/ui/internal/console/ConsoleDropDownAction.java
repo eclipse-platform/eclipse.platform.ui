@@ -112,7 +112,7 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
         ConsoleView consoleView = (ConsoleView) fView;
         boolean pinned = consoleView.isPinned();
         if (pinned) {
-            consoleView.pin(false);
+            consoleView.setPinned(false);
         }
 		List stack = consoleView.getConsoleStack();
 		if (stack.size() > 1) {
@@ -120,7 +120,7 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 			fView.display(console);
 		}
         if (pinned) {
-            consoleView.pin(true);
+            consoleView.setPinned(true);
         }
 	}
 	
