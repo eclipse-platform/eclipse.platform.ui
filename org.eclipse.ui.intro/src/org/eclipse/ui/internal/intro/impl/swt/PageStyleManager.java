@@ -339,8 +339,12 @@ public class PageStyleManager extends SharedStyleManager {
         return false;
     }
 
-    public static Font getDefaultFont() {
+    public static Font getBannerFont() {
         return JFaceResources.getBannerFont();
+    }
+
+    public static Font getHeaderFont() {
+        return JFaceResources.getHeaderFont();
     }
 
     /**

@@ -75,6 +75,20 @@ public abstract class AbstractIntroPartImplementation {
         }
     };
 
+    protected Action homeAction = new Action() {
+
+        {
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+            navigateHome();
+        }
+    };
 
     protected Action viewIntroModelAction = new Action() {
 
@@ -236,6 +250,8 @@ public abstract class AbstractIntroPartImplementation {
 
     public abstract boolean navigateForward();
 
+    public abstract boolean navigateHome();
+
 
     /**
      * Called when the IntroPart is disposed. Subclasses should override to
@@ -281,7 +297,7 @@ public abstract class AbstractIntroPartImplementation {
      * 
      * @param standby
      */
-    public void standbyStateChanged(boolean standby) {
+    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
         // do nothing.
     }
 

@@ -133,9 +133,9 @@ public class IntroPlugin extends AbstractUIPlugin {
      * false.
      *  
      */
-    public static void setIntroStandby(boolean standdby) {
+    public static void setIntroStandby(boolean standby) {
         PlatformUI.getWorkbench().getIntroManager().setIntroStandby(getIntro(),
-                standdby);
+                standby);
     }
 
 

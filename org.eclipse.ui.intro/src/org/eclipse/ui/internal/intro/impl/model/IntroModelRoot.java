@@ -82,6 +82,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
+    private IntroHomePage standbyPage;
 
 
     // the config extensions for this model.
@@ -198,6 +199,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void loadPages(Document dom, Bundle bundle) {
         String homePageId = getPresentation().getHomePageId();
+        String standbyPageId = getPresentation().getStandbyPageId();
         Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
@@ -209,6 +211,14 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 homePage.setParent(this);
                 currentPageId = homePage.getId();
                 children.add(homePage);
+            } else if (pageElement.getAttribute(IntroPage.ATT_ID)
+                    .equalsIgnoreCase(standbyPageId)) {
+                // Create the model class for the standby Page.
+                standbyPage = new IntroHomePage(pageElement, bundle);
+                standbyPage.setParent(this);
+                // signal that it is a standby page.
+                standbyPage.setStandbyPage(true);
+                children.add(standbyPage);
             } else {
                 // Create the model class for an intro Page.
                 IntroPage page = new IntroPage(pageElement, bundle);
@@ -431,6 +441,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
+     * @return Returns the standby Page.
+     */
+    public IntroHomePage getStandbyPage() {
+        return standbyPage;
+    }
+
+    /**
      * @return all pages *excluding* the Home Page. If all pages are needed,
      *         call <code>(AbstractIntroPage[])
      *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);</code>
@@ -479,7 +496,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // not actually fail. just a no op.
             return true;
 
-        AbstractIntroPage page = (AbstractIntroPage) findChild(pageId, PAGE);
+        AbstractIntroPage page = (AbstractIntroPage) findChild(pageId,
+                ABSTRACT_PAGE);
         if (page == null) {
             // not a page. Test for root page.
             if (!pageId.equals(homePage.getId())) {
@@ -543,7 +561,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return null;
 
         AbstractIntroPage page = (AbstractIntroPage) findChild(currentPageId,
-                PAGE);
+                ABSTRACT_PAGE);
         if (page != null)
             return page;
         // not a page. Test for root page.

@@ -14,6 +14,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.html.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
@@ -33,31 +34,6 @@ public class BrowserIntroPartImplementation extends
             this);
 
 
-    private Action homeAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            // Home is URL of root page in static case, and root page in
-            // dynamic.
-            IntroHomePage rootPage = getModel().getHomePage();
-            String location = null;
-            if (getModel().isDynamic()) {
-                location = rootPage.getId();
-                getModel().setCurrentPageId(location);
-            } else {
-                location = rootPage.getUrl();
-                browser.setUrl(location);
-            }
-            updateHistory(location);
-        }
-    };
 
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
@@ -149,7 +125,7 @@ public class BrowserIntroPartImplementation extends
             updateHistory(cachedPage);
 
         } else {
-            // No cacched page. Generate HTML for the home page, and set it
+            // No cached page. Generate HTML for the home page, and set it
             // on the browser.
             generateDynamicContentForPage(homePage);
             updateHistory(homePage.getId());
@@ -158,36 +134,6 @@ public class BrowserIntroPartImplementation extends
         // Add this presentation as a listener to model
         // only in dynamic case, for now.
         getModel().addPropertyListener(this);
-
-        // REVISIT: update the history here. The design of the history
-        // navigation is that it has to be updated independant of the
-        // property fired model events.
-
-
-    }
-
-    private void handleStaticIntro() {
-        // We have a static case. Set the url on the browser to be the url
-        // defined in the root page. But first check memento if we can
-        // restore last visited page.
-        String url = getCachedCurrentPage();
-        if (!isURL(url))
-            // no cached state, or invalid state.
-            url = getModel().getHomePage().getUrl();
-
-        if (url == null) {
-            // We have no content to display. log an error
-            Log.error("Url is null; no content to display in browser", //$NON-NLS-1$
-                    null);
-            return;
-        }
-        // set the URL the browser should display
-        boolean success = browser.setUrl(url);
-        if (!success) {
-            Log.error(
-                    "Unable to set the following ULR in browser: " + url, null); //$NON-NLS-1$
-            return;
-        }
     }
 
 
@@ -239,6 +185,10 @@ public class BrowserIntroPartImplementation extends
         // Handle menus:
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
+                forwardAction);
+        actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
+                backAction);
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
@@ -247,8 +197,11 @@ public class BrowserIntroPartImplementation extends
         updateNavigationActionsState();
     }
 
-    public void standbyStateChanged(boolean standby) {
-        if (standby) {
+    public void dynamicStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded) {
+        // if we have a standby part, regardless if standby state, disable
+        // actions.
+        if (isStandbyPartNeeded | standby) {
             homeAction.setEnabled(false);
             forwardAction.setEnabled(false);
             backAction.setEnabled(false);
@@ -256,7 +209,24 @@ public class BrowserIntroPartImplementation extends
             homeAction.setEnabled(true);
             updateNavigationActionsState();
         }
+
+        if (isStandbyPartNeeded)
+            // we have a standby part, nothing more to do in presentation.
+            return;
+
+        // presentation is shown here. toggle standby page. No need to update
+        // history here.
+
+        if (standby)
+            getModel().setCurrentPageId(getModel().getStandbyPage().getId());
+        else
+            getModel().setCurrentPageId(getModel().getCurrentPageId());
+
+
+
     }
+
+
 
     /**
      * Handle model property changes. Property listeners are only added in the
@@ -365,6 +335,32 @@ public class BrowserIntroPartImplementation extends
         return success;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateHome()
+     */
+    public boolean navigateHome() {
+        // Home is URL of root page in static case, and root page in
+        // dynamic.
+        IntroHomePage rootPage = getModel().getHomePage();
+        if (getModel().isDynamic()) {
+            String location = null;
+            boolean success = false;
+            if (getModel().isDynamic()) {
+                location = rootPage.getId();
+                success = getModel().setCurrentPageId(location);
+            } else {
+                location = rootPage.getUrl();
+                success = browser.setUrl(location);
+            }
+            updateHistory(location);
+            return success;
+        } else
+            return false;
+    }
+
+
 
     /*
      * (non-Javadoc)
@@ -383,4 +379,49 @@ public class BrowserIntroPartImplementation extends
     }
 
 
+    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
+        if (getModel().isDynamic())
+            dynamicStandbyStateChanged(standby, isStandbyPartNeeded);
+        else
+            staticStandbyStateChanged(standby);
+    }
+
+
+
+    // ***************** Static Intro *****************
+    private void handleStaticIntro() {
+        // We have a static case. Set the url on the browser to be the url
+        // defined in the root page. But first check memento if we can
+        // restore last visited page.
+        String url = getCachedCurrentPage();
+        if (!isURL(url))
+            // no cached state, or invalid state.
+            url = getModel().getHomePage().getUrl();
+
+        if (url == null) {
+            // We have no content to display. log an error
+            Log.error("Url is null; no content to display in browser", null);
+            return;
+        }
+        // set the URL the browser should display
+        boolean success = browser.setUrl(url);
+        if (!success) {
+            Log.error("Unable to set the following ULR in browser: " + url,
+                    null);
+            return;
+        }
+    }
+
+    public void staticStandbyStateChanged(boolean standby) {
+        IntroHomePage homePage = getModel().getHomePage();
+        IntroHomePage standbyPage = getModel().getStandbyPage();
+        if (standbyPage == null)
+            standbyPage = homePage;
+
+        if (standby)
+            browser.setUrl(standbyPage.getUrl());
+        else
+            browser.setUrl(homePage.getUrl());
+
+    }
 }

@@ -36,7 +36,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         contentComposite.setLayout(new GridLayout());
         String text = IntroPlugin.getString("EmptyStandbyContentPart.text"); //$NON-NLS-1$
         Label label = toolkit.createLabel(contentComposite, text, SWT.NULL);
-        label.setFont(PageStyleManager.getDefaultFont());
+        label.setFont(PageStyleManager.getBannerFont());
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(gd);
     }

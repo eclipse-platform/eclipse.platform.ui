@@ -17,41 +17,28 @@ import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
- * An Intro Part home page. A home page is special because it is the page that
- * decides whether the OOBE pages are dynamic or static.
+ * An Intro Home page. A home page is special because it is the page that
+ * decides whether the OOBE pages are dynamic or static. This model class models
+ * the home and the standby page (since there is no difference between the two).
  */
 public class IntroHomePage extends AbstractIntroPage {
 
     private static final String ATT_URL = "url"; //$NON-NLS-1$
-    private static final String ATT_STANDBY_URL = "standby-url"; //$NON-NLS-1$
-    private static final String ATT_STANDBY_STYLE = "standby-style"; //$NON-NLS-1$
-    private static final String ATT_STANDBY_ALT_STYLE = "standby-alt-style"; //$NON-NLS-1$
 
     private String url;
-    private String standby_url;
-    private String standby_style;
-    private String standby_alt_style;
     private boolean isDynamic = false;
+    private boolean isStandbyPage;
 
 
     IntroHomePage(Element element, Bundle bundle) {
         super(element, bundle);
         url = getAttribute(element, ATT_URL);
-        if (url == null) {
+        if (url == null)
             // if we do not have a URL attribute, then we have dynamic content.
             isDynamic = true;
-            standby_style = getAttribute(element, ATT_STANDBY_STYLE);
-            standby_alt_style = getAttribute(element, ATT_STANDBY_ALT_STYLE);
-
-            // Resolve standby styles. The ALT style need not be resolved.
-            standby_style = IntroModelRoot.getPluginLocation(standby_style,
-                    bundle);
-        } else {
+        else
             // check the url/standby-url attributes and update accordingly.
             url = IntroModelRoot.resolveURL(url, bundle);
-            standby_url = getAttribute(element, ATT_STANDBY_URL);
-            standby_url = IntroModelRoot.resolveURL(standby_url, bundle);
-        }
     }
 
 
@@ -62,12 +49,6 @@ public class IntroHomePage extends AbstractIntroPage {
         return url;
     }
 
-    /**
-     * @return Returns the standby_url.
-     */
-    public String getStandbyUrl() {
-        return standby_url;
-    }
 
     /**
      * Returns true if this is a dynamic model or not. This is based on whether
@@ -79,19 +60,6 @@ public class IntroHomePage extends AbstractIntroPage {
         return isDynamic;
     }
 
-    /**
-     * @return Returns the standby_style.
-     */
-    public String getStandbyStyle() {
-        return standby_style;
-    }
-
-    /**
-     * @return Returns the standby_alt_style.
-     */
-    public String getStandbyAltStyle() {
-        return standby_alt_style;
-    }
 
     /*
      * (non-Javadoc)
@@ -112,7 +80,7 @@ public class IntroHomePage extends AbstractIntroPage {
         // DONOW:
         IntroLink[] links = (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
         if (links.length != 0)
-                return links;
+            return links;
 
         // root page does not have any links, append all links off non-filtered
         // divs.
@@ -142,5 +110,19 @@ public class IntroHomePage extends AbstractIntroPage {
     }
 
 
+    /**
+     * @return Returns the isStandbyPage.
+     */
+    public boolean isStandbyPage() {
+        return isStandbyPage;
+    }
+
+    /**
+     * @param isStandbyPage
+     *            The isStandbyPage to set.
+     */
+    public void setStandbyPage(boolean isStandbyPage) {
+        this.isStandbyPage = isStandbyPage;
+    }
 }
 

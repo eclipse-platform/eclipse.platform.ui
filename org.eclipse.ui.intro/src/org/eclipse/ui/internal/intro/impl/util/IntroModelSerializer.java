@@ -77,10 +77,7 @@ public class IntroModelSerializer {
         text.append("\n\ttitle = " + rootPage.getTitle()); //$NON-NLS-1$
         text.append("\n\tstyle = " + rootPage.getStyle()); //$NON-NLS-1$
         text.append("\n\talt-style = " + rootPage.getAltStyle()); //$NON-NLS-1$
-        text.append("\n\tstandby style = " + rootPage.getStandbyStyle()); //$NON-NLS-1$
-        text.append("\n\tstandby alt-style = " + rootPage.getStandbyAltStyle()); //$NON-NLS-1$
         text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
-        text.append("\n\tstandby-url = " + rootPage.getStandbyUrl()); //$NON-NLS-1$
         text.append("\n\tstyle-id = " + rootPage.getStyleId()); //$NON-NLS-1$
         printPageStyles(rootPage, text);
     }

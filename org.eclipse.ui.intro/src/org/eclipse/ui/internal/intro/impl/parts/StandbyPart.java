@@ -25,15 +25,18 @@ import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
 
 /**
- * Standby part is responsible for managing and creatin IStandbycontent parts.
- * It know how create and cache content parts. It also handles saving and
+ * Standby part is responsible for managing and creating IStandbycontent parts.
+ * It knows how to create and cache content parts. It also handles saving and
  * restoring its own state. It does that by caching the id of the last content
  * part viewed and recreating that part on startup. It also manages the life
  * cycle of content parts by creating and initializing them at the right
  * moments. It also passes the momento at appropriate times to these content
  * parts to enable storing and retrieving of state by content parts. Content
  * parts are responsible for recreating there own state, including input, from
- * the passed momemnto.
+ * the passed momemnto. When the Return to Introduction link is clicked, the
+ * Intro goes out of standby content mode, and the standby content parts are not
+ * shown anymore until the user explicitly asks for a part again. This is
+ * accomplished through a data flag on the CustomizableIntroPart control.
  *  
  */
 public class StandbyPart implements IIntroConstants {
@@ -54,7 +57,7 @@ public class StandbyPart implements IIntroConstants {
 
     class StandbyLayout extends Layout {
 
-        private int VGAP = 10;
+        private int VGAP = 20;
         private int VMARGIN = 5;
         private int HMARGIN = 5;
 
@@ -88,7 +91,7 @@ public class StandbyPart implements IIntroConstants {
                     flushCache);
             int x = HMARGIN;
             int y = VMARGIN;
-            returnLink.setBounds(x, y, carea.width, lsize.y);
+            returnLink.setBounds(x, y, lsize.x, lsize.y);
             x = 0;
             y += lsize.y + VGAP;
             content.setBounds(x, y, carea.width, carea.height - VMARGIN
@@ -129,7 +132,8 @@ public class StandbyPart implements IIntroConstants {
 
         // return hyper link.
         ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.gif"); //$NON-NLS-1$
-        returnLink = toolkit.createImageHyperlink(container, SWT.WRAP);
+        returnLink = toolkit.createImageHyperlink(container, SWT.WRAP
+                | SWT.CENTER);
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));
         returnLink.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -284,15 +288,17 @@ public class StandbyPart implements IIntroConstants {
     private void updateReturnLinkLabel() {
         AbstractIntroPage page = model.getCurrentPage();
         String linkText = IntroPlugin.getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
-        if (page instanceof IntroPage) {
-            linkText = IntroPlugin.getString("StandbyPart.returnTo") //$NON-NLS-1$
-                    + " " + page.getTitle(); //$NON-NLS-1$
-        }
+        String toolTip = IntroPlugin.getString("StandbyPart.returnTo") //$NON-NLS-1$
+                + " " + page.getTitle(); //$NON-NLS-1$
+
         returnLink.setText(linkText);
-        returnLink.setToolTipText(returnLink.getText());
+        returnLink.setToolTipText(toolTip);
     }
 
     private void doReturn() {
+        // remove the flag to indicate that standbypart is no longer needed.
+        ((CustomizableIntroPart) introPart).getControl().setData(
+                IIntroConstants.SHOW_STANDBY_PART, null);
         IntroPlugin.setIntroStandby(false);
     }
 
@@ -324,6 +330,9 @@ public class StandbyPart implements IIntroConstants {
         // save cached content part id.
         if (cachedControlKey != null) {
             String contentPartId = cachedControlKey.getContentPartId();
+            if (contentPartId == EMPTY_STANDBY_CONTENT_PART)
+                // do not create memento for empty standby.
+                return;
             memento.putString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT,
                     contentPartId);
             // give standby part its own child to create a name space for

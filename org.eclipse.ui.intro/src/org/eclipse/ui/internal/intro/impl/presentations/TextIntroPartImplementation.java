@@ -67,5 +67,14 @@ public class TextIntroPartImplementation extends
     protected void handleRegistryChanged(IRegistryChangeEvent event) {
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateHome()
+     */
+    public boolean navigateHome() {
+        return false;
+    }
+
 
 }

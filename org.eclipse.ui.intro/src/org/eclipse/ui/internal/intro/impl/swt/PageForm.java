@@ -191,14 +191,15 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     /**
      * This method is called when the current page changes. It creates the
      * PageContentForm if necessary, and handles showing the page in the Page
-     * Book
+     * Book. It creates a model PageContentForm for the current page.
      * 
      * @param pageID
      */
     public void showPage(String pageID) {
         if (!categoryPageBook.hasPage(pageID)) {
             // if we do not have a category form for this page create one.
-            PageContentForm categoryForm = new PageContentForm(toolkit, model);
+            PageContentForm categoryForm = new PageContentForm(toolkit, model,
+                    pageID);
             categoryForm
                     .createPartControl(categoryPageBook, sharedStyleManager);
         }

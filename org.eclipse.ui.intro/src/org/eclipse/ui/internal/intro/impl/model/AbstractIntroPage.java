@@ -73,11 +73,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     public String getTitle() {
         // title is a child of the page, and so we have to load children first.
-        // We also have to resolve children because someone migyt be including a
+        // We also have to resolve children because someone might be including a
         // title.
         getChildren();
         if (title == null)
-                return null;
+            return null;
         return title.getTitle();
     }
 
@@ -143,7 +143,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected void addStyle(String style) {
         initStylesVectors();
         if (styles.contains(style))
-                return;
+            return;
         styles.add(style);
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected void addAltStyle(String altStyle, Bundle bundle) {
         initStylesVectors();
         if (altStyles.containsKey(altStyle))
-                return;
+            return;
         altStyles.put(altStyle, bundle);
     }
 
@@ -182,11 +182,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     private void initStylesVectors() {
         if (styles == null)
-                // delay creation until needed.
-                styles = new Vector();
+            // delay creation until needed.
+            styles = new Vector();
         if (altStyles == null)
-                // delay creation until needed.
-                altStyles = new Hashtable();
+            // delay creation until needed.
+            altStyles = new Hashtable();
     }
 
     /**
@@ -210,7 +210,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             }
         }
         if (child != null)
-                return child;
+            return child;
         return super.getModelChild(childElement, bundle);
     }
 

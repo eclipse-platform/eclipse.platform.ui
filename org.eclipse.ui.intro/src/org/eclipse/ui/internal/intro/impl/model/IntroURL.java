@@ -53,8 +53,7 @@ public class IntroURL implements IIntroURL {
     public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
-    public static final String NAVIGATE_FORWARD = "navigateForward"; //$NON-NLS-1$
-    public static final String NAVIGATE_BACKWARD = "navigateBackward"; //$NON-NLS-1$
+    public static final String NAVIGATE = "navigate"; //$NON-NLS-1$
 
     /**
      * Constants that represent valid action keys.
@@ -67,6 +66,11 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_INPUT = "input"; //$NON-NLS-1$
     public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
     public static final String KEY_URL = "url"; //$NON-NLS-1$
+    public static final String KEY_DIRECTION = "direction";
+
+    public static final String VALUE_BACKWARD = "backward";
+    public static final String VALUE_FORWARD = "forward";
+    public static final String VALUE_HOME = "home";
 
     private String action = null;
     private Properties parameters = null;
@@ -149,15 +153,15 @@ public class IntroURL implements IIntroURL {
                     getParameter(KEY_CLASS), parameters,
                     getParameter(KEY_STANDBY));
 
-        else if (action.equals(SHOW_PAGE)) {
+        else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
-            return showPage(getParameter(KEY_ID));
-        } else if (action.equals(SHOW_MESSAGE))
+            return showPage(getParameter(KEY_ID), getParameter(KEY_STANDBY));
+
+        else if (action.equals(SHOW_MESSAGE))
             return showMessage(getParameter(KEY_MESSAGE));
-        else if (action.equals(NAVIGATE_FORWARD))
-            return navigateForward();
-        else if (action.equals(NAVIGATE_BACKWARD))
-            return navigateBackward();
+
+        else if (action.equals(NAVIGATE))
+            return navigate(getParameter(KEY_DIRECTION));
 
         else
             return handleCustomAction();
@@ -179,7 +183,13 @@ public class IntroURL implements IIntroURL {
     private boolean handleStandbyState(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
-                .showIntro(true);
+                .getIntro();
+        if (introPart == null)
+            introPart = (CustomizableIntroPart) IntroPlugin.showIntro(true);
+        // store the flag to indicate that standbypart is needed.
+        introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
+                "true");
+        IntroPlugin.setIntroStandby(true);
         StandbyPart standbyPart = (StandbyPart) introPart
                 .getAdapter(StandbyPart.class);
 
@@ -301,7 +311,7 @@ public class IntroURL implements IIntroURL {
     /**
      * Display an Intro Page.
      */
-    private boolean showPage(String pageId) {
+    private boolean showPage(String pageId, String standbyState) {
         // set the current page id in the model. This will triger appropriate
         // listener event to the UI. If setting the page in the model fails (ie:
         // the page was not found in the model), return false.
@@ -309,7 +319,11 @@ public class IntroURL implements IIntroURL {
         boolean success = modelRoot.setCurrentPageId(pageId);
         if (success) {
             modelRoot.getPresentation().updateHistory(pageId);
-            return true;
+            // ran action successfully. Now set intro intro standby if needed.
+            if (standbyState == null)
+                return true;
+            else
+                return setStandbyState(standbyState);
         } else
             return false;
     }
@@ -320,7 +334,7 @@ public class IntroURL implements IIntroURL {
      * 
      * @return
      */
-    private boolean navigateForward() {
+    private boolean navigate(String direction) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
                 .getIntro();
@@ -331,26 +345,13 @@ public class IntroURL implements IIntroURL {
         IntroPartPresentation presentation = (IntroPartPresentation) introPart
                 .getAdapter(IntroPartPresentation.class);
 
-        return presentation.navigateForward();
-    }
-
-    /**
-     * Navigate back in the presentation, whichever one it is.
-     * 
-     * @return
-     */
-    private boolean navigateBackward() {
-        // set intro to standby mode. we know we have a customizable part.
-        CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
-                .getIntro();
-        if (introPart == null)
-            // intro is closed. Do nothing.
-            return false;
-
-        IntroPartPresentation presentation = (IntroPartPresentation) introPart
-                .getAdapter(IntroPartPresentation.class);
-
-        return presentation.navigateBackward();
+        if (direction.equalsIgnoreCase(VALUE_BACKWARD))
+            return presentation.navigateBackward();
+        else if (direction.equalsIgnoreCase(VALUE_FORWARD))
+            return presentation.navigateForward();
+        else if (direction.equalsIgnoreCase(VALUE_HOME))
+            return presentation.navigateHome();
+        return false;
     }
 
 

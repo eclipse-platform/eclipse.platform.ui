@@ -28,6 +28,12 @@ public interface IIntroConstants {
     String MEMENTO_STANDBY_PART_TAG = "standbyPart"; //$NON-NLS-1$
     String MEMENTO_STANDBY_CONTENT_PART_ID_ATT = "contentPartID"; //$NON-NLS-1$
     String MEMENTO_STANDBY_CONTENT_PART_TAG = "standbyContentPart"; //$NON-NLS-1$
+    String MEMENTO_RESTORE_ATT = "restore";
+
+    // CustomizableIntroPart consts:
+    // -----------------------------
+    // key to retrieve if a standby part is needed.
+    String SHOW_STANDBY_PART = "showStandbyPart";
 
     // Form implementation consts:
     // ---------------------------

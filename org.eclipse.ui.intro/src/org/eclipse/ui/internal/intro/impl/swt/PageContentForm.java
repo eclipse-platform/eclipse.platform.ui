@@ -26,13 +26,24 @@ public class PageContentForm implements IIntroConstants {
     private IntroModelRoot model;
     private PageStyleManager styleManager;
 
+    // the page we are modeling here.
+    private String pageId;
+
     /**
      *  
      */
     public PageContentForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
         this.toolkit = toolkit;
         this.model = modelRoot;
+        pageId = model.getCurrentPageId();
     }
+
+    public PageContentForm(FormToolkit toolkit, IntroModelRoot modelRoot,
+            String pageId) {
+        this(toolkit, modelRoot);
+        this.pageId = pageId;
+    }
+
 
     /**
      * Create the form for the root page. Number of columns there is equal to
@@ -44,11 +55,10 @@ public class PageContentForm implements IIntroConstants {
     public void createPartControl(ScrolledPageBook contentPageBook,
             SharedStyleManager sharedStyleManager) {
         // create a page style manager.
-        AbstractIntroPage page = model.getCurrentPage();
+        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
+                AbstractIntroElement.ABSTRACT_PAGE);
         styleManager = new PageStyleManager(page, sharedStyleManager
                 .getProperties());
-
-        String pageId = model.getCurrentPageId();
 
         // categoriesComposite has Table Layout with one col. Holds page
         // description and composite with all other children.
@@ -65,7 +75,7 @@ public class PageContentForm implements IIntroConstants {
         if (styleManager.getPageDescription() != null) {
             Label label = toolkit.createLabel(contentComposite, styleManager
                     .getPageDescription(), SWT.WRAP);
-            label.setFont(PageStyleManager.getDefaultFont());
+            label.setFont(PageStyleManager.getBannerFont());
             TableWrapData td = new TableWrapData();
             td.align = TableWrapData.FILL;
             label.setLayoutData(td);

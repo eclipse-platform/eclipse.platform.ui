@@ -56,6 +56,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private static final String ATT_OS = "os"; //$NON-NLS-1$
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
+    protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id";
 
     private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
     private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
@@ -68,6 +69,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private String implementationStyle;
     private String implementationKind;
     private String homePageId;
+    private String standbyPageId;
 
     // The Head contributions to this preentation (inherited from child
     // implementation).
@@ -86,6 +88,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     IntroPartPresentation(IConfigurationElement element) {
         super(element);
         homePageId = element.getAttribute(ATT_HOME_PAGE_ID);
+        standbyPageId = element.getAttribute(ATT_STANDBY_PAGE_ID);
     }
 
     private void updatePresentationAttributes(IConfigurationElement element) {
@@ -170,7 +173,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public void createPartControl(Composite parent) {
         Vector validImplementations = getValidImplementationElements(getCfgElement());
         IConfigurationElement implementationElement = null;
-        //Composite container = new Composite()
         for (int i = 0; i < validImplementations.size(); i++) {
             implementationElement = (IConfigurationElement) validImplementations
                     .elementAt(i);
@@ -384,9 +386,9 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.setFocus();
     }
 
-    public void standbyStateChanged(boolean standby) {
+    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
         if (implementation != null)
-            implementation.standbyStateChanged(standby);
+            implementation.standbyStateChanged(standby, isStandbyPartNeeded);
     }
 
     public void updateHistory(String location) {
@@ -404,6 +406,13 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public boolean navigateBackward() {
         if (implementation != null)
             return implementation.navigateBackward();
+        else
+            return false;
+    }
+
+    public boolean navigateHome() {
+        if (implementation != null)
+            return implementation.navigateHome();
         else
             return false;
     }
@@ -434,6 +443,13 @@ public class IntroPartPresentation extends AbstractIntroElement {
      */
     public String getHomePageId() {
         return homePageId;
+    }
+
+    /**
+     * @return Returns the homePageId.
+     */
+    public String getStandbyPageId() {
+        return standbyPageId;
     }
 
     /*

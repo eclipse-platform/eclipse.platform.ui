@@ -234,7 +234,7 @@ public class PageWidgetFactory {
             control = linkControl;
         }
         linkControl.setText(link.getLabel());
-        linkControl.setFont(PageStyleManager.getDefaultFont());
+        linkControl.setFont(PageStyleManager.getBannerFont());
         colorControl(linkControl, link);
         linkControl.setHref(link.getUrl());
         linkControl.addHyperlinkListener(hyperlinkAdapter);

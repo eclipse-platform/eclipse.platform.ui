@@ -17,7 +17,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
@@ -31,11 +33,16 @@ import org.eclipse.ui.intro.config.*;
 public class FormIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener {
 
-    private FormToolkit toolkit = null;
-    private ScrolledPageBook mainPageBook = null;
+    private FormToolkit toolkit;
+    private ScrolledPageBook mainPageBook;
+    private PageForm pageForm;
     // cache model instance for reuse.
     private IntroModelRoot model = getModel();
     private SharedStyleManager sharedStyleManager;
+
+    // static SWT Intro. This is the link shown on the center of a page in a
+    // static SWT intro.
+    private Hyperlink welcomeLink;
 
     static {
         // REVISIT: register all common images here. Even if this part
@@ -47,31 +54,6 @@ public class FormIntroPartImplementation extends
         ImageUtil.registerImage(ImageUtil.DEFAULT_FORM_BG, "form_banner.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "welcome_item.gif"); //$NON-NLS-1$
     }
-
-
-
-    private Action homeAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            IntroHomePage rootPage = getModel().getHomePage();
-            if (getModel().isDynamic()) {
-                CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                        .getIntro();
-                currentIntroPart.getControl().setRedraw(false);
-                getModel().setCurrentPageId(rootPage.getId());
-                updateHistory(rootPage.getId());
-                currentIntroPart.getControl().setRedraw(true);
-            }
-        }
-    };
 
 
     protected void updateNavigationActionsState() {
@@ -91,29 +73,18 @@ public class FormIntroPartImplementation extends
     public void createPartControl(Composite container) {
 
         if (getModel().isDynamic())
-            handleDynamicIntro(container);
+            dynamicCreatePartControl(container);
         else {
-            // create just a dummy composite for now, to enable...
-            Composite composite = new Composite(container, SWT.NULL);
-            handleStaticIntro();
+            staticCreatePartControl(container);
         }
     }
 
-
-    /*
-     * createyet3agaian static UI forms Intro. For this, we only kaunch the url
-     * of the root page.
-     */
-    private void handleStaticIntro() {
-        String rootPageUrl = getModel().getHomePage().getUrl();
-        Util.openBrowser(rootPageUrl);
-    }
 
 
     /*
      * create dynamic UI forms Intro, ie: swt intro.
      */
-    private void handleDynamicIntro(Composite container) {
+    private void dynamicCreatePartControl(Composite container) {
         // Create single toolkit instance, which is disposed of on dispose of
         // intro part. also define background of all presentation.
         toolkit = new FormToolkit(container.getDisplay());
@@ -169,7 +140,8 @@ public class FormIntroPartImplementation extends
         ScrolledPageBook pageBook = toolkit.createPageBook(body, SWT.V_SCROLL
                 | SWT.H_SCROLL);
         pageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
-        // Create root page form, only if needed.
+
+        // Create root page in root page layout form, only if needed.
         if (sharedStyleManager.useCustomHomePagelayout()) {
             // if we do not have a root page form, create one
             RootPageForm rootPageForm = new RootPageForm(toolkit, model, form);
@@ -177,7 +149,7 @@ public class FormIntroPartImplementation extends
         }
 
         // Create the Page form.
-        PageForm pageForm = new PageForm(toolkit, model, form);
+        pageForm = new PageForm(toolkit, model, form);
         pageForm.createPartControl(pageBook, sharedStyleManager);
 
         // now determine which page to show. Show it and ad it to history.
@@ -185,9 +157,10 @@ public class FormIntroPartImplementation extends
         // browser on startup.
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null & !isURL(cachedPage))
+            // this will create the page in the page form.
             model.setCurrentPageId(cachedPage);
-        AbstractIntroPage pageToShow = getModel().getCurrentPage();
 
+        AbstractIntroPage pageToShow = getModel().getCurrentPage();
         if (pageToShow != null) {
             if (pageBook.hasPage(pageToShow.getId()))
                 // we are showing Home Page.
@@ -195,7 +168,7 @@ public class FormIntroPartImplementation extends
             else {
                 // if we are showing a regular intro page, or if the Home Page
                 // has a regular page layout, set the page id to the static
-                // PageForm id. first create the correct content
+                // PageForm id. first create the correct content.
                 pageForm.showPage(pageToShow.getId());
                 // then show the page
                 pageBook.showPage(PageForm.PAGE_FORM_ID);
@@ -239,19 +212,32 @@ public class FormIntroPartImplementation extends
         // Handle menus:
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
+                forwardAction);
+        actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
+                backAction);
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
         toolBarManager.update(true);
         actionBars.updateActionBars();
         updateNavigationActionsState();
-
     }
 
 
 
-    public void standbyStateChanged(boolean standby) {
-        if (standby) {
+    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
+        if (getModel().isDynamic())
+            dynamicStandbyStateChanged(standby, isStandbyPartNeeded);
+        else
+            staticStandbyStateChanged(standby);
+    }
+
+
+    public void dynamicStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded) {
+        // handle action enablement first
+        if (isStandbyPartNeeded | standby) {
             homeAction.setEnabled(false);
             forwardAction.setEnabled(false);
             backAction.setEnabled(false);
@@ -259,7 +245,32 @@ public class FormIntroPartImplementation extends
             homeAction.setEnabled(true);
             updateNavigationActionsState();
         }
+
+        if (isStandbyPartNeeded)
+            // we have a standby part, nothing more to do in presentation.
+            return;
+
+
+        if (standby) {
+            // we are in standby. Show standby page, in PageForm.
+            String standbyPageId = getModel().getStandbyPage().getId();
+            pageForm.showPage(standbyPageId);
+            mainPageBook.showPage(PageForm.PAGE_FORM_ID);
+        } else {
+            // if we are showing a regular intro page, or if the Home Page
+            // has a regular page layout, set the page id to the static PageForm
+            // id.
+            AbstractIntroPage pageToShow = getModel().getCurrentPage();
+            String pageId = pageToShow.getId();
+            if (!mainPageBook.hasPage(pageId))
+                pageId = PageForm.PAGE_FORM_ID;
+            // show it in page form first.
+            pageForm.showPage(pageToShow.getId());
+            // now show the main page book.
+            mainPageBook.showPage(pageId);
+        }
     }
+
 
     public void setFocus() {
         if (model.isDynamic()) {
@@ -326,6 +337,22 @@ public class FormIntroPartImplementation extends
         return success;
     }
 
+    public boolean navigateHome() {
+        IntroHomePage rootPage = getModel().getHomePage();
+        if (getModel().isDynamic()) {
+            CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                    .getIntro();
+            currentIntroPart.getControl().setRedraw(false);
+            boolean success = false;
+            success = getModel().setCurrentPageId(rootPage.getId());
+            updateHistory(rootPage.getId());
+            currentIntroPart.getControl().setRedraw(true);
+            return success;
+        } else
+            return false;
+
+    }
+
 
     /*
      * (non-Javadoc)
@@ -341,4 +368,60 @@ public class FormIntroPartImplementation extends
 
 
 
+    // *********** Static case ******************
+    /*
+     * create static UI forms Intro. For this, we only launch the url of the
+     * root page.
+     */
+    private void staticCreatePartControl(Composite parent) {
+        toolkit = new FormToolkit(parent.getDisplay());
+        toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+                HyperlinkGroup.UNDERLINE_HOVER);
+
+        // create a page that has only one link. The URL and tooltip will be set
+        // by the standby listener.
+        welcomeLink = createStaticPage(parent);
+    }
+
+
+    private Hyperlink createStaticPage(Composite parent) {
+        Form mainForm = toolkit.createForm(parent);
+        Composite body = mainForm.getBody();
+
+        GridLayout gl = new GridLayout();
+        body.setLayout(gl);
+        String label = IntroPlugin.getString("StaticHTML.welcome");
+        Hyperlink link = toolkit.createHyperlink(body, label, SWT.WRAP);
+        link.setFont(PageStyleManager.getHeaderFont());
+        GridData gd = new GridData(GridData.GRAB_HORIZONTAL
+                | GridData.GRAB_VERTICAL);
+        gd.horizontalAlignment = GridData.CENTER;
+        gd.verticalAlignment = GridData.CENTER;
+        link.setLayoutData(gd);
+        link.addHyperlinkListener(new HyperlinkAdapter() {
+
+            public void linkActivated(HyperlinkEvent e) {
+                Hyperlink link = (Hyperlink) e.getSource();
+                Util.openBrowser((String) link.getHref());
+                return;
+            }
+        });
+
+        return link;
+    }
+
+    public void staticStandbyStateChanged(boolean standby) {
+        IntroHomePage homePage = getModel().getHomePage();
+        IntroHomePage standbyPage = getModel().getStandbyPage();
+        if (standbyPage == null)
+            standbyPage = homePage;
+
+        if (standby) {
+            welcomeLink.setHref(standbyPage.getUrl());
+            welcomeLink.setToolTipText(standbyPage.getUrl());
+        } else {
+            welcomeLink.setHref(homePage.getUrl());
+            welcomeLink.setToolTipText(homePage.getUrl());
+        }
+    }
 }

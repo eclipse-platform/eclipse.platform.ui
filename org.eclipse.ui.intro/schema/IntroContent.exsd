@@ -51,13 +51,6 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="standby-url" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -76,20 +69,6 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
             <annotation>
                <documentation>
                   A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-alt-style" type="string">
-            <annotation>
-               <documentation>
-                  
                </documentation>
             </annotation>
          </attribute>

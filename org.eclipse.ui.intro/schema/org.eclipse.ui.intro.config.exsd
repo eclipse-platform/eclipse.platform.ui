@@ -98,6 +98,13 @@ The content file is parsed at run time by the intro framework. Based on the sett
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="standby-page-id" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute to define the id of the standby page. The standby page will be shown to the user when the Intro is set to standby.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

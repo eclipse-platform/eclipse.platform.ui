@@ -53,6 +53,15 @@ import org.eclipse.ui.part.*;
  * 
  * @since 3.0
  */
+
+/*
+ * Internal docs: This class wraps a presentation part and a standby part. The
+ * standby part is only shown when an IntroURL asks to show standby or when we
+ * are restarting an Intro with an old memento. An internal data object
+ * "showStandbyPart" is set on the control by the intro URL to signal standby
+ * part needed. This data is nulled when the close button on the standby part is
+ * clicked, signaling that the standby part is no longer needed.
+ */
 public final class CustomizableIntroPart extends IntroPart implements
         IIntroConstants, IRegistryChangeListener {
 
@@ -61,6 +70,10 @@ public final class CustomizableIntroPart extends IntroPart implements
     private Composite container;
     private IMemento memento;
     private IntroModelRoot model;
+    // this flag is used to recreate a cached standby part. It is used once and
+    // the set to false when the standby part is first created.
+    private boolean restoreStandby;
+
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
@@ -83,11 +96,9 @@ public final class CustomizableIntroPart extends IntroPart implements
     };
 
     public CustomizableIntroPart() {
-
         // register adapter to hide standbypart.
         Platform.getAdapterManager().registerAdapters(factory,
                 CustomizableIntroPart.class);
-
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
     }
@@ -119,8 +130,13 @@ public final class CustomizableIntroPart extends IntroPart implements
             if (presentation != null)
                 presentation.init(this, getMemento(memento,
                         MEMENTO_PRESENTATION_TAG));
+
             // standby part is not created here for performance.
+
+            // cache memento, and detemine if we have a cached standby part.
             this.memento = memento;
+            restoreStandby = needToRestoreStandby(memento);
+
             // add the registry listerner for dynamic awarness.
             Platform.getExtensionRegistry().addRegistryChangeListener(this,
                     IIntroConstants.PLUGIN_ID);
@@ -150,49 +166,103 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation.createPartControl(container);
             // do not create the standby part here for performance.
         }
-        // Util.highlightFocusControl();
+    }
+
+
+    /**
+     * Determine if we need to recreate a standby part. Return true if we have a
+     * standby part memento that is not for the empty part AND stangby memento
+     * has been tagged for restore, ie: it was open when workbench closed.
+     * 
+     * @param memento
+     * @return
+     */
+    private boolean needToRestoreStandby(IMemento memento) {
+        // If we have a standby memento, it means we closed with standby open,
+        // and so recreate it.
+        IMemento standbyMemento = getMemento(memento, MEMENTO_STANDBY_PART_TAG);
+        if (standbyMemento == null)
+            return false;
+        String restore = standbyMemento.getString(MEMENTO_RESTORE_ATT);
+        if (restore == null)
+            return false;
+        String cachedStandbyPart = standbyMemento
+                .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
+        if (cachedStandbyPart != null
+                && cachedStandbyPart.equals(EMPTY_STANDBY_CONTENT_PART))
+            return false;
+
+        return cachedStandbyPart != null ? true : false;
     }
 
     /*
-     * (non-Javadoc)
+     * Handled state changes. Recreates the standby part if workbench was shut
+     * down with one.
      * 
      * @see org.eclipse.ui.IIntroPart#standbyStateChanged(boolean)
      */
     public void standbyStateChanged(boolean standby) {
         // do this only if there is a valid config.
-        if (model != null && model.hasValidConfig()) {
-            if (standby && standbyPart == null)
-                // if standby part is not created yet, create it only if in
-                // standby.
-                createStandbyPart();
-            handleSetFocus(standby);
-            setTopControl(standby ? getStandbyControl()
-                    : getPresentationControl());
-            // triger state change in presentation to enable/disable toobar
-            // actions.
-            presentation.standbyStateChanged(standby);
-        }
-        // Util.highlightFocusControl();
+        if (model == null || !model.hasValidConfig())
+            return;
+
+        if (!standby)
+            // we started of not in standby, no need to restore standby.
+            restoreStandby = false;
+
+        boolean isStandbyPartNeeded = isStandbyPartNeeded();
+        isStandbyPartNeeded = isStandbyPartNeeded | restoreStandby;
+
+        if (standbyPart == null && standby && isStandbyPartNeeded)
+            // if standby part is not created yet, create it only if in
+            // standby, and we need to.
+            createStandbyPart();
+
+        handleSetFocus(isStandbyPartNeeded);
+        setTopControl(isStandbyPartNeeded ? getStandbyControl()
+                : getPresentationControl());
+        // triger state change in presentation to enable/disable toobar
+        // actions. For this, we need to diable actions as long as we are in
+        // standby, or we need to show standby part.
+        presentation.standbyStateChanged(standby, isStandbyPartNeeded);
+
     }
 
+    /**
+     * Returns true if we need to show the standby part. False in all other
+     * cases. This basically overrides the workbench behavior of Standby/normal
+     * states. The design here is that if the showStandbyPart flag is set, then
+     * we always need to show the standby part.
+     * 
+     * @param standby
+     * @return
+     */
+    private boolean isStandbyPartNeeded() {
+        return container.getData(SHOW_STANDBY_PART) == null ? false : true;
+    }
+
+
     /*
-     * Create standby part. Called only when really needed.
+     * Create standby part. Called only when really needed. We reset the restore
+     * falg, but we need to tag the intro part as needing standby.
      */
     private void createStandbyPart() {
         standbyPart = new StandbyPart(model);
         standbyPart.init(this, getMemento(memento, MEMENTO_STANDBY_PART_TAG));
         standbyPart.createPartControl((Composite) getControl());
+        restoreStandby = false;
+        container.setData(SHOW_STANDBY_PART, "true");
     }
 
 
     private void handleSetFocus(boolean standby) {
-        if (standby)
+        if (standby) {
             // standby part is null when Intro has not gone into standby state
-            // yet, or if
+            // yet.
             if (standbyPart != null)
                 standbyPart.setFocus();
-            else
-                presentation.setFocus();
+        } else
+            presentation.setFocus();
     }
 
     /*
@@ -271,11 +341,26 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     public void saveState(IMemento memento) {
         // give presentation and standby part there own children to create a
-        // name space for each.
+        // name space for each. But save either the presentation or the standby
+        // part as needing to be restored. This way if we close with a standby
+        // mode, we dont get the cached standby part.
+
+
+        // Find out if presentation or standby is at the top and restore
+        // them.container has stack layout. safe to cast.
+        boolean restorePresentation = false;
+        StackLayout layout = (StackLayout) container.getLayout();
+        if (getPresentationControl().equals(layout.topControl))
+            restorePresentation = true;
+
         IMemento presentationMemento = memento
                 .createChild(MEMENTO_PRESENTATION_TAG);
         IMemento standbyPartMemento = memento
                 .createChild(MEMENTO_STANDBY_PART_TAG);
+        if (restorePresentation)
+            presentationMemento.putString(MEMENTO_RESTORE_ATT, "true");
+        else
+            standbyPartMemento.putString(MEMENTO_RESTORE_ATT, "true");
         if (presentation != null)
             presentation.saveState(presentationMemento);
         if (standbyPart != null)
@@ -287,6 +372,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * 
      * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
      */
+
     private IMemento getMemento(IMemento memento, String key) {
         if (memento == null)
             return null;
