@@ -64,7 +64,7 @@
 				label="%ShowHistoryAction.label"
 				tooltip="%ShowHistoryAction.tooltip"
 				menubarPath="team.main/advancedGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"/>
+				class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.GenerateDiff"
 				label="%GenerateDiff.label"
