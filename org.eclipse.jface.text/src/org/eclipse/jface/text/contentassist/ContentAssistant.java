@@ -169,8 +169,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @see FocusListener#focusLost(FocusEvent)
 		 */
 		public void focusLost(FocusEvent e) {
-			Control control= fContentAssistSubjectAdapter.getControl();
-			if (control != null) {
+			Control control= fControl;
+			if (Helper.okToUse(control)) {
 				Display d= control.getDisplay();
 				if (d != null) {
 					d.asyncExec(new Runnable() {
