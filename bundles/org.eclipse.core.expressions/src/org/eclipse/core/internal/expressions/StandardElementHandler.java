@@ -63,6 +63,8 @@ public class StandardElementHandler extends ElementHandler {
 			EnablementExpression result= new EnablementExpression(element);
 			processChildren(converter, element, result);
 			return result;
+		} else if (ExpressionTagNames.EQUALS.equals(name)) {
+			return new EqualsExpression(element);
 		}
 		return null;
 	}

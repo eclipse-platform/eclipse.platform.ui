@@ -14,12 +14,15 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.IVariableResolver;
 import org.eclipse.core.internal.expressions.AdaptExpression;
+import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.Expressions;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
@@ -36,6 +39,7 @@ public class ExpressionTests extends TestCase {
 		assertEquals("", Expressions.convertArgument(""));
 		assertEquals("", Expressions.convertArgument("''"));
 		assertEquals("eclipse", Expressions.convertArgument("eclipse"));
+		assertEquals("eclipse", Expressions.convertArgument("'eclipse'"));
 		assertEquals("true", Expressions.convertArgument("'true'"));
 		assertEquals("1.7", Expressions.convertArgument("'1.7'"));
 		assertEquals("007", Expressions.convertArgument("'007'"));
@@ -113,5 +117,33 @@ public class ExpressionTests extends TestCase {
 		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.NotExisting"));
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
 		assertTrue(result == EvaluationResult.FALSE);
+	}
+	
+	public void testVariableResolver() throws Exception {
+		final Object result= new Object();
+		IVariableResolver resolver= new IVariableResolver() {
+			public Object resolve(String name, Object[] args) throws CoreException {
+				assertEquals("variable", name);
+				assertEquals("arg1", args[0]);
+				assertEquals(Boolean.TRUE, args[1]);
+				return result;
+			}
+		};
+		EvaluationContext context= new EvaluationContext(null, new Object(), new IVariableResolver[] { resolver });
+		assertTrue(result == context.resolveVariable("variable", new Object[] {"arg1", Boolean.TRUE}));
+	}
+	
+	public void testEqualsExpression() throws Exception {
+		EqualsExpression exp= new EqualsExpression("name");
+		EvaluationContext context= new EvaluationContext(null, "name");
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		exp= new EqualsExpression(Boolean.TRUE);
+		context= new EvaluationContext(null, Boolean.TRUE);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));		
+		
+		exp= new EqualsExpression("name");
+		context= new EvaluationContext(null, Boolean.TRUE);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));		
 	}
 }

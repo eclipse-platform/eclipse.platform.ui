@@ -40,7 +40,7 @@ public class TestExpression extends Expression {
 		fNamespace= property.substring(0, pos);
 		fProperty= property.substring(pos + 1);
 		fArgs= Expressions.getArguments(element, ATT_ARGS);
-		fExpectedValue= element.getAttribute(ATT_VALUE);
+		fExpectedValue= Expressions.convertArgument(element.getAttribute(ATT_VALUE));
 	}
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {

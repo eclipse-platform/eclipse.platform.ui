@@ -30,12 +30,6 @@ public interface IEvaluationContext {
 	/** Variable name to denote a plug-in descriptor */
 	public static final String PLUGIN_DESCRIPTOR= "pluginDescriptor";  //$NON-NLS-1$
 	
-	/** Variable name to denote the current selection of elements */
-	public static final String SELECTION= "selection";  //$NON-NLS-1$
-	
-	/** Variable name to denote the java.lang.System class */
-	public static final String SYSTEM= "System";  //$NON-NLS-1$
-	
 	/**
 	 * Returns the parent context or <code>null</code> if 
 	 * this is the root of the evaluation context hierarchy.

@@ -32,6 +32,7 @@ public class EvaluationContext implements IEvaluationContext {
 	private IEvaluationContext fParent;
 	private Object fDefaultVariable;
 	private Map/*<String, Object>*/ fVariables;
+	private IVariableResolver[] fVariableResolvers;
 	
 	/**
 	 * Create a new evaluation context with the given parent and default
@@ -47,20 +48,22 @@ public class EvaluationContext implements IEvaluationContext {
 	}
 	
 	/**
-	 * Create a new evaluation context with the given parent, default
-	 * variable and the variable stored under the name selection.
+	 * Create a new evaluation context with the given parent and default
+	 * variable.
 	 * 
 	 * @param parent the parent context. Can be <code>null</code>.
 	 * @param defaultVariable the default variable
-	 * @param selection the variable stored under the name selection. Can
-	 *  be <code>null</code>
+	 * @param resolvers an array of <code>IVariableResolvers</code> to
+	 *  resolve additional variables.
+	 * 
+	 * @see #resolveVariable(String, Object[])
 	 */
-	public EvaluationContext(IEvaluationContext parent, Object defaultVariable, Object selection) {
+	public EvaluationContext(IEvaluationContext parent, Object defaultVariable, IVariableResolver[] resolvers) {
 		Assert.isNotNull(defaultVariable);
+		Assert.isNotNull(resolvers);
 		fParent= parent;
 		fDefaultVariable= defaultVariable;
-		if (selection != null)
-			addVariable(SELECTION, selection);
+		fVariableResolvers= resolvers;
 	}
 	
 	/**
@@ -125,8 +128,6 @@ public class EvaluationContext implements IEvaluationContext {
 	
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * Subclasses may extend this method to resolve specific variables.
 	 */
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		if (PLUGIN_DESCRIPTOR.equals(name)) {
@@ -141,6 +142,14 @@ public class EvaluationContext implements IEvaluationContext {
 					ExpressionStatus.VARAIBLE_POOL_ARGUMENT_IS_NOT_A_STRING,
 					ExpressionMessages.getString("VariablePool.resolveVariable.arguments.not_a_string"))); //$NON-NLS-1$
 			return Platform.getPluginRegistry().getPluginDescriptor((String)(args[0]));
+		}
+		if (fVariableResolvers != null && fVariableResolvers.length > 0) {
+			for (int i= 0; i < fVariableResolvers.length; i++) {
+				IVariableResolver resolver= fVariableResolvers[i];
+				Object variable= resolver.resolve(name, args);
+				if (variable != null)
+					return variable;
+			}
 		}
 		if (fParent != null)
 			return fParent.resolveVariable(name, args);

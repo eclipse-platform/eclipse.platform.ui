@@ -52,5 +52,8 @@ public class ExpressionTagNames {
 	public static final String RESOLVE= "resolve"; //$NON-NLS-1$
 
 	/** The tag name of the systemTest expression (value: <code>systemTest</code>) */
-	public static final String SYSTEM_TEST= "systemTest"; //$NON-NLS-1$	
+	public static final String SYSTEM_TEST= "systemTest"; //$NON-NLS-1$
+	
+	/** The tag name of the equals expression (value: <code>equals</code>) */
+	public static final String EQUALS= "equals"; //$NON-NLS-1$
 }
