@@ -27,6 +27,7 @@ public class HelpPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.addView(EmbeddedHelpView.ID, IPageLayout.TOP, 0.50f, editorArea);
 		layout.setEditorAreaVisible(false);
+		layout.addShowViewShortcut(EmbeddedHelpView.ID);
 	}
 	/**
 	 * Returns the visible set of action bars for a perspective.
