@@ -259,7 +259,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		saveConfigurationFile();
 		
 		// Write info for the next runtime
-		IPlatformConfiguration runtimeConfiguration = UpdateManagerUtils.getRuntimeConfiguration();
+		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		Iterator iterConfigurationSites = configurationSites.iterator();
 		while (iterConfigurationSites.hasNext()) {
 			IConfigurationSite element = (IConfigurationSite) iterConfigurationSites.next();

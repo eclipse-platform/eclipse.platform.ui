@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+
 /**
  * Local jar content reference. 
  * 
@@ -135,12 +137,12 @@ public class JarContentReference extends ContentReference {
 					is = null;
 					os = null;
 					entryId = selector.defineIdentifier(entry);
-					localFile = CopyHelper.createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
+					localFile = UpdateManagerUtils.createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
 					if (!entry.isDirectory()) { 
 						try {
 							is = jarArchive.getInputStream(entry);
 							os = new FileOutputStream(localFile);
-							CopyHelper.copy(is, os, monitor);
+							UpdateManagerUtils.copy(is, os, monitor);
 						} finally {
 							if (is != null) try { is.close(); } catch(IOException e) {}
 							if (os != null) try { os.close(); } catch(IOException e) {}
@@ -178,12 +180,12 @@ public class JarContentReference extends ContentReference {
 			InputStream is = null;
 			OutputStream os = null;
 			entryId = selector.defineIdentifier(entry);
-			File localFile = CopyHelper.createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
+			File localFile = UpdateManagerUtils.createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
 			if (!entry.isDirectory()) { 
 				try {
 					is = jarArchive.getInputStream(entry);
 					os = new FileOutputStream(localFile);
-					CopyHelper.copy(is, os, monitor);
+					UpdateManagerUtils.copy(is, os, monitor);
 				} finally {
 					if (is != null) try { is.close(); } catch(IOException e) {}
 					if (os != null) try { os.close(); } catch(IOException e) {}

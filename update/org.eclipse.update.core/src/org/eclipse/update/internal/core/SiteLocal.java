@@ -114,7 +114,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 		URL configXml = null;
 		try {
-			IPlatformConfiguration platformConfig = UpdateManagerUtils.getRuntimeConfiguration();
+			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
 			location = platformConfig.getConfigurationLocation();
 			configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			//if the file exists, parse it			

@@ -85,7 +85,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			JarContentReference featureJarReference = (JarContentReference) asLocalReference(featureArchiveReference[0], null);
 
 			// we need to unpack archive locally for UI browser references to be resolved correctly
-			localFeatureFiles = unpack(featureJarReference, null, monitor); // unpack and cache references
+			localFeatureFiles = featureJarReference.unpack(null, monitor); // unpack and cache references
 			result = null;
 			for (int i = 0; i < localFeatureFiles.length; i++) {
 				// find the manifest in the unpacked feature files
@@ -219,7 +219,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 			if (references[0] instanceof JarContentReference) {
 				JarContentReference localRef = (JarContentReference) asLocalReference(references[0], monitor);
-				pluginReferences = peek(localRef, null, monitor);
+				pluginReferences = localRef.peek( null, monitor);
 			} else {
 				// return the list of all subdirectories
 				List files = getFiles(references[0].asFile());

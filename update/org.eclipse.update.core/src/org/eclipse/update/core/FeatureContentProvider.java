@@ -25,6 +25,7 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Base class for feature content providers.
@@ -80,12 +81,12 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		
 		// check to see if we already have a local file for this reference
 		String key = ref.toString();
-		File localFile = CopyHelper.lookupLocalFile(key);
+		File localFile = UpdateManagerUtils.lookupLocalFile(key);
 		if (localFile != null)
 			return ref.newContentReference(ref.getIdentifier(), localFile);
 			
 		// download the referenced file into local temporary area
-		localFile = CopyHelper.createLocalFile(key, null/*name*/);
+		localFile = UpdateManagerUtils.createLocalFile(key, null/*name*/);
 		InputStream is = null;
 		OutputStream os = null;
 		try {
@@ -98,9 +99,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			}
 			is = ref.getInputStream();
 			os = new FileOutputStream(localFile);
-			CopyHelper.copy(is, os, monitor);
+			UpdateManagerUtils.copy(is, os, monitor);
 		} catch(IOException e) {
-			CopyHelper.removeLocalFile(key);
+			UpdateManagerUtils.removeLocalFile(key);
 			throw e;
 		} finally {
 			if (is != null) try { is.close(); } catch(IOException e) {}
