@@ -185,7 +185,7 @@ public class UrlUtil {
 	
 	public static boolean isSafari(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
-		return agent.indexOf("Safari/") >= 0; //$NON-NLS-1$
+		return agent.indexOf("safari/") >= 0; //$NON-NLS-1$
 	}
 	
 	public static String getSafariVersion(HttpServletRequest request) {
