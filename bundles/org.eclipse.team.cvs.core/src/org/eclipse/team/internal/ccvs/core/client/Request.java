@@ -146,6 +146,9 @@ public abstract class Request {
 					argument = getServerErrorMessage();
 				} else {
 					argument = Policy.bind("Command.seriousServerError", argument); //$NON-NLS-1$
+					if (!accumulatedStatus.isEmpty()) {
+						accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
+					}
 					serious = true;
 				}
 					

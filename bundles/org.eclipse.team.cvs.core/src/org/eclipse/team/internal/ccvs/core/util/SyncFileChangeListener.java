@@ -171,7 +171,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		return resource.getType() == IResource.FILE &&
 				   parent!=null && 
 				   parent.getName().equals(SyncFileWriter.CVS_DIRNAME) &&
-				   parent.isTeamPrivateMember();
+				   (parent.isTeamPrivateMember() || !parent.exists());
 	}
 	
 	/*

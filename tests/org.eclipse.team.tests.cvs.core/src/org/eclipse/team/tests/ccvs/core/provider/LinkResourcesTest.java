@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
 
+import java.io.IOException;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -63,5 +66,15 @@ public class LinkResourcesTest extends EclipseTest {
 		IFolder folder = project.getFolder("link");
 		folder.createLink(new Path("C:/temp"), IResource.ALLOW_MISSING_LOCAL, null);
 		assertIsIgnored(folder);
+	}
+	
+	public void testLinkCVSFolder() throws CoreException, TeamException, IOException {
+		IProject source = createProject("testLinkSource", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IProject sourceCopy = checkoutCopy(source, "copy");
+		EclipseSynchronizer.getInstance().flush(source, true, true, DEFAULT_MONITOR);
+		IProject target = createProject("testLinkTarget", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IFolder folder = target.getFolder("link");
+		folder.createLink(source.getLocation(), 0, null);
+		assertEquals(sourceCopy, source);
 	}
 }

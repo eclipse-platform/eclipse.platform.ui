@@ -236,11 +236,19 @@ public class Session {
 		} else {
 			root = resource.getParent();
 		}
+		// go to the top of the management chain
 		while (root.isManaged()) {
 			root = root.getParent();
 		}
 		// Look for the root in the current open sessions
-		return (Session)currentOpenSessions.get(root);
+		Session session;
+		do {
+			session = (Session)currentOpenSessions.get(root);
+			if (session != null) return session;
+			// we should have found it the first time but continue up the chain
+			root = root.getParent();
+		} while (root != null);
+		return null;
 	}
 	
 	/** 

@@ -364,6 +364,14 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * compare the root and repository
 	 */
 	protected void assertEquals(IPath path, FolderSyncInfo info1, FolderSyncInfo info2, boolean includeTag) throws CoreException, CVSException, IOException {
+		if (info1 == null && info2 == null) {
+			return;
+		} else if (info1 == null) {
+			fail("Expected " + path.toString() + " not to be a CVS folder but it is.");
+		} else if (info2 == null) {
+			fail("Expected " + path.toString() + " to be a CVS folder but it isn't.");
+		}
+		
 		if (includeTag) {
 			assertTrue("Folder sync info differs for " + path.toString(), info1.equals(info2));
 		} else {

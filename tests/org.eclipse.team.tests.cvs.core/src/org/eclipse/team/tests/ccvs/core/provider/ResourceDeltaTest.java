@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -36,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -69,14 +71,19 @@ public class ResourceDeltaTest extends EclipseTest {
 	}
 	
 	public void assertNotManaged(ICVSFolder cvsFolder) throws CVSException {
-		assertTrue("Folder " + cvsFolder.getName() + " should not be managed", ! cvsFolder.isManaged());
+		assertNotManaged(cvsFolder, false);
+	}
+	
+	public void assertNotManaged(ICVSFolder cvsFolder, boolean rootManaged) throws CVSException {
+		if (!rootManaged)
+			assertTrue("Folder " + cvsFolder.getName() + " should not be managed", ! cvsFolder.isManaged());
 		assertTrue("Folder " + cvsFolder.getName() + " should not be a cvs folder", ! cvsFolder.isCVSFolder());
 		cvsFolder.acceptChildren(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				assertNotManaged(file);
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
-				assertNotManaged(folder);
+				assertNotManaged(folder, false);
 			}
 		});
 	}
@@ -206,5 +213,48 @@ public class ResourceDeltaTest extends EclipseTest {
 			if (e.getStatus().getCode() != IResourceStatus.OUT_OF_SYNC_LOCAL)
 				throw e;
 		}
+	}
+	
+	public void testAllCVSFolderRemoval() throws CoreException, TeamException {
+		IProject project = createProject("testAllCVSFolderRemoval", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		// ensure that all th sync info is loaded
+		EclipseSynchronizer.getInstance().ensureSyncInfoLoaded(new IResource[] {project}, IResource.DEPTH_INFINITE);
+		// delete the CVS folders from the file system and refresh
+		String[] cvsFolders = new String[] {"CVS", "folder1/CVS", "folder1/folder2/CVS"};
+		deleteIOFiles(project, cvsFolders);
+		// The project should no longer be managed
+		assertNotManaged(CVSWorkspaceRoot.getCVSFolderFor(project));
+	}
+
+	public void testSomeCVSFolderRemoval() throws CoreException, TeamException {
+		IProject project = createProject("testAllCVSFolderRemoval", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		// ensure that all th sync info is loaded
+		EclipseSynchronizer.getInstance().ensureSyncInfoLoaded(new IResource[] {project}, IResource.DEPTH_INFINITE);
+		// delete the CVS folders from the file system and refresh
+		String[] cvsFolders = new String[] {"folder1/CVS", "folder1/folder2/CVS"};
+		deleteIOFiles(project, cvsFolders);
+		// The project should no longer be managed
+		assertNotManaged(CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1")), true);
+	}
+	
+	public void deleteIOFiles(IProject project, String[] cvsFolders)
+		throws CoreException {
+		IPath rootPath = project.getLocation();
+		for (int i = 0; i < cvsFolders.length; i++) {
+			String childPath = cvsFolders[i];
+			IPath fullPath = rootPath.append(childPath);
+			deepDelete(fullPath.toFile());
+		}
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+	}
+
+	private static void deepDelete(File resource) {
+		if (resource.isDirectory()) {
+			File[] fileList = resource.listFiles();
+			for (int i = 0; i < fileList.length; i++) {
+				deepDelete(fileList[i]);
+			}
+		}
+		resource.delete();
 	}
 }

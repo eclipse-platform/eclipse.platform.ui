@@ -239,7 +239,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				// Auto-add parents if they are not already managed
 				IContainer parent = currentResource.getParent();
 				ICVSResource cvsParentResource = CVSWorkspaceRoot.getCVSResourceFor(parent);
-				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsParentResource.isManaged()) {
+				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! isManaged(cvsParentResource)) {
 					folders.add(cvsParentResource);
 					parent = parent.getParent();
 					cvsParentResource = cvsParentResource.getParent();
@@ -253,7 +253,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 							ICVSResource mResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 							// Add the resource is its not already managed and it was either
 							// added explicitly (is equal currentResource) or is not ignored
-							if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
+							if (! isManaged(mResource) && (currentResource.equals(resource) || ! mResource.isIgnored())) {
 								if (resource.getType() == IResource.FILE) {
 									KSubstOption ksubst = KSubstOption.fromFile((IFile) resource);
 									Set set = (Set) files.get(ksubst);
@@ -324,6 +324,13 @@ public class CVSTeamProvider extends RepositoryProvider {
 		} finally {
 			progress.done();
 		}
+	}
+
+	/*
+	 * Consider a folder managed only if it's also a CVS folder
+	 */
+	private boolean isManaged(ICVSResource cvsResource) throws CVSException {
+		return cvsResource.isManaged() && (!cvsResource.isFolder() || ((ICVSFolder)cvsResource).isCVSFolder());
 	}
 	
 	/**
