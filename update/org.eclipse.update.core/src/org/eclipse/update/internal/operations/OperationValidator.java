@@ -452,8 +452,13 @@ public class OperationValidator implements IOperationValidator {
 			// Divide timestamp by 1000 so we compare up to second, to account for filesystem particulars
 			long currentTimeStamp = platformConfig.getChangeStamp()/1000;
 			URL platformXML = platformConfig.getConfigurationLocation();
-			URLConnection connection = platformXML.openConnection();
-			long actualTimeStamp = connection.getLastModified()/1000;
+			long actualTimeStamp = 0;
+			if ("file".equals(platformXML.getProtocol()))
+				actualTimeStamp = new File(platformXML.getFile()).lastModified()/1000;
+			else {
+				URLConnection connection = platformXML.openConnection();
+				actualTimeStamp = connection.getLastModified()/1000;
+			}
 			if (currentTimeStamp != actualTimeStamp)
 				status.add(createStatus(
 								null,
