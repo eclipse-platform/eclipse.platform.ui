@@ -59,8 +59,9 @@
 	
 </head>
 
-<frameset onload="onloadFrameset()"  rows="45,*"  frameborder="0" framespacing="0" border="0" spacing="0">
-	<frame name="BannerFrame" src='<%="banner.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+<frameset onload="onloadFrameset()"  rows="45,24,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+	<frame name="BannerFrame" src='banner.html'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
 	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="24,*,24" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
 		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>

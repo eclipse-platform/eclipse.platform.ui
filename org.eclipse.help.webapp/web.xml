@@ -24,8 +24,8 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.banner</servlet-name>
-		<servlet-class>jsp.banner</servlet-class>
+		<servlet-name>jsp.search</servlet-name>
+		<servlet-class>jsp.search</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -168,8 +168,8 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.banner</servlet-name>
-		<url-pattern>/banner.jsp</url-pattern>
+		<servlet-name>jsp.search</servlet-name>
+		<url-pattern>/search.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

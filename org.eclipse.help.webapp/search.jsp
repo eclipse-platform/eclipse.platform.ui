@@ -29,21 +29,25 @@ HTML {
  }
 
 BODY {
-	background-color:black;
+	background-color:ButtonFace;
+	border-top:1px solid black;
+	border-left:1px solid black;
+	border-right:1px solid black;
 	text:white;
-	height:45px;
+	height:100%;
 }
 
 TABLE {
 	font: icon;
+	background:Window;
 	margin:0;
-	border:0;
+	border-right:1px solid black;
 	padding:0;
 	height:100%;
 }
 
 FORM {
-	background:black;
+	background:Window;
 	margin:0;
 }
 
@@ -60,20 +64,22 @@ INPUT {
 }
 
 #searchWord {	
-	border:1px solid black;
-	border-right:none;
-	padding-left:2px;
+	border:0px;
+	padding-left:4px;
+	padding-right:4px;
 }
 
 #go {
-	border:1px solid black;
+	background:WindowText;
+	color:Window;
+	font-weight:bold;
 }
 
 
 #advanced {
 	text-decoration:underline; 
 	text-align:right;
-	color:#639aff; 
+	color:#0000ff; 
 	cursor:hand;
 	margin-left:4px;
 	border:0px;
@@ -86,7 +92,7 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var extraStyle = "";
 if (isIE)
- 	 extraStyle = "<style type='text/css'>#go{padding-left:4px;padding-right:4px;} </style>";
+ 	 extraStyle = "<style type='text/css'>#go{padding-left:1px;} </style>";
 document.write(extraStyle);
 	
 var selectedBooks;
@@ -141,24 +147,21 @@ function fixHeights()
 
 <body onload="fixHeights()"  onunload="closeAdvanced()">
 
-	<table align="left" cellspacing="0" cellpadding="0" border="0">
-		<tr>
-			<td align=left valign="center"><img src="images/banner_prod.jpg">
-			</td>
-		</tr>
-	</table>
-
 	<form  name="searchForm"   onsubmit="doSearch()">
-		<table id="searchTable" align="right" cellspacing="0" cellpadding="0" border="0">
+		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
+				<td>
+					&nbsp;<%=WebappResources.getString("Search", request)%>:
+				</td>
 				<td>
 					<input type="text" id="searchWord" name="searchWord" value="<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 				</td>
-				<td>
-					<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("Search", request)%>' id="go" alt='<%=WebappResources.getString("Search", request)%>'>
+				<td >
+					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
-				<td><a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>
+				<td>
+					&nbsp;<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
 				</td>
 			</tr>
 

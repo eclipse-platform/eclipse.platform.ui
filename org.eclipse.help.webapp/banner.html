@@ -1,0 +1,61 @@
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ (c) Copyright IBM Corp. 2000, 2002.
+ All Rights Reserved.
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<!--
+	<base target="NavFrame.document.all.search">
+	-->
+     
+<style type="text/css">
+/* need this one for Mozilla */
+HTML { 
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+ }
+
+BODY {
+	background-color:black;
+	text:white;
+	height:45px;
+}
+
+TABLE {
+	font: icon;
+	margin:0;
+	border:0;
+	padding:0;
+	height:100%;
+}
+
+</style>
+
+
+</head>
+
+<body>
+
+	<table align="left" cellspacing="0" cellpadding="0" border="0">
+		<tr>
+			<td align=left valign="center"><img src="images/banner_prod.jpg">
+			</td>
+		</tr>
+	</table>
+
+</body>
+</html>
+
