@@ -1,10 +1,7 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <title>Search Infrastructure Extension Points</title>
-</head>
-<body link="#0000FF" vlink="#800080">
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Search Infrastructure Extension Points</title></head>
+
+<body link="#0000ff" vlink="#800080">
 
 <center>
 <h1>
@@ -15,20 +12,20 @@ search pages for specialized searches. When the search action is performed on
 a resource, the search infrastructure locates the most specific registered search
 page for it.
 
-<p><b><i>Configuration Markup:</i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
+</p><p><b><i>Configuration Markup:</i></b>
+</p><p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA
+#REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection&nbsp;CDATA #IMPLIED</tt>
-<ul>
-<li>
-<b>id</b> - a unique name that will be used to identify this search page</li>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection&nbsp;CDATA #IMPLIED</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CDATA #IMPLIED</tt><br>
+</p><ul><li><b>id</b> - a unique name that will be used to identify this search page</li>
 
 <li>
 <b>label</b> - a translatable label that will be used in the search page tab</li>
@@ -49,10 +46,12 @@ containing the width and height separated by comma (e.g. "50, 60"). In the case
 this hint is omitted the page will be no larger than the other pages.</li>
 
 <li>
-<b>tabPosition</b> - an integer defining where the page is placed in the page book. The value does not define the absolute position but the position relative to the other pages. The ordering of pages is as follows:
-	<ol>
+<b>tabPosition</b> - an integer defining where the page is placed in the
+page book. The value does not define the absolute position but the position
+relative to the other pages. The ordering of pages is as follows: 	<ol>
 	<li>if the tabPosition is not specified for a page then <tt>Integer.MAX_VALUE / 2</tt> is used</li>
-	<li>the page with the lower value comes first. If the values are equal then the pages are are ordered alphabetically according to their labels</li>
+	<li>the page with the lower value comes first. If the values are equal
+then the pages are are ordered alphabetically according to their labels</li>
 	</ol>
 </li>
 
@@ -67,12 +66,15 @@ If a search page can search all possible resources then <tt>"*"</tt> can be used
 <b>showScopeSection</b> - if this attribute is missing or set to <tt>"false"</tt> then the
 scope section is not shown in the Search dialog. To see the scope section this
 attribute has to be set to <tt>"true"</tt>. Plug-ins which add their own Search page and
-want to see the scope section have to add this to their plugin.xml.</li>
+want to see the scope section have to add this to their plugin.xml.</li><li><b>enabled</b> - if this attribute is missing or set to <tt>"false"</tt>
+ then the page is not initially shown in the Search dialog. The page can
+be activated by the user via the "Customize..." button on the Search dialog.</li>
+
 
 </ul>
 <b><i>Examples:</i></b>
 <p>The following is an example of a search page extension definition:
-<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchPages"&gt;</tt>
+</p><p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchPages"&gt;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;page</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.search.ui.text.TextSearchPage"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label="Text Search"</tt>
@@ -85,8 +87,7 @@ want to see the scope section have to add this to their plugin.xml.</li>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
 
-<p><b><i>Supplied Implementation: </i></b>The search infrastructure provides
+</p><p><b><i>Supplied Implementation: </i></b>The search infrastructure provides
  a search page for full-text search.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
-</body>
-</html>
+</p><p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." border="0" height="12" width="195"></a>
+</p></body></html>

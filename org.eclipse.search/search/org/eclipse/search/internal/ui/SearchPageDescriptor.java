@@ -7,6 +7,7 @@ package org.eclipse.search.internal.ui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -42,6 +43,7 @@ class SearchPageDescriptor implements Comparable {
 	private final static String TAB_POSITION_ATTRIBUTE= "tabPosition"; //$NON-NLS-1$
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
+	private final static String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	
 	public final static Point UNKNOWN_SIZE= new Point(SWT.DEFAULT, SWT.DEFAULT);
 
@@ -134,12 +136,24 @@ class SearchPageDescriptor implements Comparable {
 	}
 
 	/**
+	 * Returns <code>true</code> if the page is initially
+	 * shown in the Search dialog.
+	 * 
+	 * This attribute is optional and defaults to <code>true</code>.
+	 */
+	public boolean isInitiallyEnabled() {
+		String strVal= fElement.getAttribute(ENABLED_ATTRIBUTE);
+		return strVal == null || Boolean.valueOf(strVal).booleanValue();
+	}
+
+	/**
 	 * Returns the page's preferred size
 	 */
 	public Point getPreferredSize() {
 		return StringConverter.asPoint(
 			fElement.getAttribute(SIZE_ATTRIBUTE), UNKNOWN_SIZE);
 	}
+	
 	/**
 	 * Returns the page's tab position relative to the other tabs.
 	 * @return	the tab position or <code>Integer.MAX_VALUE</code> if not defined in
@@ -175,10 +189,18 @@ class SearchPageDescriptor implements Comparable {
 	private static List getEnabledPageIds() {
 		if (fgEnabledPageIds == null) {
 			String[] pageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
-			if (pageIds == null)
+			if (pageIds == null) {
 				// Enable all pages
-				setEnabled(SearchPlugin.getDefault().getSearchPageDescriptors().toArray());
-			else
+				Iterator iter= SearchPlugin.getDefault().getSearchPageDescriptors().iterator();
+				List initiallyEnabledDescriptors= new ArrayList(5);
+				while (iter.hasNext()) {
+					SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+					if (desc.isInitiallyEnabled())
+						initiallyEnabledDescriptors.add(desc);
+				}
+				setEnabled(initiallyEnabledDescriptors.toArray());
+				
+			} else
 				fgEnabledPageIds= Arrays.asList(pageIds);
 		}
 		return fgEnabledPageIds;
