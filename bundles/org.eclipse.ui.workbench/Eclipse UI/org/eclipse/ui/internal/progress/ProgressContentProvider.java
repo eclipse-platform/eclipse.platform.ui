@@ -102,7 +102,7 @@ public class ProgressContentProvider
 	 */
 	public boolean hasChildren(Object element) {
 		if (element == this)
-			return JobProgressManager.getInstance().getJobs().length > 0;
+			return JobProgressManager.getInstance().hasJobInfos();
 		else
 			return ((JobTreeElement) element).hasChildren();
 	}
@@ -111,7 +111,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return JobProgressManager.getInstance().getJobs();
+		return JobProgressManager.getInstance().getJobInfos();
 	}
 
 	/* (non-Javadoc)

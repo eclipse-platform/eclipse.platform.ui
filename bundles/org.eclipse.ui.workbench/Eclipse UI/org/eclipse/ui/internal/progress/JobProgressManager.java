@@ -426,9 +426,9 @@ public class JobProgressManager
 
 	/**
 	 * Get the jobs currently being displayed.
-	 * @return Object[]
+	 * @return JobInfo[]
 	 */
-	public Object[] getJobs() {
+	public JobInfo[] getJobInfos() {
 		synchronized (jobs) {
 			Iterator iterator = jobs.keySet().iterator();
 			Collection result = new ArrayList();
@@ -438,7 +438,26 @@ public class JobProgressManager
 					continue;
 				result.add(jobs.get(next));
 			}
-			return result.toArray();
+			JobInfo[] infos = new JobInfo[result.size()];
+			result.toArray(infos);
+			return infos;
+		}
+	}
+	
+	/**
+	 * Return whether or not there are any jobs being displayed.
+	 * @return boolean
+	 */
+	public boolean hasJobInfos() {
+		synchronized (jobs) {
+			Iterator iterator = jobs.keySet().iterator();
+			while (iterator.hasNext()) {
+				Job next = (Job) iterator.next();
+				if (isNonDisplayableJob(next))
+					continue;
+				return true;
+			}
+			return false;
 		}
 	}
 

@@ -52,6 +52,7 @@ class AnimationManager {
 	private ImageLoader errorLoader = new ImageLoader();
 	boolean animated = false;
 	Job animateJob;
+	Job clearJob;
 	boolean showingError = false;
 	private IJobProgressManagerListener listener;
 
@@ -386,11 +387,14 @@ class AnimationManager {
 				JobProgressManager manager = JobProgressManager.getInstance();
 				showingError = manager.hasErrorsDisplayed();
 				jobs.clear();
-				Object[] currentJobs = manager.getJobs();
-				for (int i = 0; i < currentJobs.length; i++) {
-					jobs.add(currentJobs[i]);
+				JobInfo[] currentInfos = manager.getJobInfos();
+				for (int i = 0; i < currentInfos.length; i++) {
+					JobInfo info = currentInfos[i];
+					if (info.getJob().getState() != Job.RUNNING
+						|| manager.isNonDisplayableJob(info.getJob()))
+						continue;
+					add(currentInfos[i]);
 				}
-				setAnimated(jobs.size() > 0 || showingError);
 
 			}
 
@@ -406,9 +410,9 @@ class AnimationManager {
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if(job == animateJob)
+				if (isAnimationSupport(job))
 					return;
-					
+
 				if (jobs.isEmpty())
 					setAnimated(true);
 				jobs.add(job);
@@ -416,12 +420,19 @@ class AnimationManager {
 
 			private void decrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if(job == animateJob)
-					return;				
-					
+				if (isAnimationSupport(job))
+					return;
+
 				jobs.remove(job);
 				if (jobs.isEmpty())
 					setAnimated(false);
+			}
+
+			/** 
+			 * If this is one of our jobs then don't bother.
+			 */
+			private boolean isAnimationSupport(Job job) {
+				return job == clearJob || job == animateJob;
 			}
 		};
 	}
@@ -452,23 +463,8 @@ class AnimationManager {
 						animateJob.schedule();
 					else {
 						//Clear the image
-
-							UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								AnimationItem[] animationItems =
-									getAnimationItems();
-								for (int i = 0; i < animationItems.length; i++)
-									if (!animationItems[i]
-										.getControl()
-										.isDisposed())
-										animationItems[i].getControl().redraw();
-								return Status.OK_STATUS;
-							}
-						};
-						clearJob.setSystem(true);
+						if (clearJob == null)
+							createClearJob();
 						clearJob.schedule();
 					}
 				}
@@ -476,6 +472,26 @@ class AnimationManager {
 
 		}
 		return animateJob;
+	}
+
+	/**
+	 * Create the clear job if we haven't yet.
+	 * @return
+	 */
+	void createClearJob() {
+		clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
+		/* (non-Javadoc)
+		* @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		*/
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				AnimationItem[] animationItems = getAnimationItems();
+				for (int i = 0; i < animationItems.length; i++)
+					if (!animationItems[i].getControl().isDisposed())
+						animationItems[i].getControl().redraw();
+				return Status.OK_STATUS;
+			}
+		};
+		clearJob.setSystem(true);
 	}
 
 	/**
