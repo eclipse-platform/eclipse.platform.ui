@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.rules;
 
 
@@ -20,10 +19,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IDocumentPartitionerExtension;
 import org.eclipse.jface.text.IDocumentPartitionerExtension2;
+import org.eclipse.jface.text.IDocumentPartitionerExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
@@ -44,7 +45,7 @@ import org.eclipse.jface.text.TypedRegion;
  * @see IPartitionTokenScanner
  * @since 2.0
  */
-public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2 {
+public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 	
 	/** 
 	 * The position category this partitioner uses to store the document's partitioning information.
@@ -73,7 +74,17 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * The position category this partitioner uses to store the document's partitioning information.
 	 * @since 3.0
 	 */
-	private String fPositionCategory;	
+	private String fPositionCategory;
+	/**
+	 * The active document rewrite session.
+	 * @since 3.1 
+	 */
+	private DocumentRewriteSession fActiveRewriteSession;
+	/**
+	 * Flag indicating whether this partitioner has been initialized.
+	 * @since 3.1
+	 */
+	private boolean fIsInitialized= false;
 	
 	/**
 	 * Creates a new partitioner that uses the given scanner and may return 
@@ -107,14 +118,22 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fDocument= document;
 		fDocument.addPositionCategory(fPositionCategory);
 		
-		initialize();
+		fIsInitialized= false;
+	}
+	
+	/*
+	 * @since 3.1
+	 */
+	protected final void checkInitialization() {
+		if (!fIsInitialized)
+			initialize();
 	}
 	
 	/**
 	 * Performs the initial partitioning of the partitioner's document.
 	 */
 	protected void initialize() {
-		
+		fIsInitialized= true;
 		fScanner.setRange(fDocument, 0, fDocument.getLength());
 		
 		try {
@@ -155,21 +174,26 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @see IDocumentPartitioner#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent e) {
-		
-		Assert.isTrue(e.getDocument() == fDocument);
-		
-		fPreviousDocumentLength= e.getDocument().getLength();
-		fStartOffset= -1;
-		fEndOffset= -1;
-		fDeleteOffset= -1;
+		if (fIsInitialized) {
+			
+			Assert.isTrue(e.getDocument() == fDocument);
+			
+			fPreviousDocumentLength= e.getDocument().getLength();
+			fStartOffset= -1;
+			fEndOffset= -1;
+			fDeleteOffset= -1;
+		}
 	}
 	
 	/*
 	 * @see IDocumentPartitioner#documentChanged(DocumentEvent)
 	 */
 	public boolean documentChanged(DocumentEvent e) {
-		IRegion region= documentChanged2(e);
-		return (region != null);
+		if (fIsInitialized) {
+			IRegion region= documentChanged2(e);
+			return (region != null);
+		}
+		return false;
 	}
 		
 	/**
@@ -230,7 +254,10 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @since 2.0
 	 */
 	public IRegion documentChanged2(DocumentEvent e) {
-						
+		
+		if (!fIsInitialized)
+			return null;
+		
 		try {
 		
 			IDocument d= e.getDocument();
@@ -391,6 +418,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @see IDocumentPartitioner#getContentType(int)
 	 */
 	public String getContentType(int offset) {
+		checkInitialization();
 		
 		TypedPosition p= findClosestPosition(offset);
 		if (p != null && p.includes(offset))
@@ -398,11 +426,12 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
-	
+
 	/*
 	 * @see IDocumentPartitioner#getPartition(int)
 	 */
 	public ITypedRegion getPartition(int offset) {
+		checkInitialization();
 		
 		try {
 		
@@ -525,6 +554,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @since 3.0
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
+		checkInitialization();
 		List list= new ArrayList();
 		
 		try {
@@ -641,4 +671,46 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 		return j;
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 */
+	public void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException {
+		if (fActiveRewriteSession != null)
+			throw new IllegalStateException();
+		fActiveRewriteSession= session;		
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 */
+	public void stopRewriteSession(DocumentRewriteSession session) {
+		if (fActiveRewriteSession == session)
+			flushRewriteSession();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#getActiveRewriteSession()
+	 */
+	public DocumentRewriteSession getActiveRewriteSession() {
+		return fActiveRewriteSession;
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @since 3.1
+	 */
+	protected final void flushRewriteSession() {
+		fActiveRewriteSession= null;
+
+		// remove all position belonging to the partitioner position category
+		try {
+			fDocument.removePositionCategory(fPositionCategory);
+		} catch (BadPositionCategoryException x) {
+		}
+		fDocument.addPositionCategory(fPositionCategory);
+		
+		fIsInitialized= false;
+	}	
 }

@@ -38,7 +38,7 @@ public interface IDocumentPartitionerExtension {
 	 * Replaces {@link IDocumentPartitioner#documentChanged(DocumentEvent)}.
 	 * 
 	 * @param event the event describing the document change
-	 * @return the region of the document in which the partition type changed
+	 * @return the region of the document in which the partition type changed or <code>null</code>
 	 */
 	IRegion documentChanged2(DocumentEvent event);
 }

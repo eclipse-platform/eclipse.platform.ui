@@ -34,6 +34,13 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	
 	
 	/**
+	 * Tells whether this class is in debug mode.
+	 * @since 3.1
+	 */
+	private static final boolean DEBUG= false;
+
+	
+	/**
 	 * Combines the information of the occurrence of a line delimiter.
 	 * <code>delimiterIndex</code> is the index where a line delimiter
 	 * starts, whereas <code>delimiterLength</code>, indicates the length
@@ -286,12 +293,10 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public int getNumberOfLines() {
 		
-		if (hasActiveRewriteSession()) {
-			try {
-				flushRewriteSession();
-			} catch (BadLocationException x) {
-				// TODO needs to be communicated
-			}
+		try {
+			checkRewriteSession();
+		} catch (BadLocationException x) {
+			// TODO there is currently no way to communicate that exception back to the document
 		}
 		
 		int lines= fLines.size();
@@ -633,7 +638,6 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	public final void startRewriteSession(DocumentRewriteSession session) {
 		if (fActiveRewriteSession != null)
 			throw new IllegalStateException();
-		
 		fActiveRewriteSession= session;
 		fPendingRequests= new ArrayList(20);
 	}
@@ -669,8 +673,8 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @since 3.1
 	 */
 	protected final void flushRewriteSession() throws BadLocationException {
-		if (!hasActiveRewriteSession())
-			return;
+		if (DEBUG)
+			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
 		
 		try {
 			for (Iterator e= fPendingRequests.iterator(); e.hasNext();) {

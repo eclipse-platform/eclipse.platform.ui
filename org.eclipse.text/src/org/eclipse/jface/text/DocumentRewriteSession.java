@@ -42,4 +42,11 @@ public class DocumentRewriteSession {
 	public DocumentRewriteSessionType getSessionType() {
 		return fSessionType;
 	}
+	
+	/*
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return new StringBuffer().append(hashCode()).toString();
+	}
 }

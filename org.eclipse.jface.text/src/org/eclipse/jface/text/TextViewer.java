@@ -912,11 +912,12 @@ public class TextViewer extends Viewer implements
 				} else {
 					TextViewer.this.setRedraw(false);
 					TextViewer.this.startSequentialRewriteMode(false);
+					
 					if (fUndoManager != null)
 						fUndoManager.beginCompoundChange();
+					
+					fRememberedPartitioners= TextUtilities.removeDocumentPartitioners(document);
 				}
-				
-				fRememberedPartitioners= TextUtilities.removeDocumentPartitioners(document);
 
 			} else {
 				
@@ -926,12 +927,13 @@ public class TextViewer extends Viewer implements
 				} else {
 					TextViewer.this.setRedraw(true);
 					TextViewer.this.stopSequentialRewriteMode();
+					
 					if (fUndoManager != null)
 						fUndoManager.endCompoundChange();
+					
+					if (fRememberedPartitioners != null)
+						TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
 				}
-				
-				if (fRememberedPartitioners != null)
-					TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
 			}
 		}
 	}

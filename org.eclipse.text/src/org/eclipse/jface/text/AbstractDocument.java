@@ -51,6 +51,13 @@ import java.util.regex.PatternSyntaxException;
 public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IDocumentExtension4, IRepairableDocument {
 	
 	/**
+	 * Tells whether this class is in debug mode.
+	 * @since 3.1
+	 */
+	private static final boolean DEBUG= false;
+
+	
+	/**
 	 * Inner class to bundle a registered post notification replace operation together with its
 	 * owner.
 	 * 
@@ -573,6 +580,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			Iterator e= fDocumentPartitioners.values().iterator();
 			while (e.hasNext()) {
 				IDocumentPartitioner p= (IDocumentPartitioner) e.next();
+				if (p instanceof IDocumentPartitionerExtension3) {
+					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) p;
+					if (extension.getActiveRewriteSession() != null)
+						continue;
+				}
 				p.documentAboutToBeChanged(event);
 			}
 		}
@@ -613,6 +625,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			while (e.hasNext()) {
 				String partitioning= (String) e.next();
 				IDocumentPartitioner partitioner= (IDocumentPartitioner) fDocumentPartitioners.get(partitioning);
+				
+				if (partitioner instanceof IDocumentPartitionerExtension3) {
+					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+					if (extension.getActiveRewriteSession() != null)
+						continue;
+				}
+				
 				if (partitioner instanceof IDocumentPartitionerExtension) {
 					IDocumentPartitionerExtension extension= (IDocumentPartitionerExtension) partitioner;
 					IRegion r= extension.documentChanged2(event);
@@ -1048,10 +1067,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
 		try {
 			IRegion region= getFindReplaceDocumentAdapter().find(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false);
-			if (region == null)
-				return -1;
-			else
-				return region.getOffset();	
+			return region == null ?  -1 : region.getOffset();	
 		} catch (IllegalStateException ex) {
 			return -1;
 		} catch (PatternSyntaxException ex) {
@@ -1208,11 +1224,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 		
-		if (partitioner instanceof IDocumentPartitionerExtension2)
+		if (partitioner instanceof IDocumentPartitionerExtension2) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return ((IDocumentPartitionerExtension2) partitioner).computePartitioning(offset, length, includeZeroLengthPartitions);
-		else if (partitioner != null)
+		} else if (partitioner != null) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.computePartitioning(offset, length);
-		else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning))
 			return new TypedRegion[] { new TypedRegion(offset, length, DEFAULT_CONTENT_TYPE) };
 		else
 			throw new BadPartitioningException();
@@ -1228,11 +1246,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 
-		if (partitioner instanceof IDocumentPartitionerExtension2)
+		if (partitioner instanceof IDocumentPartitionerExtension2) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return ((IDocumentPartitionerExtension2) partitioner).getContentType(offset, preferOpenPartitions);
-		else if (partitioner != null)
+		} else if (partitioner != null) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.getContentType(offset);
-		else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning))
 			return DEFAULT_CONTENT_TYPE;
 		else
 			throw new BadPartitioningException();
@@ -1269,11 +1289,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 		
-		if (partitioner instanceof IDocumentPartitionerExtension2)
+		if (partitioner instanceof IDocumentPartitionerExtension2) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return ((IDocumentPartitionerExtension2) partitioner).getPartition(offset, preferOpenPartitions);
-		else if (partitioner != null)
+		} else if (partitioner != null) {
+			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.getPartition(offset);
-		else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning))
 			return new TypedRegion(0, getLength(), DEFAULT_CONTENT_TYPE);
 		else
 			throw new BadPartitioningException();
@@ -1353,21 +1375,46 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (getActiveRewriteSession() != null)
 			throw new IllegalStateException();
 		
+		
 		fDocumentRewriteSession= new DocumentRewriteSession(sessionType);
+		if (DEBUG)
+			System.out.println("AbstractDocument: Starting rewrite session: " + fDocumentRewriteSession); //$NON-NLS-1$
+		
 		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, fDocumentRewriteSession, DocumentRewriteSessionEvent.SESSION_START));
 		
-		if (DocumentRewriteSessionType.SEQUENTIAL == sessionType)
-			startSequentialRewrite(false);
-		else if (DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
-			startSequentialRewrite(true);
+		startRewriteSessionOnPartitioners(fDocumentRewriteSession);
 		
 		ILineTracker tracker= getTracker();
 		if (tracker instanceof ILineTrackerExtension) {
 			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
 			extension.startRewriteSession(fDocumentRewriteSession);
 		}
-
+		
+		if (DocumentRewriteSessionType.SEQUENTIAL == sessionType)
+			startSequentialRewrite(false);
+		else if (DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+			startSequentialRewrite(true);
+		
 		return fDocumentRewriteSession;
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @param session the rewrite session
+	 * @since 3.1
+	 */
+	protected final void startRewriteSessionOnPartitioners(DocumentRewriteSession session) {
+		if (fDocumentPartitioners != null) {
+			Iterator e= fDocumentPartitioners.values().iterator();
+			while (e.hasNext()) {
+				Object partitioner= e.next();
+				if (partitioner instanceof IDocumentPartitionerExtension3) {
+					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+					extension.startRewriteSession(session);
+				}
+			}
+		}
 	}
 	
 	/*
@@ -1377,18 +1424,47 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		if (fDocumentRewriteSession == session) {
 			
+			if (DEBUG)
+				System.out.println("AbstractDocument: Stopping rewrite session: " + session); //$NON-NLS-1$
+			
+			DocumentRewriteSessionType sessionType= session.getSessionType();
+			if (DocumentRewriteSessionType.SEQUENTIAL == sessionType || DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+				stopSequentialRewrite();
+
 			ILineTracker tracker= getTracker();
 			if (tracker instanceof ILineTrackerExtension) {
 				ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
 				extension.stopRewriteSession(session, get());
 			}
 			
-			DocumentRewriteSessionType sessionType= session.getSessionType();
-			if (DocumentRewriteSessionType.SEQUENTIAL == sessionType || DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
-				stopSequentialRewrite();
+			stopRewriteSessionOnPartitioners(fDocumentRewriteSession);
 			
 			fDocumentRewriteSession= null;
-			fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, session, DocumentRewriteSessionEvent.SESSION_STOP));
+			fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, session, DocumentRewriteSessionEvent.SESSION_STOP));			
+		}
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @param session the rewrite session
+	 * @since 3.1
+	 */
+	protected final void stopRewriteSessionOnPartitioners(DocumentRewriteSession session) {
+		if (fDocumentPartitioners != null) {
+			DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
+			Iterator e= fDocumentPartitioners.keySet().iterator();
+			while (e.hasNext()) {
+				String partitioning= (String) e.next();
+				IDocumentPartitioner partitioner= (IDocumentPartitioner) fDocumentPartitioners.get(partitioning);
+				if (partitioner instanceof IDocumentPartitionerExtension3) {
+					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+					extension.stopRewriteSession(session);
+					event.setPartitionChange(partitioning, 0, getLength());
+				}
+			}
+			if (!event.isEmpty())
+				fireDocumentPartitioningChanged(event);
 		}
 	}
 	
@@ -1409,5 +1485,27 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public void removeDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener) {
 		Assert.isNotNull(listener);
 		fDocumentRewriteSessionListeners.remove(listener);
+	}
+	
+	/**
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @param partitioner the document partitioner to be checked
+	 * @param partitioning the document partitioning the partitioner is registered for
+	 * @since 3.1
+	 */
+	protected final void checkStateOfPartitioner(IDocumentPartitioner partitioner, String partitioning) {
+		DocumentRewriteSession session= getActiveRewriteSession();
+		if (session != null && partitioner instanceof IDocumentPartitionerExtension3) {
+			IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+			extension.stopRewriteSession(session);
+			
+			if (DEBUG)
+				System.out.println("AbstractDocument: Flushing rewrite session for partition type: " + partitioning); //$NON-NLS-1$
+			
+			DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
+			event.setPartitionChange(partitioning, 0, getLength());
+			fireDocumentPartitioningChanged(event);
+		}
 	}
 }
