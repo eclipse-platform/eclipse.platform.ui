@@ -502,7 +502,7 @@ private void showMessage(String newMessage, Image newImage) {
 
 	if (!showingError) {
 		// we are not showing an error
-		updateMessage(newMessage);
+		updateMessage(message);
 		messageImageLabel.setImage(messageImage);
 		setImageLabelVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
@@ -515,12 +515,6 @@ private void showMessage(String newMessage, Image newImage) {
  * @param String the message to use
  */
 private void updateMessage(String newMessage) {
-	
-	//newMessage may be null so just clear the message and return
-	if(newMessage == null){
-		messageLabel.setText("");
-		return;
-	}
 	
 	//Be sure there are always 2 lines for layout purposes
 	if(newMessage != null && newMessage.indexOf('\n') == -1)
