@@ -163,6 +163,11 @@ public class NatureTest extends EclipseWorkspaceTest {
 		instance = SimpleNature.getInstance();
 		assertTrue("2.1", !instance.wasConfigured);
 		assertTrue("2.2", !instance.wasDeconfigured);
+		try {
+			assertTrue("2.3", project.hasNature(NATURE_SIMPLE));
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
 
 		//remove with AVOID_NATURE_CONFIG
 		instance.reset();
@@ -170,7 +175,11 @@ public class NatureTest extends EclipseWorkspaceTest {
 		instance = SimpleNature.getInstance();
 		assertTrue("2.4", !instance.wasConfigured);
 		assertTrue("2.5", !instance.wasDeconfigured);
-
+		try {
+			assertTrue("2.6", !project.hasNature(NATURE_SIMPLE));
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
 	}
 
 	/**

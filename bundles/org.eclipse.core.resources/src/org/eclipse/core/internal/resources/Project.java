@@ -59,6 +59,8 @@ public class Project extends Container implements IProject {
 		// the natures last as this may cause recursive calls to setDescription.
 		if ((updateFlags & IResource.AVOID_NATURE_CONFIG) == 0)
 			workspace.getNatureManager().configureNatures(this, current, description, result);
+		else
+			current.setNatureIds(description.getNatureIds(false));
 		return result;
 	}
 
