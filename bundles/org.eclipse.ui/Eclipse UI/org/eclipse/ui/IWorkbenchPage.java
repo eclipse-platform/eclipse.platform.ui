@@ -521,4 +521,23 @@ public void showActionSet(String actionSetID);
  * @exception PartInitException if the view could not be initialized
  */
 public IViewPart showView(String viewId) throws PartInitException;
+/**
+ * Returns true if the editors of the same type
+ * should be reused in this page otherwise return 
+ * false.
+ *
+ * @return a boolean
+ */
+public boolean getReuseEditors();
+/**
+ * Set whether editors should be reused in this
+ * page or not overwriting the global workbench preference
+ * "Reuse editors".
+ */
+public void setReuseEditors(boolean reuse);
+/**
+ * Make sure this page uses the global workbench preference
+ * "Reuse editors" instead of the local setting.
+ */
+public void clearReuseEditors();
 }

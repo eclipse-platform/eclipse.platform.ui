@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.operation.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -252,16 +251,11 @@ public IEditorPart openEditor(String editorID, IEditorInput input)
 	}
 	return openEditor(desc, input);
 }
+
 /*
  * @see IWorkbenchPage.
  */
-public IEditorPart openEditor(IFileEditorInput input) throws PartInitException {
-	return openEditor(input,true);
-}
-/*
- * @see IWorkbenchPage.
- */
-private IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
+public IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
 	throws PartInitException
 {
 	IFile file = input.getFile();
@@ -296,9 +290,7 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
  */
 private IReusableEditor findReusableEditor(EditorDescriptor desc) {
 	
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuseEditors = store.getBoolean(IPreferenceConstants.REUSE_EDITORS);
-	if(!reuseEditors)
+	if(!page.getReuseEditors())
 		return null;
 	
 	IEditorPart editors[] = getEditors();
@@ -330,7 +322,7 @@ private IReusableEditor findReusableEditor(EditorDescriptor desc) {
 	if(dirtyEditor == null)
 		return null;
 	
-	//Should we have a global preference "Open new Editor when dirty"?
+	//Should we have a global preference "Allways open new Editor when dirty"?
 	//if(openNewWhenDirty)
 	//	return null;
 	MessageDialog dialog = new MessageDialog(
@@ -460,6 +452,8 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				// Record the happy event.
 				Workbench wb = (Workbench)window.getWorkbench();
 				wb.getEditorHistory().add(input, desc);
+				
+				page.firePartOpened(part);
 			} catch (PartInitException e) {
 				ex[0] = e;
 			}
