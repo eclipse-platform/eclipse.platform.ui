@@ -99,10 +99,4 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 		fullPath = null;
 		resource = null;
 	}
-	protected void setRequestor(IPathRequestor requestor) {
-		this.requestor = requestor;
-	}
-	protected void setResourceInfo(ResourceInfo info) {
-		this.info = info;
-	}
 }
