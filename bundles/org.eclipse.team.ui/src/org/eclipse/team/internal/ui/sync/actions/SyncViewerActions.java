@@ -167,7 +167,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		directionsFilters.fillActionBars(actionBars);
 		manager.add(new Separator());
 		manager.add(collapseAll);
-		manager.add(new Separator());
 		manager.add(gotoNext);
 		manager.add(gotoPrevious);	
 		

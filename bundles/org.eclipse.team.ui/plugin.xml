@@ -344,22 +344,22 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
-            name="%Command.toggleView.name"
-            description="%Command.toggleView.description"
-            category="org.eclipse.team.ui.commands.category"
-            id="org.eclipse.team.ui.syncview.toggleView">
-      </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.syncview.toggleView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <command
             name="%Command.syncAll.name"
             description="%Command.syncAll.description"
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.syncAll">
+      </command>
+      <command
+      		name="%Command.selectPreviousChange.name"
+      		description="%Command.selectPreviousChange.description"
+      		category="org.eclipse.team.ui.commands.category"
+      		id="org.eclipse.team.ui.syncview.selectPreviousChange">
+      </command>
+      <command
+      		name="%Command.selectNextChange.name"
+      		description="%Command.selectNextChange.description"
+      		category="org.eclipse.team.ui.commands.category"
+      		id="org.eclipse.team.ui.syncview.selectNextChange">
       </command>
    </extension>
 <!-- ***************** Action sets ********************** -->
