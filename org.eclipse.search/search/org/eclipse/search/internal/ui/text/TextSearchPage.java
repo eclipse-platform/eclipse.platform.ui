@@ -263,48 +263,54 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 * Creates the page's content.
 	 */
 	public void createControl(Composite parent) {
-		readConfiguration();
 		initializeDialogUnits(parent);
-		GridLayout layout;
-		RowLayouter layouter;
+		readConfiguration();
+		
+		GridData gd;
 		Composite result= new Composite(parent, SWT.NONE);
-
-		result.setLayout(new GridLayout());
+		GridLayout layout= new GridLayout(3, false);
+		layout.horizontalSpacing= 10;
+		result.setLayout(layout);
 		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		layout= new GridLayout();
-		layout.numColumns= 3;
-		Composite group= new Composite(result, SWT.NONE);
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		layouter= new RowLayouter(3, true);
+		RowLayouter layouter= new RowLayouter(layout.numColumns);
+		gd= new GridData();
+		gd.horizontalAlignment= gd.FILL;
+		gd.verticalAlignment= gd.VERTICAL_ALIGN_BEGINNING | gd.VERTICAL_ALIGN_FILL;
+	
+		layouter.setDefaultGridData(gd, 0);
+		layouter.setDefaultGridData(gd, 1);
+		layouter.setDefaultGridData(gd, 2);
 		layouter.setDefaultSpan();
 
-		createTextSearchComposite(layouter, group);
+		layouter.perform(createTextSearchComposite(result));
 
-		// Filler
-		Label filler= new Label(group, SWT.NONE);
-		GridData gd= new GridData(GridData.FILL_BOTH);
+		// Vertical filler
+		Label filler= new Label(result, SWT.LEFT);
+		gd= new GridData(GridData.BEGINNING | GridData.VERTICAL_ALIGN_FILL);
 		gd.heightHint= convertHeightInCharsToPixels(1) / 3;
-		gd.horizontalSpan= 3;
 		filler.setLayoutData(gd);
-		layouter.perform(new Control[] { filler }, 3);
+		layouter.perform(new Control[] {filler}, 3);
 
-		createFileNamePatternComposite(layouter, group);
+		layouter.perform(createFileNamePatternComposite(result));
 
 		setControl(result);
 		
 		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 	}
 
-	private void createTextSearchComposite(RowLayouter layouter, Composite group) {
+	private Control createTextSearchComposite(Composite group) {
 		GridData gd;
 		Label label;
-		
-		// Pattern combo
+
+		// Info text		
 		label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.containingText.text")); //$NON-NLS-1$
+		gd= new GridData(GridData.BEGINNING);
+		gd.horizontalSpan= 3;
+		label.setLayoutData(gd);
+
+		// Pattern combo
 		fPattern= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
@@ -318,13 +324,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				handleWidgetSelected();
 			}
 		});
-		gd= new GridData();//GridData.FILL_HORIZONTAL
-		gd.widthHint= convertWidthInCharsToPixels(40);
+		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan= 2;
 		fPattern.setLayoutData(gd);
 		
 		fIgnoreCase= new Button(group, SWT.CHECK);
 		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
-		gd= new GridData(); gd.horizontalAlignment= gd.END;
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fIgnoreCase.setLayoutData(gd);
 		fIgnoreCase.setSelection(!fIsCaseSensitive);
 		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
@@ -333,14 +339,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				writeConfiguration();
 			}
 		});
-		layouter.perform( new Control[] {label, fPattern, fIgnoreCase }, -1);
-		
+
 		// Text line which explains the special characters
 		label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
-		Label filler= new Label(group, SWT.NONE);
-		layouter.perform(filler, label, 1);
-
+		gd= new GridData(GridData.BEGINNING);
+		gd.horizontalSpan= 3;
+		label.setLayoutData(gd);
+		
+		return group;
 	}
 
 	private void handleWidgetSelected() {
@@ -456,36 +463,43 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		return null;
 	}
 
-	private void createFileNamePatternComposite(RowLayouter layouter, Composite group) {
+	private Control createFileNamePatternComposite(Composite group) {
+		GridData gd;
+
 		// Line with label, combo and button
 		Label label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.text")); //$NON-NLS-1$
+		gd= new GridData(GridData.BEGINNING);
+		gd.horizontalSpan= 3;
+		label.setLayoutData(gd);
 
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
-		GridData gd= new GridData();
-		gd.widthHint= convertWidthInCharsToPixels(40);
-		fExtensions.setLayoutData(gd);
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 			}
 		});
+		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan= 2;
+		fExtensions.setLayoutData(gd);
 		
 		Button button= new Button(group, SWT.PUSH);
 		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_END);
+		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
 		fFileTypeEditor= new FileTypeEditor(
 			SearchPlugin.getDefault().getWorkbench().getEditorRegistry(),
 			fExtensions, button);
 		
-		layouter.perform(new Control[] { label, fExtensions, button }, -1);
-		
 		// Text line which explains the special characters
 		label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
-		Label filler= new Label(group, SWT.NONE);
-		layouter.perform(filler, label, 1);
+		gd= new GridData(GridData.BEGINNING);
+		gd.horizontalSpan= 3;
+		label.setLayoutData(gd);
+		
+		return group;
 	}
 	
 	public boolean isValid() {
