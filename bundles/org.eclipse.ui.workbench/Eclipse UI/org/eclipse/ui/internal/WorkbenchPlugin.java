@@ -143,30 +143,44 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 *
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
-	 * @returns the extension object
+	 * @return the extension object
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
-		// If plugin has been loaded create extension.
-		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
-			return element.createExecutableExtension(classAttribute);
-		} else {
-			final Object[] ret = new Object[1];
-			final CoreException[] exc = new CoreException[1];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						ret[0] = element.createExecutableExtension(classAttribute);
-					} catch (CoreException e) {
-						exc[0] = e;
+		try {
+			// If plugin has been loaded create extension.
+			// Otherwise, show busy cursor then create extension.
+			IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			if (plugin.isPluginActivated()) {
+				return element.createExecutableExtension(classAttribute);
+			} else {
+				final Object[] ret = new Object[1];
+				final CoreException[] exc = new CoreException[1];
+				BusyIndicator.showWhile(null, new Runnable() {
+					public void run() {
+						try {
+							ret[0] = element.createExecutableExtension(classAttribute);
+						} catch (CoreException e) {
+							exc[0] = e;
+						}
 					}
-				}
-			});
-			if (exc[0] != null)
-				throw exc[0];
-			else
-				return ret[0];
+				});
+				if (exc[0] != null)
+					throw exc[0];
+				else
+					return ret[0];
+			}
+		}
+		catch (CoreException core) {
+			throw core;			
+		}
+		catch (Throwable t) {
+			throw new CoreException(
+				new Status(
+						IStatus.ERROR, 
+						PI_WORKBENCH, 
+						IStatus.ERROR, 
+						WorkbenchMessages.getString("WorkbenchPlugin.extension"), //$NON-NLS-1$ 
+						t));
 		}
 	}
 	/**
