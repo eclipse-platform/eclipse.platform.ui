@@ -375,18 +375,27 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see IBreakpointManager#addBreakpoints(IBreakpoint[])
 	 */
 	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException {
-		final List added = new ArrayList(breakpoints.length);
+		List added = new ArrayList(breakpoints.length);
+		final List update = new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			if (!getBreakpoints0().contains(breakpoint)) {
 				verifyBreakpoint(breakpoint);
-				added.add(breakpoint);
+				if (breakpoint.isRegistered()) {
+					added.add(breakpoint);
+					getBreakpoints0().add(breakpoint);
+					fMarkersToBreakpoints.put(breakpoint.getMarker(), breakpoint);
+				} else {
+					// need to update the 'registered' attribute
+					update.add(breakpoint);
+				}
 			}	
 		}
-		if (!added.isEmpty()) {
+		fireUpdate(added, null, ADDED);
+		if (!update.isEmpty()) {
 			IWorkspaceRunnable r = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					Iterator iter = added.iterator();
+					Iterator iter = update.iterator();
 					while (iter.hasNext()) {
 						IBreakpoint breakpoint = (IBreakpoint)iter.next();
 						getBreakpoints0().add(breakpoint);
@@ -397,10 +406,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			};
 			// Need to suppress change notification, since this is really
 			// an add notification			
-			fSuppressChange.addAll(added);
+			fSuppressChange.addAll(update);
 			getWorkspace().run(r, null);
-			fSuppressChange.removeAll(added);
-			fireUpdate(added, null, ADDED);
+			fSuppressChange.removeAll(update);
+			fireUpdate(update, null, ADDED);
 		}			
 	}	
 	
@@ -624,6 +633,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Notifies listeners of the adds/removes/changes
 	 * 	 * @param breakpoints associated breakpoints	 * @param deltas or <code>null</code>	 * @param update type of change	 */
 	private void fireUpdate(List breakpoints, List deltas, int update) {
+		if (breakpoints.isEmpty()) {
+			return; 
+		}
 		IBreakpoint[] bpArray = (IBreakpoint[])breakpoints.toArray(new IBreakpoint[breakpoints.size()]);
 		IMarkerDelta[] deltaArray = new IMarkerDelta[bpArray.length];
 		if (deltas != null) {
