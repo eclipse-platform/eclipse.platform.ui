@@ -30,7 +30,7 @@ public void defineComponentOperation(UMSessionManagerParcel parcel, IInstallable
 		componentDescriptor = ((IComponentEntryDescriptor) descriptor).getComponentDescriptor();
 	}
 	if (componentDescriptor == null)
-		return; //LINDA- error condition 
+		return; 
 
 	UMSessionManagerOperation operation = null;
 
