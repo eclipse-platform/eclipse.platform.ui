@@ -483,16 +483,4 @@ public void stackView(String viewId, String refId) {
 		WorkbenchPlugin.log(e.getMessage());
 	}
 }
-/**
- * @see IPageLayout
- */
-public int getEditorReuseThreshold() {
-	return reuseEditors;
-}
-/**
- * @see IPageLayout
- */
-public void setEditorReuseThreshold(int openEditors) {
-	reuseEditors = openEditors;
-}
 }

@@ -619,7 +619,6 @@ private void loadPredefinedPersp(
 	if (!layout.isEditorAreaVisible())
 		hideEditorArea();
 		
-	setEditorReuseThreshold(layout.getEditorReuseThreshold());
 }
 /**
  * activate.
@@ -907,9 +906,6 @@ public void restoreState() {
 	Integer areaVisible = memento.getInteger(IWorkbenchConstants.TAG_AREA_VISIBLE);
 	if (areaVisible != null && areaVisible.intValue() == 0)
 		hideEditorArea();
-	Integer threshold = memento.getInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD);	
-	if (threshold != null && threshold.intValue() != 0)
-		setEditorReuseThreshold(threshold.intValue());	
 }
 /**
  * Save the layout.
@@ -1066,9 +1062,6 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 	else
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
-	
-	//Save editor reuse threshold	
-	memento.putInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD,getEditorReuseThreshold());
 }
 /**
  * Sets the visible action sets. 
@@ -1303,20 +1296,4 @@ public void toggleFastView(IViewPart view) {
 		setActiveFastView(view);
 	}
 }
-/**
- * Returns the number of open editors before reusing editors.
- *
- * @return a int
- */
-public int getEditorReuseThreshold() {
-	return reuseEditors;
-}
-/**
- * Set the number of open editors before reusing editors.
- * If < 0 the user preference settings will be used.
- */
-public void setEditorReuseThreshold(int openEditors) {
-	reuseEditors = openEditors;
-}
-
 }

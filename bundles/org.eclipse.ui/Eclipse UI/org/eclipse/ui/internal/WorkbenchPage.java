@@ -2364,22 +2364,8 @@ private void zoomOutIfNecessary(IWorkbenchPart part) {
  * @see IPageLayout.
  */
 public int getEditorReuseThreshold() {
-	Perspective persp = getActivePerspective();
-	if (persp != null) {
-		int result = persp.getEditorReuseThreshold();
-		if(result > 0)
-			return result;
-	}
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
 	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
-}
-/**
- * @see IPageLayout.
- */
-public void setEditorReuseThreshold(int openEditors) {
-	Perspective persp = getActivePerspective();
-	if (persp != null)
-		persp.setEditorReuseThreshold(openEditors);
 }
 /*
  * Returns the editors in activation order (oldest first).

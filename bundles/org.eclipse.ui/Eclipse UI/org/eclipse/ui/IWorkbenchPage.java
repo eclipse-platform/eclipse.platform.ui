@@ -624,24 +624,4 @@ public IViewPart showView(String viewId) throws PartInitException;
  * @return boolean
  */
 public boolean isEditorPinned(IEditorPart editor);
-/**
- * Returns the number of open editors before reusing editors.
- *
- * @return a int
- * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
- * 
- * @deprecated
- */
-public int getEditorReuseThreshold();
-/**
- * Set the number of open editors before reusing editors.
- * If < 0 the user preference settings will be used.
- * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
- * 
- * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors) instead.
- */
-public void setEditorReuseThreshold(int openEditors);
-
 }
