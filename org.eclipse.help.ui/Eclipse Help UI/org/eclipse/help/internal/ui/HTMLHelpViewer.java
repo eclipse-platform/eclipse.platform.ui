@@ -99,11 +99,23 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 			String url = topicElement.getHref();
 			if (url == null || url.equals(""))
 				return; // no content in this topic
+			// Check for fragments
+			int fragmentIndex = url.indexOf('#');
+			String fragment = null;
+			if (fragmentIndex != -1)
+			{
+				fragment = url.substring(fragmentIndex);
+				url = url.substring(0, fragmentIndex);
+			}
+			
 			if (url.indexOf("?resultof=") != -1) 
 				url = url+"&lang=" + locale;
 			else 
 				url = url + "?lang=" + locale;
 			
+			if (fragment != null)
+				url = url + fragment;
+				
 			if (url.indexOf("http:") == -1) {
 				try {
 					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
