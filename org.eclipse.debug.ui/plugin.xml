@@ -255,6 +255,17 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
          <action
+               id="org.eclipse.debug.ui.actions.ResumeAllThreads"
+               hoverIcon="icons/full/elcl16/resume_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ResumeAllThreadsActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.ResumeAllThreads"
+               disabledIcon="icons/full/dlcl16/resume_co.gif"
+               icon="icons/full/elcl16/resume_co.gif"
+               helpContextId="resume_all_thraeds_action_context"
+               label="%ResumeAllThreadsAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup">
+         </action>         
+         <action
                id="org.eclipse.debug.ui.actions.Resume"
                hoverIcon="icons/full/elcl16/resume_co.gif"
                class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
@@ -925,6 +936,19 @@
             </selection>
          </action>
          <action
+               label="%ResumeAllThreadsAction.label"
+               icon="icons/full/elcl16/resume_co.gif"
+               helpContextId="resume__all_threads_action_context"
+               definitionId="org.eclipse.debug.ui.commands.ResumeAllThreads"
+               class="org.eclipse.debug.internal.ui.actions.ResumeAllThreadsActionDelegate"
+               menubarPath="threadGroup"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.debugview.popupMenu.resumeAllThreads">
+            <selection
+                  class="org.eclipse.debug.core.model.IDebugElement">
+            </selection>
+         </action>         
+         <action
                label="%ResumeAction.label"
                icon="icons/full/elcl16/resume_co.gif"
                helpContextId="resume_action_context"
@@ -1309,6 +1333,18 @@ M4 = Platform-specific fourth key
             command="org.eclipse.debug.ui.commands.Resume"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.resumeAllThreads.name"
+            category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.resumeAllThreads.description"
+            id="org.eclipse.debug.ui.commands.ResumeAllThreads">
+      </command>
+      <keyBinding
+            keySequence="M1+F8"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.ResumeAllThreads"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
       <command
             name="%ActionDefinition.terminate.name"
             category="org.eclipse.debug.ui.category.run"
