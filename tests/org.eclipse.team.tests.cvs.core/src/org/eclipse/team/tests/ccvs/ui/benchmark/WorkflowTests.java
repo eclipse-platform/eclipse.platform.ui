@@ -11,9 +11,7 @@
 package org.eclipse.team.tests.ccvs.ui.benchmark;
 
 import java.io.File;
-
 import junit.framework.Test;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 
@@ -53,27 +51,31 @@ public class WorkflowTests extends BenchmarkTest {
 	}
 
 	public void testBigWorkflow() throws Exception {
-		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, WORKFLOW_GROUP);
+		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
 	}
 	
 	public void testSmallWorkflow() throws Exception {
-		runWorkflowTests("testSmall", BenchmarkTestSetup.SMALL_ZIP_FILE, null);
+		runWorkflowTests("testSmall", BenchmarkTestSetup.SMALL_ZIP_FILE, "CVS Small Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
 	}
 
 	public void testTinyWorkflow() throws Exception {
-		runWorkflowTests("testTiny", BenchmarkTestSetup.TINY_ZIP_FILE, null);
+		runWorkflowTests("testTiny", BenchmarkTestSetup.TINY_ZIP_FILE, "CVS Tiny Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
 	}
-
+	
+	public void testBigWorkflowForSummary() throws Exception {
+		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", 1, true);
+	}
+	
 	/**
 	 * Runs a series of incoming and outgoing workflow-related tests.
 	 */
-	protected void runWorkflowTests(String name, File initialContents, String globalName) throws Exception {
-	    setupGroups(PERFORMANCE_GROUPS, globalName);
-	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
+	protected void runWorkflowTests(String name, File initialContents, String globalName, int loopCount, boolean global) throws Exception {
+	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
+	    for (int i = 0; i < loopCount; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();
 			IProject outProject = createAndImportProject(name, initialContents);
 			
-			// test project sharing
+			// test project sharing			
 			startGroup(SHARE_PROJECT);
 			shareProject(outProject);
 			endGroup();

@@ -38,11 +38,6 @@ public abstract class BenchmarkTest extends EclipseTest {
 	private HashMap groups;
     private PerformanceMeter currentMeter;
     private static SyncInfoSource source = new SynchronizeViewTestAdapter();
-    
-    // Global performance groups for CVS tests, these will be shown in the platform overview 
-    // diagram.
-    public final static String SYNC_GROUP = "CVS Synchronize";
-    public final static String WORKFLOW_GROUP = "CVS Workflow";
 
     protected BenchmarkTest() {
 	}
@@ -84,10 +79,10 @@ public abstract class BenchmarkTest extends EclipseTest {
      * @param performance_groups
      */
 	protected void setupGroups(String[] performance_groups) {
-        setupGroups(performance_groups, null);
+        setupGroups(performance_groups, null, false);
     }
 	
-	protected void setupGroups(String[] performance_groups, String globalName) {
+	protected void setupGroups(String[] performance_groups, String globalName, boolean global) {
         groups = new HashMap();
 	    Performance perf = Performance.getDefault();
         for (int i = 0; i < performance_groups.length; i++) {
@@ -95,7 +90,10 @@ public abstract class BenchmarkTest extends EclipseTest {
 		    PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
             groups.put(suffix, meter);
             if(globalName != null) {
-    	    	perf.tagAsGlobalSummary(meter, globalName, Dimension.CPU_TIME);
+            	if(global)
+            		perf.tagAsGlobalSummary(meter, globalName, Dimension.CPU_TIME);
+            	else 
+            		perf.tagAsSummary(meter, globalName, Dimension.CPU_TIME);
     	    }
         }
     }

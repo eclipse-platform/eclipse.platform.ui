@@ -50,15 +50,15 @@ public class SyncTests extends BenchmarkTest {
 	}
 
     public void testSync1() throws Exception {
-		runTestSync(1, null);
+		runTestSync(1, "CVS Synchronize 1");
 	}
 
 	public void testSync10() throws Exception {
-		runTestSync(10, null);
+		runTestSync(10, "CVS Synchronize 10");
 	}
 
 	public void testSync100() throws Exception {
-		runTestSync(100, SYNC_GROUP);
+		runTestSync(100, "CVS Synchronize 100");
 	}
 
 	protected IProject setupOutProject() throws Exception {
@@ -72,7 +72,7 @@ public class SyncTests extends BenchmarkTest {
 	 * A parallel project is used to generate incoming changes.
 	 */
 	protected void runTestSync(int size, String globalName) throws Exception {
-	    setupGroups(PERFORMANCE_GROUPS, globalName);
+	    setupGroups(PERFORMANCE_GROUPS, globalName, false);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();
 	
