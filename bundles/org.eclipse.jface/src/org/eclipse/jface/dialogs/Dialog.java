@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -236,36 +235,39 @@ public abstract class Dialog extends Window {
 	}
 	
 	/**
-	 * Shorten the given text <code>textValue</code> so that its length
-	 * doesn't exceed the given width. Override characters in the center of the original string with an
-	 * ellipsis ("..."). 
-	 * @param textValue The original string
-	 * @param control The control the string will be displayed on
-	 * @return String The value to display
+	 * Shortens the given text <code>textValue</code> so that its width in pixels
+	 * does not exceed the width of the given control. 
+	 * Overrides characters in the center of the original string with an ellipsis ("...")
+	 * if necessary.
+	 * If a <code>null</code> value is given, <code>null</code> is returned.
+	 *  
+	 * @param textValue the original string or <code>null</code>
+	 * @param control the control the string will be displayed on
+	 * @return the string to display, or <code>null</code> if null was passed in
+	 * 
+	 * @since 3.0
 	 */
 	public static String shortenText(String textValue, Control control) {
 		if (textValue == null)
 			return null;
-		Display display = control.getDisplay();
-		GC gc = new GC(display);
+		GC gc = new GC(control);
 		int maxWidth = control.getBounds().width - 5;
 		if (gc.textExtent(textValue).x < maxWidth) {
 			gc.dispose();
 			return textValue;
 		}
 		int length = textValue.length();
-		int ellipsisWidth = gc.textExtent(ELLIPSIS).x;
 		int pivot = length / 2;
 		int start = pivot;
 		int end = pivot + 1;
 		while (start >= 0 && end < length) {
 			String s1 = textValue.substring(0, start);
 			String s2 = textValue.substring(end, length);
-			int l1 = gc.textExtent(s1).x;
-			int l2 = gc.textExtent(s2).x;
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
+			String s = s1 + ELLIPSIS + s2;
+			int l = gc.textExtent(s).x;
+			if (l < maxWidth) {
 				gc.dispose();
-				return s1 + ELLIPSIS + s2;
+				return s;
 			}
 			start--;
 			end++;
