@@ -81,11 +81,13 @@ public void add(LayoutPart child, int relationship, float ratio, LayoutPart rela
 		return;
 	if (relative != null && !isChild(relative))
 		return;
-	if (0 > relationship || relationship > 4)
+	if (relationship < IPageLayout.LEFT || relationship > IPageLayout.BOTTOM)
 		relationship = IPageLayout.LEFT;
-	if (0.0 > ratio || ratio > 0.99)
-		ratio = (float)0.99; // Ratios greater than 0.99 are hard to grab.
-	
+	// Ratios less than 5% or greater than 95% are hard to grab.
+	if (ratio < IPageLayout.RATIO_MIN)
+		ratio = IPageLayout.RATIO_MIN;
+	else if (ratio > IPageLayout.RATIO_MAX)
+		ratio = IPageLayout.RATIO_MAX;
 
 	// store info about relative positions
 	RelationshipInfo info = new RelationshipInfo();
