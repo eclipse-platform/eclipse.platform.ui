@@ -5,13 +5,20 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugViewAdapter;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -25,7 +32,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	protected StructuredViewer fViewer = null;
 
 	/**
-	 * @see IAdaptable
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugViewAdapter.class) {
@@ -33,23 +40,26 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 		return super.getAdapter(adapter);
 	}
+	/**
+	 * IWorkbenchPart#dispose()
+	 */
 	public void dispose() {
-		fViewer= null;
+		setViewer(null);
 		super.dispose();
 	}
 	
 	/**
-	 * @see IDebugViewAdapter
+	 * @see IDebugViewAdapter#getViewer()
 	 */
 	public StructuredViewer getViewer() {
 		return fViewer;
 	}
 	
 	/**
-	 * @see IDebugViewAdapter
+	 * @see IDebugViewAdapter#getPresentation(String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		return ((DelegatingModelPresentation)fViewer.getLabelProvider()).getPresentation(id);
+		return ((DelegatingModelPresentation)getViewer().getLabelProvider()).getPresentation(id);
 	}
 	
 	protected void createContextMenu(Control menuControl) {
@@ -64,7 +74,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		menuControl.setMenu(menu);
 
 		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(menuMgr, fViewer);
+		getSite().registerContextMenu(menuMgr, getViewer());
 	}
 	/**
 	 * Configures the toolBar
@@ -78,7 +88,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		// is created
 		Runnable r = new Runnable() {
 			public void run() {
-				if (fViewer.getControl().isDisposed()) {
+				if (getViewer().getControl().isDisposed()) {
 					return;
 				}
 				IContributionItem[] items = tbm.getItems();
@@ -94,17 +104,17 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 				}
 			}
 		};
-		if (fViewer.getControl().isDisposed()) {
+		if (getViewer().getControl().isDisposed()) {
 			return;
 		}
-		fViewer.getControl().getDisplay().asyncExec(r);
+		getViewer().getControl().getDisplay().asyncExec(r);
 	}
 	
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		fViewer.getControl().setFocus();
+		getViewer().getControl().setFocus();
 	}
 	
 	/**
@@ -112,6 +122,10 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 */
 	protected String getTitleToolTipText(String prefix) {
 		return DebugUIUtils.getResourceString(prefix + TITLE_TOOLTIPTEXT);
+	}
+	
+	protected void setViewer(StructuredViewer viewer) {
+		fViewer = viewer;
 	}
 	
 	protected abstract void fillContextMenu(IMenuManager mgr);
