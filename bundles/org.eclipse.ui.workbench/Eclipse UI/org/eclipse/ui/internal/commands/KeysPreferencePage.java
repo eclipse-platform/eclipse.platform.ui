@@ -416,7 +416,7 @@ public class KeysPreferencePage
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// The multi   -key assist button.
+		// The multi-key assist button.
 		checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
 		checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
 		checkBoxMultiKeyAssist.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$
@@ -432,10 +432,10 @@ public class KeysPreferencePage
 		textMultiKeyAssistTime = new IntegerFieldEditor(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, Util.translateString(RESOURCE_BUNDLE, "textMultiKeyAssistTime.Text"), composite); //$NON-NLS-1$
 		textMultiKeyAssistTime.setPreferenceStore(store);
 		textMultiKeyAssistTime.setPreferencePage(this);
-		textMultiKeyAssistTime.setTextLimit(2);
+		textMultiKeyAssistTime.setTextLimit(9);
 		textMultiKeyAssistTime.setErrorMessage(Util.translateString(RESOURCE_BUNDLE, "textMultiKeyAssistTime.ErrorMessage")); //$NON-NLS-1$
 		textMultiKeyAssistTime.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		textMultiKeyAssistTime.setValidRange(0, Integer.MAX_VALUE);
+		textMultiKeyAssistTime.setValidRange(1, Integer.MAX_VALUE);
 		textMultiKeyAssistTime.setStringValue(
 			Integer.toString(store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
 		textMultiKeyAssistTime.setPropertyChangeListener(new IPropertyChangeListener() {
