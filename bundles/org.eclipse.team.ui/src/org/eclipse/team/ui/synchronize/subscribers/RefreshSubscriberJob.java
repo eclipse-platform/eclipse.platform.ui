@@ -20,8 +20,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
@@ -204,16 +202,16 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				monitor.done();
 			}
 			
+			Boolean modelProperty = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
+			boolean isModal = modelProperty == null ? true : false;
+			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
+			
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
 			event.setStopTime(System.currentTimeMillis());
 			event.setStatus(status.isOK() ? calculateStatus(event) : (IStatus) status);
 			notifyListeners(DONE, event);
 			changeListener.clear();
-			
-			Boolean modelProperty = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
-			boolean isModal = modelProperty == null ? true : false;
-			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
 			return event.getStatus();
 		}
 	}

@@ -14,7 +14,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -269,6 +268,20 @@ public class Utils {
 		}
 	}
 
+	public static Shell findShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			return window.getShell();
+		}
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+			return display.getActiveShell();
+		}
+		// worst case, just create our own.
+		return new Shell(TeamUIPlugin.getStandardDisplay());	
+	}
+	
 	public static IWorkbenchPartSite findSite(Control c) {
 		while (c != null && !c.isDisposed()) {
 			Object data = c.getData();

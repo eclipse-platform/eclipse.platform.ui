@@ -108,7 +108,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		String message = Policy.bind("RefreshUserNotificationPolicy.0", event.getSubscriber().getName()); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getProgressService().requestInUI(new UIJob(message) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				RefreshCompleteDialog d = new RefreshCompleteDialog(new Shell(TeamUIPlugin.getStandardDisplay()), event, participant);
+				RefreshCompleteDialog d = new RefreshCompleteDialog(Utils.findShell(), event, participant);
 				d.setBlockOnOpen(false);
 				d.open();
 				return Status.OK_STATUS;
