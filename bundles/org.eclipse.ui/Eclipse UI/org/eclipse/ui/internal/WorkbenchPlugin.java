@@ -368,7 +368,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
-		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, "");
+		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
+
+		// Temporary option to enable wizard for project capability
+		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);

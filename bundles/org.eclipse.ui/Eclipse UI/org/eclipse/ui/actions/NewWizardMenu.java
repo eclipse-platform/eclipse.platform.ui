@@ -5,7 +5,6 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
@@ -57,8 +56,12 @@ protected void fillMenu() {
 	innerMgr.removeAll();
 
 	if (this.enabled) {
+		// Temporary option to enable wizard for project capability
+		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD") == true)
+			innerMgr.add(createProjectAction);
+		
 		// Add new project ..
-		innerMgr.add(createProjectAction);
 		innerMgr.add(newProjectAction);
 		innerMgr.add(new Separator());
 
