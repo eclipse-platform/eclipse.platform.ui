@@ -82,13 +82,13 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		Tree tree = (Tree) widgets.get(0);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();		
 		assertEquals(workspace.getRoot().getProjects().length, tree.getItemCount());
-		setTextWidgetText(WORKING_SET_NAME_2);
+		setTextWidgetText(WORKING_SET_NAME_2,page);
 		assertTrue(fWizard.canFinish());
 		
 		/*
 		 * Test page state with partial page input
 		 */
- 		setTextWidgetText("");
+ 		setTextWidgetText("",page);
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish() == false);		
 		assertNotNull(page.getErrorMessage());		
@@ -96,7 +96,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		/*
 		 * Test page state with complete page input
 		 */
-		setTextWidgetText(WORKING_SET_NAME_2);
+		setTextWidgetText(WORKING_SET_NAME_2,page);
 		checkTreeItems();
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish());
