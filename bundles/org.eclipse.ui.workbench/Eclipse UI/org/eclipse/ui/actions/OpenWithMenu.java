@@ -239,14 +239,8 @@ private void openEditor(IEditorDescriptor editor) {
  * @param registry the editor registry
  */
 private void createDefaultMenuItem(Menu menu, final IFile file) {
-	final MenuItem menuItem;
-	if (registry.getDefaultEditor(file) == null) {
-		menuItem = new MenuItem(menu, SWT.RADIO);
-		menuItem.setSelection(true);
-	}
-	else {
-		menuItem = new MenuItem(menu, SWT.PUSH);
-	}
+	final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
+	menuItem.setSelection(registry.getDefaultEditor(file) == null);
 	menuItem.setText(WorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
 	
 	Listener listener = new Listener() {
