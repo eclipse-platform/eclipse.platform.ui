@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.ChildDocumentManager;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -536,7 +537,7 @@ public class ContentFormatter implements IContentFormatter {
 						
 						Position p= (Position) positions[j];
 						if (p.overlapsWith(offset, length)) {
-							
+
 							if (offset < p.getOffset())
 								fOverlappingPositionReferences.add(new PositionReference(p, true, categories[i]));
 							
@@ -619,8 +620,14 @@ public class ContentFormatter implements IContentFormatter {
 				r.setLength((offset + positions[i]) - r.getOffset());
 			
 			Position p= r.getPosition();
-			if (!document.containsPosition(r.getCategory(), p.offset, p.length)) {
+			String category= r.getCategory();
+			if (!document.containsPosition(category, p.offset, p.length)) {
 				try {
+					if (ChildDocumentManager.CHILDDOCUMENTS.equals(category)) {
+						int lineOffset= document.getLineInformationOfOffset(p.offset).getOffset(); 
+						p.setLength(p.length + p.offset - lineOffset);
+						p.setOffset(lineOffset);
+					}
 					document.addPosition(r.getCategory(), p);
 				} catch (BadPositionCategoryException x) {
 					// can not happen
