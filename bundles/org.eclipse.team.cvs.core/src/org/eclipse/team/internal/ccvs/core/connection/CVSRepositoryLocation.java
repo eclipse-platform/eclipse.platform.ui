@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
@@ -120,6 +121,21 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public static Preferences getParentPreferences() {
 		return CVSProviderPlugin.getPlugin().getInstancePreferences().node(PREF_REPOSITORIES_NODE);
+	}
+	
+	/**
+	 * Return a preferences node that contains suitabel defaults for a
+	 * repository location.
+	 * @return  a preferences node
+	 */
+	public static Preferences getDefaultPreferences() {
+		Preferences defaults = new EclipsePreferences();
+		defaults.put(PREF_SERVER_ENCODING, getDefaultEncoding());
+		return defaults;
+	}
+	
+	private static String getDefaultEncoding() {
+		return System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -480,7 +496,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// The password can only be fixed if the username is and a password is provided
 		if (userFixed && passwordFixed && (password != null))
 			this.passwordFixed = true;
-		setEncoding(encoding);
+		if (encoding != null) {
+			setEncoding(encoding);
+		}
 	}
 	
 	/*
@@ -503,7 +521,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		flushCache();
 		try {
 			if (hasPreferences()) {
-				getPreferences().removeNode();
+				internalGetPreferences().removeNode();
 				getParentPreferences().flush();
 			}
 		} catch (BackingStoreException e) {
@@ -580,7 +598,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public String getEncoding() {
 		if (hasPreferences()) {
-			return getPreferences().get(PREF_SERVER_ENCODING, getDefaultEncoding());
+			return internalGetPreferences().get(PREF_SERVER_ENCODING, getDefaultEncoding());
 		} else {
 			return getDefaultEncoding();
 		}
@@ -592,11 +610,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public void setEncoding(String encoding) {
 		if (encoding == null || encoding == getDefaultEncoding()) {
 			if (hasPreferences()) {
-				getPreferences().remove(PREF_SERVER_ENCODING);
+				internalGetPreferences().remove(PREF_SERVER_ENCODING);
 			}
 		} else {
 			ensurePreferencesStored();
-			getPreferences().put(PREF_SERVER_ENCODING, encoding);
+			internalGetPreferences().put(PREF_SERVER_ENCODING, encoding);
 			flushPreferences();
 		}
 	}	
@@ -1054,7 +1072,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public String getReadLocation() {
 		if (hasPreferences()) {
-			return getPreferences().get(PREF_READ_LOCATION, null);
+			return internalGetPreferences().get(PREF_READ_LOCATION, null);
 		} else {
 			return null;
 		}
@@ -1070,11 +1088,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public void setReadLocation(String readLocation) {
 		if (readLocation == null || readLocation.equals(getLocation())) {
 			if (hasPreferences()) {
-				getPreferences().remove(PREF_READ_LOCATION);
+				internalGetPreferences().remove(PREF_READ_LOCATION);
 			}
 		} else {
 			ensurePreferencesStored();
-			getPreferences().put(PREF_READ_LOCATION, readLocation);
+			internalGetPreferences().put(PREF_READ_LOCATION, readLocation);
 			flushPreferences();
 		}
 	}
@@ -1087,7 +1105,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public String getWriteLocation() {
 		if (hasPreferences()) {
-			return getPreferences().get(PREF_WRITE_LOCATION, null);
+			return internalGetPreferences().get(PREF_WRITE_LOCATION, null);
 		} else {
 			return null;
 		}
@@ -1103,11 +1121,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public void setWriteLocation(String writeLocation) {
 		if (writeLocation == null || writeLocation.equals(getLocation())) {
 			if (hasPreferences()) {
-				getPreferences().remove(PREF_WRITE_LOCATION);
+				internalGetPreferences().remove(PREF_WRITE_LOCATION);
 			}
 		} else {
 			ensurePreferencesStored();
-			getPreferences().put(PREF_WRITE_LOCATION, writeLocation);
+			internalGetPreferences().put(PREF_WRITE_LOCATION, writeLocation);
 			flushPreferences();
 		}
 	}
@@ -1129,7 +1147,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * Return the preferences node for this repository
 	 */
-	private Preferences getPreferences() {
+	public Preferences getPreferences() {
+		if (!hasPreferences()) {
+			ensurePreferencesStored();
+		}
+		return internalGetPreferences();
+	}
+	
+	private Preferences internalGetPreferences() {
 		return getParentPreferences().node(getPreferenceName());
 	}
 	
@@ -1153,7 +1178,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 
 	public void storePreferences() {
-		Preferences prefs = getPreferences();
+		Preferences prefs = internalGetPreferences();
 		// Must store at least one preference in the node
 		prefs.put(PREF_LOCATION, getLocation());
 		flushPreferences();
@@ -1161,7 +1186,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	private void flushPreferences() {
 		try {
-			getPreferences().flush();
+			internalGetPreferences().flush();
 		} catch (BackingStoreException e) {
 			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.75", getLocation(true)), e); //$NON-NLS-1$
 		}
@@ -1171,9 +1196,5 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (!hasPreferences()) {
 			storePreferences();
 		}
-	}
-	
-	private String getDefaultEncoding() {
-		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 }

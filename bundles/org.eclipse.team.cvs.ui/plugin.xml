@@ -126,6 +126,13 @@
             class="org.eclipse.team.internal.ccvs.ui.repo.CVSRepositoryPropertiesPage"
             id="org.eclipse.team.ccvs.ui.propertyPages.CVSRepositoryPropertiesPage">
       </page>
+      
+      <page
+            objectClass="org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot"
+            name="%ServerEncoding"
+            class="org.eclipse.team.internal.ccvs.ui.repo.RepositoryEncodingPropertyPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.RepositoryEncodingPage">
+      </page>
    </extension>
 <!-- ******************* Action Definitions ******************** -->
    <extension
