@@ -40,6 +40,24 @@ public class Manager {
 		return instance;	
 	}
 
+	private static SortedMap buildPathMapForGestureConfigurationMap(SortedMap gestureConfigurationMap) {
+		SortedMap pathMap = new TreeMap();
+		Iterator iterator = gestureConfigurationMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			if (id != null) {			
+				Path path = pathForGestureConfiguration(id, gestureConfigurationMap);
+			
+				if (path != null)
+					pathMap.put(id, path);
+			}			
+		}
+
+		return pathMap;		
+	}
+
 	private static SortedMap buildPathMapForKeyConfigurationMap(SortedMap keyConfigurationMap) {
 		SortedMap pathMap = new TreeMap();
 		Iterator iterator = keyConfigurationMap.keySet().iterator();
@@ -74,6 +92,31 @@ public class Manager {
 		}
 
 		return pathMap;		
+	}
+
+	private static Path pathForGestureConfiguration(String id, Map gestureConfigurationMap) {
+		Path path = null;
+
+		if (id != null) {
+			List pathItems = new ArrayList();
+
+			while (id != null) {	
+				if (pathItems.contains(id))
+					return null;
+							
+				GestureConfiguration gestureConfiguration = (GestureConfiguration) gestureConfigurationMap.get(id);
+				
+				if (gestureConfiguration == null)
+					return null;
+							
+				pathItems.add(0, id);
+				id = gestureConfiguration.getParent();
+			}
+		
+			path = Path.create(pathItems);
+		}
+		
+		return path;			
 	}
 
 	private static Path pathForKeyConfiguration(String id, Map keyConfigurationMap) {
@@ -337,10 +380,6 @@ public class Manager {
 	}
 
 	public void update() {
-		List pathItems = new ArrayList();
-		pathItems.add(systemPlatform());
-		pathItems.add(systemLocale());
-
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();

@@ -1532,7 +1532,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			return null;
 	}
 
-
+	private KeySequenceRecord getSelectedKeySequenceRecord() {		
+		int selection = tableCommandsForKeySequence.getSelectionIndex();
+		
+		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForKeySequence.getSelectionCount() == 1)
+			return (KeySequenceRecord) keySequenceRecords.get(selection);
+		else
+			return null;
+	}
 
 	private KeySequence getKeySequence() {
 		KeySequence keySequence = null;
@@ -1612,6 +1619,4 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private String bracket(String string) {
 		return string != null ? '[' + string + ']' : "[]"; //$NON-NLS-1$	
 	}
-	
-	
 }
