@@ -28,6 +28,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final String RSH;
 	public static final int WAIT_FACTOR;
 	public static final int COMPRESSION_LEVEL;
+	public static final boolean FAIL_IF_EXCEPTION_LOGGED;
 	
 	public static final String READ_REPOSITORY_LOCATION;
 	public static final String WRITE_REPOSITORY_LOCATION;
@@ -47,6 +48,7 @@ public class CVSTestSetup extends TestSetup {
 		LOCAL_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.localRepo", "false")).booleanValue();
 		WAIT_FACTOR = Integer.parseInt(System.getProperty("eclipse.cvs.waitFactor", "1"));
 		COMPRESSION_LEVEL = Integer.parseInt(System.getProperty("eclipse.cvs.compressionLevel", "0"));
+		FAIL_IF_EXCEPTION_LOGGED = Boolean.valueOf(System.getProperty("eclipse.cvs.failLog", "true")).booleanValue();
 	}
 
 	public static void loadProperties() {
@@ -168,7 +170,7 @@ public class CVSTestSetup extends TestSetup {
 		}
 		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
 		// Add a log listener so we can ensure that nothing is logged during a test
-		if (logListener == null) {
+		if (CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED && logListener == null) {
 			logListener = new CVSTestLogListener();
 			Platform.addLogListener(logListener);
 		}
