@@ -87,7 +87,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * @see IBreakpoint#isRegistered()
 	 */
 	public boolean isRegistered() throws CoreException {
-		return getMarker().getAttribute(REGISTERED, true);
+		return getMarker().getAttribute(REGISTERED, false);
 	}	
 	
 	/**
