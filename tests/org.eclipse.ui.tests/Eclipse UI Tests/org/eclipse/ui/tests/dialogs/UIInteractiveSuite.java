@@ -26,6 +26,7 @@ public class UIInteractiveSuite extends TestSuite {
 		addTest(new TestSuite(UIWizards.class));
 		addTest(new TestSuite(UIDialogs.class));
 		addTest(new TestSuite(UIMessageDialogs.class));
+		addTest(new TestSuite(UIErrorDialogs.class));
 	}
 
 
