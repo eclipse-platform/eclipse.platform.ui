@@ -1336,6 +1336,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Returns the <code>UndoContext</code> for this view.
      * The navigator considers the workspace the context for undo.
+     * 
+     * @return the undo context for this view
+     * @since 3.1
      */
     protected IUndoContext getUndoContext() { 
     	return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
@@ -1343,8 +1346,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     
     /**
      * Creates global action handlers for undo and redo.
+     *
+     * @since 3.1
      */
-    
     protected void createGlobalActionHandlers() {
     	IUndoContext undoContext = getUndoContext();
     	if (undoContext != null) {
