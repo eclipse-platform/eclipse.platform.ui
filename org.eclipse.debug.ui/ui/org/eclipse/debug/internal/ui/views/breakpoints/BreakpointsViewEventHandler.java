@@ -41,7 +41,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
-		if (fView.isAvailable()) {		
+		if (fView.isAvailable() && fView.isVisible()) {		
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
@@ -57,7 +57,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
 	public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-		if (fView.isAvailable()) {
+		if (fView.isAvailable() && fView.isVisible()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
@@ -86,7 +86,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
 	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-		if (fView.isAvailable()) {
+		if (fView.isAvailable() & fView.isVisible()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {

@@ -1,27 +1,22 @@
 package org.eclipse.debug.internal.ui.views;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -34,41 +29,6 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 * This event handler's view
 	 */
 	private AbstractDebugView fView;
-
-	/**
-	 * The part listener for this view. Set to <code>null</code> when this view
-	 * isn't currently listening to part changes.
-	 */
-	private DebugViewPartListener fPartListener= null;
-
-	/**
-	 * Part listener that disables updating when the variables view is not
-	 * visible and reenables updating when the view appears.
-	 */
-	private class DebugViewPartListener implements IPartListener2 {
-		public void partActivated(IWorkbenchPartReference ref) {
-		}
-		public void partBroughtToTop(IWorkbenchPartReference ref) {
-		}
-		public void partOpened(IWorkbenchPartReference ref) {
-		}
-		/**
-		 * Refresh the view when it becomes visible.
-		 */
-		public void partVisible(IWorkbenchPartReference ref) {
-			IWorkbenchPart part= ref.getPart(false);
-			// The event handler is created before the viewer is set.
-			if (part != null && part == getView() && getViewer() != null) {
-				viewBecomesVisible();
-			}
-		}
-		public void partHidden(IWorkbenchPartReference ref) {
-		}
-		public void partClosed(IWorkbenchPartReference ref) {
-		}
-		public void partDeactivated(IWorkbenchPartReference ref) {
-		}
-	}
 	
 	/**
 	 * Constructs an event handler for the given view.
@@ -79,44 +39,6 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		setView(view);
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.addDebugEventListener(this);
-		// The launch listener registers the view's part listener when there are active launches
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchesListener() {
-			public void launchesRemoved(ILaunch[] launches) {
-			}
-			/**
-			 * Start listening to part activations when a launch is added.
-			 */
-			public void launchesAdded(ILaunch[] launches) {
-				registerPartListener();
-			}
-			public void launchesChanged(ILaunch[] launches) {
-			}
-		});
-		// if there are already launches, must add a part listener
-		if (activeTargetsRemain()) {
-			registerPartListener();
-		}
-	}
-
-	/**
-	 * Creates and registers a part listener with this event handler's page,
-	 * if one does not already exist.
-	 */
-	protected void registerPartListener() {
-		if (fPartListener == null) {
-			fPartListener= new DebugViewPartListener();
-			getView().getSite().getPage().addPartListener(new DebugViewPartListener());
-		}
-	}
-
-	/**
-	 * Deregisters and disposes this event handler's part listener.
-	 */
-	protected void deregisterPartListener() {
-		if (fPartListener != null) {
-			getView().getSite().getPage().removePartListener(fPartListener);
-			fPartListener = null;
-		}
 	}
 
 	/**
@@ -149,46 +71,15 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	}
 	
 	/**
-	 * Updates this view for the given debug events. Unline
+	 * Updates this view for the given debug events. Unlike
 	 * doHandleDebugEvents(DebugEvent[]) which is only called if the view is
 	 * visible, this method is always called. This allows the view to perform
 	 * updating that must always be performed, even when the view is not
 	 * visible.
 	 */
 	protected void updateForDebugEvents(DebugEvent[] events) {
-		boolean terminatingTarget= false;
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event= events[i];
-			if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IDebugTarget) {
-				terminatingTarget= true;
-				break;
-			}
-		}
-		if (!terminatingTarget || fPartListener == null || activeTargetsRemain()) {
-			return;
-		}
-		// To get here, there must be no running IDebugTargets
-		IWorkbenchPage page= getActivePage();
-		if (page != null) {
-			page.removePartListener(fPartListener);
-			fPartListener= null;
-		}
 	}
 	
-	/**
-	 * Returns whether or not there are any active (running) debug targets.
-	 */
-	protected boolean activeTargetsRemain() {
-		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget target = targets[i];
-			if (!target.isDisconnected() && !target.isTerminated()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Implementation specific handling of debug events.
 	 * Subclasses should override.
@@ -324,20 +215,10 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Returns whether this event handler's view is currently visible.
 	 * 
-	 * @return boolean
+	 * @return whether this event handler's view is currently visible
 	 */
 	protected boolean isViewVisible() {
-		AbstractDebugView view = getView();
-		if (view != null) {
-			IWorkbenchPartSite site = view.getSite();
-			if (site != null) {
-				IWorkbenchPage page = site.getPage();
-				if (page != null) {
-					return page.isPartVisible(view);
-				}
-			}
-		}
-		return false;		
+		return getView().isVisible();	
 	}	
 	
 	/**
@@ -346,6 +227,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void viewBecomesVisible() {
 		refresh();
+	}
+	
+	/**
+	 * Called when this event handler's view becomes hidden. Default behavior is
+	 * to do nothing. Subclasses may override.
+	 */
+	protected void viewBecomesHidden() {
 	}
 
 }

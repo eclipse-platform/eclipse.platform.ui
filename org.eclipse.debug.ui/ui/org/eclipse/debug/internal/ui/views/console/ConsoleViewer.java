@@ -66,6 +66,12 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	private IConsoleHyperlink fHyperLink = null;
 	
+	/**
+	 * Whether this viewer is visible. The console viewer only paints in
+	 * response to document changes when it is visible.
+	 */
+	private boolean fVisible = false;
+	
 	protected InternalDocumentListener fInternalDocumentListener= new InternalDocumentListener();
 	/**
 	 * Internal document listener.
@@ -87,8 +93,10 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 				return;
 			}
 			getTextWidget().setEditable(!doc.isReadOnly());
-			revealEndOfDocument();
-			paintDocument();
+			if (isVisible()) {
+				revealEndOfDocument();
+				paintDocument();
+			}
 		}
 	}
 	
@@ -447,5 +455,15 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	public void mouseUp(MouseEvent e) {
 	}
 
+	protected void setVisible(boolean visible) {
+		fVisible = visible;
+		if (visible) {
+			paintDocument();
+		}
+	}
+	
+	protected boolean isVisible() {
+		return fVisible;
+	}
 }
 

@@ -37,10 +37,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
@@ -115,6 +117,76 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * May be <code>null</code>.
 	 */
 	private IMemento fMemento;
+	
+	/**
+	 * Whether this view is currently visible.
+	 */
+	private boolean fIsVisible = false;
+	
+	/**
+	 * The part listener for this view, used to notify this view when it
+	 * becomes visible and hidden. Set to <code>null</code> when this view isn't
+	 * currently listening to part changes.
+	 */
+	private DebugViewPartListener fPartListener= null;
+
+	/**
+	 * Part listener that disables updating when the variables view is not
+	 * visible and reenables updating when the view appears.
+	 */
+	private class DebugViewPartListener implements IPartListener2 {
+		/**
+		 * 
+		 * @see org.eclipse.ui.IPartListener2#partVisible(IWorkbenchPartReference)
+		 */
+		public void partVisible(IWorkbenchPartReference ref) {
+			IWorkbenchPart part= ref.getPart(false);
+			if (part == AbstractDebugView.this) {
+				fIsVisible = true;
+				becomesVisible();
+			}
+		}
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partHidden(IWorkbenchPartReference)
+		 */
+		public void partHidden(IWorkbenchPartReference ref) {
+			IWorkbenchPart part= ref.getPart(false);
+			if (part == AbstractDebugView.this) {
+				fIsVisible = false;
+				becomesHidden();
+			}
+		}
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partActivated(IWorkbenchPartReference)
+		 */
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(IWorkbenchPartReference)
+		 */
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partClosed(IWorkbenchPartReference)
+		 */
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)
+		 */
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partOpened(IWorkbenchPartReference)
+		 */
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
+
+	}	
 	
 	/**
 	 * Constructs a new debug view.
@@ -196,6 +268,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	public void createPartControl(Composite parent) {
+		registerPartListener();
 		super.createPartControl(parent);
 		createActions();
 		initializeToolBar();
@@ -258,6 +331,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		deregisterPartListener();
 		if (getViewer() instanceof StructuredViewer) {
 			((StructuredViewer)getViewer()).removeDoubleClickListener(this);
 		}
@@ -772,6 +846,57 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		fContextMenuManagers.add(contextMenuManager);
 	}
+	
+	/**
+	 * Notification this view is now visible.
+	 * 
+	 * @since 2.1
+	 */
+	protected void becomesVisible() {
+	}
+	
+	/**
+	 * Notification this view is now hidden.
+	 * 
+	 * @since 2.1
+	 */
+	protected void becomesHidden() {
+	}
+	
+	/**
+	 * Returns whether this view is currently visible.
+	 * 
+	 * @return whether this view is currently visbile
+	 * @since 2.1
+	 */
+	public boolean isVisible() {
+		return fIsVisible;
+	}
+	
+	/**
+	 * Creates and registers a part listener with this event handler's page,
+	 * if one does not already exist.
+	 * 
+	 * @since 2.1
+	 */
+	protected void registerPartListener() {
+		if (fPartListener == null) {
+			fPartListener= new DebugViewPartListener();
+			getSite().getPage().addPartListener(fPartListener);
+		}
+	}
+
+	/**
+	 * Deregisters and disposes this event handler's part listener.
+	 * 
+	 * @since 2.1
+	 */
+	protected void deregisterPartListener() {
+		if (fPartListener != null) {
+			getSite().getPage().removePartListener(fPartListener);
+			fPartListener = null;
+		}
+	}	
 }	
 
 

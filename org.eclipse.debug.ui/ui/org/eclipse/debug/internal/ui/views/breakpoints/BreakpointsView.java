@@ -123,4 +123,12 @@ public class BreakpointsView extends AbstractDebugView {
 	private void setEventHandler(BreakpointsViewEventHandler eventHandler) {
 		fEventHandler = eventHandler;
 	}
+	/**
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		getViewer().refresh();
+	}
+
 }

@@ -45,4 +45,21 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 			getEventHandler().dispose();
 		}	
 	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
+	 */
+	protected void becomesHidden() {
+		super.becomesHidden();
+		getEventHandler().viewBecomesHidden();
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		getEventHandler().viewBecomesVisible();
+	}
+
 }
