@@ -773,7 +773,8 @@ public void setVisibleEditor(EditorPane comp) {
 			tabFolder.setSelection(index);
 		}
 		setControlSize(visibleEditor);
-		visibleEditor.getControl().setVisible(true);
+		if(visibleEditor.getControl() != null)
+			visibleEditor.getControl().setVisible(true);
 	}
 
 	becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
