@@ -4015,7 +4015,7 @@ public class TextViewer extends Viewer implements
 			if (region == null)
 				return;
 
-			List list= new ArrayList();
+			List list= new ArrayList(presentation.getDenumerableRanges());
 			Iterator e= presentation.getAllStyleRangeIterator();
 			while (e.hasNext()) {
 				range= (StyleRange) e.next();

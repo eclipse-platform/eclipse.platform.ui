@@ -354,6 +354,31 @@ public class TextPresentation {
 	}
 	
 	/**
+	 * Merges the given ranges into this presentation. Each range must be a 
+	 * subrange of the presentation's default range. The ranges must be ordered
+	 * by increasing offset and must not overlap (but may be adjacent).
+	 *
+	 * @param ranges the ranges to be added
+	 * @since 3.0
+	 */
+	public void mergeStyleRanges(StyleRange[] ranges) {
+		int j= 0;
+		ArrayList oldRanges= fRanges;
+		ArrayList newRanges= new ArrayList(2*ranges.length + oldRanges.size());
+		for (int i= 0, n= ranges.length; i < n; i++) {
+			StyleRange range= ranges[i];
+			fRanges= oldRanges; // for getFirstIndexAfterWindow(...)
+			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
+				newRanges.add(oldRanges.get(j));
+			fRanges= newRanges; // for mergeStyleRange(...)
+			mergeStyleRange(range);
+		}
+		for (int m= oldRanges.size(); j < m; j++)
+			newRanges.add(oldRanges.get(j));
+		fRanges= newRanges;
+	}
+	
+	/**
 	 * Applies the template's style to the target.
 	 * 
 	 * @param template the style range to be used as template
