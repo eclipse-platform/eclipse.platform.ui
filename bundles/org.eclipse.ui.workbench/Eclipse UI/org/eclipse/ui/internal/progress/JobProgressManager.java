@@ -126,7 +126,7 @@ public class JobProgressManager implements IProgressProvider {
 	};
 
 	/**
-	 * Create a new instance of the receiver.	 *
+	 * Create a new instance of the receiver.
 	 */
 	JobProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
