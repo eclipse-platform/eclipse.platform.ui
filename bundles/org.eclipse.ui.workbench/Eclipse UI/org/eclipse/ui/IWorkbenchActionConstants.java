@@ -477,9 +477,9 @@ public interface IWorkbenchActionConstants {
 
 	/**
 	 * Navigate menu: name of group for end of menu
-	 * (value <code>"navStart"</code>).
+	 * (value <code>"navEnd"</code>).
 	 */
-	public static final String NAV_END = "navStart";		// Group. //$NON-NLS-1$
+	public static final String NAV_END = "navEnd";		// Group. //$NON-NLS-1$
 
 	/**
 	 * Navigate menu: name of group for extra Open actions
