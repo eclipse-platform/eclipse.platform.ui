@@ -34,6 +34,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension3;
@@ -105,6 +106,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	private Position fHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
+	/**
+	 * The text input listener.
+	 * @since 3.0
+	 */
+	private ITextInputListener fTextInputListener;
+	/**
+	 * Flag which tells that a new document input is currently being set.
+	 * @since 3.0
+	 */
+	private boolean fInputDocumentAboutToBeChanged;
 
 	
 	/**
@@ -231,8 +242,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					}
 				}
 				if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
+					int end= Math.max(fHighlightAnnotationRange.offset + fHighlightAnnotationRange.length, highlightAnnotationRangeEnd);
+					end= Math.min(end, fSourceViewer.getDocument().getLength());
 					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, highlightAnnotationRangeStart);
-					fHighlightAnnotationRange.length= Math.max(fHighlightAnnotationRange.length, highlightAnnotationRangeEnd - highlightAnnotationRangeStart);
+					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, fSourceViewer.getDocument().getLength());
+					fHighlightAnnotationRange.length= end - fHighlightAnnotationRange.offset; 
 				}
 			}
 		}
@@ -246,7 +260,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		
 		catchupWithModel();
 		
-		invalidateTextPresentation();
+		if (!fInputDocumentAboutToBeChanged)
+			invalidateTextPresentation();
 		
 		enablePainting();
 	}
@@ -339,7 +354,23 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public void addHighlightAnnotationType(Object annotationType) {
 		fHighlightAnnotationTypes.add(annotationType);
-	
+		if (fTextInputListener == null) {
+			fTextInputListener= new ITextInputListener() {
+				/*
+				 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+				 */
+				public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+					fInputDocumentAboutToBeChanged= true;
+				}
+				/*
+				 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+				 */
+				public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+					fInputDocumentAboutToBeChanged= false;
+				}
+			};
+			fSourceViewer.addTextInputListener(fTextInputListener);
+		}
 	}
 	
 	/**
@@ -363,6 +394,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public void removeHighlightAnnotationType(Object annotationType) {
 		fHighlightAnnotationTypes.remove(annotationType);
+		if (fHighlightAnnotationTypes.isEmpty() && fTextInputListener != null) {
+			fSourceViewer.removeTextInputListener(fTextInputListener);
+			fTextInputListener= null;
+			fInputDocumentAboutToBeChanged= false;
+		}
 	}
 	
 	/**
@@ -372,6 +408,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	public void removeAllAnnotationTypes() {
 		fAnnotationTypes.clear();
 		fHighlightAnnotationTypes.clear();
+		if (fTextInputListener != null) {
+			fSourceViewer.removeTextInputListener(fTextInputListener);
+			fTextInputListener= null;
+		}
 	}
 	
 	/**
