@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.editorsupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IEditorPart;
+
 /**
  * This class provides an OS independent interface to the
  * components available on the platform
