@@ -50,6 +50,4 @@ public class TargetProjectAction extends TeamAction {
 */
 		return true;
 	}
-
-
 }

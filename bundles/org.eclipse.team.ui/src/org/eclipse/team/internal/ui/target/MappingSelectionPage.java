@@ -100,11 +100,10 @@ public class MappingSelectionPage extends TargetWizardPage {
 		return this.path;
 	}
 	
-	/*
+	/**
 	 * Attempt to set the viewer input.
 	 * Do nothing if we don't have enough info yet to set it.
 	 */
-	 
 	private void setViewerInput() {
 		if(this.site == null || viewer == null)
 			return;

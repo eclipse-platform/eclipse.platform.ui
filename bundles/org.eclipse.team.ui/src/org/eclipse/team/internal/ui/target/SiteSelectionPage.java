@@ -7,13 +7,18 @@ package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,10 +38,12 @@ public class SiteSelectionPage extends TargetWizardPage {
 	private Button useExistingRepo;
 	private Button useNewRepo;
 	private Site site;
+	private Site initialSiteSelection;
 	
-	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
+	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage, Site site) {
 		super(pageName, title, titleImage);
 		setDescription(Policy.bind("SiteSelectionPage.description")); //$NON-NLS-1$
+		initialSiteSelection = site;
 	}
 
 	protected TableViewer createTable(Composite parent) {
@@ -64,7 +71,15 @@ public class SiteSelectionPage extends TargetWizardPage {
 		useExistingRepo = createRadioButton(composite, Policy.bind("SiteSelectionPage.useExisting"), 2); //$NON-NLS-1$
 		table = createTable(composite);
 		table.setContentProvider(new WorkbenchContentProvider());
-		table.setLabelProvider(new WorkbenchLabelProvider());
+		table.setLabelProvider(new WorkbenchLabelProvider() {
+			protected String decorateText(String input, Object element) {
+				if(element.equals(new SiteElement(initialSiteSelection))) {
+					return super.decorateText(input, element) + " (current location)";
+				}
+				return super.decorateText(input, element);
+			}
+		});
+		
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				SiteElement siteElement = (SiteElement)((IStructuredSelection)table.getSelection()).getFirstElement();
@@ -105,8 +120,12 @@ public class SiteSelectionPage extends TargetWizardPage {
 		if (sites.length == 0) {
 			useNewRepo.setSelection(true);	
 		} else {
-			useExistingRepo.setSelection(true);	
-			table.setSelection(new StructuredSelection(new SiteElement(sites[0])));
+			useExistingRepo.setSelection(true);				
+			if(initialSiteSelection != null) {
+				table.setSelection(new StructuredSelection(new SiteElement(initialSiteSelection)));
+			} else {
+				table.setSelection(new StructuredSelection(new SiteElement(sites[0])));
+			}
 		}
 	}
 	

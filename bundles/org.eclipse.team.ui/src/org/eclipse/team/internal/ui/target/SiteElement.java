@@ -22,7 +22,7 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 	public SiteElement(Site site) {
 		this.site = site;
 	}
-
+	
 	public SiteElement(Site site, boolean showFiles) {
 		this.site = site;
 		this.showFiles = showFiles;

@@ -64,7 +64,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	/*
 	 * @see WizardPage#canFlipToNextPage
 	 */
-	public boolean canFlipToNextPage() {
+	public boolean canFlipToNextPage() {		
 		return selectedWizard != null && selectedWizard.getPageCount() > 0;
 	}
 	/*

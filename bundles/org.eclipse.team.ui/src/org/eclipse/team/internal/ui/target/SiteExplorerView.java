@@ -62,7 +62,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		// Refresh (toolbar)
 		addSiteAction = new Action(Policy.bind("SiteExplorerViewaddSiteAction"), TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
 			public void run() {
-				ConfigureProjectWizard wizard = new ConfigureTargetWizard();
+				ConfigureTargetWizard wizard = new ConfigureTargetWizard();
 				wizard.init(null, null);
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
