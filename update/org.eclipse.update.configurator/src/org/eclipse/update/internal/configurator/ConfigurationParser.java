@@ -284,7 +284,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				config = new Configuration(new Date(time));
 			} catch (NumberFormatException e1) {
 				time = new Date().getTime();
-				Utils.log(Messages.getString("Parser.date", date));
+				Utils.log(Messages.getString("InstalledSiteParser.date", date));
 				config = new Configuration(); // constructed with current date
 			}
 		}
