@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.registry.ProjectImageRegistry;
@@ -244,6 +246,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		store.setDefault(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, true);
 		store.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_PROMPT);
+		store.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 	}
 
 	/**
