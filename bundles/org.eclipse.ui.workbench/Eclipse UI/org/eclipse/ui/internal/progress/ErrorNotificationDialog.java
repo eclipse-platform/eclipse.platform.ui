@@ -86,7 +86,7 @@ public class ErrorNotificationDialog extends Dialog {
                 : parentShell);
         setBlockOnOpen(false);
         setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE
-                | SWT.RESIZE);
+                | SWT.RESIZE | getDefaultOrientation());
     }
 
     /*

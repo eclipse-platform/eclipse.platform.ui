@@ -106,8 +106,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     public AboutFeaturesDialog(Shell parentShell, String productName,
             AboutBundleGroupData[] bundleGroupInfos) {
         super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
-                | SWT.APPLICATION_MODAL);
+        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 
         this.productName = productName;
 

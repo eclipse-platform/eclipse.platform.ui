@@ -140,7 +140,7 @@ public class ErrorDialog extends IconAndMessageDialog {
         this.status = status;
         statusList = Arrays.asList(status.getChildren());
         this.displayMask = displayMask;
-        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /*

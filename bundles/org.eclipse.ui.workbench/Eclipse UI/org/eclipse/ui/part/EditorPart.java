@@ -12,6 +12,7 @@ package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -240,6 +241,13 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
         setDefaultPartName();
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#getOrientation()
+	 */
+	public int getOrientation() {
+		return SWT.RIGHT_TO_LEFT;
+	}
 
     private void setDefaultPartName() {
         if (compatibilityTitleListener == null) {

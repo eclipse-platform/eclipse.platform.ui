@@ -50,7 +50,7 @@ public class DetachedWindow extends Window {
     public DetachedWindow(WorkbenchPage workbenchPage) {
         super(workbenchPage.getWorkbenchWindow().getShell());
         setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
-        SWT.RESIZE);
+        SWT.RESIZE | getDefaultOrientation());
         this.page = workbenchPage;
         folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
     }

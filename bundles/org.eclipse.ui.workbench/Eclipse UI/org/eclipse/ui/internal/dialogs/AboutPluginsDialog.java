@@ -108,8 +108,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     public AboutPluginsDialog(Shell parentShell, String productName,
             Bundle[] bundles, String title, String message, String helpContextId) {
         super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
-                | SWT.APPLICATION_MODAL);
+        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
         this.title = title;
         this.message = message;
         this.helpContextId = helpContextId;

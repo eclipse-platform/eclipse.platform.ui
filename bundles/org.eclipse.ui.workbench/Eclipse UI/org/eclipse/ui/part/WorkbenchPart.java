@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
@@ -448,6 +450,19 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
 
         firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
 
+    }
+    
+    /**
+     * Return the orientation of this part. By default it
+     * will use the default orientation from Window.
+     * @return int SWT#RIGHT_TO_LEFT or SWT#LEFT_TO_RIGHT
+     * @see Window#getDefaultOrientation()
+     * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+     * @since 3.1
+     */
+    public int getOrientation(){
+    	return Window.getDefaultOrientation();
     }
 
 }

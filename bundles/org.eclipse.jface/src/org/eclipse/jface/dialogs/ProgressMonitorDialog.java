@@ -277,7 +277,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      */
     public ProgressMonitorDialog(Shell parent) {
         super(parent);
-        setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL); // no
+        setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL); // no
         // close
         // button
         setBlockOnOpen(false);

@@ -367,7 +367,7 @@ public abstract class Dialog extends Window {
      */
     protected Dialog(Shell parentShell) {
         super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+        setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | getDefaultOrientation());
         setBlockOnOpen(true);
         if (parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT)
             Policy.getLog().log(

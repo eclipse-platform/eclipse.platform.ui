@@ -270,7 +270,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
         if (blockingStatus instanceof IJobStatus)
             blockingJob = ((IJobStatus) blockingStatus).getJob();
         setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL
-                | SWT.RESIZE);
+                | SWT.RESIZE| getDefaultOrientation());
         // no close button
         setBlockOnOpen(false);
         setMessage(blockingStatus.getMessage());

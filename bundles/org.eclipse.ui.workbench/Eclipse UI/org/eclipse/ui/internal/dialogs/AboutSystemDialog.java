@@ -59,8 +59,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
 
     public AboutSystemDialog(Shell parentShell) {
         super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
-                | SWT.APPLICATION_MODAL);
+        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
     }
 
     /* (non-Javadoc)

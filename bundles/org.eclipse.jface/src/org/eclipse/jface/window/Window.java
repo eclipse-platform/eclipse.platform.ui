@@ -11,6 +11,7 @@
 package org.eclipse.jface.window;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
@@ -143,6 +144,13 @@ public abstract class Window {
 	 * The exception handler for this application.
 	 */
 	private static IExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+	
+	/**
+	 * The default orientation of the window. By default
+	 * it is SWT#NONE but it can also be SWT#LEFT_TO_RIGHT
+	 * or SWT#RIGHT_TO_LEFT
+	 */
+	private static int orientation = SWT.NONE;
 
 	/**
 	 * The parent shell.
@@ -154,7 +162,7 @@ public abstract class Window {
 	 * 
 	 * @see #setShellStyle
 	 */
-	private int shellStyle = SWT.SHELL_TRIM;
+	private int shellStyle = SWT.SHELL_TRIM | getDefaultOrientation();
 
 	/**
 	 * Window manager, or <code>null</code> if none.
@@ -913,6 +921,38 @@ public abstract class Window {
 	public static void setExceptionHandler(IExceptionHandler handler) {
 		if (exceptionHandler instanceof DefaultExceptionHandler)
 			exceptionHandler = handler;
+	}
+
+	/**
+	 * Get the default orientation for widget. If the locale is Hebrew (iw or
+	 * he), Arabic (ar), Persian (fa) or Urdu (ur) then return
+	 * SWT.RIGHT_TO_LEFT, otherwise return SWT.LEFT_TO_RIGHT.
+	 * <strong>NOTE</strong> This API is experimental and may 
+	 * be subject to change during the development cycle for
+	 * Eclipse 3.1.
+	 * 
+	 * @return int SWT.RIGHT_TO_LEFT or SWT.LEFT_TO_RIGHT
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 * @see SWT#NONE
+	 * @since 3.1
+	 */
+	public static int getDefaultOrientation() {
+		return orientation;
+
+	}
+
+	/**
+	 * Set the default orientation of windows.
+	 * @param defaultOrientation
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 * @see SWT#NONE
+	 * @since 3.1
+	 */
+	public static void setDefaultOrientation(int defaultOrientation) {
+		orientation = defaultOrientation;
+		
 	}
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -60,7 +61,7 @@ public final class WorkbenchWindowConfigurer implements
     /**
      * The shell style bits to use when the window's shell is being created.
      */
-    private int shellStyle = SWT.SHELL_TRIM;
+    private int shellStyle = SWT.SHELL_TRIM | Window.getDefaultOrientation();
 
     /**
      * The window title to set when the window's shell has been created.

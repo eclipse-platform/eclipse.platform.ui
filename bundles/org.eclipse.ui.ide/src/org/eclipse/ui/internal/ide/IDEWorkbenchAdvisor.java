@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,6 +43,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -173,7 +176,24 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
         // initialize the activity helper
         activityHelper = IDEWorkbenchActivityHelper.getInstance();
+        
+        Window.setDefaultOrientation(getDefaultOrientation());
     }
+
+    /**
+	 * Get the default orientation for the workbench.
+	 * @return int
+	 */
+	private int getDefaultOrientation() {
+
+		Locale locale = Locale.getDefault();
+		String lang = locale.getLanguage();
+
+		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				|| "ur".equals(lang)) //$NON-NLS-1$
+			return SWT.RIGHT_TO_LEFT;
+		return SWT.NONE; //Use the default value if there is nothing specified
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
