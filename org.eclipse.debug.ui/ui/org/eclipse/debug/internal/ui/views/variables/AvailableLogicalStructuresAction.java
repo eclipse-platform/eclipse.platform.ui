@@ -95,7 +95,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		
 		fMenu= new Menu(parent);
 		ILogicalStructureType[] types = getTypes();
-        ILogicalStructureType enabledType = DebugPlugin.getSelectedStructureType(types);
+        ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
                 ILogicalStructureType type= types[i];

@@ -663,30 +663,35 @@ public class DebugPlugin extends Plugin {
 	}
     
     /**
-     * Returns the structure that the user has chosen from among the given
-     * collection of structures or <code>null</code> if the user has chosen
-     * to display none.
-     * @param structures the collection of structures available
-     * @return the structure that the user has chosen from among the given collection
-     *  or <code>null</code> if the user has chosen to display none
+     * Returns the default logical structure type among the given combination of
+     * logical structure types, or <code>null</code> if none. When the given combination
+     * of logical structure type is applicable for a value, the default logical structure
+     * type is used to display a value.
+     * 
+     * @param structures a combination of structures applicable to a value
+     * @return the default structure that should be used to display the value
+     * or <code>null</code> if none
      *  
      * @since 3.1
      */
-    public static ILogicalStructureType getSelectedStructureType(ILogicalStructureType[] types) {
+    public static ILogicalStructureType getDefaultStructureType(ILogicalStructureType[] types) {
         return LogicalStructureManager.getDefault().getSelectedStructureType(types);
     }
     
     /**
-     * Sets the selected logical structure type for the given combination of logical
-     * structure types.
-     * @param types the combination on structure types
-     * @param selected the type that is selected for the given combo or <code>null</code>
-     *  if the user has deselected any structure for the given combo
+     * Sets the default logical structure type among the given combination of logical structure
+     * types. The logical structure types provided should all be applicable to a single
+     * value. Specifying <code>null</code> indicates there is no default logical stucture
+     * for the given combination of types.
+     * 
+     * @param types a combination of logical structure types applicable to a value
+     * @param def the default logical structure among the given combination of types
+     * or <code>null</code> if none
      *  
      * @since 3.1
      */
-    public static void setSelectedStructureType(ILogicalStructureType[] types, ILogicalStructureType selected) {
-        LogicalStructureManager.getDefault().setEnabledType(types, selected);
+    public static void setDefaultStructureType(ILogicalStructureType[] types, ILogicalStructureType def) {
+        LogicalStructureManager.getDefault().setEnabledType(types, def);
     }
 	
 	/**

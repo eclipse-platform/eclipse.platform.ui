@@ -122,7 +122,7 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
         if (isShowLogicalStructure()) {
             ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
             if (types.length > 0) {
-                ILogicalStructureType type = DebugPlugin.getSelectedStructureType(types);
+                ILogicalStructureType type = DebugPlugin.getDefaultStructureType(types);
                 if (type != null && !previousStructureIds.contains(type.getId())) {
                     try {
                         value= type.getLogicalStructure(value);

@@ -61,7 +61,7 @@ public class SelectLogicalStructureAction extends Action {
                 if (isChecked()) {
                     type= fType;
                 }
-                DebugPlugin.setSelectedStructureType(fAvailableTypes, type);
+                DebugPlugin.setDefaultStructureType(fAvailableTypes, type);
 				getView().getViewer().refresh();					
 			}
 		});			
