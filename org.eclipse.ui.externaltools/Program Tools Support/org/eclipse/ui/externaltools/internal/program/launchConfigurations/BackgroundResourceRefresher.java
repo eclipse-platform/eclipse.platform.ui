@@ -23,7 +23,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
