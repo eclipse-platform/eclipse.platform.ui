@@ -96,9 +96,15 @@ public Composite createCompositeSeparator(Composite parent) {
 	composite.setBackground(getColor(COLOR_COMPOSITE_SEPARATOR));
 	return composite;
 }
+
+public Label createHeadingLabel(Composite parent, String text) {
+	return createHeadingLabel(parent, text, null, SWT.NONE);
+}
+
 public Label createHeadingLabel(Composite parent, String text, Color bg) {
 	return createHeadingLabel(parent, text, bg, SWT.NONE);
 }
+
 public Label createHeadingLabel(Composite parent, String text, Color bg, int style) {
 	Label label = new Label(parent, style);
 	label.setText(text);
@@ -107,6 +113,7 @@ public Label createHeadingLabel(Composite parent, String text, Color bg, int sty
     label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 	return label;
 }
+
 public Label createHyperlinkLabel(Composite parent, String text, IHyperlinkListener listener) {
 	return createHyperlinkLabel(parent, text, listener, SWT.NULL);
 }
