@@ -77,7 +77,6 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 			label.append(' ');
 		}
 		label.append(action.getText());
-		label.append("..."); //$NON-NLS-1$
 		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
