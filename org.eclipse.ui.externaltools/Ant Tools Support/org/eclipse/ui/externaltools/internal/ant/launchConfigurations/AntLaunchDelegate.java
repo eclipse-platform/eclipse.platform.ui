@@ -37,7 +37,6 @@ import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
  */
 public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	
-	private static final String TRUE = "true"; //$NON-NLS-1$
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.AntProcessBuildLogger"; //$NON-NLS-1$
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$

@@ -21,7 +21,6 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -258,7 +257,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 * Label provider for classpath elements
 	 */
 	private static final class AntPropertiesLabelProvider extends LabelProvider implements ITableLabelProvider {
-		private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
 
 		private Image classpathImage;
 		private Image fileImage;
@@ -304,14 +302,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 				fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 			return fileImage;
-		}
-		
-		private Image getClasspathImage() {
-			if (classpathImage == null) {
-				ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_CLASSPATH);
-				classpathImage = desc.createImage();
-			}
-			return classpathImage;
 		}
 	}
 	

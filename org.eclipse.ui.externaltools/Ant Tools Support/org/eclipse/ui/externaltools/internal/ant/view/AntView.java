@@ -160,7 +160,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * The tree viewer that displays the users ant projects
 	 */
 	private TreeViewer projectViewer;
-	private ToolBar projectToolBar;
 	private AntProjectContentProvider projectContentProvider;
 
 	/**
