@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
@@ -105,16 +106,15 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		String syncKeyPrefix = id.getLocalName();
 		remoteSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + end.getName(), end);
 		baseSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + start.getName(), start);
-		mergedSynchronizer = new RemoteSynchronizer(syncKeyPrefix + "0merged");
+		mergedSynchronizer = new RemoteSynchronizer(syncKeyPrefix + "0merged"); //$NON-NLS-1$
 		
-		// TODO: must use revision comparison until bugs 40035 and 40129 are addressed
-//		try {
-//			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
-//		} catch (TeamException e) {
-//			// use the default but log an exception because the content comparison should
-//			// always be available.
-//			CVSProviderPlugin.log(e);
-//		}
+		try {
+			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
+		} catch (TeamException e) {
+			// use the default but log an exception because the content comparison should
+			// always be available.
+			CVSProviderPlugin.log(e);
+		}
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(this);
