@@ -329,7 +329,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				fInputBuffer.setLength(0);
 				fPartitions.clear();
 				// reset lines processed to 0
-				fLineNotifier.setLinesProcessed(0);
+				if (fLineNotifier != null) {
+					fLineNotifier.setLinesProcessed(0);
+				}
 				// remove existing positions
 				try {
 					Position[] positions = fDocument.getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
