@@ -100,7 +100,8 @@ import org.eclipse.update.core.SiteManager;
 public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
-	
+	private static final String WORKBENCH_PREFERENCE_CATEGORY_ID = "org.eclipse.ui.preferencePages.Workbench"; //$NON-NLS-1$
+
 	/**
 	 * The dialog setting key to access the known installed features
 	 * since the last time the workbench was run.
@@ -1119,4 +1120,12 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#getMainPreferencePageId
+	 */
+	public String getMainPreferencePageId() {
+		// indicate that we want the Workench preference page to be prominent
+		return WORKBENCH_PREFERENCE_CATEGORY_ID;
+	}
+
 }

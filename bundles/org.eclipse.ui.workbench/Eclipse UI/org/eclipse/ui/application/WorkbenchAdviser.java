@@ -500,16 +500,27 @@ public abstract class WorkbenchAdviser {
 	 * Returns the id of the initial perspective for new workbench windows.
 	 * <p>
 	 * This method is called during startup when the workbench is restoring
-	 * the window(s) or creating a new window. The default implementation
-	 * returns <code>null</code>. Subclasses may override.
+	 * the window(s) or creating a new window. Subclasses must implement.
 	 * </p>
 	 * 
-	 * @return the id of the initial perspective, or <code>null</code> if none
-	 * @issue if this returns null, we're in trouble?
+	 * @return the id of the initial perspective
 	 */
-	public String getInitialWindowPerspectiveId() {
-		// default: no initial perspective
+	public abstract String getInitialWindowPerspectiveId();
+	
+	/**
+	 * Returns the id of the preference page that should be presented most
+	 * prominently.
+	 * <p>
+	 * The default implementation returns <code>null</code>. 
+	 * Subclasses may override.
+	 * </p>
+	 * 
+	 * @return the id of the preference page, or <code>null</code> if none
+	 */
+	public String getMainPreferencePageId() {
+		// default: no opinion
 		return null;
 	}
+	
 }
 

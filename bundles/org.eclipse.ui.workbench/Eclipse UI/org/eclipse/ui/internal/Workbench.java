@@ -1729,10 +1729,13 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Returns the default perspective id.
 	 * 
-	 * @return the default perspective id, or <code>null</code> if none
+	 * @return the default perspective id
 	 */
 	public String getDefaultPerspectiveId() {
-		return getAdviser().getInitialWindowPerspectiveId();
+		String id = getAdviser().getInitialWindowPerspectiveId();
+		// make sure we the adviser gave us one
+		Assert.isNotNull(id);
+		return id;
 	}
 
 	/**
@@ -1744,6 +1747,17 @@ public final class Workbench implements IWorkbench {
 		return getAdviser().getDefaultWindowInput();
 	}
 	
+	/**
+	 * Returns the id of the preference page that should be presented most
+	 * prominently.
+	 * 
+	 * @return the id of the preference page, or <code>null</code> if none
+	 */
+	public String getMainPreferencePageId() {
+		String id = getAdviser().getMainPreferencePageId();
+		return id;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench
 	 * @since 3.0
