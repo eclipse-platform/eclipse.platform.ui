@@ -17,7 +17,7 @@ Markers are optionally persisted by the workspace whenever a workspace
 save or snapshot is done.
 <p>Users can define and query for markers of a given type.&nbsp; Marker
 types are defined in a hierarchy which supports multiple-inheritance.&nbsp;
-Marker type definitions also specify a number attributes which must or
+Marker type definitions also specify a number of attributes which must or
 may be present on a marker of that type as well as whether or not markers
 of that type should be persisted.
 <p>The markers extension-point allows marker writers to register their
@@ -37,8 +37,8 @@ CDATA #REQUIRED</tt>
 <b>type -</b> the fully-qualified id of a marker super type (i.e., a marker
 type defined by another marker extension)</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT transient EMPTY></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST transient</tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT persistent EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST persistent</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -46,7 +46,7 @@ CDATA #REQUIRED</tt>
 <li>
 <b>value</b> - <tt>"true"</tt> or <tt>"false"</tt> indicating whether or
 not markers of this type should be persisted by the workspace.&nbsp; If
-the transient characteristic is not specified, the marker type is <b>not</b>
+the persistent characteristic is not specified, the marker type is <b>not</b>
 persisted.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT attribute EMPTY></tt>
@@ -63,7 +63,7 @@ of this type</li>
 <p>Following is an example of a builder configuration:
 <p><tt>&nbsp;&nbsp; &lt;extension id="com.xyz.coolMarker" point="org.eclipse.core.resources.markers"
 name="Cool Marker"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;transient value="false"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;persistent value="true"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;super type="org.eclipse.core.resources.problemmarker"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;super type="org.eclipse.core.resources.textmarker"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute name="owner"/></tt>
