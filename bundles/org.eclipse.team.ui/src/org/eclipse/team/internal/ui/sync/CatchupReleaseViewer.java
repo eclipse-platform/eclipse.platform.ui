@@ -91,12 +91,18 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 		}
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-			if (selection.size() != 1) {
+			if (selection.size() == 0) {
 				setEnabled(false);
 				return;
 			}
-			ITeamNode node = (ITeamNode)selection.getFirstElement();
-			setEnabled(node.getResource().isAccessible());
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				ITeamNode node = (ITeamNode)iter.next();
+				if(!node.getResource().isAccessible()) {
+					setEnabled(false);
+					return;
+				}
+			}
+			setEnabled(true);
 		}
 	};
 	
