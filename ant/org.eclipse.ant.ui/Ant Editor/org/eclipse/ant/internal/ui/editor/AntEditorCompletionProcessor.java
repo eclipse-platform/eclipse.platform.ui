@@ -267,7 +267,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             	}
 				break;
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
-                proposals= getClosingTaskProposals(getNotClosedTaskName(document, lineNumber, columnNumber), prefix);
+                proposals= getClosingTaskProposals(getOpenElementName(), prefix);
             	if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.30"); //$NON-NLS-1$
             	}
@@ -574,17 +574,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	/**
      * Returns the one possible completion for the specified unclosed task .
      * 
-     * @param unclosedTaskName the task that hasn't been closed 
+     * @param openElementName the task that hasn't been closed 
      * last
      * @param prefix The prefix that the one possible proposal should start 
      * with. The prefix may be an empty string.
      * @return array which may contain either one or none proposals
      */
-    private ICompletionProposal[] getClosingTaskProposals(String unclosedTaskName, String prefix) {
+    private ICompletionProposal[] getClosingTaskProposals(String openElementName, String prefix) {
 		ICompletionProposal[] proposals= null;
-        if(unclosedTaskName != null) {
-            if(unclosedTaskName.toLowerCase().startsWith(prefix)) {
-                String replaceString = unclosedTaskName;
+        if(openElementName != null) {
+            if(openElementName.toLowerCase().startsWith(prefix)) {
+                String replaceString = openElementName;
                 proposals= new ICompletionProposal[1];
                 proposals[0]= new AntCompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, AntCompletionProposal.TASK_PROPOSAL);
             }
@@ -1042,17 +1042,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         return new File(projectPath + File.separator + projectRelativeFilePath);
     }
     
-    private String getNotClosedTaskName(IDocument document, int taskLineNumber, int taskColumnNumber) {
-    	Iterator openElements= antModel.getStillOpenElement();
-    	int offset= getOffset(document, taskLineNumber, taskColumnNumber);
-    	while (openElements.hasNext()) {
-    		AntElementNode element = (AntElementNode) openElements.next();
-    		AntElementNode containingNode= element.getNode(offset);
-    		if (element.equals(containingNode)) {
-    			return element.getName();
-    		}
-		}
-    	return null;
+    private String getOpenElementName() {
+    	AntElementNode node= antModel.getOpenElement();
+    	if (node == null) {
+    		return null;
+    	}
+    	return node.getName();
     }
 
     /**

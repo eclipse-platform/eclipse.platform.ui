@@ -476,7 +476,7 @@ public class AntModel {
 				node= createProblemElement((SAXParseException)exception);
 			}
 		} else {
-			node= (AntElementNode)fStillOpenElements.pop();
+			node= (AntElementNode)fStillOpenElements.peek();
 			generateExceptionOutline(node);
 		}
 	
@@ -490,7 +490,7 @@ public class AntModel {
 	public void error(Exception exception, AntElementNode node, int start, int count) {
 		if (node == null) {
 			if (!fStillOpenElements.empty()) {
-				node= (AntElementNode)fStillOpenElements.pop();
+				node= (AntElementNode)fStillOpenElements.peek();
 			} else {
 				node= fLastNode;
 			}
@@ -570,7 +570,7 @@ public class AntModel {
 	}
 
 	public void fatalError(Exception exception) {
-		AntElementNode node= (AntElementNode)fStillOpenElements.pop();
+		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
 		generateExceptionOutline(node);
 		try {
 			if (exception instanceof SAXParseException) {
@@ -607,8 +607,11 @@ public class AntModel {
 		}
 	}
 	
-	public Iterator getStillOpenElement() {
-		return fStillOpenElements.iterator();
+	public AntElementNode getOpenElement() {
+		if (fStillOpenElements.isEmpty()) {
+			return null;
+		}
+		return (AntElementNode)fStillOpenElements.peek();
 	}
 
 	/**
