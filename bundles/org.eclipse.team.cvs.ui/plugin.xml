@@ -147,7 +147,7 @@
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
-			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteRoot">
+			objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation">
 			<action
 				id="org.eclipse.team.ccvs.ui.defineTag"
 				label="%DefineTagAction.label"
