@@ -125,13 +125,13 @@ public Menu createContextMenu(Control parent) {
 }
 /**
  * Creates and returns an SWT menu bar control for this menu,
- * for use in the given shell, and installs all registered contributions.
- * Does not create a new control if one already exists.
+ * for use in the given <code>Decorations</code>, and installs all registered
+ * contributions. Does not create a new control if one already exists.
  *
- * @param parent the parent shell
+ * @param parent the parent decorations
  * @return the menu control
  */
-public Menu createMenuBar(Shell parent) {
+public Menu createMenuBar(Decorations parent) {
 	if (!menuExist()) {
 		menu = new Menu(parent, SWT.BAR);
 		update(false);
