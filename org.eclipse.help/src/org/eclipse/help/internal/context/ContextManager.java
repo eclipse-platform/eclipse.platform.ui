@@ -5,7 +5,7 @@ package org.eclipse.help.internal.context;
  */
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
+import org.eclipse.help.IContext;
 import org.eclipse.help.internal.util.*;
 /**
  * Maintains the list of contexts
@@ -40,10 +40,12 @@ public class ContextManager {
 		String plugin = contextId;
 		String id = contextId;
 		int dot = contextId.lastIndexOf('.');
-		if (dot != -1) {
-			plugin = contextId.substring(0, dot);
-			id = contextId.substring(dot + 1);
+		if (dot <= 0 || dot >= contextId.length() - 1) {
+			// no dot in the middle of context ID
+			return (IContext) null;
 		}
+		plugin = contextId.substring(0, dot);
+		id = contextId.substring(dot + 1);
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
 			// parse the xml context contribution files and load the context
@@ -52,59 +54,6 @@ public class ContextManager {
 			contexts = loadContext(plugin);
 		}
 		return (IContext) contexts.get(id);
-	}
-	/**
-	 * Finds the context to display (text and related topics), given
-	 * a an ordered list of (nested) context objects
-	 */
-	public String getDescription(Object[] contexts) {
-		if (contexts == null)
-			return null;
-		// Scan the list and return the description from the first context containing data
-		for (int i = 0; i < contexts.length; i++) {
-			String description = getDescription(contexts[i]);
-			if (description != null)
-				return description;
-		}
-		// worst case scenario. Could not find description from any context object. 
-		return null;
-	}
-	/**
-	 * Finds the context description to display, given
-	 * an ordered list of (nested) context objects.
-	 */
-	private String getDescription(Object context) {
-		if (context instanceof IContext)
-			return ((IContext) context).getText();
-		if (!(context instanceof String))
-			return null;
-		IContext contextNode = getContext((String) context);
-		if (contextNode != null)
-			return contextNode.getText();
-		else // no context defined for this object. return null to enable 
-			// lookup of description from other Contexts. 
-			return null;
-	}
-	/**
-	 * Finds the context related topics to display, given
-	 * a an ordered list of (nested) context objects.
-	 * Finds rest of the topics not returned by
-	 * getRelatedTopics(Object[]).  May take long to execute.
-	 */
-	public IHelpResource[] getMoreRelatedTopics(Object[] contexts) {
-		if (contexts == null)
-			return null;
-		ArrayList relatedTopics = new ArrayList();
-		// Skip the first one the list and return the related topics from the other contexts
-		for (int i = 1; i < contexts.length; i++) {
-			IHelpResource[] topics = getRelatedTopics(contexts[i]);
-			if (topics != null) {
-				for (int j = 0; j < topics.length; j++)
-					relatedTopics.add(topics[j]);
-			}
-		}
-		IHelpResource[] moreRelated = new IHelpResource[relatedTopics.size()];
-		return (IHelpResource[]) relatedTopics.toArray(moreRelated);
 	}
 	// NL enables a description string. 
 	private String getNLdescription(String pluginID, String description) {
@@ -118,38 +67,6 @@ public class ContextManager {
 			description = ContextResources.getPluginString(pluginID, description);
 		}
 		return description;
-	}
-	/**
-	 * Finds the context to display (text and related topics), given
-	 * a an ordered list of (nested) context objects
-	 */
-	public IHelpResource[] getRelatedTopics(Object[] contexts) {
-		if (contexts == null)
-			return null;
-		// return the related topics from the first context
-		if (contexts.length >= 1) {
-			IHelpResource[] topics = getRelatedTopics(contexts[0]);
-			return topics;
-		}
-		// worst case scenario. Could not find related Toc in any context object. 
-		return null;
-	}
-	/**
-	 * Finds the context related topics to display, given
-	 * a an ordered list of (nested) context objects
-	 * Finds only some of the topics.
-	 */
-	private IHelpResource[] getRelatedTopics(Object context) {
-		if (context instanceof IContext)
-			return ((IContext) context).getRelatedTopics();
-		if (!(context instanceof String))
-			return null;
-		IContext contextNode = getContext((String) context);
-		if (contextNode != null)
-			return contextNode.getRelatedTopics();
-		else // no context defined for this object. return null to enable 
-			// lookup of description from other Contexts. 
-			return null;
 	}
 	private synchronized Map loadContext(String plugin) {
 		Map contexts = (Map) pluginsContexts.get(plugin);

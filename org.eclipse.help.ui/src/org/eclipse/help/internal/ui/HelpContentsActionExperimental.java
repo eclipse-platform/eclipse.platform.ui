@@ -20,7 +20,6 @@ import org.eclipse.help.ui.browser.IBrowser;
 public class HelpContentsActionExperimental //extends Action
 implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	private String topicsURL;
-	private static IBrowser browser;
 	
 	public HelpContentsActionExperimental() {
 	}
