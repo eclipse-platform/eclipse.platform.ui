@@ -50,15 +50,18 @@ public class InstallCommand extends ScriptedCommand {
 			// Get site to install to
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 			if (toSite != null) {
-				URL toSiteURL = new File(toSite).toURL();
-				if (SiteManager.getSite(toSiteURL, null) == null) {
+				File sitePath = new File(toSite);
+				URL toSiteURL = sitePath.toURL();
+				ISite site = SiteManager.getSite(toSiteURL, null);
+				if (site == null) {
 					throw new Exception(
 						"Cannot find site to install to: " + toSite);
 				}
-				targetSite =
-					SiteManager
-						.getSite(toSiteURL, null)
-						.getCurrentConfiguredSite();
+				targetSite = site.getCurrentConfiguredSite();
+				if (targetSite == null) {
+					targetSite = getConfiguration().createConfiguredSite(sitePath);
+					getConfiguration().addConfiguredSite(targetSite);
+				}
 			}
 			if (targetSite == null) {
 				for (int i = 0; i < sites.length; i++) {
