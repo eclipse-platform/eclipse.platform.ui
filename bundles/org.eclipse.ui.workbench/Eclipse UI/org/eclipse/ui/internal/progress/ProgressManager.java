@@ -985,7 +985,7 @@ public class ProgressManager extends ProgressProvider
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
 				try {
-					manager.beginRule(rule, null);
+					manager.beginRule(rule, getEventLoopMonitor());
 					context.run(false, false, runnable);
 				} catch (InvocationTargetException e) {
 					exception[0] = e;
@@ -996,6 +996,30 @@ public class ProgressManager extends ProgressProvider
 				} finally {
 					manager.endRule(rule);
 				}
+			}
+
+			/**
+			 * Get a progress monitor that forwards to an
+			 * event loop monitor. Override #setBlocked()
+			 * so that we always open the blocked dialog.
+			 * @return the monitor on the event loop
+			 */
+			private IProgressMonitor getEventLoopMonitor() {
+				return new EventLoopProgressMonitor(new NullProgressMonitor()) {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor#setBlocked(org.eclipse.core.runtime.IStatus)
+					 */
+					public void setBlocked(IStatus reason) {
+						
+						//Set a shell to open with as we want to create this
+						//even if there is a modal shell.
+						Dialog.getBlockedHandler().showBlocked(
+								ProgressManagerUtil.getDefaultParent(), this,
+								reason, getTaskName());
+					}
+				};
 			}
 		});
 		if (exception[0] != null)
@@ -1054,25 +1078,27 @@ public class ProgressManager extends ProgressProvider
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		Shell[] shells = workbench.getDisplay().getShells();
 		for (int i = 0; i < shells.length; i++) {
-			setActive(shells[i],active);
+			setActive(shells[i], active);
 		}
 	}
-	
+
 	/**
-	 * Set all of the children of the composite to have 
-	 * their enabled state set to active. Recurse through'
-	 * the children if required.
-	 * @param composite the composite to recurse through
-	 * @param active the state to set
+	 * Set all of the children of the composite to have their enabled state set
+	 * to active. Recurse through' the children if required.
+	 * 
+	 * @param composite
+	 *            the composite to recurse through
+	 * @param active
+	 *            the state to set
 	 */
 	private void setActive(Composite composite, boolean active) {
 		Control[] children = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			if(children[i] instanceof Composite)
-				setActive((Composite)children[i],active);
+			if (children[i] instanceof Composite)
+				setActive((Composite) children[i], active);
 			else
-				children[i].setEnabled(active);		
-		}		
+				children[i].setEnabled(active);
+		}
 	}
 	/**
 	 * Check to see if there are any stale jobs we have not cleared out.
