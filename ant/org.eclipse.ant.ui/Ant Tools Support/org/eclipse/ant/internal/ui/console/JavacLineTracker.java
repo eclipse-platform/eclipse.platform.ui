@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.console;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsole;
@@ -131,7 +132,17 @@ public class JavacLineTracker implements IConsoleLineTracker {
 					num = Integer.parseInt(lineNumber);
 				} catch (NumberFormatException e) {
 				}
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+				IFile file= null;
+				IPath filePath= new Path(fileName);
+				//first check if in the same file...faster
+				if (fLastFile != null && fLastFile.getLocation().equals(filePath)) {
+					file= fLastFile;
+				} else {
+					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
+					if (files.length != 0) {
+						file= files[0];
+					}
+				}
 				fLastFile = file;
 				if (file != null && file.exists()) {
 					FileLink link = new FileLink(file, null, -1, -1, num);
