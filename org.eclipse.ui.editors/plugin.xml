@@ -202,13 +202,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Plain Text"
-            category="org.eclipse.ui.preferencePages.Editors"
-            class="org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2"
-            id="org.eclipse.ui.preferencePages.TextEditor">
-      </page>
-      <page
-            name="General"
+            name="All Text Editors"
             category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
