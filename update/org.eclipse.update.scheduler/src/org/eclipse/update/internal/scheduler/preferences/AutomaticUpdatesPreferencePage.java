@@ -103,10 +103,10 @@ public class AutomaticUpdatesPreferencePage
 		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
 		enabledCheck.setSelection(pref.getBoolean(UpdateScheduler.P_ENABLED));
 		setSchedule(pref.getString(UpdateScheduler.P_SCHEDULE));
-		if (UpdateScheduler.VALUE_ON_SCHEDULE.equals(pref.getString(UpdateScheduler.P_SCHEDULE))) {
-			dayCombo.select(getDay(pref));
-			hourCombo.select(getHour(pref));
-		}
+
+		dayCombo.setText(UpdateScheduler.DAYS[getDay(pref)]);
+		hourCombo.setText(UpdateScheduler.HOURS[getHour(pref)]);
+
 		pageChanged();
 	}
 
