@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ltk.core.refactoring">
+<schema targetNamespace="ore.eclipse.core.expressions">
 <annotation>
       <appInfo>
          <meta.schema plugin="ore.eclipse.core.expressions" id="testParticipants" name="Test Participants"/>
@@ -11,7 +11,7 @@
    </annotation>
 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
-   
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -36,6 +36,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -47,6 +50,11 @@
             <element ref="enablement"/>
          </all>
          <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>
@@ -56,6 +64,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -64,6 +73,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -72,6 +82,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -88,4 +99,5 @@
 &lt;/p&gt;
       </documentation>
    </annotation>
+
 </schema>
