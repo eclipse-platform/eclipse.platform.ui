@@ -183,7 +183,8 @@ public class BrowserView extends ViewPart {
 		});
 		browser.addLocationListener(new LocationAdapter() {
 			public void changed(LocationEvent event) {
-				location.setText(event.location);
+			    if (event.top)
+			        location.setText(event.location);
 			}
 		});
 		browser.addTitleListener(new TitleListener() {
