@@ -21,6 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -121,7 +122,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			}
 		}
 
-		viewer = new ListViewer(top, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		viewer = new ListViewer(top, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new LabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -141,6 +142,11 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		document = provider.getDocument(editor.getEditorInput());
 
 		setTitle(Policy.bind("CVSAnnotateView.showFileAnnotation", new Object[] {cvsResource.getName()})); //$NON-NLS-1$
+		try {
+			setTitleToolTip(cvsResource.getIResource().getFullPath().toString());
+		} catch (CVSException e1) {
+			setTitleToolTip(cvsResource.getName());
+		}
 		
 		if (!useHistoryView) {
 			return;
@@ -342,9 +348,12 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			throw new InvocationTargetException(e);
 		}
 		
-		// Hook Editor selection listener.
+		// Hook Editor post selection listener.
 		ITextEditor editor = (ITextEditor) part;
-		editor.getSelectionProvider().addSelectionChangedListener(this);
+		if (editor.getSelectionProvider() instanceof IPostSelectionProvider) {
+			((IPostSelectionProvider) editor.getSelectionProvider()).addPostSelectionChangedListener(this);
+		}
+	
 		return part;
 	}
 
