@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.views.framelist.TreeFrame;
 import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Frame source for the resource navigator.

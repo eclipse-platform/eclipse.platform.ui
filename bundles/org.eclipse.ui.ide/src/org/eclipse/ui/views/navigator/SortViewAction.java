@@ -11,6 +11,7 @@
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Implementation of the view sorting actions.

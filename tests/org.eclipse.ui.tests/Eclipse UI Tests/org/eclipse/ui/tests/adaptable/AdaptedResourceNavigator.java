@@ -60,8 +60,8 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Implements the Resource Navigator view.

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Standard action for copying the currently selected resources to the clipboard.

@@ -29,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * An action which shows the current selection in the Navigator view.

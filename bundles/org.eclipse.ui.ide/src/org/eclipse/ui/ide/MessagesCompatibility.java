@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.navigator;
 
+package org.eclipse.ui.ide;
 
 /**
- * Utility class which helps managing messages
- * @since 2.0
- * @deprecated These messages are not API and should not be referenced
- * outside of this plug-in.
+ * MessagesCompatibility is the abstract superclass of the 
+ * deprecated message catalog classes.
+ * @deprecated Subclasses of this class are provided for backwards
+ * compatibility only.
+ *
  */
-public class ResourceNavigatorMessages {
-    
-	private ResourceNavigatorMessages() {
-        // prevent instantiation of class
-    }
-
-    /**
+public abstract class MessagesCompatibility {
+	
+	/**
      * Returns the formatted message for the given key in
      * the resource bundle. 
      *
@@ -42,8 +39,11 @@ public class ResourceNavigatorMessages {
      *
      * @param key the resource name
      * @return the string
+     * @deprecated Do not reference message catalogs using
+     * getString()
      */
     public static String getString(String key) {
         return key;
     }
+
 }

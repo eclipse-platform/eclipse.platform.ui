@@ -25,6 +25,7 @@ import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.framelist.UpAction;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * This is the action group for the goto actions.

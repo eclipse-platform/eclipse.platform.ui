@@ -21,7 +21,7 @@ import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 public class TestNavigatorActionGroup extends ActionGroup {
 

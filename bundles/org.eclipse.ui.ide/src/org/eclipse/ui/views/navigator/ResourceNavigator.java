@@ -94,6 +94,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.TreeFrame;
+import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Implements the Resource Navigator view.
