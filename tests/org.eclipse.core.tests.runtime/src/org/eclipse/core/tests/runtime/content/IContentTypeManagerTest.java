@@ -153,6 +153,23 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("2.1", 1, fooBarAssociated.length);
 		assertEquals("2.2", fooBarType, fooBarAssociated[0]);
 	}
+	public void testIsKindOf() {
+		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
+		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
+		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
+		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
+		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
+		assertTrue("1.0", textContentType.isKindOf(textContentType));
+		assertTrue("2.0", xmlContentType.isKindOf(textContentType));
+		assertTrue("2.1", !textContentType.isKindOf(xmlContentType));
+		assertTrue("2.2", xmlContentType.isKindOf(xmlContentType));		
+		assertTrue("3.0", xmlBasedDifferentExtensionContentType.isKindOf(textContentType));
+		assertTrue("3.1", xmlBasedDifferentExtensionContentType.isKindOf(xmlContentType));		
+		assertTrue("4.0", !xmlBasedDifferentExtensionContentType.isKindOf(xmlBasedSpecificNameContentType));
+		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));		
+	}
+
 	private boolean isText(IContentType candidate) {
 		IContentType text = ((ContentType) candidate).getManager().getContentType(IContentTypeManager.CT_TEXT);
 		return candidate.isKindOf(text);
