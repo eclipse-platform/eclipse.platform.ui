@@ -1120,7 +1120,8 @@ public IViewPart getActiveFastView() {
 		previousActiveFastView = activeFastView;
 		
 	if (activeFastView != null) {
-		if (presentation.isZoomed()) {
+		ViewPane pane = getPane(activeFastView);
+		if (pane.isZoomed()) {
 			presentation.zoomOut();
 		}
 		hideFastView(activeFastView, steps);
