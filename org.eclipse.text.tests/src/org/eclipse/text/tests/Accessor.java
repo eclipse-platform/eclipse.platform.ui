@@ -32,6 +32,16 @@ public class Accessor extends Assert {
 	private Object fInstance;
 
 	/**
+	 * Creates an accessor for the given instance.
+	 * 
+	 * @param instance the instance
+	 */
+	public Accessor(Object instance) {
+		fInstance= instance;
+		fClass= instance.getClass();
+	}
+	
+	/**
 	 * Creates an accessor for the given class.
 	 * <p>
 	 * In order to get the type information from the given
