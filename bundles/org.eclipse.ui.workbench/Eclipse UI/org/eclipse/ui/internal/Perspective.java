@@ -1539,4 +1539,31 @@ public void setOldPartID(String oldPartID) {
 	}
 }
 
+//for dynamic UI
+/* package */ void addActionSet(IActionSetDescriptor newDesc) {
+	for (int i = 0; i < visibleActionSets.size(); i++) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)visibleActionSets.get(i);
+		if (desc.getId().equals(newDesc.getId())) {
+			visibleActionSets.remove(desc);
+			alwaysOnActionSets.remove(desc);
+			alwaysOffActionSets.remove(desc);
+			break;
+		}
+	}
+	visibleActionSets.add(newDesc);
+	alwaysOnActionSets.add(newDesc);
+}
+
+//for dynamic UI
+/* package */ void removeActionSet(String id) {
+	for (int i = 0; i < visibleActionSets.size(); i++) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)visibleActionSets.get(i);
+		if (desc.getId().equals(id)) {
+			visibleActionSets.remove(desc);
+			alwaysOnActionSets.remove(desc);
+			alwaysOffActionSets.remove(desc);
+			break;
+		}
+	}
+}
 }

@@ -349,8 +349,8 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	public IStatus restoreState(IMemento memento) {
 		IMemento mem[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
 		for (int i = 0; i < mem.length; i++) {
-			String id = mem[i].getString(IWorkbenchConstants.TAG_ID);
-			mementoTable.put(id, mem[i].getChild(IWorkbenchConstants.TAG_VIEW_STATE));
+			//for dynamic UI - add the next line to replace subsequent code that is commented out
+			restoreViewState(mem[i]);
 		}
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
@@ -385,28 +385,45 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 		final IViewReference refs[] = getViews();
 		for (int i = 0; i < refs.length; i++) {
-			final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
-			viewMemento.putString(IWorkbenchConstants.TAG_ID, refs[i].getId());
-			final IViewPart view = (IViewPart) refs[i].getPart(false);
-			if (view != null) {
-				final int index = i;
-				Platform.run(new SafeRunnable() {
-					public void handleException(Throwable e) {
-						result.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("ViewFactory.couldNotSave", new String[] { refs[index].getTitle()}), //$NON-NLS-1$
-						e));
-					}
-					public void run() {
-						view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
-					}
-				});
-			} else {
-				IMemento mem = (IMemento) mementoTable.get(refs[i].getId());
-				if (mem != null) {
-					IMemento child = viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
-					child.putMemento(mem);
-				}
-			}
+			//for dynamic UI - add the following line to replace subsequent code which is commented out
+			saveViewState(memento, refs[i], result);
 		}
 		return result;
 	}
+	
+	//	for dynamic UI
+	public IMemento saveViewState(IMemento memento, IViewReference ref, MultiStatus res) {
+		final MultiStatus result = res;
+		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
+		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
+		final IViewReference viewRef = ref;
+		final IViewPart view = (IViewPart)ref.getPart(false);
+		if(view != null) {
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
+				}
+				public void handleException(Throwable e) {
+					result.add(new Status(
+							IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+							WorkbenchMessages.format("ViewFactory.couldNotSave",new String[]{viewRef.getTitle()}), //$NON-NLS-1$
+							e));
+				}
+			});
+		} else {
+			IMemento mem = (IMemento)mementoTable.get(ref.getId());
+			if(mem != null) {
+				IMemento child = viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
+				child.putMemento(mem);
+			}
+		}
+		return viewMemento;
+	}
+
+//	for dynamic UI
+	public void restoreViewState(IMemento memento){
+		String id = memento.getString(IWorkbenchConstants.TAG_ID);
+		mementoTable.put(id, memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE));
+	}
 }
+	

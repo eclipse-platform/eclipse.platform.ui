@@ -269,4 +269,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 		return items[insertIndex];
 	}
 	
+	//for dynamic UI
+	/* package */ void removeAdjunctContribution(ContributionItem item) {
+		adjunctContributions.remove(item);
+	}
+	
 }

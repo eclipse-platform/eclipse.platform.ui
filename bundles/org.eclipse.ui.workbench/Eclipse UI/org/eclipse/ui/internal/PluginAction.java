@@ -63,6 +63,7 @@ public abstract class PluginAction extends Action
 	private SelectionEnabler enabler;
 	private ISelection selection;
 	private IConfigurationElement configElement;
+	private String pluginId;
 	private String runAttribute;
 	private static int actionCount = 0;
 
@@ -76,7 +77,7 @@ public abstract class PluginAction extends Action
 	 */
 	public PluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
 		super(null, style);
-
+		
 		// Create unique action id.
 		setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$
 		++actionCount;
@@ -84,6 +85,7 @@ public abstract class PluginAction extends Action
 				
 		this.configElement = actionElement;
 		this.runAttribute = runAttribute;
+		pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 		
 		// Read enablement declaration.
 		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null) {
@@ -377,6 +379,6 @@ public abstract class PluginAction extends Action
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
-		return configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		return pluginId;
 	}
 }

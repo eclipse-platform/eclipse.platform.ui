@@ -129,5 +129,14 @@ public class PerspectiveHistory {
 			
 		return itemCount;
 	} 
+
+	//for dynamic UI 
+	public void removeItem(Object item) {
+		for (int i = 0; i < shortcuts.size(); i++)
+			if (shortcuts.get(i) == item) {
+				shortcuts.remove(i);
+				break;
+			}
+	}
 }
 

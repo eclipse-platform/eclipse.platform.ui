@@ -134,7 +134,8 @@ public Object getAdapter(Class adapter) {
  *
  * @return the configuration element for this part
  */
-protected IConfigurationElement getConfigurationElement() {
+//for dynamic UI - change access from protected to public
+public IConfigurationElement getConfigurationElement() {
 	return configElement;
 }
 /**

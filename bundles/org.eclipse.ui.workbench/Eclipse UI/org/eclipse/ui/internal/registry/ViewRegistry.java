@@ -142,4 +142,30 @@ public void mapViewsToCategories() {
 		}
 	}
 }
+//for dynamic UI
+public void setMiscCategory(Category miscCategory) {
+	this.miscCategory = miscCategory;
+}
+
+//for dynamic UI
+public void remove(String id) {
+	IViewDescriptor desc = find(id);
+	if (desc == null)
+		return;
+	
+	views.remove(desc);
+
+	Category cat = null;
+	String [] catPath = desc.getCategoryPath();
+	if (catPath != null) {
+		String rootCat = catPath[0];
+		cat = (Category)findCategory(rootCat);
+	}	
+	if (cat != null) {
+		ArrayList elements = cat.getElements();
+		elements.remove(desc);
+		if (elements.size() <= 0 && cat != miscCategory)
+			categories.remove(cat);
+	}
+}
 }

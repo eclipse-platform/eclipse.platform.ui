@@ -343,7 +343,8 @@ public class EditorRegistry implements IEditorRegistry {
 		anImage = getSystemExternalEditorImageDescriptor(filename);
 		if (anImage == null)
 			anImage = getDefaultImage();
-		extensionImages.put(key, anImage);
+		//	for dynamic UI - comment out the next line
+		//extensionImages.put(key, anImage);
 		return anImage;
 	}
 	/**
@@ -894,6 +895,36 @@ public class EditorRegistry implements IEditorRegistry {
 			return null;
 		} else {
 			return new ExternalProgramImageDescriptor(externalProgram);
+		}
+	}
+//	for dynamic UI
+	public void remove(String id) {
+		IEditorDescriptor desc = findEditor(id);
+		if (id == null)
+			return;
+		sortedEditorsFromPlugins.remove(desc);
+		mapIDtoEditor.remove(id);
+		removeEditorFromMapping(typeEditorMappings.defaultMap, id);
+		removeEditorFromMapping(typeEditorMappings.map, id);
+	}
+
+//	for dynamic UI 
+	private void removeEditorFromMapping(HashMap map, String id) {
+		Iterator iter = map.values().iterator();
+		FileEditorMapping mapping;
+		IEditorDescriptor[] editors;
+		while(iter.hasNext()) {
+			mapping = (FileEditorMapping)iter.next();
+			editors = mapping.getEditors();
+			for(int i=0; i<editors.length; i++)
+				if (editors[i].getId().equals(id)) {
+					mapping.removeEditor((EditorDescriptor)editors[i]);
+					break;
+				}
+			if (editors.length <= 0) {
+				map.remove(mapping);
+				break;
+			}
 		}
 	}
 }

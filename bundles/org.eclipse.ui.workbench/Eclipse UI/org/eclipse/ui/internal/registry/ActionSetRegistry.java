@@ -25,7 +25,9 @@ public class ActionSetRegistry extends Object
 	private ArrayList children = new ArrayList();
 	private ArrayList categories = new ArrayList(1);
 	private Map mapPartToActionSets = new HashMap();
-
+	// for dynamic UI - store cache for removal
+	private Map mapCacheToActionSets = new HashMap();
+	
 /**
  * Creates the action set registry.
  */
@@ -153,5 +155,38 @@ public void readFromRegistry() {
 	
 	ActionSetPartAssociationsReader assocReader = new ActionSetPartAssociationsReader();
 	assocReader.readRegistry(Platform.getPluginRegistry(), this);
+}
+//for dynamic UI
+public void addCache(String actionSetId, Object cache) {
+	mapCacheToActionSets.put(actionSetId, cache);
+}
+
+//for dynamic UI
+public Object removeCache(String actionSetId) {
+	return mapCacheToActionSets.remove(actionSetId);
+}
+
+//for dynamic UI
+public void remove(String id) {
+	IActionSetDescriptor desc = findActionSet(id);
+	if (id != null) {
+		children.remove(desc);
+		categories.remove(desc);
+	}
+}
+
+//for dynamic UI
+public void removeAssociation(String actionSetId, String partId) {
+	IActionSetDescriptor desc = findActionSet(actionSetId);
+	if (desc == null)
+		return;
+	ArrayList actionSets = (ArrayList)mapPartToActionSets.get(partId);
+	if (actionSets == null)
+		return;
+	if (actionSets.contains(desc))
+		actionSets.remove(desc);
+	if (actionSets.size() == 0)
+		mapPartToActionSets.remove(partId);
+
 }
 }

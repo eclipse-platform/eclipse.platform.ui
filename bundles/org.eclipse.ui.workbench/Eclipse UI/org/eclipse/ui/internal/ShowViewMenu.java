@@ -233,5 +233,10 @@ public void fill(Menu menu, int index) {
 	}
 	dirty = false;
 }
-	
+
+//for dynamic UI
+protected void removeAction(String viewId) {
+	actions.remove(viewId);
+}
+
 }

@@ -16,12 +16,16 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.jface.action.AbstractGroupMarker;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -208,6 +212,8 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		readElements(new IConfigurationElement[] {set.getConfigElement()});
 		
 		if (cache != null) {
+			// for dynamic UI - save cache for future removal lf actionset extensions
+			WorkbenchPlugin.getDefault().getActionSetRegistry().addCache(set.getDesc().getId(), cache);
 			for (int i = 0; i < cache.size(); i++) {
 				ActionSetContribution contribution = (ActionSetContribution)cache.get(i);
 				contribution.contribute(actionSet.getBars(), true, true);
@@ -354,6 +360,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			IContributionItem groupMarker = toolBar.find(toolGroupId);
 			// Add a group marker if one does not exist
 			if (groupMarker == null) {
+				// @issue should this be a GroupMarker?
 				toolBar.add(new Separator(toolGroupId));
 			}
 			toolBar.prependToGroup(toolGroupId, actionContribution);
@@ -447,6 +454,164 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 				mgr.insertAfter(refItem.getId(), item);
 			} else {
 				WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		//for dynamic UI
+		private void revokeContribution(WorkbenchWindow window, IActionBars bars, String id) {
+			revokeActionSetFromMenu(window.getMenuManager(), id);
+//			IMenuManager menuMgr = bars.getMenuManager();
+//			if (menuMgr != null) 
+//				revokeActionSetFromMenu(menuMgr, id);
+			
+			revokeActionSetFromCoolbar(window.getCoolBarManager(), id);
+//			IToolBarManager toolBarMgr = bars.getToolBarManager();
+//			if (toolBarMgr != null && toolBarMgr instanceof CoolItemToolBarManager) 
+//				revokeActionSetFromToolbar(toolBarMgr, id);
+		}
+		//for dynamic UI
+		protected void revokeAdjunctCoolbarAction(ActionDescriptor ad, ActionSetActionBars bars) {
+			String toolBarId = ad.getToolbarId();
+			String toolGroupId = ad.getToolbarGroupId();
+
+			String contributingId = bars.getActionSetId();
+			ICoolBarManager coolBarMgr = bars.getCoolBarManager();
+//				((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
+			PluginAction action = ad.getAction();
+			PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(action);
+			
+			bars.removeAdjunctContribution(actionContribution);
+
+			// remove a coolitem for the toolbar id if it exists 			
+			IContributionItem cbItem = coolBarMgr.find(toolBarId);
+			if (cbItem != null)
+				coolBarMgr.remove(cbItem);
+
+//			activeManager = cbItem.getToolBarManager();	
+//			activeManager.remove(contributingId);	
+//			IContributionItem groupMarker = activeManager.find(toolGroupId);
+//			if (groupMarker != null) {
+//				int idx = activeManager.indexOf(toolGroupId);
+//				IContributionItem[] items = activeManager.getItems();
+//				if (items.length == idx+1 || 
+//						((items.length > idx && items[idx+1] instanceof Separator)))
+//					if (activeManager.find(toolGroupId) != null)
+//						activeManager.remove(toolGroupId);
+//			} 			
+//			activeManager.addAdjunctItemToGroup(toolGroupId, contributingId, actionContribution);		 
+		}
+		//for dynamic UI
+		private void revokeActionSetFromMenu(IMenuManager menuMgr, String actionsetId) {
+			IContributionItem[] items = menuMgr.getItems();
+			ArrayList itemsToRemove = new ArrayList();
+			String id;
+			for(int i = 0; i < items.length; i++) 
+				if (items[i] instanceof IMenuManager) {
+					revokeActionSetFromMenu((IMenuManager)items[i], actionsetId);
+				} else if (items[i] instanceof ActionSetContributionItem) {
+					id = ((ActionSetContributionItem)items[i]).getActionSetId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				} else if (items[i] instanceof Separator) {
+					id = ((Separator)items[i]).getId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				} else if (items[i] instanceof GroupMarker) {
+					id = ((GroupMarker)items[i]).getId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				}
+			java.util.Iterator iter = itemsToRemove.iterator();
+			while(iter.hasNext()) {
+				IContributionItem item = (IContributionItem)iter.next();
+				menuMgr.remove(item);
+			}
+			menuMgr.update(true);
+		}
+		
+		// for dynamic UI
+		private void revokeActionSetFromCoolbar(ICoolBarManager coolbarMgr, String actionsetId) {
+			IContributionItem[] items = coolbarMgr.getItems();
+			ArrayList itemsToRemove = new ArrayList();
+			String id;
+			for(int i = 0; i < items.length; i++) {
+				id = items[i].getId();
+				if (id.equals(actionsetId)) {
+					itemsToRemove.add(items[i]);
+					continue;
+				}
+				if (items[i] instanceof ToolBarManager) {
+					revokeActionSetFromToolbar((IToolBarManager)items[i], actionsetId);
+				} else if (items[i] instanceof ToolBarContributionItem) {
+					id = ((ToolBarContributionItem)items[i]).getId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				} else if (items[i] instanceof GroupMarker) {
+					id = ((GroupMarker)items[i]).getId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				}
+			}
+			java.util.Iterator iter = itemsToRemove.iterator();
+			while(iter.hasNext())
+				coolbarMgr.remove((IContributionItem)iter.next());
+			coolbarMgr.update(true);
+		}
+		
+		// for dynamic UI
+		private void revokeActionSetFromToolbar(IToolBarManager toolbarMgr, String actionsetId) {
+			IContributionItem[] items = toolbarMgr.getItems();
+			ArrayList itemsToRemove = new ArrayList();
+			String id;
+			for(int i = 0; i < items.length; i++) {
+				id = items[i].getId();
+				if (id.equals(actionsetId)) {
+					itemsToRemove.add(items[i]);
+					continue;
+				}
+				if (items[i] instanceof PluginActionCoolBarContributionItem) {
+					id = ((PluginActionCoolBarContributionItem)items[i]).getActionSetId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				} else if (items[i] instanceof ActionContributionItem) {
+					id = ((ActionContributionItem)items[i]).getId();
+					if (id.equals(actionsetId))
+						itemsToRemove.add(items[i]);
+				} else if (items[i] instanceof GroupMarker) {
+						id = ((GroupMarker)items[i]).getId();
+						if (id.equals(actionsetId))
+							itemsToRemove.add(items[i]);
+					}
+			}
+			java.util.Iterator iter = itemsToRemove.iterator();
+			while(iter.hasNext())
+				toolbarMgr.remove((IContributionItem)iter.next());
+			toolbarMgr.update(true);
+		}
+	}
+	
+	// for dynamic UI
+	public void removeActionExtensions(PluginActionSet set, IWorkbenchWindow window) {
+		this.actionSet = set;
+		this.window = window;
+		cache = null;
+		currentContribution = null;
+		targetID = null;
+		targetContributionTag = TAG_ACTION_SET;
+		String id = set.getDesc().getId();
+		
+		cache = (ArrayList) WorkbenchPlugin.getDefault().getActionSetRegistry().removeCache(id);
+		//readElements(new IConfigurationElement[] {set.getConfigElement()});
+		
+		if (cache != null) {
+			for (int i = 0; i < cache.size(); i++) {
+				ActionSetContribution contribution = (ActionSetContribution)cache.get(i);
+				contribution.revokeContribution((WorkbenchWindow)window, actionSet.getBars(), id);
+				if (contribution.isAdjunctContributor()) {
+					for (int j=0; j< contribution.adjunctActions.size(); j++) {
+						ActionDescriptor adjunctAction = (ActionDescriptor)contribution.adjunctActions.get(j);
+						contribution.revokeAdjunctCoolbarAction(adjunctAction, actionSet.getBars());
+					}
+				}
 			}
 		}
 	}

@@ -88,4 +88,8 @@ public class WorkingSetRegistry {
 		WorkingSetRegistryReader reader = new WorkingSetRegistryReader();
 		reader.readWorkingSets(Platform.getPluginRegistry(), this);
 	}	
+	//for dynamic UI
+	public void removeWorkingSetDescriptor(String id) {
+		workingSetDescriptors.remove(id);
+	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
 
+import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -30,8 +31,11 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 *            the action
 	 */
 	public PluginActionContributionItem(PluginAction action) {
+		// dynamic UI (DDW) - this constructor has changed since 1113
 		super(action);
 	}
+
+	// dynamic UI (DDW) - method getActivityObject is missing since 1113
 
 	/**
 	 * The default implementation of this <code>IContributionItem</code>

@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+//for dynamic UI - add import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -181,6 +183,12 @@ public final class Workbench implements IWorkbench {
 	 */
 	private WorkbenchConfigurer workbenchConfigurer;
 
+	//for dynamic UI
+	/**
+	 * ExtensionEventHandler handles extension life-cycle events. 
+	 */
+	private ExtensionEventHandler extensionEventHandler;
+
 	/**
 	 * Creates a new workbench.
 	 * 
@@ -203,6 +211,9 @@ public final class Workbench implements IWorkbench {
 		this.advisor = advisor;
 		this.display = display;
 		Workbench.instance = this;
+		// for dynamic UI
+		extensionEventHandler = new ExtensionEventHandler(this);
+		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(extensionEventHandler);
 	}
 
 	/**
@@ -1767,6 +1778,9 @@ public final class Workbench implements IWorkbench {
 	 * Shuts down the application.
 	 */
 	private void shutdown() {
+		// for dynamic UI 
+		InternalPlatform.getDefault().getRegistry().removeRegistryChangeListener(extensionEventHandler);
+
 		// shutdown application-specific portions first
 		advisor.postShutdown();
 

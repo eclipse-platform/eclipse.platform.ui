@@ -2204,4 +2204,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		else
 			return null;
 	}
+
+	//for dynamic UI
+	protected ActionPresentation getActionPresentation() {
+		return actionPresentation;
+	}
 }
