@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * The abstract superclass for actions that listen to selection change events.
@@ -50,6 +51,17 @@ public abstract class BaseSelectionListenerAction extends Action implements ISel
 	 * The current selection.
 	 */
 	private IStructuredSelection selection = new StructuredSelection();
+	
+	/**
+	 * Running flag:  <code>true</code> iff the action is running.  
+	 */
+	private boolean running = false;
+	
+	/**
+	 * The deferred selection.  Any selection change that occurs
+	 * while the action is running is held here until the run is complete.
+	 */
+	private IStructuredSelection deferredSelection = null;
 
 	/**
 	 * Creates a new action with the given text.
@@ -97,6 +109,15 @@ public abstract class BaseSelectionListenerAction extends Action implements ISel
 	 * @param selection the new selection
 	 */
 	public final void selectionChanged(IStructuredSelection selection) {
+	    // Ignore any incoming selection change while the action is running,
+	    // otherwise the action can have unpredictable results, including lost
+	    // data, if it operates on a different selection than what it initially
+	    // validated.
+	    // See Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
+	    if (running) {
+	        deferredSelection = selection;
+	        return;
+	    }
 		this.selection = selection;
 		clearCache();
 		setEnabled(updateSelection(selection));
@@ -133,4 +154,24 @@ public abstract class BaseSelectionListenerAction extends Action implements ISel
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void runWithEvent(Event event) {
+        // Set the running flag during the run so that selection changes are deferred.
+        // See selectionChanged(IStructuredSelection) for more details.
+        running = true;
+        try {
+            run();
+        }
+        finally {
+            running = false;
+            IStructuredSelection s = deferredSelection;
+            deferredSelection = null;
+            if (s != null) {
+                selectionChanged(s);
+            }
+        }
+    }
 }
