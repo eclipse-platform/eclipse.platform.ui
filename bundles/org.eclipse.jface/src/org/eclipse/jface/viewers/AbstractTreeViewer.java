@@ -1117,14 +1117,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Returns whether the tree node representing the given element can be
+	 * Return whether the tree node representing the given element can be
 	 * expanded.
 	 * <p>
 	 * The default implementation of this framework method calls <code>hasChildren</code>
-	 * on this viewer's content provider if there are no filters configured on this viewer.
-	 * If there are filters configured, then it calls <code>getChildren</code> on this
-	 * viewer's content provider and checks to see if any children remain after
-	 * passing them through the filters. 
+	 * on this viewer's content provider. It may be overridden if necessary.
 	 * </p>
 	 * 
 	 * @param element
@@ -1134,23 +1131,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	public boolean isExpandable(Object element) {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-		if (cp == null)
-			return false;
-		// if there are filters configured, then <code>hasChildren</code>
-		// does not suffice; need to get the children and pass them through
-		// the filters
-	    if (hasFilters()) {
-			ViewerFilter[] filters = getFilters();
-			Object[] result = getRawChildren(element);
-			for (int i = 0; i < filters.length; i++) {
-				ViewerFilter filter = filters[i];
-				result = filter.filter(this, element, result);
-				if (result.length == 0)
-					return false;
-			}
-			return true; //Still elements left so return true
-		}
-		return cp.hasChildren(element);
+		return cp != null && cp.hasChildren(element);
 	}
 	/* (non-Javadoc) Method declared on Viewer. */
 	protected void labelProviderChanged() {
