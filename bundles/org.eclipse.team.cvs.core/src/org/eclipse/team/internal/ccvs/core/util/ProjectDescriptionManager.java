@@ -183,7 +183,7 @@ public class ProjectDescriptionManager {
 			public void resourceChanged(IResourceChangeEvent event) {
 				try {
 					IResourceDelta root = event.getDelta();
-					IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED);
+					IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.ADDED);
 					for (int i = 0; i < projectDeltas.length; i++) {
 						IResourceDelta delta = projectDeltas[i];
 						IResource resource = delta.getResource();
