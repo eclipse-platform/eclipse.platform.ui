@@ -89,8 +89,7 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 				IContentProvider provider= getTreeViewer().getContentProvider();
 				if (provider instanceof ExpressionViewContentProvider) {
 					ExpressionViewContentProvider expressionProvider= (ExpressionViewContentProvider) provider;
-					List decendants= new ArrayList();
-					expressionProvider.getDecendants(expression, decendants);
+					List decendants = expressionProvider.getCachedDecendants(expression);
 					decendants.add(expression);
 					// Remove the parent cache for the expression and its children
 					expressionProvider.removeCache(decendants.toArray());

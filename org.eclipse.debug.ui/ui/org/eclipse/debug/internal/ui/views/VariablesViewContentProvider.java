@@ -5,7 +5,10 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -127,6 +130,43 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
+	}
+	
+	/**
+	 * Return all cached decendants of the given parent.
+	 * 
+	 * @param parent the element whose decendants are to be calculated
+	 * @return list of decendants that have been cached for
+	 *  the given parent
+	 */
+	protected List getCachedDecendants(Object parent) {
+		Iterator children = fParentCache.keySet().iterator();
+		List cachedChildren = new ArrayList(10);
+		while (children.hasNext()) {
+			Object child = children.next();
+			if (isCachedDecendant(child, parent)) {
+				cachedChildren.add(child);
+			}
+		}
+		return cachedChildren;
+	}
+	
+	/**
+	 * Returns whether the given child is a cached descendant
+	 * of the given parent.
+	 * 
+	 * @return whether the given child is a cached descendant
+	 * of the given parent
+	 */
+	protected boolean isCachedDecendant(Object child, Object parent) {
+		Object p = getParent(child);
+		while (p != null) {
+			if (p.equals(parent)) {
+				return true;
+			}
+			p = getParent(p);
+		}
+		return false;
 	}
 }
 
