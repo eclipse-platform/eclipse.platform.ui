@@ -91,8 +91,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 			}
 		});
 
-		// @issue copy code over
-		WorkbenchPreferencePage.createSpace(pageComponent);
+		IDEWorkbenchPreferencePage.createSpace(pageComponent);
 		
 		topLabel = new Label(pageComponent, SWT.NONE);
 		topLabel.setText(IDEWorkbenchMessages.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$

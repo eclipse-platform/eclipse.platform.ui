@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
@@ -67,8 +67,7 @@ public void addPages() {
  * Returns the import wizards that are available for invocation.
  */
 protected AdaptableList getAvailableImportWizards() {
-	// @issue move constant to IDE project
-	return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
+	return new WizardsRegistryReader(IDEWorkbenchPlugin.PL_IMPORT).getWizards();
 }
 /**
  * Initializes the wizard.
