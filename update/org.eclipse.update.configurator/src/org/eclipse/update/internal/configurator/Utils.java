@@ -130,10 +130,13 @@ public class Utils {
 				completeString.append(msg!=null?msg:e.toString());
 				completeString.append("]");
 			}
-			status = new Status(IStatus.ERROR, "org.eclipse.update.configurator", 0, completeString.toString(), e);
+			status = newStatus(completeString.toString(), e);
 		}
 		return new CoreException(status); //$NON-NLS-1$
 	}
 
+	public static IStatus newStatus(String message, Throwable e) {
+		return new Status(IStatus.ERROR, "org.eclipse.update.configurator", IStatus.OK, message, e);
+	}
 	
 }
