@@ -43,9 +43,9 @@ public class ResourceSyncInfo {
 	private boolean isDeleted = false;
 	
 	// a sync element with a revision of '0' is considered a new file that has
-	// not been comitted to the repo.
-	// XXX Should this be private
-	static final String ADDED_REVISION = "0";
+	// not been comitted to the repo. Is visible so that clients can create sync infos
+	// for new files.
+	public static final String ADDED_REVISION = "0";
 	
 	// fields describing the synchronization of a resource in CVS parlance
 	private int type;
@@ -95,7 +95,7 @@ public class ResourceSyncInfo {
 		Assert.isNotNull(name);
 		Assert.isNotNull(revision);		
 		this.name = name;
-		this.timeStamp = timestamp;
+		this.timeStamp = timestamp;		
 		this.keywordMode = keywordMode;
 		this.permissions = permissions;
 		setRevision(revision);
@@ -184,7 +184,7 @@ public class ResourceSyncInfo {
 				result.append(timeStamp);
 			}
 			result.append(SEPERATOR);
-			result.append(keywordMode);
+			result.append(keywordMode == null ? "" : keywordMode);
 			result.append(SEPERATOR);
 			if (tag != null) {
 				result.append(tag.toEntryLineFormat(true));
