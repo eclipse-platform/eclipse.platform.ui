@@ -112,6 +112,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	private static class Hit {
 		IFeature candidate;
 		IFeatureReference ref;
+		IInstallFeatureOperation patchFor;
 		boolean patch;
 		public Hit(IFeature candidate, IFeatureReference ref) {
 			this.candidate = candidate;
@@ -120,6 +121,11 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		public Hit(IFeature candidate, IFeatureReference ref, boolean patch) {
 			this(candidate, ref);
 			this.patch = patch;
+		}
+
+		public Hit(IFeature candidate, IFeatureReference ref, IInstallFeatureOperation patchFor) {
+			this(candidate, ref, true);
+			this.patchFor = patchFor;
 		}
 
 		public IInstallFeatureOperation getJob() {
@@ -133,6 +139,9 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 
 		public boolean isPatch() {
 			return patch;
+		}
+		public IInstallFeatureOperation getPatchedJob() {
+			return patchFor;
 		}
 	}
 
@@ -226,29 +235,56 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				missingOptionalChildren = isMissingOptionalChildren(candidate);
 			ISiteFeatureReference[] refs = site.getFeatureReferences();
 			monitor.beginTask("", refs.length + 1);
+			ArrayList updateJobs = new ArrayList();
 			for (int i = 0; i < refs.length; i++) {
 				ISiteFeatureReference ref = refs[i];
 				try {
 					if (isNewerVersion(candidate.getVersionedIdentifier(),ref.getVersionedIdentifier())) {
-						hits.add(new Hit(candidate, ref));
+						Hit h = new Hit(candidate, ref);
+						hits.add(h);
+						updateJobs.add(h.getJob());
 					} else {
 						// accept the same feature if the installed
 						// feature is broken
 						if ((broken || missingOptionalChildren)
 							&& candidate.getVersionedIdentifier().equals(
-								ref.getVersionedIdentifier()))
+								ref.getVersionedIdentifier())){
 							hits.add(new Hit(candidate, ref));
+							continue;
+						}
 						else {
 							// check for patches
-							if (isPatch(candidate, ref))
+							if (isPatch(candidate, ref)){
 								hits.add(new Hit(candidate, ref, true));
+								continue;
+							}
 						}
 					}
 				} catch (CoreException e) {
 				}
 				monitor.worked(1);
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()){
 					return;
+				}
+				
+			}
+			// accept patches for updated features
+			for (int n = 0; n < updateJobs.size(); n++) {
+				IInstallFeatureOperation job = (IInstallFeatureOperation) updateJobs
+						.get(n);
+					IFeature newCandidate = job.getFeature();
+					for (int i = 0; i < refs.length; i++) {
+						ISiteFeatureReference ref = refs[i];
+						if (isPatch(newCandidate, ref)) {
+							Hit h = new Hit(newCandidate, ref, job);
+							hits.add(h);
+							continue;
+						}
+						//monitor.worked(1);
+						if (monitor.isCanceled()) {
+							return;
+						}
+					}
 			}
 			if (hits.size() > 0) {
 				collectValidHits(hits, filter, collector);
@@ -282,7 +318,13 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Policy.bind("DefaultFeatureParser.NoLicenseText"), null);
 				continue;
 			}
-			IStatus status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
+			IStatus status;
+			if( hit.getPatchedJob()==null){
+				status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
+			}else{
+				status = OperationsManager.getValidator().validatePendingChanges(new IInstallFeatureOperation[]{hit.getPatchedJob(), job});
+						
+			}
 			if (status == null || status.getCode() == IStatus.WARNING) {
 				if (hit.isPatch()) {
 					IFeature patch = job.getFeature();
