@@ -385,8 +385,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     public void setDocumentLocator(Locator aLocator) {
         locator = aLocator;
         super.setDocumentLocator(aLocator);
-        if (errorHandler != null)
+        if (errorHandler != null) {
         	errorHandler.setDocumentLocator(aLocator);
+        }
     }
 
 
