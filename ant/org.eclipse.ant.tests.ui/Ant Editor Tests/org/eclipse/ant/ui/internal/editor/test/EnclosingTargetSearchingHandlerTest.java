@@ -34,8 +34,6 @@ import org.xml.sax.SAXException;
 /**
  * Tests the parsing using the EnclosingTargetSearchingHandler.
  * 
- * @version 19.11.2002
- * @author Alf Schiefelbein
  */
 public class EnclosingTargetSearchingHandlerTest extends TestCase {
 
@@ -46,7 +44,6 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
     public EnclosingTargetSearchingHandlerTest(String name) {
         super(name);
     }
-
 
 	/**
 	 * The test suite.
@@ -59,8 +56,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
         suite.addTest(new EnclosingTargetSearchingHandlerTest("testParsingOfEmptyBuildFile"));
         return suite;
     }
-	
-    
+	    
     /**
      * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
@@ -136,6 +132,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
     public void testParsingOfEmptyBuildFile() throws SAXException, ParserConfigurationException, IOException {
 		URL url= getClass().getResource("projectOnly.xml");
 		File file= new File(url.getFile());
+		System.out.println("Expected: " + url.getFile());
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
         InputStream stream = getClass().getResourceAsStream("projectOnly.xml");
         parse(stream, getSAXParser(), handler, file);

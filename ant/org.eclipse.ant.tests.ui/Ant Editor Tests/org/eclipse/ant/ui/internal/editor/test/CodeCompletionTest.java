@@ -14,10 +14,15 @@
 
 package org.eclipse.ant.ui.internal.editor.test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +32,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.ui.internal.editor.AntEditorSaxDefaultHandler;
 import org.eclipse.ant.ui.internal.editor.support.TestTextCompletionProcessor;
@@ -43,8 +51,6 @@ import org.xml.sax.SAXException;
 /**
  * Tests everything about code completion and code assistance.
  * 
- * @version 29.11.2002
- * @author Alf Schiefelbein
  */
 public class CodeCompletionTest extends TestCase {
 
@@ -158,97 +164,97 @@ public class CodeCompletionTest extends TestCase {
 	 * Tests the property proposals in for the case that they are defined in
 	 * a seperate property file.
 	 */
-//    public void testBuildWithProperties() {
-//        Project project = new Project();
-//        project.init();
-//        URL url = getClass().getResource("buildtest1.xml");
-//        assertNotNull(url);
-//        File file = new File(url.getFile());
-//        assertTrue("Required file does not exist: " + url.getFile(), file.exists());
-//        
-//        project.setUserProperty("ant.file", file.getAbsolutePath());
-//
-//        ProjectHelper.configureProject(project, file);  // File will be parsed here
-//        Hashtable table = project.getProperties();
-//        assertEquals("valD", table.get("propD"));
-//        assertEquals("val1", table.get("prop1"));
-//        assertEquals("val2", table.get("prop2"));
-//        assertEquals("valV", table.get("propV"));
-//        // assertEquals("val", tempTable.get("property_in_target"));  // (T) is known and should be fixed
-//
-//        // test with not valid (complete) build file
-//        project = new Project();
-//        project.init();
-//        url = getClass().getResource("buildtest2.xml");
-//        assertNotNull(url);
-//        file = new File(url.getFile());
-//		assertTrue("Required file does not exist: " + url.getFile(), file.exists());
-//        project.setUserProperty("ant.file", file.getAbsolutePath());
-//        try {
-//            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file);  // File will be parsed here
-//        }
-//        catch(BuildException e) {
-//            // ignore a build exception on purpose 
-//        }    
-//        table = project.getProperties();
-//        assertEquals("valD", table.get("propD"));
-//        assertEquals("val1", table.get("prop1"));
-//        assertEquals("val2", table.get("prop2"));
-//
-//        // test with not valid whole document string
-//        project = new Project();
-//        project.init();
-//        url = getClass().getResource("buildtest2.xml");
-//        assertNotNull(url);
-//        String path = url.getFile();
-//        path = path.substring(0, path.lastIndexOf('/')+1) + "someNonExisting.xml";
-//        file = new File(path);
-//        project.setUserProperty("ant.file", file.getAbsolutePath());
-//        StringBuffer buff = new StringBuffer();
-//        buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//        buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
-//        buff.append("<property name=\"propA\" value=\"valA\" />\n");
-//		buff.append("<property file=\"buildtest1.properties\" />\n");
-//        buff.append("<target name=\"main\" depends=\"properties\">\n");
-//        try {
-//            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file, buff.toString());  // File will be parsed here
-//        }
-//        catch (BuildException e) {
-//            //ignore a build exception on purpose
-//			//as the document does not start and end within the same entity
-//        }    
-//        table = project.getProperties();
-//        assertEquals("valA", table.get("propA"));
-//        assertEquals("val2", table.get("prop2"));
-//    }
+    public void testBuildWithProperties() {
+        Project project = new Project();
+        project.init();
+        URL url = getClass().getResource("buildtest1.xml");
+        assertNotNull(url);
+        File file = new File(url.getFile());
+      //  assertTrue("Required file does not exist: " + url.getFile(), file.exists());
+	  	System.out.println("Expected: " + url.getFile());
+        project.setUserProperty("ant.file", file.getAbsolutePath());
+
+        ProjectHelper.configureProject(project, file);  // File will be parsed here
+        Map map = project.getProperties();
+        assertEquals("valD", map.get("propD"));
+        assertEquals("val1", map.get("prop1"));
+        assertEquals("val2", map.get("prop2"));
+        assertEquals("valV", map.get("propV"));
+        // assertEquals("val", tempTable.get("property_in_target"));  // (T) is known and should be fixed
+
+        // test with not valid (complete) build file
+        project = new Project();
+        project.init();
+        url = getClass().getResource("buildtest2.xml");
+        assertNotNull(url);
+        file = new File(url.getFile());
+		//assertTrue("Required file does not exist: " + url.getFile(), file.exists());
+        project.setUserProperty("ant.file", file.getAbsolutePath());
+        try {
+			ProjectHelper.configureProject(project, file);  // File will be parsed here
+        }
+        catch(BuildException e) {
+            // ignore a build exception on purpose 
+        }    
+        map = project.getProperties();
+        assertEquals("valD", map.get("propD"));
+        assertEquals("val1", map.get("prop1"));
+        assertEquals("val2", map.get("prop2"));
+
+        // test with not valid whole document string
+        project = new Project();
+        project.init();
+        url = getClass().getResource("buildtest2.xml");
+        assertNotNull(url);
+        String path = url.getFile();
+        path = path.substring(0, path.lastIndexOf('/')+1) + "someNonExisting.xml";
+        file = new File(path);
+        project.setUserProperty("ant.file", file.getAbsolutePath());
+        StringBuffer buff = new StringBuffer();
+        buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
+        buff.append("<property name=\"propA\" value=\"valA\" />\n");
+		buff.append("<property file=\"buildtest1.properties\" />\n");
+        buff.append("<target name=\"main\" depends=\"properties\">\n");
+        try {
+            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file, buff.toString());  // File will be parsed here
+        }
+        catch (BuildException e) {
+            //ignore a build exception on purpose
+			//as the document does not start and end within the same entity
+        }    
+        map = project.getProperties();
+        assertEquals("valA", map.get("propA"));
+        assertEquals("val2", map.get("prop2"));
+    }
 
 
 	/**
 	 * Tests the property proposals for the case that they are defined in
 	 * a dependent targets.
 	 */
-//    public void testPropertyProposalDefinedInDependantTargets() throws FileNotFoundException {
-//        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-//
-//        URL url = getClass().getResource("dependencytest.xml");
-//        assertNotNull(url);
-//        File file = new File(url.getFile());
-//        assertTrue("Required file does not exist: " + url.getFile(), file.exists());
-//        processor.setEditedFile(file);
-//		String documentText = getFileContentAsString(file);
-//
-//		processor.setLineNumber(35);
-//		processor.setColumnNumber(41);
-//		int cursorPosition = documentText.lastIndexOf("${");
-//		assertTrue(cursorPosition != -1);
-//        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPosition+2);
-//		assertContains("init_prop", proposals);
-//		assertContains("main_prop", proposals);
-//		assertContains("prop_prop", proposals);
-//		assertContains("do_not_compile", proposals);
-//		assertContains("adit_prop", proposals);
-//		assertContains("compile_prop", proposals);
-//    }
+    public void testPropertyProposalDefinedInDependantTargets() throws FileNotFoundException {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+        URL url = getClass().getResource("dependencytest.xml");
+        assertNotNull(url);
+        File file = new File(url.getFile());
+        //assertTrue("Required file does not exist: " + url.getFile(), file.exists());
+        processor.setEditedFile(file);
+		String documentText = getFileContentAsString(file);
+
+		processor.setLineNumber(35);
+		processor.setColumnNumber(41);
+		int cursorPosition = documentText.lastIndexOf("${");
+		assertTrue(cursorPosition != -1);
+        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPosition+2);
+		assertContains("init_prop", proposals);
+		assertContains("main_prop", proposals);
+		assertContains("prop_prop", proposals);
+		assertContains("do_not_compile", proposals);
+		assertContains("adit_prop", proposals);
+		assertContains("compile_prop", proposals);
+    }
 
     
     /**
@@ -551,26 +557,26 @@ public class CodeCompletionTest extends TestCase {
 	/**
 	 * Returns the content of the specified file as <code>String</code>.
 	 */
-//	private String getFileContentAsString(File aFile) throws FileNotFoundException {
-//        InputStream stream = new FileInputStream(aFile);
-//        InputStreamReader reader = new InputStreamReader(stream);
-//        BufferedReader bufferedReader = new BufferedReader(reader);
-//
-//        String result = "";
-//        try {
-//            String line= bufferedReader.readLine();
-//        
-//            while(line != null) {
-//                result += "\n";
-//                result += line;
-//                line = bufferedReader.readLine();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//		return result;
-//	}
+	private String getFileContentAsString(File aFile) throws FileNotFoundException {
+        InputStream stream = new FileInputStream(aFile);
+        InputStreamReader reader = new InputStreamReader(stream);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+
+        String result = "";
+        try {
+            String line= bufferedReader.readLine();
+        
+            while(line != null) {
+                result += "\n";
+                result += line;
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+		return result;
+	}
 
 
     public static Test suite() {
