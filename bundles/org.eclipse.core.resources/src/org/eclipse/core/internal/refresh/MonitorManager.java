@@ -63,8 +63,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 	private RefreshProvider[] getRefreshProviders() {
 		if (providers != null)
 			return providers;
-		IPluginDescriptor descriptor = ResourcesPlugin.getPlugin().getDescriptor();
-		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(ResourcesPlugin.PT_REFRESH_PROVIDERS);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_REFRESH_PROVIDERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		List providerList = new ArrayList(infos.length);
 		for (int i = 0; i < infos.length; i++) {
