@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -25,7 +25,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * Action for getting the contents of the selected resources
  */
-public class UpdateAction extends TeamAction {
+public class GetAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
