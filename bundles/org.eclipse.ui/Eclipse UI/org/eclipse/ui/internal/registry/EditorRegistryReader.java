@@ -31,7 +31,6 @@ public class EditorRegistryReader extends RegistryReader {
 	private static final    String      ATT_ICON = "icon";//$NON-NLS-1$
 	private static final   String       ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
 	private static final   String       ATT_FILENAMES = "filenames";//$NON-NLS-1$
-	private static final   String       ATT_EXTENDEDTYPE = "extendedType";//$NON-NLS-1$
 	private EditorRegistry editorRegistry;
 /**
  * Get the editors that are defined in the registry
