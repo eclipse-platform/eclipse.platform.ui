@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
@@ -89,7 +88,7 @@ public class ContentDescriptionManager implements IManager {
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
 			if (type != null)
-				return ((ContentType) type).getDefaultDescription();
+				return type.getDefaultDescription();
 		}
 		//make sure no cached information is set on the info
 		info.clear(ICoreConstants.M_CONTENT_CACHE);
@@ -108,7 +107,7 @@ public class ContentDescriptionManager implements IManager {
 				return null;
 			}
 			// if it is a default description for the default type, we don't have to cache 
-			if ((((ContentType) newDescription.getContentType()).getDefaultDescription()).equals(newDescription)) {
+			if (newDescription.getContentType().getDefaultDescription().equals(newDescription)) {
 				IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
 				if (newDescription.getContentType().equals(defaultForName)) {
 					// the default content description is enough for this file
