@@ -52,7 +52,7 @@ TABLE {
 	font: icon;
 	background:ButtonFace;
 	margin:0;
-	border-right:1px solid black;
+	xborder-right:1px solid black;
 	padding:0;
 	height:100%;
 }
