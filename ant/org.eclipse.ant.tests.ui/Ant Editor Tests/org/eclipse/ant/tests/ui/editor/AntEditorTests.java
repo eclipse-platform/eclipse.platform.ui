@@ -39,19 +39,19 @@ public class AntEditorTests extends AbstractAntUITest {
         }
     }
     
-//    public void testHoverRegionWithSpaces() throws PartInitException {
-//        try {
-//            IFile file= getIFile("refid.xml");
-//            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
-//            XMLTextHover hover= new XMLTextHover(editor);
-//            //in the middle of the "compile" target of the depends attribute
-//            IRegion region= hover.getHoverRegion(editor.getViewer(), 555);
-//            
-//            assertNotNull(region);
-//            assertTrue("Region incorrect", region.getLength() == 7 && region.getOffset() == 552);
-//            
-//        } finally {
-//            EditorTestHelper.closeAllEditors();    
-//        }
-//    }
+    public void testHoverRegionWithSpaces() throws PartInitException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            //in the middle of the "compile" target of the depends attribute
+            IRegion region= hover.getHoverRegion(editor.getViewer(), 555);
+            
+            assertNotNull(region);
+            assertTrue("Region incorrect. Expected length of 7 and offset of 552. Got length of " + region.getLength() + "and offset of " + region.getOffset(), region.getLength() == 7 && region.getOffset() == 552);
+            
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
 }
