@@ -15,13 +15,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.Hashtable;
-import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.service.datalocation.FileManager;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.service.systembundle.EntryLocator;
@@ -92,16 +91,20 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				start = System.currentTimeMillis();
 
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
-			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
-			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
-
-			if (cacheFile.isFile()) {
+			File cacheFile = null;
+			try {
+				cacheFile = InternalPlatform.getDefault().getRuntimeFileManager().lookup(".registry", true); //$NON-NLS-1$
+			} catch (IOException e) {
+				//Ignore the exception. The registry will be rebuilt from the xml files.
+			}
+			
+			if (cacheFile != null && cacheFile.isFile()) {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
 				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache(registryStamp);
 			}
 			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-
+	
 			if (InternalPlatform.DEBUG_REGISTRY) {
 				if (registry == null)
 					System.out.println("Reloading registry from manifest files..."); //$NON-NLS-1$
@@ -116,11 +119,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			fromCache = false;
 			registry = new ExtensionRegistry(new ExtensionLinker());
 		}
-
+	
 		// register a listener to catch new bundle installations/resolutions.
 		pluginBundleListener = new EclipseBundleListener(registry);
 		runtimeContext.addBundleListener(pluginBundleListener);
-
+	
 		// populate the registry with all the currently installed bundles.
 		// There is a small window here while processBundles is being
 		// called where the pluginBundleListener may receive a BundleEvent 
@@ -129,13 +132,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		// same bundle twice.
 		if (!fromCache)
 			pluginBundleListener.processBundles(runtimeContext.getBundles());
-
+	
 		runtimeContext.registerService(IExtensionRegistry.class.getName(), registry, new Hashtable()); //$NON-NLS-1$
 		InternalPlatform.getDefault().setExtensionRegistry(registry);
 	}
 
 	private long computeRegistryStamp() {
-		// If the chack config prop is false or not set then exit
+		// If the check config prop is false or not set then exit
 		if (!"true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_CHECK_CONFIG))) //$NON-NLS-1$  
 			return 0;
 		Bundle[] allBundles = context.getBundles();
@@ -166,14 +169,27 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(runtimeContext);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
+		InternalPlatform.getDefault().getRuntimeFileManager().close();
 	}
 
 	private void stopRegistry(BundleContext runtimeContext) {
 		runtimeContext.removeBundleListener(this.pluginBundleListener);
 		if (registry != null && registry.isDirty()) {
-			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
-			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$			
+			FileManager manager = InternalPlatform.getDefault().getRuntimeFileManager();
+			File cacheFile = null;
+			try {
+				manager.lookup(".registry", true); //$NON-NLS-1$
+				cacheFile = File.createTempFile("registry", ".new", manager.getBase()); //$NON-NLS-1$
+			} catch(IOException e) {
+				registry = null;
+				return; //Ignore the exception since we can recompute the cache
+			}
 			new RegistryCacheWriter(cacheFile).saveCache(registry, computeRegistryStamp());
+			try {
+				manager.update(new String[]{".registry"}, new String[]{cacheFile.getName()});  //$NON-NLS-1$
+			} catch (IOException e) {
+				//Ignore the exception since we can recompute the cache
+			}
 			registry = null;
 		}
 	}

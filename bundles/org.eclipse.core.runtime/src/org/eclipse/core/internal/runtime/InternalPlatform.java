@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
+import org.eclipse.osgi.service.datalocation.FileManager;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
@@ -78,8 +79,9 @@ public final class InternalPlatform implements IPlatform {
 	private ArrayList groupProviders = new ArrayList(3);
 	private IProduct product;
 
+	private FileManager runtimeFileManager;
 	private Path cachedInstanceLocation; // Cache the path of the instance location
-
+	
 	// execution options
 	private static final String OPTION_DEBUG = PI_RUNTIME + "/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
@@ -289,7 +291,7 @@ public final class InternalPlatform implements IPlatform {
 			//	This makes the assumption that the instance location is a file: URL
 			cachedInstanceLocation = new Path(location.getURL().getPath());
 		}
-		return cachedInstanceLocation;
+		return cachedInstanceLocation;	
 	}
 
 	/**
@@ -452,8 +454,6 @@ public final class InternalPlatform implements IPlatform {
 	private String[] processCommandLine(String[] args) {
 		final String TRUE = "true"; //$NON-NLS-1$
 
-		// disables lazy registry cache loading 
-		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, TRUE);
 		if (args == null)
 			return args;
 		allArgs = args;
@@ -1192,5 +1192,18 @@ public final class InternalPlatform implements IPlatform {
 
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		groupProviders.remove(provider);
+	}
+	
+	public FileManager getRuntimeFileManager() {
+		if (runtimeFileManager==null) {
+			try {
+				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + PI_RUNTIME);
+				controlledDir.mkdirs();
+				runtimeFileManager = new FileManager(controlledDir);
+			} catch (IOException e) {
+				getFrameworkLog().log(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + PI_RUNTIME), 0, null, null)); //$NON-NLS-1$
+			}
+		}
+		return runtimeFileManager;
 	}
 }
