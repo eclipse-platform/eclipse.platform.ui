@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -107,7 +108,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					if (fParent instanceof MemoryView)
 					{
 						MemoryView mv = (MemoryView)fParent;
-						if (!mv.isPinMBDisplay())
+						IMemoryBlock[] mbs = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(getMemoryBlockRetrieval(memory));
+						if (!mv.isPinMBDisplay() || mbs.length == 1)
 						{
 							setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
 						}
@@ -138,7 +140,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				if (fParent instanceof MemoryView)
 				{
 					MemoryView mv = (MemoryView)fParent;
-					if (!mv.isPinMBDisplay())
+					IMemoryBlock[] mbs = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(getMemoryBlockRetrieval(memory));
+					if (!mv.isPinMBDisplay() || mbs.length == 1)
 					{
 						setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
 						setRenderingSelection(createTab.getRendering());
