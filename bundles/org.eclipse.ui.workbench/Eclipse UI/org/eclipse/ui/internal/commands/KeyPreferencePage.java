@@ -609,28 +609,34 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableSequencesForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 90;
-		gridData.widthHint = 440;	
 		tableSequencesForCommand.setLayoutData(gridData);
 
+		int width = 0;
 		TableColumn tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
+		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
+		tableColumn.pack();
+		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
+		tableColumn.pack();
+		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 3);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnSequence")); //$NON-NLS-1$
-		tableColumn.setWidth(220);	
+		tableColumn.pack();
+		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));	
 		
 		//tableViewerKeySequencesForCommand = new TableViewer(tableKeySequencesForCommand);
 		//tableViewerKeySequencesForCommand.setContentProvider(new TableViewerKeySequencesForCommandContentProvider());
@@ -718,28 +724,34 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableCommandsForSequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
-		gridData.widthHint = 440;	
 		tableCommandsForSequence.setLayoutData(gridData);
 
+		width = 0;
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
+		width += tableColumn.getWidth();
 		
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
+		tableColumn.pack();
+		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
+		tableColumn.pack();
+		tableColumn.setWidth(tableColumn.getWidth() + 20);		
+		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 3);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
-		tableColumn.setWidth(220);	
+		tableColumn.pack();
+		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));		
 		
 		//tableViewerCommandsForKeySequence = new TableViewer(tableCommandsForKeySequence);
 		//tableViewerCommandsForKeySequence.setContentProvider(new TableViewerCommandsForKeySequenceContentProvider());
