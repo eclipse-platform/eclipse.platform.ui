@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * elements with a registered workbench adapter in JFace structured viewers.
  * </p>
  * @see WorkbenchLabelProvider
- * @see WorkbenchContentProvider
+ * @see BaseWorkbenchContentProvider
  */
 public interface IWorkbenchAdapter {
 /**

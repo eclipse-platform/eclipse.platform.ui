@@ -22,18 +22,15 @@ import org.eclipse.jface.viewers.Viewer;
  * </p>
  * 
  * @see IWorkbenchAdapter
- * 
- * @issue There is breaking API here due to the removal of IResourceChangeListener.
- *   Could reduce this by moving WorkbenchContentProvider to the IDE layer and have 
- *   BaseWorkbenchContentProvider at the generic workbench layer.
+ * @since 3.0
  */
-public class WorkbenchContentProvider implements ITreeContentProvider {
+public class BaseWorkbenchContentProvider implements ITreeContentProvider {
 
 /**
  * Creates a new workbench content provider.
  *
  */
-public WorkbenchContentProvider() {
+public BaseWorkbenchContentProvider() {
 	super();
 }
 

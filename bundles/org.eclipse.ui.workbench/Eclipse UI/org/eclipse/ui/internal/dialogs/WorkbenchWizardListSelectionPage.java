@@ -87,7 +87,7 @@ public void createControl(Composite parent) {
 
 	// the list viewer		
 	wizardSelectionViewer = new TableViewer(table);
-	wizardSelectionViewer.setContentProvider(new WorkbenchContentProvider());
+	wizardSelectionViewer.setContentProvider(new BaseWorkbenchContentProvider());
 	wizardSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
 	wizardSelectionViewer.setSorter(new WorkbenchViewerSorter());
 	wizardSelectionViewer.addSelectionChangedListener(this);

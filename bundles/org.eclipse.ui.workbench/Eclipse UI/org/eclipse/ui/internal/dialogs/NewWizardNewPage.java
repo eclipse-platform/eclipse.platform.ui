@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -128,7 +128,7 @@ class NewWizardNewPage
 		}
 
 		categoryTreeViewer.getTree().setLayoutData(data);
-		categoryTreeViewer.setContentProvider(new WorkbenchContentProvider());
+		categoryTreeViewer.setContentProvider(new BaseWorkbenchContentProvider());
 		categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		categoryTreeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 		categoryTreeViewer.addSelectionChangedListener(this);
@@ -230,7 +230,7 @@ class NewWizardNewPage
 	 */
 	protected IContentProvider getWizardProvider() {
 		//want to get the wizards of the collection element
-		return new WorkbenchContentProvider() {
+		return new BaseWorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof WizardCollectionElement) {
 					return ((WizardCollectionElement) o).getWizards();

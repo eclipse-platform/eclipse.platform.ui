@@ -65,7 +65,7 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
@@ -974,7 +974,7 @@ public class EditorManager {
 			AdaptableList input = new AdaptableList(dirtyEditors);
 		
 			ListSelectionDialog dlg =
-				new ListSelectionDialog(window.getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
+				new ListSelectionDialog(window.getShell(), input, new BaseWorkbenchContentProvider(), new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
 		
 			dlg.setInitialSelections(dirtyEditors.toArray(new Object[dirtyEditors.size()]));
 			dlg.setTitle(SAVE_RESOURCES_TITLE);
