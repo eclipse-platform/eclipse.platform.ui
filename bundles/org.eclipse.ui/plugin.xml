@@ -2244,7 +2244,7 @@
       </view>
       <view
             name="%Views.Problem"
-            icon="icons/full/obj16/problemview.gif"
+            icon="icons/full/cview16/problems_view.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
