@@ -62,7 +62,9 @@ public interface ISourceViewer extends ITextViewer {
 	static final int INFORMATION= ITextOperationTarget.STRIP_PREFIX + 4;
 	
 	/**
-	 * Configures the source viewer using the given configuration.
+	 * Configures the source viewer using the given configuration. Prior to 3.0 this
+	 * method can only be called once. Since 3.0 this method can be called again
+	 * after a call to {@link ISourceViewerExtension2#unconfigure()}.
 	 * 
 	 * @param configuration the source viewer configuration to be used
 	 */
