@@ -36,32 +36,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ST;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -111,7 +85,30 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -132,11 +129,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
-import org.eclipse.ui.internal.KeyBindingService;
-import org.eclipse.ui.internal.actions.gestures.Capture;
-import org.eclipse.ui.internal.actions.gestures.CaptureListener;
-import org.eclipse.ui.internal.actions.gestures.Gesture;
-import org.eclipse.ui.internal.actions.gestures.Util;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -1868,6 +1860,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
 
+		/* gestures commented out until proper solution (i.e. preference page) can be found
+		 * for bug # 28417:
+		 * 
 		final Map gestureMap = new HashMap();
 		
 		gestureMap.put("E", "org.eclipse.ui.navigate.forwardHistory");
@@ -1910,6 +1905,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			};
 		});
+		*/
 
 		styledText.addMouseListener(getCursorListener());
 		styledText.addKeyListener(getCursorListener());
@@ -1924,7 +1920,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());
 		fTextContextMenu= manager.createContextMenu(styledText);
-		//styledText.setMenu(fTextContextMenu);
+		
+		// comment this line if using gestures, above.
+		styledText.setMenu(fTextContextMenu);
 		
 		if (fEditorContextMenuId != null)
 			getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
