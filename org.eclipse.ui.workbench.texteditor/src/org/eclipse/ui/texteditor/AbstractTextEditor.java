@@ -841,9 +841,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void run() {
 			ISourceViewer viewer= getSourceViewer();
-			int topIndex= viewer.getTopIndex();
-			int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
-			viewer.setTopIndex(newTopIndex);
+			if (viewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+				StyledText textWidget= viewer.getTextWidget();
+				int topIndex= textWidget.getTopIndex();
+				int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
+				viewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
+			} else {
+				int topIndex= viewer.getTopIndex();
+				int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
+				viewer.setTopIndex(newTopIndex);
+			}
 		}
 	}
 	
@@ -3199,7 +3207,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				MessageDialog.openError(shell, title, msg);
 			}
 			
-		} else {	
+		} else {
+			updateState(getEditorInput());
+			validateState(getEditorInput());
 			performSave(false, progressMonitor);
 		}
 	}
