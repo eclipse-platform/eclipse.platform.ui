@@ -12,11 +12,23 @@ Contributors:
 *********************************************************************/
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -34,6 +46,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
@@ -41,13 +54,16 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.externaltools.internal.ant.view.actions.*;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.SearchForBuildFilesAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveDownAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveUpAction;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
@@ -92,11 +108,11 @@ public class AntView extends ViewPart {
 	/**
 	 * XML value for a boolean attribute whose value is <code>true</code>
 	 */
-	private String VALUE_TRUE="true"; //$NON-NLS-1$
+	private String VALUE_TRUE = "true"; //$NON-NLS-1$
 	/**
 	 * XML value for a boolean attribute whose value is <code>false</code>
 	 */
-	private String VALUE_FALSE="false"; //$NON-NLS-1$
+	private String VALUE_FALSE = "false"; //$NON-NLS-1$
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -137,6 +153,136 @@ public class AntView extends ViewPart {
 	private TargetMoveDownAction moveDownAction;
 
 	/**
+	 * Map of build files (IFile) to project nodes (ProjectNode)
+	 */
+	private Map buildFilesToProjects = new HashMap();
+	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+				/**
+				 * Returns whether children should be visited
+				 */
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					if (delta == null || (0 == (delta.getKind() & IResourceDelta.CHANGED) && 0 == (delta.getKind() & IResourceDelta.REMOVED))) {
+						return false;
+					}
+					IResource resource = delta.getResource();
+					if (resource.getType() == IResource.FILE) {
+						if ("xml".equalsIgnoreCase(((IFile) resource).getFileExtension())) { //$NON-NLS-1$
+							if ((delta.getKind() & IResourceDelta.CHANGED) != 0 && delta.getFlags() == IResourceDelta.CONTENT) {
+								handleXMLFileChanged((IFile) resource);
+							} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
+								handleXMLFileRemoved((IFile) resource);
+							}
+						}
+						return false;
+					} else if (resource.getType() == IResource.PROJECT) {
+						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
+							IProject project= resource.getProject();
+							if (!project.isOpen()) {
+								handleProjectClosed(project);
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+			};
+			try {
+				event.getDelta().accept(visitor);
+			} catch (CoreException e) {
+			}
+		}
+	};
+
+	/**
+	 * The given XML file has changed. If it is present in the view, refresh the
+	 * view to pick up any structural changes.
+	 */
+	private void handleXMLFileChanged(IFile file) {
+		final ProjectNode project = (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
+		if (project == null) {
+			return;
+		}
+		project.parseBuildFile();
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				projectViewer.refresh(project);
+			}
+		});
+		// Update targets pane for removed targets
+		List activeTargets = targetContentProvider.getTargets();
+		ListIterator iter = activeTargets.listIterator();
+		while (iter.hasNext()) {
+			TargetNode target = (TargetNode) iter.next();
+			if (target.getParent().equals(project)) {
+				TargetNode[] newTargets = project.getTargets();
+				boolean oldTargetFound = false;
+				for (int i = 0; i < newTargets.length; i++) {
+					TargetNode newTarget = newTargets[i];
+					if (newTarget.getName().equals(target.getName())) {
+						// Replace the old target with the new
+						oldTargetFound = true;
+						iter.set(newTarget);
+					}
+				}
+				if (!oldTargetFound) {
+					// If no replacement was found for the old target, it was removed
+					iter.remove();
+				}
+			}
+		}
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				targetViewer.refresh();
+			}
+		});
+	}
+	
+	/**
+	 * The given XML file has been removed from the workspace. If the file is
+	 * present in the view, remove it.
+	 */
+	private void handleXMLFileRemoved(IFile file) {
+		final ProjectNode project= (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
+		if (project == null) {
+			return;
+		}
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				removeProject(project);
+			}
+		});
+	}
+	
+	/**
+	 * The given project has been closed. If any files present in the view are
+	 * contained in that project, remove them from the view.
+	 */
+	private void handleProjectClosed(IProject project) {
+		ProjectNode[] projects= projectContentProvider.getRootNode().getProjects();
+		final List projectsToRemove= new ArrayList();
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		for (int i = 0; i < projects.length; i++) {
+			ProjectNode projectNode = projects[i];
+			Path buildFilePath= new Path(projectNode.getBuildFileName());
+			int matchingSegments= root.getLocation().matchingFirstSegments(buildFilePath);
+			IFile file= root.getFile(buildFilePath.removeFirstSegments(matchingSegments));
+			//if (project.equals(file.getProject())) {
+			if (!file.exists()) {
+				projectsToRemove.add(projectNode);
+			}
+		}
+		if (!projectsToRemove.isEmpty()) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					removeProjects(projectsToRemove);
+				}
+			});
+		}
+	}
+
+	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -145,6 +291,7 @@ public class AntView extends ViewPart {
 		createProjectViewer();
 		createTargetViewer();
 		createToolbarActions();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -201,19 +348,19 @@ public class AntView extends ViewPart {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
-		
-		ToolBarManager projectManager= new ToolBarManager(projectToolBar);
+
+		ToolBarManager projectManager = new ToolBarManager(projectToolBar);
 		projectManager.add(runTargetAction);
 		projectManager.add(removeProjectAction);
 		projectManager.add(removeAllAction);
 		projectManager.update(true);
-		
-		ToolBarManager targetManager= new ToolBarManager(targetToolBar);
+
+		ToolBarManager targetManager = new ToolBarManager(targetToolBar);
 		targetManager.add(runActiveTargetsAction);
 		targetManager.add(moveDownAction);
 		targetManager.add(moveUpAction);
 		targetManager.update(true);
-		
+
 		updateActions();
 	}
 
@@ -243,13 +390,13 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the active targets
 	 */
 	private void createTargetViewer() {
-		ViewForm targetForm= new ViewForm(sashForm, SWT.NONE);
-		CLabel title= new CLabel(targetForm, SWT.NONE);
+		ViewForm targetForm = new ViewForm(sashForm, SWT.NONE);
+		CLabel title = new CLabel(targetForm, SWT.NONE);
 		title.setText("Active Targets");
 		targetForm.setTopLeft(title);
-		targetToolBar= new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
+		targetToolBar = new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
 		targetForm.setTopRight(targetToolBar);
-		
+
 		targetViewer = new TableViewer(targetForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		targetForm.setContent(targetViewer.getTable());
 		targetContentProvider = new AntTargetContentProvider();
@@ -268,7 +415,7 @@ public class AntView extends ViewPart {
 		});
 		createContextMenu(targetViewer);
 	}
-	
+
 	private void updateActions() {
 		Iterator iter = updateActions.iterator();
 		while (iter.hasNext()) {
@@ -280,13 +427,13 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the ant projects
 	 */
 	private void createProjectViewer() {
-		ViewForm projectForm= new ViewForm(sashForm, SWT.NONE);
-		CLabel title= new CLabel(projectForm, SWT.NONE);
+		ViewForm projectForm = new ViewForm(sashForm, SWT.NONE);
+		CLabel title = new CLabel(projectForm, SWT.NONE);
 		title.setText("Build Files");
 		projectForm.setTopLeft(title);
-		projectToolBar= new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
+		projectToolBar = new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
 		projectForm.setTopRight(projectToolBar);
-		 
+
 		projectViewer = new TreeViewer(projectForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		projectForm.setContent(projectViewer.getTree());
 		projectContentProvider = new AntProjectContentProvider();
@@ -321,7 +468,7 @@ public class AntView extends ViewPart {
 	public TableViewer getTargetViewer() {
 		return targetViewer;
 	}
-	
+
 	/**
 	 * Returns a list of <code>TargetNode</code> objects that have been
 	 * activated by the user
@@ -332,6 +479,16 @@ public class AntView extends ViewPart {
 	public List getActiveTargets() {
 		return targetContentProvider.getTargets();
 	}
+	
+	/**
+	 * Returns the <code>ProjectNode</code>s currently displayed in this view.
+	 * 
+	 * @return ProjectNode[] the <code>ProjectNode</code>s currently displayed
+	 * in this view
+	 */
+	public ProjectNode[] getProjects() {
+		return projectContentProvider.getRootNode().getProjects();
+	}
 
 	/**
 	 * Adds the given project project to the view
@@ -340,6 +497,7 @@ public class AntView extends ViewPart {
 	 */
 	public void addProject(ProjectNode project) {
 		projectContentProvider.addProject(project);
+		buildFilesToProjects.put(project.getBuildFileName(), project);
 		projectViewer.refresh();
 	}
 
@@ -348,7 +506,7 @@ public class AntView extends ViewPart {
 	 * viewer.
 	 */
 	public void activateSelectedTargets() {
-		TreeItem[] items= projectViewer.getTree().getSelection();
+		TreeItem[] items = projectViewer.getTree().getSelection();
 		for (int i = 0; i < items.length; i++) {
 			Object data = items[i].getData();
 			if (data instanceof TargetNode) {
@@ -363,8 +521,8 @@ public class AntView extends ViewPart {
 	 * viewer.
 	 */
 	public void deactivateSelectedTargets() {
-		int startIndex= targetViewer.getTable().getSelectionIndex();
-		int indices[]= targetViewer.getTable().getSelectionIndices();
+		int startIndex = targetViewer.getTable().getSelectionIndex();
+		int indices[] = targetViewer.getTable().getSelectionIndices();
 		for (int i = indices.length - 1; i >= 0; i--) {
 			targetContentProvider.removeTarget(indices[i]);
 		}
@@ -382,7 +540,7 @@ public class AntView extends ViewPart {
 		projectViewer.refresh();
 		targetViewer.refresh();
 	}
-	
+
 	/**
 	 * Removes the given list of <code>ProjectNode</code> objects from the view.
 	 * This method should be called whenever multiple projects are to be removed
@@ -393,7 +551,7 @@ public class AntView extends ViewPart {
 	 * remove
 	 */
 	public void removeProjects(List projectNodes) {
-		Iterator iter= projectNodes.iterator();
+		Iterator iter = projectNodes.iterator();
 		while (iter.hasNext()) {
 			ProjectNode project = (ProjectNode) iter.next();
 			removeProjectFromContentProviders(project);
@@ -401,7 +559,7 @@ public class AntView extends ViewPart {
 		projectViewer.refresh();
 		targetViewer.refresh();
 	}
-	
+
 	/**
 	 * Removes the given project node from the project content provider. Also
 	 * removes any targets from the given project from the target content
@@ -410,16 +568,18 @@ public class AntView extends ViewPart {
 	 * @param project the project to remove
 	 */
 	private void removeProjectFromContentProviders(ProjectNode project) {
-		ListIterator targets= targetContentProvider.getTargets().listIterator();
+		ListIterator targets = targetContentProvider.getTargets().listIterator();
 		while (targets.hasNext()) {
-			TargetNode target= (TargetNode) targets.next();
+			TargetNode target = (TargetNode) targets.next();
 			if (project.equals(target.getParent())) {
 				targets.remove();
 			}
 		}
 		projectContentProvider.getRootNode().removeProject(project);
+		// Clear the file to project mapping for this project
+		buildFilesToProjects.remove(project.getBuildFileName());
 	}
-	
+
 	/**
 	 * Removes all projects from the view
 	 */
@@ -428,6 +588,8 @@ public class AntView extends ViewPart {
 		targetContentProvider.getTargets().clear();
 		// Remove all projects
 		projectContentProvider.getRootNode().removeAllProjects();
+		// Clear the file to project map
+		buildFilesToProjects.clear();
 		// Refresh the viewers
 		projectViewer.refresh();
 		targetViewer.refresh();
@@ -497,20 +659,21 @@ public class AntView extends ViewPart {
 		}
 		List projectNodes = new ArrayList(projects.length);
 		for (int i = 0; i < projects.length; i++) {
-			IMemento project = projects[i];
-			String pathString = project.getString(KEY_PATH);
-			String nameString = project.getString(KEY_NAME);
-			String errorString = project.getString(KEY_ERROR);
-			
-			ProjectNode node= null;
+			IMemento projectMemento = projects[i];
+			String pathString = projectMemento.getString(KEY_PATH);
+			String nameString = projectMemento.getString(KEY_NAME);
+			String errorString = projectMemento.getString(KEY_ERROR);
+
+			ProjectNode project = null;
 			if (nameString == null) {
-				nameString= ""; //$NON-NLS-1$
+				nameString = ""; //$NON-NLS-1$
 			}
-			node= new ProjectNode(nameString, pathString);
+			project = new ProjectNode(nameString, pathString);
 			if (errorString != null && errorString.equals(VALUE_TRUE)) {
-				node.setIsErrorNode(true);
+				project.setIsErrorNode(true);
 			}
-			projectNodes.add(node);
+			projectNodes.add(project);
+			buildFilesToProjects.put(project.getBuildFileName(), project);
 		}
 		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
 	}
@@ -525,7 +688,7 @@ public class AntView extends ViewPart {
 		ProjectNode project;
 		IMemento projectMemento;
 		for (int i = 0; i < projects.length; i++) {
-			project= projects[i];
+			project = projects[i];
 			projectMemento = memento.createChild(TAG_PROJECT);
 			projectMemento.putString(KEY_PATH, project.getBuildFileName());
 			projectMemento.putString(KEY_NAME, project.getName());
@@ -545,12 +708,12 @@ public class AntView extends ViewPart {
 			targetMemento.putString(KEY_NAME, target.getName());
 		}
 	}
-	
+
 	/**
 	 * Moves the given target up in the list of active targets
 	 */
 	public void moveUpTarget(TargetNode target) {
-		int index= targetViewer.getTable().getSelectionIndex();
+		int index = targetViewer.getTable().getSelectionIndex();
 		if (index < 0) {
 			return;
 		}
@@ -558,17 +721,26 @@ public class AntView extends ViewPart {
 		targetViewer.refresh();
 		targetViewer.getTable().select(index - 1);
 	}
+
 	/**
 	 * Moves the given target down in the list of active targets
 	 */
 	public void moveDownTarget(TargetNode target) {
-		int index= targetViewer.getTable().getSelectionIndex();
-				if (index < 0) {
-					return;
-				}
+		int index = targetViewer.getTable().getSelectionIndex();
+		if (index < 0) {
+			return;
+		}
 		targetContentProvider.moveDownTarget(index);
 		targetViewer.refresh();
 		targetViewer.getTable().select(index + 1);
+	}
+
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 	}
 
 }

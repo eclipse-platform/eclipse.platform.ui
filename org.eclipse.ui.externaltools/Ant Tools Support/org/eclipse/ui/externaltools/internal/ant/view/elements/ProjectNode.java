@@ -129,7 +129,7 @@ public class ProjectNode extends AntNode {
 	 * state will be set and a target error node will be added
 	 */
 	public void parseBuildFile() {
-		targets= new ArrayList();
+		clear();
 		AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(buildFileName);
 		TargetInfo[] infos = null;
@@ -206,6 +206,15 @@ public class ProjectNode extends AntNode {
 				targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName());
 			}
 		}
+	}
+	
+	/**
+	 * Clear's this node's internally stored data
+	 */
+	private void clear() {
+		targets= new ArrayList();
+		setIsErrorNode(false);
+		setDefaultTarget(null);
 	}
 	
 	/**
