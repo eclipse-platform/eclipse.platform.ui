@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.ui.IBreakpointContainerFactory;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -80,12 +79,12 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         
 	    // Add hard-coded actions
         IAction action = new GroupBreakpointsAction(null, fView);
-        action.setText(ActionMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
+        action.setText(BreakpointGroupMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(menu, -1);
         
         AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
-        advancedAction.setText(ActionMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
+        advancedAction.setText(BreakpointGroupMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
 		item= new ActionContributionItem(advancedAction);
 		item.fill(menu, -1);
 	}
