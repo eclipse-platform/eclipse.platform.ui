@@ -181,6 +181,51 @@ public interface IPlatformConfiguration {
 	}
 	
 	/**
+	 * Feature entry.
+	 * Represents runtime "hints" about configured features.
+	 * The information is used during startup to locate the
+	 * correct attribution information for a primary feature. Note,
+	 * that a typical configuration can declare multiple feature
+	 * entries. At execution time, only one can be selected as
+	 * the active primary feature. This is determined based on 
+	 * specified command line arguments or computed defaults.
+	 * 
+	 * @since 2.0
+	 */
+	public interface IFeatureEntry {
+		
+		/**
+		 * Returns feature identifier.
+		 * @return feature identifier
+		 * @since 2.0
+		 */
+		public String getFeatureIdentifier();
+		
+		/**
+		 * Returns the currently configured version for the feature.
+		 * @return feature version (as string), or <code>null</code>
+		 * @since 2.0
+		 */
+		public String getFeatureVersion();
+		
+		/**
+		 * Returns the application to run when this feature is the
+		 * primary feature.
+		 * @return application identifier, or <code>null</code> 
+		 * @since 2.0
+		 */
+		public String getFeatureApplication();
+		
+		/**
+		 * Returns URL to the feature "root" files potentially
+		 * containing feature customization information
+		 * @return feature root path, or <code>null</code>
+		 * @since 2.0
+		 */
+		public URL getFeatureRootURL();
+	}
+	
+	/**
 	 * Create a site entry
 	 *
 	 * @param url site URL
@@ -200,7 +245,22 @@ public interface IPlatformConfiguration {
 	 * @return created site policy entry
 	 * @since 2.0
 	 */		
-	public ISitePolicy createSitePolicy(int type, String[] list);		
+	public ISitePolicy createSitePolicy(int type, String[] list);
+	
+	/**
+	 * Create a feature entry
+	 * @param id feature identifier. Must not be <code>null</code>.
+	 * @param version feature version (as String). Can be <code>null</code>.
+	 * @param application identifier of the application to run when 
+	 * this feature is the primary feature. Can be <code>null</code>.
+	 * If specified, the identifier must represent a valid extension 
+	 * registered in the <code>org.eclipse.core.runtime.applications</code>
+	 * extension point.
+	 * @param root URL to feature root. Can be <code>null</code>.
+	 * @return create feature entry
+	 * @since 2.0
+	 */	
+	public IFeatureEntry createFeatureEntry(String id, String version, String application, URL root);
 		
 	/**
 	 * Configures the specified site entry. If a site entry with the
@@ -251,6 +311,38 @@ public interface IPlatformConfiguration {
 	public ISiteEntry findConfiguredSite(URL url);
 	
 	/**
+	 * Configures the feature entry.
+	 * If another feature entry with the same feature identifier 
+	 * already exists, it is replaced.
+	 * @param entry feature entry
+	 * @since 2.0
+	 */
+	public void configureFeatureEntry(IFeatureEntry entry);
+	
+	/**
+	 * Unconfigures the specified feature entry if it exists.
+	 * @param entry feature entry
+	 * @since 2.0
+	 */
+	public void unconfigureFeatureEntry(IFeatureEntry entry);
+	
+	/**
+	 * Returns a list of configured feature entries.
+	 * @return array or entries, or an empty array if no entries
+	 * are configured
+	 * @since 2.0
+	 */
+	public IFeatureEntry[] getConfiguredFeatureEntries();
+	
+	/**
+	 * Locates the specified feature entry.
+	 * @param id feature identifier
+	 * @return ferature entry, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public IFeatureEntry findConfiguredFeatureEntry(String id);
+	
+	/**
 	 * Returns the URL location of the configuration information
 	 * 
 	 * @return configuration location URL, or <code>null</code> if the
@@ -289,29 +381,8 @@ public interface IPlatformConfiguration {
 	 */
 	public long getPluginsChangeStamp();	
 			
-	/**
-	 * Returns the identifier of the configured application. The identifier must
-	 * represent a valid extension registered in the 
-	 * <code>org.eclipse.core.runtime.applications</code> extension point.
-	 * 
-	 * @return application identifier. Returns the default Eclipse application
-	 * if none is configured.
-	 * @since 2.0
-	 */
-	public String getApplicationIdentifier();			
-	
-	/**
-	 * Returns the identifier of the application for the specified feature.
-	 * The identifier must represent a valid extension registered in the 
-	 * <code>org.eclipse.core.runtime.applications</code> extension point.
-	 * 
-	 * @param feature optional identifier for the primary feature.
-	 * @return application identifier for the feature. If feature was <code>null</code>,
-	 * or the specified feature is not defined, return <code>null</code>.
-	 * @since 2.0
-	 */
-	public String getApplicationIdentifier(String feature);			
-	
+		
+		
 	/**
 	 * Returns the identifier of the configured primary feature. A primary feature
 	 * is used to specify product customization information for a running instance
@@ -329,8 +400,29 @@ public interface IPlatformConfiguration {
 	 * @return an array of plug-in path elements (full URL entries), or an empty array.
 	 * @since 2.0
 	 */
-	public URL[] getPluginPath();
-		
+	public URL[] getPluginPath();		
+				
+	/**
+	 * Returns an array of bootstrap plugin identifiers whose
+	 * location needs to be explicitly identified in the configuration.
+	 * 
+	 * @return an array of identifiers, or empty array
+	 * otherwise
+	 * @since 2.0
+	 */
+	public String[] getBootstrapPluginIdentifiers();			
+				
+	/**
+	 * Sets the location of a bootstrap plugin.
+	 * 
+	 * @see IPlatformConfiguration#getBootstrapPluginIdentifiers()
+	 * @param id plugin identifier. Must match one of the entries returned
+	 * by getBootstrapPluginIdentifiers()
+	 * @param location
+	 * @since 2.0
+	 */
+	public void setBootstrapPluginLocation(String id, URL location);	
+				
 	/**
 	 * Returns an indication whether the configuration can be updated.
 	 * 
@@ -350,7 +442,21 @@ public interface IPlatformConfiguration {
 	 * otherwise
 	 * @since 2.0
 	 */
-	public boolean isTransient();	
+	public boolean isTransient();		
+		
+	/**
+	 * Indicates whether the configuration is transient or not. A transient
+	 * configuration typically represents a scenario where the configuration
+	 * was computed for a single instantiation of the platform and is not
+	 * guaranteed to be valid on subsequent instantiations. This method has
+	 * no effect if called on the current platform configuration.
+	 * 
+	 * @see BootLoader#getCurrentPlatformConfiguration()
+	 * @param value <code>true</code> if configuration is transient, <code>false</code> 
+	 * otherwise
+	 * @since 2.0
+	 */
+	public void isTransient(boolean value);	
 	
 	/**
 	 * Called to save the configuration information

@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.IPlatformConfiguration.IFeatureEntry;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
 import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 
@@ -35,9 +36,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private URL configLocation;
 	private HashMap sites;
 	private HashMap externalLinkSites; // used to restore prior link site state
-	private String primaryFeature;
-	private String primaryFeatureVersion;
-	private String primaryFeatureApplication;
+	private HashMap cfgdFeatures;
+	private HashMap bootPlugins;
+	private String defaultFeature;
 	private long lastChangeStamp;
 	private long changeStamp;
 	private boolean changeStampIsValid = false;
@@ -59,7 +60,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static final String ECLIPSEDIR = "eclipse";
 	private static final String PLUGINS = "plugins";
-	private static final String INSTALL = "install/.metadata";
+	private static final String INSTALL = "install";
 	private static final String CONFIG_FILE = "platform.cfg";
 	private static final String CONFIG_FILE_INIT = "install.properties";
 	private static final String FEATURES = INSTALL + "/features";
@@ -67,7 +68,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String PLUGIN_XML = "plugin.xml";
 	private static final String FRAGMENT_XML = "fragment.xml";
 	private static final String FEATURE_XML = "feature.xml";
-
+	
+	private static final String[] BOOTSTRAP_PLUGINS = {"org.eclipse.core.boot", "org.eclipse.core.runtime"};
+	private static final String CFG_BOOT_PLUGIN = "bootstrap";
 	private static final String CFG_SITE = "site";
 	private static final String CFG_URL = "url";
 	private static final String CFG_POLICY = "policy";
@@ -79,14 +82,18 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CFG_PLUGIN_STAMP = "stamp.plugins";
 	private static final String CFG_UPDATEABLE = "updateable";
 	private static final String CFG_LINK_FILE = "linkfile";
-	private static final String CFG_PRIMARY_FEATURE = "primary.feature";
-	private static final String INIT_PRIMARY_FEATURE = "application.configuration";
-	private static final String DFLT_PRIMARY_FEATURE = "org.eclipse.sdk";
-	private static final String CFG_PRIMARY_FEATURE_VERSION = "primary.feature.version";
-	private static final String INIT_PRIMARY_FEATURE_VERSION = "application.configuration";
-	private static final String CFG_PRIMARY_FEATURE_APP = "primary.feature.application";
-	private static final String INIT_PRIMARY_FEATURE_APP = "application";
-	private static final String DFLT_PRIMARY_FEATURE_APP = "org.eclipse.ui.workbench";
+	private static final String CFG_FEATURE_ENTRY = "feature";
+	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id";
+	private static final String CFG_FEATURE_ENTRY_ID = "id";
+	private static final String CFG_FEATURE_ENTRY_VERSION = "version";
+	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application";
+	private static final String CFG_FEATURE_ENTRY_ROOT = "root";
+	
+	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id";
+	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application";
+	private static final String DEFAULT_FEATURE_ID = "org.eclipse.sdk";
+	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench";
+	
 	private static final String CFG_VERSION = "version";
 	private static final String CFG_TRANSIENT = "transient";
 	private static final String VERSION = "1.0";
@@ -454,6 +461,50 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	}
 	
+	private class FeatureEntry implements IPlatformConfiguration.IFeatureEntry {
+		private String id;
+		private String version;
+		private String application;
+		private URL root;
+		
+		private FeatureEntry(String id, String version, String application, URL root) {
+			if (id == null)
+				throw new IllegalArgumentException();
+			this.id = id;
+			this.version = version;
+			this.application = application;
+			this.root = root;
+		}
+				
+		/*
+		 * @see IFeatureEntry#getFeatureIdentifier()
+		 */
+		public String getFeatureIdentifier() {
+			return id;
+		}
+		
+		/*
+		 * @see IFeatureEntry#getFeatureVersion()
+		 */
+		public String getFeatureVersion() {
+			return version;
+		}
+		
+		/*
+		 * @see IFeatureEntry#getFeatureApplication()
+		 */
+		public String getFeatureApplication() {
+			return application;
+		}
+		
+		/*
+		 * @see IFeatureEntry#getFeatureRootURL()
+		 */
+		public URL getFeatureRootURL() {
+			return root;
+		}
+	}
+	
 	private class VersionedIdentifier {
 		private String identifier = "";		
 		private int major = 0;
@@ -547,6 +598,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private PlatformConfiguration(String configArg) throws IOException {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
+		this.cfgdFeatures = new HashMap();
+		this.bootPlugins = new HashMap();
 						
 		// Determine configuration URL to use (based on command line argument)	
 		URL configURL = getConfigurationURL(configArg);
@@ -572,6 +625,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	PlatformConfiguration(URL url) throws IOException {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
+		this.cfgdFeatures = new HashMap();
+		this.bootPlugins = new HashMap();
 		initialize(url);
 	}
 
@@ -587,6 +642,17 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public ISitePolicy createSitePolicy(int type, String[] list) {
 		return new PlatformConfiguration.SitePolicy(type, list);
+	}
+
+	/*
+	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String, URL)
+	 */
+	public IFeatureEntry createFeatureEntry(
+		String id,
+		String version,
+		String application,
+		URL root) {
+		return new PlatformConfiguration.FeatureEntry(id, version, application, root);
 	}
 
 	/*
@@ -653,6 +719,54 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			result = (ISiteEntry) sites.get(URLDecoder.decode(key));
 		return result;
 	}
+	
+	/*
+	 * @see IPlatformConfiguration#configureFeatureEntry(IFeatureEntry)
+	 */
+	public void configureFeatureEntry(IFeatureEntry entry) {
+		if (entry == null)
+			return;
+
+		String key = entry.getFeatureIdentifier();
+		if (key == null)
+			return;
+
+		cfgdFeatures.put(key, entry);
+	}
+
+	/*
+	 * @see IPlatformConfiguration#unconfigureFeatureEntry(IFeatureEntry)
+	 */
+	public void unconfigureFeatureEntry(IFeatureEntry entry) {
+		if (entry == null)
+			return;
+
+		String key = entry.getFeatureIdentifier();
+		if (key == null)
+			return;
+
+		cfgdFeatures.remove(key);
+	}
+
+	/*
+	 * @see IPlatformConfiguration#getConfiguredFeatureEntries()
+	 */
+	public IFeatureEntry[] getConfiguredFeatureEntries() {
+		if (cfgdFeatures.size() == 0)
+			return new IFeatureEntry[0];
+
+		return (IFeatureEntry[]) cfgdFeatures.values().toArray(new IFeatureEntry[0]);
+	}
+
+	/*
+	 * @see IPlatformConfiguration#findConfiguredFeatureEntry(String)
+	 */
+	public IFeatureEntry findConfiguredFeatureEntry(String id) {
+		if (id == null)
+			return null;
+
+		return (IFeatureEntry) cfgdFeatures.get(id);
+	}
 
 	/*
 	 * @see IPlatformConfiguration#getConfigurationLocation()
@@ -689,44 +803,44 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	/*
-	 * @see IPlatformConfiguration#getApplication()
+	 * @see IPlatformConfiguration#getApplicationIdentifier()
 	 */
 	public String getApplicationIdentifier() {
-		// FIXME: change to use configured information
-		if (cmdApplication != null && !cmdApplication.equals(""))
-			return cmdApplication; // R1.0 compatibility			
-		else if (primaryFeatureApplication != null && !primaryFeatureApplication.equals(""))
-			return primaryFeatureApplication;
-		else
-			return DFLT_PRIMARY_FEATURE_APP;
-	}
-
-	/*
-	 * @see IPlatformConfiguration#getApplication(String)
-	 */
-	public String getApplicationIdentifier(String feature) {
-		// FIXME: change to use configured information
+		
+		if (cmdApplication != null) // application was specified
+			return cmdApplication;
+			
+		// if -feature was not specified use the default feature
+		String feature = cmdFeature;
 		if (feature == null)
-			return null;
-		else if (feature.equals(primaryFeature)) {
-			if (primaryFeatureApplication != null && !primaryFeatureApplication.equals(""))
-				return primaryFeatureApplication;
-			else 
-				return null;
+			feature = defaultFeature;
+			
+		// lookup application for feature (specified or defaulted)
+		if (feature != null) {
+			IFeatureEntry fe = findConfiguredFeatureEntry(feature);
+			if (fe != null) {
+				if (fe.getFeatureApplication() != null)
+					return fe.getFeatureApplication();
+			}
 		}
-		else
-			return null;
+		
+		// return hardcoded default if we failed
+		return DEFAULT_FEATURE_APPLICATION;
 	}
 
 	/*
-	 * @see IPlatformConfiguration#getPrimaryFeature()
+	 * @see IPlatformConfiguration#getPrimaryFeatureIdentifier()
 	 */
 	public String getPrimaryFeatureIdentifier() {
-		// FIXME: change to use configured information
-		if (primaryFeature != null && !primaryFeature.equals(""))
-			return primaryFeature;
+		
+		if (cmdFeature != null) // -feature was specified on command line
+			return cmdFeature; 
+		
+		// feature was not specified on command line
+		if (defaultFeature != null)
+			return defaultFeature; // return customized default if set
 		else
-			return DFLT_PRIMARY_FEATURE;
+			return DEFAULT_FEATURE_ID; // return hardcoded default
 	}
 
 	/*
@@ -767,6 +881,26 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	/*
+	 * @see IPlatformConfiguration#getBootstrapPluginIdentifiers()
+	 */
+	public String[] getBootstrapPluginIdentifiers() {
+		return BOOTSTRAP_PLUGINS;
+	}
+
+	/*
+	 * @see IPlatformConfiguration#setBootstrapPluginLocation(String, URL)
+	 */
+	public void setBootstrapPluginLocation(String id, URL location) {
+		String[] ids = getBootstrapPluginIdentifiers();
+		for (int i=0; i<ids.length; i++) {
+			if (ids[i].equals(id)) {
+				bootPlugins.put(id, location.toExternalForm());
+				break;
+			}
+		}
+	}
+		
+	/*
 	 * @see IPlatformConfiguration#isUpdateable()
 	 */
 	public boolean isUpdateable() {
@@ -779,6 +913,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public boolean isTransient() {
 		return transientConfig;
+	}
+	
+	/*
+	 * @see IPlatformConfiguration#isTransient(boolean)
+	 */
+	public void isTransient(boolean value) {
+		if (this != BootLoader.getCurrentPlatformConfiguration())
+			transientConfig = value;
 	}
 
 	/*
@@ -952,6 +1094,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	private void initializeCurrent(URL url) throws IOException {
+		
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//  NOTE: 
+		//       Due to Eclipse class loader structure and class
+		//       visibility, the configuration file search is
+		//       implemented in 2 different classes:
+		//          org.eclipse.core.internal.boot.PlatformConfiguration
+		//             getConfigurationURL(String)
+		//             initializeCurrent(URL)
+		//          org.eclipse.core.launcher.Main
+		//             getConfigurationURL(String)
+		//             loadConfiguration(URL)
+		//       If you are making changes to this method make sure
+		//       the change is applied in both places
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		// URL of configuration file was specified ... just use it, or create one in specified
 		// location if it does not exist
@@ -1205,9 +1362,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 				
 		// load simple properties
-		primaryFeature = loadAttribute(props, CFG_PRIMARY_FEATURE, null);
-		primaryFeatureVersion = loadAttribute(props, CFG_PRIMARY_FEATURE_VERSION, null);
-		primaryFeatureApplication = loadAttribute(props, CFG_PRIMARY_FEATURE_APP, null);
+		defaultFeature = loadAttribute(props, CFG_FEATURE_ENTRY_DEFAULT, null);
+		
 		String flag = loadAttribute(props, CFG_TRANSIENT, null);
 		if (flag != null) {
 			if (flag.equals("true"))
@@ -1238,6 +1394,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				lastPluginsChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
 			}
+		}
+		
+		// load bootstrap entries
+		String[] ids = getBootstrapPluginIdentifiers();
+		for (int i=0; i<ids.length; i++) {
+			bootPlugins.put(ids[i], loadAttribute(props, CFG_BOOT_PLUGIN + "." + ids[i], null));
+		}		
+		
+		// load feature entries
+		IFeatureEntry fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+".0", null);
+		for (int i=1; fe != null; i++) {
+			configureFeatureEntry(fe);
+			fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+"."+i, null);
 		}
 		
 		// load site properties
@@ -1330,6 +1499,22 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return site;
 	}
 	
+	private IFeatureEntry loadFeatureEntry(Properties props, String name, IFeatureEntry dflt) {
+		String id = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ID, null);
+		if (id == null)
+			return dflt;
+		String version = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_VERSION, null);
+		String application = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_APPLICATION, null);
+		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT, null);
+		URL root = null;
+		if (rootString != null)
+			try {
+				root = new URL(rootString);
+			} catch (MalformedURLException e) {
+			}
+		return createFeatureEntry(id, version, application, root);
+	}
+	
 	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
 		ArrayList list = new ArrayList();
 		String value = loadAttribute(props, name+".0",null);
@@ -1369,9 +1554,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		if (url == null)
 			return;
+		if (defaultFeature != null)
+			return; // already set
 								
 		// load any initialization attributes. These become the initial default settings
-		// for critical attributes (eg. primary feature) supplied by the packaging team.
+		// for critical attributes (eg. default primary feature) supplied by the packaging team.
 		// Once these are reflected in the configuration they cannot be changed via the
 		// initialization mechanism
 		Properties initProps = new Properties();
@@ -1392,26 +1579,20 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 				
 		// use "first-time" settings if not already set
-		int ix;
-		if (primaryFeature == null) {
-			primaryFeature = loadAttribute(initProps, INIT_PRIMARY_FEATURE, DFLT_PRIMARY_FEATURE);
-			// FIXME: temporary code for 1.0/ 2.0 compatibility
-			if (primaryFeature!=null && (ix=primaryFeature.indexOf("_"))!=-1) 
-				primaryFeature = primaryFeature.substring(0,ix);
-		}
-		if (primaryFeatureVersion == null) {			
-			primaryFeatureVersion = loadAttribute(initProps, INIT_PRIMARY_FEATURE_VERSION,null);
-			// FIXME: temporary code for 1.0/ 2.0 compatibility
-			if (primaryFeatureVersion!=null && (ix=primaryFeatureVersion.indexOf("_"))!=-1)
-				primaryFeatureVersion = primaryFeatureVersion.substring(ix+1);
-		}
-		if (primaryFeatureApplication == null) {
-			primaryFeatureApplication = loadAttribute(initProps, INIT_PRIMARY_FEATURE_APP, DFLT_PRIMARY_FEATURE_APP);
+		defaultFeature = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
+		if (defaultFeature != null) {	
+			String application = loadAttribute(initProps, INIT_DEFAULT_FEATURE_APPLICATION, null);
+			IFeatureEntry fe = createFeatureEntry(defaultFeature, null, application, null);
+			configureFeatureEntry(fe);
 		}
 	}
 	
 	private boolean isReadWriteLocation(URL url) {
-		return true; // FIXME: for now force use of the first location tried
+		if (!url.getProtocol().equals("file"))
+			return false;
+			
+		File f = new File(url.getFile());
+		return f.canWrite();
 	}
 	
 	private void write(PrintWriter w) {
@@ -1423,12 +1604,25 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		w.println("");
 		
 		// write global attributes
-		writeAttribute(w,CFG_PRIMARY_FEATURE,primaryFeature);
-		writeAttribute(w,CFG_PRIMARY_FEATURE_VERSION,primaryFeatureVersion); 
-		writeAttribute(w,CFG_PRIMARY_FEATURE_APP,primaryFeatureApplication); 
 		writeAttribute(w,CFG_STAMP,Long.toString(getChangeStamp()));
 		writeAttribute(w,CFG_FEATURE_STAMP,Long.toString(getFeaturesChangeStamp()));
 		writeAttribute(w,CFG_PLUGIN_STAMP,Long.toString(getPluginsChangeStamp()));
+		
+		// write out bootstrap entries
+		String[] ids = getBootstrapPluginIdentifiers();
+		for (int i=0; i<ids.length; i++) {
+			String location = (String) bootPlugins.get(ids[i]);
+			if (location != null)
+				writeAttribute(w, CFG_BOOT_PLUGIN + "." + ids[i], location);
+		}
+		
+		// write out feature entries
+		w.println("");
+		writeAttribute(w,CFG_FEATURE_ENTRY_DEFAULT,defaultFeature);
+		IFeatureEntry[] feats = getConfiguredFeatureEntries();
+		for (int i=0; i<feats.length; i++) {
+			writeFeatureEntry(w, CFG_FEATURE_ENTRY + "." + Integer.toString(i), feats[i]);
+		}
 		
 		// write out site entries
 		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
@@ -1463,6 +1657,18 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		writeAttribute(w, id + "." + CFG_POLICY, typeString);
 		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList());
+	}
+
+	private void writeFeatureEntry(PrintWriter w, String id, IFeatureEntry entry) {
+		
+		// write feature entry separator
+		w.println("");
+				
+		// write out feature entry settings
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier());
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion());
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication());
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT, entry.getFeatureRootURL()==null ? null : entry.getFeatureRootURL().toExternalForm());
 	}
 	
 	private void writeListAttribute(PrintWriter w, String id, String[] list) {
@@ -1587,6 +1793,22 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 		
 	private static URL getConfigurationURL(String configArg) throws MalformedURLException {
+	
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//  NOTE: 
+		//       Due to Eclipse class loader structure and class
+		//       visibility, the configuration file search is
+		//       implemented in 2 different classes:
+		//          org.eclipse.core.internal.boot.PlatformConfiguration
+		//             getConfigurationURL(String)
+		//             initializeCurrent(URL)
+		//          org.eclipse.core.launcher.Main
+		//             getConfigurationURL(String)
+		//             loadConfiguration(URL)
+		//       If you are making changes to this method make sure
+		//       the change is applied in both places
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
 		// Determine configuration URL to use (based on command line argument)		
 		// flag: -configuration COMMON | USER.HOME | USER.DIR | <url>
 		//        	COMMON		in <eclipse>/install/<cfig>
@@ -1708,7 +1930,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					PlatformConfiguration oldConfig = new PlatformConfiguration(tmpURL);
 					ISiteEntry[] oldSites = oldConfig.getConfiguredSites();
 					for (int i=0; i<oldSites.length; i++) {
-						tempConfig.configureSite(oldSites[i], false /*no not replace*/);
+						tempConfig.configureSite(oldSites[i], false /*do not replace*/);
 					}
 				} catch(IOException e) {
 				}
