@@ -528,7 +528,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
 	 */
-	public void checkedIn(String info) {
+	public void checkedIn(String info, boolean commit) {
 		// do nothing
 	}
 	/**

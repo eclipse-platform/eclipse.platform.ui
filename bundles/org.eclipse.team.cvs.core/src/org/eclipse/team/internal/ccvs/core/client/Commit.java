@@ -99,7 +99,7 @@ public class Commit extends Command {
 			// There should be sync info. Log the problem
 			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null); //$NON-NLS-1$
 		}
-		cvsFile.checkedIn(null);
+		cvsFile.checkedIn(null, true /* commit in progress */);
 		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, Policy.bind("Commit.timestampReset", cvsFile.getIResource().getFullPath().toString()), null); //$NON-NLS-1$;
 	}
 	

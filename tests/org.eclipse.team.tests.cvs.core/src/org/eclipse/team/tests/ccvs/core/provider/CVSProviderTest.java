@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import junit.framework.Test;
 
@@ -542,5 +541,18 @@ public class CVSProviderTest extends EclipseTest {
 		}
 		
 	}
+    
+    public void testUpdateWithNoChange() throws TeamException, CoreException {
+        IProject project = createProject(new String[] { "a.txt"});
+        setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
+        commitProject(project);
+        Date modDate = CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp();
+        // set the contents to the same value but ensure the local timestamp is different
+        setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
+        // Update and ensure file tiemstamp is what is was before out edit
+        updateProject(project, null, false);
+        assertEquals("Timestamp was not properly reset", modDate, CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp());
+        
+    }
 }
 

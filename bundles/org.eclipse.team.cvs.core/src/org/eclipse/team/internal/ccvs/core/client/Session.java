@@ -80,6 +80,8 @@ public class Session {
 	
 	// List of errors accumulated while the command is executing
     private List errors = new ArrayList();
+    
+    private Command currentCommand;
 
 	/**
 	 * Creates a new CVS session, initially in the CLOSED state.
@@ -964,5 +966,13 @@ public class Session {
 	
     public void clearErrors() {
         errors.clear();
+    }
+
+    public void setCurrentCommand(Command c) {
+        currentCommand = c;
+    }
+    
+    public Command getCurrentCommand() {
+        return currentCommand;
     }
 }

@@ -55,7 +55,7 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 					if (resource.getType() == IResource.FILE) {
 						if (comparator.compareContents((IFile)resource, info.getBase(), Policy.subMonitorFor(monitor, 100))) {
 							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-							cvsFile.checkedIn(null);
+							cvsFile.checkedIn(null, false /* not a commit */);
 						}
 					}
 				}

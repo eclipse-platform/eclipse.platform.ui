@@ -18,12 +18,25 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -31,10 +44,20 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.misc.ContainerContentProvider;
@@ -47,8 +70,7 @@ public class GenerateDiffFileWizard extends Wizard {
 	
 	private PatchFileSelectionPage mainPage;
 	private PatchFileCreationOptionsPage optionsPage;
-	
-	private IStructuredSelection selection;
+
 	private IResource resource;
 
 	/**
@@ -56,10 +78,72 @@ public class GenerateDiffFileWizard extends Wizard {
 	 * entering a file name that already exists.
 	 */
 	private class PatchFileSelectionPage extends WizardPage {
-		private Text filenameCombo;
+		
+		private final class DefaultValuesStore {
+			
+			private static final String PREF_LAST_SELECTION= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.selection"; //$NON-NLS-1$
+			private static final String PREF_LAST_FS_PATH= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.fs.path"; //$NON-NLS-1$
+			private static final String PREF_LAST_WS_FILENAME= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.ws.filename"; //$NON-NLS-1$
+			private static final String PREF_LAST_WS_PATH= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.ws.path"; //$NON-NLS-1$
+			
+			public int getDefaultSelection() {
+				try {
+					final int value= getDialogSettings().getInt(PREF_LAST_SELECTION); 
+					return value == CLIPBOARD || value == FILESYSTEM || value == WORKSPACE ? value : CLIPBOARD;					
+				} catch (NumberFormatException e) {
+					return CLIPBOARD;
+				}
+			}
+			
+			public String getDefaultFilesystemPath() {
+				final String lastPath = getDialogSettings().get(PREF_LAST_FS_PATH);
+				return lastPath != null ? lastPath : "";				 //$NON-NLS-1$
+			}
+			
+			public String getDefaultWorkspaceFilename() {
+				final String filename= getDialogSettings().get(PREF_LAST_WS_FILENAME);
+				return filename != null ? filename : "";				 //$NON-NLS-1$
+			}
+			
+			public IContainer getDefaultWorkspaceSelection() {
+				final String value= getDialogSettings().get(PREF_LAST_WS_PATH);
+				if ( value != null ) {
+					final IPath path= new Path(value);
+					final IResource container= ResourcesPlugin.getWorkspace().getRoot().findMember( path );
+					if (container instanceof IContainer) {
+						return (IContainer)container;
+					}
+				}
+				return null;
+			}
+						
+			public void storeDefaultSelection(int defaultSelection) {
+				getDialogSettings().put(PREF_LAST_SELECTION, defaultSelection);
+			}
+			
+			public void storeDefaultFilesystemPath(String path) {
+				getDialogSettings().put(PREF_LAST_FS_PATH, path);
+			}
+			
+			public void storeDefaultWorkspacePath(String path) {
+				getDialogSettings().put(PREF_LAST_WS_PATH, path);
+			}
+			
+			public void storeDefaultWorkspaceFilename(String filename) {
+				getDialogSettings().put(PREF_LAST_WS_FILENAME, filename);
+			}
+			
+			private IDialogSettings getDialogSettings() {
+				return CVSUIPlugin.getPlugin().getDialogSettings();
+			}
+		}			
+		
+		private final DefaultValuesStore defaultValuesStore;
+		
+		protected Text filenameCombo;
 		private Button browseButton;
 		
-		private TreeViewer treeViewer;
+		protected TreeViewer treeViewer;
 		private IContainer selectedContainer;
 		private Text workspaceFilename;
 		private Button saveInFilesystem;
@@ -74,26 +158,35 @@ public class GenerateDiffFileWizard extends Wizard {
 		private static final int SIZING_SELECTION_PANE_HEIGHT = 125;
 		private static final int SIZING_SELECTION_PANE_WIDTH = 200;
 		
-		PatchFileSelectionPage(String pageName, String title, ImageDescriptor image, IStructuredSelection selection) {
+		PatchFileSelectionPage(String pageName, String title, ImageDescriptor image) {
 			super(pageName, title, image);
 			setPageComplete(false);
+			defaultValuesStore = new DefaultValuesStore();
 		}
 		
 		/**
 		 * Allow the user to finish if a valid file has been entered. 
 		 */
 		protected boolean validatePage() {
-			boolean valid = false;									
+			boolean valid = false;
+			int selected = getSaveType();
 			
-			switch (getSaveType()) {
+			switch (selected) {
 				case WORKSPACE:
 					if (selectedContainer != null && getWorkspaceFile() != null) {
 						valid = true;
+						defaultValuesStore.storeDefaultWorkspaceFilename(workspaceFilename.getText());
+						final String path= selectedContainer.getFullPath().toOSString();
+						defaultValuesStore.storeDefaultWorkspacePath(path);
 					}
 					break;
 				case FILESYSTEM:
-					File file = new File(getFilesystemFile());
+					final String filename = getFilesystemFile();
+					final File file = new File(filename);
 					valid = isValidFile(file);
+					if (valid) {
+						defaultValuesStore.storeDefaultFilesystemPath(filename);
+					}
 					break;
 				case CLIPBOARD:
 					valid = true;
@@ -105,6 +198,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			if (valid) {
 				setMessage(null);
 				setErrorMessage(null);
+				defaultValuesStore.storeDefaultSelection(selected);
 			} else {
 				setErrorMessage(Policy.bind("Enter_a_valid_file_name_or_select_the_clipboard_option_1")); //$NON-NLS-1$
 			}
@@ -112,7 +206,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			return valid;
 		}
 
-		private boolean isValidFile(File file) {
+		protected boolean isValidFile(File file) {
 			if (!file.isAbsolute()) return false;
 			if (file.isDirectory()) return false;
 			File parent = file.getParentFile();
@@ -137,7 +231,7 @@ public class GenerateDiffFileWizard extends Wizard {
 		 * the patch outside of the workspace.
 		 */
 		public IFile getWorkspaceFile() {
-			if(saveInWorkspace.getSelection() && selectedContainer !=null) {
+			if(saveInWorkspace.getSelection() && selectedContainer != null) {
 				String filename = workspaceFilename.getText();
 				if(filename==null || filename.length() == 0) {
 					return null;
@@ -166,22 +260,10 @@ public class GenerateDiffFileWizard extends Wizard {
 			// Clipboard
 			saveToClipboard= new Button(composite, SWT.RADIO);
 			saveToClipboard.setText(Policy.bind("Save_To_Clipboard_2")); //$NON-NLS-1$
-			saveToClipboard.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					validatePage();
-					updateEnablements();
-				}
-			});
 			
 			// File System
 			saveInFilesystem= new Button(composite, SWT.RADIO);
 			saveInFilesystem.setText(Policy.bind("Save_In_File_System_3")); //$NON-NLS-1$
-			saveInFilesystem.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					validatePage();
-					updateEnablements();
-				}
-			});
 
 			Composite nameGroup = new Composite(composite,SWT.NONE);
 			layout = new GridLayout();
@@ -194,11 +276,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			filenameCombo= new Text(nameGroup, SWT.BORDER);
 			GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 			filenameCombo.setLayoutData(gd);
-			filenameCombo.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validatePage();
-				}
-			});
+			filenameCombo.setText(defaultValuesStore.getDefaultFilesystemPath());
 
 			browseButton = new Button(nameGroup, SWT.NULL);
 			browseButton.setText(Policy.bind("Browse..._4")); //$NON-NLS-1$
@@ -206,9 +284,56 @@ public class GenerateDiffFileWizard extends Wizard {
 			data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			browseButton.setLayoutData(data);
+			
+			// Workspace
+			saveInWorkspace= new Button(composite, SWT.RADIO);
+			saveInWorkspace.setText(Policy.bind("Save_In_Workspace_7")); //$NON-NLS-1$
+			
+			createTreeViewer(composite);	
+
+			final int selected = defaultValuesStore.getDefaultSelection();
+			saveToClipboard.setSelection(selected == CLIPBOARD);
+			saveInFilesystem.setSelection(selected == FILESYSTEM);
+			saveInWorkspace.setSelection(selected == WORKSPACE);
+
+			validatePage();
+			updateEnablements();
+
+			/**
+			 * Add listeners.
+			 */
+			saveToClipboard.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					validatePage();
+					updateEnablements();
+				}
+			});
+			saveInFilesystem.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					validatePage();
+					updateEnablements();
+				}
+			});
+			
+			saveInWorkspace.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					validatePage();
+					updateEnablements();
+				}
+			});
+			
+			filenameCombo.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validatePage();
+				}
+			});
+			
 			browseButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					FileDialog d = new FileDialog(getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
+					if (isValidFile(new File(filenameCombo.getText()))) {
+						d.setFilterPath(filenameCombo.getText());
+					}
 					d.setText(Policy.bind("Save_Patch_As_5")); //$NON-NLS-1$
 					d.setFileName(Policy.bind("patch.txt_6")); //$NON-NLS-1$
 					String file = d.open();
@@ -218,21 +343,7 @@ public class GenerateDiffFileWizard extends Wizard {
 					}			
 				}
 			});			
-			
-			// Workspace
-			saveInWorkspace= new Button(composite, SWT.RADIO);
-			saveInWorkspace.setText(Policy.bind("Save_In_Workspace_7")); //$NON-NLS-1$
-			saveInWorkspace.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					validatePage();
-					updateEnablements();
-				}
-			});
-			
-			createTreeViewer(composite);		
-			saveToClipboard.setSelection(true);
-			validatePage();
-			updateEnablements();
+
 		}
 		
 		/**
@@ -262,31 +373,13 @@ public class GenerateDiffFileWizard extends Wizard {
 			treeViewer.getTree().setLayoutData(data);
 			treeViewer.setContentProvider(cp);
 			treeViewer.setLabelProvider(new WorkbenchLabelProvider());
-			treeViewer.addSelectionChangedListener(
-				new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-						containerSelectionChanged((IContainer) selection.getFirstElement()); // allow null
-						validatePage();
-					}
-				});
-			
-			treeViewer.addDoubleClickListener(
-				new IDoubleClickListener() {
-					public void doubleClick(DoubleClickEvent event) {
-						ISelection selection = event.getSelection();
-						if (selection instanceof IStructuredSelection) {
-							Object item = ((IStructuredSelection)selection).getFirstElement();
-							if (treeViewer.getExpandedState(item))
-								treeViewer.collapseToLevel(item, 1);
-							else
-								treeViewer.expandToLevel(item, 1);
-						}
-					}
-				});
 		
 			// This has to be done after the viewer has been laid out
 			treeViewer.setInput(ResourcesPlugin.getWorkspace());
+			selectedContainer= defaultValuesStore.getDefaultWorkspaceSelection();
+			if (selectedContainer != null) {
+				treeViewer.setSelection(new StructuredSelection(selectedContainer));
+			}
 			
 			// name group
 			Composite nameGroup = new Composite(parent,SWT.NONE);
@@ -304,13 +397,41 @@ public class GenerateDiffFileWizard extends Wizard {
 			workspaceFilename = new Text(nameGroup,SWT.BORDER);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 			workspaceFilename.setLayoutData(data);
+			workspaceFilename.setText(defaultValuesStore.getDefaultWorkspaceFilename());
+			
+			/**
+			 * Add listeners.
+			 */
+			treeViewer.addSelectionChangedListener(
+					new ISelectionChangedListener() {
+						public void selectionChanged(SelectionChangedEvent event) {
+							IStructuredSelection s = (IStructuredSelection)event.getSelection();
+							containerSelectionChanged((IContainer) s.getFirstElement()); // allow null
+							validatePage();
+						}
+					});
+			
+			treeViewer.addDoubleClickListener(
+					new IDoubleClickListener() {
+						public void doubleClick(DoubleClickEvent event) {
+							ISelection s= event.getSelection();
+							if (s instanceof IStructuredSelection) {
+								Object item = ((IStructuredSelection)s).getFirstElement();
+								if (treeViewer.getExpandedState(item))
+									treeViewer.collapseToLevel(item, 1);
+								else
+									treeViewer.expandToLevel(item, 1);
+							}
+						}
+					});
+			
 			workspaceFilename.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					validatePage();
 				}
 			});
 		}
-	
+		
 		/**
 		 * Enable and disable controls based on the selected radio button.
 		 */
@@ -444,7 +565,6 @@ public class GenerateDiffFileWizard extends Wizard {
 	
 	public GenerateDiffFileWizard(IStructuredSelection selection, IResource resource) {
 		super();
-		this.selection = selection;
 		this.resource = resource;
 		setWindowTitle(Policy.bind("GenerateCVSDiff.title")); //$NON-NLS-1$
 		initializeDefaultPageImageDescriptor();
@@ -453,7 +573,7 @@ public class GenerateDiffFileWizard extends Wizard {
 	public void addPages() {
 		String pageTitle = Policy.bind("GenerateCVSDiff.pageTitle"); //$NON-NLS-1$
 		String pageDescription = Policy.bind("GenerateCVSDiff.pageDescription"); //$NON-NLS-1$
-		mainPage = new PatchFileSelectionPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF), selection);
+		mainPage = new PatchFileSelectionPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF));
 		mainPage.setDescription(pageDescription);
 		addPage(mainPage);
 		

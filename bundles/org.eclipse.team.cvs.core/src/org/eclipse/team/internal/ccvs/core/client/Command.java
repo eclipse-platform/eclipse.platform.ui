@@ -334,6 +334,7 @@ public abstract class Command extends Request {
 				
 				// run the command
 				try {
+				    session.setCurrentCommand(Command.this);
 					status[0] = doExecute(session, gOptions, lOptions, arguments, listener, monitor);
 					notifyConsoleOnCompletion(session, status[0], null);
 				} catch (CVSException e) {

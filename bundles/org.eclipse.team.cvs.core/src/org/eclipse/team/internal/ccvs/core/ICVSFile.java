@@ -152,8 +152,10 @@ public interface ICVSFile extends ICVSResource, ICVSStorage {
 	/**
 	 * This method is invoked by the checked-in handler after the file
 	 * has been committed.
+	 * @param entryLine the entry line recieved from the server (can be null)
+	 * @param commit whether the checkin is comming from a cvs commit or not
 	 */
-	public void checkedIn(String entryLine) throws CVSException;
+	public void checkedIn(String entryLine, boolean commit) throws CVSException;
 		
 	/**
 	 * Answer any pending notification information associated with the receiver.

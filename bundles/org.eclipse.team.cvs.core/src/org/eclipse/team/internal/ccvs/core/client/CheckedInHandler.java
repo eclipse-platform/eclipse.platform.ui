@@ -48,7 +48,7 @@ class CheckedInHandler extends ResponseHandler {
 		
 		// Marked the local file as checked-in
 		monitor.subTask(Policy.bind("CheckInHandler.checkedIn", Util.toTruncatedPath((ICVSResource)mFile, session.getLocalRoot(), 3))); //$NON-NLS-1$
-		mFile.checkedIn(entryLine);
+		mFile.checkedIn(entryLine, session.getCurrentCommand() instanceof Commit);
 	}
 }
 

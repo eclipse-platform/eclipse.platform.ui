@@ -415,15 +415,15 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		return getNotifyInfo();
 	}
 	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkedIn(java.lang.String)
 	 */
-	public void checkedIn(String entryLine) throws CVSException {
+	public void checkedIn(String entryLine, boolean commit) throws CVSException {
 		ResourceSyncInfo oldInfo = getSyncInfo();
 		ResourceSyncInfo newInfo = null;
 		int modificationState = ICVSFile.CLEAN;
 		if (entryLine == null) {
-			// The file contents matched the server contents so no entry line was sent
+			// cvs commit: the file contents matched the server contents so no entry line was sent
 			if (oldInfo == null) return;
 			Date timeStamp = oldInfo.getTimeStamp();
 			if (timeStamp == null || oldInfo.isMergedWithConflicts()) {
@@ -440,14 +440,27 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			}
 			// (modified = false) the file will be no longer modified
 		} else if (oldInfo == null) {
-			// cvs add of a file
+			// cvs add: addition of a file
 			newInfo = new ResourceSyncInfo(entryLine, null, null);
 			// an added file should show up as modified
 			modificationState = ICVSFile.DIRTY;
 		} else {
-			// commit of a changed file
-			newInfo = new ResourceSyncInfo(entryLine, oldInfo.getPermissions(), getTimeStamp());
-			// (modified = false) a committed file is no longer modified
+			// cvs commit: commit of a changed file
+		    // cvs update: update of a file whose contents match the server contents
+		    Date timeStamp;
+		    if (commit) {
+		        // This is a commit. Put the file timestamp in the entry
+		        timeStamp = getTimeStamp();
+		    } else {
+		        // This is an update. Reset the file timestamp to match the entry
+		        timeStamp = oldInfo.getTimeStamp();
+		        if (timeStamp == null) {
+		            timeStamp = getTimeStamp();
+		        } else {
+		            setTimeStamp(timeStamp);
+		        }
+		    }
+	        newInfo = new ResourceSyncInfo(entryLine, oldInfo.getPermissions(), timeStamp);
 			
 		}
 		if (newInfo != null) setSyncInfo(newInfo, modificationState);
