@@ -214,7 +214,7 @@
 		<consoleContentProvider 
 			id="org.eclipse.ant.consoleColorProvider" 
 			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleColorProvider"
-			processType="ant">
+			processType="org.eclipse.ui.externaltools.ant">
 		</consoleContentProvider>
 	</extension>  	
     
