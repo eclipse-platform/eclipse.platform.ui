@@ -96,7 +96,8 @@ public class ContentReference {
 		else if (url != null) {
 			if (connection == null) {
 				try {
-			 		connection = url.openConnection();
+					URL resolvedURL = URLEncoder.encode(url);
+			 		connection = resolvedURL.openConnection();
 				} catch (IOException e) {
 					return ContentReference.UNKNOWN_SIZE;
 				}

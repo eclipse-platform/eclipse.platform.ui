@@ -228,7 +228,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			};
 
 		} catch (Exception e) {
-			throw newCoreException("Error retrieving plugin Entry Archive Reference :" + pluginEntry.getVersionIdentifier().toString(), e);
+			throw newCoreException("Error retrieving plugin Entry Archive Reference: " + pluginEntry.getVersionIdentifier().toString()+"\r\n"+e.toString(), e);
 		}
 		return pluginReferences;
 	}
