@@ -394,7 +394,7 @@
             textPreferenceKey="changeIndication"
             textPreferenceValue="false"
             overviewRulerPreferenceKey="changeIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="true"
+            overviewRulerPreferenceValue="false"
             colorPreferenceKey="changeIndicationColor"
             colorPreferenceValue="128,0,64"
             presentationLayer="2"
