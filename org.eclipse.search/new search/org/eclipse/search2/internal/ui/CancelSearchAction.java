@@ -29,6 +29,8 @@ public class CancelSearchAction extends Action {
 	
 	public void run() {
 		ISearchResult result= fView.getCurrentSearchResult();
-		InternalSearchUI.getInstance().cancelSearch(result.getQuery());
+		if (result != null) {
+			InternalSearchUI.getInstance().cancelSearch(result.getQuery());
+		}
 	}
 }

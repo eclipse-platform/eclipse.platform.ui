@@ -252,6 +252,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (page != null)
 			page.setInput(search, fSearchViewStates.get(search));
 		updateLabel();
+		updateCancelAction();
 	}
 
 	private void doUpdateTitle() {
