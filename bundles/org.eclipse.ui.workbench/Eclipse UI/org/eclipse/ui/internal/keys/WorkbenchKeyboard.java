@@ -10,10 +10,12 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -24,13 +26,15 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -497,59 +501,71 @@ public class WorkbenchKeyboard {
 
 		// Set up the shell.
 		multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
-		multiKeyAssistShell.setLayout(new GridLayout());
-		Composite composite = new Composite(multiKeyAssistShell, SWT.NULL);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		multiKeyAssistShell.setLayout(layout);
 
 		// Get the list of items.
-		Map partialMatches = commandManager.getPartialMatches(state.getCurrentSequence());
-		String[] items = new String[partialMatches.size()];
+		Map partialMatches = new TreeMap(new Comparator() {
+			public int compare(Object a, Object b) {
+				KeySequence sequenceA = (KeySequence) a;
+				KeySequence sequenceB = (KeySequence) b;
+				return sequenceA.format().compareTo(sequenceB.format());
+			}
+		});
+		partialMatches.putAll(commandManager.getPartialMatches(state.getCurrentSequence()));
 		Iterator partialMatchItr = partialMatches.entrySet().iterator();
-		int i = 0;
 		while (partialMatchItr.hasNext()) {
 			Map.Entry entry = (Map.Entry) partialMatchItr.next();
-			KeySequence partialMatch = (KeySequence) entry.getKey();
 			String commandId = (String) entry.getValue();
 			ICommand command = commandManager.getCommand(commandId);
-			try {
-				// TODO The enabled property of ICommand is broken.
-				if (command.isDefined()
-					&& command.isActive()
-					/*
-					 * && command.isEnabled()
-					 */
-					) {
-					items[i++] = partialMatch.format() + "   " + command.getName(); //$NON-NLS-1$
-				}
-			} catch (NotDefinedException e) {
-				// Simply don't insert the item.
+			// TODO The enabled property of ICommand is broken.
+			if (!command.isDefined() || !command.isActive() // ||
+			// !command.isEnabled()
+			) {
+				partialMatchItr.remove();
 			}
 		}
 
-		// Compact the list of items.
-		if (i < items.length) {
-			String[] tempItems = new String[i];
-			System.arraycopy(items, 0, tempItems, 0, i);
-			items = tempItems;
-		}
-
 		// Layout the partial matches.
-		if (items.length < 1) {
-			Label noMatchesLabel = new Label(composite, SWT.NULL);
+		if (partialMatches.isEmpty()) {
+			Label noMatchesLabel = new Label(multiKeyAssistShell, SWT.NULL);
 			noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE, "NoMatches.Message")); //$NON-NLS-1$
 			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-			multiKeyAssistShell.pack();
 		} else {
-			org.eclipse.swt.widgets.List completionsList =
-				new org.eclipse.swt.widgets.List(composite, SWT.SINGLE);
-			completionsList.setLayoutData(new GridData(GridData.FILL_BOTH));
-			completionsList.setItems(items);
-			multiKeyAssistShell.setSize(300, 200);
+			Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
+			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+			new TableColumn(completionsTable, SWT.LEFT);
+			new TableColumn(completionsTable, SWT.LEFT);
+			Iterator itemsItr = partialMatches.entrySet().iterator();
+			while (itemsItr.hasNext()) {
+				Map.Entry entry = (Map.Entry) itemsItr.next();
+				KeySequence sequence = (KeySequence) entry.getKey();
+				String commandId = (String) entry.getValue();
+				ICommand command = commandManager.getCommand(commandId);
+				try {
+					String[] text = { sequence.format(), command.getName()};
+					TableItem item = new TableItem(completionsTable, SWT.NULL);
+					item.setText(text);
+				} catch (NotDefinedException e) {
+					// Not much to do, but this shouldn't really happen.
+				}
+			}
 		}
 
-		// Position the shell, and then open it.
+		// Size the shell.
+		multiKeyAssistShell.pack();
 		Point assistShellSize = multiKeyAssistShell.getSize();
+		if (assistShellSize.x > 300) {
+			assistShellSize.x = 300;
+		}
+		if (assistShellSize.y > 200) {
+			assistShellSize.y = 200;
+		}
+		multiKeyAssistShell.setSize(assistShellSize);
+
+		// Position the shell.
 		Point assistShellLocation =
 			new Point(statusLineLocation.x, statusLineLocation.y - assistShellSize.y);
 		Rectangle displayBounds = display.getBounds();
@@ -566,6 +582,8 @@ public class WorkbenchKeyboard {
 			assistShellLocation.y = displayBottomEdge - assistShellSize.y;
 		}
 		multiKeyAssistShell.setLocation(assistShellLocation);
+
+		// Open the shell.
 		multiKeyAssistShell.open();
 	}
 
