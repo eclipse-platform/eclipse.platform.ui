@@ -8,8 +8,11 @@
  ******************************************************************************/
 package org.eclipse.search.ui;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.SearchMessages;
 /**
  * A facade for access to the new search UI facilities.
  * 
@@ -49,8 +52,16 @@ public class NewSearchUI {
 	public static void runQuery(ISearchQuery query) {
 		if (query.canRunInBackground())
 			InternalSearchUI.getInstance().runSearchInBackground(query);
-		else
-			InternalSearchUI.getInstance().runSearchInForeground(null, query);
+		else {
+			IStatus status=InternalSearchUI.getInstance().runSearchInForeground(null, query);
+			if (status != null) {
+				if (!status.isOK())
+					SearchPlugin.log(status);
+				if (status.getSeverity() == IStatus.ERROR) {
+					ErrorDialog.openError(SearchPlugin.getActiveWorkbenchShell(), SearchMessages.getString("NewSearchUI.error.title"), SearchMessages.getString("NewSearchUI.error.label"), status); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		}
 	}
 	/**
 	 * Runs the given search query. This method will execute the query in the
