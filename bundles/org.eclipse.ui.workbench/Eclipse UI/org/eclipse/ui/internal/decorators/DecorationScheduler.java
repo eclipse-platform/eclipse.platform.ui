@@ -271,7 +271,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 				while (true) {
 					// will block if there are no resources to be decorated
 					DecorationReference reference = next();
-					DecorationResult cacheResult = new DecorationResult();
+					DecorationBuilder cacheResult = new DecorationBuilder();
 
 					// if next() returned null, we are done and should shut down.
 					if (reference == null) {
@@ -290,7 +290,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 
 						if (cacheResult.hasValue()) {
 							DecorationResult result =
-								cacheResult.copyAndClear();
+								cacheResult.createResult();
 							resultCache.put(reference.getElement(), result);
 							pendingUpdate.add(reference.getElement());
 						};

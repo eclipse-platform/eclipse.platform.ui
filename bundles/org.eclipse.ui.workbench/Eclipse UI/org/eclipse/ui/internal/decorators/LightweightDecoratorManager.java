@@ -142,7 +142,7 @@ class LightweightDecoratorManager {
 	void getDecorations(
 		Object element,
 		Object adapted,
-		DecorationResult decoration) {
+		DecorationBuilder decoration) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
