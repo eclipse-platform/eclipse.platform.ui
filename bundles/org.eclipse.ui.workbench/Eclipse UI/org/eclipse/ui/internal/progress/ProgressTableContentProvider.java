@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 /**
@@ -132,4 +133,6 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 		}
 		return roots.toArray();
 	}
+	
+	
 }

@@ -35,6 +35,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
@@ -105,6 +106,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 					boolean fullMap) {
 				super.doUpdateItem(widget, element, fullMap);
 				moveShell(getShell(), AssociatedWindow.ALWAYS_VISIBLE);
+				
 			}
 		};
 		viewer.setUseHashlookup(true);
@@ -134,6 +136,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 				}
 			}
 		});
+		
 		return viewer.getControl();
 	}
 	/**
@@ -219,7 +222,16 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * Set the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider = new ProgressTableContentProvider(viewer);
+		IContentProvider provider = new ProgressTableContentProvider(viewer){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.ProgressContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+				getShell().setSize(getMaximumSize(getShell().getDisplay()));
+				super.inputChanged(viewer, oldInput, newInput);
+			}
+		};
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
