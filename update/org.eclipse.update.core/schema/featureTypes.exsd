@@ -6,18 +6,16 @@
       <meta.schema plugin="org.eclipse.update.core" id="featureTypes" name="Feature Type Factory"/>
    </appInfo>
    <documentation>
-      &lt;p&gt;The platform update mechanism supports pluggable feature type
+      The platform update mechanism supports pluggable feature type
 implementations. A new feature type can be registered in order
 to support
 alternate packaging and verification schemes.
-&lt;/p&gt;
 &lt;p&gt;
 The &lt;code&gt;featureTypes&lt;/code&gt;
 extension point allows alternate feature implementations to be
 registered using a symbolic type identifier. Whenever the 
 type is referenced using this identifier, the supplied factory
 is used to create the correct concrete feature implementation.
-&lt;/p&gt;
    </documentation>
 </annotation>
 
@@ -70,19 +68,19 @@ is used to create the correct concrete feature implementation.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of new feature type registration.
-&lt;br&gt;&lt;br&gt;
-&lt;code&gt;
-&amp;lt;extension&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;id="custom"&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;point="org.eclipse.update.core.featureTypes"&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;name="Custom packaged feature"&amp;gt;&lt;br&gt;
-&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;feature-factory&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;class="com.xyz.update.CustomFeatureFactory"&amp;gt;&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;/feature-factory&amp;gt;&lt;br&gt;
-&amp;lt;/extension&amp;gt;&lt;br&gt;
-&lt;/code&gt;
+         The following is an example of new feature type registration:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+      id="custom"
+      point="org.eclipse.update.core.featureTypes"
+      name="Custom packaged feature"&gt;
+      &lt;feature-factory
+          class="com.xyz.update.CustomFeatureFactory"&gt;
+      &lt;/feature-factory&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 

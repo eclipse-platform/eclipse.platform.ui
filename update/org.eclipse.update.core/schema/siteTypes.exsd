@@ -6,20 +6,15 @@
       <meta.schema plugin="org.eclipse.update.core" id="siteTypes" name="Site Type Factory"/>
    </appInfo>
    <documentation>
-      &lt;p&gt;
-The platform update mechanism supports pluggable site type
+      The platform update mechanism supports pluggable site type
 implementations. A new site type can be registered in order
-to support
-alternate site layout schemes.
-&lt;/p&gt;
-
+to support alternate site layout schemes.
 &lt;p&gt;
 The &lt;code&gt;siteTypes&lt;/code&gt;
 extension point allows alternate site implementations to be
 registered using a symbolic type identifier. Whenever the 
 type is referenced using this identifier, the supplied factory
 is used to create the correct concrete site implementation.
-&lt;/p&gt;
    </documentation>
 </annotation>
 
@@ -71,18 +66,18 @@ site type
       </appInfo>
       <documentation>
          The following is an example of new site type registration.
-&lt;br&gt;&lt;br&gt;
-&lt;code&gt;
-&amp;lt;extension&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;id="custom"&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;point="org.eclipse.update.core.siteTypes"&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;name="Custom site"&amp;gt;&lt;br&gt;
-&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;site-factory&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;class="com.xyz.update.CustomSiteFactory"&amp;gt;&lt;br&gt;
-&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;/site-factory&amp;gt;&lt;br&gt;
-&amp;lt;/extension&amp;gt;&lt;br&gt;
-&lt;/code&gt;
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+        id="custom"
+        point="org.eclipse.update.core.siteTypes"
+        name="Custom site"&gt;
+      &lt;site-factory
+          class="com.xyz.update.CustomSiteFactory"&gt;
+      &lt;/site-factory&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 

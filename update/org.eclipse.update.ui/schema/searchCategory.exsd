@@ -6,7 +6,7 @@
       <meta.schema plugin="org.eclipse.update.ui" id="searchCategory" name="Search Category"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      &lt;b&gt;This is an internal extension point and is not supposed to be used by plug-ins other than Update UI.&lt;/b&gt;
    </documentation>
 </annotation>
 
@@ -101,7 +101,7 @@ instances of this search category in the UI.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         
       </documentation>
    </annotation>
 
@@ -110,7 +110,7 @@ instances of this search category in the UI.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -119,7 +119,7 @@ instances of this search category in the UI.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
