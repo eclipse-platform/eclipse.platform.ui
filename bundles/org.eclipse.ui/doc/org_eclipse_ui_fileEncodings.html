@@ -1,0 +1,94 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Eclipse Workbench Extension Point: Pop-up Menus</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">File Encodings</h1>
+<b><i>Identifier: </i></b>org.eclipse.ui.fileEncodings
+<p><b><i>Description: </i></b>This extension point is used to specify file
+encodings available to editors that read the contents of a file using a user
+specified file encoding. Eclipse supplies default definitions for ASCII, UTF-8,
+UTF-16, UTF-16 big endian, UTF-16 little endian, GBK (Chinese only) and GB18030
+(Chinese(PRC) only).
+<p>File encodings by default are displayed in all locales but it is possible to
+restrict the locales they are available in by using the <font face="Courier">locale</font>
+key.
+<p>The file encodings also specify details for use in building selection actions
+for them in the workbench. They are label, description, helpContextID and
+toolTip. The value of an encoding is the string that will be sent to the
+IEncodingSupport for the workbench.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT fileEncoding &gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST fileEncoding</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+id
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+label
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+value
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+helpContextID
+&nbsp;&nbsp; CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+description
+&nbsp;&nbsp;&nbsp;&nbsp; CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+tooltip
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+locale
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #OPTIONAL</tt>
+
+<br><tt>&gt;</tt>
+
+</p>
+<ul>
+<li>
+<b>id</b> - a unique identifier that can be used to reference this contribution.</li>
+
+<li>
+<b>label</b> - the label that will be used to display the encoding</li>
+
+<li>
+<b>value</b> - the system encoding value in the format as would be returned by <font face="Courier">System.getProperty(&quot;file.encoding&quot;)</font></li>
+
+<li>
+<b>helpContextId</b> - the id of the help entry for this encoding</li>
+
+<li>
+<b>description</b> - a String to be used as the description of this encoding</li>
+
+<li>
+<b>toolTip</b> - a String to be used for a tooltip about the encoding</li>
+
+<li>
+<b>locale</b> - the locale this definition is restricted to. The locale is
+either specified fully (i.e. the supplied GB18030 definition defines its locale
+as zh_CW for Simplified Chinese) or for a language code only (i.e. the supplied
+GBK definition defines its locale as zh which is all Chinese language locales)</li>
+
+</ul>
+<p><b><i>Predefined File Encodings</i></b></p>
+<p>The following encodings are provided by Eclipse:</p>
+<ul>
+  <li>US-ASCII</li>
+  <li>ISO8859-1 (Latin 1)</li>
+  <li>UTF-8</li>
+  <li>UTF-16</li>
+  <li>UTF-16 (big endian)</li>
+  <li>UTF-16 (little endian)</li>
+  <li>GB18030 (Simplified Chinese only)</li>
+  <li>GBK (Chinese only)</li>
+</ul>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0></a>
+
+</body>
+</html>
