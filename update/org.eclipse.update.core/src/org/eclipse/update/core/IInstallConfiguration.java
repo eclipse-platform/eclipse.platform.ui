@@ -94,5 +94,10 @@ public interface IInstallConfiguration {
 	 */
 	String getLabel();
 
+	/**
+	 * sets the label of the configuration
+	 */
+	void setLabel(String label);
+
 }
 

@@ -119,8 +119,8 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			configuredFeatureReferences = new ArrayList(0);
 
 		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel(feature.getURL().toExternalForm());
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
+		activity.setLabel(feature.getFeature().getIdentifier().toString());
 		activity.setDate(new Date());
 			
 		addConfiguredFeatureReference(feature);
@@ -140,7 +140,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel(feature.getURL().toExternalForm());
+		activity.setLabel(feature.getFeature().getIdentifier().toString());
 		activity.setDate(new Date());
 			
 		addUnconfiguredFeatureReference(feature);
