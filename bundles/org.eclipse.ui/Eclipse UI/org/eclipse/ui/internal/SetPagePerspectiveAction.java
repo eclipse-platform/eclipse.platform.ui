@@ -64,6 +64,8 @@ public class SetPagePerspectiveAction extends Action {
 	 */
 	public void run() {
 		page.setPerspective(persp.getDesc());
+		// Force the button into proper checked state
+		setChecked(page.getActivePerspective() == persp);
 	}
 	
 	/**
