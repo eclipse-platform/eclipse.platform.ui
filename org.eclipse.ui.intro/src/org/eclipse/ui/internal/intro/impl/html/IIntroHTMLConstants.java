@@ -27,6 +27,7 @@ public interface IIntroHTMLConstants {
 	/* HTML element names */
 	String ELEMENT_HTML = "HTML"; //$NON-NLS-1$
 	String ELEMENT_HEAD = "HEAD"; //$NON-NLS-1$
+	String ELEMENT_BASE = "BASE"; //$NON-NLS-1$
 	String ELEMENT_BODY = "BODY"; //$NON-NLS-1$
 	String ELEMENT_TITLE = "TITLE"; //$NON-NLS-1$
 	String ELEMENT_LINK = "LINK"; //$NON-NLS-1$
@@ -40,7 +41,7 @@ public interface IIntroHTMLConstants {
 	String ELEMENT_H3 = "H3"; //$NON-NLS-1$
 	String ELEMENT_H4 = "H4"; //$NON-NLS-1$
 	String ELEMENT_PARAGRAPH = "P"; //$NON-NLS-1$
-	String ELEMENT_STYLE = "style"; //$NON-NLS-1$
+	String ELEMENT_STYLE = "STYLE"; //$NON-NLS-1$
 
 	/* HTML attribute names */
 	String ATTRIBUTE_ID = "id"; //$NON-NLS-1$

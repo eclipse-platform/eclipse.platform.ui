@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 import java.io.*;
-import java.net.*;
-
+import java.net.URL;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.internal.intro.impl.util.Logger;
 public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
 	private String introTitle;
@@ -49,15 +48,15 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;HTML&gt;
-	 *   &lt;HEAD&gt;
-	 *   head content
-	 *   &lt;/HEAD&gt;
-	 *   &lt;BODY&gt;
-	 *   body content
-	 *   &lt;/BODY&gt;
-	 *   &lt;/HTML&gt;
-	 *  
+	 *     &lt;HTML&gt;
+	 *     &lt;HEAD&gt;
+	 *     head content
+	 *     &lt;/HEAD&gt;
+	 *     &lt;BODY&gt;
+	 *     body content
+	 *     &lt;/BODY&gt;
+	 *     &lt;/HTML&gt;
+	 *
 	 * </pre>
 	 * 
 	 * @return the html HTMLElement
@@ -78,12 +77,13 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;HEAD&gt;
-	 *   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-	 *   &lt;TITLE&gt;page title &lt;/TITLE&gt;
-	 *   &lt;LINK href=&quot;style sheet&quot;&gt;
-	 *   additional head content, if specified
-	 *   &lt;/HEAD&gt;
+	 *     &lt;HEAD&gt;
+	 *     &lt;BASE href=&quot;base_plugin_location&gt;
+	 *     &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+	 *     &lt;TITLE&gt;page title &lt;/TITLE&gt;
+	 *     &lt;LINK href=&quot;style sheet&quot;&gt;
+	 *     additional head content, if specified
+	 *     &lt;/HEAD&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -95,10 +95,16 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateHeadElement(int indentLevel) {
 		HTMLElement head = new FormattedHTMLElement(
 				IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
-		// create the HTML style block
-		head.addContent(generateStyleElement(indentLevel + 1));
 		// add the title
 		head.addContent(generateTitleElement(null, indentLevel + 1));
+		// create the BASE element
+		String basePath = HTMLUtil.getResolvedPluginPath(introPage
+				.getPluginDesc());
+		HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
+		if (base != null)
+			head.addContent(base);
+		// create the HTML style block
+		head.addContent(generateStyleElement(indentLevel + 1));
 		// add the presentation style
 		String style = IntroPlugin.getDefault().getIntroModelRoot()
 				.getPresentation().getStyle();
@@ -148,18 +154,18 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;BODY&gt;
-	 *   &lt;DIV id=&quot;presentation-header&quot;&gt;
-	 *   presentation title
-	 *   &lt;/DIV&gt;
-	 *   &lt;DIV id=&quot;pageId&quot; class=&quot;page-content&quot;&gt;
-	 *   &lt;DIV id=&quot;page-header&quot;&gt;
-	 *   page title
-	 *   &lt;/DIV&gt;
-	 *   page content
-	 *   &lt;/DIV&gt;
-	 *   &lt;/BODY&gt;
-	 *  
+	 *     &lt;BODY&gt;
+	 *     &lt;DIV id=&quot;presentation-header&quot;&gt;
+	 *     presentation title
+	 *     &lt;/DIV&gt;
+	 *     &lt;DIV id=&quot;pageId&quot; class=&quot;page-content&quot;&gt;
+	 *     &lt;DIV id=&quot;page-header&quot;&gt;
+	 *     page title
+	 *     &lt;/DIV&gt;
+	 *     page content
+	 *     &lt;/DIV&gt;
+	 *     &lt;/BODY&gt;
+	 *
 	 * </pre>
 	 * 
 	 * @param indentLevel
@@ -170,15 +176,14 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateBodyElement(int indentLevel) {
 		HTMLElement body = new FormattedHTMLElement(
 				IIntroHTMLConstants.ELEMENT_BODY, indentLevel, true);
-
 		// Create the div that contains the page content
-		String pageId = (introPage.getId() != null) ? introPage
-				.getId() : IIntroHTMLConstants.DIV_ID_PAGE;
-		HTMLElement pageContentDiv = generateDivElement(pageId,
-				indentLevel + 1);
-		if(introPage.getClassId() != null)
-			pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, introPage.getClassId());
-
+		String pageId = (introPage.getId() != null)
+				? introPage.getId()
+				: IIntroHTMLConstants.DIV_ID_PAGE;
+		HTMLElement pageContentDiv = generateDivElement(pageId, indentLevel + 1);
+		if (introPage.getClassId() != null)
+			pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
+					introPage.getClassId());
 		// Add any children of the page, in the order they are defined
 		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -229,10 +234,10 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;div id=&quot;attrvalue&quot;&gt;
-	 *   &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
-	 *   any defined divs, links, html, images, text, includes
-	 *   &lt;/div&gt;
+	 *     &lt;div id=&quot;attrvalue&quot;&gt;
+	 *     &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
+	 *     any defined divs, links, html, images, text, includes
+	 *     &lt;/div&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -275,11 +280,11 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
-	 *   &lt;IMG src=&quot;blank.gif&quot;&gt;
-	 *   &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
-	 *   &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
-	 *   &lt;/A&gt;
+	 *     &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
+	 *     &lt;IMG src=&quot;blank.gif&quot;&gt;
+	 *     &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
+	 *     &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
+	 *     &lt;/A&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -342,7 +347,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;IMG src=imageSrc id=imageId&gt;
+	 *     &lt;IMG src=imageSrc id=imageId&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -372,7 +377,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 *     &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -410,9 +415,9 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
-	 *   content from file specified in src attribute
-	 *   &lt;/div&gt;
+	 *     &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
+	 *     content from file specified in src attribute
+	 *     &lt;/div&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -489,9 +494,9 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
-	 *   alternative text in case the object can not be rendered
-	 *   &lt;/OBJECT&gt; 
+	 *     &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
+	 *     alternative text in case the object can not be rendered
+	 *     &lt;/OBJECT&gt; 
 	 *  
 	 * </pre>
 	 * 
@@ -538,12 +543,31 @@ public class IntroHTMLGenerator {
 		return objectElement;
 	}
 	/**
+	 * Generates the BASE element for the head of the html document. Each
+	 * document can have only one base element
+	 * 
+	 * <pre>
+	 *   	&lt;BASE href=baseURL&gt;
+	 * </pre>
+	 * 
+	 * @param indentLevel
+	 * @param baseURL
+	 * @return
+	 */
+	private HTMLElement generateBaseElement(int indentLevel, String baseURL) {
+		HTMLElement base = new FormattedHTMLElement(
+				IIntroHTMLConstants.ELEMENT_BASE, indentLevel, true, false);
+		if (baseURL != null)
+			base.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, baseURL);
+		return base;
+	}
+	/**
 	 * Generates the style element that goes into HEAD:
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-	 *  
+	 *     &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+	 *
 	 * </pre>
 	 * 
 	 * @param indentLevel
@@ -564,7 +588,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+	 *     &lt;TITLE&gt;intro title&lt;/TITLE&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -587,7 +611,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
+	 *     &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -614,7 +638,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
+	 *     &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -646,10 +670,10 @@ public class IntroHTMLGenerator {
 	 * Generates a div block that contains a header and span element:
 	 * 
 	 * <pre>
-	 * 
-	 *   &lt;DIV id=divId&gt;
-	 *   &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
-	 *   &lt;/DIV&gt;
+	 *   
+	 *     &lt;DIV id=divId&gt;
+	 *     &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
+	 *     &lt;/DIV&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -682,8 +706,8 @@ public class IntroHTMLGenerator {
 	 * span element provides additional flexibility for CSS designers.
 	 * 
 	 * <pre>
-	 * 
-	 *   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 *   
+	 *     &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -754,8 +778,8 @@ public class IntroHTMLGenerator {
 	 * Generates an IMG element:
 	 * 
 	 * <pre>
-	 * 
-	 *   &lt;IMG src=imageSrc alt=altText&gt;
+	 *   
+	 *     &lt;IMG src=imageSrc alt=altText&gt;
 	 *  
 	 * </pre>
 	 * 
@@ -781,7 +805,7 @@ public class IntroHTMLGenerator {
 	 * 
 	 * <pre>
 	 * 
-	 *   &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
+	 *     &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
 	 *  
 	 * </pre>
 	 * 
