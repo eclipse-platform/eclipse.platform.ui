@@ -28,6 +28,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -330,6 +331,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
        
         try {
             stream.write(streamMonitor.getContents());
+            if (streamMonitor instanceof IFlushableStreamMonitor) {
+                IFlushableStreamMonitor monitor = (IFlushableStreamMonitor) streamMonitor;
+                monitor.flushContents();
+                monitor.setBuffered(false);
+            }
         } catch (IOException e) {
             DebugUIPlugin.log(e);
         }
