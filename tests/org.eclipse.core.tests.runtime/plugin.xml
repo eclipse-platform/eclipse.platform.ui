@@ -7,6 +7,7 @@
 
   <requires>
     <import plugin="org.eclipse.core.runtime"/>
+    <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.tests.resources"/>
     <import plugin="org.eclipse.core.tests.harness"/>
     <import plugin="org.junit"/>
