@@ -187,7 +187,7 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			lprov = (ILabelProvider) prov;
 		}
 		int columnCount = table.getColumnCount();
-		TableItem ti = (TableItem) item;
+		TableItem ti = item;
 		// Also enter loop if no columns added.  See 1G9WWGZ: JFUIF:WINNT - TableViewer with 0 columns does not work
 		for (int column = 0; column < columnCount || column == 0; column++) {
 			// Similar code in TableTreeViewer.doUpdateItem()

@@ -505,7 +505,7 @@ protected Image getImage() {
  */
 private void setMessage(String messageString) {
 	//must not set null text in a label
-	message = messageString == null ? "" : messageString;
+	message = messageString == null ? "" : messageString; //$NON-NLS-1$
 	if (messageLabel == null || messageLabel.isDisposed())
 		return;
 	messageLabel.setText(message);
