@@ -162,8 +162,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 									if (!keep) {
 										// Remove the root
 										try {
-											if (! isPreviouslyKnown)
+											if (!isPreviouslyKnown) {
 												CVSProviderPlugin.getProvider().disposeRepository(location);
+											}
 										} catch (TeamException e1) {
 											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
 										}
@@ -209,8 +210,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								return;
 							}
 							// Add the location to the provider if it is new
-							if (! isKnown)
+							if (!isKnown) {
 								CVSProviderPlugin.getProvider().addRepository(location);
+							}
 							// Create the remote module for the project
 							CVSProviderPlugin.getProvider().createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
