@@ -626,7 +626,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * Returns the prefix in the specified document text with respect to the 
      * specified offset.
      * 
-     * @param aDocumentString the whole content of the edited file as String
+     * @param aDocumentText the whole content of the edited file as String
      * @param anOffset the cursor position
      */
     protected String getPrefixFromDocument(String aDocumentText, int anOffset) {
@@ -641,7 +641,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         while (startOfWordToken > 0 
                 && (Character.isJavaIdentifierPart(token) 
                     || '.' == token
-					|| '-' == token)
+					|| '-' == token
+        			|| ';' == token)
                 && !('$' == token)) {
             startOfWordToken--;
 			token= aDocumentText.charAt(startOfWordToken - 1);
