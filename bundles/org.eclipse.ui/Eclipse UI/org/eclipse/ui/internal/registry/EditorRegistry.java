@@ -193,11 +193,12 @@ public IEditorDescriptor getDefaultEditor() {
  */
 public IEditorDescriptor getDefaultEditor(String filename) {
 	FileEditorMapping[] mapping = getMappingForFilename(filename);
+	IEditorDescriptor desc = null;
 	if (mapping[0] != null)
-		return mapping[0].getDefaultEditor();
-	if (mapping[1] != null)
-		return mapping[1].getDefaultEditor();
-	return null;
+		desc = mapping[0].getDefaultEditor();
+	if (desc == null && mapping[1] != null)
+		desc = mapping[1].getDefaultEditor();
+	return desc;
 }
 /* (non-Javadoc)
  * Method declared on IEditorRegistry.
