@@ -7,7 +7,7 @@ package org.eclipse.help.internal.navigation;
 
 import java.io.*;
 import java.net.URL;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.server.TempURL;
@@ -46,7 +46,7 @@ public class InfosetsMap extends PersistentMap {
 						HelpSystem.getRemoteHelpServerPath()
 							+ "/"
 							+ TempURL.getPrefix()
-							+ "/infosets.tab");
+							+ "/infosets.ini");
 
 				if (Logger.DEBUG)
 					Logger.logDebugMessage(
@@ -61,12 +61,7 @@ public class InfosetsMap extends PersistentMap {
 					Logger.logError("Could not copy the infoset data from server", ioe);
 					return false;
 				}
-
-				String line;
-				while ((line = reader.readLine()) != null) {
-					StringTokenizer tokens = new StringTokenizer(line, this.columnSeparator, true);
-					put(tokens.nextToken(), tokens.nextToken());
-				}
+				super.parseLines(reader);
 				try {
 					in.close();
 				} catch (Exception ioe) {

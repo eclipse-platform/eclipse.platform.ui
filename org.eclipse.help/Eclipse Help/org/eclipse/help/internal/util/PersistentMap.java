@@ -13,7 +13,7 @@ import org.eclipse.help.internal.HelpSystem;
  * Persistent Hashtable with keys and values of type String.
  */
 public class PersistentMap extends Hashtable {
-	public static final String columnSeparator = "|";
+	public static final String columnSeparator = "=";
 	private File file = null;
 	private File tempfile = null;
 	protected String name = null;
@@ -31,8 +31,8 @@ public class PersistentMap extends Hashtable {
 	public PersistentMap(String dir, String name) {
 		super();
 		this.name = name;
-		file = new File(dir, name + ".tab");
-		tempfile = new File(dir, name + "_.tab");
+		file = new File(dir, name + ".ini");
+		tempfile = new File(dir, name + "_.ini");
 	}
 	public boolean exists() {
 		return file.exists() || tempfile.exists();
@@ -44,7 +44,6 @@ public class PersistentMap extends Hashtable {
 	public boolean restore() {
 		File usedfile = file;
 		BufferedReader bufr = null;
-		String line = null;
 		boolean loaded = false;
 		if (!usedfile.exists()) {
 			usedfile = tempfile;
@@ -58,32 +57,7 @@ public class PersistentMap extends Hashtable {
 				new BufferedReader(
 					new InputStreamReader(
 						new FileInputStream(usedfile) /* can specify encoding */));
-			line = bufr.readLine();
-			while (line != null) {
-				StringTokenizer tokens = new StringTokenizer(line, columnSeparator, true);
-				try {
-					String key, value;
-					key = tokens.nextToken();
-					if (key.equals(columnSeparator)) {
-						// key was empty, separator read.
-						key = "";
-					} else {
-						// read the separator
-						value = tokens.nextToken();
-					}
-					if (tokens.hasMoreElements()) {
-						value = tokens.nextToken();
-					} else {
-						value = "";
-					}
-					this.put(key, value);
-					loaded = true;
-				} catch (NoSuchElementException nsee) {
-					// Probably got an emtpy line at the end
-					break;
-				}
-				line = bufr.readLine();
-			}
+			loaded=parseLines(bufr);
 		} catch (IOException ioe00) {
 			Logger.logError(Resources.getString("Table", name), null);
 			Logger.logError(Resources.getString("File4", usedfile.getName()), null);
@@ -140,5 +114,35 @@ public class PersistentMap extends Hashtable {
 			}
 		}
 		return ret;
+	}
+	protected boolean parseLines(BufferedReader bufr) throws IOException {
+		boolean loaded=false;
+		String line = bufr.readLine();
+		while (line != null) {
+			StringTokenizer tokens = new StringTokenizer(line, columnSeparator, true);
+			try {
+				String key, value;
+				key = tokens.nextToken();
+				if (key.equals(columnSeparator)) {
+					// key was empty, separator read.
+					key = "";
+				} else {
+					// read the separator
+					value = tokens.nextToken();
+				}
+				if (tokens.hasMoreElements()) {
+					value = tokens.nextToken();
+				} else {
+					value = "";
+				}
+				this.put(key, value);
+				loaded = true;
+			} catch (NoSuchElementException nsee) {
+				// Probably got an emtpy line at the end
+				break;
+			}
+			line = bufr.readLine();
+		}
+		return loaded;
 	}
 }
