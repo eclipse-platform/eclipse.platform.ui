@@ -4,6 +4,7 @@ package org.eclipse.help.internal.ui.util;
  * All Rights Reserved.
  */
 import java.net.*;
+import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 /**
@@ -54,61 +55,85 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
+
 	}
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(String name, String replace1) {
+	public static String getString(String name, String replace0) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
+				MessageFormat.format(stringFromPropertiesFile, new Object[] { replace0 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
+
 	}
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(String name, String replace1, String replace2) {
+	public static String getString(String name, String replace0, String replace1) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%2", replace2);
+				MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
+
 	}
 	/**
 	 * Returns a string from a property file
 	 */
 	public static String getString(
 		String name,
+		String replace0,
+		String replace1,
+		String replace2) {
+		try {
+			String stringFromPropertiesFile = resBundle.getString(name);
+			stringFromPropertiesFile =
+				MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1, replace2 });
+			return stringFromPropertiesFile;
+		} catch (Exception e) {
+			return name;
+		}
+
+	}
+	/**
+	 * Returns a string from a property file
+	 */
+	public static String getString(
+		String name,
+		String replace0,
 		String replace1,
 		String replace2,
 		String replace3) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%2", replace2);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%3", replace3);
+				MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1, replace2, replace3 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
+
 	}
 	/**
 	 * Returns a string from a property file
 	 */
 	public static String getString(
 		String name,
+		String replace0,
 		String replace1,
 		String replace2,
 		String replace3,
@@ -116,23 +141,21 @@ public class WorkbenchResources {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%2", replace2);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%3", replace3);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%4", replace4);
+				MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1, replace2, replace3, replace4 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
+
 	}
 	/**
 	 * Returns a string from a property file
 	 */
 	public static String getString(
 		String name,
+		String replace0,
 		String replace1,
 		String replace2,
 		String replace3,
@@ -141,48 +164,13 @@ public class WorkbenchResources {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%2", replace2);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%3", replace3);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%4", replace4);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%5", replace5);
+				MessageFormat.format(
+					stringFromPropertiesFile,
+					new Object[] { replace0, replace1, replace2, replace3, replace4, replace5 });
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
 		}
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(
-		String name,
-		String replace1,
-		String replace2,
-		String replace3,
-		String replace4,
-		String replace5,
-		String replace6) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%1", replace1);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%2", replace2);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%3", replace3);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%4", replace4);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%5", replace5);
-			stringFromPropertiesFile =
-				TString.change(stringFromPropertiesFile, "%6", replace6);
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
+
 	}
 }
