@@ -69,6 +69,7 @@ import org.eclipse.jface.text.source.SourceViewer;
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
+	
 	/**
 	 * Threshold determining whether individual repaints should be sent out.
 	 */
@@ -171,6 +172,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fRememberedTopIndex= -1;
 		}
 	}
+	
 	
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
@@ -1143,12 +1145,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					try {
 						selection= getSelectedRange();
 						if (selection.y == 0)
-							deleteMarkedRegion();
+							deleteText();
 						else
 							deleteTextRange(selection.x, selection.y, textWidget);
 						
 						selection= textWidget.getSelectionRange();
 						fireSelectionChanged(selection.x, selection.y);
+						
 					} catch (BadLocationException x) {
 						// ignore
 					}
@@ -1225,12 +1228,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			copyToClipboard(markedRegion.getOffset(), markedRegion.getLength(), delete, getTextWidget());		
 	}
 	
-	private void deleteMarkedRegion() throws BadLocationException {
-		IRegion markedRegion= getMarkedRegion();
-		if (markedRegion != null)
-			deleteTextRange(markedRegion.getOffset(), markedRegion.getLength(), getTextWidget());
-	}
-	
 	private void copyToClipboard(int offset, int length, boolean delete, StyledText textWidget) {
 		
 		IDocument document= getDocument();
@@ -1252,9 +1249,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	private void deleteTextRange(int offset, int length, StyledText textWidget) throws BadLocationException {
-		int widgetCaret= modelOffset2WidgetOffset(offset);
-		textWidget.setSelection(widgetCaret);
 		getDocument().replace(offset, length, null);
+		int widgetCaret= modelOffset2WidgetOffset(offset);
+		if (widgetCaret > -1)
+			textWidget.setSelection(widgetCaret);
 	}
 	
 	/**
