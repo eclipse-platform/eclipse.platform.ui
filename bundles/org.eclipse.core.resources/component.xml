@@ -36,6 +36,8 @@
    <type name="IWorkspace" implement="false" />
    <type name="IWorkspaceDescription" implement="false" />
    <type name="IWorkspaceRoot" implement="false" />
+   <type name="ProjectScope" subclass="false"/>
+   <type name="ResourceAttributes" subclass="false"/>
    <type name="ResourcesPlugin" subclass="false" instantiate="false" />
  </package>
  <package name="org.eclipse.core.resources.mapping">
