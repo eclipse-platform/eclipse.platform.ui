@@ -21,7 +21,7 @@ private static String createErrorString(IManifestDescriptor manifest, IManifestD
 	strbMessage.append(" ");
 	strbMessage.append(manifest.getVersionIdentifier());
 	strbMessage.append("\n");
-	strbMessage.append(Policy.bind("S_This_component_cannot_be_installed_because_of_conflicts"));
+	strbMessage.append(Policy.bind("update.conflicts"));
 	strbMessage.append("\n");
 	
 	for (int j = 0; j < manifestsConflicting.length; ++j) {

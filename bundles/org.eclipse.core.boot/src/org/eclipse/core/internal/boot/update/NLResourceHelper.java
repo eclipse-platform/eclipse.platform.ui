@@ -38,7 +38,7 @@ public java.util.ResourceBundle getResourceBundle(Locale locale) throws MissingR
 	// check if we already tried and failed
 	if (notFound) 
 		throw new MissingResourceException(
-			Policy.bind("S_Resource_not_found") + ": " + fName + "_" + locale, 
+			Policy.bind("update.resourceNotFound", fName + "_" + locale), 
 			fName + "_" + locale, 
 			"");
 
