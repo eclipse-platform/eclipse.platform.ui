@@ -6,46 +6,48 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
-public final class Configuration implements Comparable {
-	
-	private final static int HASH_INITIAL = 27;
-	private final static int HASH_FACTOR = 37;
+import org.eclipse.ui.internal.actions.Util;
 
-	public static Configuration create(String id, String name, String description, String parent, String plugin)
+public final class Scope implements Comparable {
+
+	private final static int HASH_INITIAL = 107;
+	private final static int HASH_FACTOR = 117;
+
+	public static Scope create(String id, String name, String description, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Configuration(id, name, description, parent, plugin);
+		return new Scope(id, name, description, parent, plugin);
 	}
-	
+
 	private String id;
 	private String name;
 	private String description;
 	private String parent;
 	private String plugin;
-	
-	private Configuration(String id, String name, String description, String parent, String plugin)
+		
+	private Scope(String id, String name, String description, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
 		if (id == null)
 			throw new IllegalArgumentException();
-		
+
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.parent = parent;
 		this.plugin = plugin;
 	}
-	
+
 	public String getId() {
 		return id;	
 	}
-	
+
 	public String getName() {
 		return name;
-	}		
-	
+	}
+
 	public String getDescription() {
 		return description;	
 	}
@@ -62,20 +64,20 @@ public final class Configuration implements Comparable {
 		if (!(object instanceof Configuration))
 			throw new ClassCastException();
 			
-		Configuration configuration = (Configuration) object;
-		int compareTo = id.compareTo(configuration.id);
+		Scope scope = (Scope) object;
+		int compareTo = id.compareTo(scope.id);
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(name, configuration.name);	
+			compareTo = Util.compare(name, scope.name);	
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, configuration.description);	
+				compareTo = Util.compare(description, scope.description);	
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(parent, configuration.parent);	
+					compareTo = Util.compare(parent, scope.parent);	
 
 					if (compareTo == 0)
-						compareTo = Util.compare(plugin, configuration.plugin);
+						compareTo = Util.compare(plugin, scope.plugin);
 				}
 			}
 		}
@@ -87,9 +89,9 @@ public final class Configuration implements Comparable {
 		if (!(object instanceof Configuration))
 			return false;
 
-		Configuration configuration = (Configuration) object;		
-		return id.equals(configuration.id) && Util.equals(name, configuration.name) && Util.equals(description, configuration.description) && 
-			Util.equals(parent, configuration.parent) && Util.equals(plugin, configuration.plugin);
+		Scope scope = (Scope) object;		
+		return id.equals(scope.id) && Util.equals(name, scope.name) && Util.equals(description, scope.description) && 
+			Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
 	}
 
 	public int hashCode() {
@@ -100,7 +102,7 @@ public final class Configuration implements Comparable {
 		result = result * HASH_FACTOR + Util.hashCode(parent);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
 		return result;
-	}
+	}	
 
 	public String toString() {
 		return name != null ? name : '(' + id + ')';		

@@ -1122,13 +1122,15 @@
             class="org.eclipse.ui.views.tasklist.TaskList"
             id="org.eclipse.ui.views.TaskList">
       </view>
+      <!--
       <view
             name="%Views.KeyBindings"
-            icon="icons/full/cview16/keybindings.gif"
+            icon="icons/full/keybindings/key.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.keybindings.View"
-            id="org.eclipse.ui.internal.keybindings.View">
+            class="org.eclipse.ui.internal.actions.keybindings.View"
+            id="org.eclipse.ui.internal.actions.keybindings.View">
       </view>
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.markerImageProviders">
@@ -1256,7 +1258,7 @@
       <page
             name="%PreferencePages.KeyBindings"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.keybindings.PreferencePage"
+            class="org.eclipse.ui.internal.actions.keybindings.PreferencePage"
             id="org.eclipse.ui.preferencePages.KeyBindings">
       </page>
    </extension>

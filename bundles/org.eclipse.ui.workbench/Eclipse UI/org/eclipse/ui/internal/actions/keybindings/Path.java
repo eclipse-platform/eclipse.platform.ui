@@ -6,13 +6,15 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.ui.internal.actions.Util;
 
 public final class Path implements Comparable {
 
@@ -24,12 +26,12 @@ public final class Path implements Comparable {
 		return new Path(Collections.EMPTY_LIST);
 	}
 
-	static Path create(PathItem pathItem)
+	static Path create(String pathItem)
 		throws IllegalArgumentException {
 		return new Path(Collections.singletonList(pathItem));
 	}
 
-	static Path create(PathItem[] pathItems)
+	static Path create(String[] pathItems)
 		throws IllegalArgumentException {
 		return new Path(Arrays.asList(pathItems));
 	}
@@ -56,7 +58,7 @@ public final class Path implements Comparable {
 		Iterator iterator = this.pathItems.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof PathItem))
+			if (!(iterator.next() instanceof String))
 				throw new IllegalArgumentException();
 	}
 
@@ -99,7 +101,7 @@ public final class Path implements Comparable {
 		Iterator iterator = pathItems.iterator();
 		
 		while (iterator.hasNext())
-			result = result * HASH_FACTOR + ((PathItem) iterator.next()).hashCode();
+			result = result * HASH_FACTOR + iterator.next().hashCode();
 
 		return result;
 	}

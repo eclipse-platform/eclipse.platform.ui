@@ -113,7 +113,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
 	private org.eclipse.ui.internal.actions.Registry actionRegistry;
-	private org.eclipse.ui.internal.keybindings.Registry keyBindingRegistry;
+	private org.eclipse.ui.internal.actions.keybindings.Registry keyBindingRegistry;
 	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;

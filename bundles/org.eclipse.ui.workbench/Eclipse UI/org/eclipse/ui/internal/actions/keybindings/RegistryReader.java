@@ -6,7 +6,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +29,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	private final static String ATTRIBUTE_PARENT_CONFIGURATION = "parentConfiguration"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_PARENT_SCOPE = "parentScope"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_PLATFORM = "platform"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_RANK = "rank"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_SCOPE_ID = "scopeId"; //$NON-NLS-1$
 	private final static String ELEMENT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 	private final static String ELEMENT_ACCELERATOR_CONFIGURATION = "acceleratorConfiguration"; //$NON-NLS-1$
@@ -37,8 +38,8 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 	
 	private String configuration;
-	private String scope;
 	private Registry registry;
+	private String scope;
 	
 	RegistryReader() {
 		super();	
@@ -56,6 +57,9 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	protected boolean readElement(IConfigurationElement element) {
 		String name = element.getName();
+
+		if (ELEMENT_ACCELERATOR.equals(name))
+			return readAccelerator(element);
 		
 		if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name))
 			return readAcceleratorConfiguration(element);
@@ -65,10 +69,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		
 		if (ELEMENT_ACCELERATOR_SET.equals(name))
 			return readAcceleratorSet(element);
-		
-		if (ELEMENT_ACCELERATOR.equals(name))
-			return readAccelerator(element);
-		
+				
 		return false;
 	}
 
@@ -89,21 +90,69 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		return plugin;
 	}
 
-	private boolean readAcceleratorConfiguration(IConfigurationElement element) {
+	private boolean readAccelerator(IConfigurationElement element) {
+		if (configuration == null || scope == null)
+			return false;
+
 		String id = element.getAttribute(ATTRIBUTE_ID);
-		String name = element.getAttribute(ATTRIBUTE_NAME);
-		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-		String parent = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
+		String key = element.getAttribute(ATTRIBUTE_KEY);
+
+		if (key == null) {
+			logMissingAttribute(element, ATTRIBUTE_KEY);
+			return true;
+		}	
+
+		List keySequences = KeyManager.parseKeySequences(key);
+		
+		if (keySequences.size() <= 0)
+			return true;
+
+		String locale = element.getAttribute(ATTRIBUTE_LOCALE);
+
+		if (locale == null)
+			locale = ZERO_LENGTH_STRING;
+
+		String platform = element.getAttribute(ATTRIBUTE_PLATFORM);
+
+		if (platform == null)
+			platform = ZERO_LENGTH_STRING;
+
+		String plugin = getPlugin(element);		
+		int rank = 0;
+		
+		try {
+			rank = Integer.valueOf(element.getAttribute(ATTRIBUTE_RANK)).intValue();		
+		} catch (NumberFormatException eNumberFormat) {
+		}
 			
-		if (id == null)
-			logMissingAttribute(element, ATTRIBUTE_ID);
+		Iterator iterator = keySequences.iterator();
 		
-		if (name == null)
-			logMissingAttribute(element, ATTRIBUTE_NAME);
-		
+		while (iterator.hasNext()) {
+			KeySequence keySequence = (KeySequence) iterator.next();			
+			Binding binding = Binding.create(id, configuration, keySequence, plugin, rank, scope);	
+			registry.addRegionalBinding(RegionalBinding.create(binding, locale, platform));
+		}
+
+		return true;
+	}
+
+	private boolean readAcceleratorConfiguration(IConfigurationElement element) {
+		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
+
 		if (description == null)
 			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
 
+		String id = element.getAttribute(ATTRIBUTE_ID);
+
+		if (id == null)
+			logMissingAttribute(element, ATTRIBUTE_ID);
+
+		String name = element.getAttribute(ATTRIBUTE_NAME);
+
+		if (name == null)
+			logMissingAttribute(element, ATTRIBUTE_NAME);
+
+		String parent = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
 		String plugin = getPlugin(element);
 		Configuration configuration = Configuration.create(id, name, description, parent, plugin);
 		registry.addConfiguration(configuration);
@@ -111,20 +160,22 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	}
 
 	private boolean readAcceleratorScope(IConfigurationElement element) {
-		String id = element.getAttribute(ATTRIBUTE_ID);
-		String name = element.getAttribute(ATTRIBUTE_NAME);
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-		String parent = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
-			
-		if (id == null)
-			logMissingAttribute(element, ATTRIBUTE_ID);
-		
-		if (name == null)
-			logMissingAttribute(element, ATTRIBUTE_NAME);
-		
+
 		if (description == null)
 			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
 
+		String id = element.getAttribute(ATTRIBUTE_ID);
+
+		if (id == null)
+			logMissingAttribute(element, ATTRIBUTE_ID);
+
+		String name = element.getAttribute(ATTRIBUTE_NAME);
+
+		if (name == null)
+			logMissingAttribute(element, ATTRIBUTE_NAME);
+			
+		String parent = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
 		String plugin = getPlugin(element);
 		Scope scope = Scope.create(id, name, description, parent, plugin);
 		registry.addScope(scope);
@@ -149,43 +200,5 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		configuration = null;
 		scope = null;
 		return true;	
-	}
-
-	private boolean readAccelerator(IConfigurationElement element) {
-		if (configuration == null || scope == null)
-			return false;
-		
-		String id = element.getAttribute(ATTRIBUTE_ID);
-		String key = element.getAttribute(ATTRIBUTE_KEY);
-
-		if (key == null) {
-			logMissingAttribute(element, ATTRIBUTE_KEY);
-			return false;
-		}	
-
-		List keySequences = KeyManager.parseKeySequences(key);
-		
-		if (keySequences.size() <= 0)
-			return true;
-
-		String locale = element.getAttribute(ATTRIBUTE_LOCALE);
-
-		if (locale == null)
-			locale = ZERO_LENGTH_STRING;
-
-		String platform = element.getAttribute(ATTRIBUTE_PLATFORM);
-
-		if (platform == null)
-			platform = ZERO_LENGTH_STRING;
-
-		String plugin = getPlugin(element);
-		Iterator iterator = keySequences.iterator();
-		
-		while (iterator.hasNext()) {
-			KeySequence keySequence = (KeySequence) iterator.next();			
-			registry.addDefinition(Definition.create(keySequence, configuration, locale, platform, scope, id, plugin));
-		}
-			
-		return true;
 	}
 }

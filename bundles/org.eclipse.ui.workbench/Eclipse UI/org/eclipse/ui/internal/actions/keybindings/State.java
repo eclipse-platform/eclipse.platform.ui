@@ -6,18 +6,20 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.internal.actions.Util;
+
 public final class State implements Comparable {
 
 	final static int MAXIMUM_PATHS = 8;
-	private final static int HASH_INITIAL = 107;
-	private final static int HASH_FACTOR = 117;
+	private final static int HASH_INITIAL = 117;
+	private final static int HASH_FACTOR = 127;
 
 	static State create(List paths)
 		throws IllegalArgumentException {

@@ -6,13 +6,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -28,14 +28,14 @@ public final class Registry {
 	}
 	
 	private SortedMap configurationMap;
+	private SortedSet regionalBindingSet;
 	private SortedMap scopeMap;
-	private List definitions;
 	
 	private Registry() {
 		super();
 		configurationMap = new TreeMap();
+		regionalBindingSet = new TreeSet();
 		scopeMap = new TreeMap();
-		definitions = new ArrayList();
 		(new RegistryReader()).read(Platform.getPluginRegistry(), this);
 	}
 
@@ -43,13 +43,13 @@ public final class Registry {
 		return Collections.unmodifiableSortedMap(configurationMap);			
 	}
 
+	public SortedSet getRegionalBindingSet() {
+		return Collections.unmodifiableSortedSet(regionalBindingSet);		
+	}	
+	
 	public SortedMap getScopeMap() {
 		return Collections.unmodifiableSortedMap(scopeMap);			
 	}
-
-	public List getDefinitions() {
-		return Collections.unmodifiableList(definitions);		
-	}	
 
 	void addConfiguration(Configuration configuration)
 		throws IllegalArgumentException {
@@ -59,19 +59,19 @@ public final class Registry {
 		configurationMap.put(configuration.getId(), configuration);	
 	}
 
+	void addRegionalBinding(RegionalBinding regionalBinding)
+		throws IllegalArgumentException {
+		if (regionalBinding == null)
+			throw new IllegalArgumentException();
+		
+		regionalBindingSet.add(regionalBinding);
+	}
+
 	void addScope(Scope scope)
 		throws IllegalArgumentException {
 		if (scope == null)
 			throw new IllegalArgumentException();
 		
 		scopeMap.put(scope.getId(), scope);
-	}
-
-	void addDefinition(Definition definition)
-		throws IllegalArgumentException {
-		if (definition == null)
-			throw new IllegalArgumentException();
-		
-		definitions.add(definition);
 	}
 }

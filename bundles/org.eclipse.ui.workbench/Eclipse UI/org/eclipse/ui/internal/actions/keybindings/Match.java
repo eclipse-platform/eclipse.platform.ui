@@ -6,47 +6,47 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.actions.keybindings;
 
 public final class Match implements Comparable {
 
 	private final static int HASH_INITIAL = 57;
 	private final static int HASH_FACTOR = 67;
 
-	static Match create(int match, State state)
+	static Match create(Binding binding, int value)
 		throws IllegalArgumentException {
-		return new Match(match, state);
+		return new Match(binding, value);
 	}
 	
+	private Binding binding;
 	private int value;
-	private State state;
 
-	private Match(int value, State state)
+	private Match(Binding binding, int value)
 		throws IllegalArgumentException {
-		if (value < 0 || state == null)
+		if (binding == null || value < 0)
 			throw new IllegalArgumentException();
 			
+		this.binding = binding;
 		this.value = value;
-		this.state = state;
 	}
 
+	public Binding getBinding() {
+		return binding;	
+	}
+	
 	public int getValue() {
 		return value;	
 	}	
-
-	public State getState() {
-		return state;	
-	}
 
 	public int compareTo(Object object) {
 		if (!(object instanceof Match))
 			throw new ClassCastException();
 			
 		Match match = (Match) object;
-		int compareTo = value - match.value;
+		int compareTo = binding.compareTo(match.binding);
 		
 		if (compareTo == 0)
-			compareTo = state.compareTo(match.state);
+			compareTo = value - match.value;
 
 		return compareTo;	
 	}
@@ -56,13 +56,13 @@ public final class Match implements Comparable {
 			return false;
 
 		Match match = (Match) object;		
-		return value == match.value && state.equals(match.state);
+		return binding.equals(match.binding) && value == match.value;
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + binding.hashCode();
 		result = result * HASH_FACTOR + value;
-		result = result * HASH_FACTOR + state.hashCode();
 		return result;
 	}
 }
