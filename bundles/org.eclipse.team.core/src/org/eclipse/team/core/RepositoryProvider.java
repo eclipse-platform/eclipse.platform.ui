@@ -191,11 +191,14 @@ public abstract class RepositoryProvider implements IProjectNature {
 				// in the team set.
 				for (int i = 0; i < natureIds.length; i++) {
 					IProjectNatureDescriptor desc = workspace.getNatureDescriptor(natureIds[i]);
-					String[] setIds = desc.getNatureSetIds();
-					for (int j = 0; j < setIds.length; j++) {
-						if(setIds[j].equals(TEAM_SETID)) {
-							return getProvider(project, natureIds[i]);
-						}			
+					// The descriptor can be null if the nature doesn't exist
+					if (desc != null) {
+						String[] setIds = desc.getNatureSetIds();
+						for (int j = 0; j < setIds.length; j++) {
+							if(setIds[j].equals(TEAM_SETID)) {
+								return getProvider(project, natureIds[i]);
+							}			
+						}
 					}
 				}
 			}
