@@ -29,21 +29,23 @@ import org.eclipse.ui.part.*;
  * Experience. It is a customizable intro part where both its presentation, and
  * its content can be customized based on a configuration. Both are contributed
  * using the org.eclipse.ui.intro.intro.config extension point. There are two
- * two presentation: an SWT brwoser based presentatin, and a UI forms
+ * two presentation: an SWT browser based presentatin, and a UI forms
  * presentation. Based on the configuration, one is chosen on startup. If a
- * Brwoser based prsentation is selected, and the intro is being loaded on a
- * platform that does not support the SWT Brwoser control, the default behavior
+ * Browser based prsentation is selected, and the intro is being loaded on a
+ * platform that does not support the SWT Browser control, the default behavior
  * is to degrade to UI forms prsentation. Content displayed in this intro part
  * can be static or dynamic. Static is html files, dynamic is markup in content
  * files. Again, both of whch can be specified using the above extension point.
  * <p>
  * Note: This class was made public on for re-use as-is as a valid class for the
- * <code>org.eclipse.ui.intro</code> extension point.
+ * <code>org.eclipse.ui.intro</code> extension point. It is not intended to be
+ * subclassed or used otheriwse.
  * </p>
  * 
  * @since 3.0
  */
-public final class CustomizableIntroPart extends IntroPart {
+public final class CustomizableIntroPart extends IntroPart implements
+        IIntroConstants {
 
     private IntroModelRoot model;
     private IntroPartPresentation presentation;
@@ -98,12 +100,15 @@ public final class CustomizableIntroPart extends IntroPart {
         model = extensionPointManager.getCurrentModel();
 
         if (model != null && model.hasValidConfig()) {
-            // we have a valid config contribution, get presentation.
+            // we have a valid config contribution, get presentation. Make sure
+            // you pass corret memento.
             presentation = model.getPresentation();
             if (presentation != null)
-                presentation.init(this, memento);
+                presentation.init(this, getMomento(memento,
+                        MEMENTO_PRESENTATION_TAG));
             standbyPart = new StandbyPart(model);
-            standbyPart.init(this, memento);
+            standbyPart.init(this,
+                    getMomento(memento, MEMENTO_STANDBY_PART_TAG));
         }
 
         if (model == null || !model.hasValidConfig())
@@ -219,12 +224,28 @@ public final class CustomizableIntroPart extends IntroPart {
      * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
      */
     public void saveState(IMemento memento) {
+        // give presentation and standby part there own children to create a
+        // name space for each.
+        IMemento presentationMemento = memento
+                .createChild(MEMENTO_PRESENTATION_TAG);
+        IMemento standbyPartMemento = memento
+                .createChild(MEMENTO_STANDBY_PART_TAG);
         if (presentation != null)
-            presentation.saveState(memento);
+            presentation.saveState(presentationMemento);
         if (standbyPart != null)
-            standbyPart.saveState(memento);
+            standbyPart.saveState(standbyPartMemento);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+     */
+    public IMemento getMomento(IMemento memento, String key) {
+        if (memento == null)
+            return null;
+        return memento.getChild(key);
+    }
 
 }
 

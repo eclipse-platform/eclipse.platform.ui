@@ -18,10 +18,17 @@ public interface IIntroConstants {
     String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
     String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
+    //  Empty Standby Content part. This is registered in this plugin,
+    // through markup.
+    String EMPTY_STANDBY_CONTENT_PART = "org.eclipse.ui.intro.config.emptyStandby"; //$NON-NLS-1$
+
     // Memento constants
     // ------------------
     String MEMENTO_PRESENTATION_TAG = "presentation"; //$NON-NLS-1$
-    String MEMENTO_CURRENT_PAGE = "currentPage"; //$NON-NLS-1$
+    String MEMENTO_CURRENT_PAGE_ATT = "currentPage"; //$NON-NLS-1$
+    String MEMENTO_STANDBY_PART_TAG = "standbyPart"; //$NON-NLS-1$
+    String MEMENTO_STANDBY_CONTENT_PART_ID_ATT = "contentPartID"; //$NON-NLS-1$
+    String MEMENTO_STANDBY_CONTENT_PART_TAG = "standbyContentPart"; //$NON-NLS-1$
 
 
     // Form implementation consts:

@@ -313,9 +313,7 @@ public class BrowserIntroPartImplementation extends
                 && !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
             String currentURL = browser.getUrl();
             if (currentURL != null) {
-                IMemento introMemento = memento
-                        .createChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
-                introMemento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE,
+                memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
                         currentURL);
             }
         } else {

@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
@@ -27,7 +26,6 @@ import org.eclipse.ui.internal.intro.impl.parts.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
-import org.osgi.framework.*;
 
 /**
  * An intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
@@ -179,31 +177,13 @@ public class IntroURL implements IIntroURL {
         StandbyPart standbyPart = (StandbyPart) introPart
                 .getAdapter(StandbyPart.class);
 
-        // Get the IntroStandbyContentPart that maps to the given partId.
-        IntroStandbyContentPart standbyPartContent = ExtensionPointManager
-                .getInst().getSharedConfigExtensionsManager().getStandbyPart(
-                        partId);
-
-        if (standbyPartContent != null) {
-            String standbyContentClassName = standbyPartContent.getClassName();
-            String pluginId = standbyPartContent.getPluginId();
-
-            Object standbyContentObject = createClassInstance(pluginId,
-                    standbyContentClassName);
-            if (standbyContentObject instanceof IStandbyContentPart) {
-                IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
-                Control c = standbyPart.addStandbyContentPart(partId,
-                        contentPart);
-                if (c != null) {
-                    standbyPart.setTopControl(partId);
-                    standbyPart.setInput(input);
-                    return true;
-                }
-            }
-        }
+        boolean success = standbyPart.showContentPart(partId, input);
+        if (success)
+            return true;
 
         // we do not have a valid partId or we failed to instantiate part or
-        // create the part content, do nothing.
+        // create the part content, show empty part and signal failure.
+        standbyPart.setTopControl(IIntroConstants.EMPTY_STANDBY_CONTENT_PART);
         return false;
     }
 
@@ -247,7 +227,8 @@ public class IntroURL implements IIntroURL {
      */
     private boolean runAction(String pluginId, String className) {
 
-        Object actionObject = createClassInstance(pluginId, className);
+        Object actionObject = ModelLoaderUtil.createClassInstance(pluginId,
+                className);
         try {
             if (actionObject instanceof IIntroAction) {
                 IIntroAction introAction = (IIntroAction) actionObject;
@@ -276,28 +257,6 @@ public class IntroURL implements IIntroURL {
         } catch (Exception e) {
             Log.error("Could not run action: " + className, e); //$NON-NLS-1$
             return false;
-        }
-    }
-
-    private Object createClassInstance(String pluginId, String className) {
-        // quick exits.
-        if (pluginId == null | className == null)
-            return null;
-        Bundle bundle = Platform.getBundle(pluginId);
-        if (!ModelLoaderUtil.bundleHasValidState(bundle))
-            return null;
-
-        Class aClass;
-        Object aObject;
-        try {
-            aClass = bundle.loadClass(className);
-            aObject = aClass.newInstance();
-            return aObject;
-        } catch (Exception e) {
-            Log.error(
-                    "Could not instantiate: " + className + " in " + pluginId, //$NON-NLS-1$ //$NON-NLS-2$
-                    e);
-            return null;
         }
     }
 

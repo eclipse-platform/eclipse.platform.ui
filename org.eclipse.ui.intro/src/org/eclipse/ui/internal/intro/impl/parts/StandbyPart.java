@@ -19,11 +19,24 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
 
-public class StandbyPart {
+/**
+ * Standby part is responsible for managing and creatin IStandbycontent parts.
+ * It know how create and cache content parts. It also handles saving and
+ * restoring its own state. It does that by caching the id of the last content
+ * part viewed and recreating that part on startup. It also manages the life
+ * cycle of content parts by creating and initializing them at the right
+ * moments. It also passes the momento at appropriate times to these content
+ * parts to enable storing and retrieving of state by content parts. Content
+ * parts are responsible for recreating there own state, including input, from
+ * the passed momemnto.
+ *  
+ */
+public class StandbyPart implements IIntroConstants {
 
     private FormToolkit toolkit;
     private IntroModelRoot model;
@@ -120,19 +133,121 @@ public class StandbyPart {
         slayout.marginWidth = slayout.marginHeight = 0;
         content.setLayout(slayout);
 
-        // By default, we always have the Context Help standby content.
-        addEmptyPart();
+        boolean success = false;
+        if (memento != null)
+            success = restoreState(memento);
+
+        if (!success)
+            // add empty standby content.
+            addEmptyPart();
         updateReturnLinkLabel();
     }
 
+    /**
+     * Empty content part used as backup for failures.
+     *  
+     */
     private void addEmptyPart() {
         emptyPart = new EmptyStandbyContentPart();
-        addStandbyContentPart("emptyPart", emptyPart);
-        setTopControl("emptyPart");
+        addStandbyContentPart(EMPTY_STANDBY_CONTENT_PART, emptyPart);
+        setTopControl(EMPTY_STANDBY_CONTENT_PART);
     }
 
+    /**
+     * Tries to create the last content part viewed, based on content part id..
+     * 
+     * @param memento
+     * @return
+     */
+    private boolean restoreState(IMemento memento) {
+        return false;
+        /*String contentPartId = memento
+                .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
+        if (contentPartId == null)
+            return false;
+        // create the cached content part. Content parts are responsible for
+        // storing and reading their input state.
+        return showContentPart(contentPartId, null);*/
+    }
+
+
+    /**
+     * Sets the into part to standby, and shows the passed standby part, with
+     * the given input.
+     * 
+     * @param partId
+     * @param input
+     */
+    public boolean showContentPart(String partId, String input) {
+        // Get the IntroStandbyContentPart that maps to the given partId.
+        IntroStandbyContentPart standbyPartContent = ExtensionPointManager
+                .getInst().getSharedConfigExtensionsManager().getStandbyPart(
+                        partId);
+
+        if (standbyPartContent != null) {
+            String standbyContentClassName = standbyPartContent.getClassName();
+            String pluginId = standbyPartContent.getPluginId();
+
+            Object standbyContentObject = ModelLoaderUtil.createClassInstance(
+                    pluginId, standbyContentClassName);
+            if (standbyContentObject instanceof IStandbyContentPart) {
+                IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
+                Control c = addStandbyContentPart(partId, contentPart);
+                if (c != null) {
+                    try {
+                        setTopControl(partId);
+                        setInput(input);
+                        return true;
+                    } catch (Exception e) {
+                        Log.error("Failed to set the input: " + input
+                                + " on standby part: " + partId, e);
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+        // we do not have a valid partId or we failed to instantiate part or
+        // create the part content, show empty part and signal failure.
+        setTopControl(EMPTY_STANDBY_CONTENT_PART);
+        return false;
+    }
+
+    /**
+     * Creates a standbyContent part in the stack only if one is not already
+     * created. The partId is used as tke key in the cache. The value is an
+     * instance of ControlKey that wraps a control/StandbyPart pair along with
+     * the corresponding part id. This is needed to retrive the control of a
+     * given standby part. The IMemento should be passed to the StandbyPart when
+     * it is initialized.
+     * 
+     * @param standbyContent
+     */
+    public Control addStandbyContentPart(String partId,
+            IStandbyContentPart standbyContent) {
+
+        ControlKey controlKey = getCachedContent(partId);
+        if (controlKey == null) {
+            standbyContent.init(introPart, memento);
+            try {
+                standbyContent.createPartControl(content, toolkit);
+            } catch (Exception e) {
+                Log.error(
+                        "Failed to create part for standby part: " + partId, e); //$NON-NLS-1$
+                return null;
+            }
+            Control control = standbyContent.getControl();
+            controlKey = new ControlKey(control, standbyContent, partId);
+            cachedContentParts.put(partId, controlKey);
+        }
+        return controlKey.getControl();
+    }
+
+
+
     public void setInput(Object input) {
-        IStandbyContentPart standbyContent = cachedControlKey.getPart();
+        IStandbyContentPart standbyContent = cachedControlKey.getContentPart();
         standbyContent.setInput(input);
         updateReturnLinkLabel();
         container.layout();
@@ -182,23 +297,37 @@ public class StandbyPart {
         Enumeration values = cachedContentParts.elements();
         while (values.hasMoreElements()) {
             ControlKey controlKey = (ControlKey) values.nextElement();
-            controlKey.getPart().dispose();
+            controlKey.getContentPart().dispose();
         }
         toolkit.dispose();
     }
 
     /**
-     * Save the current state of the standby part.
+     * Save the current state of the standby part. It stores the cached content
+     * part id for later creating it on restart. It also creates another
+     * subclass momento to also give the standby content part its own name
+     * space. This was momentos saved by different content parts will not
+     * conflict.
      * 
      * @param memento
      *            the memento in which to store state information
      */
     public void saveState(IMemento memento) {
-        // pass memento to correct standby part.
-        IStandbyContentPart standbypart = cachedControlKey.getPart();
-        if (standbypart != null)
-            standbypart.saveState(memento);
-
+        // save cached content part id.
+        if (cachedControlKey != null) {
+            String contentPartId = cachedControlKey.getContentPartId();
+            memento.putString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT,
+                    contentPartId);
+            // give standby part its own child to create a name space for
+            // IStandbyPartContent contribution momentos.
+            IMemento standbyContentPartMemento = memento
+                    .createChild(MEMENTO_STANDBY_CONTENT_PART_TAG);
+            // pass new memento to correct standby part.
+            IStandbyContentPart standbyContentpart = cachedControlKey
+                    .getContentPart();
+            if (standbyContentpart != null)
+                standbyContentpart.saveState(standbyContentPartMemento);
+        }
     }
 
 
@@ -210,39 +339,9 @@ public class StandbyPart {
      */
     public void setFocus() {
         if (cachedControlKey != null)
-            cachedControlKey.getPart().setFocus();
+            cachedControlKey.getContentPart().setFocus();
     }
 
-    /**
-     * Creates a standbyContent part in the stack only if one is not already
-     * created. The partId is used as tke key in the cache. The value is an
-     * instance of ControlKey that wraps a control/StandbyPart pair. This is
-     * needed to retrive the control of a given standby part.
-     * 
-     * The IMemento should be passed to the StandbyPart when it is initialized.
-     * 
-     * @param standbyContent
-     */
-    public Control addStandbyContentPart(String partId,
-            IStandbyContentPart standbyContent) {
-
-        ControlKey controlKey = getCachedContent(partId);
-        if (controlKey == null) {
-            standbyContent.init(introPart, memento);
-            //DONOW: No memento support exposed right now for Standby Content.
-            //standbyContent.init(introPart, memento);
-            try {
-                standbyContent.createPartControl(content, toolkit);
-            } catch (Exception e) {
-                Log.error("Failed to create standby part: " + partId, e); //$NON-NLS-1$
-                return null;
-            }
-            Control control = standbyContent.getControl();
-            controlKey = new ControlKey(control, standbyContent);
-            cachedContentParts.put(partId, controlKey);
-        }
-        return controlKey.getControl();
-    }
 
 
     /**
@@ -259,16 +358,19 @@ public class StandbyPart {
     }
 
     /*
-     * Model class to wrap Control and IStandbyContentPart pairs.
+     * Model class to wrap Control and IStandbyContentPart pairs, along with the
+     * representing ID..
      */
     class ControlKey {
 
         Control c;
         IStandbyContentPart part;
+        String contentPartId;
 
-        ControlKey(Control c, IStandbyContentPart part) {
+        ControlKey(Control c, IStandbyContentPart part, String contentPartId) {
             this.c = c;
             this.part = part;
+            this.contentPartId = contentPartId;
         }
 
         /**
@@ -279,10 +381,17 @@ public class StandbyPart {
         }
 
         /**
-         * @return Returns the part.
+         * @return Returns the content part.
          */
-        public IStandbyContentPart getPart() {
+        public IStandbyContentPart getContentPart() {
             return part;
+        }
+
+        /**
+         * @return Returns the part id.
+         */
+        public String getContentPartId() {
+            return contentPartId;
         }
     }
 

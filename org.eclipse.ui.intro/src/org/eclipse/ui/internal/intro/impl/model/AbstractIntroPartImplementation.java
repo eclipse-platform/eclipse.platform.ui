@@ -227,12 +227,9 @@ public abstract class AbstractIntroPartImplementation {
 
         if (memento == null || model == null)
             return;
-
         String currentPage = model.getCurrentPageId();
         if (currentPage != null && currentPage.length() > 0) {
-            IMemento introMemento = memento
-                    .createChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
-            introMemento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE,
+            memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
                     currentPage);
         }
     }
@@ -248,12 +245,7 @@ public abstract class AbstractIntroPartImplementation {
         IMemento memento = getMemento();
         if (memento == null)
             return null;
-        IMemento presentationMemento = memento
-                .getChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
-        if (presentationMemento != null)
-            return presentationMemento
-                    .getString(IIntroConstants.MEMENTO_CURRENT_PAGE);
-        return null;
+        return memento.getString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT);
     }
 
 

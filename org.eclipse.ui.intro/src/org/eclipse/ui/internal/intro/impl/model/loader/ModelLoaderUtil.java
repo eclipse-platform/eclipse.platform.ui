@@ -56,8 +56,8 @@ public class ModelLoaderUtil {
 
         int arraySize = configElements.length;
         if (arraySize == 0)
-                // No one contributed to extension. return null.
-                return null;
+            // No one contributed to extension. return null.
+            return null;
 
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
@@ -113,8 +113,8 @@ public class ModelLoaderUtil {
 
         int arraySize = elements.length;
         if (arraySize == 0)
-                // element list in empty. return null.
-                return null;
+            // element list in empty. return null.
+            return null;
 
         // we should only have one, so use first one.
         Element element = (Element) elements[0];
@@ -168,8 +168,8 @@ public class ModelLoaderUtil {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);
             if (aElement.getParentNode().equals(parent))
-                    // first level child element. add it.
-                    vector.add(aElement);
+                // first level child element. add it.
+                vector.add(aElement);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
@@ -186,9 +186,9 @@ public class ModelLoaderUtil {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);
             if (aElement.getParentNode().equals(dom.getDocumentElement()))
-                    // first level child element. add it. Cant use getParent
-                    // here.
-                    vector.add(aElement);
+                // first level child element. add it. Cant use getParent
+                // here.
+                vector.add(aElement);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
@@ -236,5 +236,37 @@ public class ModelLoaderUtil {
     public static String getBundleHeader(Bundle bundle, String key) {
         return (String) bundle.getHeaders().get(key);
     }
+
+
+    /**
+     * Util class for creating class instances from plugins.
+     * 
+     * @param pluginId
+     * @param className
+     * @return
+     */
+    public static Object createClassInstance(String pluginId, String className) {
+        // quick exits.
+        if (pluginId == null | className == null)
+            return null;
+        Bundle bundle = Platform.getBundle(pluginId);
+        if (!bundleHasValidState(bundle))
+            return null;
+
+        Class aClass;
+        Object aObject;
+        try {
+            aClass = bundle.loadClass(className);
+            aObject = aClass.newInstance();
+            return aObject;
+        } catch (Exception e) {
+            Log
+                    .error(
+                            "Intro Could not instantiate: " + className + " in " + pluginId, //$NON-NLS-1$ //$NON-NLS-2$
+                            e);
+            return null;
+        }
+    }
+
 
 }
