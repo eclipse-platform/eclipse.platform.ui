@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
@@ -223,16 +221,6 @@ public static Image manage(String key, ImageDescriptor desc) {
 	Image image = desc.createImage();
 	PLUGIN_REGISTRY.put(key, image);
 	return image;
-}
-
-public static URL getDefaultProviderImageURL() {
-	URL url = makeImageURL(PATH_FORMS, "def_provider.jpg"); //$NON-NLS-1$
-	try {
-		url = InternalBootLoader.resolve(url);
-	}
-	catch (IOException e) {
-	}
-	return url; 
 }
 
 }
