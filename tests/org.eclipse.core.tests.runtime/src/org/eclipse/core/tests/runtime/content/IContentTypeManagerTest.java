@@ -659,7 +659,7 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 	}
 
 	/**
-	 * Bugs 67841e 62443 
+	 * Bugs 67841 and 62443 
 	 */
 	public void testIOException() {
 		ContentTypeManager manager = ContentTypeManager.getInstance();
