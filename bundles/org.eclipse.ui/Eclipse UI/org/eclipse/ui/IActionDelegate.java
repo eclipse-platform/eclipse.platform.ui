@@ -51,8 +51,10 @@ public void run(IAction action);
  * action or to modify other presentation properties.
  * </p>
  *
- * @param action the action proxy that handles presentation portion of the action
- * @param selection the current selection in the workbench
+ * @param action the action proxy that handles presentation portion of 
+ * 		the action
+ * @param selection the current selection, or <code>null</code> if there
+ * 		is no selection.
  */
 public void selectionChanged(IAction action, ISelection selection);
 }
