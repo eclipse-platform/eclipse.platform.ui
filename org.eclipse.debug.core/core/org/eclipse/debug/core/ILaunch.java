@@ -61,7 +61,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	/**
 	 * Returns the source locator to use for locating source elements for
 	 * the debug target associated with this launch, or <code>null</code>
-	 * if source mapping is not supported.
+	 * if source lookup is not supported.
 	 *
 	 * @return the source locator
 	 */

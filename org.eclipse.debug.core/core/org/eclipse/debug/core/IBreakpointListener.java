@@ -28,16 +28,17 @@ import org.eclipse.debug.core.model.IBreakpoint;
 public interface IBreakpointListener {
 
 	/**
-	 * Notifies this listener that the given breakpoint has been added.
+	 * Notifies this listener that the given breakpoint has been added
+	 * to the breakpoint manager.
 	 *
 	 * @param breakpoint the added breakpoint
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint);
 	/**
-	 * Notifies this listener that the given breakpoint has been removed.
+	 * Notifies this listener that the given breakpoint has been removed
+	 * from the breakpoint manager.
 	 * If the given breakpoint has been removed because it has been deleted,
-	 * the associated marker delta is also provided such that any attributes 
-	 * of the breakpoint can still be accessed.
+	 * the associated marker delta is also provided.
 	 *
 	 * @param breakpoint the removed breakpoint
 	 * @param delta the associated marker delta, or  <code>null</code> when
@@ -53,7 +54,8 @@ public interface IBreakpointListener {
 	 * changed, as described by the delta.
 	 *
 	 * @param breakpoint the changed breakpoint
-	 * @param delta the marker delta that describes the change
+	 * @param delta the marker delta that describes the changes
+	 *  with the marker associated with the given breakpoint
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 */

@@ -28,7 +28,7 @@ import org.eclipse.debug.core.model.IProcess;
  *
  * @see ILaunchManager
  */
-public class LaunchManager extends PlatformObject implements ILaunchManager  {
+public class LaunchManager implements ILaunchManager  {
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>

@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see ILaunch
  * @see ILaunchListener
  */
-public interface ILaunchManager extends IAdaptable {
+public interface ILaunchManager {
 	/**
 	 * A launch in a normal, non-debug mode(value <code>"run"</code>).
 	 */
@@ -121,8 +121,9 @@ public interface ILaunchManager extends IAdaptable {
 	 */
 	public IProcess[] getProcesses();
 	/**
-	 * Registers the specified launch with this launch manager.
-	 * Has no effect if an identical launch is already registered.
+	 * Registers the specified launch with this launch manager
+	 * and notifies listeners. Has no effect if an identical
+	 * launch is already registered.
 	 * 
 	 * @param launch the launch to register
 	 */
@@ -138,7 +139,7 @@ public interface ILaunchManager extends IAdaptable {
 	 * Sets the default launcher for the given project as a persistent property.
 	 *
 	 * @param project the project for which to set the preference
-	 * @param launcher the launcher preference
+	 * @param launcher the default launcher preference
 	 * @exception CoreException if an error occurs setting the persistent property
 	 */
 	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;

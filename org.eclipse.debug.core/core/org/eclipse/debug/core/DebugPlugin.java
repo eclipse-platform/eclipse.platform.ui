@@ -18,14 +18,13 @@ import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.RuntimeProcess;
 
 /**
- * There is one instance of the debug plugin available from
- * <code>DebugPlugin.getDefault()</code>. The debug plugin provides:
+ * There is one instance of the debug plug-in available from
+ * <code>DebugPlugin.getDefault()</code>. The debug plug-in provides:
  * <ul>
  * <li>access to the breakpoint manager</li>
  * <li>access to the launch manager</li>
  * <li>access to the registered launcher extensions</li>
- * <li>registration for debug events</li>
- * <li>notification of debug events</li>
+ * <li>debug event notification</li>
  * </ul>
  * <p>
  * Clients may not instantiate or subclass this class.
@@ -109,7 +108,7 @@ public class DebugPlugin extends Plugin {
 	 * Constructs the debug plug-in.
 	 * <p>
 	 * An instance of this plug-in runtime class is automatically created 
-	 * when the facilities provided by the Resources plug-in are required.
+	 * when the facilities provided by this plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
@@ -160,7 +159,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Returns a collection of launchers. Launchers represent
 	 * and provide access to launcher extensions, delaying
-	 * instantiation of the underlying launcher delegates until
+	 * instantiation of the underlying delegate until
 	 * required.
 	 *
 	 * @return an array of launchers

@@ -77,7 +77,8 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Breakpoint marker attribute (value <code>"id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
-	 * id of a breakpoint type
+	 * identifier of the debug model a breakpoint is
+	 * associated with.
 	 */
 	public static final String ID= "id";
 	

@@ -66,7 +66,7 @@ public class DebugException extends CoreException {
 	/**
 	 * Constructs a new debug exception with the given status object.
 	 *
-	 * @param status the status object to be associated with this exception
+	 * @param status the status object describing this exception
 	 * @see IStatus
 	 */
 	public DebugException(IStatus status) {

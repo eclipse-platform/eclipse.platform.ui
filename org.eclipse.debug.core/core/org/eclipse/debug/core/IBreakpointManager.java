@@ -30,10 +30,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @see IBreakpointListener
  */
 public interface IBreakpointManager {
 	/**
-	 * Adds the given breakpoint to the collection of active breakpoints
+	 * Adds the given breakpoint to the collection of registered breakpoints
 	 * in the workspace and notifies all registered listeners. This has no effect
 	 * if the given breakpoint is already registered.
 	 *

@@ -10,15 +10,16 @@ import java.util.EventObject;
 /**
  * A debug event describes an event in a program being debugged.
  * Debug model implementations are required to generate debug events as
- * specified by this class. Debug events also describe the creation and
+ * specified by this class. Debug events also indicate the creation and
  * termination of system processes.
  * <p>
- * The following list defines the events that are required to 
- * be generated for each element type, and when the event should be created.
- * The object that an event is associated
- * with is available from the event's <code>getSource</code> method. Creation
- * events are guaranteed to occur in a top down order - that is, parents are created
- * before children. Termination events are guaranteed to occur in a bottom up order -
+ * The following list defines the events generated for each debug
+ * model element.
+ * The <code>getSource()</code> method of a debug event
+ * returns the debug model element associated with the
+ * event. Creation events are guaranteed to occur in a top
+ * down order - that is, parents are created before children.
+ * Termination events are guaranteed to occur in a bottom up order -
  * that is, children before parents. However, termination events are not guaranteed
  * for all  elements that are created. That is, terminate events can be coalesced - a 
  * terminate event for a parent signals that all children have been terminated.
@@ -47,24 +48,28 @@ import java.util.EventObject;
  * <li><code>IThread</code>
  *	<ul>
  *	<li><code>CREATE</code> - a thread has been created in a debug target.</li>
- *	<li><code>TERMINATE</code> - a thread has ended.</li>
- *	<li><code>SUSPEND</code> - a thread has suspended. Event detail provides
- *		the reason for the suspension, or -1 if unknown:<ul>
- *		<li>STEP_END - a request to step has completed</li>
- *		<li>BREAKPOINT - a breakpoint has been hit</li>
- *		<li>CLIENT_REQUEST - a client request has caused the thread to suspend</li>
+ *	<li><code>TERMINATE</code> - a thread has terminated.</li>
+ *	<li><code>SUSPEND</code> - a thread has suspended execution. Event detail provides
+ *		the reason for the suspension:<ul>
+ *		<li><code>STEP_END</code> - a request to step has completed</li>
+ *		<li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
+ *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to suspend
+ * 			(i.e. an explicit call to <code>suspend()</code>)</li>
+ * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
  *		</ul>
  *	</li>
- *	<li><code>RESUME</code> - a thread has resumed. Event detail provides
- *		the reason for the resume, or -1 if unknown:<ul>
- *		<li>STEP_START - a thread is being resumed because of a request to step</li>
- *		<li>CLIENT_REQUEST - a client request has caused the thread to be resumed</li>
+ *	<li><code>RESUME</code> - a thread has resumed execution. Event detail provides
+ *		the reason for the resume:<ul>
+ *		<li><code>STEP_START</code> - a thread is being resumed because of a request to step</li>
+ *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to be resumed
+ * 			(i.e. an explicit call to <code>resume()</code>)</li>
+ * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
  *		</ul>
  *	</li>
  *    </ul>
  * </li>
  * <li><code>IStackFrame</code> - no events are specified for stack frames.
- *	When a thread is suspended, it has children (stack frames). When a thread resumes,
+ *	When a thread is suspended, it has stack frames. When a thread resumes,
  *	stack frames are unavailable.
  * </li>
  * <li><code>IVariable</code> - no events are specified for variables.
@@ -141,22 +146,29 @@ public final class DebugEvent extends EventObject {
 	public static final int CLIENT_REQUEST= 0x0008;
 	
 	/**
+	 * Constant indicating that the kind or detail of a debug
+	 * event is unspecified.
+	 */
+	public static final int UNSPECIFIED = -1;
+	
+	/**
 	 * The kind of event - one of the kind constants defined by
 	 * this class.
 	 */
-	private int fKind= 0;
+	private int fKind= UNSPECIFIED;
 
 	/**
 	 * The detail of the event - one of the detail constants defined by
 	 * this class.
 	 */
-	private int fDetail= -1;
+	private int fDetail= UNSPECIFIED;
 	/**
-	 * Constructs a new debug event of the given kind with a detail code of -1.
+	 * Constructs a new debug event of the given kind with a detail code of
+	 * <code>UNSPECIFIED</code>.
 	 *
-	 * @param eventSource the object that generated the event
+	 * @param eventSource the object associated with the event
 	 * @param kind the kind of debug envent (one of the
-	 *	constants in <code>IDebugEventConstants</code>)
+	 *	kind constants defined by this class)
 	 */
 	public DebugEvent(Object eventSource, int kind) {
 		this(eventSource, kind, -1);
@@ -165,12 +177,11 @@ public final class DebugEvent extends EventObject {
 	/**
 	 * Constructs a new debug event of the given kind with the given detail.
 	 *
-	 * @param eventSource the object that generated the event
+	 * @param eventSource the object associated with the event
 	 * @param kind the kind of debug envent (one of the
 	 *	kind constants defined by this class)
 	 * @param detail extra information about the event (one of the
-	 *	detail constants defined by this class), or -1 if
-	 *    unspecified
+	 *	detail constants defined by this class)
 	 */
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
@@ -184,7 +195,8 @@ public final class DebugEvent extends EventObject {
 
 	/**
 	 * Returns a constant describing extra detail about the event - one
-	 * of the detail constants defined by this class, or -1 if unspecified.
+	 * of the detail constants defined by this class, possibly
+	 * <code>UNSPECIFIED</code>.
 	 *
 	 * @return the detail code
 	 */
@@ -194,6 +206,8 @@ public final class DebugEvent extends EventObject {
 
 	/**
 	 * Returns this event's kind - one of the kind constants defined by this class.
+	 * 
+	 * @return the kind code
 	 */
 	public int getKind() {
 		return fKind;

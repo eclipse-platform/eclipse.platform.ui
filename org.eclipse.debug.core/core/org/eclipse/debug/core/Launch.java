@@ -38,11 +38,6 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 public class Launch extends PlatformObject implements ILaunch {
 	
 	/**
-	 * Shared, immutable empty collection used for efficiency.
-	 */
-	private static List fgEmptyChildren= Collections.EMPTY_LIST;
-
-	/**
 	 * The target being debugged, or <code>null</code> if
 	 * there is no debug target.
 	 */
@@ -65,7 +60,7 @@ public class Launch extends PlatformObject implements ILaunch {
 
 	/**
 	 * The source locator to use in the debug session
-	 * or <code>null</code> if not available.
+	 * or <code>null</code> if not supported.
 	 */
 	private ISourceLocator fLocator= null;
 
@@ -95,7 +90,6 @@ public class Launch extends PlatformObject implements ILaunch {
 	 *	if none 
 	 */
 	public Launch(ILauncher launcher, String mode, Object launchedElement, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
-		super();
 		setLauncher(launcher);			
 		setElement(launchedElement);
 		setSourceLocator(locator);
@@ -232,7 +226,7 @@ public class Launch extends PlatformObject implements ILaunch {
 			fChildren.add(getDebugTarget());
 		}
 		if (fChildren == null) {
-			fChildren= fgEmptyChildren;
+			fChildren= Collections.EMPTY_LIST;
 		}
 	}
 
