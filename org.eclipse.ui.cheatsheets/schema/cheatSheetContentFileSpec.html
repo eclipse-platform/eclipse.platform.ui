@@ -1,8 +1,7 @@
-<html&gt;
+<html>
 
 <head>
 
-<head>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
@@ -13,13 +12,14 @@
 
 <h1>Cheat Sheet Content File XML Format</h1>
 
+<p>Version 3.0</p>
+
 <p>This
 document describes the cheat sheet content file structure as a series of
 DTD fragments.</p>
 
 <h2><code>cheatsheet</code> Element</h2>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
-&lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
+<pre>&lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
 &lt;!ATTLIST cheatsheet&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &gt;</pre>
@@ -31,8 +31,7 @@ DTD fragments.</p>
   <li><b>title</b>
     - the title of the cheat sheet
 </ul>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
-&lt;!ELEMENT intro ()&gt;&nbsp;
+<pre>&lt;!ELEMENT intro ()&gt;&nbsp;
 &lt;!ATTLIST intro&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &gt;</pre>
@@ -49,8 +48,7 @@ The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
   </li>
 </ul>
 <h2><code>item</code> Element</h2>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
-&lt;!ELEMENT item (subitem*)&gt;&nbsp;
+<pre>&lt;!ELEMENT item (subitem*)&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
@@ -94,10 +92,10 @@ into sub-steps. &lt;item&gt; attributes are as follows:</p>
   <li><b>class</b>
     - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
     or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
-    pluginId attribute must be present whenever the class attribute is present</li>
+    pluginId attribute must be present whenever this attribute is present</li>
   <li><b>pluginId
     </b>- the id of the plug-in which contains the Java class of the action
-    class; this attribute must be present whenever the &quot;class&quot;
+    class; this attribute must be present whenever the class
     attribute is present</li>
   <li><b>actionparam<i>N</i></b>
     - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
@@ -106,13 +104,12 @@ into sub-steps. &lt;item&gt; attributes are as follows:</p>
     (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
     time; e.g., actionParam0=&quot;${var1}&quot;]</li>
   <li><b>href</b>
-    - the cheat sheet items's optional task documentation link; when the user clicks the
+    - the cheat sheet item's optional task documentation link; when the user clicks the
     item's help link, this document is shown in the help browser</li>
 </ul>
 
 <h2><code>subitem</code> Element</h2>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
-&lt;!ELEMENT subitem EMPTY&gt;&nbsp;
+<pre>&lt;!ELEMENT subitem EMPTY&gt;&nbsp;
 &lt;!ATTLIST subitem&nbsp;
 &nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
@@ -136,16 +133,16 @@ sub-items.</p>
 <p>Unlike
 items, which must be followed in strict sequence, the sub-items of a given item
 can be performed in any order. 
-All sub-items within an item have to be attempted (that is, performed, skipped,
-or completed) before progressing to the next item. (Which means actions that
-must be performed in a required sequence cannot be represented as sub-items.)&nbsp;</p>
+All sub-items within an item have to be attempted (or skipped) before progressing to the next item. (Which means actions that
+must be performed in a required sequence should not be represented as sub-items.)</p>
 <p>&lt;subitem&gt;
-attributes are as follows:</p>
+attributes are as follows (the semantics of the kind, class, pluginId, and
+actionparamN are the same as &lt;item&gt;):</p>
 <ul type="disc">
   <li><b>label</b>
     - title of the cheat sheet sub-item
   <li><b>kind</b>
-    - the kind of step (
+    - the kind of step
     <ul type="disc">
       <li><b>&quot;action&quot;</b> - the step has an accompanying
     computed-provided action (&quot;class&quot; and &quot;pluginId&quot;
@@ -162,7 +159,11 @@ attributes are as follows:</p>
   <li><b>class</b>
     - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
     or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
-    pluginId attribute must be present whenever the class attribute is present</li>
+    pluginId attribute must also be present whenever this attribute is present</li>
+  <li><b>pluginId
+    </b>- the id of the plug-in which contains the Java class of the action
+    class; this attribute must be present whenever the class
+    attribute is present</li>
   <li><b>actionparam<i>N</i></b>
     - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
     the string values of these attributes are passed to the action when it is invoked.
@@ -171,14 +172,12 @@ attributes are as follows:</p>
     time; e.g., actionParam0=&quot;${var1}&quot;]</li>
 </ul>
 
-<h2>Basic Elements and Attributes</h2>
+<h2>Example</h2>
 
-<p>The following snippet shows an example of a cheat sheet XML that is provided in the cheat sheet sample
-plugin. 
+<p>The following is an example of a cheat sheet content file: 
 </p>
 
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;&nbsp; 
-&nbsp; 
 &lt;cheatSheet title=&quot;Hello World Demo&quot; version=&quot;1.0&quot;&gt; 
 &nbsp; 
 &lt;intro&nbsp; 
@@ -188,26 +187,33 @@ This cheat sheet will help you to build the famous &quot;hello world&quot;
 application and try it out. You will create a java project, and
 a Java class that will print &quot;hello world&quot; in the console when run. 
 Let's get started! 
-&lt;/intro&gt; 
+&lt;/intro&gt;
 &nbsp; 
 &lt;item 
-      id=&quot;0&quot; 
       title=&quot;Open the Java Perspective&quot;&nbsp; 
       href=&quot;/org.eclipse.platform.doc.user/concepts/concepts-4.htm&quot; 
       kind=&quot;manual&quot;&nbsp; 
       pluginId=&quot;org.eclipse.ui.cheatsheet.sample&quot; 
       class=&quot;org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction&quot;&gt;
 To begin, open the Java Perspective in the Eclipse workbench.&nbsp; 
-You may do this by clicking window-&gt;open perspective-&gt;Java in the
-toolbar at the top of the workbench. When you have done this, press
+You may do this by clicking Window-&gt;Open Perspective-&gt;Java in the
+tool bar at the top of the workbench. When you have done this, press
 the &quot;click when done&quot; button below.
 &lt;/item&gt; 
 &nbsp; 
-&lt;/cheatSheet&gt;</pre>
+&lt;/cheatSheet&gt;
+</pre>
 Figure 1: Example cheat sheet xml
-<h3>Item extensions</h3>
+
+<h2>Text formatting</h2>
+<p>In the cheat sheet content file, you should keep all text on the same line as the &lt;intro&gt; or &lt;item&gt; tag.
+At execution time, the cheat sheet automatically wraps the text to make it show up correctly in
+UI. A line break in the text in the cheat sheet content file is interpreted as a line break in the displayed cheat sheet.</p>
+
+<h2>Item extensions</h2>
 <p>If you need extend an item’s assistance capabilities to launch additional support tools besides help topics, you can use the item extension mechanism to display additional custom controls to the left of help link  button. To accomplish this, you need to do these two things:Use the extension point to extend the cheat sheet &lt;item&gt; 
 In the cheat sheet content XML file, use the newly defined &lt;item&gt; attribute that supports the item extension.</p>
+
 <h4>Extension point for item extensions</h4>
 <p>In the cheat sheet content plugin's plugin.xml file, use the extension point, org.eclipse.ui.cheatsheets.cheatSheetItemExtension, as follows: 
 &lt;extension point="org.eclipse.ui.cheatsheets.cheatSheetItemExtension"&gt; 
@@ -229,7 +235,6 @@ The class="" attribute is a class that implements the org.eclipse.ui.cheatsheets
         extensionlink=”input data required by extension”        actionphrase="2"        pluginId="org.eclipse.ui.cheatsheet.sample" 
         class="org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction"&gt;To begin, open the Java Perspective in the Eclipse workbench. 
 You may do this by clicking window-&gt;open perspective-&gt;Java in the toolbar at the top of the workbench.  When you have done this, press the "click when done" button below.&lt;/item&gt;</p>
-<h2>Additional notes</h2>
-<p>Text formatting and line breaks 
-In the cheat sheet content XML file keep all the text in the same line as the &lt;intro&gt; or &lt;item&gt; tag. At execution time, the cheat sheet will automatically wrap the text to make it show up correctly in the cheat sheet. If you break the text into another line in the cheat sheet content XML file, you will force a line break in the displayed cheat sheet. 
- </p>
+
+</body>
+</html>
