@@ -189,6 +189,7 @@ public void createControl(Composite parent) {
 	layout.marginWidth = 0;
 	layout.marginHeight = 0;
 	content.setLayout(layout);
+	content.setFont(font);
 
 	// initialize the dialog units
 	initializeDialogUnits(content);
