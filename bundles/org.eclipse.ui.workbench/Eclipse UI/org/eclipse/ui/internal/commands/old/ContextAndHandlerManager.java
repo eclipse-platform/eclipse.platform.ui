@@ -190,6 +190,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			if (contexts.size() == 0)
 				contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
 			
+			System.out.println(contexts);			
 			keyMachine.setContexts((String[]) contexts.toArray(new String[contexts.size()]));
 		} catch (IllegalArgumentException eIllegalArgument) {
 			System.err.println(eIllegalArgument);
@@ -208,9 +209,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 			String command = (String) entry.getValue();		
 
 			if (sequence.isChildOf(mode, false)) {
-				ICommandDelegate commandDelegate = (ICommandDelegate) commandManager.getCommandDelegatesById().get(command);
+				//ICommandDelegate commandDelegate = (ICommandDelegate) commandManager.getCommandDelegatesById().get(command);
 				
-				if (commandDelegate != null)
+				//if (commandDelegate != null)
 					strokeSetForMode.add(sequence.getStrokes().get(size));	
 			}
 		}

@@ -288,7 +288,7 @@ public class PartSite implements IWorkbenchPartSite {
 				}				
 			}			
 			
-			keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
+			// keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
 		}
 
 		return keyBindingService;
