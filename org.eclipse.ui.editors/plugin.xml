@@ -430,12 +430,12 @@
 	  <actionSet
 	    label="%conversionActionSet.label"
 	    visible="true"
-	    id="org.eclipse.ui.edit.text.actionSet.conversion">
+	    id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo">
          <menu
                label="%conversionSubMenu.label"
                path="file/save.ext"
-               id="conversion">
-            <separator name="lineDelimiterConversion"/>
+               id="converstLineDelimitersTo">
+            <separator name="lineDelimitersConversion"/>
             <separator name="encoding"/>
          </menu>
          <action
@@ -443,7 +443,7 @@
 	       label="%convertDelimiters.MacOS9.label"
 	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToMacOS9"
 	       tooltip="%convertDelimiters.MacOS9.description"
-	       menubarPath="file/conversion/lineDelimiterConversion"
+	       menubarPath="file/converstLineDelimitersTo/lineDelimitersConversion"
 	       id="org.eclipse.ui.edit.text.delimiter.macOS9">
 	 	 </action>
          <action
@@ -451,7 +451,7 @@
 	       label="%convertDelimiters.Unix.label"
 	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToUnix"
 	       tooltip="%convertDelimiters.Unix.description"
-	       menubarPath="file/conversion/lineDelimiterConversion"
+	       menubarPath="file/converstLineDelimitersTo/lineDelimitersConversion"
 	       id="org.eclipse.ui.edit.text.delimiter.unix">
 	 	 </action>
          <action
@@ -459,7 +459,7 @@
 	       label="%convertDelimiters.Windows.label"
 	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToWindows"
 	       tooltip="%convertDelimiters.Unix.description"
-	       menubarPath="file/conversion/lineDelimiterConversion"
+	       menubarPath="file/converstLineDelimitersTo/lineDelimitersConversion"
 	       id="org.eclipse.ui.edit.text.delimiter.windows">
 	 	 </action>
 	  </actionSet>

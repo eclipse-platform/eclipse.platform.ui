@@ -25,8 +25,12 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 /**
  * Manages the installation and de-installation of global actions for the default text editor.
  * <p>
- * If instantiated and used as-is, this contributor connects global actions and adds actions
- * for encoding support.</p>
+ * If instantiated and used as-is, this contributor connects the following global actions:
+ * <ul>
+ * 		<li>Add Bookmark</li>
+ * 		<li>Add Task</li>
+ * 		<li>Change Encoding</li>
+ * </ul>
  * 
  * @since 2.0
  */
@@ -39,7 +43,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * Creates a new contributor.
 	 */
 	public TextEditorActionContributor() {
-		super();
 		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 	}	
 	
@@ -87,7 +90,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		super.init(bars);
 		
 		IMenuManager menuManager= bars.getMenuManager();
-		IMenuManager conversionMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_FILE + "/conversion");  //$NON-NLS-1$
-		if (conversionMenu != null)
-			conversionMenu.insertAfter("encoding", fChangeEncodingAction); //$NON-NLS-1$
+		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null)
+			editMenu.add(fChangeEncodingAction);
 	}}
