@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;

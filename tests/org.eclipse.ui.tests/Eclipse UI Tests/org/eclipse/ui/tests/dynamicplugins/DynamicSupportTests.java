@@ -17,8 +17,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.ExtensionTracker;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.tests.leaks.LeakTests;
 
 /**

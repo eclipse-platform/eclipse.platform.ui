@@ -21,8 +21,9 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -295,7 +296,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                 });
 		triggerPointManager = new TriggerPointManager();
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
+        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /* (non-Javadoc)

@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Shell;
 

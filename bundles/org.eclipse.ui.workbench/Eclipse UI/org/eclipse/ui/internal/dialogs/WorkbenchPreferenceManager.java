@@ -19,8 +19,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
@@ -44,7 +45,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 		super(separatorChar);
         
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-		tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
 		// add a listener for keyword deltas. If any occur clear all page caches
 		Platform.getExtensionRegistry().addRegistryChangeListener(

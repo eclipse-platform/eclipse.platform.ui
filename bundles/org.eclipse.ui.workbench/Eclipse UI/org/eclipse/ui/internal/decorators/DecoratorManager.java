@@ -26,8 +26,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -101,7 +102,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         scheduler = new DecorationScheduler(this);
         IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
-        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
+        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /**

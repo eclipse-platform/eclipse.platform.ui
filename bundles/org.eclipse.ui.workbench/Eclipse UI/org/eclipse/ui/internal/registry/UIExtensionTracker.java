@@ -11,8 +11,8 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.dynamicHelpers.ExtensionTracker;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 

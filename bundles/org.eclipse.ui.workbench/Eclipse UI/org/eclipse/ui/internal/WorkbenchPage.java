@@ -30,8 +30,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -1967,7 +1968,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveActivated(this, desc);
         }
         
-        getExtensionTracker().registerHandler(changeHandler, getExtensionTracker().createExtensionPointFilter(getExtensionPointFilter()));
+        getExtensionTracker().registerHandler(changeHandler, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
 
     /**

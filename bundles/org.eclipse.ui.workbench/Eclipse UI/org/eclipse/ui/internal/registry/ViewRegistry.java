@@ -24,8 +24,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -158,7 +159,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
         super();    
         categories = new ArrayList();       
         sticky = new ArrayList();        
-        PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, PlatformUI.getWorkbench().getExtensionTracker().createExtensionPointFilter(getExtensionPointFilter()));
+        PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
         reader.readViews(Platform.getExtensionRegistry(), this);
     }
 

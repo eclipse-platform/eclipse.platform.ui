@@ -36,8 +36,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler;
-import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -150,7 +151,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
         super();
         initializeFromStorage();
         IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, tracker.createExtensionPointFilter(getExtensionPointFilter()));
+        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 		relatedRegistry = new RelatedRegistry();
     }
 
