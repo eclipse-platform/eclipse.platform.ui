@@ -201,8 +201,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
 	 */
     public PerspectiveDescriptor createPerspective(String label,
             PerspectiveDescriptor originalDescriptor) {
-        // Sanity check to avoid duplicate labels.
+        // Sanity check to avoid invalid or duplicate labels.
         if (!validateLabel(label))
+            return null;
+        if (findPerspectiveWithLabel(label) != null)
             return null;
 
         // Calculate ID.
@@ -526,7 +528,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
     }
 
     /**
-     * Return <code>true</code> if a label is valid and unused.
+     * Return <code>true</code> if a label is valid.
+     * This checks only the given label in isolation.  It does not
+     * check whether the given label is used by any
+     * existing perspectives.
      * 
      * @param label the label to test
      * @return whether the label is valid
@@ -535,8 +540,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
         label = label.trim();
         if (label.length() <= 0)
             return false;
-        if (findPerspectiveWithLabel(label) != null)
-        	return false;
         return true;
     }
 
