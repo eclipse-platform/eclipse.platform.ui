@@ -97,8 +97,11 @@ public void setVisible(boolean visible, boolean forceVisibility) {
 			setVisible(true);
 		// Enable the ones disabled when the manager was deactivated
 		if (grayedOutItems != null) {
-			for (int i = 0; i < grayedOutItems.size(); i++)
-				((ToolItem) grayedOutItems.get(i)).setEnabled(true);
+			for (int i = 0; i < grayedOutItems.size(); i++) {
+				ToolItem toolItem = (ToolItem) grayedOutItems.get(i);
+				if (!toolItem.isDisposed())
+					toolItem.setEnabled(true);
+			}
 			grayedOutItems = null;
 		}
 	}
