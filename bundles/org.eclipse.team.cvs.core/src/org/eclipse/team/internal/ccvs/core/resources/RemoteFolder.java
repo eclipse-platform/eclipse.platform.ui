@@ -315,12 +315,18 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 							new UpdateListener(listener),
 							Policy.subMonitorFor(monitor, 60));
 						if (status.getCode() == CVSStatus.SERVER_ERROR) {
-							throw new CVSServerException(status);
+							// Only throw the exception if no files or folders were found
+							if (newRemoteDirectories.size() + newRemoteFiles.size() == 0) {
+								throw new CVSServerException(status);
+							} else {
+								CVSProviderPlugin.log(status);
+							}
+							
 						}
 						if (! exists[0]) {
 							throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXIST, Policy.bind("RemoteFolder.doesNotExist", getRepositoryRelativePath()))); //$NON-NLS-1$
 						}
-						// Report any exceptions that occured fetching the members
+						// Report any internal exceptions that occured fetching the members
 						if ( ! exceptions.isEmpty()) {
 							if (exceptions.size() == 1) {
 								throw (CVSException)exceptions.get(0);
