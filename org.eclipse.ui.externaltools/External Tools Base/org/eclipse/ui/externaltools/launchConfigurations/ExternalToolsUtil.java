@@ -142,7 +142,7 @@ public class ExternalToolsUtil {
 					if (path.isDirectory()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
