@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ======================================================================= -->
 <!-- Search Plugin                                                           -->
 <!-- ======================================================================= -->
 <plugin
-	name= "Search Support"
+	name="%pluginName"
 	id= "org.eclipse.search"
 	version= "0.9"
 	provider-name= "Object Technology International, Inc."
