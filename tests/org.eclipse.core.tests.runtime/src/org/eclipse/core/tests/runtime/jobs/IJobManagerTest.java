@@ -11,8 +11,8 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
 
-import junit.framework.*;
-import org.eclipse.core.internal.jobs.JobManager;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
