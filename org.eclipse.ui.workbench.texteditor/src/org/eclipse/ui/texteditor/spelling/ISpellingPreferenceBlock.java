@@ -54,9 +54,19 @@ public interface ISpellingPreferenceBlock {
 	void setEnabled(boolean enabled);
 	
 	/**
-	 * Returns <code>true</code> iff <code>performOk()</code> may be
-	 * called. A preference block may, for example, return
-	 * <code>false</code> if some user supplied value is not valid.
+	 * Returns <code>true</code> iff {@link #performOk()} may be called. A
+	 * preference block may, for example, return <code>false</code> if
+	 * some user supplied value is not valid (and validation is an expensive
+	 * operation, use {@link IPreferenceStatusMonitor} to report validation
+	 * results on-the-fly). A preference block may also request additional
+	 * user input and cancel the initiated {@link #performOk()}, based on
+	 * that input.
+	 * <p>
+	 * Note that this method is guaranteed to be called only on an enabled
+	 * spelling engine, any spelling engine should be prepared to store its
+	 * settings on {@link #performOk()} without a preceding call to this
+	 * method.
+	 * </p>
 	 * 
 	 * @return <code>true</code> iff <code>performOk()</code> may be
 	 *         called
