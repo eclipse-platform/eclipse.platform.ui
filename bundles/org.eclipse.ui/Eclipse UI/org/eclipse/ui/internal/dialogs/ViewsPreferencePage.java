@@ -4,20 +4,21 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
  * views in the workbench.
@@ -53,22 +54,21 @@ public class ViewsPreferencePage
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
 	 */
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("ViewsPreference.note"); //$NON-NLS-1$
-	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewsPreference.tabPositions"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
 /**
  * Create a composite that for creating the tab toggle buttons.
  * @param composite Composite
- * @param store IPreferenceStore
+ * @param title String
  */
-private Composite createButtonGroup(Composite composite) {
+private Group createButtonGroup(Composite composite, String title) {
 
-	Composite buttonComposite = new Composite(composite, SWT.LEFT);
+	Group buttonComposite = new Group(composite, SWT.LEFT);
+	buttonComposite.setText(title);
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
 	buttonComposite.setLayout(layout);
 	GridData data =
-		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-	buttonComposite.setData(data);
+		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	buttonComposite.setLayoutData(data);
 
 	return buttonComposite;
 
@@ -98,11 +98,8 @@ protected Control createContents(Composite parent) {
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	Composite parentGroup = createGroup(composite);
-
-	Composite buttonComposite = createButtonGroup(parentGroup);
-	createEditorTabButtonGroup(buttonComposite);
-	createViewTabButtonGroup(buttonComposite);
+	createEditorTabButtonGroup(composite);
+	createViewTabButtonGroup(composite);
 
 	Composite messageComposite = new Composite(composite, SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -147,11 +144,8 @@ protected Control createContents(Composite parent) {
  * @param store IPreferenceStore
  */
 private void createEditorTabButtonGroup(Composite composite) {
-
-	Label titleLabel = new Label(composite, SWT.NONE);
-	titleLabel.setText(EDITORS_TITLE);
-
-	Composite buttonComposite = createButtonGroup(composite);
+	
+	Group buttonComposite = createButtonGroup(composite,EDITORS_TITLE);
 
 	this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
 	this.editorTopButton.setText(EDITORS_TOP_TITLE);
@@ -160,6 +154,12 @@ private void createEditorTabButtonGroup(Composite composite) {
 	this.editorTopButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			editorAlignment = SWT.TOP;
+		}
+	});
+	
+	this.editorTopButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+		public void getName(AccessibleEvent e) {
+			e.result = EDITORS_TITLE;
 		}
 	});
 
@@ -227,27 +227,7 @@ private void createOpenViewButtonGroup(Composite composite) {
 	 * }
 	 */
 }
-/**
- * Create a group for encapsualting the buttons.
- * @param composite Composite
- * @param store IPreferenceStore
- */
-private Composite createGroup(Composite composite) {
 
-	Group group = new Group(composite, SWT.SHADOW_NONE);
-	group.setText(TAB_POSITIONS_LABEL);
-	//GridLayout
-	group.setLayout(new GridLayout());
-	//GridData
-	GridData data = new GridData();
-	data.verticalAlignment = GridData.FILL;
-	data.horizontalAlignment = GridData.FILL;
-	data.grabExcessHorizontalSpace = true;
-	group.setLayoutData(data);
-
-	return group;
-
-}
 /**
  * Creates a horizontal spacer line that fills the width of its container.
  *
@@ -267,10 +247,7 @@ private void createSpacer(Composite parent) {
  */
 private void createViewTabButtonGroup(Composite composite) {
 
-	Label titleLabel = new Label(composite, SWT.NONE);
-	titleLabel.setText(VIEWS_TITLE);
-
-	Composite buttonComposite = createButtonGroup(composite);
+	Group buttonComposite = createButtonGroup(composite,VIEWS_TITLE);
 
 	this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
 	this.viewTopButton.setText(VIEWS_TOP_TITLE);
