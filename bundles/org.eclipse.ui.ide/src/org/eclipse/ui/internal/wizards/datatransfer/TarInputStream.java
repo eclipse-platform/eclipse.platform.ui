@@ -70,7 +70,7 @@ public class TarInputStream extends FilterInputStream
 		long sum = 0;
 
 		for(int i = 0; i < 512; i++) {
-			sum += header[i];
+			sum += header[i] & 0xff;
 		}
 
 		return sum;
@@ -114,7 +114,6 @@ public class TarInputStream extends FilterInputStream
 	private boolean isValidTarHeader(byte[] header) {
 		long fileChecksum, calculatedChecksum;
 		int pos, i;
-		
 		
 		pos = 148;
 		StringBuffer checksumString = new StringBuffer();
@@ -191,7 +190,7 @@ public class TarInputStream extends FilterInputStream
 
 		StringBuffer name = new StringBuffer();
 		while(pos < 100 && header[pos] != 0) {
-			name.append((char) header[pos]);
+			name.append((char) (header[pos] & 0xff));
 			pos++;
 		}
 		// Prepend the prefix here.
@@ -199,7 +198,7 @@ public class TarInputStream extends FilterInputStream
 		if(header[pos] != 0) {
 			StringBuffer prefix = new StringBuffer();
 			while(pos < 500 && header[pos] != 0) {
-				prefix.append((char) header[pos]);
+				prefix.append((char) (header[pos] & 0xff));
 				pos++;
 			}
 			prefix.append('/');
@@ -268,7 +267,7 @@ public class TarInputStream extends FilterInputStream
 			int pos = 0;
 			
 			while(pos < longNameData.length && longNameData[pos] != 0) {
-				filename.append((char) longNameData[pos]);
+				filename.append((char) (longNameData[pos] & 0xff));
 				pos++;
 			}
 			longLinkName = filename.toString();
