@@ -56,6 +56,8 @@ class ShowSearchesAction extends Action {
 			Iterator iter= fImages.iterator();
 			while (iter.hasNext())
 				((Image)iter.next()).dispose();
+			
+			fImages= null;
 		}
 	};
 
