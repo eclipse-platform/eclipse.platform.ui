@@ -35,6 +35,7 @@ public class Bug42616Test extends UITestCase {
 	public void testErrorCondition() {
 		try {
 			WorkbenchPlugin.createExtension(null, null);
+			fail("createExtension with nulls succeeded");
 		} 
 		catch (CoreException e) {
 			// ensure that exception has a root cause.
