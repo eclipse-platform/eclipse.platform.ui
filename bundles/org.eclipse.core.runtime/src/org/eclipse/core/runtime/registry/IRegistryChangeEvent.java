@@ -18,29 +18,40 @@ package org.eclipse.core.runtime.registry;
  * @since 3.0
  *
  */
-//TODO: missing javadoc for params and returns
 public interface IRegistryChangeEvent {
 	/** 
-	 * Returns all extension deltas for all hosts.
+	 * Returns all extension deltas for all hosts. Returns an empty array if there are 
+	 * no deltas in this event.
 	 * 
 	 * @return  all extension deltas 
 	 */
 	public IExtensionDelta[] getExtensionDeltas();	
 	/** 
-	 * Returns all extension deltas for the given host. An extension delta is 
-	 * related to a host if it reports additions/removals of an extension to any 
-	 * of the hosts's extension points.  
-	 * 
+	 * Returns all extension deltas for the given host. Returns an empty array if there are
+	 * no deltas in this event for any extension points provided by the given host. 
+	 *
+	 * @param hostId the host identifier 
 	 * @return all extension deltas for the given host 
 	 */
 	public IExtensionDelta[] getExtensionDeltas(String hostId);
 	/** 
-	 * Returns all the extension deltas for the given host and extension point.
+	 * Returns all the extension deltas for the given host and extension point. Returns an 
+	 * empty array if there are no deltas in this event for the given extension point.
+	 *  
+	 * @param hostId the host identifier
+	 * @param extensionPoint the simple identifier of the 
+	 * extension point (e.g. <code>"builders"</code>)
+	 * @return all extension deltas for the given extension point
 	 */
 	public IExtensionDelta[] getExtensionDeltas(String hostId, String extensionPoint);
 	/** 
-	 * Returns the delta for the given host, extension point and extension. Returns null if none.
+	 * Returns the delta for the given host, extension point and extension. 
+	 * Returns <code>null</code> if none exists in this event.
+	 * 
+	 * @param hostId the host identifier
+	 * @param extensionPoint the simple identifier of the 
+	 * extension point (e.g. <code>"builders"</code>)
+	 * @param extension the unique identifier of the extension
 	 */
-	public IExtensionDelta getExtensionDelta(String hostId, String extensionPoint, String extension);
-	
+	public IExtensionDelta getExtensionDelta(String hostId, String extensionPoint, String extension);	
 }
