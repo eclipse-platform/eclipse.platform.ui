@@ -94,6 +94,15 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
 	public void memoryBlocksAdded(final IMemoryBlock[] memoryBlocks) {
+		
+		// check condition before doing anything
+		if (memoryBlocks == null || memoryBlocks.length <= 0)
+			return;
+		
+		// disable current view tab before handling new memory blocks
+		if (getTopMemoryTab() != null)
+			getTopMemoryTab().setEnabled(false);
+		
 		for (int i=0; i<memoryBlocks.length; i++)
 		{
 			IMemoryBlock memory = memoryBlocks[i];

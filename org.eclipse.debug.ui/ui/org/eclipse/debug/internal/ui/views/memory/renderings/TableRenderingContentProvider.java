@@ -91,7 +91,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				fInput.getMemoryRendering().displayTable();
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e.getStatus());
 			fInput.getMemoryRendering().displayError(e);
 		}
 	}
@@ -208,7 +207,14 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// calculate address size
 		String adjustedAddress = startingAddress.toString(16);
 		
-		int addressSize = getAddressSize(startingAddress);
+		int addressSize;
+		try {
+			addressSize = getAddressSize(startingAddress);
+		} catch (DebugException e1) {
+			dbgEvt = e1;
+			error = true;
+			addressSize = 4;
+		}
 		
 		int addressLength = addressSize * IInternalDebugUIConstants.CHAR_PER_BYTE;
 
@@ -334,7 +340,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			// finish creating the content provider before throwing an event
 			error = true; 
 			dbgEvt = new DebugException(DebugUIPlugin.newErrorStatus(e.getMessage(), e));
-			DebugUIPlugin.log(e);
 		}
 		
 		// if debug adapter did not return enough memory, create dummy memory
@@ -523,6 +528,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		
 		// do nothing if the debug event did not come from a debug element comes from non-debug element
 		if (!(event.getSource() instanceof IDebugElement))
+			return;
+		
+		// do not try to recover if the content input has not been created
+		if (fInput == null)
 			return;
 		
 		IDebugElement src = (IDebugElement)event.getSource();

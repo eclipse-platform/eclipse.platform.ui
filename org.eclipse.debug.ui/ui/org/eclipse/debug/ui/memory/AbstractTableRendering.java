@@ -492,8 +492,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				fAddressableSize = ((IMemoryBlockExtension)getMemoryBlock()).getAddressableSize();
 		} catch (DebugException e1) {
 			// log error and default to 1
-			DebugUIPlugin.log(e1);
 			fAddressableSize = 1;
+			displayError(e1);
+			return;
+			
 		}
 		if (getAddressableSize() < 1)
 			fAddressableSize = 1;
@@ -530,74 +532,82 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 // END FORMAT RENDERING		
 		
 		// figure out selected address 
-		try {
-			BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
-			if (selectedAddress == null)
-			{
-				if (getMemoryBlock() instanceof IMemoryBlockExtension) {
+		BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
+		if (selectedAddress == null)
+		{
+			if (getMemoryBlock() instanceof IMemoryBlockExtension) {
+				try {
 					selectedAddress = ((IMemoryBlockExtension) getMemoryBlock())
 							.getBigBaseAddress();
-					if (selectedAddress == null) {
-						selectedAddress = new BigInteger("0"); //$NON-NLS-1$
-					}
+				} catch (DebugException e1) {
+					selectedAddress = new BigInteger("0"); //$NON-NLS-1$
+				}
+				if (selectedAddress == null) {
+					selectedAddress = new BigInteger("0"); //$NON-NLS-1$
+				}
 
-				} else {
-					long address = getMemoryBlock().getStartAddress();
-					selectedAddress = BigInteger.valueOf(address);
-				}
+			} else {
+				long address = getMemoryBlock().getStartAddress();
+				selectedAddress = BigInteger.valueOf(address);
 			}
-			fSelectedAddress = selectedAddress;
-			// figure out top visible address
-			BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
-			if (topVisibleAddress == null)
+		}
+		fSelectedAddress = selectedAddress;
+		// figure out top visible address
+		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
+		if (topVisibleAddress == null)
+		{
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				if (getMemoryBlock() instanceof IMemoryBlockExtension)
-				{
+				try {
 					topVisibleAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
-				}
-				else
-				{
-					topVisibleAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
+				} catch (DebugException e1) {
+					topVisibleAddress = new BigInteger("0"); //$NON-NLS-1$
 				}
 			}
-			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
-			fTableViewer.setInput(fContentInput);
-			fCellModifier = new TableRenderingCellModifier(this);
-			fTableViewer.setCellModifier(fCellModifier);
-			// SET UP FONT		
-			// set to a non-proportional font
-			fTableViewer.getTable().setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-			if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
-			{		
-				// If not extended memory block, do not create any buffer
-				// no scrolling
-				fContentInput.setPreBuffer(0);
-				fContentInput.setPostBuffer(0);
-				fContentInput.setDefaultBufferSize(0);
+			else
+			{
+				topVisibleAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
 			}
-			createCursor(fTableViewer.getTable(), fSelectedAddress);
-			fTableViewer.getTable().addMouseListener(new MouseAdapter() {
-				public void mouseDown(MouseEvent e) {
-					handleTableMouseEvent(e);
-				}});
-			// create pop up menu for the rendering
-			createActions();
-			createPopupMenu(fTableViewer.getControl());
-			createPopupMenu(fTableCursor);
-			getPopupMenuManager().addMenuListener(new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					fillContextMenu(manager);
-					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-				}});
-			fIsCreated = true;
-			addRenderingToSyncService();
-			//synchronize
-			synchronize();
-			fTopRowAddress = getTopVisibleAddress();
-			// Need to resize column after content is filled in
-			// Pack function does not work unless content is not filled in
-			// since the table is not able to compute the preferred size.
-			resizeColumnsToPreferredSize();
+		}
+		fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+		fTableViewer.setInput(fContentInput);
+		fCellModifier = new TableRenderingCellModifier(this);
+		fTableViewer.setCellModifier(fCellModifier);
+		// SET UP FONT		
+		// set to a non-proportional font
+		fTableViewer.getTable().setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
+		if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
+		{		
+			// If not extended memory block, do not create any buffer
+			// no scrolling
+			fContentInput.setPreBuffer(0);
+			fContentInput.setPostBuffer(0);
+			fContentInput.setDefaultBufferSize(0);
+		}
+		createCursor(fTableViewer.getTable(), fSelectedAddress);
+		fTableViewer.getTable().addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				handleTableMouseEvent(e);
+			}});
+		// create pop up menu for the rendering
+		createActions();
+		createPopupMenu(fTableViewer.getControl());
+		createPopupMenu(fTableCursor);
+		getPopupMenuManager().addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillContextMenu(manager);
+				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			}});
+		fIsCreated = true;
+		addRenderingToSyncService();
+		//synchronize
+		synchronize();
+		fTopRowAddress = getTopVisibleAddress();
+		// Need to resize column after content is filled in
+		// Pack function does not work unless content is not filled in
+		// since the table is not able to compute the preferred size.
+		resizeColumnsToPreferredSize();
+		try {
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
 				if(((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() == null)
@@ -606,22 +616,19 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					displayError(e);				
 				}
 			}
-			// add font change listener and update font when the font has been changed
-			JFaceResources.getFontRegistry().addListener(this);
-			fScrollbarSelectionListener = new SelectionAdapter() {
-
-				public void widgetSelected(SelectionEvent event) {
-					handleScrollBarSelection();
-					
-				}};
-			scroll.addSelectionListener(fScrollbarSelectionListener);
-			DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		} catch (DebugException e) {
-			// when there is an error in creation, just display error
-			displayError(e);
-			return;
+		} catch (DebugException e1) {
+			displayError(e1);	
 		}
-		
+		// add font change listener and update font when the font has been changed
+		JFaceResources.getFontRegistry().addListener(this);
+		fScrollbarSelectionListener = new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent event) {
+				handleScrollBarSelection();
+				
+			}};
+		scroll.addSelectionListener(fScrollbarSelectionListener);
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
 	private void createCursor(Table table, BigInteger address)

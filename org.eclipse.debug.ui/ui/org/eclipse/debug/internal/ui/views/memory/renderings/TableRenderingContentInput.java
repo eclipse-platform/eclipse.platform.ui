@@ -96,6 +96,16 @@ public class TableRenderingContentInput {
 		fLoadAddress = address;
 	}
 	public BigInteger getContentBaseAddress() {
+		
+		if (fMemoryBlockBaseAddress == null)
+		{
+			try {
+				updateContentBaseAddress();
+			} catch (DebugException e) {
+				fMemoryBlockBaseAddress = new BigInteger("0"); //$NON-NLS-1$
+			}
+		}
+		
 		return fMemoryBlockBaseAddress;
 	}
 	public void updateContentBaseAddress() throws DebugException {
@@ -119,7 +129,6 @@ public class TableRenderingContentInput {
 						fStartAddress =  startAddress;
 				}
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
 				// default to 0 if we have trouble getting the start address
 				fStartAddress =  BigInteger.valueOf(0);			
 			}
@@ -143,8 +152,6 @@ public class TableRenderingContentInput {
 					if (endAddress != null)
 						fEndAddress = endAddress;
 				} catch (DebugException e) {
-					// log error, default to null
-					DebugUIPlugin.log(e);
 					fEndAddress = null;
 				}
 				
@@ -154,8 +161,6 @@ public class TableRenderingContentInput {
 					try {
 						addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
 					} catch (DebugException e) {
-						// log error and default to 4
-						DebugUIPlugin.log(e);
 						addressSize = 4;
 					}
 					
