@@ -180,6 +180,7 @@ public class InternalAntRunner {
 		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
+		
 		if (userProperties == null) {
 			return;
 		}
@@ -413,13 +414,13 @@ public class InternalAntRunner {
 			getCurrentProject().init();
 			if (argList != null) {
 				executeScript= preprocessCommandLine(argList);
-			}
-			if (!executeScript) {
-				return;
-			}
-			if (argList != null) {
+			
+				if (!executeScript) {
+					return;
+				}
 				processProperties(argList);
 			}
+			
 			addBuildListeners(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
@@ -621,6 +622,7 @@ public class InternalAntRunner {
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
 		this.buildFileLocation = buildFileLocation;
+		getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
 	}
 
 	protected String getBuildFileLocation() {
@@ -772,7 +774,7 @@ public class InternalAntRunner {
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
-			buildFileLocation = args[0];
+			setBuildFileLocation(args[0]);
 			targets = new Vector(args.length - 1);
 			for (int i = 1; i < args.length; i++) {
 				targets.add(args[i]);
