@@ -111,7 +111,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
 		try {
-			fFile.setCharset(encoding);
+			fFile.setPersistentProperty(ENCODING_KEY, encoding);
 		} catch (CoreException x) {
 			handleCoreException(x);
 		}
@@ -193,25 +193,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
 		try {
-			fEncoding= null;
-			try {
-				fEncoding= fFile.getPersistentProperty(ENCODING_KEY);
-			} catch (CoreException x) {
-				// we ignore exceptions here because we support the ENCODING_KEY property only for compatibility reasons
-			}
-			if (fEncoding != null) {
-				// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
-				try {
-					fFile.setCharset(fEncoding);
-					// if successful delete old property
-					fFile.setPersistentProperty(ENCODING_KEY, null);
-				} catch (CoreException ex) {
-					// log problem because we could not migrate the property successfully
-					handleCoreException(ex);
-				}
-			} else {
-				fEncoding= fFile.getCharset();
-			}
+			fEncoding= fFile.getPersistentProperty(ENCODING_KEY);
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
 		} catch (CoreException x) {
