@@ -5,8 +5,10 @@ package org.eclipse.core.boot;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.internal.boot.*;
+import java.io.IOException;
 import java.net.URL;
+
+import org.eclipse.core.internal.boot.InternalBootLoader;
 
 /**
  * Special boot loader class for the Eclipse Platform. This class cannot
@@ -133,6 +135,15 @@ public static String[] getCommandLineArgs() {
 	return InternalBootLoader.getCommandLineArgs();
 }
 /**
+ * Returns the current platform configuration.
+ * 
+ * @return platform configuration used in current instance of platform
+ * @since 2.0
+ */	
+public static IPlatformConfiguration getCurrentPlatformConfiguration() {
+	return InternalBootLoader.getCurrentPlatformConfiguration();
+}
+/**
  * Returns the installation information for this invocation of the platform.
  *
  * @return the installation information.
@@ -172,6 +183,18 @@ public static String getNL() {
  */
 public static String getOS() {
 	return InternalBootLoader.getOS();
+}
+/**
+ * Returns a platform configuration object, optionally initialized with previously saved
+ * configuration information.
+ * 
+ * @param url location of previously save configuration information. If <code>null</code>
+ * is specified, an empty configuration object is returned
+ * @return platform configuration used in current instance of platform
+ * @since 2.0
+ */	
+public static IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
+	return InternalBootLoader.getPlatformConfiguration(url);
 }
 /**
  * Returns the complete plugin path defined by the file at the given location.

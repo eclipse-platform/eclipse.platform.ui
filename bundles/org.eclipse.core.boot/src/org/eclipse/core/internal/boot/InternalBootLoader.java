@@ -37,13 +37,15 @@ public final class InternalBootLoader {
 	private static String baseLocation = null;
 	private static URL plugins = null;
 	private static String application = null;
+	private static String configuration = null;
 	private static URL installURL = null;
 	private static boolean debugRequested = false;
 	private static boolean usage = false;
 	private static String devClassPath = null;
 	private static String debugOptionsFilename = null;
 	private static Properties options = null;
-	private static boolean inDevelopmentMode = false;
+	private static boolean inDevelopmentMode = false;	
+	private static PlatformConfiguration currentPlatformConfiguration = null;
 
 	// state for tracking the Platform context (e.g., the OS, Window system, locale, ...)
 	private static String nl = null;
@@ -89,6 +91,7 @@ public final class InternalBootLoader {
 	private static final String OPTION_URL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/url/debug/cachelookup";
 	private static final String OPTION_URL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/url/debug/cachecopy";
 	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug";
+	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug";
 
 	// command line arguments
 	private static final String DEBUG = "-debug";
@@ -96,9 +99,15 @@ public final class InternalBootLoader {
 	private static final String DATA = "-data";
 	private static final String PLUGINS = "-plugins";
 	private static final String APPLICATION = "-application";
+	private static final String CONFIGURATION = "-configuration";
 	private static final String DEV = "-dev";
 	private static final String WS = "-ws";
 	private static final String USAGE = "-?";
+	// temporary declarations in support of 2.0 startup command line argument. These will
+	// be removed once the startup support is fully transitioned to the R2.0 configuration
+	// mechanism
+	private static final String R2_0_STARTUP = "-r2.0";
+	private static boolean r2_0 = false;
 
 	// Development mode constants
 	private static final String PLUGIN_JARS = "plugin.jars";
@@ -207,6 +216,12 @@ public static String[] getCommandLineArgs() {
 /**
  * @see BootLoader
  */
+public static PlatformConfiguration getCurrentPlatformConfiguration() {
+	return PlatformConfiguration.getCurrent();
+}
+/**
+ * @see BootLoader
+ */
 public static IInstallInfo getInstallationInfo() {
 	return LaunchInfo.getCurrent();
 }
@@ -272,6 +287,12 @@ public static String getNL() {
  */
 public static String getOS() {
 	return os;
+}
+/**
+ * @see BootLoader
+ */
+public static PlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
+	return new PlatformConfiguration(url);
 }
 
 private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String name, String version) {
@@ -546,8 +567,8 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 	// load any debug options
 	loadOptions();
 
-	// load update profile
-	LaunchInfo.startup(getInstallURL());
+	// load platform configuration
+	PlatformConfiguration.startup(getInstallURL()/*r1.0 arg*/,configuration/*r2.0 arg*/);
 
 	// initialize eclipse URL handling
 	PlatformURLHandlerFactory.startup(baseLocation + File.separator + META_AREA);
@@ -679,6 +700,18 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			found = true;
 		}
 
+		// look for the R2.0 configuration flag. This is a temporary flag used to enable the 
+		// R2.0 plugin path computation instead of the current R1.0 computation performed
+		// in LaunchInfo.getPlugInPath()/getFragmentPath(). This flag will be removed
+		// once startup code is fully transitioned to the R2.0 configuration mechanism
+		if (args[i].equalsIgnoreCase(R2_0_STARTUP)) {
+			r2_0 = true;
+			LaunchInfo.r2_0 = true;
+			PlatformConfiguration.r2_0 = true;
+			found = true;
+			System.out.println("R2.0 startup mode activated");
+		}
+
 		if (found) {
 			configArgs[configArgIndex++] = i;
 			continue;
@@ -738,6 +771,12 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			found = true;
 			if (application == null)
 				application = arg;
+		}
+
+		// look for the platform configuration to use.
+		if (args[i - 1].equalsIgnoreCase(CONFIGURATION)) {
+			found = true;
+			configuration = arg;
 		}
 
 		// look for the window system.  
@@ -855,6 +894,7 @@ public static void setupOptions() {
 	PlatformURLConnection.DEBUG_CACHE_LOOKUP = getBooleanOption(OPTION_URL_DEBUG_CACHE_LOOKUP, true);
 	PlatformURLConnection.DEBUG_CACHE_COPY = getBooleanOption(OPTION_URL_DEBUG_CACHE_COPY, true);
 	LaunchInfo.DEBUG = getBooleanOption(OPTION_UPDATE_DEBUG, false);
+	PlatformConfiguration.DEBUG = getBooleanOption(OPTION_CONFIGURATION_DEBUG,false);
 }
 /**
  * Initializes the execution context for this run of the platform.  The context
@@ -899,7 +939,7 @@ public static void shutdown() throws Exception {
 			throw e;
 	} finally {
 		PlatformURLHandlerFactory.shutdown();
-		LaunchInfo.shutdown();
+		PlatformConfiguration.shutdown();
 		loader = null;
 	}
 }
