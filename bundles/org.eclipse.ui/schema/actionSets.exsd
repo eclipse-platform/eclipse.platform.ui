@@ -175,7 +175,7 @@ information (see example).
                <documentation>
                   an integer that is used to specify the keycode of the accelerator for the action.
 This is the integer value resulting from a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) and a character code.
-For example, for Ctrl+Z, use SWT.CTRL|'Z' = (1&lt;&lt;18)|'Z' = 262234.
+For example, for Ctrl+Z, use &lt;pre&gt;SWT.CTRL|'Z' = (1&lt;&lt;18)|'Z' = 262234&lt;/pre&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -314,34 +314,34 @@ If no attribute is specified, the action is enabled for any number of items sele
 The following attribute formats are supported: 
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;!&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;?&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 or 1 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 1 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;multiple, 2+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 2 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;n&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- a precise number of items selected.a precise number of items selected.&amp;nbsp;
           For example: enablesFor=&amp;quot; 4&amp;quot; enables the action only when 4
           items are selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;*&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- any number of items selected&lt;/td&gt;
       &lt;/tr&gt;
@@ -355,22 +355,22 @@ The following attribute formats are supported:
                   an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a regular menu item or tool item.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a cascading style menu item or as a drop down menu beside the tool item.&lt;/td&gt;
       &lt;/tr&gt;
