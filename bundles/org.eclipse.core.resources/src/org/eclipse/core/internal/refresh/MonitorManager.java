@@ -65,7 +65,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		IPluginDescriptor descriptor = ResourcesPlugin.getPlugin().getDescriptor();
 		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(ResourcesPlugin.PT_REFRESH_PROVIDERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		List providers = new ArrayList(infos.length);
+		List providerList = new ArrayList(infos.length);
 		for (int i = 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			RefreshProvider provider = null;
@@ -75,9 +75,10 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 			}
 			if (provider != null)
-				providers.add(provider);
+				providerList.add(provider);
 		}
-		return (RefreshProvider[]) providers.toArray(new RefreshProvider[providers.size()]);
+		providers = (RefreshProvider[]) providerList.toArray(new RefreshProvider[providerList.size()]);
+		return providers;
 	}
 	/**
 	 * Collects the set of root resources that required monitoring. This
