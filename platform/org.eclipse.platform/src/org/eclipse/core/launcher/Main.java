@@ -750,10 +750,14 @@ public class Main {
 			// only log the exceptions if they have not been caught by the 
 			// EclipseStarter (i.e., if the exitCode is not 13) 
 			if (!"13".equals(System.getProperty(PROP_EXITCODE))) {
-				String message = "An error has occurred.  See the log file\n" + logFile.getAbsolutePath();
-			    System.getProperties().put(PROP_EXITDATA, message);
 				log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
 				log(e);
+				String message = "An error has occurred";	//$NON-NLS-1$
+				if (logFile == null)
+					message += " and could not be logged: \n" + e.getMessage();	//$NON-NLS-1$
+				else
+					message += ".  See the log file\n" + logFile.getAbsolutePath();	//$NON-NLS-1$
+				System.getProperties().put(PROP_EXITDATA, message);
 			}
 			// Return "unlucky" 13 as the exit code. The executable will recognize
 			// this constant and display a message to the user telling them that
