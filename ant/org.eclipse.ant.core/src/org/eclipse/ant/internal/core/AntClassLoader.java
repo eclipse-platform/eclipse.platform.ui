@@ -13,6 +13,7 @@ import java.net.URLClassLoader;
 public class AntClassLoader extends URLClassLoader {
 
 	protected ClassLoader[] pluginLoaders;
+	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools.ant"; //$NON-NLS-1$
 
 	public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders) {
 		super(urls, null);
@@ -21,7 +22,9 @@ public class AntClassLoader extends URLClassLoader {
 
 	public Class loadClass(String name) throws ClassNotFoundException {
 		Class result = loadClassURLs(name);
-		if (result == null) {
+		//do not load the "base" ant classes from the plugin class loaders 
+		//these should only be specified from the Ant runtime classpath preferences setting
+		if (result == null && !(name.startsWith(ANT_PACKAGES_PREFIX))) {
 			result = loadClassPlugins(name);
 		}
 		if (result == null) {
@@ -43,9 +46,7 @@ public class AntClassLoader extends URLClassLoader {
 	protected Class loadClassPlugins(String name) {
 		Class result = null;
 		if (pluginLoaders != null) {
-			for (int i = 0;
-				(i < pluginLoaders.length) && (result == null);
-				i++) {
+			for (int i = 0; (i < pluginLoaders.length) && (result == null); i++) {
 				try {
 					result = pluginLoaders[i].loadClass(name);
 				} catch (ClassNotFoundException e) {
