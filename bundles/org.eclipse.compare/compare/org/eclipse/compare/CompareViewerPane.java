@@ -56,7 +56,7 @@ public class CompareViewerPane extends ViewForm {
 		
 		CLabel label= new CLabel(this, SWT.NONE) {
 			public Point computeSize(int wHint, int hHint, boolean changed) {
-				return super.computeSize(wHint, Math.max(23, hHint), changed);
+				return super.computeSize(wHint, Math.max(24, hHint), changed);
 			}
 		};
 		setTopLeft(label);
