@@ -70,15 +70,17 @@ class ResourceToItemsMapper {
 			ILabelProvider lprovider= (ILabelProvider) fContentViewer.getLabelProvider();
 			
 			Object data= item.getData();
-			Image oldImage= item.getImage();
-			Image image= lprovider.getImage(data);
-			if (image != null && !image.equals(oldImage)) {
-				item.setImage(image);
-			}
+
 			String oldText= item.getText();
 			String text= lprovider.getText(data);
 			if (text != null && !text.equals(oldText)) {
 				item.setText(text);
+			}
+
+			Image oldImage= item.getImage();
+			Image image= lprovider.getImage(data);
+			if (image != null && !image.equals(oldImage)) {
+				item.setImage(image);
 			}
 		}
 	}
