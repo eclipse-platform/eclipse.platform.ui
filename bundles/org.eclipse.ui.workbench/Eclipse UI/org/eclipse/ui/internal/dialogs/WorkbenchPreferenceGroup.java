@@ -177,7 +177,7 @@ public class WorkbenchPreferenceGroup {
 		Iterator groupsIterator = childGroups.iterator();
 		
 		while(groupsIterator.hasNext()){
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) pagesIterator.next();
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) groupsIterator.next();
 			Matcher m = pattern.matcher(group.getName());
 			group.highlight = m.matches();
 			group.highlightHits(text);
