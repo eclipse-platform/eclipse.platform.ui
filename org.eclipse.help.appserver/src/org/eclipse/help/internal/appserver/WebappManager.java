@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
 
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -21,6 +20,7 @@ import org.eclipse.core.runtime.*;
  * @since 2.1
  */
 public class WebappManager {
+	private static boolean applicationsStarted = false;
 
 	/**
 	 * Private constructor, so no instances can be created.
@@ -48,13 +48,21 @@ public class WebappManager {
 		// we get the server before constructing the class loader, so
 		// class loader exposed by the server is available to the webapps.
 		IWebappServer server = AppserverPlugin.getDefault().getAppServer();
-		server.start(webappName, webappPath, new PluginClassLoaderWrapper(pluginId));
+		applicationsStarted = true;
+		server.start(
+			webappName,
+			webappPath,
+			new PluginClassLoaderWrapper(pluginId));
 	}
 
 	/**
 	 * Stops the specified webapp.
 	 */
 	public static void stop(String webappName) throws CoreException {
+		if (!applicationsStarted) {
+			// do not obtain (start) appserver when no reason
+			return;
+		}
 		AppserverPlugin.getDefault().getAppServer().stop(webappName);
 	}
 
