@@ -67,11 +67,20 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Activities preference page that primarily shows categories and can optionally
- * show an advanced dialog that allows fine-tune adjustmenet of activities.
+ * show an advanced dialog that allows fine-tune adjustmenet of activities. You
+ * may provide the certain strings to this class via method #2 of
+ * {@link org.eclipse.core.runtime.IExecutableExtension}
+ * 
+ * @see #ACTIVITY_NAME
+ * @see #ALLOW_ADVANCED
+ * @see #CAPTION_MESSAGE
+ * @see #CATEGORY_NAME
+ * @see #ACTIVITY_PROMPT_BUTTON
+ * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
  * 
  * @since 3.1
  */
-public class ActivityCategoryPreferencePage extends PreferencePage implements
+public final class ActivityCategoryPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage, IExecutableExtension {
 
     /**

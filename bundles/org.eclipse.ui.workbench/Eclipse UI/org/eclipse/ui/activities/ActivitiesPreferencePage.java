@@ -30,18 +30,17 @@ import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
 /**
- * Preference page that allows configuration of the activity set.  This page may be used
- * by product developers to provide basic ability to tweak the enabled activity set.  You may
- * provide the certain strings to this class via method #2 of IExecutableExtension.
- * <p>
- * <strong>EXPERIMENTAL</strong>
- * </p>
+ * Preference page that allows configuration of the activity set. This page may
+ * be used by product developers to provide basic ability to tweak the enabled
+ * activity set. You may provide the certain strings to this class via method #2
+ * of {@link org.eclipse.core.runtime.IExecutableExtension}.
+ * 
  * @see #ACTIVITY_NAME
  * @see #ACTIVITY_PROMPT_BUTTON
  * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
  * @since 3.1
  */
-public class ActivitiesPreferencePage extends PreferencePage implements
+public final class ActivitiesPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage, IExecutableExtension {
 
 	/**
