@@ -7,6 +7,39 @@
 <hr>
 <h1>Eclipse Platform Build Notes<br>
   Core</h1>
+Eclipse SDK Build 20040127
+<h2>What's new in this drop</h2>
+<p><em>(Massive update in build-notes takes into account all action between 2003-10-08 
+  and 2004-01-27)</em></p>
+<h3>API changes</h3>
+<ul>
+  <li>Equinox work on new runtime has been merged into HEAD on dev.eclipse.org 
+    and is now apart of the regular (integration, nightly and milestone) builds. 
+    Check the Platform/Core team web site for more information as well as a porting 
+    guide for API changes. Note: as a result of the changes, some of the Runtime 
+    code has been refactored into a new project. (<code>org.eclipse.core.runtime.compatibility</code>) 
+    This is covered in the on-line documentation.</li>
+  <li>Changes have been made to the concurrency model and Core now exposes a new 
+    job API for clients. Details can be found on the Platform/Core team web site 
+    and in the <code>org.eclipse.core.runtime.jobs</code> package.</li>
+  <li>The Auto-Refresh Plug-in (which was originally contributed to Core by Jed 
+    as a separate plug-in) has both been integrated into Core as well as been 
+    converted to use the new Jobs APIs. The <code>ResourcesPlugin.PREFS_AUTO_REFRESH</code> 
+    preference is exposed as a Work-in-progress preference in the Workbench preferences.</li>
+</ul>
+<h3>Other highlights</h3>
+<ul>
+  <li>None.</li>
+</ul>
+<h3>Resolved Bugs</h3>
+<ul>
+  <li> <a href="https://bugs.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Equinox&product=Platform&component=Core&component=Dynamic%2BPlugins&component=General&component=OSGi&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2003-10-08&chfieldto=2004-01-27&chfieldvalue=&cmdtype=doit&namedcmd=core-3.0&newqueryname=&order=Reuse%2Bsame%2Bsort%2Bas%2Blast%2Btime&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
+    here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED 
+    since the last integration build.</li>
+</ul>
+<hr>
+<h1>Eclipse Platform Build Notes<br>
+  Core</h1>
 Eclipse SDK Build 20031008 (M4)
 <h2>What's new in this drop</h2>
 <h3>API changes</h3>
@@ -38,7 +71,7 @@ Eclipse SDK Build 20031008 (M4)
 </ul>
 <h3>Resolved Bugs</h3>
 <ul>
-  <li> <a href="https://bugs.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2003-09-22&chfieldto=2003-10-08&chfieldvalue=&cmdtype=doit&namedcmd=core-3.0&newqueryname=&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
+  <li> <a href="https://bugs.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=%0F%22uct=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2003-09-22&chfieldto=2003-10-08&chfieldvalue=&cmdtype=doit&namedcmd=core-3.0%60%22wqueryname=(%22der=Reuse%2Bsame%2Bsort%2Bas%2Blast%2Btime&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
     here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED 
     since the last integration build.</li>
 </ul>
