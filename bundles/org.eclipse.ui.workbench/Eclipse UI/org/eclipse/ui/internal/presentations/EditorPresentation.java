@@ -184,7 +184,6 @@ public class EditorPresentation extends BasicStackPresentation {
             openEditorDropDownHandlerSubmission = null;
         }
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
-        getTabFolder().removeCTabFolder2Listener(showListListener);
         super.dispose();
     }
 
