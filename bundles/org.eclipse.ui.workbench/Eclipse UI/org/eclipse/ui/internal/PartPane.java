@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -39,10 +35,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.PresentablePart;
-import org.eclipse.ui.part.IWorkbenchPartOrientation;
+import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -116,73 +110,6 @@ public abstract class PartPane extends LayoutPart implements Listener {
         super(partReference.getId());
         this.partReference = partReference;
         this.page = workbenchPage;
-        ((WorkbenchPartReference) partReference).setPane(this);
-    }
-	
-    /**
-     * Factory method for creating the SWT Control hierarchy for this Pane's child.
-     */
-    protected void doCreateChildControl() {
-        final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(false) };
-        if (part[0] == null)
-            return;
-
-        Assert.isNotNull(control);
-        
-        int style = SWT.NONE;
-        if(part[0] instanceof IWorkbenchPartOrientation){
-        	style = ((IWorkbenchPartOrientation) part[0]).getOrientation();
-        }
-
-        final Composite content = new Composite(control, style);
-        content.setLayout(new FillLayout());
-
-        String error = NLS.bind(WorkbenchMessages.PartPane_unableToCreate,partReference.getTitle() ); 
-        Platform.run(new SafeRunnable(error) {
-            public void run() {
-                try {
-                    UIStats.start(UIStats.CREATE_PART_CONTROL, id);
-                    part[0].createPartControl(content);
-
-                    Rectangle oldBounds = control.getBounds();
-
-                    ((WorkbenchPartReference) getPartReference())
-                            .refreshFromPart();
-
-                    // Unless refreshing the part has somehow triggered a layout, 
-                    // we need to force a layout now. (SWT only triggers a layout if the
-                    // bounds change, so check that case here).
-                    if (oldBounds.equals(control.getBounds())) {
-                        control.layout(true);
-                    }
-                } finally {
-                    UIStats.end(UIStats.CREATE_PART_CONTROL, part[0], id);
-                }
-            }
-
-            public void handleException(Throwable e) {
-                // Log error.
-                Workbench wb = (Workbench) PlatformUI.getWorkbench();
-                if (!wb.isStarting())
-                    super.handleException(e);
-
-                // Dispose old part.
-                Control children[] = content.getChildren();
-                for (int i = 0; i < children.length; i++) {
-                    children[i].dispose();
-                }
-
-                // Create new part.
-                IWorkbenchPart newPart = createErrorPart(part[0]);
-                part[0].getSite().setSelectionProvider(null);
-                newPart.createPartControl(content);
-                ((WorkbenchPartReference) partReference).setPart(newPart);
-                part[0] = newPart;
-            }
-        });
-        page.addPart(partReference);
-        page.firePartOpened(part[0]);
     }
 
     public void addSizeMenuItem(Menu menu, int index) {
@@ -212,16 +139,12 @@ public abstract class PartPane extends LayoutPart implements Listener {
         // Create a title bar.
         createTitleBar();
 
-        // Create content.
-        createChildControl();
         
         // When the pane or any child gains focus, notify the workbench.
         control.addListener(SWT.Activate, this);
 
         control.addTraverseListener(traverseListener);
     }
-
-    protected abstract IWorkbenchPart createErrorPart(IWorkbenchPart oldPart);
 
     /**
      * Create a title bar for the pane if required.
@@ -309,7 +232,17 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * been activated by the user.
      */
     protected void requestActivation() {
-        this.page.requestActivation(partReference.getPart(true));
+        IWorkbenchPart part = partReference.getPart(true);
+        // Cannot activate the outer bit of a MultiEditor. In previous versions of the 
+        // workbench, MultiEditors had their own implementation of EditorPane for the purpose
+        // of overriding requestActivation with a NOP... however, keeping the old pattern would
+        // mean it is necessary to eagerly activate an editor's plugin in order to determine
+        // what type of pane to create.
+        if (part instanceof MultiEditor) {
+            return;
+        }
+        
+        this.page.requestActivation(part);
     }
 
     /**
@@ -325,27 +258,10 @@ public abstract class PartPane extends LayoutPart implements Listener {
     public void setVisible(boolean makeVisible) {
     	if (makeVisible) {
     	    partReference.getPart(true);
-    		createChildControl();
     	}
     	
         super.setVisible(makeVisible);
-    }
-    
-    protected final void createChildControl() {
-
-    	// Force the view to be loaded if it isn't already
-    	if (partReference.getPart(false) == null) {
-    	    return;
-    	}
-    	
-        Assert.isNotNull(control);
-
-        // Make sure the child control has not been created yet
-        if (control.getChildren().length != 0)
-            return;
-        
-        doCreateChildControl();
-    }
+    }    
     
     /**
      * Sets focus to this part.

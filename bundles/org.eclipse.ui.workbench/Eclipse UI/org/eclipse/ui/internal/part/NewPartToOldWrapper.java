@@ -109,7 +109,7 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
             //parent.layout(true);
         } catch (ComponentException e) {
             WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
-            new ErrorPart(parent);
+            new StatusPart(parent, e.getStatus());
         }
     }
 

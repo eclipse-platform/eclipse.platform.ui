@@ -208,9 +208,11 @@ public final class PresentablePartFolder implements IPresentablePartList {
     
     private void internalRemove(IPresentablePart toRemove) {
         AbstractTabItem item = getTab(toRemove);
-        item.dispose();
-        toRemove.removePropertyListener(childPropertyChangeListener);
-        partList.remove(toRemove);        
+        if (item != null) {
+            item.dispose();
+            toRemove.removePropertyListener(childPropertyChangeListener);
+            partList.remove(toRemove);
+        }
     }
     
     /**

@@ -84,7 +84,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -798,8 +797,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         toggleZoom(introPane.getPartReference());
                 } catch (PartInitException e) {
                     WorkbenchPlugin.log("Could not restore intro", //$NON-NLS-1$
-                            StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
-                                    e));
+                            WorkbenchPlugin.getStatus(e));
                 } finally {
                     // we want the intro back to a normal state before we fire the event
                     introViewAdapter.setHandleZoomEvents(true);
@@ -1363,14 +1361,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     errors[0]++;
                 }
             });
-        }
-        if (errors[0] > 0) {
-            String message;
-            if (errors[0] == 1)
-                message = WorkbenchMessages.WorkbenchPage_oneErrorClosingPage; 
-            else
-                message = WorkbenchMessages.WorkbenchPage_multipleErrorsClosingPage;
-            MessageDialog.openError(null,WorkbenchMessages.Error, message); 
         }
         activePart = null;
         activationList = new ActivationList();
@@ -2402,7 +2392,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * In the current design this method is invoked by the part pane when the
      * pane, the part, or any children gain focus.
      */
-    public void requestActivation(IWorkbenchPart part) {
+    public void requestActivation(IWorkbenchPart part) {        
         // Sanity check.
         if (!certifyPart(part))
             return;

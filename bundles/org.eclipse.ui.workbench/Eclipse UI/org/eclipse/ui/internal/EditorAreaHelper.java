@@ -12,9 +12,11 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -173,6 +175,10 @@ public class EditorAreaHelper {
         return editorArea.getActiveWorkbookID();
     }
 
+    public EditorStack getActiveWorkbook() {
+        return editorArea.getActiveWorkbook();
+    }
+    
     /**
      * Returns an array of the open editors.
      *
@@ -245,50 +251,25 @@ public class EditorAreaHelper {
         //pane.getWorkbook().reorderTab(pane, position);
     }
 
-    /**
-     * Opens an editor within the presentation but does not give it focus.
-     * </p>
-     * @param part the editor
-     */
-    public void openEditor(IEditorReference ref,
-            IEditorReference[] innerEditors, boolean setVisible) {
-        EditorPane pane = new MultiEditorOuterPane(ref, page, editorArea
-                .getActiveWorkbook());
-        initPane(pane, ref);
-        for (int i = 0; i < innerEditors.length; i++) {
-            EditorPane innerPane = new MultiEditorInnerPane(pane,
-                    innerEditors[i], page, editorArea.getActiveWorkbook());
-            initPane(innerPane, innerEditors[i]);
+
+
+    public void addToEditorList(EditorPane pane) {
+        for (Iterator iter = editorTable.iterator(); iter.hasNext();) {
+            EditorPane next = (EditorPane) iter.next();
+            
+            Assert.isTrue(next.getPartReference() != pane.getPartReference());
         }
-        // Show the editor.
-        editorArea.addEditor(pane);
-        if (setVisible)
-            setVisibleEditor(ref, false);
-    }
-
-    /**
-     * Opens an editor within the presentation but does not give it focus.
-     * </p>
-     * @param part the editor
-     */
-    public void openEditor(IEditorReference ref, boolean setVisible) {
-
-        EditorPane pane = new EditorPane(ref, page, editorArea
-                .getActiveWorkbook());
-        initPane(pane, ref);
-
-        // Show the editor.
-        editorArea.addEditor(pane);
-        if (setVisible)
-            setVisibleEditor(ref, false);
-    }
-
-    private EditorPane initPane(EditorPane pane, IEditorReference ref) {
-        ((WorkbenchPartReference) ref).setPane(pane);
-        // Record the new editor.
+        
         editorTable.add(pane);
-        return pane;
     }
+    
+    public void addToLayout(EditorPane pane) {
+        EditorStack stack = editorArea.getActiveWorkbook();
+        pane.setWorkbook(stack);
+        
+        editorArea.addEditor(pane);
+    }
+
 
     /**
      * @see IPersistablePart

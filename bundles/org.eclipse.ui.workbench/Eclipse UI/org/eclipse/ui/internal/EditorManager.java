@@ -48,13 +48,14 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -88,6 +89,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.part.services.NullActionBars;
+import org.eclipse.ui.internal.part.services.NullEditorInput;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -98,6 +101,7 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -476,9 +480,14 @@ public class EditorManager implements IExtensionRemovalHandler {
             Editor e = (Editor) editors[i];
             if (e.getPart(false) == null) {
                 if (name.equals(e.getName()) && id.equals(e.getFactoryId())) {
-                    IEditorInput restoredInput = e.getRestoredInput();
-                    if (restoredInput.equals(input)) {
-                        return e.getEditor(true);
+                    IEditorInput restoredInput;
+                    try {
+                        restoredInput = e.getRestoredInput();
+                        if (Util.equals(restoredInput, input)) {
+                            return e.getEditor(true);
+                        }
+                    } catch (PartInitException e1) {
+                        WorkbenchPlugin.log(e1);
                     }
                 }
             }
@@ -627,26 +636,26 @@ public class EditorManager implements IExtensionRemovalHandler {
                     NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage,editorId )); 
         }
 
-        IEditorReference result = openEditorFromDescriptor(new Editor(), desc,
-                input);
+        IEditorReference result = openEditorFromDescriptor(desc, input);
         return result;
     }
 
     /*
      * Open a new editor
      */
-    private IEditorReference openEditorFromDescriptor(IEditorReference ref,
+    private IEditorReference openEditorFromDescriptor(
             EditorDescriptor desc, IEditorInput input) throws PartInitException {
-        IEditorReference result = ref;
+        IEditorReference result = null;
         if (desc.isInternal()) {
             result = reuseInternalEditor(desc, input);
             if (result == null) {
-                result = ref;
-                openInternalEditor(ref, desc, input, true);
+                result = new Editor(input, desc);
             }
         } else if (desc.getId()
                 .equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
-            result = openSystemInPlaceEditor(ref, desc, input);
+            if (ComponentSupport.inPlaceEditorSupported()) {
+                result = new Editor(input, desc);
+            }
         } else if (desc.getId().equals(
                 IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
             IPathEditorInput pathInput = getPathEditorInput(input);
@@ -661,6 +670,10 @@ public class EditorManager implements IExtensionRemovalHandler {
             // this should never happen
             throw new PartInitException(
                     NLS.bind(WorkbenchMessages.EditorManager_invalidDescriptor, desc.getId() ));
+        }
+        
+        if (result != null) {
+            createEditorTab((Editor)result);
         }
 
         Workbench wb = (Workbench) window.getWorkbench();
@@ -736,7 +749,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                         NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorArray[i] )); 
             descArray[i] = innerDesc;
             partArray[i] = createPart(descArray[i]);
-            refArray[i] = new Editor();
+            refArray[i] = new InnerEditor(ref, inputArray[i], descArray[i]);
             createSite(ref, partArray[i], descArray[i], inputArray[i]);
             ((Editor) refArray[i]).setPart(partArray[i]);
         }
@@ -747,9 +760,7 @@ public class EditorManager implements IExtensionRemovalHandler {
     /*
      * Opens an editor part.
      */
-    private void createEditorTab(final IEditorReference ref,
-            final EditorDescriptor desc, final IEditorInput input,
-            final boolean setVisible) throws PartInitException {
+    private void createEditorTab(final Editor ref) throws PartInitException {
 
         //Check it there is already a tab for this ref.
         IEditorReference refs[] = editorPresentation.getEditors();
@@ -757,7 +768,22 @@ public class EditorManager implements IExtensionRemovalHandler {
             if (ref == refs[i])
                 return;
         }
-
+        
+        // The editor's memento stores the id of its parent workbook. Currently, all editors are
+        // opened in the active workbook, so force the parent workbook to be active to cause
+        // the editor to be opened in the correct workbook. A better solution would be to permit
+        // editors to be opened in inactive workbooks, and avoid the extra activations
+        IMemento memento = ref.getMemento();
+        if (memento != null) {
+            String workbookID = ref.getMemento().getString(
+                    IWorkbenchConstants.TAG_WORKBOOK);
+            editorPresentation
+                    .setActiveEditorWorkbookFromID(workbookID);
+        }
+        
+        final IEditorInput input = ref.getRestoredInput();
+        final EditorDescriptor desc = ref.getDescriptor();
+        
         final PartInitException ex[] = new PartInitException[1];
         BusyIndicator.showWhile(getDisplay(), new Runnable() {
             public void run() {
@@ -767,16 +793,22 @@ public class EditorManager implements IExtensionRemovalHandler {
                         if (part != null && part instanceof MultiEditor) {
                             IEditorReference refArray[] = openMultiEditor(ref,
                                     (MultiEditor) part, desc,
-                                    (MultiEditorInput) input, setVisible);
-                            editorPresentation.openEditor(ref, refArray,
-                                    setVisible);
-                            return;
+                                    (MultiEditorInput) input, false);
+
+                            for (int i = 0; i < refArray.length; i++) {
+                                WorkbenchPartReference ref = (WorkbenchPartReference) refArray[i];
+                                EditorPane pane = (EditorPane)ref.getPane();
+                                
+                                editorPresentation.addToEditorList(pane);
+                            }
                         }
                     }
-                    editorPresentation.openEditor(ref, setVisible);
+                    EditorPane pane = (EditorPane)((WorkbenchPartReference)ref).getPane();
+                    editorPresentation.addToLayout(pane);
+                    editorPresentation.addToEditorList(pane);
                 } catch (PartInitException e) {
                     ex[0] = e;
-                }
+                } 
             }
         });
 
@@ -814,8 +846,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 			if (e instanceof PartInitException)
 				throw (PartInitException) e;
 
-			throw new PartInitException(
-					NLS.bind(WorkbenchMessages.EditorManager_unableToInitialize,desc.getId(), e ), e);
+			throw new PartInitException(WorkbenchMessages.EditorManager_errorInInit, e);
 		}
     }
 
@@ -828,8 +859,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         if (reusableEditorRef != null) {
             IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
             if (reusableEditor == null) {
-                IEditorReference result = new Editor();
-                openInternalEditor(result, desc, input, true);
+                IEditorReference result = new Editor(input, desc);
                 page.closeEditor(reusableEditorRef, false);
                 return result;
             }
@@ -846,8 +876,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                 return reusableEditorRef;
             } else {
                 //findReusableEditor(...) checks pinned and saves editor if necessary
-                IEditorReference ref = new Editor();
-                openInternalEditor(ref, desc, input, true);
+                IEditorReference ref = new Editor(input, desc);
                 reusableEditor.getEditorSite().getPage().closeEditor(
                         reusableEditor, false);
                 return ref;
@@ -856,56 +885,20 @@ public class EditorManager implements IExtensionRemovalHandler {
         return null;
     }
 
-    /**
-     * Open an internal editor on an file.  Throw up an error dialog if
-     * an exception occurs.
-     */
-    private void openInternalEditor(IEditorReference ref,
-            EditorDescriptor desc, IEditorInput input, boolean setVisible)
-            throws PartInitException {
-        // Create an editor instance.
-        String label = ref.getName();
-        if (label == null) {
-            label = desc.getLabel();
-        }
-        IEditorPart editor = null;
-        try {
-            UIStats.start(UIStats.CREATE_PART, label);
-            editor = createPart(desc);
-        } finally {
-            UIStats.end(UIStats.CREATE_PART, editor, label);
-        }
-        // Open the instance.
-        createSite(ref, editor, desc, input);
-        ((Editor) ref).setPart(editor);
-        createEditorTab(ref, desc, input, setVisible);
-    }
-
     private IEditorPart createPart(final EditorDescriptor desc)
             throws PartInitException {
-        final IEditorPart editor[] = new IEditorPart[1];
-        final Throwable ex[] = new Throwable[1];
-        Platform.run(new SafeRunnable() {
-            public void run() throws CoreException {
-                editor[0] = desc.createEditor();
+        try {
+            IEditorPart result = desc.createEditor();
+            IConfigurationElement element = desc.getConfigurationElement();
+            if (element != null) {
+                page.getExtensionTracker().registerObject(
+                        element.getDeclaringExtension(), result,
+                        IExtensionTracker.REF_WEAK);
             }
-
-            public void handleException(Throwable e) {
-                ex[0] = e;
-            }
-        });
-
-        if (ex[0] != null)
-            throw new PartInitException(
-                    NLS.bind(WorkbenchMessages.EditorManager_unableToInstantiate, desc.getId(), ex[0] )); 
-        
-        IConfigurationElement element = desc.getConfigurationElement();
-        if (element != null) {
-        	page.getExtensionTracker().registerObject(
-					element.getDeclaringExtension(), editor[0],
-					IExtensionTracker.REF_WEAK);
+            return result;
+        } catch (CoreException e) {
+            throw new PartInitException(StatusUtil.newStatus(desc.getPluginID(), WorkbenchMessages.EditorManager_instantiationError, e));
         }
-        return editor[0];
     }
 
     /**
@@ -944,9 +937,6 @@ public class EditorManager implements IExtensionRemovalHandler {
         if (cEditor == null) {
             return null;
         } else {
-            createSite(ref, cEditor, desc, input);
-            ((Editor) ref).setPart(cEditor);
-            createEditorTab(ref, desc, input, true);
             return ref;
         }
     }
@@ -1046,96 +1036,210 @@ public class EditorManager implements IExtensionRemovalHandler {
         return result[0];
     }
 
-    public IStatus busyRestoreEditor(final Editor ref) {
-        final IStatus result[] = new IStatus[1];
-        Platform.run(new SafeRunnable() {
-            public void run() {
-                IEditorInput editorInput = ref.getRestoredInput();
-                if (editorInput == null) {
-                    result[0] = unableToCreateEditor(ref, null);
-                    return;
-                }
-
-                // Get the editor descriptor.
-                String editorID = ref.getId();
-                EditorDescriptor desc = null;
-                if (editorID != null) {
-                    IEditorRegistry reg = WorkbenchPlugin.getDefault()
-                            .getEditorRegistry();
-                    desc = (EditorDescriptor) reg.findEditor(editorID);
-                }
-                if (desc == null) {
-                    WorkbenchPlugin
-                            .log("Unable to restore editor - no editor descriptor for id: " + editorID); //$NON-NLS-1$
-                    result[0] = unableToCreateEditor(ref, null);
-                    return;
-                }
-
-                // Open the editor.
-                try {
-                    String workbookID = ref.getMemento().getString(
-                            IWorkbenchConstants.TAG_WORKBOOK);
-                    editorPresentation
-                            .setActiveEditorWorkbookFromID(workbookID);
-                    if (desc.isInternal()) {
-                        openInternalEditor(ref, desc, editorInput, false);
-
-                        // TODO: workaround, it should be possible for the following 
-                        // code to be as follows:
-                        // ref.getPane().createControl((Composite)page.getEditorPresentation().getLayoutPart().getControl());
-                        // OR something simpler like:
-                        // ref.getPane().createControl();
-                        //
-                        Control ctrl = ref.getPane().getControl();
-                        if (ctrl == null)
-                            ref.getPane().createControl(
-                                    (Composite) page.getEditorPresentation()
-                                            .getLayoutPart().getControl());
-                        else
-                            ref.getPane().createChildControl();
-                    } else if (desc.getId().equals(
-                            IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
-                        if (openSystemInPlaceEditor(ref, desc, editorInput) != null) {
-                            ref.getPane().createChildControl();
-                        } else {
-                            WorkbenchPlugin
-                                    .log("Unable to restore in-place editor.  In-place support is missing."); //$NON-NLS-1$
-                            result[0] = unableToCreateEditor(ref, null);
-                        }
-                    } else {
-                        WorkbenchPlugin
-                                .log("Unable to restore editor - invalid editor descriptor for id: " + editorID); //$NON-NLS-1$
-                        result[0] = unableToCreateEditor(ref, null);
-                    }
-                    // TODO commented during presentation refactor ((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
-                } catch (PartInitException e) {
-                    WorkbenchPlugin
-                            .log("Exception creating editor: " + e.getMessage(), e); //$NON-NLS-1$
-                    result[0] = unableToCreateEditor(ref, e);
-                }
-            }
-
-            public void handleException(Throwable e) {
-                result[0] = unableToCreateEditor(ref, e);
-            }
-        });
-        if (result[0] != null)
-            return result[0];
-        else
-            return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-    }
-
+    
     /**
-     *  Returns an error status to be displayed when unable to create an editor.
+     * Wrapper for restoring the editor. First, this delegates to busyRestoreEditorHelper
+     * to do the real work of restoring the view. If unable to restore the editor, this
+     * method tries to substitute an error part and return success.
+     *
+     * @param ref_
+     * @return
      */
-    private IStatus unableToCreateEditor(Editor ref, Throwable t) {
-        return new Status(
-                IStatus.ERROR,
-                PlatformUI.PLUGIN_ID,
-                0,
-                NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor, ref.getName() ), t); 
-    }
+    public IStatus busyRestoreEditor(Editor ref) {
+        
 
+        // If the part has already been restored, exit
+        if (ref.getPart(false) != null)
+            return Status.OK_STATUS;
+
+        PartInitException exception = null;
+        
+        // Try to restore the editor -- this does the real work of restoring the editor
+        //
+        try {
+            busyRestoreEditorHelper(ref);
+        } catch (PartInitException e2) {
+            exception = e2;
+        }
+        
+        // If unable to create the part, create an error part instead
+        if (exception != null) {
+            
+            IStatus originalStatus = exception.getStatus();
+            IStatus logStatus = StatusUtil.newStatus(originalStatus, 
+                    NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
+                            ref.getId(), originalStatus.getMessage()));
+            WorkbenchPlugin.log(logStatus);
+            
+            IStatus displayStatus = StatusUtil.newStatus(originalStatus,
+                    NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
+                            originalStatus.getMessage()));
+            
+            ErrorEditorPart part = new ErrorEditorPart(displayStatus);
+            
+            IEditorInput input;
+            try {
+                input = ref.getRestoredInput();
+            } catch (PartInitException e1) {
+                input = new NullEditorInput();
+            }
+            
+            EditorPane pane = (EditorPane)ref.getPane();
+            
+            pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
+            
+            EditorDescriptor descr = ref.getDescriptor();
+            EditorSite site = new EditorSite(ref, part, page, descr);
+            
+            site.setActionBars(new EditorActionBars(new NullActionBars(), ref.getId()));
+            try {
+                part.init(site, input);
+            } catch (PartInitException e) {
+                return e.getStatus();
+            }
+
+            Composite parent = (Composite)pane.getControl();
+            Composite content = new Composite(parent, SWT.NONE);
+            content.setLayout(new FillLayout());
+            
+            try {
+                part.createPartControl(content);
+            } catch (Exception e) {
+                content.dispose();
+                return exception.getStatus();
+            }
+            
+            ref.setPart(part);
+            ref.refreshFromPart();
+            page.addPart(ref);
+            page.firePartOpened(part);
+        }
+        
+        return Status.OK_STATUS;
+    }
+    
+    public void busyRestoreEditorHelper(Editor ref) throws PartInitException {
+        
+        // Things that will need to be disposed if an exception occurs (listed in the order they
+        // need to be disposed, and set to null if they haven't been created yet)
+        Composite content = null;
+        IEditorPart initializedPart = null;
+        EditorActionBars actionBars = null;
+        EditorSite site = null;
+        
+        try {
+            IEditorInput editorInput = ref.getRestoredInput();
+            
+            // Get the editor descriptor.
+            String editorID = ref.getId();
+            EditorDescriptor desc = ref.getDescriptor();
+            
+            if (desc == null) {
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID)); //$NON-NLS-1$
+            }
+            
+            IEditorPart part;
+            
+            if (desc.isInternal()) {    
+                // Create an editor instance.
+                try {
+                    UIStats.start(UIStats.CREATE_PART, editorID);
+                    part = createPart(desc);
+                } finally {
+                    UIStats.end(UIStats.CREATE_PART, ref, editorID);
+                }
+                
+            } else if (desc.getId().equals(
+                    IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
+                
+                part = ComponentSupport.getSystemInPlaceEditor();
+                
+                if (part == null) {
+                    throw new PartInitException(WorkbenchMessages.EditorManager_no_in_place_support); //$NON-NLS-1$
+                }
+            } else {
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_invalid_editor_descriptor, editorID)); //$NON-NLS-1$
+            }
+            
+
+            // Create a pane for this part
+            PartPane pane = ref.getPane();
+
+            pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
+            
+            // Create controls
+            int style = SWT.NONE;
+            if(part instanceof WorkbenchPart){
+                style = ((WorkbenchPart) part).getOrientation();
+            }
+
+            // Link everything up to the part reference (the part reference itself should not have
+            // been modified until this point)
+            createSite(ref, part, desc, editorInput);
+            
+            // Remember the site and the action bars (now that we've created them, we'll need to dispose
+            // them if an exception occurs)
+            site = (EditorSite) part.getSite();
+            actionBars = (EditorActionBars) site.getActionBars();
+            
+            Composite parent = (Composite)pane.getControl();
+            content = new Composite(parent, style);
+
+            content.setLayout(new FillLayout());
+
+            try {
+                UIStats.start(UIStats.CREATE_PART_CONTROL, editorID);
+                part.createPartControl(content);
+            
+                parent.layout(true);
+            } finally {
+                UIStats.end(UIStats.CREATE_PART_CONTROL, part, editorID);
+            }
+
+            ref.setPart(part);
+            ref.refreshFromPart();
+            ref.releaseReferences();
+            page.addPart(ref);
+            page.firePartOpened(part);
+        } catch (Exception e) {
+            // Dispose anything which we allocated in the try block
+            if (content != null) {
+                try {
+                    content.dispose();
+                } catch (RuntimeException re) {
+                    WorkbenchPlugin.log(re);
+                }
+            }
+
+            if (initializedPart != null) {
+                try {
+                    initializedPart.dispose();
+                } catch (RuntimeException re) {
+                    WorkbenchPlugin.log(re);
+                }
+            }
+            
+            if (actionBars != null) {
+                try {
+                    disposeEditorActionBars(actionBars);
+                } catch (RuntimeException re) {
+                    WorkbenchPlugin.log(re);
+                }
+            }
+            
+            if (site != null) {
+                try {
+                    site.dispose();
+                } catch (RuntimeException re) {
+                    WorkbenchPlugin.log(re);
+                }
+            }
+            
+            throw new PartInitException(StatusUtil.getLocalizedMessage(e), StatusUtil.getCause(e));
+        }
+
+    }
+    
     /**
      * Save all of the editors in the workbench.  
      * Return true if successful.  Return false if the
@@ -1332,50 +1436,17 @@ public class EditorManager implements IExtensionRemovalHandler {
 
         private IEditorInput restoredInput;
 
-        /**
-         * Constructs a new editor reference for use by editors being newly opened.
-         */
-        Editor() {
-            // initialize the necessary editor listeners and handlers
+        Editor(IEditorInput input, EditorDescriptor desc) {
             initListenersAndHandlers();
+            restoredInput = input;
+            init(desc.getId(), desc.getLabel(), "", desc.getImageDescriptor(), desc.getLabel(), "");  //$NON-NLS-1$//$NON-NLS-2$
         }
-
-        /**
-         * Initializes the necessary editor listeners and handlers
-         */
-        private void initListenersAndHandlers() {
-            // Create a property change listener to track the "close editors automatically"
-            // preference and show/remove the pin icon on editors
-            // Only 1 listener will be created in the EditorManager when necessary
-            checkCreateEditorPropListener();
-            // Create a keyboard shortcut handler for pinning editors
-            // Only 1 handler will be created in the EditorManager when necessary
-            checkCreatePinEditorShortcutKeyHandler();
-        }
-
-        /**
-         * This method is called when there should be a change in the editor pin
-         * status (added or removed) so that it will ask its presentable part
-         * to fire a PROP_TITLE event in order for the presentation to request
-         * the new icon for this editor
-         */
-        public void pinStatusUpdated() {
-            PartPane partPane = getPane();
-            EditorPane editorPane = null;
-            if (partPane instanceof EditorPane) {
-                editorPane = (EditorPane) partPane;
-                IPresentablePart iPresPart = editorPane.getPresentablePart();
-                if (iPresPart instanceof PresentablePart)
-                    ((PresentablePart) iPresPart)
-                            .firePropertyChange(IWorkbenchPart.PROP_TITLE);
-            }
-        }
-
+        
         /**
          * Constructs a new editor reference for use by editors being restored from a memento.
          */
         Editor(IMemento memento) {
-            this();
+            initListenersAndHandlers();
             this.editorMemento = memento;
             String id = memento.getString(IWorkbenchConstants.TAG_ID);
             String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
@@ -1392,9 +1463,7 @@ public class EditorManager implements IExtensionRemovalHandler {
             // Get the editor descriptor.
             EditorDescriptor desc = null;
             if (id != null) {
-                IEditorRegistry reg = WorkbenchPlugin.getDefault()
-                        .getEditorRegistry();
-                desc = (EditorDescriptor) reg.findEditor(id);
+                desc = getDescriptor(id);
             }
             // desc may be null if id is null or desc is not found, but findImage below handles this
             String location = memento.getString(IWorkbenchConstants.TAG_PATH);
@@ -1416,6 +1485,59 @@ public class EditorManager implements IExtensionRemovalHandler {
             init(id, title, tooltip, iDesc, partName, null);
         }
 
+        public EditorDescriptor getDescriptor() {
+            return getDescriptor(getId());
+        }
+        
+        /**
+         * @since 3.1 
+         *
+         * @param id
+         * @return
+         */
+        private EditorDescriptor getDescriptor(String id) {
+            EditorDescriptor desc;
+            IEditorRegistry reg = WorkbenchPlugin.getDefault()
+                    .getEditorRegistry();
+            desc = (EditorDescriptor) reg.findEditor(id);
+            return desc;
+        }
+        
+        /**
+         * Initializes the necessary editor listeners and handlers
+         */
+        private void initListenersAndHandlers() {
+            // Create a property change listener to track the "close editors automatically"
+            // preference and show/remove the pin icon on editors
+            // Only 1 listener will be created in the EditorManager when necessary
+            checkCreateEditorPropListener();
+            // Create a keyboard shortcut handler for pinning editors
+            // Only 1 handler will be created in the EditorManager when necessary
+            checkCreatePinEditorShortcutKeyHandler();
+        }
+
+        public PartPane createPane() {
+            return new EditorPane(this, page, editorPresentation.getActiveWorkbook());
+        }
+        
+        /**
+         * This method is called when there should be a change in the editor pin
+         * status (added or removed) so that it will ask its presentable part
+         * to fire a PROP_TITLE event in order for the presentation to request
+         * the new icon for this editor
+         */
+        public void pinStatusUpdated() {
+            PartPane partPane = getPane();
+            EditorPane editorPane = null;
+            if (partPane instanceof EditorPane) {
+                editorPane = (EditorPane) partPane;
+                IPresentablePart iPresPart = editorPane.getPresentablePart();
+                if (iPresPart instanceof PresentablePart)
+                    ((PresentablePart) iPresPart)
+                            .firePropertyChange(IWorkbenchPart.PROP_TITLE);
+            }
+        }
+        
         public String getFactoryId() {
             IEditorPart editor = getEditor(false);
             if (editor != null) {
@@ -1449,27 +1571,14 @@ public class EditorManager implements IExtensionRemovalHandler {
         public IEditorPart getEditor(boolean restore) {
             if (part != null)
                 return (IEditorPart) part;
-            if (!restore || editorMemento == null)
+            if (!restore)
                 return null;
 
             IStatus status = restoreEditor(this);
             Workbench workbench = (Workbench) window.getWorkbench();
             if (status.getSeverity() == IStatus.ERROR) {
-                editorMemento = null;
-                page.closeEditor(this, false);
-                if (closingEditorStatus != null) {
-                    closingEditorStatus.add(status);
-                } else if (!workbench.isStarting()) {
-                    ErrorDialog
-                            .openError(
-                                    window.getShell(),
-                                    WorkbenchMessages.EditorManager_unableToRestoreEditorTitle,
-                                    NLS.bind(WorkbenchMessages.EditorManager_unableToRestoreEditorMessage,  getName() ),
-                                    status, IStatus.WARNING | IStatus.ERROR);
-                }
+                return null;
             }
-            setPane(getPane());
-            releaseReferences();
             return (IEditorPart) part;
         }
 
@@ -1527,7 +1636,7 @@ public class EditorManager implements IExtensionRemovalHandler {
             editorMemento = null;
         }
 
-        public IEditorInput getRestoredInput() {
+        public IEditorInput getRestoredInput() throws PartInitException {
             if (restoredInput != null) {
                 return restoredInput;
             }
@@ -1535,7 +1644,7 @@ public class EditorManager implements IExtensionRemovalHandler {
             // Get the input factory.
             IMemento editorMem = getMemento();
             if (editorMem == null) {
-                return null;
+                throw new PartInitException(WorkbenchMessages.EditorManager_no_persisted_state); //$NON-NLS-1$
             }
             IMemento inputMem = editorMem
                     .getChild(IWorkbenchConstants.TAG_INPUT);
@@ -1545,9 +1654,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                         .getString(IWorkbenchConstants.TAG_FACTORY_ID);
             }
             if (factoryID == null) {
-                WorkbenchPlugin
-                        .log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
-                return null;
+                throw new PartInitException(WorkbenchMessages.EditorManager_no_input_factory_ID); //$NON-NLS-1$
             }
             IAdaptable input = null;
             String label = null; // debugging only
@@ -1559,25 +1666,19 @@ public class EditorManager implements IExtensionRemovalHandler {
                 IElementFactory factory = PlatformUI.getWorkbench()
                         .getElementFactory(factoryID);
                 if (factory == null) {
-                    WorkbenchPlugin
-                            .log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
-                    return null;
+                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory, factoryID)); //$NON-NLS-1$
                 }
 
                 // Get the input element.
                 input = factory.createElement(inputMem);
                 if (input == null) {
-                    WorkbenchPlugin
-                            .log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
-                    return null;
+                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null, factoryID)); //$NON-NLS-1$
                 }
             } finally {
                 UIStats.end(UIStats.CREATE_PART_INPUT, input, label);
             }
             if (!(input instanceof IEditorInput)) {
-                WorkbenchPlugin
-                        .log("Unable to restore editor - createElement result is not an IEditorInput for input element factory: " + factoryID); //$NON-NLS-1$
-                return null;
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result, factoryID)); //$NON-NLS-1$
             }
             restoredInput = (IEditorInput) input;
             return restoredInput;
@@ -1620,6 +1721,21 @@ public class EditorManager implements IExtensionRemovalHandler {
                 imgHashtable.put(imgHashKey, image);
             }
             return image;
+        }
+    }
+    
+    private class InnerEditor extends Editor {
+        
+        private IEditorReference outerEditor;
+        
+        public InnerEditor(IEditorReference outerEditor, IEditorInput input, EditorDescriptor desc) {
+            super(input, desc);
+            this.outerEditor = outerEditor;
+        }
+        
+        public PartPane createPane() {
+            return new MultiEditorInnerPane((EditorPane)((Editor)outerEditor).getPane(),
+                    this, page, editorPresentation.getActiveWorkbook());
         }
     }
 
@@ -1670,6 +1786,11 @@ public class EditorManager implements IExtensionRemovalHandler {
         String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
         boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
         Editor e = new Editor(editorMem);
+        try {
+            createEditorTab(e);
+        } catch (PartInitException ex) {
+            result.add(ex.getStatus());
+        }
         if (visibleEditor) {
             visibleEditors.add(e);
             page.addPart(e);
@@ -1709,11 +1830,6 @@ public class EditorManager implements IExtensionRemovalHandler {
                 editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 
                 page.addPart(e);
-                try {
-                    createEditorTab(e, null, null, false);
-                } catch (PartInitException ex) {
-                    result.add(ex.getStatus());
-                }
             }
         }
     }

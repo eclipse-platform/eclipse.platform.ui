@@ -110,20 +110,97 @@
    <extension
          point="org.eclipse.ui.views">
 
+      <category
+            name="Error handling"
+            id="org.eclipse.ui.tests.errorhandling"/>
+
       <view
       		name="ERROR: View that caches its shell"
       		icon="icons\view.gif"
+      		category="org.eclipse.ui.tests.errorhandling"
       		class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.api.workbenchpart.ViewThatCachesItsShell"
       		id="org.eclipse.ui.test.api.workbenchpart.ViewThatCachesItsShell">
       </view>
       
+      <view
+       		name="ERROR: View that throws PartInitException in init"
+       		icon="icons\view.gif"
+      		category="org.eclipse.ui.tests.errorhandling"
+       		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitException"
+       		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitException">
+      </view>
+
+      <view
+       		name="ERROR: View that throws RuntimeException in init"
+       		icon="icons\view.gif"
+      		category="org.eclipse.ui.tests.errorhandling"
+       		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitRuntimeException"
+       		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitRuntimeException">
+      </view>
+      <view
+       		name="ERROR: View pointing to invalid class"
+       		category="org.eclipse.ui.tests.errorhandling"
+       		icon="icons\view.gif"
+       		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithMissingClass"
+       		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithMissingClass">
+      </view>
+      <view
+       		name="ERROR: View that throws exception in dispose"
+       		category="org.eclipse.ui.tests.errorhandling"
+       		icon="icons\view.gif"
+       		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithDisposeException"
+       		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithDisposeException">
+      </view>
+      <view
+       		name="ERROR: View that throws exception in createPartControls"
+      		category="org.eclipse.ui.tests.errorhandling"
+       		icon="icons\view.gif"
+       		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException"
+       		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException">
+      </view>
+
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CyclicDependencyView"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: Cyclic dependency view"
+            id="org.eclipse.ui.tests.components.CyclicDependencyView"/>      
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: Missing dependency"
+            id="org.eclipse.ui.tests.components.MissingDependencyView"/>      
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: View that throws an exception"
+            id="org.eclipse.ui.tests.components.ViewThatThrowsAnException"/>      
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: Dependency that throws an exception"
+            id="org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"/>      
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnMissingImplementation"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: Dependency with missing implementation"
+            id="org.eclipse.ui.tests.components.DependsOnMissingImplementation"/>
+      <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"
+      		category="org.eclipse.ui.tests.errorhandling"
+            name="ERROR: View requiring component in wrong scope"
+            id="org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"/>
+
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.views">
+
       <view
        		name="Title Test View"
        		icon="icons\view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.TitleTestView"
        		id="org.eclipse.ui.tests.api.TitleTestView">
       </view>
-      
 
       <view
             name="Mock View 1"
@@ -358,36 +435,6 @@
       <category
             name="Table Viewer Tests"
             id="org.eclipse.ui.tests.tableViewerViews"/>
-      <view
-            class="org.eclipse.ui.tests.components.CyclicDependencyView"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: Cyclic dependency view"
-            id="org.eclipse.ui.tests.components.CyclicDependencyView"/>      
-      <view
-            class="org.eclipse.ui.tests.components.MissingDependencyView"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: Missing dependency"
-            id="org.eclipse.ui.tests.components.MissingDependencyView"/>      
-      <view
-            class="org.eclipse.ui.tests.components.ViewThatThrowsAnException"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: View that throws an exception"
-            id="org.eclipse.ui.tests.components.ViewThatThrowsAnException"/>      
-      <view
-            class="org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: Dependency that throws an exception"
-            id="org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"/>      
-      <view
-            class="org.eclipse.ui.tests.components.DependsOnMissingImplementation"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: Dependency with missing implementation"
-            id="org.eclipse.ui.tests.components.DependsOnMissingImplementation"/>
-      <view
-            class="org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"
-            category="org.eclipse.ui.tests.components"
-            name="ERROR: View requiring component in wrong scope"
-            id="org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"/>
       <category
             name="Component Tests"
             id="org.eclipse.ui.tests.components"/>
@@ -455,6 +502,51 @@
             name="Title Test Editor"
             id="org.eclipse.ui.tests.TitleTestEditor"
             extensions="titletest"/>
+
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.TitleTestEditor"
+            icon="invalidpath/iconThatDoesNotExist.gif"
+            default="true"
+            name="ERROR: Editor with missing icon"
+            id="org.eclipse.ui.tests.EditorWithMissingIcon"
+            extensions="test"/>
+
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.MissingClass"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: Editor with missing class"
+            id="org.eclipse.ui.tests.api.workbenchpart.MissingClass"
+            extensions="test"/>
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitRuntimeException"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: RuntimeException in init"
+            id="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitRuntimeException"
+            extensions="test"/>
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitException"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: PartInitException in init"
+            id="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitException"
+            extensions="test"/>
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.EditorWithCreateControlsException"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: Exception in createPartControls"
+            id="org.eclipse.ui.tests.api.workbenchpart.EditorWithCreateControlsException"
+            extensions="test"/>
+      <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.EditorWithDisposeException"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: Exception in dispose"
+            id="org.eclipse.ui.tests.api.workbenchpart.EditorWithDisposeException"
+            extensions="test"/>
+ 
 	   <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
             icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.gif"

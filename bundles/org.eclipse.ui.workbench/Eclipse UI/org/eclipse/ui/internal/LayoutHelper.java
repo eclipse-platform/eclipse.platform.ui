@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -159,11 +158,6 @@ class LayoutHelper {
         WorkbenchPartReference ref = (WorkbenchPartReference) factory
                 .createView(viewId);
         ViewPane newPart = (ViewPane) ref.getPane();
-        if (newPart == null) {
-            WorkbenchPage page = (WorkbenchPage) ref.getPage();
-            newPart = new ViewPane((IViewReference) ref, page);
-            ref.setPane(newPart);
-        }
         return newPart;
     }
 
@@ -184,11 +178,6 @@ class LayoutHelper {
         WorkbenchPartReference ref = (WorkbenchPartReference) factory
                 .createView(viewId);
         ViewPane newPart = (ViewPane) ref.getPane();
-        if (newPart == null) {
-            WorkbenchPage page = (WorkbenchPage) ref.getPage();
-            newPart = new ViewPane((IViewReference) ref, page);
-            ref.setPane(newPart);
-        }
         return newPart;
     }
 }

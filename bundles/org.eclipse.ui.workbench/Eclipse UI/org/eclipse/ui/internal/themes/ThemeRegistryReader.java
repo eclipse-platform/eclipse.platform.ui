@@ -18,13 +18,11 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.themes.IColorFactory;
 
@@ -450,9 +448,7 @@ public class ThemeRegistryReader extends RegistryReader {
             } catch (Exception e) {
                 WorkbenchPlugin.log(RESOURCE_BUNDLE
                         .getString("Colors.badFactory"), //$NON-NLS-1$ 
-                        StatusUtil.newStatus(IStatus.ERROR,
-                                e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$, 
-                                e));
+                        WorkbenchPlugin.getStatus(e));
             }
         }
         return value;

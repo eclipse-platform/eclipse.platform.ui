@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.components.ComponentFactory;
 import org.eclipse.ui.components.ComponentHandle;
@@ -71,10 +70,6 @@ public class PartSite implements IWorkbenchPartSite {
 
     private IWorkbenchPage page;
 
-    private PartPane pane;
-
-    private IConfigurationElement configElement;
-
     private String extensionID;
 
     private String pluginID;
@@ -83,7 +78,7 @@ public class PartSite implements IWorkbenchPartSite {
 
     private ISelectionProvider selectionProvider;
 
-    private SubActionBars actionBars;
+    private IActionBars actionBars;
 
     private KeyBindingService keyBindingService;
 
@@ -167,7 +162,7 @@ public class PartSite implements IWorkbenchPartSite {
      * Gets the part pane.
      */
     public PartPane getPane() {
-        return pane;
+        return ((WorkbenchPartReference)partReference).getPane();
     }
 
     /**
@@ -304,7 +299,7 @@ public class PartSite implements IWorkbenchPartSite {
     /**
      * Sets the action bars for the part.
      */
-    public void setActionBars(SubActionBars bars) {
+    public void setActionBars(IActionBars bars) {
         actionBars = bars;
     }
 
@@ -312,8 +307,6 @@ public class PartSite implements IWorkbenchPartSite {
      * Sets the configuration element for a part.
      */
     public void setConfigurationElement(IConfigurationElement configElement) {
-        // Save for external use.
-        this.configElement = configElement;
 
         // Get extension ID.
         extensionID = configElement.getAttribute("id"); //$NON-NLS-1$
@@ -327,6 +320,10 @@ public class PartSite implements IWorkbenchPartSite {
             extensionName = name;
     }
 
+    protected void setPluginId(String pluginId) {
+        this.pluginID = pluginId;
+    }
+    
     /**
      * Sets the part registry extension ID.
      * 
@@ -334,13 +331,6 @@ public class PartSite implements IWorkbenchPartSite {
      */
     protected void setId(String id) {
         extensionID = id;
-    }
-
-    /**
-     * Sets the part pane.
-     */
-    public void setPane(PartPane pane) {
-        this.pane = pane;
     }
 
     /**
@@ -454,7 +444,7 @@ public class PartSite implements IWorkbenchPartSite {
                     }
                     
                     throw new ComponentException(Composite.class, 
-                            Messages.getString("PartSite.needsWidgetsError"), null); //$NON-NLS-1$
+                            WorkbenchMessages.PartSite_needsWidgetsError, null); //$NON-NLS-1$
                 } 
             });
         serviceContainer = new SiteServices(context);

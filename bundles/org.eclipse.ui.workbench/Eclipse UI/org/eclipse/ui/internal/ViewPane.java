@@ -1,25 +1,20 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+package org.eclipse.ui.internal;
+
+/******************************************************************************* 
+ * Copyright (c) 2000, 2004 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials! 
+ * are made available under the terms of the Common Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html 
+ * 
+ * Contributors: 
  *    IBM Corporation - initial API and implementation 
  *    Cagatay Kavukcuoglu <cagatayk@acm.org>
  *      - Fix for bug 10025 - Resizing views should not use height ratios
- *******************************************************************************/
-package org.eclipse.ui.internal;
+ **********************************************************************/
 
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -29,16 +24,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.newapi.EnhancedFillLayout;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -83,8 +74,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
             toolBar.layout();
         }
-        
-        
     }
 
     /**
@@ -126,51 +115,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
         super.createControl(parent);
     }
 
-    protected void doCreateChildControl() {
-        final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(false) };
-        if (part[0] == null)
-            return;
-
-        Assert.isNotNull(control);
-
-        super.doCreateChildControl();
-
-        Platform.run(new SafeRunnable() {
-            public void run() {
-                // Install the part's tools and menu
-                ViewActionBuilder builder = new ViewActionBuilder();
-                IViewPart part = (IViewPart) getViewReference().getPart(true);
-                if (part != null) {
-                    builder.readActionExtensions(part);
-                    ActionDescriptor[] actionDescriptors = builder
-                            .getExtendedActions();
-                    KeyBindingService keyBindingService = (KeyBindingService) part
-                            .getSite().getKeyBindingService();
-
-                    if (actionDescriptors != null) {
-                        for (int i = 0; i < actionDescriptors.length; i++) {
-                            ActionDescriptor actionDescriptor = actionDescriptors[i];
-
-                            if (actionDescriptor != null) {
-                                IAction action = actionDescriptors[i]
-                                        .getAction();
-
-                                if (action != null
-                                        && action.getActionDefinitionId() != null)
-                                    keyBindingService.registerAction(action);
-                            }
-                        }
-                    }
-                }
-                updateActionBars();
-            }
-
-            public void handleException(Throwable e) {
-                //Just have it logged.
-            }
-        });
-    }
 
     private void recreateToolbars() {
         // create new toolbars based on the locked vs !locked state
@@ -178,39 +122,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
         // create new toolbars
         updateActionBars();
 
-    }
-
-    protected IWorkbenchPart createErrorPart(IWorkbenchPart oldPart) {
-        class ErrorViewPart extends ViewPart {
-            private Text text;
-
-            public void createPartControl(Composite parent) {
-                text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-                text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
-                text.setBackground(text.getDisplay().getSystemColor(
-                        SWT.COLOR_WIDGET_BACKGROUND));
-                text.setText(WorkbenchMessages.ViewPane_errorMessage); 
-            }
-
-            public void setFocus() {
-                if (text != null)
-                    text.setFocus();
-            }
-
-            public void setSite(IWorkbenchPartSite site) {
-                super.setSite(site);
-            }
-
-            public void setPartName(String title) {
-                super.setPartName(title);
-            }
-        }
-        ErrorViewPart newPart = new ErrorViewPart();
-        PartSite site = (PartSite) oldPart.getSite();
-        newPart.setSite(site);
-        newPart.setPartName(site.getRegisteredName());
-        site.setPart(newPart);
-        return newPart;
     }
 
     /**
@@ -516,15 +427,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
         if (isFastView() && (page.getActiveFastView() != getViewReference()))
             return;
 
-        Menu aMenu = isvMenuMgr.createContextMenu(getControl());
+        Menu aMenu = isvMenuMgr.createContextMenu(getControl().getParent());
         aMenu.setLocation(location.x, location.y);
         aMenu.setVisible(true);
-//        aMenu.addMenuListener(new MenuAdapter() {
-//           public void menuHidden(MenuEvent e) {
-//               isvMenuMgr.dispose();
-//               isvMenuMgr.markDirty();
-//           }
-//        });
     }
 
     public String toString() {
@@ -678,20 +583,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
         }
         
         return toolbarWrapper;
-
-//        ToolBarManager toolbarManager = getToolBarManager();
-//
-//        if (toolbarManager == null) {
-//            return null;
-//        }
-//
-//        ToolBar control = toolbarManager.getControl();
-//
-//        if (control == null || control.isDisposed()) {
-//            return null;
-//        }
-//
-//        return control;
     }
 
     /* (non-Javadoc)

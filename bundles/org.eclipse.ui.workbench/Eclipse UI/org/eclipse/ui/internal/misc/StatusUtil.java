@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -63,7 +65,76 @@ public class StatusUtil {
         return new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
                 stati, message, exception);
     }
+    
+    public static IStatus newStatus(String pluginId, Throwable exception) {
+        return newStatus(pluginId, getLocalizedMessage(exception), exception);
+    }
 
+    /**
+     * Returns a localized message describing the given exception. If the given exception does not
+     * have a localized message, this returns the string "An error occurred".
+     *
+     * @param exception
+     * @return
+     */
+    public static String getLocalizedMessage(Throwable exception) {
+        String message = exception.getLocalizedMessage();
+        
+        if (message != null) {
+            return message;
+        }
+        
+        // Workaround for the fact that CoreException does not implement a getLocalizedMessage() method.
+        // Remove this branch when and if CoreException implements getLocalizedMessage() 
+        if (exception instanceof CoreException) {
+            CoreException ce = (CoreException)exception;
+            return ce.getStatus().getMessage();
+        }
+        
+        return WorkbenchMessages.StatusUtil_errorOccurred;
+    }
+    
+    /**
+     * Creates a new Status based on the original status, but with a different message
+     *
+     * @param originalStatus
+     * @param newMessage
+     * @return
+     */
+    public static IStatus newStatus(IStatus originalStatus, String newMessage) {
+        return new Status(originalStatus.getSeverity(), 
+                originalStatus.getPlugin(), originalStatus.getCode(), newMessage, originalStatus.getException());
+    }
+    
+    public static IStatus newStatus(String pluginId, String message, Throwable exception) {        
+        return new Status(IStatus.ERROR, pluginId, IStatus.OK, 
+                message, getCause(exception));
+    }    
+    
+    public static Throwable getCause(Throwable exception) {
+        // Figure out which exception should actually be logged -- if the given exception is
+        // a wrapper, unwrap it
+        Throwable cause = null;
+        if (exception != null) {
+            if (exception instanceof CoreException) {
+                // Workaround: CoreException contains a cause, but does not actually implement getCause(). 
+                // If we get a CoreException, we need to manually unpack the cause. Otherwise, use
+                // the general-purpose mechanism. Remove this branch if CoreException ever implements
+                // a correct getCause() method.
+                CoreException ce = (CoreException)exception;
+                cause = ce.getStatus().getException();
+            } else {
+                cause = exception.getCause();
+            }
+            
+            if (cause == null) {
+                cause = exception;
+            }
+        }
+
+        return cause;
+    }
+        
     /**
      * This method must not be called outside the workbench.
      *
@@ -81,7 +152,7 @@ public class StatusUtil {
         }
 
         return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity,
-                statusMessage, exception);
+                statusMessage, getCause(exception));
     }
 
     /**

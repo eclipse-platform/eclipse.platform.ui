@@ -20,6 +20,17 @@ import org.eclipse.ui.views.IViewDescriptor;
  * A view container manages the services for a view.
  */
 public class ViewSite extends PartSite implements IViewSite {
+    
+    public ViewSite(IViewReference ref, IViewPart view, WorkbenchPage page,
+            String id, String pluginId, String registeredName) {
+
+        super(ref, view, page);
+        
+        setId(id);
+        setRegisteredName(registeredName);
+        setPluginId(pluginId);
+    }
+    
     /**
      * Creates a new ViewSite.
      */

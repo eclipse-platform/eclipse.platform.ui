@@ -580,17 +580,28 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
-    public static Status getStatus(Throwable t) {
-        return getStatus(t.getLocalizedMessage() != null ? t.getLocalizedMessage() : t.toString(), t);
+    public static IStatus getStatus(Throwable t) {
+        return getStatus(StatusUtil.getLocalizedMessage(t), t);
     }
     
     public static void log(Throwable t) {
         getDefault().getLog().log(getStatus(t));
     }
     
-    public static Status getStatus(String message, Throwable t) {
-        return new Status(Status.ERROR, getDefault().getBundle().getSymbolicName(), 0,
-                message, t);        
+    public static IStatus getStatus(String message, Throwable t) {
+        // If this is a low-level exception, report it as though it came from the workbench
+        String pluginId = getDefault().getBundle().getSymbolicName();
+        int errorCode = IStatus.OK;
+        
+        // If this was a CoreException, keep the original plugin ID and error code
+        if (t instanceof CoreException) {
+            CoreException ce = (CoreException)t;
+            pluginId = ce.getStatus().getPlugin();
+            errorCode = ce.getStatus().getCode();
+        }
+        
+        return new Status(IStatus.ERROR, pluginId, errorCode, 
+                message, StatusUtil.getCause(t));
     }
     
     /**
@@ -660,6 +671,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
+    public static void log(IStatus status) {
+        getDefault().getLog().log(status);
+    }
+    
     /**
      * Get the decorator manager for the receiver
      * @return DecoratorManager the decorator manager

@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
@@ -64,9 +64,7 @@ public abstract class UIJob extends Job {
      * @see Job
      */
     public static IStatus errorStatus(Throwable exception) {
-        return StatusUtil.newStatus(IStatus.ERROR,
-                exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
-                exception);
+        return WorkbenchPlugin.getStatus(exception); 
     }
 
     /**

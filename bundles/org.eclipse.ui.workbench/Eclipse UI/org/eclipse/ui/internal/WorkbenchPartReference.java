@@ -349,41 +349,20 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             return;
 
         part.addPropertyListener(propertyChangeListener);
-        PartSite site = (PartSite) part.getSite();
-        if (site != null && this.pane != null) {
-            site.setPane(this.pane);
-            this.pane = null;
-        }
 
         // Note: it might make sense to call refreshFromPart() here to immediately
         // get the updated values from the part itself. However, we wait until after
         // the widgetry is created to avoid breaking parts that can't return meaningful
         // values until their widgetry exists.
     }
-
-    public void setPane(PartPane pane) {
-        if (pane == null)
-            return;
-        if (part != null) {
-            PartSite site = (PartSite) part.getSite();
-            if (site != null) {
-                site.setPane(pane);
-                return;
-            }
-        }
-        this.pane = pane;
-    }
-
+    
+    protected abstract PartPane createPane();
+    
     public PartPane getPane() {
-        PartPane result = null;
-        if (part != null) {
-            PartSite partSite = (PartSite) part.getSite();
-            if (partSite != null)
-                result = partSite.getPane();
+        if (pane == null) {
+            pane = createPane();
         }
-        if (result == null)
-            result = pane;
-        return result;
+        return pane;
     }
 
     public void dispose() {

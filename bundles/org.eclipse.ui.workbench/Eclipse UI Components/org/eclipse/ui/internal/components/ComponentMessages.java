@@ -24,6 +24,7 @@ public class ComponentMessages extends NLS {
 	public static String ReflectionFactory_no_constructors;
 	public static String Container_missing_dependency;
 	public static String Container_cycle_detected;
+    public static String ComponentException_unable_to_instantiate_because;
 
 	static {
 		// load message values from bundle file

@@ -232,7 +232,7 @@ public class EditorPane extends PartPane {
     public void updateTitles() {
         //	  TODO commented during presentation refactor 	workbook.updateEditorTab(getEditorReference());
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
      */

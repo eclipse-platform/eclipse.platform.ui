@@ -970,10 +970,6 @@ public class Perspective {
                         NLS.bind(WorkbenchMessages.Perspective_couldNotFind,  key ), null));
                 continue;
             }
-            if (ref.getPane() == null) {
-                ViewPane vp = new ViewPane(viewRef, page);
-                ref.setPane(vp);
-            }
             page.addPart(ref);
             boolean willPartBeVisible = pres.willPartBeVisible(ref.getId(),
                     secondaryId);
@@ -1044,9 +1040,6 @@ public class Perspective {
                 // will come back to check if its a fast view. We really
                 // need to clean up this code.		
                 fastViews.add(ref);
-                if (ref.getPane() == null) {
-                    ref.setPane(new ViewPane(viewRef, page));
-                }
                 page.addPart(ref);
             }
         }

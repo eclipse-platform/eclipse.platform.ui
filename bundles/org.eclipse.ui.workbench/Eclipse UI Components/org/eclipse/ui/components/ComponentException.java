@@ -107,15 +107,17 @@ public class ComponentException extends Exception {
         }
         
         if (reason != null) {
-	        if (reason != reason.getCause()) {
-	            String msg = reason.toString();
-	            if (msg != null) {
-	                return msg;
-	            }
-	        }
+            String userString = reason.getLocalizedMessage();
+            if (reason instanceof CoreException) {
+                userString = ((CoreException)reason).getStatus().getMessage();
+            }
+            
+            if (userString != null) {
+                return NLS.bind(ComponentMessages.ComponentException_unable_to_instantiate_because, dep, userString);
+            }
         }
         
-        return NLS.bind(ComponentMessages.ComponentException_unable_to_instantiate,dep); 
+        return NLS.bind(ComponentMessages.ComponentException_unable_to_instantiate, dep); 
     }
     
     private static String getMessageString(String componentName, ComponentException e) {

@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.components.ComponentHandle;
 import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.components.util.ServiceMap;
-import org.eclipse.ui.internal.Messages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Contains a factory for services that can delegate to a shared implementation.
@@ -73,7 +73,7 @@ public class NestedContext extends ServiceFactory {
         Object component = handle.getInstance();
         
         if (!(component instanceof INestedComponent)) {
-        	throw new ComponentException(MessageFormat.format(Messages.getString("NestedContext.0"), new String[] { //$NON-NLS-1$
+        	throw new ComponentException(NLS.bind(WorkbenchMessages.NestedContext_0, new String[] { //$NON-NLS-1$
         			INestedComponent.class.getName(), component.getClass().getName()}
         	), null);
         }

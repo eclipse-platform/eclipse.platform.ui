@@ -19,6 +19,8 @@ public class WorkbenchMessages extends NLS {
 
 	public static String Workbench_CreatingWorkbenchTwice;
 
+    public static String StatusUtil_errorOccurred;
+    
 	// ==============================================================================
 	// Workbench Actions
 	// ==============================================================================
@@ -41,6 +43,7 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_revert;
 	public static String Workbench_revertToolTip;
 	public static String Workbench_move;
+
 	public static String Workbench_moveToolTip;
 	public static String Workbench_rename;
 	public static String Workbench_renameToolTip;
@@ -48,6 +51,8 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_refreshToolTip;
 	public static String Workbench_properties;
 	public static String Workbench_propertiesToolTip;
+
+
 	public static String Workbench_print;
 	public static String Workbench_printToolTip;
 	public static String ExportResourcesAction_text;
@@ -520,8 +525,8 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_unableToCreateEditor;
 	public static String EditorManager_systemEditorError;
 	public static String EditorManager_invalidDescriptor;
-	public static String EditorManager_unableToInstantiate;
-	public static String EditorManager_unableToInitialize;
+	public static String EditorManager_instantiationError;
+    public static String EditorManager_errorInInit;
 	public static String EditorManager_siteIncorrect;
 	public static String EditorManager_unknownEditorIDMessage;
 	public static String EditorManager_errorOpeningExternalEditor;
@@ -529,6 +534,15 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_unableToOpenEditors;
 	public static String EditorManager_operationFailed;
 	public static String EditorManager_saveChangesQuestion;
+    public static String EditorManager_missing_editor_descriptor;
+    public static String EditorManager_no_in_place_support;
+    public static String EditorManager_invalid_editor_descriptor;
+    public static String EditorManager_no_persisted_state;
+    public static String EditorManager_no_input_factory_ID;
+    public static String EditorManager_bad_element_factory;
+    public static String EditorManager_create_element_returned_null;
+    public static String EditorManager_wrong_createElement_result;
+    
 	public static String EditorPane_errorMessage;
 	public static String EditorPane_moveEditor;
 	public static String EditorPane_pinEditor;
@@ -867,6 +881,11 @@ public class WorkbenchMessages extends NLS {
 	public static String PartFactory_bad_part_class;
 	public static String PartSite_needsWidgetsError;
 	public static String PartFactory_wrongtype;
+
+    // Error part
+    public static String ErrorPart_part_creation_error;
+    public static String ErrorPart_error_opening_part;    
+    public static String ErrorPart_details;
 
 	static {
 		// load message values from bundle file
