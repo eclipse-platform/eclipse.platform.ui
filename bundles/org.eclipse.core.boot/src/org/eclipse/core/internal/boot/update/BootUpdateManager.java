@@ -1,11 +1,6 @@
 package org.eclipse.core.internal.boot.update;
 
-import java.util.StringTokenizer;
-import java.util.PropertyResourceBundle;
-import java.io.*;
-import org.eclipse.core.internal.boot.*;
-import java.net.URL;
-import java.util.*;
+import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.PropertyResourceBundle;import java.util.StringTokenizer;import java.util.Vector;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.LaunchInfo.Status;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
 
 public class BootUpdateManager {
 /**
@@ -35,8 +30,66 @@ private static String createErrorString(IManifestDescriptor manifest, IManifestD
 	return strbMessage.toString();
 }
 /*
+ * Filters out the older versions of the identifiers.
+ */
+private static LaunchInfo.VersionedIdentifier[] filterNewestVersions( LaunchInfo.VersionedIdentifier[] vids ){
+	
+	if( vids == null )
+		return null;
+		
+	if( vids.length <= 1 )
+		return vids;
+	
+	VersionComparator comparator = new VersionComparator();	
+	Vector vectorLatest = new Vector();
+	LaunchInfo.VersionedIdentifier vid = null;
+	boolean bFound = false;
+
+	// Add latest versions of each identfier to another list
+	//------------------------------------------------------
+	for( int i=0; i<vids.length; ++i){
+		
+		bFound = false;
+		
+		// Determine if the identifier has already been seen
+		//--------------------------------------------------
+		for( int j=0; j<vectorLatest.size(); ++j ){
+			
+			// Retrieve an identifier from the encountered list
+			//-------------------------------------------------
+			vid = (LaunchInfo.VersionedIdentifier)vectorLatest.elementAt(j);
+			
+			// Determine if the identifiers are equal
+			//---------------------------------------
+			if( vids[i].getIdentifier().equals( vid.getIdentifier() ) == true ){
+				bFound = true;
+				
+				// Compare versions and replace if newer
+				//--------------------------------------
+				if( comparator.compare( vids[i].getVersion(), vid.getVersion() ) > 0 ){
+					vectorLatest.setElementAt( vids[i], j);
+					break;
+				}
+			}
+		}
+		
+		// Add to the list if this is the first encounter
+		//-----------------------------------------------
+		if( bFound == false ){
+			vectorLatest.add( vids[i] );
+		}
+	}
+	
+	// Create an array from the list of latest versions
+	//-------------------------------------------------
+	LaunchInfo.VersionedIdentifier[] vidsLatest = new LaunchInfo.VersionedIdentifier[vectorLatest.size()];
+	vectorLatest.copyInto(vidsLatest);
+	
+	return vidsLatest;
+}
+/*
  * Registers newly found configurations and components with the current
- * launch info.F
+ * launch info.
  */
 public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidConfigurations, LaunchInfo.VersionedIdentifier[] vidComponents) {
 
@@ -60,14 +113,18 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 	// Register configurations
 	//------------------------
 	if (vidConfigurations.length > 0) {
+		
+		// Obtain only newest versions
+		//----------------------------
+		vidConfigurations = filterNewestVersions( vidConfigurations );
 
 		for (int i = 0; i < vidConfigurations.length; i++) {			
 
 			IManifestDescriptor manifestDescriptor = registryInstalled.getProductDescriptor(vidConfigurations[i].getIdentifier(), vidConfigurations[i].getVersion());
 			if (manifestDescriptor!=null) {
 
-				// Verify existence
-				//-----------------
+				// Validate existence
+				//-------------------
 				IManifestDescriptor[] manifestsConflicting = registryCurrent.getConflictingManifests(manifestDescriptor);
 
 				// Add to launch info
@@ -89,6 +146,8 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 	// Register components  
 	//--------------------
 	if (vidComponents.length > 0) {
+		
+		vidComponents = filterNewestVersions( vidComponents );
 
 		for (int i = 0; i < vidComponents.length; i++) {
 
@@ -225,6 +284,9 @@ public static void uninstall(LaunchInfo.VersionedIdentifier[] configList, Launch
 }
 
 
+/**
+ *
+ */
 private static void uninstall(Vector vectorProducts, Vector vectorComponents) {
 	
 	// Process configurations and components
@@ -239,8 +301,10 @@ private static void uninstall(Vector vectorProducts, Vector vectorComponents) {
 
 		LaunchInfo launchInfo = LaunchInfo.getCurrent();
 
-		uninstallProducts(vectorProducts, registryInstalled, launchInfo);
-		uninstallComponents(vectorComponents, registryInstalled, launchInfo);
+		if( registryInstalled != null && launchInfo != null ){			
+			uninstallProducts(vectorProducts, registryInstalled, launchInfo);
+			uninstallComponents(vectorComponents, registryInstalled, launchInfo);
+		}
 
 		// Do garbage collection of inactive items
 		//----------------------------------------
@@ -251,17 +315,57 @@ private static void uninstall(Vector vectorProducts, Vector vectorComponents) {
 }
 
 /**
+ * Makes the component inactive, and all of its child plugins / fragments inactive,
+ * only if the component is removable.
+ */
+private static void uninstallComponent(IComponentDescriptor componentInstalled, IProductDescriptor productParent, IUMRegistry registry, LaunchInfo launchInfo) {
+
+	if (componentInstalled == null || registry == null || launchInfo == null)
+		return;
+
+	// Determine if the component is removeable
+	//-----------------------------------------
+	if (componentInstalled.isRemovable( productParent ) == true) {
+
+		// Component
+		//----------
+		LaunchInfo.VersionedIdentifier[] vidaComponents = new LaunchInfo.VersionedIdentifier[1];
+		vidaComponents[0] = new LaunchInfo.VersionedIdentifier( componentInstalled.getUniqueIdentifier(), componentInstalled.getVersionStr() );
+
+		// Plugins
+		//--------
+		IPluginEntryDescriptor[] plugins = componentInstalled.getPluginEntries();
+		LaunchInfo.VersionedIdentifier[] vidaPlugins = new LaunchInfo.VersionedIdentifier[plugins.length];
+		
+		for (int i = 0; i < plugins.length; ++i) {
+			vidaPlugins[i] = new LaunchInfo.VersionedIdentifier(plugins[i].getUniqueIdentifier(), plugins[i].getVersionStr());
+		}
+
+		// Fragments
+		//----------
+		IFragmentEntryDescriptor[] fragments = componentInstalled.getFragmentEntries();
+		LaunchInfo.VersionedIdentifier[] vidaFragments = new LaunchInfo.VersionedIdentifier[fragments.length];
+		
+		for (int i = 0; i < fragments.length; ++i) {
+			vidaFragments[i] = new LaunchInfo.VersionedIdentifier(fragments[i].getUniqueIdentifier(), fragments[i].getVersionStr());
+		}
+
+		// Remove the component, plugins, and fragments
+		//---------------------------------------------
+		launchInfo.setInactive(null, vidaComponents, vidaPlugins, vidaFragments);
+	}
+
+	return;
+}
+/**
+ * Attempts to make the component and its child plugins / fragments inactive.
  */
 private static void uninstallComponents(Vector vectorComponents, IUMRegistry registry, LaunchInfo launchInfo) {
 
-	if (vectorComponents == null || vectorComponents.size() == 0)
+	if (vectorComponents == null || vectorComponents.size() == 0 || registry == null || launchInfo == null)
 		return;
 
-	Vector vectorComponentsRemoving = new Vector();
-	Vector vectorPluginsRemoving = new Vector();
-	Vector vectorFragmentsRemoving = new Vector();
-
-	IdVersionPair pair = null;
+	IdVersionPair        pair               = null;
 	IComponentDescriptor componentInstalled = null;
 
 	for (int i = 0; i < vectorComponents.size(); ++i) {
@@ -272,79 +376,28 @@ private static void uninstallComponents(Vector vectorComponents, IUMRegistry reg
 		//--------------------------------------------------
 		componentInstalled = registry.getComponentDescriptor(pair.getUniqueIdentifier(), pair.getVersionStr());
 
-		// Determine if the descriptor is removeable
-		//------------------------------------------
-		if (componentInstalled != null && componentInstalled.isRemovable() == true) {
-			vectorComponentsRemoving.add(componentInstalled);
-
-			// Plugins
-			//--------
-			IPluginEntryDescriptor[] plugins = componentInstalled.getPluginEntries();
-			for (int j = 0; j < plugins.length; ++j) {
-				vectorPluginsRemoving.addElement(plugins[j]);
-			}
-
-			// Fragments
-			//----------
-			IFragmentEntryDescriptor[] fragments = componentInstalled.getFragmentEntries();
-			for (int j = 0; j < fragments.length; ++j) {
-				vectorFragmentsRemoving.addElement(fragments[j]);
-			}
-		}
-	}
-
-	// Remove the components
-	//----------------------
-	if (vectorComponentsRemoving.size() > 0) {
-
-		// Create a string array of component identifiers
-		//-----------------------------------------------
-		LaunchInfo.VersionedIdentifier[] vidaComponents = new LaunchInfo.VersionedIdentifier[vectorComponentsRemoving.size()];
-
-		for (int i = 0; i < vectorComponentsRemoving.size(); ++i) {
-			componentInstalled = (IComponentDescriptor) vectorComponentsRemoving.elementAt(i);
-			vidaComponents[i] = new LaunchInfo.VersionedIdentifier(componentInstalled.getUniqueIdentifier(), componentInstalled.getVersionStr());
-		}
-
-		// Create a string array of plugin identifiers
-		//--------------------------------------------
-		LaunchInfo.VersionedIdentifier[] vidaPlugins = new LaunchInfo.VersionedIdentifier[vectorPluginsRemoving.size()];
-		IPluginEntryDescriptor pluginInstalled = null;
-
-		for (int i = 0; i < vectorPluginsRemoving.size(); ++i) {
-			pluginInstalled = (IPluginEntryDescriptor) vectorPluginsRemoving.elementAt(i);
-			vidaPlugins[i] = new LaunchInfo.VersionedIdentifier(pluginInstalled.getUniqueIdentifier(), pluginInstalled.getVersionStr());
-		}
-
-		// Create a string array of fragment identifiers
-		//----------------------------------------------
-		LaunchInfo.VersionedIdentifier[] vidaFragments = new LaunchInfo.VersionedIdentifier[vectorFragmentsRemoving.size()];
-		IFragmentEntryDescriptor fragmentInstalled = null;
-
-		for (int i = 0; i < vectorFragmentsRemoving.size(); ++i) {
-			fragmentInstalled = (IFragmentEntryDescriptor) vectorFragmentsRemoving.elementAt(i);
-			vidaFragments[i] = new LaunchInfo.VersionedIdentifier(fragmentInstalled.getUniqueIdentifier(), fragmentInstalled.getVersionStr());
-		}
-
-		// Remove the components, plugins, and fragments
-		//----------------------------------------------
-		launchInfo.setInactive(null, vidaComponents, vidaPlugins, vidaFragments);
+		// Uninstall the component assuming no parent
+		//-------------------------------------------
+		uninstallComponent( componentInstalled, null, registry, launchInfo );
 	}
 
 	return;
 }
 /**
+ * Makes the configuration inactive, and all of its child components inactive
+ * only if the configuration / component is removable.
  */
 private static void uninstallProducts(Vector vectorProducts, IUMRegistry registry, LaunchInfo launchInfo) {
 
-	if (vectorProducts == null || vectorProducts.size() == 0)
+	if (vectorProducts == null || vectorProducts.size() == 0 || registry == null || launchInfo == null)
 		return;
 
 	// Determine which products may be removed
 	//----------------------------------------
-	Vector vectorProductsRemoving = new Vector();
-	IdVersionPair pair = null;
-	IProductDescriptor productInstalled = null;
+	IdVersionPair      pair                   = null;
+	IProductDescriptor productInstalled       = null;
+	Vector             vectorProductsRemoving = new Vector();
+
 
 	for (int i = 0; i < vectorProducts.size(); ++i) {
 
@@ -361,16 +414,32 @@ private static void uninstallProducts(Vector vectorProducts, IUMRegistry registr
 		}
 	}
 
-	// Remove the products
-	//--------------------
+	// Remove the configurations
+	//--------------------------
 	if (vectorProductsRemoving.size() > 0) {
 
 		// Create a string array of product identifiers
 		//---------------------------------------------	    
 		LaunchInfo.VersionedIdentifier[] vidaProducts = new LaunchInfo.VersionedIdentifier[vectorProductsRemoving.size()];
 
+		Vector vectorComponentsRemoving = new Vector();
+
 		for (int i = 0; i < vectorProductsRemoving.size(); ++i) {
+			
 			productInstalled = (IProductDescriptor) vectorProductsRemoving.elementAt(i);
+			
+			// Uninstall each child component
+			//-------------------------------
+			IComponentEntryDescriptor[] componentEntries = productInstalled.getComponentEntries();
+			
+			if( componentEntries != null ){
+				for( int j=0; j<componentEntries.length; ++j ){
+					uninstallComponent( componentEntries[j].getComponentDescriptor(), productInstalled, registry, launchInfo );
+				}
+			}
+	
+			// Add to the list of inactive products
+			//-------------------------------------
 			vidaProducts[i] = new LaunchInfo.VersionedIdentifier(productInstalled.getUniqueIdentifier(), productInstalled.getVersionStr());
 		}
 
