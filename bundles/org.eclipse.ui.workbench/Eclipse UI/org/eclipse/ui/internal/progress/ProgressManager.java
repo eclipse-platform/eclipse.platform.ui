@@ -434,10 +434,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	public IProgressMonitor getDefaultMonitor() {
 		//only need a default monitor for operations the UI thread
-		if (PlatformUI.isWorkbenchRunning())
-			return new DefaultMonitor();
-		else
+		if (Display.getDefault() == null)
 			return super.getDefaultMonitor();
+		else
+			return new DefaultMonitor();
+			
 	}
 
 	/**
