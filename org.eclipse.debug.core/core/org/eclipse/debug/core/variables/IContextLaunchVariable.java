@@ -30,7 +30,7 @@ package org.eclipse.debug.core.variables;
  *   &lt;variable 
  *      name="resource_name"
  *      expanderClass="com.example.ResourceNameExpander"
- *      description="The name of the selected resource"
+ *      description="The name of the selected resource"&gt;
  *   &lt;/variable&gt;
  * &lt;/extension&gt;
  * </pre>
