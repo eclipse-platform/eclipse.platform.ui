@@ -326,18 +326,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 */
 	 private CoreException errorRetrieving(String obj, ContentReference archive, URL url, Exception e){
 	 	
-	 		String urlString = "";
-	 		String refString = "";
-	 		
-	 		if (url != null){
-	 			urlString = Policy.bind("FeaturePackagedContentProvider.URLString",url.toExternalForm()); //$NON-NLS-1$
-	 		}
-			
-			if(archive == null) {
-				refString = Policy.bind("FeaturePackagedContentProvider.ContentReferenceString",archive.getIdentifier());//$NON-NLS-1$
-			}
-
-			String[] values = new String[] {obj,refString,urlString };
+			String[] values = new String[] { obj };
 			
 			return Utilities.newCoreException(
 				Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving",values),e);
