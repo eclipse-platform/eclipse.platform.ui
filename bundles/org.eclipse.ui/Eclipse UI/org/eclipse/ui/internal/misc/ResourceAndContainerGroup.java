@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.misc;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -40,6 +41,7 @@ public class ResourceAndContainerGroup implements Listener {
 	public static final int PROBLEM_PATH_INVALID = 4;
 	public static final int PROBLEM_CONTAINER_EMPTY = 5;
 	public static final int PROBLEM_PROJECT_DOES_NOT_EXIST = 6;
+	public static final int PROBLEM_NAME_INVALID = 7;
 	
 	// the client to notify of changes
 	private Listener client;
@@ -318,6 +320,13 @@ protected boolean validateResourceName() {
         problemMessage = WorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
         return false;
     }
+    
+    if(!(new Path("")).isValidSegment(resourceName)){
+		problemType = PROBLEM_NAME_INVALID;
+		problemMessage = WorkbenchMessages.format("ResourceGroup.invalidFilename", new String[] {resourceName});
+		return false;
+	}
+	
     return true;
 }
 
