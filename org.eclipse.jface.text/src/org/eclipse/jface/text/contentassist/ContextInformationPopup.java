@@ -158,13 +158,13 @@ class ContextInformationPopup implements IContentAssistListener {
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				
-				int position= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+				int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 				
-				IContextInformation[] contexts= computeContextInformation(position);
+				IContextInformation[] contexts= computeContextInformation(offset);
 				int count = (contexts == null ? 0 : contexts.length);
 				if (count == 1) {
 					
-					ContextFrame frame= createContextFrame(contexts[0], position);
+					ContextFrame frame= createContextFrame(contexts[0], offset);
 					if (isDuplicate(frame))
 						validateContextInformation();
 					else
@@ -178,7 +178,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					// info is kept)
 					for (int i= 0; i < contexts.length; i++) {
 						IContextInformation info= contexts[i];
-						ContextFrame frame= createContextFrame(info, position);
+						ContextFrame frame= createContextFrame(info, offset);
 						
 						// check top of stack and stored context
 						if (isDuplicate(frame)) {
@@ -225,17 +225,17 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * Displays the given context information for the given offset.
 	 * 
 	 * @param info the context information
-	 * @param position the offset
+	 * @param offset the offset
 	 * @since 2.0
 	 */
-	public void showContextInformation(final IContextInformation info, final int position) {
+	public void showContextInformation(final IContextInformation info, final int offset) {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				if (info == null)
 					validateContextInformation();
 				else {
-					ContextFrame frame= createContextFrame(info, position);
+					ContextFrame frame= createContextFrame(info, offset);
 					if (isDuplicate(frame))
 						validateContextInformation();
 					else
@@ -366,12 +366,12 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Computes all possible context information for the given offset.
 	 * 
-	 * @param position the offset
+	 * @param offset the offset
 	 * @return all possible context information for the given offset
 	 * @since 2.0
 	 */
-	private IContextInformation[] computeContextInformation(int position) {
-		return fContentAssistSubjectControlAdapter.computeContextInformation(fContentAssistant, position);
+	private IContextInformation[] computeContextInformation(int offset) {
+		return fContentAssistSubjectControlAdapter.computeContextInformation(fContentAssistant, offset);
 	}
 	
 	/**
@@ -518,8 +518,8 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (i < 0 || i >= fContextSelectorInput.length)
 			return;
 		
-		int position= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-		internalShowContextInfo(createContextFrame(fContextSelectorInput[i], position));
+		int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+		internalShowContextInfo(createContextFrame(fContextSelectorInput[i], offset));
 	}
 	
 	/**

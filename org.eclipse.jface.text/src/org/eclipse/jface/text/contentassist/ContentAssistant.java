@@ -1359,12 +1359,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Requests that the specified context information to be shown.
 	 *
 	 * @param contextInformation the context information to be shown
-	 * @param position the position to which the context information refers to
+	 * @param offset the offset to which the context information refers to
 	 * @since 2.0
 	 */
-	void showContextInformation(IContextInformation contextInformation, int position) {
+	void showContextInformation(IContextInformation contextInformation, int offset) {
 		if (fContextInfoPopup != null)
-			fContextInfoPopup.showContextInformation(contextInformation, position);
+			fContextInfoPopup.showContextInformation(contextInformation, offset);
 	}
 	
 	/**
@@ -1432,19 +1432,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * determine the appropriate content assist processor to invoke.
 	 *
 	 * @param contentAssistSubjectControl the content assist subject control
-	 * @param position a document position
+	 * @param offset a document offset
 	 * @return an array of completion proposals
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 * @since 3.0
 	 */
-	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int position) {
+	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		fLastErrorMessage= null;
 		
 		ICompletionProposal[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, position);
+		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
 		if (p instanceof ISubjectControlContentAssistProcessor) {
-			result= ((ISubjectControlContentAssistProcessor)p).computeCompletionProposals(contentAssistSubjectControl, position);
+			result= ((ISubjectControlContentAssistProcessor)p).computeCompletionProposals(contentAssistSubjectControl, offset);
 			fLastErrorMessage= p.getErrorMessage();
 		}
 		
@@ -1457,19 +1457,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * determine the appropriate content assist processor to invoke.
 	 *
 	 * @param viewer the viewer for which to compute the proposals
-	 * @param position a document position
+	 * @param offset a document offset
 	 * @return an array of completion proposals
 	 *
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
-	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
+	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		fLastErrorMessage= null;
 		
 		ICompletionProposal[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(viewer, position);
+		IContentAssistProcessor p= getProcessor(viewer, offset);
 		if (p != null) {
-			result= p.computeCompletionProposals(viewer, position);
+			result= p.computeCompletionProposals(viewer, offset);
 			fLastErrorMessage= p.getErrorMessage();
 		}
 		
@@ -1482,19 +1482,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * the appropriate content assist processor to invoke.
 	 *
 	 * @param viewer the viewer for which to compute the context information
-	 * @param position a document position
+	 * @param offset a document offset
 	 * @return an array of context information objects
 	 *
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
-	IContextInformation[] computeContextInformation(ITextViewer viewer, int position) {
+	IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		fLastErrorMessage= null;
 		
 		IContextInformation[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(viewer, position);
+		IContentAssistProcessor p= getProcessor(viewer, offset);
 		if (p != null) {
-			result= p.computeContextInformation(viewer, position);
+			result= p.computeContextInformation(viewer, offset);
 			fLastErrorMessage= p.getErrorMessage();
 		}
 		
@@ -1507,19 +1507,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * the appropriate content assist processor to invoke.
 	 *
 	 * @param contentAssistSubjectControl the content assist subject control
-	 * @param position a document position
+	 * @param offset a document offset
 	 * @return an array of context information objects
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 * @since 3.0
 	 */
-	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int position) {
+	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		fLastErrorMessage= null;
 		
 		IContextInformation[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, position);
+		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
 		if (p instanceof ISubjectControlContentAssistProcessor) {
-			result= ((ISubjectControlContentAssistProcessor)p).computeContextInformation(contentAssistSubjectControl, position);
+			result= ((ISubjectControlContentAssistProcessor)p).computeContextInformation(contentAssistSubjectControl, offset);
 			fLastErrorMessage= p.getErrorMessage();
 		}
 		

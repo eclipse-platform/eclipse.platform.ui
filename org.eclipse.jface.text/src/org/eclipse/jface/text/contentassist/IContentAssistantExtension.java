@@ -12,8 +12,12 @@ package org.eclipse.jface.text.contentassist;
 
 
 /**
- * Extension interface for <code>IContentAssistant</code>.
- * Updates the content assistant to be aware of documents with multiple partitions.
+ * Extends {@link org.eclipse.jface.text.contentassist.IContentAssistant}
+ * with the following functions:
+ * <ul>
+ * 	<li>handle documents with multiple partitions</li>
+ * 	<li>insertion of common completion prefixes</li>
+ * </ul>
  * 
  * @since 3.0
  */
@@ -27,7 +31,9 @@ public interface IContentAssistantExtension {
 	String getDocumentPartitioning();
 
 	/**
-	 * Complete the common prefix of the available choices.
+	 * Inserts the common prefix of the available completions. If no common
+	 * prefix can be computed it is identical to
+	 * {@link IContentAssistant#showPossibleCompletions()}.
 	 *
 	 * @return an optional error message if no proposals can be computed
 	 */

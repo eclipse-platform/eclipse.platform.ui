@@ -17,9 +17,9 @@ import org.eclipse.jface.text.IDocument;
  * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
  * with the following functions:
  * <ul>
- * 	<li> handling of trigger characters other than ENTER</li>
- * 	<li> completion proposal validation for a given offset</li>
- * 	<li> context information can be freely positioned</li>
+ * 	<li>handling of trigger characters other than ENTER</li>
+ * 	<li>completion proposal validation for a given offset</li>
+ * 	<li>context information can be freely positioned</li>
  * </ul>
  * 
  * @since 2.0

@@ -46,14 +46,14 @@ public final class SubjectControlContextInformationValidator implements ISubject
 	/*
 	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 	 */
-	public void install(IContextInformation contextInformation, ITextViewer viewer, int position) {
+	public void install(IContextInformation contextInformation, ITextViewer viewer, int offset) {
 		throw new UnsupportedOperationException();
 	}
 
 	/*
 	 * @see ISubjectControlContextInformationValidator#install(IContextInformation, IContentAssistSubjectControl, int)
 	 */
-	public void install(IContextInformation contextInformation, IContentAssistSubjectControl contentAssistSubjectControl, int position) {
+	public void install(IContextInformation contextInformation, IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		fContextInformation= contextInformation;
 		fContentAssistSubjectControl= contentAssistSubjectControl;
 	}
@@ -61,9 +61,9 @@ public final class SubjectControlContextInformationValidator implements ISubject
 	/*
 	 * @see IContentAssistTipCloser#isContextInformationValid(int)
 	 */
-	public boolean isContextInformationValid(int position) {
+	public boolean isContextInformationValid(int offset) {
 		if (fContentAssistSubjectControl != null && fProcessor instanceof ISubjectControlContentAssistProcessor) {
-			IContextInformation[] infos= ((ISubjectControlContentAssistProcessor)fProcessor).computeContextInformation(fContentAssistSubjectControl, position);
+			IContextInformation[] infos= ((ISubjectControlContentAssistProcessor)fProcessor).computeContextInformation(fContentAssistSubjectControl, offset);
 			if (infos != null && infos.length > 0) {
 				for (int i= 0; i < infos.length; i++) {
 					if (fContextInformation.equals(infos[i]))

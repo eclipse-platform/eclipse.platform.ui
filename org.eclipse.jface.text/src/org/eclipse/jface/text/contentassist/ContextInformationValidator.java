@@ -42,7 +42,7 @@ public final class ContextInformationValidator implements IContextInformationVal
 	/*
 	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 	 */
-	public void install(IContextInformation contextInformation, ITextViewer viewer, int position) {
+	public void install(IContextInformation contextInformation, ITextViewer viewer, int offset) {
 		fContextInformation= contextInformation;
 		fViewer= viewer;
 	}
@@ -50,8 +50,8 @@ public final class ContextInformationValidator implements IContextInformationVal
 	/*
 	 * @see IContentAssistTipCloser#isContextInformationValid(int)
 	 */
-	public boolean isContextInformationValid(int position) {
-		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, position);
+	public boolean isContextInformationValid(int offset) {
+		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, offset);
 		if (infos != null && infos.length > 0) {
 			for (int i= 0; i < infos.length; i++)
 				if (fContextInformation.equals(infos[i]))

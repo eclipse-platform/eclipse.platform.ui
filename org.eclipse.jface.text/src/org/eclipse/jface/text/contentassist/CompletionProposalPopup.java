@@ -405,17 +405,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 			IContextInformation info= p.getContextInformation();
 			if (info != null) {				
 				
-				int position;
+				int contextInformationOffset;
 				if (p instanceof ICompletionProposalExtension) {
 					ICompletionProposalExtension e= (ICompletionProposalExtension) p;
-					position= e.getContextInformationPosition();
+					contextInformationOffset= e.getContextInformationPosition();
 				} else {
 					if (selection == null)
 						selection= fContentAssistSubjectControlAdapter.getSelectedRange();
-					position= selection.x + selection.y;
+					contextInformationOffset= selection.x + selection.y;
 				}
 				
-				fContentAssistant.showContextInformation(info, position);
+				fContentAssistant.showContextInformation(info, contextInformationOffset);
 			} else
 				fContentAssistant.showContextInformation(null, -1);
 			

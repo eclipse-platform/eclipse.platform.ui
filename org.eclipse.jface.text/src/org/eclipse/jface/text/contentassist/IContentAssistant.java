@@ -15,23 +15,41 @@ import org.eclipse.jface.text.ITextViewer;
  
 /** 
  * An <code>IContentAssistant</code> provides support on interactive content completion.
- * The content assistant is a <code>ITextViewer</code> add-on. Its
+ * The content assistant is a {@link org.eclipse.jface.text.ITextViewer} add-on. Its
  * purpose is to propose, display, and insert completions of the content
  * of the text viewer's document at the viewer's cursor position. In addition
  * to handle completions, a content assistant can also be requested to provide
  * context information. Context information is shown in a tool tip like popup.
  * As it is not always possible to determine the exact context at a given
  * document offset, a content assistant displays the possible contexts and requests
- * the user to choose the one whose information should be displayed.<p>
- * A content assistant has a list of  <code>IContentAssistProcessor</code>
+ * the user to choose the one whose information should be displayed.
+ * <p>
+ * A content assistant has a list of {@link org.eclipse.jface.text.contentassist.IContentAssistProcessor}
  * objects each of which is registered for a  particular document content
  * type. The content assistant uses the processors to react on the request 
- * of completing documents or presenting context information.<p>
+ * of completing documents or presenting context information.
+ * </p>
+ * <p>
+ * In order to provide backward compatibility for clients of <code>IContentAssistant</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension} since version 3.0 introducing 
+ *		the following functions:
+ *			<ul>
+ *				<li>handle documents with multiple partitions</li>
+ *				<li>insertion of common completion prefixes</li>
+ *			</ul>
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
  * The interface can be implemented by clients. By default, clients use
- * <code>ContentAssistant</code> as the standard implementer of this interface. 
+ * {@link org.eclipse.jface.text.contentassist.ContentAssistant} as the standard
+ * implementer of this interface.
+ * </p> 
  *
- * @see ITextViewer
- * @see IContentAssistProcessor 
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor
  */
  public interface IContentAssistant {
 	

@@ -327,9 +327,14 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * @param contentAssistant
-	 * @param offset
-	 * @return
+	 * Returns the context information validator that should be used to 
+	 * determine when the currently displayed context information should
+	 * be dismissed. The position is used to determine the appropriate 
+	 * content assist processor to invoke.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param offset a document offset
+	 * @return an validator
 	 */
 	public IContextInformationValidator getContextInformationValidator(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubjectControl != null)
@@ -339,9 +344,13 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * @param contentAssistant
-	 * @param offset
-	 * @return
+	 * Returns the context information presenter that should be used to 
+	 * display context information. The position is used to determine the 
+	 * appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param offset a document offset
+	 * @return a presenter
 	 */
 	public IContextInformationPresenter getContextInformationPresenter(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubjectControl != null)
@@ -351,7 +360,9 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * @param frame
+	 * Installs this adapter's information validator on the given context frame.
+	 * 
+	 * @param frame the context frame
 	 */
 	public void installValidator(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
@@ -362,7 +373,9 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * @param frame
+	 * Installs this adapter's information presenter on the given context frame.
+	 * 
+	 * @param frame the context frame
 	 */
 	public void installContextInformationPresenter(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
@@ -373,15 +386,20 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * @param contentAssistant
-	 * @param position
-	 * @return
+	 * Returns an array of context information objects computed based
+	 * on the specified document position. The position is used to determine 
+	 * the appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param offset a document offset
+	 * @return an array of context information objects
+	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
-	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int position) {
+	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubjectControl != null)
-			return contentAssistant.computeContextInformation(fContentAssistSubjectControl, position);
+			return contentAssistant.computeContextInformation(fContentAssistSubjectControl, offset);
 		else
-			return contentAssistant.computeContextInformation(fViewer, position);
+			return contentAssistant.computeContextInformation(fViewer, offset);
 	}
 
 	/*

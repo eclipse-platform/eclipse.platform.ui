@@ -28,8 +28,8 @@ public interface ISubjectControlContextInformationValidator extends IContextInfo
 	 * 
 	 * @param info the context information which this validator should check
 	 * @param contentAssistSubjectControl the content assist subject control
-	 * @param documentPosition the document position for which the information
+	 * @param offset the document offset for which the information
 	 *           has been computed
 	 */
-	void install(IContextInformation info, IContentAssistSubjectControl contentAssistSubjectControl, int documentPosition);
+	void install(IContextInformation info, IContentAssistSubjectControl contentAssistSubjectControl, int offset);
 }

@@ -12,8 +12,8 @@ package org.eclipse.jface.text.contentassist;
 
 
 /**
- * Extension interface for <code>IContextInformation</code>.
- * Adds the functionality of context information that can be freely positioned.
+ * Extends {@link org.eclipse.jface.text.contentassist.IContextInformation} with 
+ * the ability to freely position the context information.
  * 
  * @since 2.0
  */

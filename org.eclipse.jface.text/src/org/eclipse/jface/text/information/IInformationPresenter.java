@@ -26,7 +26,7 @@ import org.eclipse.jface.text.ITextViewer;
  * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li> {@link IInformationPresenterExtension} since version 3.0 introducing 
+ * <li>{@link IInformationPresenterExtension} since version 3.0 introducing 
  *		the ability to handle documents with multiple partitions</li>
  * </ul>
  * </p>

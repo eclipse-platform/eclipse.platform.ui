@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Table;
  */
 class PopupCloser implements FocusListener, SelectionListener {
 	
-	/** The content assistant to be monitored */
+	/** The content assistant to be monitored. */
 	private ContentAssistant fContentAssistant;
-	/** The table of a selector popup opened by the content assistant */
+	/** The table of a selector popup opened by the content assistant. */
 	private Table fTable;
-	/** The scroll bar of the table for the selector popup */
+	/** The scroll bar of the table for the selector popup. */
 	private ScrollBar fScrollbar;
-	/** Indicates whether the scroll bar thumb has been grabbed */
+	/** Indicates whether the scroll bar thumb has been grabbed. */
 	private boolean fScrollbarClicked= false;
 	
 	/**

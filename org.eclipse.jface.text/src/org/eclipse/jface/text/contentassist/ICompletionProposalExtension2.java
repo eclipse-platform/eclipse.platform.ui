@@ -19,8 +19,8 @@ import org.eclipse.jface.text.ITextViewer;
  * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
  * with the following functions:
  * <ul>
- *	<li> handling of trigger characters with modifiers</li>
- *	<li> visual indication for selection of a proposal</li>
+ *	<li>handling of trigger characters with modifiers</li>
+ *	<li>visual indication for selection of a proposal</li>
  * </ul>
  * 
  * @since 2.1

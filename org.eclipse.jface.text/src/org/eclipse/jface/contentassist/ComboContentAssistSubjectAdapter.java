@@ -38,10 +38,10 @@ import org.eclipse.jface.util.Assert;
  *	Known issues:
  *  <ul>
  *		<li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50121
- *		=> Combo doesn't get Arrow_up/Down keys on GTK</li>
+ *		= &gt; Combo doesn't get Arrow_up/Down keys on GTK</li>
  *
  *		<li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50123
- *		=> Combo broken on MacOS X</li>
+ *		= &gt; Combo broken on MacOS X</li>
  *  </ul>
  *	</p>
  *

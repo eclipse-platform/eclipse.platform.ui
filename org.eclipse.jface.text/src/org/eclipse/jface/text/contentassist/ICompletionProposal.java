@@ -25,22 +25,22 @@ import org.eclipse.jface.text.IDocument;
  * In order to provide backward compatibility for clients of <code>ICompletionProposal</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li> {@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension} since version 2.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension} since version 2.0 introducing 
  *		the following functions:
  *			<ul>
- *				<li> handling of trigger characters other than ENTER</li>
- *				<li> completion proposal validation for a given offset</li>
- *				<li> context information can be freely positioned</li>
+ *				<li>handling of trigger characters other than ENTER</li>
+ *				<li>completion proposal validation for a given offset</li>
+ *				<li>context information can be freely positioned</li>
  *			</ul>
  * </li>
- * <li> {@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension2} since version 2.1 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension2} since version 2.1 introducing 
  *		the following functions:
  *			<ul>
- *				<li> handling of trigger characters with modifiers</li>
- *				<li> visual indication for selection of a proposal</li>
+ *				<li>handling of trigger characters with modifiers</li>
+ *				<li>visual indication for selection of a proposal</li>
  *			</ul>
  * </li>
- * <li> {@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension3} since version 3.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension3} since version 3.0 introducing 
  *		the following functions:
  *			<ul>
  *				<li>provision of a custom information control creator</li>
