@@ -25,7 +25,7 @@ public final class LevensteinTestHelper {
 	private final Accessor fLevenstein;
 
 	public LevensteinTestHelper(Levenstein levenstein) {
-		fLevenstein= new Accessor(levenstein);
+		fLevenstein= new Accessor(levenstein, levenstein.getClass());
 	}
 	public void initMatrix() {
 		fLevenstein.invoke("initMatrix", null);

@@ -32,13 +32,18 @@ public class Accessor extends Assert {
 	private Object fInstance;
 
 	/**
-	 * Creates an accessor for the given instance.
+	 * Creates an accessor for the given <code>instance</code> and
+	 * <code>class</code>. Only non-inherited members that particular
+	 * <code>class</code> can be accessed.
 	 * 
 	 * @param instance the instance
+	 * @param clazz the class
 	 */
-	public Accessor(Object instance) {
+	public Accessor(Object instance, Class clazz) {
+		assertNotNull(instance);
+		assertNotNull(clazz);
 		fInstance= instance;
-		fClass= instance.getClass();
+		fClass= clazz;
 	}
 	
 	/**
