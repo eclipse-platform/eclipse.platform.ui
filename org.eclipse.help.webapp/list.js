@@ -89,6 +89,9 @@ function mouseClickHandler(e) {
  */
 function highlightTopic(topic)
 {
+  if (!topic || (topic.tagName != "A" && topic.parentNode.tagName != "A"))
+	return;
+	
   var tr = getTRNode(topic); 
   if (tr != null)
   {
