@@ -625,6 +625,8 @@ public static void setPluginRegistry(IPluginRegistry value) {
 }
 private static void setupMetaArea(String locationString) throws CoreException {
 	location = new Path(locationString);
+	if (!location.isAbsolute())
+		location = new Path(System.getProperty("user.dir")).append(location);
 	// must create the meta area first as it defines all the other locations.
 	if (location.toFile().exists()) {
 		if (!location.toFile().isDirectory()) {
