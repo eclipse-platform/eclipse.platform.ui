@@ -849,7 +849,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
         tree.setLayoutData(data);
         myApplyDialogFont(tree.getViewer().getControl());
-        myApplyDialogFont(tree.getFilterField());
+        myApplyDialogFont(tree.getFilterControl());
 
         tree.getViewer().setLabelProvider(labelProvider);
         tree.getViewer().setContentProvider(new ThemeContentProvider());

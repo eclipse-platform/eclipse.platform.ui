@@ -966,4 +966,18 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		tab.setText(getCurrentPage().getTitle());
 		tab.setImage(getCurrentPage().getImage());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#createFilteredTree(org.eclipse.swt.widgets.Composite, org.eclipse.ui.internal.dialogs.PatternFilter, int)
+	 */
+	protected FilteredTree createFilteredTree(Composite parent, PatternFilter filter, int styleBits) {
+		FilteredComboTree comboTree =  new FilteredComboTree(parent, styleBits, filter);
+//		Combo filteredCombo = comboTree.getFilterCombo();
+//		WorkbenchPreferenceManager manager = (WorkbenchPreferenceManager) getPreferenceManager();
+//		Iterator values = manager.getKeywords().keySet().iterator();
+//		while(values.hasNext()){
+//			filteredCombo.add((String) values.next());
+//		}
+		return comboTree;
+	}
 }

@@ -277,12 +277,14 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.dialogs.IDEEditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Editors">
+         <keywordReference id="org.eclipse.ui.ide.editing"/>
       </page>
       <page
             name="%PreferencePages.Perspectives"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.dialogs.IDEPerspectivesPreferencePage"
             id="org.eclipse.ui.preferencePages.Perspectives">
+         <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.LinkedResources"
@@ -306,24 +308,28 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
+         <keywordReference id="org.eclipse.ui.ide.editing"/>
       </page>
       <page
             name="%PreferencePages.Views"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
             id="org.eclipse.ui.preferencePages.Views">
+         <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage"
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
+         <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.Decorators"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Decorators">
+         <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.Startup"
@@ -342,6 +348,12 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             name="%PreferencePages.Activities"
             id="org.eclipse.ui.ide.page1"/>
+      <keyword
+            name="%PreferenceKeywords.Editing"
+            id="org.eclipse.ui.ide.editing"/>
+      <keyword
+            name="%PreferenceKeywords.Appearance"
+            id="org.eclipse.ui.ide.appearance"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">

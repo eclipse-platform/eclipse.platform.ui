@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -25,6 +26,8 @@ import org.eclipse.jface.preference.PreferenceManager;
 public class WorkbenchPreferenceManager extends PreferenceManager {
 
 	WorkbenchPreferenceGroup[] groups;
+	
+	Map keywords;
 
 	private final static String GENERAL_ID = "org.eclipse.ui.general";//$NON-NLS-1$
 
@@ -125,5 +128,19 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 		}
 		sortGroups(newGroups);
 
+	}
+	/**
+	 * Get the mapping of keyword ids to human readable Strings.
+	 * @return 
+	 */
+	public Map getKeywords() {
+		return keywords;
+	}
+	/**
+	 * Set the mapping of keyword ids to human readable Strings.
+	 * @param keywords
+	 */
+	public void setKeywords(Map keywords) {
+		this.keywords = keywords;
 	}
 }

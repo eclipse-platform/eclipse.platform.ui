@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -57,12 +58,19 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private final static String TRUE_STRING = "true";//$NON-NLS-1$
 
 	private static final String TAG_GROUP = "group"; //$NON-NLS-1$
+	
+	private static final String TAG_KEYWORD = "keyword"; //$NON-NLS-1$
+	
+	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
 	private List nodes;
 
 	private List groups;
+	
+	private Hashtable keywords;
 
 	private IWorkbench workbench;
+	
 
 	class PreferencesCategoryNode extends CategoryNode {
 
@@ -173,6 +181,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
 		groups = new ArrayList();
+		keywords = new Hashtable();
 
 		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 
@@ -187,6 +196,8 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_GROUP) == true)
 			return readGroupElement(element);
+		if (element.getName().equals(TAG_KEYWORD) == true)
+			return readKeywordElement(element);
 		if (element.getName().equals(TAG_PAGE) == false)
 			return false;
 		WorkbenchPreferenceNode node = createNode(workbench, element);
@@ -195,7 +206,20 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		readElementChildren(element);
 		return true;
 	}
+	
+	/**
+	 * Read a keyword from the configuration element
+	 * @param element
+	 * @return boolean <code>true</code> if the definition
+	 * was successful
+	 */
+	private boolean readKeywordElement(IConfigurationElement element) {
 
+		String name = element.getAttribute(ATT_NAME);
+		String id = element.getAttribute(ATT_ID);
+		keywords.put(id,name);
+		return true;
+	}
 	/**
 	 * Read an element that is a group.
 	 * @param element
@@ -248,13 +272,15 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		if (name == null || id == null || className == null) {
 			return null;
 		}
+		
+		Collection keywordReferences = readKeywordReferences(element); 
 		ImageDescriptor image = null;
 		if (imageName != null) {
 			String contributingPluginId = element.getDeclaringExtension().getNamespace();
 			image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
 		}
 		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category, image,
-				element, workbench);
+				element, keywordReferences, workbench);
 		return node;
 	}
 
@@ -268,6 +294,24 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		HashSet list = new HashSet();
 		for (int i = 0; i < pages.length; i++) {
 			IConfigurationElement page = pages[i];
+			String id = page.getAttribute(ATT_ID);
+			if (id != null)
+				list.add(id);
+		}
+
+		return list;
+	}
+	
+	/**
+	 * Read the pages for the receiver from element.
+	 * @param element
+	 * @return Collection the ids of the children
+	 */
+	private static Collection readKeywordReferences(IConfigurationElement element) {
+		IConfigurationElement[] references = element.getChildren(TAG_KEYWORD_REFERENCE);
+		HashSet list = new HashSet();
+		for (int i = 0; i < references.length; i++) {
+			IConfigurationElement page = references[i];
 			String id = page.getAttribute(ATT_ID);
 			if (id != null)
 				list.add(id);
@@ -332,5 +376,12 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	public Collection getGroups() {
 		return this.groups;
+	}
+	/**
+	 * Get the mapping of keywords to readable String.
+	 * @return a mapping from keyword ids to keyword strings
+	 */
+	public Map getKeywords() {
+		return keywords;
 	}
 }

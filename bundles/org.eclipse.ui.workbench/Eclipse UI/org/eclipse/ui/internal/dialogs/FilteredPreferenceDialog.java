@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -84,12 +87,27 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 				IPreferenceNode node = (IPreferenceNode) element;
 				Object[] children = contentProvider.getChildren(node);
-				return match(node.getLabelText()) || (filter(viewer, element, children).length > 0);
+				if (match(node.getLabelText()) || (filter(viewer, element, children).length > 0))
+					return true;
+				if(node instanceof WorkbenchPreferenceNode){
+					Collection keywordCollection = ((WorkbenchPreferenceNode) node).getKeywordReferences();
+					if(keywordCollection == null)
+						return false;
+					Iterator keywords = keywordCollection.iterator();
+					while(keywords.hasNext()){
+						String id = (String) keywords.next();
+						String keyword = 
+							(String) ((WorkbenchPreferenceManager) getPreferenceManager()).keywords.get(id);
+						if(match(keyword))
+							return true;
+					}
+				}
+				return false;
 
 			}
 		};
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredTree(parent, styleBits, filter);
+		filteredTree = createFilteredTree(parent, filter, styleBits);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -115,6 +133,17 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		super.addListeners(filteredTree.getViewer());
 		return filteredTree.getViewer();
+	}
+
+	/**
+	 * Create the filtered tree
+	 * @param parent
+	 * @param filter
+	 * @param styleBits
+	 * @return FilteredTree
+	 */
+	protected FilteredTree createFilteredTree(Composite parent, PatternFilter filter, int styleBits) {
+		return new FilteredTree(parent, styleBits, filter);
 	}
 
 	/**

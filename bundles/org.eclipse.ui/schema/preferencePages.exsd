@@ -29,6 +29,8 @@ the root level.
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -64,6 +66,9 @@ the root level.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -160,6 +165,50 @@ the root level.
             <annotation>
                <documentation>
                   The id of the page being referenced.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="keyword">
+      <annotation>
+         <documentation>
+            The keyword is the definition of the id and the human readable name of a keyword.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id is the id of the keyword for preference pages to refer to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The value is the human readable value for the keyword
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="keywordReference">
+      <annotation>
+         <documentation>
+            A reference by a preference page to a keyword.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the keyword being referred to.
                </documentation>
             </annotation>
          </attribute>
