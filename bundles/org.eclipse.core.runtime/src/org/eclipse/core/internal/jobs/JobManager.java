@@ -501,6 +501,9 @@ public class JobManager implements IJobManager {
 			while (previous != null) {
 				if (!previous.isSystem())
 					return true;
+				//implicit jobs should interrupt unless they act on behalf of system jobs
+				if (previous instanceof ThreadJob && ((ThreadJob)previous).shouldInterrupt())
+					return true;
 				previous = previous.previous();
 			}
 			//none found

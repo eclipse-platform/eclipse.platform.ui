@@ -32,6 +32,7 @@ class ImplicitJobs {
 		private ISchedulingRule[] ruleStack;
 		protected boolean running = false;
 		private int top;
+		private Job realJob;
 		/**
 		 * Set to true if this thread job is running in a thread that did
 		 * not own a rule already.  This means it needs to acquire the
@@ -213,6 +214,16 @@ class ImplicitJobs {
 			}
 			return Job.ASYNC_FINISH;
 		}
+		public void setRealJob(Job realJob) {
+			this.realJob = realJob;
+		}
+		/**
+		 * Returns true if this job should cause a self-canceling job
+		 * to cancel itself, and false otherwise.
+		 */
+		boolean shouldInterrupt() {
+			return realJob == null ? true : !realJob.isSystem();
+		}
 	}
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
@@ -253,7 +264,7 @@ class ImplicitJobs {
 				threadJob.acquireRule = true;
 			}
 			//indicate if it is a system job to ensure isBlocking works correctly
-			threadJob.setSystem(realJob != null ? realJob.isSystem() : false);
+			threadJob.setRealJob(realJob);
 			threadJob.setThread(currentThread);
 			threadJob.push(rule);
 		}
