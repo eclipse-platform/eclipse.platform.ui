@@ -32,22 +32,6 @@ package org.eclipse.jface.bindings;
 public abstract class Trigger implements Comparable {
 
     /**
-     * A factor for computing the hash code for all schemes.
-     */
-    protected final static int HASH_FACTOR = 89;
-
-    /**
-     * The hash code for this object. This value is computed lazily, and marked
-     * as invalid when one of the values on which it is based changes.
-     */
-    protected transient int hashCode;
-
-    /**
-     * Whether <code>hashCode</code> still contains a valid value.
-     */
-    protected transient boolean hashCodeComputed = false;
-
-    /**
      * Tests whether this object is equal to another object. A handle object is
      * only equal to another trigger with the same properties.
      * 

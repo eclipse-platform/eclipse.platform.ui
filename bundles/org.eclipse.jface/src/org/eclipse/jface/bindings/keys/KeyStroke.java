@@ -52,12 +52,6 @@ import org.eclipse.jface.util.Util;
 public final class KeyStroke extends Trigger implements Comparable {
 
 	/**
-	 * An internal constant used only in this object's hash code algorithm.
-	 */
-	private static final int HASH_INITIAL = KeyStroke.class.getName()
-			.hashCode();
-
-	/**
 	 * The delimiter between multiple keys in a single key strokes -- expressed
 	 * in the formal key stroke grammar. This is not to be displayed to the
 	 * user. It is only intended as an internal representation.
@@ -265,14 +259,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(modifierKeys);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(naturalKey);
-			hashCodeComputed = true;
-		}
-
-		return hashCode;
+		return modifierKeys << 4 + naturalKey;
 	}
 
 	/**
