@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -26,6 +27,8 @@ import org.osgi.framework.Bundle;
  */
 
 public class CharsetDeltaJob extends Job implements IContentTypeManager.IContentTypeChangeListener {
+
+	public final static String FAMILY_CHARSET_DELTA = ResourcesPlugin.PI_RESOURCES + "charsetJobFamily"; //$NON-NLS-1$
 
 	interface ICharsetListenerFilter {
 
@@ -59,6 +62,10 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 			work.add(filter);
 		}
 		schedule(CHARSET_DELTA_DELAY);
+	}
+
+	public boolean belongsTo(Object family) {
+		return FAMILY_CHARSET_DELTA.equals(family);
 	}
 
 	public void charsetPreferencesChanged(final IProject project) {
