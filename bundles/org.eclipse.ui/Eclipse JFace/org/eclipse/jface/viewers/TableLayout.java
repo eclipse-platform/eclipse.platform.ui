@@ -7,6 +7,10 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
@@ -78,12 +82,17 @@ public Point computeSize(Composite c, int wHint, int hHint, boolean flush) {
  * Method declared on Layout.
  */
 public void layout(Composite c, boolean flush) {
-	// Only do initial layout.  Trying to maintain proportions when resizing is too hard,
-	// causes lots of widget flicker, causes scroll bars to appear and occasionally stick around (on Windows),
-	// requires hooking column resizing as well, and may not be what the user wants anyway.
-	if (!firstTime) 
-		return;
-	
+	if (firstTime) {
+		firstTimeLayout(c,flush);
+	} else {
+		lastColumnLayout(c);
+	}
+}
+
+/*
+ * Layout the table according to its columns layout data.
+ */
+private void firstTimeLayout(Composite c, boolean flush) {	
 	Table table = (Table) c;
 	int width = table.getClientArea().width;
 
@@ -161,10 +170,59 @@ public void layout(Composite c, boolean flush) {
 //	}
 //	System.out.println(" Total: " + total);
 
-	firstTime = false;
+	final ControlListener controlListener = new ControlListener() {
+		public void controlMoved(ControlEvent e){}
+		public void controlResized(ControlEvent e) {
+			columnResized(e);
+		}
+	};
+	DisposeListener disposeListener = new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			((TableColumn)e.widget).removeControlListener(controlListener);
+		}
+	};
 	
 	for (int i = 0; i < size; i++) {
+		tableColumns[i].addDisposeListener(disposeListener);
+		tableColumns[i].addControlListener(controlListener);
 		tableColumns[i].setWidth(widths[i]);
 	}
+	firstTime = false;
+}
+/*
+ * Make sure the last column uses all the client area.
+ */
+private void lastColumnLayout(Composite c) {
+	Table table = (Table) c;
+	int width = table.getClientArea().width;
+	int columnCount = table.getColumnCount();
+	for(int i=0;i<columnCount;i++) {
+		width = width - table.getColumn(i).getWidth();
+	}
+	if(width > 0) {
+		TableColumn column = table.getColumn(columnCount - 1);
+		column.setWidth(column.getWidth() + width);
+	}
+}
+
+/*
+ * Make sure the columns are not smaller the minimun size.
+ */
+private void columnResized(ControlEvent e) {
+	if(firstTime)
+		return;
+	TableColumn column = (TableColumn) e.widget;
+	Table table = column.getParent();
+	//Find the index of column
+	int i = 0;
+	int columnCount = table.getColumnCount();
+	for (; i < columnCount; i++) {
+		if (column == table.getColumn(i))
+					break;
+	}
+	ColumnLayoutData layoutData = (ColumnLayoutData)columns.get(i);
+	if (column.getWidth() < layoutData.minimumWidth)
+		column.setWidth(layoutData.minimumWidth);
+	lastColumnLayout(table);
 }
 }
