@@ -3596,7 +3596,10 @@ public class TextViewer extends Viewer implements
 				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i]);
 				// end line of region
-				int offset= regions[i].getOffset() + regions[i].getLength() - 1;
+				int length= regions[i].getLength();
+				int offset= regions[i].getOffset() + length;
+				if (length > 0)
+					offset--;
 				lines[j + 1]= (lines[j] == -1 ? -1 : d.getLineOfOffset(offset));
 				lineCount += lines[j + 1] - lines[j] + 1;
 			}
