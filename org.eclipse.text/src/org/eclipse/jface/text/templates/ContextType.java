@@ -146,6 +146,10 @@ public class ContextType {
 			if (variable.isResolved())
 				continue;			
 
+			// remember old values
+			int[] oldOffsets= variable.getOffsets();
+			int oldLength= variable.getLength();
+			
 			String type= variable.getType();
 			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
 			if (resolver != null)
@@ -153,12 +157,10 @@ public class ContextType {
 			
 			if (variable.isResolved()) {
 				String value= variable.getDefaultValue();
-				int[] offsets= variable.getOffsets();
-				int length= variable.getLength();
 				
 				
-				for (int k= 0; k != offsets.length; k++)
-					edits.add(new ReplaceEdit(offsets[k], length, value));
+				for (int k= 0; k != oldOffsets.length; k++)
+					edits.add(new ReplaceEdit(oldOffsets[k], oldLength, value));
 			}
 			
         }
