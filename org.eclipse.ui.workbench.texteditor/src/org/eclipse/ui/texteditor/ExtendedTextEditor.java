@@ -607,10 +607,17 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		return fChangeRulerColumn;
 	}
 	
-	/*
+	/**
+	 * Returns {@link #createCompositeRuler()}. Subclasses should not override this method, but
+	 * rather <code>createCompositeRuler</code> if they want to contribute their own vertical ruler
+	 * implementation. If not an instance of {@link CompositeRuler} is returned, the built-in ruler
+	 * columns (line numbers, annotations) will not work.
+	 * 
+	 * <p>May become <code>final</code> in the future.</p>
+	 * 
 	 * @see AbstractTextEditor#createVerticalRuler()
 	 */
-	protected final IVerticalRuler createVerticalRuler() {
+	protected IVerticalRuler createVerticalRuler() {
 		return createCompositeRuler();
 	}
 	
