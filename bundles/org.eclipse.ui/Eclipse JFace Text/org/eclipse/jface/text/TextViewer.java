@@ -1445,22 +1445,21 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
-	 * Returns the width of the representation of a text range in this
-	 * viewer's document as drawn in this viewer's widget.
+	 * Returns the width of the representation of a text range in the
+	 * visible region of the viewer's document as drawn in this viewer's
+	 * widget.
 	 * 
-	 * @param offset the offset text range
-	 * @param length the length of the text range
+	 * @param offset the offset of the text range in the visible region
+	 * @param length the length of the text range in the visible region
 	 * @return the width of the presentation of the specified text range
 	 */
 	final protected int getWidthInPixels(int offset, int length) {		
 		
-		int start= offset - getVisibleRegionOffset();
-		int end= start + length;
-		
-		Point left= fTextWidget.getLocationAtOffset(start);
+		Point left= fTextWidget.getLocationAtOffset(offset);
 		Point right= new Point(left.x, left.y);
 		
-		for (int i= start +1; i <= end; i++) {
+		int end= offset + length;
+		for (int i= offset +1; i <= end; i++) {
 			
 			Point p= fTextWidget.getLocationAtOffset(i);
 			
@@ -1471,7 +1470,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				right.x= p.x;				
 		}
 		
-		return  right.x - left.x;
+		return right.x - left.x;
 	}
 	
 	/**
