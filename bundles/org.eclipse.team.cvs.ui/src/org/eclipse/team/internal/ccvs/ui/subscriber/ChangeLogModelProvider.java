@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
@@ -136,6 +135,13 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
             super(Policy.bind("ChangeLogModelProvider.0"), configuration); //$NON-NLS-1$
         }
         
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#needsToSaveDirtyEditors()
+		 */
+		protected boolean needsToSaveDirtyEditors() {
+			return false;
+		}
+        
         /* (non-Javadoc)
          * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSyncInfoFilter()
          */
@@ -247,6 +253,10 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
             return OUTGOING_FILE_FILTER;
         }
         
+		protected boolean needsToSaveDirtyEditors() {
+			return false;
+		}
+        
         /* (non-Javadoc)
          * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSubscriberOperation(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration, org.eclipse.compare.structuremergeviewer.IDiffElement[])
          */
@@ -290,7 +300,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
                     new SyncInfoDirectionFilter(new int[] { SyncInfo.INCOMING, SyncInfo.CONFLICTING })
             });
         }
-        
+                
         /* (non-Javadoc)
          * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
          */
