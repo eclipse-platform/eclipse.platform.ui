@@ -245,6 +245,11 @@ public interface IWorkbenchActionConstants {
 	public static final String PRINT = "print"; 			// Global action. //$NON-NLS-1$
 	
 	/**
+	 * File menu: name of group for extra Print-like actions (value <code>"print.ext"</code>).
+	 */
+	public static final String PRINT_EXT = "print.ext";		// Group. //$NON-NLS-1$
+
+	/**
 	 * File menu: name of standard Import action (value <code>"import"</code>).
 	 */
 	public static final String IMPORT = "import"; //$NON-NLS-1$

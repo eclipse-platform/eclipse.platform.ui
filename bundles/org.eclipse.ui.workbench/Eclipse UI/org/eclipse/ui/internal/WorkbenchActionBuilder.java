@@ -326,6 +326,7 @@ public class WorkbenchActionBuilder {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 		menu.add(new Separator());
 		menu.add(printAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
 		menu.add(new Separator());
 		menu.add(importResourcesAction);
 		menu.add(exportResourcesAction);
@@ -567,6 +568,7 @@ public class WorkbenchActionBuilder {
 		tBarMgr.add(saveAsAction);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_EXT, false);
 		tBarMgr.add(printAction);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PRINT_EXT, false);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_GROUP, true);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_EXT, false);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.MB_ADDITIONS, true);
