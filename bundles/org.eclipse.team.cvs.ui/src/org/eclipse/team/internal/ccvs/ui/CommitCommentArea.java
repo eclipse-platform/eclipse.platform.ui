@@ -123,25 +123,15 @@ public class CommitCommentArea extends DialogArea {
 		
 		// determine the initial comment text
 		String initialComment;
-		boolean selectText = false;
 		try {
 			initialComment = getCommitTemplate();
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e);
 			initialComment = null;
 		}
-		if (initialComment == null || initialComment.length() == 0) {
-			// there is no template, so use the latest comment
-			if (comments.length > 0)
-				previousCommentsCombo.select(0);
-			initialComment = getSelectedComment();
-			selectText = true;
-		} else {
-			// use the template
-			previousCommentsCombo.deselectAll();
+		if (initialComment != null && initialComment.length() != 0) {
+			text.setText(initialComment);
 		}
-		text.setText(initialComment);
-		if (selectText) text.selectAll();
 	}
 
 	/*
