@@ -527,48 +527,37 @@ public class OperationValidator implements IOperationValidator {
 	 * feature
 	 */
 	private static ArrayList computeFeatureSubtree(
-		IFeature top,
-		IFeature feature,
-		ArrayList features,
-		boolean tolerateMissingChildren)
-		throws CoreException {
-		return computeFeatureSubtree(
-			top,
-			feature,
-			features,
-			tolerateMissingChildren,
-			null);
-	}
-
-	/*
-	 * Compute the nested feature subtree starting at the specified base
-	 * feature
-	 */
-	private static ArrayList computeFeatureSubtree(
 			IFeature top,
 			IFeature feature,
 			ArrayList features,
 			boolean tolerateMissingChildren,
-			ArrayList configuredFeatures)
+			ArrayList configuredFeatures,
+			ArrayList visitedFeatures)
 	throws CoreException {
 
 		// check arguments
-		if (features == null)
-			features = new ArrayList();
 		if (top == null)
 			return features;
 		if (feature == null)
 			feature = top;
+		if (features == null)
+			features = new ArrayList();
+		if (visitedFeatures == null)
+			visitedFeatures = new ArrayList();
 
 		// check for <includes> cycle
-//		if (features.contains(feature)) {
-//			IStatus status =
-//			createStatus(top, UpdateUtils.getString(KEY_CYCLE));
-//			throw new CoreException(status);
-//		}
+		if (visitedFeatures.contains(feature)) {
+			IStatus status =
+			createStatus(top, UpdateUtils.getString(KEY_CYCLE));
+			throw new CoreException(status);
+		} else {
+			// keep track of visited features so we can detect cycles
+			visitedFeatures.add(feature);
+		}
 
 		// return specified base feature and all its children
-		features.add(feature);
+		if (!features.contains(feature))
+			features.add(feature);
 		IIncludedFeatureReference[] children =
 		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
@@ -583,12 +572,16 @@ public class OperationValidator implements IOperationValidator {
 						top,
 						child,
 						features,
-						tolerateMissingChildren);
+						tolerateMissingChildren,
+						null,
+						visitedFeatures);
 			} catch (CoreException e) {
 				if (!children[i].isOptional() && !tolerateMissingChildren)
 					throw e;
 			}
 		}
+		// no cycles for this feature during DFS
+		visitedFeatures.remove(feature);
 		return features;
 	}
 	/*
@@ -677,13 +670,15 @@ public class OperationValidator implements IOperationValidator {
 
 		ArrayList addTree = computeFeatureSubtree(add, null, null, false,
 		/* do not tolerate missing children */
-		features);
+		features, null);
 		ArrayList removeTree =
 			computeFeatureSubtree(
 				remove,
 				null,
 				null,
-				true /* tolerate missing children */
+				true /* tolerate missing children */,
+				null,
+				null
 		);
 		if (remove != null) {
 			// Patches to features are removed together with
@@ -721,7 +716,7 @@ public class OperationValidator implements IOperationValidator {
 			IFeature candidate = (IFeature) features.get(i);
 			if (UpdateUtils.isPatch(feature, candidate)) {
 				ArrayList removeTree =
-					computeFeatureSubtree(candidate, null, null, true);
+					computeFeatureSubtree(candidate, null, null, true,null,null);
 				result.addAll(removeTree);
 			}
 		}
@@ -1239,7 +1234,9 @@ public class OperationValidator implements IOperationValidator {
 					feature,
 					null,
 					null,
-					false /* do not tolerate missing children */
+					false /* do not tolerate missing children */,
+					null,
+					null
 				);
 			} catch (CoreException e) {
 				status.add(e.getStatus());
