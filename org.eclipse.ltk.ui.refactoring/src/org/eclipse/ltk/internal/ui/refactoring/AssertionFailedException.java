@@ -21,6 +21,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
  */
 /* package */
 class AssertionFailedException extends RuntimeException {
+	/** This class is not intended to be serialized. */
 	private static final long serialVersionUID= 1L;
 	/** 
 	 * Constructs a new exception.

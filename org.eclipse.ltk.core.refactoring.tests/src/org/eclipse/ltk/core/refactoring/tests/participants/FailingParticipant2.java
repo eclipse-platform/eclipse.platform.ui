@@ -23,6 +23,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 public class FailingParticipant2 extends RenameParticipant {
 
 	public static class Exception extends RuntimeException {
+		/** This class is not intended to be serialized. */
 		private static final long serialVersionUID= 1L;
 	}
 	
