@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -39,11 +41,14 @@ import org.eclipse.update.operations.*;
  * @see ViewPart
  */
 public class NewConfigurationView
-	extends BaseTreeView
+	extends ViewPart
 	implements
 		IInstallConfigurationChangedListener,
 		IConfiguredSiteChangedListener,
 		ILocalSiteChangedListener {
+	private TreeViewer treeViewer;
+	private DrillDownAdapter drillDownAdapter;
+	private Action collapseAllAction;
 	private static final String KEY_CURRENT = "ConfigurationView.current";
 	private static final String KEY_SHOW_UNCONF_FEATURES =
 		"ConfigurationView.showUnconfFeatures";
@@ -55,8 +60,6 @@ public class NewConfigurationView
 		"ConfigurationView.showSites";
 	private static final String STATE_SHOW_NESTED_FEATURES =
 		"ConfigurationView.showNestedFeatures";
-	//private static final String KEY_PRESERVE =
-	//"ConfigurationView.Popup.preserve";
 	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
 
@@ -68,7 +71,6 @@ public class NewConfigurationView
 	private InstallOptionalFeatureAction installOptFeatureAction;
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
-	//private SaveConfigurationAction preserveAction;
 	private Action propertiesAction;
 	private SiteStateAction2 siteStateAction;
 	private SashForm splitter;
@@ -107,6 +109,7 @@ public class NewConfigurationView
 				return;
 			updateTitle(newInput);
 		}
+		
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
@@ -285,22 +288,22 @@ public class NewConfigurationView
 				if (efix && !adapter.isConfigured())
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
 				if (OperationsManager.findPendingOperation(feature) == null) {
-
-					int code =
-						getStatusCode(
-							feature,
-							getLocalSite().getFeatureStatus(feature));
-					switch (code) {
-						case IFeature.STATUS_UNHAPPY :
-							flags |= UpdateLabelProvider.F_ERROR;
-							break;
-						case IFeature.STATUS_AMBIGUOUS :
-							flags |= UpdateLabelProvider.F_WARNING;
-							break;
-						default :
-							if (adapter.isConfigured() && adapter.isUpdated())
-								flags |= UpdateLabelProvider.F_UPDATED;
-							break;
+					ILocalSite localSite = getLocalSite();
+					if (localSite != null) {
+						int code =
+							getStatusCode(feature, localSite.getFeatureStatus(feature));
+						switch (code) {
+							case IFeature.STATUS_UNHAPPY :
+								flags |= UpdateLabelProvider.F_ERROR;
+								break;
+							case IFeature.STATUS_AMBIGUOUS :
+								flags |= UpdateLabelProvider.F_WARNING;
+								break;
+							default :
+								if (adapter.isConfigured() && adapter.isUpdated())
+									flags |= UpdateLabelProvider.F_UPDATED;
+								break;
+						}
 					}
 				}
 				return provider.get(baseDesc, flags);
@@ -350,19 +353,16 @@ public class NewConfigurationView
 			edesc = info.getWindowImage();
 		eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
 	}
+	
 
 	public void initProviders() {
-		final TreeViewer treeViewer = getTreeViewer();
 		treeViewer.setContentProvider(new LocalSiteProvider());
-		treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		treeViewer.setLabelProvider(new LocalSiteLabelProvider());
+		treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		treeViewer.setSorter(new ConfigurationSorter());
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
+		ILocalSite localSite = getLocalSite();
+		if (localSite != null)
 			localSite.addLocalSiteChangedListener(this);
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-		}
 
 		modelListener = new IUpdateModelChangedListener() {
 			public void objectsAdded(Object parent, Object[] children) {
@@ -404,25 +404,21 @@ public class NewConfigurationView
 		final Object[][] bag = new Object[1][];
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
-				try {
-					ILocalSite localSite = SiteManager.getLocalSite();
-					IInstallConfiguration config =
-						localSite.getCurrentConfiguration();
-					IConfiguredSite[] sites = config.getConfiguredSites();
-					Object[] result = new Object[sites.length];
-					for (int i = 0; i < sites.length; i++) {
-						result[i] = new ConfiguredSiteAdapter(config, sites[i]);
-					}
-					if (!initialized) {
-						config.addInstallConfigurationChangedListener(
-							NewConfigurationView.this);
-						initialized = true;
-					}
-					bag[0] = result;
-				} catch (CoreException e) {
-					UpdateUI.logException(e);
-					bag[0] = new Object[0];
+				ILocalSite localSite = getLocalSite();
+				if (localSite == null)
+					return;
+				IInstallConfiguration config = getLocalSite().getCurrentConfiguration();
+				IConfiguredSite[] sites = config.getConfiguredSites();
+				Object[] result = new Object[sites.length];
+				for (int i = 0; i < sites.length; i++) {
+					result[i] = new ConfiguredSiteAdapter(config, sites[i]);
 				}
+				if (!initialized) {
+					config.addInstallConfigurationChangedListener(
+						NewConfigurationView.this);
+					initialized = true;
+				}
+				bag[0] = result;
 			}
 		});
 		return bag[0];
@@ -431,14 +427,11 @@ public class NewConfigurationView
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		if (initialized) {
-			try {
-				ILocalSite localSite = SiteManager.getLocalSite();
+			ILocalSite localSite = getLocalSite();
+			if (localSite != null) {
 				localSite.removeLocalSiteChangedListener(this);
-				IInstallConfiguration config =
-					localSite.getCurrentConfiguration();
+				IInstallConfiguration config = localSite.getCurrentConfiguration();
 				config.removeInstallConfigurationChangedListener(this);
-			} catch (CoreException e) {
-				UpdateUI.logException(e);
 			}
 			initialized = false;
 		}
@@ -449,19 +442,23 @@ public class NewConfigurationView
 	}
 
 	protected void makeActions() {
-		super.makeActions();
+		collapseAllAction = new Action() {
+			public void run() {
+				treeViewer.getControl().setRedraw(false);
+				treeViewer.collapseToLevel(treeViewer.getInput(), TreeViewer.ALL_LEVELS);
+				treeViewer.getControl().setRedraw(true);
+			}
+		};
+		collapseAllAction.setText("Collapse All");
+		collapseAllAction.setToolTipText("Collapse All");
+		collapseAllAction.setImageDescriptor(UpdateUIImages.DESC_COLLAPSE_ALL);
 
-		initDrillDown();
+		drillDownAdapter = new DrillDownAdapter(treeViewer);
 
 		featureStateAction = new FeatureStateAction();
 
 		siteStateAction = new SiteStateAction2();
 
-		/*preserveAction =
-			new SaveConfigurationAction(UpdateUI.getString(KEY_PRESERVE));
-		WorkbenchHelp.setHelp(
-			preserveAction,
-			"org.eclipse.update.ui.CofigurationView_preserveAction");*/
 
 		revertAction = new RevertConfigurationAction("Revert...");
 		WorkbenchHelp.setHelp(
@@ -471,7 +468,7 @@ public class NewConfigurationView
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
-				getTreeViewer());
+				treeViewer);
 		propertiesAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
 			propertiesAction,
@@ -497,7 +494,7 @@ public class NewConfigurationView
 		pref.setDefault(STATE_SHOW_NESTED_FEATURES, true);
 		showNestedFeaturesAction = new Action() {
 			public void run() {
-				getTreeViewer().refresh();
+				treeViewer.refresh();
 				pref.setValue(
 					STATE_SHOW_NESTED_FEATURES,
 					showNestedFeaturesAction.isChecked());
@@ -521,7 +518,7 @@ public class NewConfigurationView
 		pref.setDefault(STATE_SHOW_SITES, true);
 		showSitesAction = new Action() {
 			public void run() {
-				getTreeViewer().refresh();
+				treeViewer.refresh();
 				pref.setValue(STATE_SHOW_SITES, showSitesAction.isChecked());
 				UpdateUI.getDefault().savePluginPreferences();
 			}
@@ -541,7 +538,7 @@ public class NewConfigurationView
 					STATE_SHOW_UNCONF,
 					showUnconfFeaturesAction.isChecked());
 				UpdateUI.getDefault().savePluginPreferences();
-				getTreeViewer().refresh();
+				treeViewer.refresh();
 			}
 		};
 		WorkbenchHelp.setHelp(
@@ -562,13 +559,13 @@ public class NewConfigurationView
 		tbm.add(showNestedFeaturesAction);
 		tbm.add(showUnconfFeaturesAction);
 		tbm.add(new Separator());
-		addDrillDownAdapter(bars);
+		drillDownAdapter.addNavigationActions(bars.getToolBarManager());
 		tbm.add(new Separator());
 		tbm.add(collapseAllAction);
 	}
 
 	protected Object getSelectedObject() {
-		ISelection selection = getTreeViewer().getSelection();
+		ISelection selection = treeViewer.getSelection();
 		if (selection instanceof IStructuredSelection
 			&& !selection.isEmpty()) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -583,7 +580,6 @@ public class NewConfigurationView
 
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
-			//manager.add(preserveAction);
 			manager.add(new Separator());
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
@@ -608,7 +604,7 @@ public class NewConfigurationView
 			}
 		}
 
-		addDrillDownAdapter(manager);
+		drillDownAdapter.addNavigationActions(manager); 
 
 		if (obj instanceof IFeatureAdapter || obj instanceof ILocalSite) {
 			manager.add(new Separator());
@@ -651,7 +647,7 @@ public class NewConfigurationView
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (!getControl().isDisposed())
-					getTreeViewer().refresh();
+					treeViewer.refresh();
 			}
 		});
 	}
@@ -776,9 +772,6 @@ public class NewConfigurationView
 		}
 		return false;
 	}
-	protected Object getRootObject() {
-		return UpdateUI.getDefault().getUpdateModel();
-	}
 
 	protected void handleDoubleClick(DoubleClickEvent e) {
 		if (e.getSelection() instanceof IStructuredSelection) {
@@ -791,10 +784,11 @@ public class NewConfigurationView
 
 	public void createPartControl(Composite parent) {
 		splitter = new SashForm(parent, SWT.HORIZONTAL);
+		splitter.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Composite leftContainer = createLineContainer(splitter);
 		Composite rightContainer = createLineContainer(splitter);
-		super.createPartControl(leftContainer);
-		super.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		createTreeViewer(leftContainer);
+		makeActions();
 		createVerticalLine(leftContainer);
 		createVerticalLine(rightContainer);
 		preview = new ConfigurationPreview(this);
@@ -802,7 +796,48 @@ public class NewConfigurationView
 		preview.getScrollingControl().setLayoutData(
 			new GridData(GridData.FILL_BOTH));
 		splitter.setWeights(new int[] { 2, 3 });
-		getTreeViewer().expandToLevel(2);
+		fillActionBars(getViewSite().getActionBars());
+
+		treeViewer.expandToLevel(2);
+	}
+	
+	private void createTreeViewer(Composite parent) {
+		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		treeViewer.setUseHashlookup(true);
+		initProviders();
+
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				manager.add(new GroupMarker("additions"));
+				fillContextMenu(manager);
+			}
+		});
+
+		treeViewer.getControl().setMenu(menuMgr.createContextMenu(treeViewer.getControl()));
+		getSite().registerContextMenu(menuMgr, treeViewer);
+
+
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged(event);
+			}
+		});
+		
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});
+
+		getSite().setSelectionProvider(treeViewer);
+		
+	}
+	
+	public TreeViewer getTreeViewer() {
+		return treeViewer;
 	}
 
 	private Composite createLineContainer(Composite parent) {
@@ -821,6 +856,7 @@ public class NewConfigurationView
 		gd.widthHint = 1;
 		line.setLayoutData(gd);
 	}
+	
 
 	public Control getControl() {
 		return splitter;
@@ -887,8 +923,6 @@ public class NewConfigurationView
 		}
 		if (obj instanceof ILocalSite) {
 			propertiesAction.setEnabled(true);
-			//preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
-			//preserveAction.setEnabled(true);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(
 				((IConfiguredSiteAdapter) obj).getConfiguredSite());
@@ -912,7 +946,6 @@ public class NewConfigurationView
 				"Revert to Previous",
 				"You can revert to one of the previous configurations if you are having problems with the current one.",
 				revertAction));
-		//array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
 		array.add(
 			new PreviewTask(
 				"Show Activities",
@@ -969,10 +1002,28 @@ public class NewConfigurationView
 		if (object instanceof ILocalSite)
 			tasks = (IPreviewTask[]) previewTasks.get(ILocalSite.class);
 		if (object instanceof IConfiguredSiteAdapter)
-			tasks =
-				(IPreviewTask[]) previewTasks.get(IConfiguredSiteAdapter.class);
-		if (tasks != null)
-			return tasks;
-		return new IPreviewTask[0];
+			tasks = (IPreviewTask[]) previewTasks.get(IConfiguredSiteAdapter.class);
+		return (tasks != null) ? tasks : new IPreviewTask[0];
 	}
+	
+	void updateTitle(Object newInput) {
+		IConfigurationElement config = getConfigurationElement();
+		if (config == null)
+			return;
+		String viewName = config.getAttribute("name"); //$NON-NLS-1$
+		if (newInput == null || newInput.equals(UpdateUI.getDefault().getUpdateModel())) {
+			// restore old
+			setTitle(viewName);
+			setTitleToolTip(getTitle());
+		} else {
+			String name =
+				((LabelProvider) treeViewer.getLabelProvider()).getText(newInput);
+			setTitle(viewName + ": " + name); //$NON-NLS-1$
+			setTitleToolTip(getTitle());
+		}
+	}
+
+	public void setFocus() {
+	}	
+
 }
