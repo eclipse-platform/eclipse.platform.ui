@@ -25,6 +25,31 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	private JarFile currentOpenJarFile = null;
 
 	public static final String JAR_EXTENSION = ".jar";
+	
+	
+	/**
+	 * @see IFeature#getRootURL()
+	 * In general, the Root URL is the URL of teh Feature
+	 * 
+	 * The RootURL is used to calculate relative URL for teh feature
+	 * In case of a file feature, you can just append teh relative path
+	 * to the URL of teh feature
+	 * 
+	 * In case of a JAR file, you cannot *just* append the file 
+	 * You have to transfrom the URL
+	 * 
+	 */
+	public URL getRootURL() {
+		URL rootURL = null;
+		try {
+			rootURL = new URL("jar:"+getURL().toExternalForm()+"!/");
+		} catch (MalformedURLException e){
+			//FIXME:
+			e.printStackTrace();
+		}
+		return rootURL;
+	}
+	
 
 	/**
 	 * Constructor for DefaultPackagedFeature
@@ -144,20 +169,8 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	 * and get the feature.xml
 	 */
 	public InputStream getFeatureInputStream() throws IOException {
-
-		InputStream result = null;
 		transferLocally();
-		// get the stream inside the JAR
-		URL insideURL = null;
-		try {
-			String newURLString = getURL() + FEATURE_XML;
-			insideURL = new URL("jar:file://" + getURL().getPath() + "!/" + FEATURE_XML);
-		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		}
-
-		return insideURL.openStream();
+		return super.getFeatureInputStream();
 	}
 
 	/**

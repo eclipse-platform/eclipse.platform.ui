@@ -2,27 +2,13 @@ package org.eclipse.update.internal.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.Assert;
-import org.eclipse.update.core.ICategory;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.UpdateManagerPlugin;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.eclipse.update.core.*;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 
@@ -56,12 +42,21 @@ public class DefaultSiteParser extends DefaultHandler {
 		this.siteStream = siteStream;
 		Assert.isTrue(site instanceof AbstractSite);
 		this.site = (AbstractSite)site;
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Start parsing:"+site.getURL().toExternalForm());
+		}
 		
 		try {
 			ClassLoader l = new URLClassLoader(new URL[]{site.getURL()},null);
 			bundle = ResourceBundle.getBundle("site",Locale.getDefault(),l);
 		} catch (MissingResourceException e){
 			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				UpdateManagerPlugin.getDefault().debug(e.getLocalizedMessage()+":"+site.getURL().toExternalForm());
+			}
 		}		
 		parser.parse(new InputSource(this.siteStream));
 	}
@@ -71,24 +66,33 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName,String qName, Attributes attributes)
 		throws SAXException {
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
+		}
 
 		String tag = localName.trim();
 	
 		if (tag.equalsIgnoreCase(SITE)){
 			processSite(attributes);
+			return;
 		}
 	
 		if (tag.equalsIgnoreCase(FEATURE)){
 			processFeature(attributes);
+			return;
 		}
 		
 	
 		if (tag.equalsIgnoreCase(ARCHIVE)){
 			processArchive(attributes);
+			return;
 		}		
 
 		if (tag.equalsIgnoreCase(CATEGORY_DEF)){
 			processCategoryDef(attributes);
+			return;
 		}
 
 	}
@@ -105,8 +109,14 @@ public class DefaultSiteParser extends DefaultHandler {
 		site.setInfoURL(url);
 		
 		// process the Site....if the site has a different type
-		// throw an exception so the new parer can be used...
+		// throw an exception so the new parser can be used...
 		// TODO:
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End process Site tag: infoURL:"+infoURL);
+		}
+		
 		
 	}
 	
@@ -136,6 +146,13 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// add the feature
 		site.addFeature(feature);
+		
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End Processing Feature Tag: id:"+id+" ver:"+ver+" type:"+type+" url"+url.toExternalForm());
+		}
+		
 	}
 	
 	
@@ -144,9 +161,15 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processArchive(Attributes attributes){
 		String id = attributes.getValue("id");
-		String urlString = attributes.getValue("version");
+		String urlString = attributes.getValue("url");
 		URL url = UpdateManagerUtils.getURL(site.getURL(),urlString,null);
 		site.addArchive(new Info(id,url));
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End processing Archive: id:"+id+" ver:"+urlString);
+		}
+		
 	}	
 	
 	/** 
@@ -158,6 +181,12 @@ public class DefaultSiteParser extends DefaultHandler {
 		label = UpdateManagerUtils.getResourceString(label,bundle);
 		ICategory category = new DefaultCategory(name,label);
 		site.addCategory(category);		
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End processing CategoryDef: name:"+name+" label:"+label);
+		}
+		
 	}
 
 	/**
@@ -173,6 +202,12 @@ public class DefaultSiteParser extends DefaultHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 		throws SAXException {
 		super.endElement(arg0, arg1, arg2);
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End Element:"+arg0+":"+arg1+":"+arg2);
+		}
+		
 	}
 
 }

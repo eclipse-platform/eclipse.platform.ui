@@ -14,7 +14,7 @@ public class UpdateManagerPlugin extends Plugin {
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_SHOW_INSTALL = true;
-	public static boolean DEBUG_SHOW_SITE = true;
+	public static boolean DEBUG_SHOW_PARSING = true;
 	public static boolean DEBUG_SHOW_WARNINGS = true;
 	
 	//The shared instance.
@@ -82,6 +82,12 @@ public class UpdateManagerPlugin extends Plugin {
 			if (DEBUG) {
 				result = Platform.getDebugOption("org.eclipse.update.core/debug/warnings");
 				DEBUG_SHOW_WARNINGS = result.trim().equalsIgnoreCase("true");
+				
+				result = Platform.getDebugOption("org.eclipse.update.core/debug/parsing");
+				DEBUG_SHOW_PARSING = result.trim().equalsIgnoreCase("true");
+				
+				result = Platform.getDebugOption("org.eclipse.update.core/debug/install");
+				DEBUG_SHOW_INSTALL = result.trim().equalsIgnoreCase("true");
 			}
 		}
 	}

@@ -5,11 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.update.internal.core.DefaultFeatureParser;
+import org.eclipse.update.internal.core.PluginEntry;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -77,6 +79,11 @@ public abstract class AbstractFeature implements IFeature {
 	 * Image (shoudl be either GIF or JPG)
 	 */
 	private URL image;
+
+
+	private String nl;
+	private String os;
+	private String ws;
 
 	/**
 	 * List of ID representing the *bundles/archives*
@@ -161,6 +168,23 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
+	 * @see IFeature#getRootURL()
+	 * In general, the Root URL is the URL of teh Feature
+	 * 
+	 * The RootURL is used to calculate relative URL for teh feature
+	 * In case of a file feature, you can just append teh relative path
+	 * to the URL of teh feature
+	 * 
+	 * In case of a JAR file, you cannot *just* append the file 
+	 * You have to transfrom the URL
+	 * 
+	 * Can be overriden 
+	 */
+	public URL getRootURL() {
+		return url;
+	}
+
+	/**
 	 * @see IFeature#getUpdateInfo()
 	 */
 	public IInfo getUpdateInfo() {
@@ -224,9 +248,33 @@ public abstract class AbstractFeature implements IFeature {
 	 * @see IFeature#getImage()
 	 */
 	public URL getImage() {
-		if (image == null && !isInitialized)
-			init();
+		if (image == null && !isInitialized)init();
 		return image;
+	}
+	/**
+	 * @see IFeature#getNL()
+	 */
+	public String getNL() {
+		if (nl == null && !isInitialized)init();		
+		return nl;
+	}
+
+
+	/**
+	 * @see IFeature#getOS()
+	 */
+	public String getOS() {
+		if (os == null && !isInitialized)init();		
+		return os;
+	}
+
+
+	/**
+	 * @see IFeature#getWS()
+	 */
+	public String getWS() {
+		if (ws == null && !isInitialized)init();		
+		return ws;
 	}
 
 	/**
@@ -324,33 +372,85 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
+	 * Sets the nl
+	 * @param nl The nl to set
+	 */
+	public void setNL(String nl) {
+		this.nl = nl;
+	}
+	
+	/**
+	 * Sets the os
+	 * @param os The os to set
+	 */
+	public void setOS(String os) {
+		this.os = os;
+	}
+	
+	/**
+	 * Sets the ws
+	 * @param ws The ws to set
+	 */
+	public void setWS(String ws) {
+		this.ws = ws;
+	}
+
+	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
 	public int getDownloadSize(IPluginEntry entry) {
-		//TODO:
-		return 0;
+		Assert.isTrue(entry instanceof PluginEntry);
+		return ((PluginEntry)entry).getDownloadSize();
 	}
 
 	/**
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
 	public int getInstallSize(IPluginEntry entry) {
-		//TODO:
-		return 0;
+		Assert.isTrue(entry instanceof PluginEntry);
+		return ((PluginEntry)entry).getInstallSize();
 	}
 	/**
 	 * @see IFeature#getDownloadSize(ISite)
 	 */
 	public long getDownloadSize(ISite site) {
-		//TODO:
-		return 0;
+		int result=0;
+		IPluginEntry[] featureEntries = this.getPluginEntries();
+		IPluginEntry[] siteEntries = site.getPluginEntries();
+		IPluginEntry[] entriesToInstall = intersection(featureEntries,siteEntries);
+		if (entriesToInstall==null || entriesToInstall.length==0){
+			 result =-1;
+		} else {
+			int pluginSize = 0;
+			int i =0;
+			while( i<entriesToInstall.length && pluginSize!=-1){
+				pluginSize = getDownloadSize(entriesToInstall[i]);
+				result = pluginSize == -1 ? -1 : result+pluginSize; 				
+				i++;
+			}
+		}
+		return result;
 	}
 	/**
 	 * @see IFeature#getInstallSize(ISite)
 	 */
 	public long getInstallSize(ISite site) {
-		//TODO:
-		return 0;
+		int result=0;
+		IPluginEntry[] featureEntries = this.getPluginEntries();
+		IPluginEntry[] siteEntries = site.getPluginEntries();
+		IPluginEntry[] entriesToInstall = intersection(featureEntries,siteEntries);
+		if (entriesToInstall==null || entriesToInstall.length==0){
+			 result =-1;
+		} else {
+			int pluginSize = 0;
+			int i =0;
+			while( i<entriesToInstall.length && pluginSize!=-1){
+				pluginSize = getInstallSize(entriesToInstall[i]);
+				result = pluginSize == -1 ? -1 : result+pluginSize; 				
+				i++;
+			}
+		}
+		return result;
 	}
 	/**
 	 * @see IFeature#isExecutable()
@@ -469,6 +569,8 @@ public abstract class AbstractFeature implements IFeature {
 		}
 	}
 	/**
+	 * Transfer a Stream into another Stream
+	 * 
 	 * This method also closes both streams.
 	 * Taken from FileSystemStore
 	 */
@@ -522,12 +624,10 @@ public abstract class AbstractFeature implements IFeature {
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()
-	 * Does not return null
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = null;
-		//FIXME: 
-		// especially teh ' does nto return null'
+		//FIXME: not pretty code
 		if (pluginEntries == null && !isInitialized)
 			init();
 		if (pluginEntries != null && !pluginEntries.isEmpty()) {
@@ -535,9 +635,6 @@ public abstract class AbstractFeature implements IFeature {
 				(IPluginEntry[]) (pluginEntries
 					.toArray(new IPluginEntry[pluginEntries.size()]));
 		}
-		//else {
-		//result = new IPluginEntry[0];
-		//}
 		return result;
 	}
 
@@ -573,10 +670,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(
-		IPluginEntry pluginEntry,
-		String contentKey,
-		InputStream inStream) {
+	public void store(IPluginEntry pluginEntry,	String contentKey,InputStream inStream) {
 		// check if pluginEntry already exists before passing to the site
 		// anything else ?
 		boolean found = false;
@@ -591,7 +685,7 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		}
 		if (!found) {
-			//FIXME: throw execption
+			//FIXME: throw exception
 		}
 		getSite().store(pluginEntry, contentKey, inStream);
 	}
@@ -604,35 +698,49 @@ public abstract class AbstractFeature implements IFeature {
 	public abstract String[] getContentReferences();
 
 	/**
-	 * 
+	 * return the list of FILE to be transfered for a Plugin
 	 */
 	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry);
 
 	/**
-	 * 
+	 * return the list of FILE to be transfered from within the Feature
 	 */
 	protected abstract String[] getStorageUnitNames();
 
 	/**
-	 * 
+	 * return the Stream of the FILE to be transfered for a Plugin
 	 */
-	protected abstract InputStream getInputStreamFor(
-		IPluginEntry pluginEntry,
-		String name);
+	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry,String name);
 
 	/**
-	 * 
+	 * return the Stream of FILE to be transfered from within the Feature
 	 */
 	protected abstract InputStream getInputStreamFor(String name);
 
 	/**
-	 * 
+	 * returns the Stream corresponding to the XML file
 	 */
-	protected abstract InputStream getFeatureInputStream() throws IOException;
+	protected InputStream getFeatureInputStream() throws IOException{
+		InputStream result = null;
+
+		//FIXME: is that global to ALL implementation ?
+		
+		// get the stream inside the Feature
+		URL insideURL = null;
+		try {
+			insideURL = new URL(getRootURL(),FEATURE_XML);
+		} catch (MalformedURLException e) {
+			//FIXME:
+			e.printStackTrace();
+		}
+
+		return insideURL.openStream();
+	};
 
 	/**
-	 * 
+	 * returns the list of bundles/id to transfer/install
+	 * in order to install the list of plugins
 	 */
 	protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
-
+
 }

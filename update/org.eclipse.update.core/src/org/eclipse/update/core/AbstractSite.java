@@ -72,7 +72,7 @@ public abstract class AbstractSite implements ISite {
 			e.printStackTrace();
 		} catch (FileNotFoundException e){
 			// log not manageable site
-			if (UpdateManagerPlugin.getDefault().DEBUG && UpdateManagerPlugin.getDefault().DEBUG_SHOW_WARNINGS){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
 				System.out.println(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
 			}
 		} catch (MalformedURLException e){

@@ -1,7 +1,13 @@
 package org.eclipse.update.internal.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.update.core.AbstractFeature;
+import org.eclipse.update.core.AbstractSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
@@ -29,37 +35,89 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	 * @see AbstractFeature#getContentReferenceToInstall(IPluginEntry[])
 	 */
 	public String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall) {
-		return null;
+		String[] names = null;
+		if (pluginsToInstall != null) {
+			names = new String[pluginsToInstall.length];
+			for (int i = 0; i < pluginsToInstall.length; i++) {
+				names[i] = getArchiveID(pluginsToInstall[i]);
+			}
+		}
+		return names;
 	}
 
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
 	public InputStream getInputStreamFor(IPluginEntry pluginEntry,String name) {
-		return null;
+		URL siteURL = getSite().getURL();
+		InputStream result = null;
+		try {
+			// default			
+			String filePath =
+				siteURL.getPath()
+					+ AbstractSite.DEFAULT_PLUGIN_PATH
+					+ getArchiveID(pluginEntry);
+			URL fileURL =
+				((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+			if (fileURL != null) {
+				// has to be local, file ?
+				filePath = fileURL.getPath();
+			}
+
+			if (!(new File(filePath)).exists())
+				throw new IOException("The File:" + filePath + "does not exist.");
+			File entry = new File(filePath,name);
+			result = new FileInputStream(entry);
+		} catch (MalformedURLException e) {
+			//FIXME:
+			e.printStackTrace();
+		} catch (IOException e) {
+			//FIXME:
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	/**
 	 * @see AbstractFeature#getStorageUnitNames(IPluginEntry)
 	 */
 	public String[] getStorageUnitNames(IPluginEntry pluginEntry) {
-		return null;
+		URL siteURL = getSite().getURL();
+		String[] result = null;
+		try {
+			// get the URL of the JAR file that contains teh plugin entry
+			URL fileURL =
+				((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+			if (fileURL == null) {
+				// default path
+				fileURL =
+					new URL(siteURL, AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
+			}
+			File pluginDir = new File(fileURL.getFile());
+			
+			result = new String[pluginDir.list().length];
+
+
+			for (int i = 0; i<pluginDir.list().length;i++){
+				result[i] = pluginDir.list()[i];
+
+			}
+
+		} catch (MalformedURLException e) {
+			//FIXME:
+			e.printStackTrace();
+		}
+		return result;
 	}
-
-	/**
-	 * @see AbstractFeature#getFeatureInputStream()
-	 */
-	public InputStream getFeatureInputStream() {
-		// TODO:
-		// the feature url is pointing at the directory, teh feature.xml is inside
-		return null;
-	}
-
-	/**
+	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
 	public String[] getContentReferences() {
-		return null;
+		String[] names = new String[getPluginEntryCount()];
+		for (int i = 0; i < getPluginEntryCount(); i++) {
+			names[i] = getArchiveID(getPluginEntries()[i]);
+		}
+		return names;
 	}
 
 	/**
@@ -73,6 +131,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
 	protected InputStream getInputStreamFor(String name) {
+		// TODO:
 		return null;
 	}
 
@@ -80,7 +139,16 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	 * @see AbstractFeature#getStorageUnitNames()
 	 */
 	protected String[] getStorageUnitNames() {
+		// TODO:
 		return null;
+	}
+	
+	/**
+	 * return the archive ID for a plugin
+	 */
+	private String getArchiveID(IPluginEntry entry) {
+		//TODO: ?
+		return entry.getIdentifier().toString() ;
 	}
 
 }

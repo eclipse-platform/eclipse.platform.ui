@@ -9,5 +9,8 @@ public interface IPluginEntry {
 	IPluginContainer getContainer();
 	VersionedIdentifier getIdentifier();
 	String getLabel();
+	String getOS();
+	String getWS();
+	String getNL();	
 }
 

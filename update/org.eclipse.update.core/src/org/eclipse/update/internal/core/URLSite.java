@@ -44,7 +44,7 @@ public class URLSite extends AbstractSite {
 		try {
 			//FIXME: delete ?
 			contentURL = getArchiveURLfor(archiveId);
-			if (contentURL==null) contentURL = new URL(getURL(),"plugins/"+archiveId);
+			if (contentURL==null) contentURL = new URL(getURL(),DEFAULT_PLUGIN_PATH+archiveId);
 			result = contentURL.openStream();
 		} catch (MalformedURLException e){
 			//FIXME:

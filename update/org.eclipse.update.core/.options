@@ -1,2 +1,4 @@
 org.eclipse.update.core/debug=true
 org.eclipse.update.core/debug/warnings=true
+org.eclipse.update.core/debug/parsing=true
+org.eclipse.update.core/debug/install=true

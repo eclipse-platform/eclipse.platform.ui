@@ -38,8 +38,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private static final String DESCRIPTION		= "description";
 	private static final String COPYRIGHT		= "copyright";	
 	private static final String LICENSE 		= "license";	
-	private static final String UPDATE			 	= "update";
-	private static final String DISCOVERY		 	= "discovery";
+	private static final String UPDATE			 = "update";
+	private static final String DISCOVERY		 = "discovery";
 	private static final String IMPORT			= "import";	
 	private static final String PLUGIN			= "plugin";	
 	
@@ -59,11 +59,21 @@ public class DefaultFeatureParser extends DefaultHandler {
 		Assert.isTrue(feature instanceof AbstractFeature);
 		this.feature = (AbstractFeature)feature;
 
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Start parsing:"+feature.getURL().toExternalForm());
+		}
+
+
 		try {
-			ClassLoader l = new URLClassLoader(new URL[]{feature.getURL()},null);
+			ClassLoader l = new URLClassLoader(new URL[]{feature.getRootURL()},null);
 			bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
 		} catch (MissingResourceException e){
 			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				UpdateManagerPlugin.getDefault().debug(e.getLocalizedMessage()+":"+feature.getURL().toExternalForm());
+			}
 		}
 		
 		parser.parse(new InputSource(this.featureStream));
@@ -74,7 +84,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName,String qName, Attributes attributes)
 		throws SAXException {
-
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
+		}
+		
 		String tag = localName.trim();
 	
 		if (tag.equalsIgnoreCase(FEATURE)){
@@ -134,14 +148,31 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String label = UpdateManagerUtils.getResourceString(attributes.getValue("label"),bundle);
 		feature.setLabel(label);
 		
-		feature.setProvider(attributes.getValue("provider-name"));
+		String provider = attributes.getValue("provider-name");
+		feature.setProvider(provider);
 		
 		//image
-		URL imageURL = UpdateManagerUtils.getURL(feature.getURL(),attributes.getValue("image"),null);
+		URL imageURL = UpdateManagerUtils.getURL(feature.getRootURL(),attributes.getValue("image"),null);
 		feature.setImage(imageURL); 
+		
 		//feature.setOS
+		String os = attributes.getValue("os");
+		feature.setOS(os);
+		
 		//feature.setWS
+		String ws = attributes.getValue("ws");
+		feature.setWS(ws);
+		
 		//feature.setNL
+		String nl = attributes.getValue("nl");
+		feature.setNL(nl);
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End process Feature tag: id:"+id+" ver:"+ver+" label:"+label+" provider:"+provider);
+			UpdateManagerPlugin.getDefault().debug("End process Feature tag: image:"+imageURL);
+			UpdateManagerPlugin.getDefault().debug("End process Feature tag: ws:"+ws+" os:"+os+" nl:"+nl); 
+		}
 	}
 	
 	/** 
@@ -150,8 +181,15 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private IInfo processInfo(Attributes attributes){
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
-		URL url = UpdateManagerUtils.getURL(feature.getURL(),infoURL,null);
+		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);
 		Info inf = new Info(url);
+
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Processed Info: url:"+infoURL);
+		}
+		
 		return inf;
 	}
 	
@@ -161,20 +199,27 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private IInfo processURLInfo(Attributes attributes){
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
-		URL url = UpdateManagerUtils.getURL(feature.getSite().getURL(),infoURL,null);
-		String label = attributes.getValue("url");
+		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);
+		String label = attributes.getValue("label");
 		label = UpdateManagerUtils.getResourceString(label,bundle);
 		IInfo inf = new Info(label,url);
+		
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Processed URLInfo: url:"+infoURL+" label:"+label);
+		}
+
+		
 		return inf;
 	}
-	
-	
-	
+
 	
 	/** 
 	 * process the Archive info
 	 */
 	private void processImport(Attributes attributes){
+		//TODO:
 	}	
 	
 	/** 
@@ -187,15 +232,24 @@ public class DefaultFeatureParser extends DefaultHandler {
 		
 		String fragment = attributes.getValue("fragment");
 		pluginEntry.setFragment(fragment.trim().equalsIgnoreCase("true"));
-		//os
-		//ws
-		//nl
+
+		//feature.setOS
+		String os = attributes.getValue("os");
+		pluginEntry.setOS(os);
 		
-		int download_size = 0;
+		//feature.setWS
+		String ws = attributes.getValue("ws");
+		pluginEntry.setWS(ws);
+		
+		//feature.setNL
+		String nl = attributes.getValue("nl");
+		pluginEntry.setNL(nl);
+		
+		
+		// download size
+		int download_size = -1;
 		String download = attributes.getValue("download-size");
-		if (download==null || download.trim().equals("")){
-			download_size = -1;
-		} else {
+		if (download!=null && !download.trim().equals("")){
 			try{
 				download_size = Integer.valueOf(download).intValue();
 			} catch (NumberFormatException e){
@@ -203,19 +257,29 @@ public class DefaultFeatureParser extends DefaultHandler {
 				e.printStackTrace();
 			}
 		}
-			
-		int install_size = 0;
+		pluginEntry.setDownloadSize(download_size);
+		
+		
+		// install size	
+		int install_size = -1;
 		String install = attributes.getValue("install-size");
-		if (install==null || install.trim().equals("")){
-			install_size = -1;
-		} else {
+		if (install!=null && !install.trim().equals("")){
 			try{
 				install_size = Integer.valueOf(install).intValue();
 			} catch (NumberFormatException e){
 				//FIXME:
 				e.printStackTrace();
 			}
-		}				
+		}
+		pluginEntry.setInstallSize(install_size);				
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("Processed Plugin: id:"+id+" ver:"+ver+" fragment:"+fragment);
+			UpdateManagerPlugin.getDefault().debug("Processed Plugin: os:"+os+" ws:"+ws+" nl:"+nl);			
+			UpdateManagerPlugin.getDefault().debug("Processed Plugin: download size:"+download_size+" install size:"+install_size);
+		}
+
 	
 		feature.addPluginEntry(pluginEntry);
 	}
@@ -238,19 +302,39 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String tag = localName.trim();
 			if (tag.equalsIgnoreCase(DESCRIPTION)) {
 				((Info)feature.getDescription()).setText(text);
+				
+				// DEBUG:		
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+					UpdateManagerPlugin.getDefault().debug("Found Description Text");
+				}
 			}
 
 			if (tag.equalsIgnoreCase(COPYRIGHT)) {
 				((Info)feature.getCopyright()).setText(text);
+
+				// DEBUG:		
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+					UpdateManagerPlugin.getDefault().debug("Found Copyright Text");
+				}
+				
 			}
 
 			if (tag.equalsIgnoreCase(LICENSE)) {
 				((Info)feature.getLicense()).setText(text);
+
+				// DEBUG:		
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+					UpdateManagerPlugin.getDefault().debug("Found License Text");
+				}
+				
 			}
 			// clean the text
 			text = null;
 		}
-
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getDefault().debug("End Element:"+uri+":"+localName+":"+qName);
+		}
 	}
 
 	/**

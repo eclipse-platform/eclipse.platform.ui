@@ -22,7 +22,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	
 	public void testParse(){
 	
-		String xmlFile = "xmls/feature1.xml";
+		String xmlFile = "xmls/";
 		try {		
 			ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
 			VersionedIdentifier id = new VersionedIdentifier("feature","1.0.0");
@@ -30,7 +30,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			feature.setURL(new URL(remoteSite.getURL(),xmlFile));
 			
 			String prov = feature.getProvider();
-			assertEquals("Object Technology International",null);
+			assertEquals("Object Technology International",prov);
 			
 		} catch (Exception e){
 			fail(e.toString());
