@@ -10,20 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands.ws;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageCache;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -55,156 +50,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CommandContributionItem extends ContributionItem implements
         ICommandListener {
-
-    /**
-     * A cache of images loaded by the command contribution item.
-     */
-    private static class ImageCache {
-        /**
-         * An entry in the cache for tracking images.
-         */
-        private class Entry {
-            /** The greyed representation of the image. */
-            Image grayImage;
-
-            /** The plain image (unmodified). */
-            Image image;
-
-            /** Disposes this entry by releasing its native resources, if any. */
-            void dispose() {
-                if (image != null) {
-                    image.dispose();
-                    image = null;
-                }
-
-                if (grayImage != null) {
-                    grayImage.dispose();
-                    grayImage = null;
-                }
-            }
-        }
-
-        /** Map from ImageDescriptor to Entry */
-        private Map entries = new HashMap(11);
-
-        /** The image used to represent an image that is not available. */
-        private Image missingImage;
-
-        /** Disposes the cache by calling dispose an all of its entries. */
-        void dispose() {
-            for (Iterator i = entries.values().iterator(); i.hasNext();) {
-                ((Entry) i.next()).dispose();
-            }
-            entries.clear();
-        }
-
-        /**
-         * If the entry is already in the cache, then it simply returns a
-         * reference. Otherwise, it creates a new entry in the cache, and
-         * returns a reference to that.
-         * 
-         * @param descriptor
-         *            The descriptor to look up in the cache; should not be
-         *            <code>null</code>.
-         * @return The entry for that descriptor; never <code>null</code>.
-         */
-        Entry getEntry(ImageDescriptor descriptor) {
-            Entry entry = (Entry) entries.get(descriptor);
-
-            if (entry == null) {
-                entry = new Entry();
-                entries.put(descriptor, entry);
-            }
-
-            return entry;
-        }
-
-        /**
-         * Retrieves a greyed representation of the image of the corresponding
-         * URI from the cache. If the image is not in the cache, then it tries
-         * to load the image. If the image URI is invalid, then it returns the
-         * missing image.
-         * 
-         * @param imageURI
-         *            The URI at which the image is located; may be <code>null</code>
-         * @return The image at the URI, or the missing image if it is invalid.
-         *         If the URI is <code>null</code>, then this returns <code>null</code>
-         *         as well.
-         */
-        Image getGrayImage(String imageURI) {
-            if (imageURI == null) {
-                return null;
-            }
-
-            try {
-                ImageDescriptor descriptor = ImageDescriptor
-                        .createFromURL(new URL(imageURI));
-                Entry entry = getEntry(descriptor);
-                if (entry.grayImage == null) {
-                    Image image = getImage(imageURI);
-                    if (image != null) {
-                        entry.grayImage = new Image(null, image, SWT.IMAGE_GRAY);
-                    }
-                }
-
-                return entry.grayImage;
-
-            } catch (MalformedURLException e) {
-                return new Image(null, getMissingImage(), SWT.IMAGE_GRAY);
-            }
-        }
-
-        /**
-         * Retrieves the image of the corresponding URI from the cache. If the
-         * image is not in the cache, then it tries to load the image. If the
-         * image URI is invalid, then it returns the missing image.
-         * 
-         * @param imageURI
-         *            The URI at which the image is located; may be <code>null</code>
-         * @return The image at the URI, or the missing image if it is invalid.
-         *         If the URI is <code>null</code>, then this returns <code>null</code>
-         *         as well.
-         */
-        Image getImage(String imageURI) {
-            if (imageURI == null) {
-                return null;
-            }
-
-            try {
-                ImageDescriptor descriptor = ImageDescriptor
-                        .createFromURL(new URL(imageURI));
-                Entry entry = getEntry(descriptor);
-                if (entry.image == null) {
-                    entry.image = descriptor.createImage();
-                }
-
-                return entry.image;
-
-            } catch (MalformedURLException e) {
-                return getMissingImage();
-            }
-        }
-
-        /**
-         * Retrieves the missing image from the cache. If the image isn't
-         * available, then it loads it into the cache.
-         * 
-         * @return The missing image; never <code>null</code>.
-         */
-        Image getMissingImage() {
-            if (missingImage == null) {
-                ImageDescriptor descriptor = ImageDescriptor
-                        .getMissingImageDescriptor();
-                Entry entry = getEntry(descriptor);
-                if (entry.image == null) {
-                    entry.image = descriptor.createImage();
-                }
-                missingImage = entry.image;
-            }
-
-            return missingImage;
-        }
-    }
 
     /** The global cache of images used by this contribution item. */
     private static ImageCache globalImageCache;
