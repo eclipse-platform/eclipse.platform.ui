@@ -12,9 +12,10 @@ Contributors:
 **********************************************************************/
 
 /**
- * Implementors of this interface are notified whenever a change is made to the launch history.
- * This could be an addition or deletion from either of the run or debug histories, or change
- * to the last launched item.
+ * Implementors of this interface are notified whenever there is a change is
+ * made to the launch history. This could be an addition or deletion from either
+ * of the run or debug histories, a change to the last launched item, or a
+ * change in favorites.
  */
 public interface ILaunchHistoryChangedListener {
 

@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.preferences;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +14,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org
@@ -21,7 +24,9 @@ import org
 	.ui
 	.launchConfigurations
 	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,7 +49,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 /**
  * Tab for favorite and recent history lists
  */
-public abstract class LaunchHistoryPreferenceTab {
+public class LaunchHistoryPreferenceTab {
 		
 	/**
 	 * Table of favorite launch configurations
@@ -76,6 +81,22 @@ public abstract class LaunchHistoryPreferenceTab {
 	private List fRecents;
 	
 	/**
+	 * Launch group.	 */
+	private LaunchHistory fLaunchHistory;
+	
+	/**
+	 * Constructs a launch history preference tab for the given launch history
+	 * 
+	 * @param history	 */
+	public LaunchHistoryPreferenceTab(LaunchHistory history) {
+		fLaunchHistory = history;
+	}
+	
+	protected LaunchHistory getLaunchHistory() {
+		return fLaunchHistory;
+	}
+	
+	/**
 	 * Creates the control for this tab
 	 */
 	protected Control createControl(Composite parent) {
@@ -87,7 +108,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		topComp.setLayoutData(gd);
 	
 		Label favoritesLabel = new Label(topComp, SWT.LEFT);
-		favoritesLabel.setText(getFavoritesLabel());
+		favoritesLabel.setText("Fa&vorites:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		favoritesLabel.setLayoutData(gd);
@@ -157,7 +178,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		createSpacer(topComp, 1);
 	
 		Label recent = new Label(topComp, SWT.LEFT);
-		recent.setText(getRecentLabel());
+		recent.setText("&Launch History:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		recent.setLayoutData(gd);
@@ -392,27 +413,23 @@ public abstract class LaunchHistoryPreferenceTab {
 	/**
 	 * Returns the mode of this page - run or debug.
 	 */
-	protected abstract String getMode();
-		
-	/**
-	 * Returns the label for the favorites table.
-	 */
-	protected abstract String getFavoritesLabel();
+	protected String getMode() {
+		return getLaunchHistory().getLaunchGroup().getMode();
+	}
 		
 	/**
 	 * Returns the initial content for the favorites list
 	 */
-	protected abstract ILaunchConfiguration[] getInitialFavorites();
-	
-	/**
-	 * Returns the label for the recent launch table.
-	 */
-	protected abstract String getRecentLabel();	
+	protected ILaunchConfiguration[] getInitialFavorites() {
+		return getLaunchHistory().getFavorites();
+	}
 	
 	/**
 	 * Returns the initial content for the recent table
 	 */
-	protected abstract ILaunchConfiguration[] getInitialRecents();	
+	protected ILaunchConfiguration[] getInitialRecents() {
+		return getLaunchHistory().getHistory();
+	}	
 	
 	/**
 	 * Content provider for favorites table
@@ -540,4 +557,65 @@ public abstract class LaunchHistoryPreferenceTab {
 		handleFavoriteSelectionChanged();
 		handleRecentSelectionChanged();				
 	}
+	
+	/**
+	 * Method performOK.
+	 */
+	public void performOK() {
+		ILaunchConfiguration[] initial = getInitialFavorites();
+		List current = getFavorites();
+		String groupId = getLaunchHistory().getLaunchGroup().getIdentifier();
+		
+		// removed favorites
+		for (int i = 0; i < initial.length; i++) {
+			ILaunchConfiguration configuration = initial[i];
+			if (current.contains(configuration)) {
+			} else {
+				// remove fav attributes
+				try {
+					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+					workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
+					workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
+					List groups = workingCopy.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+					if (groups != null) {
+						groups.remove(groupId);
+						if (groups.isEmpty()) {
+							groups = null;	
+						}
+						workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+					}
+					workingCopy.doSave();
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
+				} 
+			}
+		}
+		// update added favorites
+		Iterator favs = current.iterator();
+		while (favs.hasNext()) {
+			ILaunchConfiguration configuration = (ILaunchConfiguration)favs.next();
+			try {
+				List groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+				if (groups == null) {
+					groups = new ArrayList();
+				}
+				if (!groups.contains(groupId)) {
+					groups.add(groupId);
+					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+					workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+					workingCopy.doSave();
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		 
+		fLaunchHistory.setFavorites(getArray(current));		
+		fLaunchHistory.setHistory(getArray(getRecents()));
+	}
+	
+	protected ILaunchConfiguration[] getArray(List list) {
+		return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
+	} 
+	
 }

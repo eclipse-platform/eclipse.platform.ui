@@ -1,13 +1,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.RunAction;
 
 public class RunDropDownAction extends LaunchDropDownAction {
@@ -28,20 +29,6 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	}
 
 	/**
-	 * @see LaunchDropDownAction#getHistory()
-	 */
-	public LaunchConfigurationHistoryElement[] getHistory() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
-	}
-	
-	/**
-	 * @see LaunchDropDownAction#getFavorites()
-	 */
-	public LaunchConfigurationHistoryElement[] getFavorites() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getRunFavorites();
-	}		
-
-	/**
 	 * @see LaunchDropDownAction#getLastLaunchPrefix()
 	 */
 	protected String getLastLaunchPrefix() {
@@ -53,5 +40,12 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	protected String getStaticTooltip() {
 		return ActionMessages.getString("RunDropDownAction.Run_1"); //$NON-NLS-1$
 	}
+	/**
+	 * @see org.eclipse.debug.internal.ui.actions.LaunchDropDownAction#getLaunchGroupId()
+	 */
+	public String getLaunchGroupId() {
+		return IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
+	}
+
 }
 

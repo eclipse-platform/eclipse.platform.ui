@@ -12,6 +12,7 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Relaunches the last run-mode launch
@@ -23,5 +24,12 @@ public class RunLastAction extends RelaunchLastAction {
 	 */
 	public String getMode() {
 		return ILaunchManager.RUN_MODE;
+	}	
+	
+	/**
+	 * @see org.eclipse.debug.internal.ui.actions.LaunchDropDownAction#getLaunchGroupId()
+	 */
+	public String getLaunchGroupId() {
+		return IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
 	}	
 }

@@ -709,11 +709,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Return the last launched configuration in the workspace.
 	 */
 	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
-		LaunchConfigurationHistoryElement historyElement = DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
-		if (historyElement != null) {
-			return historyElement.getLaunchConfiguration();
-		}
-		return null;			
+		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroup().getIdentifier());
 	}
 	
 	/**

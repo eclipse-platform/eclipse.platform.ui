@@ -602,6 +602,7 @@ public interface IDebugUIConstants {
 	 * <code>false</code> if absent.
 	 * 
 	 * @since 2.0
+	 * @deprecated use <code>ATTR_FAVORITE_GROUPS</code> instead
 	 */
 	public static final String ATTR_DEBUG_FAVORITE = PLUGIN_ID + ".debugFavorite"; //$NON-NLS-1$	
 	
@@ -611,8 +612,19 @@ public interface IDebugUIConstants {
 	 * <code>false</code> if absent.
 	 * 
 	 * @since 2.0
+	 * @deprecated use <code>ATTR_FAVORITE_GROUPS</code> instead
 	 */
 	public static final String ATTR_RUN_FAVORITE = PLUGIN_ID + ".runFavorite"; //$NON-NLS-1$		
+	
+	/**
+	 * Launch configuration attribute - a list of launch group identifiers
+	 * representing the favorite histories a launch configuration should appear
+	 * in. When <code>null</code>, the configuration does not appear in any
+	 * favorite lists.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String ATTR_FAVORITE_GROUPS = PLUGIN_ID + ".favoriteGroups"; //$NON-NLS-1$		
 	
 	// Extension points
 	

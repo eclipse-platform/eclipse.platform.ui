@@ -12,14 +12,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,8 +33,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -44,64 +41,32 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class LaunchConfigurationManager implements ILaunchListener, 
-														ILaunchConfigurationListener, 
-														IPropertyChangeListener,
-														ILaunchHistoryChangedListener  {
+public class LaunchConfigurationManager implements ILaunchListener {
 	/**
 	 * The singleton instance of the launch configuration manager
 	 */
 	private static LaunchConfigurationManager fgLaunchConfigurationManager;
-	/**
-	 * The length of the Run & Debug history lists.  
-	 */
-	protected int fMaxHistorySize;
 	
 	/**
-	 * The most recent debug launches
-	 */
-	private Vector fDebugHistory;
-	
-	/**
-	 * The most recent run launches
-	 */
-	private Vector fRunHistory;
-	
-	/**
-	 * The most recent debug launches
-	 */
-	protected Vector fDebugFavorites;
-	
-	/**
-	 * The most recent run launches
-	 */
-	protected Vector fRunFavorites;
-	
-	protected boolean fHistoryInitialized= false;
-	
-	/**
-	 * Launch group extensions, keyed by identifier.
+	 * Launch group extensions, keyed by launch group identifier.
 	 */
 	protected Map fLaunchGroups;
 	
 	/**
-	 * The list of most recent launches, independent of mode.
-	 * This list may be empty, but should never be <code>null</code>.
-	 */
-	protected List fLastLaunchList;	
+	 * Launch histories keyed by launch group identifier
+	 */	
+	protected Map fLaunchHistories;
 		
 	/**
 	 * The list of registered implementors of <code>ILaunchHistoryChangedListener</code>
@@ -122,6 +87,11 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * Cache of launch configuration tab images with error overlays
 	 */
 	protected ImageRegistry fErrorImages = null;
+	
+	/**
+	 * true when restoring launch history
+	 */
+	protected boolean fRestoring = false;
 		
 	/**
 	 * The name of the file used to persist the launch history.
@@ -138,39 +108,15 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
 	
-	private LaunchConfigurationManager() {		
-		setEmptyLaunchHistories();		
-		fMaxHistorySize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
-		fLastLaunchList = new ArrayList(fMaxHistorySize);
+	private LaunchConfigurationManager() {				
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
-		launchManager.addLaunchConfigurationListener(this);
 
 		//update histories for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		addLaunchHistoryListener(this);
-	}
-
-	protected void setRunHistoryVector(Vector runHistory) {
-		fRunHistory = runHistory;
-	}
-
-	protected Vector getRunHistoryVector() {
-		initializeHistory();
-		return fRunHistory;
-	}
-
-	protected void setDebugHistoryVector(Vector debugHistory) {
-		fDebugHistory = debugHistory;
-	}
-
-	protected Vector getDebugHistoryVector() {
-		initializeHistory();
-		return fDebugHistory;
 	}
 	
 	public static LaunchConfigurationManager getDefault() {
@@ -189,8 +135,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * @param launchConfiguration	 * @return boolean	 */
 	public static boolean isVisible(ILaunchConfiguration launchConfiguration) {
 		try {
-			return !(launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) &&
-			launchConfiguration.getType().getCategory() == null;
+			return !(launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false));
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -207,9 +152,13 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	public void shutdown() throws CoreException {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
-		launchManager.removeLaunchConfigurationListener(this);
-		removeLaunchHistoryListener(this);		
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		if (fLaunchHistories != null) {
+			Iterator histories = fLaunchHistories.values().iterator();
+			while (histories.hasNext()) {
+				LaunchHistory history = (LaunchHistory)histories.next();
+				history.dispose();
+			}
+		}
 	}
 	
 	/**
@@ -231,7 +180,6 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public void launchAdded(final ILaunch launch) {
-		updateHistories(launch);
 		removeTerminatedLaunches(launch);
 	}
 	
@@ -248,256 +196,15 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		}
 	}
 	
-	protected void updateFavorites(ILaunchConfiguration config) {
-		try {
-			if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
-				addDebugFavorite(config);
-				removeLaunchConfigurationFromHistoryList(getDebugHistoryVector(), config);
-			} else {
-				removeDebugFavorite(config);
-			}
-			if (config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false)) {
-				addRunFavorite(config);
-				removeLaunchConfigurationFromHistoryList(getRunHistoryVector(), config);
-			} else {
-				removeRunFavorite(config);
-			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}	
-	}
-	
 	/**
-	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
-	 */
-	public void launchConfigurationAdded(ILaunchConfiguration config) {		
-		updateFavorites(config);
-	}
-	
-	/**
-	 * @see ILaunchConfigurationListener#launchConfigurationChanged(ILaunchConfiguration)
-	 */
-	public void launchConfigurationChanged(ILaunchConfiguration config) {		
-		if (!config.isWorkingCopy()) {
-			updateFavorites(config);
-		}
-	}
-	
-	/**
-	 * If the deleted config appeared in either of the history lists, delete it from the list(s).
-	 * 
-	 * @see ILaunchConfigurationListener#launchConfigurationRemoved(ILaunchConfiguration)
-	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration config) {
-		boolean modified = removeLaunchConfigurationFromHistoryList(getRunHistoryVector(), config);
-		modified |= removeLaunchConfigurationFromHistoryList(getDebugHistoryVector(), config);
-		modified |= removeLaunchConfigurationFromHistoryList(fDebugFavorites, config);
-		modified |= removeLaunchConfigurationFromHistoryList(fRunFavorites, config);
-		modified |= removeLaunchConfigurationFromHistoryList(fLastLaunchList, config);
-				
-		if (modified) {
-			fireLaunchHistoryChanged();
-		}
-	}
-	
-	/**
-	 * Remove the specified launch configuration from the specified history list.  If the 
-	 * configuration does not appear in the list, this method does nothing.  Return <code>true</code>
-	 * if the configuration was removed, <code>false</code> otherwise.
-	 */
-	protected boolean removeLaunchConfigurationFromHistoryList(List list, ILaunchConfiguration config) {
-		ListIterator iterator = list.listIterator();
-		while (iterator.hasNext()) {
-			LaunchConfigurationHistoryElement element = (LaunchConfigurationHistoryElement) iterator.next();
-			ILaunchConfiguration elementConfig = element.getLaunchConfiguration();
-			if (config.equals(elementConfig)) {
-				iterator.remove();
-				return true;
-			}
-		}
-		return false;
-	}
-		
-	/**
-	 * Returns an array of the most recent debug launches, which can be empty.
-	 *
-	 * @return an array of launches
-	 */	
-	public LaunchConfigurationHistoryElement[] getDebugHistory() {
-		return getHistoryArray(getDebugHistoryVector());
-	}
-	
-	/**
-	 * Returns an array of the favorite debug launches, which can be empty.
-	 *
-	 * @return an array of launches
-	 */	
-	public LaunchConfigurationHistoryElement[] getDebugFavorites() {
-		return getHistoryArray(fDebugFavorites);
-	}
-	
-	/**
-	 * Sets the favorite debug launches, which can be empty.
-	 *
-	 * @param favorites an array of launches
-	 */	
-	public void setDebugFavorites(Vector favorites) {
-		fDebugFavorites = favorites;
-	}	
-	
-	/**
-	 * Sets the recent debug launches, which can be empty.
-	 *
-	 * @param hsitory an array of launches
-	 */	
-	public void setDebugHistory(Vector history) {
-		setDebugHistoryVector(history);
-		fireLaunchHistoryChanged();
-	}	
-	
-	/**
-	 * Sets the recent run launches, which can be empty.
-	 *
-	 * @param hsitory an array of launches
-	 */	
-	public void setRunHistory(Vector history) {
-		setRunHistoryVector(history);
-		fireLaunchHistoryChanged();
-	}			
-	
-	/**
-	 * Sets the favorite run launches, which can be empty.
-	 *
-	 * @param favorites an array of launches
-	 */	
-	public void setRunFavorites(Vector favorites) {
-		fRunFavorites = favorites;
-	}
-		
-	/**
-	 * Returns an array of the most recent run launches, which can be empty.
-	 *
-	 * @return an array of launches
-	 */
-	public LaunchConfigurationHistoryElement[] getRunHistory() {
-		return getHistoryArray(getRunHistoryVector());
-	}
-	
-	/**
-	 * Returns an array of the favorite run launches, which can be empty.
-	 *
-	 * @return an array of launches
-	 */
-	public LaunchConfigurationHistoryElement[] getRunFavorites() {
-		return getHistoryArray(fRunFavorites);
-	}	
-	
-	protected LaunchConfigurationHistoryElement[] getHistoryArray(Vector history) {
-		LaunchConfigurationHistoryElement[] array = new LaunchConfigurationHistoryElement[history.size()];
-		history.copyInto(array);
-		return array;
-	}
-	
-	/**
-	 * Returns the most recent launch, or <code>null</code> if there
-	 * have been no launches.
+	 * Returns the most recent launch for the given group, or <code>null</code>
+	 * if none.
 	 *	
 	 * @return the last launch, or <code>null</code> if none
 	 */	
-	public LaunchConfigurationHistoryElement getLastLaunch() {
-		initializeHistory();
-		if (!fLastLaunchList.isEmpty()) {
-			return (LaunchConfigurationHistoryElement) fLastLaunchList.get(0);
-		}
-		return null;
-	}
-		
-	/**
-	 * Erase both (run & debug) launch histories and the last launched list.
-	 */
-	protected void setEmptyLaunchHistories() {
-		setRunHistoryVector(new Vector(fMaxHistorySize));
-		setDebugHistoryVector(new Vector(fMaxHistorySize));
-		setRunFavorites(new Vector(fMaxHistorySize));
-		setDebugFavorites(new Vector(fMaxHistorySize));
-		fLastLaunchList = new ArrayList(fMaxHistorySize);
-		fireLaunchHistoryChanged();		
-	}
-	
-	/**
-	 * Given a launch, try to add it to both of the run & debug histories.
-	 * If either history was modified, fire a history modified notification.
-	 */
-	protected void updateHistories(ILaunch launch) {
-		boolean modified = updateHistory(ILaunchManager.DEBUG_MODE, getDebugHistoryVector(), fDebugFavorites, launch);
-		modified |= updateHistory(ILaunchManager.RUN_MODE, getRunHistoryVector(), fRunFavorites, launch);
-		if (modified) {
-			fireLaunchHistoryChanged();
-		}
-	}
-
-	/**
-	 * Add the given launch to the specified history if the launcher supports the mode. 
-	 * Return <code>true</code> if the history was modified, <code>false</code> otherwise.
-	 */
-	protected boolean updateHistory(String mode, Vector history, Vector favorites, ILaunch launch) {
-		
-		// First make sure the launch configuration exists, supports the mode of the history list,
-		// and isn't private
-		ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
-		if (launchConfig == null) {
-			return false;
-		}
-		try {
-			if (!launchConfig.supportsMode(mode) || !isVisible(launchConfig)) {
-				return false;
-			}
-		} catch (CoreException ce) {
-			return false;
-		}
-		
-		// Create a new history item
-		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launchConfig, mode);
-		
-		// Update the most recent launch list
-		boolean modified = false;
-		if (launch.getLaunchMode().equals(mode)) {
-			int index = findConfigInHistoryList(fLastLaunchList, launchConfig);
-			if (index > 0) {
-				fLastLaunchList.remove(item);
-			}	
-			if (index != 0) {		
-				fLastLaunchList.add(0, item);
-				modified = true;
-			}
-		}
-		
-		// Look for an equivalent launch in the favorites
-		int index = findConfigInHistoryList(favorites, item.getLaunchConfiguration());
-		if (index >= 0) {
-			// a favorite, do not add to history
-			return modified;
-		}
-		
-		// Look for an equivalent launch in the history list
-		index = findConfigInHistoryList(history, item.getLaunchConfiguration());
-		
-		//It's already listed as the most recent launch, so nothing to do
-		if (index == 0) {
-			return modified;
-		}
-		
-		// Make it the top item in the list, removing it from it's previous location, if there was one
-		if (index > 0) {
-			history.remove(index);
-		} 			
-		history.add(0, item);
-		
-		if (history.size() > fMaxHistorySize) {
-			history.remove(history.size() - 1);
-		}
-
-		return true;	
+	public ILaunchConfiguration getLastLaunch(String groupId) {
+		LaunchHistory history = getLaunchHistory(groupId);
+		return history.getRecentLaunch();
 	}
 	
 	/**
@@ -528,177 +235,37 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			listener.launchHistoryChanged();
 		}
 	}
-	
-	/**
-	 * Returns whether the given config is displayed in the favorites
-	 * menu
-	 * 
-	 * @param config launch configuration
-	 * @return whether the given config is displayed in the favorites
-	 *  menu
-	 */
-	public boolean isDebugFavorite(ILaunchConfiguration config) {
-		return (findConfigInHistoryList(fDebugFavorites, config)) >= 0;
-	}	
-	
-	/**
-	 * Returns whether the given config is displayed in the favorites
-	 * menu
-	 * 
-	 * @param config launch configuration
-	 * @return whether the given config is displayed in the favorites
-	 *  menu
-	 */
-	public boolean isRunFavorite(ILaunchConfiguration config) {
-		return(findConfigInHistoryList(fRunFavorites, config)) >= 0;
-	}	
-	
-	/**
-	 * Adds the given config to the debug favorites. Has no
-	 * effect if already a debug favorite.
-	 * 
-	 * @param config launch configuration
-	 */
-	public void addDebugFavorite(ILaunchConfiguration config) {
-		if (!isDebugFavorite(config)) {
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.DEBUG_MODE);
-			fDebugFavorites.add(hist);
-		}
-	}	
-	
-	/**
-	 * Adds the given config to the run favorites. Has no
-	 * effect if already a run favorite.
-	 * 
-	 * @param config launch configuration
-	 */
-	public void addRunFavorite(ILaunchConfiguration config) {
-		if (!isRunFavorite(config)) {
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.RUN_MODE);
-			fRunFavorites.add(hist);
-		}
-	}	
-	
-	/**
-	 * Removes the given config from the debug favorites. Has no
-	 * effect if not a favorite.
-	 * 
-	 * @param config launch configuration
-	 */
-	public void removeDebugFavorite(ILaunchConfiguration config) {
-		int index = findConfigInHistoryList(fDebugFavorites, config);
-		if (index >= 0) {
-			fDebugFavorites.remove(index);
-		}
-	}	
-	
-	/**
-	 * Adds the given config to the run favorites. Has no
-	 * effect if already a run favorite.
-	 * 
-	 * @param config launch configuration
-	 */
-	public void removeRunFavorite(ILaunchConfiguration config) {
-		int index = findConfigInHistoryList(fRunFavorites, config);
-		if (index >= 0) {
-			fRunFavorites.remove(index);
-		}
-	}
-	
-	/**
-	 * Find the specified history element in the specified list and return the index at which
-	 * it was found.  Return -1 if the element wasn't found in the list.
-	 */
-	protected int findConfigInHistoryList(List list, ILaunchConfiguration config) {
-		for (int i = 0; i < list.size(); i++) {
-			LaunchConfigurationHistoryElement historyElement = (LaunchConfigurationHistoryElement) list.get(i);
-			if (historyElement != null) {
-				ILaunchConfiguration historyConfig = historyElement.getLaunchConfiguration();
-				if ((historyConfig != null) && historyConfig.equals(config)) {
-					return i;
-				}
-			}
-		}
-		
-		// Element wasn't in list
-		return -1;
-	}
-	
-	/**
-	 * Find the specified history element in the history list for the mode that is not the one
-	 * specified.  For example, if mode is 'debug', the 'run' list is searched.
-	 */
-	protected int findConfigInOtherHistoryList(String mode, ILaunchConfiguration config) {
-		Vector historyList = getOtherHistoryList(mode);
-		return findConfigInHistoryList(historyList, config);
-	}
-	
-	/**
-	 * Return the 'other' history list from the mode specified.  For example, if
-	 * mode is 'debug', return the 'run' history list.
-	 */
-	protected Vector getOtherHistoryList(String mode) {
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return getRunHistoryVector();
-		} else {
-			return getDebugHistoryVector();
-		}
-	}
-	
+
 	protected String getHistoryAsXML() throws IOException, CoreException {
-		org.w3c.dom.Document doc = new DocumentImpl();
+		Document doc = new DocumentImpl();
 		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
 		doc.appendChild(historyRootElement);
 		
-		List all = new ArrayList(getDebugHistoryVector().size() + fDebugFavorites.size() + getRunHistoryVector().size() + fRunFavorites.size());
-		all.addAll(fDebugFavorites);
-		all.addAll(fRunFavorites);
-		all.addAll(getDebugHistoryVector());
-		all.addAll(getRunHistoryVector());
+		Iterator histories = fLaunchHistories.values().iterator();
+		while (histories.hasNext()) {
+			LaunchHistory history = (LaunchHistory)histories.next();
+			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
+			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
+			ILaunchConfiguration configuration = history.getRecentLaunch();
+			if (configuration != null) {
+				Element last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
+				last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
+				last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
+				historyRootElement.appendChild(last);
+			}
+		}
 		
-
-		Iterator iter = all.iterator();
-		while (iter.hasNext()) {
-			Element historyElement = getHistoryEntryAsXMLElement(doc, (LaunchConfigurationHistoryElement)iter.next());
-			if (historyElement != null) {
-				historyRootElement.appendChild(historyElement);
-			}
-		}
-		if (!fLastLaunchList.isEmpty()) {
-			Element recent = getRecentLaunchAsXMLElement(doc, (LaunchConfigurationHistoryElement) fLastLaunchList.get(0));
-			if (recent != null) {
-				historyRootElement.appendChild(recent);
-			}
-		}
-
 		return DebugUIPlugin.serializeDocument(doc);
 	}
-	
-	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
-		Element entry = doc.createElement(HISTORY_LAUNCH_NODE); 
-		return setAttributes(entry, element);
-	}
-	
-	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
-		Element entry = doc.createElement(HISTORY_LAST_LAUNCH_NODE); 
-		return setAttributes(entry, element);
-	}
-	
-	protected Element setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
-		if (element == null) {
-			return null;
+
+	protected void createEntry(Document doc, Element historyRootElement, String mode, ILaunchConfiguration[] configurations) throws CoreException {
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration configuration = configurations[i];
+			Element launch = doc.createElement(HISTORY_LAUNCH_NODE);
+			launch.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
+			launch.setAttribute(HISTORY_MODE_ATT, mode);
+			historyRootElement.appendChild(launch);
 		}
-		ILaunchConfiguration config = element.getLaunchConfiguration();
-		if (config instanceof ILaunchConfigurationWorkingCopy) {
-			config = ((ILaunchConfigurationWorkingCopy)config).getOriginal();
-		}
-		if (config == null) {
-			return null;
-		}		
-		String memento = config.getMemento();
-		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
-		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());			 
-		return entry;
 	}
 				
 	protected IPath getHistoryFilePath() {
@@ -710,6 +277,9 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * the most recent launch.
 	 */
 	protected void persistLaunchHistory() throws IOException, CoreException {
+		if (fRestoring) {
+			return;
+		}
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
 		String xml = getHistoryAsXML();
@@ -719,23 +289,14 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		FileOutputStream stream = new FileOutputStream(file);
 		stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 		stream.close();
+		fireLaunchHistoryChanged();
 	}
 	
 	/**
-	 * Restore the launch history if it hasn't already been done.
+	 * Find the XML history file and parse it.  Place the corresponding configs
+	 * in the appropriate history, and set the most recent launch.
 	 */
-	protected void initializeHistory() {
-		if (!fHistoryInitialized) {
-			fHistoryInitialized = true;
-			restoreLaunchHistory();
-		}		
-	}
-	
-	/**
-	 * Find the XML history file and parse it.  Place the corresponding history elements
-	 * in the appropriate history lists, and set the most recent launch.
-	 */
-	protected void restoreLaunchHistory() {
+	private void restoreLaunchHistory() {
 		// Find the history file
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
@@ -745,6 +306,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		if (!file.exists()) {
 			return;
 		}
+		
 		FileInputStream stream= null;
 		Element rootHistoryElement= null;
 		try {
@@ -773,8 +335,10 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			return;
 		}
 
-		// For each child of the root node, construct a history element wrapper and add it to
-		// the appropriate history list, or set the most recent launch
+		// For each child of the root node, construct a launch config handle and add it to
+		// the appropriate history, or set the most recent launch
+		Collection l = fLaunchHistories.values();
+		LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
 		NodeList list = rootHistoryElement.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -783,47 +347,57 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			if (type == Node.ELEMENT_NODE) {
 				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAUNCH_NODE)) { 
-					LaunchConfigurationHistoryElement item = createHistoryElement(entry);
-					if (item != null) {
-						if (item.isFavorite()) {
-							if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
-								fDebugFavorites.add(item);
-							} else {
-								fRunFavorites.add(item);
-							}							
-						} else {
-							if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
-								getDebugHistoryVector().add(item);
-							} else {
-								getRunHistoryVector().add(item);
-							}
-						}
-					}
-				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) { 
-					fLastLaunchList.add(0, createHistoryElement(entry));
+					createHistoryElement(entry, histories);
+				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) {
+					createRecentElement(entry, histories);
 				}
 			}
 		}
 	}
 	
 	/**
-	 * Construct & return a <code>LaunchConfigurationHistoryElement</code> corresponding to
-	 * the specified XML element.
+	 * Construct a launch configuration corresponding to the specified XML
+	 * element, and place it in the approriate history.
 	 */
-	protected LaunchConfigurationHistoryElement createHistoryElement(Element entry) {
+	private void createHistoryElement(Element entry, LaunchHistory[] histories) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
-		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
-		LaunchConfigurationHistoryElement hist = null;
+		String mode = entry.getAttribute(HISTORY_MODE_ATT);     
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
-				hist = new LaunchConfigurationHistoryElement(launchConfig, mode);
+				for (int i = 0; i < histories.length; i++) {
+					LaunchHistory history = histories[i];
+					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
+						history.addHistory(launchConfig);
+					}
+				}
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}	
-		return hist;
 	}
+	
+	/**
+	 * Construct a launch configuration corresponding to the specified XML
+	 * element, and place it in the approriate history's recent launch
+	 */
+	private void createRecentElement(Element entry, LaunchHistory[] histories) {
+		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
+		String mode = entry.getAttribute(HISTORY_MODE_ATT);     
+		try {
+			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
+			if (launchConfig.exists()) {
+				for (int i = 0; i < histories.length; i++) {
+					LaunchHistory history = histories[i];
+					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
+						history.setRecentLaunch(launchConfig);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}	
+	}	
 	
 	/**
 	 * Load all registered extensions of the 'launch shortcut' extension point.
@@ -846,16 +420,18 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * Load all registered extensions of the 'launch groups' extension point.
 	 */
 	private void loadLaunchGroups() {
-		// Get the configuration elements
-		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-
-		// Load the configuration elements into a Map 
-		fLaunchGroups = new HashMap(infos.length);
-		for (int i = 0; i < infos.length; i++) {
-			LaunchGroupExtension ext = new LaunchGroupExtension(infos[i]);
-			fLaunchGroups.put(ext.getIdentifier(), ext);
+		if (fLaunchGroups == null) {
+			// Get the configuration elements
+			IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
+			IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+	
+			// Load the configuration elements into a Map 
+			fLaunchGroups = new HashMap(infos.length);
+			for (int i = 0; i < infos.length; i++) {
+				LaunchGroupExtension ext = new LaunchGroupExtension(infos[i]);
+				fLaunchGroups.put(ext.getIdentifier(), ext);
+			}
 		}
 	}	
 	
@@ -909,50 +485,6 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 	
 	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IDebugUIConstants.PREF_MAX_HISTORY_SIZE)) {
-			IPreferenceStore prefs = DebugUIPlugin.getDefault().getPreferenceStore();
-			int newValue = prefs.getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
-			if (fMaxHistorySize != newValue) {
-				shortenHistoryLists(newValue);
-				fMaxHistorySize = newValue;
-				fireLaunchHistoryChanged();
-			}
-		}
-	}
-	
-	/**
-	 * Adjust the lengths of the history lists, throwing away any entries that are past the new end
-	 * of the lists. 
-	 */
-	protected void shortenHistoryLists(int newLength) {		
-		if (newLength < getRunHistoryVector().size()) {
-			setRunHistoryVector(new Vector(getRunHistoryVector().subList(0, newLength)));
-		}
-		if (newLength < getDebugHistoryVector().size()) {
-			setDebugHistoryVector(new Vector(getDebugHistoryVector().subList(0, newLength)));
-		}
-		if (newLength < fLastLaunchList.size()) {
-			fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));		
-		}
-	}
-
-	/**
-	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
-	 */
-	public void launchHistoryChanged() {
-		try {
-			persistLaunchHistory();
-		} catch (IOException e) {
-			DebugUIPlugin.log(e);
-		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce);			
-		}		
-	}
-	
-	/**
 	 * Returns the image used to display an error in the given tab
 	 */
 	public Image getErrorTabImage(ILaunchConfigurationTab tab) {
@@ -984,6 +516,48 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			loadLaunchGroups();
 		}
 		return (LaunchGroupExtension)fLaunchGroups.get(id);
+	}
+	
+	/**
+	 * Return all defined launch groups
+	 * 
+	 * @return all defined launch groups
+	 */
+	public LaunchGroupExtension[] getLaunchGroups() {
+		if (fLaunchGroups == null) {
+			loadLaunchGroups();
+		}
+		Collection groups = fLaunchGroups.values();
+		return (LaunchGroupExtension[])groups.toArray(new LaunchGroupExtension[groups.size()]);
+	}	
+	
+	/**
+	 * Return the launch history with the given group id, or <code>null</code>
+	 * 
+	 * @return the launch history with the given group id, or <code>null</code>
+	 */
+	public LaunchHistory getLaunchHistory(String id) {
+		if (fLaunchHistories == null) {
+			loadLaunchHistories();
+		}
+		return (LaunchHistory)fLaunchHistories.get(id);
+	}	
+	
+	/**
+	 * Restore launch history
+	 */
+	private void loadLaunchHistories() {
+		if (fLaunchHistories == null) {
+			fRestoring = true;
+			LaunchGroupExtension[] groups = getLaunchGroups();
+			fLaunchHistories = new HashMap(groups.length);
+			for (int i = 0; i < groups.length; i++) {
+				LaunchGroupExtension extension = groups[i];
+				fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
+			}
+			restoreLaunchHistory();
+			fRestoring = false;
+		}
 	}
 	
 	/**

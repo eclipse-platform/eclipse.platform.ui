@@ -10,8 +10,13 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationDialog;
 import org
 	.eclipse
 	.debug
@@ -24,8 +29,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -55,20 +58,12 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	public void run(IAction action){		
 		try {
-			final LaunchConfigurationHistoryElement historyElement = getLastLaunch();
-			if (historyElement != null) {
-				final ILaunchConfiguration historyConfig = historyElement.getLaunchConfiguration();
-				if (historyConfig.supportsMode(getMode())) {
-					if (!DebugUITools.saveAndBuildBeforeLaunch()) {
-						return;
-					}
-					BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-						public void run() {							
-							RelaunchActionDelegate.relaunch(historyConfig, getMode());
-						}
-					});				
+			final ILaunchConfiguration configuration = getLastLaunch();
+			if (configuration != null) {
+				if (configuration.supportsMode(getMode())) {
+					DebugUITools.launch(configuration, getMode());
 				} else {
-					String configName = historyElement.getLaunchConfiguration().getName();
+					String configName = configuration.getName();
 					String title = ActionMessages.getString("RelaunchLastAction.Cannot_relaunch_1"); //$NON-NLS-1$
 					String message = MessageFormat.format(ActionMessages.getString("RelaunchLastAction.Cannot_relaunch_[{0}]_because_it_does_not_support_{2}_mode_2"), new String[] {configName, getMode()}); //$NON-NLS-1$
 					MessageDialog.openError(getShell(), title, message);				
@@ -105,8 +100,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	/**
 	 * Return the last launch that occurred in the workspace.
 	 */
-	protected LaunchConfigurationHistoryElement getLastLaunch() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
+	protected ILaunchConfiguration getLastLaunch() {
+		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
 	}
 	
 	protected Shell getShell() {
@@ -117,6 +112,11 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * Returns the mode (run or debug) of this action.
 	 */
 	public abstract String getMode();
+	
+	/**
+	 * Returns the launch group id of this action.
+	 */
+	public abstract String getLaunchGroupId();	
 
 }
 

@@ -7,6 +7,12 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -18,8 +24,34 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationsMessages;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,6 +63,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -86,14 +119,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Label fSwitchToLabel;
 
 	/**
-	 * The check box specifying run favoite
+	 * Check box list for specifying favorites
 	 */
-	private Button fRunFavoriteButton;	
-	
-	/**
-	 * The check box specifying debug favoite
-	 */
-	private Button fDebugFavoriteButton;
+	private CheckboxTableViewer fFavoritesTable;
 		
 	/**
 	 * Constant for the name of the drop-down choice 'None' for perspectives.
@@ -222,22 +250,39 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 1);
 		
 		Composite favComp = new Composite(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		favComp.setLayoutData(gd);
 		GridLayout favLayout = new GridLayout();
 		favLayout.marginHeight = 0;
 		favLayout.marginWidth = 0;
-		favLayout.numColumns = 1;
+		favLayout.numColumns = 2;
+		favLayout.makeColumnsEqualWidth = true;
 		favComp.setLayout(favLayout);
 		
 		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
 		favLabel.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 2;
+		favLabel.setLayoutData(gd);
 		
-		setRunFavoriteButton(new Button(favComp, SWT.CHECK));
-		getRunFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.&Run_11")); //$NON-NLS-1$
-		getRunFavoriteButton().addSelectionListener(fBasicSelectionListener);
-						
-		setDebugFavoriteButton(new Button(favComp, SWT.CHECK));
-		getDebugFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.Debu&g_12")); //$NON-NLS-1$
-		getDebugFavoriteButton().addSelectionListener(fBasicSelectionListener);
+		createVerticalSpacer(favComp, 2);
+		
+		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		Control table = fFavoritesTable.getControl();
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		table.setLayoutData(gd);
+		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
+		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
+		fFavoritesTable.addCheckStateListener(
+			new ICheckStateListener() {
+				/**
+				 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+				 */
+				public void checkStateChanged(CheckStateChangedEvent event) {
+					updateLaunchConfigurationDialog();
+				}
+			});
 	}
 
 	
@@ -500,23 +545,32 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void updateFavoritesFromConfig(ILaunchConfiguration config) {
-		ILaunchConfigurationType type = null;
-		boolean isDebug = false;
-		boolean isRun = false;
+		fFavoritesTable.setInput(config);
+		fFavoritesTable.setCheckedElements(new Object[]{});
 		try {
-			type = config.getType();
-			isDebug = config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
-			isRun = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
-		} catch (CoreException ce) {
-			getDebugFavoriteButton().setEnabled(false);
-			getRunFavoriteButton().setEnabled(false);
-			return;
+			List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList());
+			if (groups.isEmpty()) {
+				// check old attributes for backwards compatible
+				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
+					groups.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+				}
+				if (config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false)) {
+					groups.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+				}
+			}
+			if (!groups.isEmpty()) {
+				List list = new ArrayList();
+				Iterator iterator = groups.iterator();
+				while (iterator.hasNext()) {
+					String id = (String)iterator.next();
+					LaunchGroupExtension extension = LaunchConfigurationManager.getDefault().getLaunchGroup(id);
+					list.add(extension);
+				}
+				fFavoritesTable.setCheckedElements(list.toArray());
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
 		}
-		getDebugFavoriteButton().setEnabled(type.supportsMode(ILaunchManager.DEBUG_MODE));
-		getRunFavoriteButton().setEnabled(type.supportsMode(ILaunchManager.RUN_MODE));
-		getDebugFavoriteButton().setSelection(isDebug);
-		getRunFavoriteButton().setSelection(isRun);
-		
 	}
 	
 	/**
@@ -607,16 +661,52 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 	and will be missing for older configs.
 	 */
 	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
-		if (getDebugFavoriteButton().getSelection()) {
-			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, true);
-		} else {
+		try {
+			Object[] checked = fFavoritesTable.getCheckedElements();
+			boolean debug = config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
+			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
+			if (debug || run) {
+				// old attributes
+				List groups = new ArrayList();
+				int num = 0;
+				if (debug) {
+					groups.add(LaunchConfigurationManager.getDefault().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+					num++;
+				}
+				if (run) {
+					num++;
+					groups.add(LaunchConfigurationManager.getDefault().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+				}
+				// see if there are any changes
+				if (num == checked.length) {
+					boolean different = false;
+					for (int i = 0; i < checked.length; i++) {
+						if (!groups.contains(checked[i])) {
+							different = true;
+							break;
+						}
+					}
+					if (!different) {
+						return;
+					}
+				}
+			} 
+			// erase old attributes (if any)
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
-		} 
-		if (getRunFavoriteButton().getSelection()) {
-			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, true);
-		} else {
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
-		} 		
+			// new attribute
+			List groups = null;
+			for (int i = 0; i < checked.length; i++) {
+				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
+				if (groups == null) {
+					groups = new ArrayList();
+				}
+				groups.add(group.getIdentifier());
+			}
+			config.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}		
 	}	
 	
 	/**
@@ -674,46 +764,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Returns the check box used to specify a config
-	 * as a debug favorite.
-	 * 
-	 * @return check box
-	 */
-	private Button getDebugFavoriteButton() {
-		return fDebugFavoriteButton;
-	}
-
-	/**
-	 * Sets the check box used to specify a config
-	 * as a debug favorite.
-	 * 
-	 * @param button check box
-	 */
-	private void setDebugFavoriteButton(Button button) {
-		fDebugFavoriteButton = button;
-	}
-	
-	/**
-	 * Returns the check box used to specify a config
-	 * as a run favorite.
-	 * 
-	 * @return check box
-	 */
-	private Button getRunFavoriteButton() {
-		return fRunFavoriteButton;
-	}
-
-	/**
-	 * Sets the check box used to specify a config
-	 * as a run favorite.
-	 * 
-	 * @param button check box
-	 */
-	private void setRunFavoriteButton(Button button) {
-		fRunFavoriteButton = button;
-	}	
-
-	/**
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
@@ -734,5 +784,97 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_PERSPECTIVE_DEBUG);
 	}
 
+	class FavoritesContentProvider implements IStructuredContentProvider {
+		/**
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			LaunchGroupExtension[] groups = LaunchConfigurationManager.getDefault().getLaunchGroups();
+			List possibleGroups = new ArrayList();
+			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
+			for (int i = 0; i < groups.length; i++) {
+				LaunchGroupExtension extension = groups[i];
+				LaunchHistory history = LaunchConfigurationManager.getDefault().getLaunchHistory(extension.getIdentifier());
+				if (history.accepts(configuration)) {
+					possibleGroups.add(extension);
+				} 
+			}
+			return possibleGroups.toArray();
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(
+			Viewer viewer,
+			Object oldInput,
+			Object newInput) {
+		}
+
+	}
+	
+	class FavoritesLabelProvider implements ITableLabelProvider {
+		
+		private Map fImages = new HashMap();
+		
+		/**
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			Image image = (Image)fImages.get(element);
+			if (image == null) {
+				ImageDescriptor descriptor = ((LaunchGroupExtension)element).getImageDescriptor();
+				if (descriptor != null) {
+					image = descriptor.createImage();
+					fImages.put(element, image);
+				}
+			}
+			return image;
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			return ((LaunchGroupExtension)element).getLabel();
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			Iterator images = fImages.values().iterator();
+			while (images.hasNext()) {
+				Image image = (Image)images.next();
+				image.dispose();
+			}
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		/**
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
+	}
 }
 

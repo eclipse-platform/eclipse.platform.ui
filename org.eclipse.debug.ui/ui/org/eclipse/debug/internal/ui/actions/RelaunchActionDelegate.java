@@ -11,7 +11,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -27,11 +26,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			relaunch((IProcess)object);
 		}
 	}
-	
-	public static void relaunch(LaunchConfigurationHistoryElement history) {
-		relaunch(history.getLaunchConfiguration(), history.getMode());			
-	}
-		
+			
 	public static void relaunch(IDebugElement element) {
 		relaunch(element.getLaunch());
 	}

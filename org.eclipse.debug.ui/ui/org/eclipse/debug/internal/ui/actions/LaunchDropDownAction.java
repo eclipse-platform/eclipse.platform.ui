@@ -8,11 +8,19 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -116,10 +124,10 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Updates this action's tooltip to correspond to the most recent launch.
 	 */
 	protected void updateTooltip() {
-		LaunchConfigurationHistoryElement lastLaunched = getLastLaunch();
+		ILaunchConfiguration lastLaunched = getLastLaunch();
 		String tooltip= fOriginalTooltip;
 		if (lastLaunched != null) {
-			tooltip= getLastLaunchPrefix() + lastLaunched.getLaunchConfiguration().getName();
+			tooltip= getLastLaunchPrefix() + lastLaunched.getName();
 		} else {
 			tooltip= getStaticTooltip();
 		}
@@ -146,8 +154,8 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Return the last launch that occurred in the workspace.
 	 */
-	protected LaunchConfigurationHistoryElement getLastLaunch() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
+	protected ILaunchConfiguration getLastLaunch() {
+		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
 	}
 
 	/**
@@ -176,14 +184,14 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Create the drop-down menu based on whether the config style pref is set
 	 */
 	protected Menu createMenu(Menu menu) {	
-		LaunchConfigurationHistoryElement[] historyList= getHistory();
-		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();		
+		ILaunchConfiguration[] historyList= getHistory();
+		ILaunchConfiguration[] favoriteList = getFavorites();		
 		
 		// Add any favorites
 		int total = 0;
 		for (int i = 0; i < favoriteList.length; i++) {
-			LaunchConfigurationHistoryElement launch= favoriteList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			ILaunchConfiguration launch= favoriteList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch, getMode());
 			createMenuForAction(menu, newAction, total + 1);
 			total++;
 		}		
@@ -199,8 +207,8 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		
 		// Add history launches next
 		for (int i = 0; i < historyList.length; i++) {
-			LaunchConfigurationHistoryElement launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			ILaunchConfiguration launch= historyList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch, getMode());
 			createMenuForAction(menu, newAction, total+1);
 			total++;
 		}
@@ -280,17 +288,26 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Returns an array of previous launches applicable to this drop down.
 	 */
-	public abstract LaunchConfigurationHistoryElement[] getHistory();
+	public ILaunchConfiguration[] getHistory() {
+		return LaunchConfigurationManager.getDefault().getLaunchHistory(getLaunchGroupId()).getHistory();
+	}
 	
 	/**
 	 * Returns an array of favorites applicable to this drop down.
 	 */
-	public abstract LaunchConfigurationHistoryElement[] getFavorites();	
+	public ILaunchConfiguration[] getFavorites() {
+		return LaunchConfigurationManager.getDefault().getLaunchHistory(getLaunchGroupId()).getFavorites();
+	}	
 	
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.
 	 */
 	public abstract String getMode();
+	
+	/**
+	 * Returns the launch group of this drop down.
+	 */
+	public abstract String getLaunchGroupId();	
 	
 	/**
 	 * Return the String to use as the first part of the tooltip for this action

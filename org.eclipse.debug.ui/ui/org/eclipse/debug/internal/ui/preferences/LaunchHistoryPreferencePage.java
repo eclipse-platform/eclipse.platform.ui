@@ -1,31 +1,32 @@
 package org.eclipse.debug.internal.ui.preferences;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -46,15 +47,10 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	
 	private IntegerFieldEditor fHistoryMaxEditor;
 	/**
-	 * Debug tab.
+	 * History tabs.
 	 */
-	protected LaunchHistoryPreferenceTab fDebugTab;
-	
-	/**
-	 * Run tab.
-	 */
-	protected LaunchHistoryPreferenceTab fRunTab;
-	
+	protected LaunchHistoryPreferenceTab[] fTabs;
+		
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -85,33 +81,40 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		gd.horizontalSpan= 2;
 		tabFolder.setLayoutData(gd);
 		
-		TabItem tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.De&bug_1")); //$NON-NLS-1$
-		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_DEBUG));
-		tab.setControl(createDebugTab(tabFolder));
+		// create tabs (debug and run first) 
+		LaunchConfigurationManager manager = LaunchConfigurationManager.getDefault();
+		LaunchGroupExtension[] groups = manager.getLaunchGroups();
+		fTabs = new LaunchHistoryPreferenceTab[groups.length];
+		LaunchHistory history = manager.getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+		fTabs[0] = createTab(history, tabFolder);
+		history = manager.getLaunchHistory(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+		fTabs[1] = createTab(history, tabFolder);
 		
-		tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.&Run_2")); //$NON-NLS-1$
-		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_RUN));
-		tab.setControl(createRunTab(tabFolder));
-				
+		// create other tabs
+		int index = 2;
+		for (int i = 0; i < groups.length; i++) {
+			LaunchGroupExtension extension = groups[i];
+			String id = extension.getIdentifier();
+			if (!(id.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP) || id.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP))) {
+				history = manager.getLaunchHistory(id);
+				fTabs[index] = createTab(history, tabFolder);
+				index++;
+			}
+		}				
 		return composite;
 	}
 	
-	/**
-	 * Creates the control for the debug favorites
-	 */
-	protected Control createDebugTab(Composite parent) {
-		setDebugTab(new DebugHistoryPreferenceTab());
-		return getDebugTab().createControl(parent);
-	}
-
-	/**
-	 * Creates the control for the debug favorites
-	 */
-	protected Control createRunTab(Composite parent) {
-		setRunTab(new RunHistoryPreferenceTab());
-		return getRunTab().createControl(parent);
+	protected LaunchHistoryPreferenceTab createTab(LaunchHistory history, TabFolder tabFolder) {
+		TabItem tab = new TabItem(tabFolder, SWT.NONE);
+		tab.setText(history.getLaunchGroup().getLabel());
+		ImageDescriptor descriptor = history.getLaunchGroup().getImageDescriptor();
+		if (descriptor != null) {
+			tab.setImage(descriptor.createImage());
+			// TODO: dispose image
+		}
+		LaunchHistoryPreferenceTab prefTab = new LaunchHistoryPreferenceTab(history);
+		tab.setControl(prefTab.createControl(tabFolder));	
+		return prefTab;	
 	}
 	
 	/**
@@ -122,72 +125,14 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	}
 
 	/**
-	 * Returns the run tab.
-	 * 
-	 * @return a launch history preference tab
-	 */
-	protected LaunchHistoryPreferenceTab getRunTab() {
-		return fRunTab;
-	}
-
-	/**
-	 * Sets the run tab.
-	 * 
-	 * @param tab launch history preference tab
-	 */
-	private void setRunTab(LaunchHistoryPreferenceTab tab) {
-		fRunTab = tab;
-	}
-	
-	/**
-	 * Returns the debug tab.
-	 * 
-	 * @return a launch history preference tab
-	 */
-	protected LaunchHistoryPreferenceTab getDebugTab() {
-		return fDebugTab;
-	}
-
-	/**
-	 * Sets the debug tab.
-	 * 
-	 * @param tab launch history preference tab
-	 */
-	private void setDebugTab(LaunchHistoryPreferenceTab tab) {
-		fDebugTab = tab;
-	}
-
-	/**
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		
-		ILaunchConfiguration[] debugOriginals = getDebugTab().getInitialFavorites();
-		ILaunchConfiguration[] runOriginals = getRunTab().getInitialFavorites();
-		
-		LaunchConfigurationManager manager= DebugUIPlugin.getLaunchConfigurationManager();
-		// debug favorites
-		Vector list = convertToHistoryElements(getDebugTab().getFavorites(), ILaunchManager.DEBUG_MODE);
-		manager.setDebugFavorites(list);
-		
-		// debug recent history
-		list = convertToHistoryElements(getDebugTab().getRecents(), ILaunchManager.DEBUG_MODE);
-		manager.setDebugHistory(list);
-		
-		// run favorites
-		list = convertToHistoryElements(getRunTab().getFavorites(), ILaunchManager.RUN_MODE);
-		manager.setRunFavorites(list);
-		
-		// run recent history
-		list = convertToHistoryElements(getRunTab().getRecents(), ILaunchManager.RUN_MODE);
-		manager.setRunHistory(list);	
-		
-		// update config attributes for favorites
-		List current = getDebugTab().getFavorites();
-		updateAttributes(debugOriginals, current, IDebugUIConstants.ATTR_DEBUG_FAVORITE);
-		
-		current = getRunTab().getFavorites();
-		updateAttributes(runOriginals, current, IDebugUIConstants.ATTR_RUN_FAVORITE);			
+		for (int i = 0; i < fTabs.length; i++) {
+			LaunchHistoryPreferenceTab tab = fTabs[i];
+			tab.performOK();
+		}			
 		
 		fHistoryMaxEditor.store();
 		
@@ -196,66 +141,13 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	}
 	
 	/**
-	 * Update the 'favorite' attributes to reflect the current list.
-	 */
-	protected void updateAttributes(ILaunchConfiguration[] originals, List current, String attribute) {
-		List added = new ArrayList(current);
-		List removed = new ArrayList();
-
-		for (int i = 0; i < originals.length; i++) {
-			added.remove(originals[i]);
-			if (!current.contains(originals[i])) {
-				removed.add(originals[i]);
-			}
-		}
-		
-		try {
-			Iterator a = added.iterator();
-			while (a.hasNext()) {
-				ILaunchConfiguration config = (ILaunchConfiguration)a.next();
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute(attribute, true);
-				wc.doSave();
-			}
-			
-			Iterator r = removed.iterator();
-			while (r.hasNext()) {
-				ILaunchConfiguration config = (ILaunchConfiguration)r.next();
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute(attribute, (String)null);
-				wc.doSave();
-			}				
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
-	}
-	
-	/**
-	 * Converts the list of launch configurations to a vector
-	 * of history elements.
-	 * 
-	 * @param configs list of configs
-	 * @param mode the mode for the history elements
-	 * @return vector of history elements corresponding to the
-	 *  given launch configurations
-	 */
-	protected Vector convertToHistoryElements(List configs, String mode) {
-		Vector  v = new Vector(configs.size());
-		Iterator iter = configs.iterator();
-		while (iter.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, mode);
-			v.add(hist);
-		}
-		return v;
-	}
-	
-	/**
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		getDebugTab().performDefaults();
-		getRunTab().performDefaults();
+		for (int i = 0; i < fTabs.length; i++) {
+			LaunchHistoryPreferenceTab tab = fTabs[i];
+			tab.performDefaults();
+		}
 		fHistoryMaxEditor.loadDefault();
 		super.performDefaults();
 	}

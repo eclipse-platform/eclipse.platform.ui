@@ -356,27 +356,29 @@ public class DebugUITools {
 	 * @param mode launch mode - run or debug
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					configuration.launch(mode, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
+		if (saveAndBuildBeforeLaunch()) {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						configuration.launch(mode, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}		
+			};
+			try {
+				dialog.run(true, true, runnable);
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getTargetException();
+				Throwable t = e;
+				if (targetException instanceof CoreException) {
+					t = targetException;
 				}
-			}		
-		};
-		try {
-			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			Throwable targetException = e.getTargetException();
-			Throwable t = e;
-			if (targetException instanceof CoreException) {
-				t = targetException;
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", "Exception occurred during launch", t);
+			} catch (InterruptedException e) {
+				// cancelled
 			}
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", "Exception occurred during launch", t);
-		} catch (InterruptedException e) {
-			// cancelled
 		}
 	}
 	
