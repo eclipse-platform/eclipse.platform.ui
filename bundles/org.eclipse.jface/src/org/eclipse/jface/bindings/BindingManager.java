@@ -373,8 +373,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method completes in <code>O(1)</code>.
 	 */
 	private final void clearSolution() {
-		activeBindings = null;
-		prefixTable = null;
+		setActiveBindings(null, null);
 	}
 
 	/**
@@ -1180,8 +1179,7 @@ public final class BindingManager implements IContextManagerListener,
 	private final void recomputeBindings() {
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
-			activeBindings = Collections.EMPTY_MAP;
-			prefixTable = Collections.EMPTY_MAP;
+			setActiveBindings(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
 			return;
 		}
 
@@ -1208,8 +1206,8 @@ public final class BindingManager implements IContextManagerListener,
 			if (DEBUG) {
 				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
 			}
-			activeBindings = commandIdsByTrigger;
-			prefixTable = existingCache.getPrefixTable();
+			setActiveBindings(commandIdsByTrigger, existingCache
+					.getPrefixTable());
 			return;
 		}
 
@@ -1222,8 +1220,7 @@ public final class BindingManager implements IContextManagerListener,
 		commandIdsByTrigger = new HashMap();
 		computeBindings(activeContextTree, commandIdsByTrigger);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
-		activeBindings = commandIdsByTrigger;
-		prefixTable = buildPrefixTable(activeBindings);
+		setActiveBindings(commandIdsByTrigger, buildPrefixTable(activeBindings));
 		existingCache.setPrefixTable(prefixTable);
 	}
 
@@ -1616,10 +1613,37 @@ public final class BindingManager implements IContextManagerListener,
 				}
 			}
 
-			fireBindingManagerChanged(new BindingManagerEvent(this,
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
 					activeSchemeChanged, schemeId, schemeIdAdded,
 					!schemeIdAdded));
 		}
+	}
+
+	/**
+	 * Sets the active bindings and the prefix table. This ensures that the two
+	 * values change at the same time, and that any listeners are notified
+	 * appropriately.
+	 * 
+	 * @param activeBindings
+	 *            This is a map of tirggers ( <code>TriggerSequence</code>)
+	 *            to command ids (<code>String</code>). This value will only
+	 *            be <code>null</code> if the active bindings have not yet
+	 *            been computed. Otherwise, this value may be empty.
+	 * @param prefixTable
+	 *            A map of prefixes (<code>TriggerSequence</code>) to a map
+	 *            of available completions (possibly <code>null</code>, which
+	 *            means there is an exact match). The available completions is a
+	 *            map of trigger (<code>TriggerSequence</code>) to command
+	 *            identifier (<code>String</code>). This value may be
+	 *            <code>null</code> if there is no existing solution.
+	 */
+	private final void setActiveBindings(final Map activeBindings,
+			final Map prefixTable) {
+		this.activeBindings = activeBindings;
+		this.prefixTable = prefixTable;
+
+		fireBindingManagerChanged(new BindingManagerEvent(this, true, false,
+				null, false, false));
 	}
 
 	/**
@@ -1654,8 +1678,8 @@ public final class BindingManager implements IContextManagerListener,
 		activeScheme = scheme;
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
 		clearSolution();
-		fireBindingManagerChanged(new BindingManagerEvent(this, true, null,
-				false, false));
+		fireBindingManagerChanged(new BindingManagerEvent(this, false, true,
+				null, false, false));
 	}
 
 	/**

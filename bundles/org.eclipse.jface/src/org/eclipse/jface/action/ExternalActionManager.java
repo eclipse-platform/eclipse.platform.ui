@@ -194,15 +194,16 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 		 */
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
-			final Iterator listenerItr = registeredListeners.values()
-					.iterator();
-			while (listenerItr.hasNext()) {
-				final IPropertyChangeListener listener = (IPropertyChangeListener) listenerItr
-						.next();
-				listener.propertyChange(new PropertyChangeEvent(null,
-						IAction.TEXT, null, null));
+			if (event.haveActiveBindingsChanged()) {
+				final Iterator listenerItr = registeredListeners.values()
+						.iterator();
+				while (listenerItr.hasNext()) {
+					final IPropertyChangeListener listener = (IPropertyChangeListener) listenerItr
+							.next();
+					listener.propertyChange(new PropertyChangeEvent(null,
+							IAction.TEXT, null, null));
+				}
 			}
-
 		}
 
 		/**
