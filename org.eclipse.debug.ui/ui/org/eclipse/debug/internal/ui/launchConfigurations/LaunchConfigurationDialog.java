@@ -1641,6 +1641,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	/**
 	 * Notification that a tab has been selected
+	 * 
+	 * Disallow tab changing when the current tab is invalid.
+	 * Update the config from the tab being left, and refresh
+	 * the tab being entered.
 	 */
 	protected void handleTabSelected() {
 		if (fCurrentTabIndex == getTabFolder().getSelectionIndex()) {
@@ -1648,7 +1652,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		if (fCurrentTabIndex != -1) {
 			ILaunchConfigurationTab tab = getTabs()[fCurrentTabIndex];
-			if (!tab.isValid()) {
+			if (tab.okToLeave()) {
+				ILaunchConfigurationWorkingCopy wc = getLaunchConfiguration();
+				if (wc != null) {
+					// apply changes when leaving a tab
+					tab.performApply(getLaunchConfiguration());
+					// update when entering a tab
+					getActiveTab().initializeFrom(wc);
+				}
+			} else {
 				getTabFolder().setSelection(fCurrentTabIndex);
 				return;
 			}
