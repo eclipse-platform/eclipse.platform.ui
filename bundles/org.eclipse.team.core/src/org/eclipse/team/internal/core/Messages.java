@@ -70,16 +70,7 @@ public class Messages extends NLS {
 
 	public static String Config_error;
 
-	public static String teamStatus_notCheckedOut;
-	public static String teamStatus_notCheckedIn;
-	public static String teamStatus_unmanagedResource;
-	public static String teamStatus_noRemoteResource;
-	public static String teamStatus_ioFailed;
-	public static String teamStatus_conflict;
-
 	public static String multiStatus_errorsOccurred;
-	public static String provider_configuration_missing;
-	public static String provider_configuration_invalid;
 	public static String filetransfer_monitor;
 
 	public static String SynchronizedTargetProvider_invalidURLCombination;
