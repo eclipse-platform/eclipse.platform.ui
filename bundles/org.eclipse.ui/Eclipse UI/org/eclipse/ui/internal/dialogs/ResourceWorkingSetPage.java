@@ -58,6 +58,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	public ResourceWorkingSetPage() {
 		super("resourceWorkingSetPage");	//$NON-NLS-1$
+		setDescription(WorkbenchMessages.getString("ResourceWorkingSetPage.description")); //$NON-NLS-1$				
 	}
 	/**
 	 * Overrides method in WizardPage.

@@ -63,19 +63,9 @@ public class WorkingSetNewWizard extends Wizard {
 			editPageId = descriptors[0].getId();
 			page = workingSetEditPage = registry.getWorkingSetPage(editPageId);
 		}
-		initializeWorkingSetPage(page);
+		page.setWizard(this);
 		addPage(page);
 		setForcePreviousAndNextButtons(descriptors.length > 1);
-	}
-	/**
-	 * Initializes the working set editing page.
-	 * 
-	 * @param page the working set editing page to initialize
-	 */
-	private void initializeWorkingSetPage(IWizardPage page) {
-		page.setWizard(this);
-		page.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
-		page.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
 	}
 	/**
 	 * Overrides method in Wizard.
@@ -92,7 +82,7 @@ public class WorkingSetNewWizard extends Wizard {
 				if (workingSetEditPage == null || pageId != editPageId) {
 					WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 					workingSetEditPage = registry.getWorkingSetPage(pageId);
-					initializeWorkingSetPage(workingSetEditPage);
+					workingSetEditPage.setWizard(this);
 					editPageId = pageId;
 				}			
 				return workingSetEditPage;
