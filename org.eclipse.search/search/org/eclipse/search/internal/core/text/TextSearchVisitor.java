@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,6 +48,7 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.StringMatcher;
 
 /**
  * The visitor that does the actual work.
@@ -58,14 +57,14 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	protected static final int fgLF= '\n';
 	protected static final int fgCR= '\r';
 
-	private String fPatternStr;
+	private String fPattern;
 	private ISearchScope fScope;
 	private ITextSearchResultCollector fCollector;
 	private String fOptions;
 	private IEditorPart[] fDirtyEditors;
 		
 	private IProgressMonitor fProgressMonitor;
-	private Matcher fMatcher;
+	private StringMatcher fMatcher;
 	private Integer[] fMessageFormatArgs;
 
 	private int fNumberOfScannedFiles;
@@ -78,7 +77,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	
 	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		super(status);
-		fPatternStr= pattern;
+		fPattern= pattern;
 		fScope= scope;
 		fCollector= collector;
 		fPushback= false;
@@ -88,79 +87,10 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 			fOptions= "";	 //$NON-NLS-1$
 
 		fProgressMonitor= collector.getProgressMonitor();
-		Pattern regExPattern;
-		if (options.indexOf('r') == -1)
-			pattern= asRegEx(pattern);
-		if (options.indexOf('i') != -1)
-			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-		else
-			regExPattern= Pattern.compile(pattern);
-
-		fMatcher= regExPattern.matcher(""); //$NON-NLS-1$
-			
+		fMatcher= new StringMatcher(pattern, options.indexOf('i') != -1, false);
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
 		fMessageFormatArgs= new Integer[] { new Integer(0), new Integer(fileCount) };
-	}
-
-	/*
-	 * Converts '*' and '?' to regEx variables.
-	 */
-	private String asRegEx(String pattern) {
-		
-		StringBuffer out= new StringBuffer(pattern.length());
-		
-		boolean escaped= false;
-		boolean quoting= false;
-	
-		int i= 0;
-		while (i < pattern.length()) {
-			char ch= pattern.charAt(i++);
-	
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-	
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-	
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-	
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out.toString();
 	}
 	
 	public void process(Collection projects) {
@@ -212,7 +142,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		if (proxy.isDerived())
 			return false;
 
-		if (fPatternStr.length() == 0) {
+		if (fPattern.length() == 0) {
 			fCollector.accept(proxy, "", -1, 0, -1); //$NON-NLS-1$
 			updateProgressMonitor();
 			return true;
@@ -239,13 +169,13 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 					int start= 0;
 					eof= eolStrLength == -1;
 					String line= sb.toString();
+					StringMatcher.Position match;
 					while (start < lineLength) {
-						fMatcher.reset(line);
-						if (fMatcher.find(start)) {
-							start= charCounter + fMatcher.start();
-							int length= fMatcher.end() - fMatcher.start();
+						if ((match= fMatcher.find(line, start, lineLength)) != null) {
+							start= charCounter + match.getStart();
+							int length= match.getEnd() - match.getStart();
 							fCollector.accept(proxy, line.trim(), start, length, lineCounter);
-							start= fMatcher.end();
+							start= match.getEnd();
 						}
 						else	// no match in this line
 							start= lineLength;

@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,6 +24,7 @@ import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.util.StringMatcher;
 
 /**
  * A special text search scope that take file extensions into account.
@@ -102,70 +101,8 @@ public class TextSearchScope extends SearchScope {
 	 * Adds an extension to the scope.
 	 */
 	public void addExtension(String extension) {
-		Pattern pattern= Pattern.compile(asRegEx(extension), Pattern.CASE_INSENSITIVE);
-		fExtensions.add(pattern.matcher("")); //$NON-NLS-1$
+		fExtensions.add(new StringMatcher(extension, true, false));
 	}
-
-	/*
-	 * Converts '*' and '?' to regEx variables.
-	 */
-	private String asRegEx(String pattern) {
-		
-		StringBuffer out= new StringBuffer(pattern.length());
-		
-		boolean escaped= false;
-		boolean quoting= false;
-	
-		int i= 0;
-		while (i < pattern.length()) {
-			char ch= pattern.charAt(i++);
-	
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-	
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-	
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-	
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out.toString();
-	}
-
 	/**
 	 * Adds all string patterns contained in <code>extensions</code> to this
 	 * scope. The allowed pattern characters are <code>*</code> for any character
@@ -195,7 +132,7 @@ public class TextSearchScope extends SearchScope {
 		if (proxy != null) {
 			Iterator iter= fExtensions.iterator();
 			while (iter.hasNext()) {
-				if (((Matcher)iter.next()).reset(proxy.getName()).matches())
+				if (((StringMatcher)iter.next()).match(proxy.getName()))
 					return false;
 			}
 		}
@@ -217,7 +154,7 @@ public class TextSearchScope extends SearchScope {
 		if (file != null) {
 			Iterator iter= fExtensions.iterator();
 			while (iter.hasNext()) {
-				if (((Matcher)iter.next()).reset(file.getName()).matches())
+				if (((StringMatcher)iter.next()).match(file.getName()))
 					return false;
 			}
 		}
