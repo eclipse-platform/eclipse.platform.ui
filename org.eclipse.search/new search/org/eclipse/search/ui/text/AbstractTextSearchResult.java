@@ -8,24 +8,15 @@
  ******************************************************************************/
 package org.eclipse.search.ui.text;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelExtension;
-
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -43,66 +34,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fElementsToMatches= new HashMap();
 		fListeners= new ArrayList();
 		fMatchEvent= new MatchEvent(this);
-	}
-	
-	
-	/**
-	 * Adds annotations to the given editor. The default implementation works for editors that
-	 * implement <code>ITextEditor</code>.
-	 * Subclasses may override this method. 
-	 * @param editor
-	 * @param annotationToPositionMap A map containing annotations as keys and Positions as values.
-	 * 			 @see Annotation
-	 * 			 @see Position
-	 */
-	public void addAnnotations(IEditorPart editor, Map annotationToPositionMap) {
-		if (!(editor instanceof ITextEditor))
-			return;
-		ITextEditor textEditor= (ITextEditor) editor;
-		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
-		if (model == null) {
-			return;
-		}
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
-			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
-		} else {
-			for (Iterator elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
-				Annotation element= (Annotation) elements.next();
-				Position p= (Position) annotationToPositionMap.get(element);
-				model.addAnnotation(element, p);
-			}
-		}
-	}
-	
-	/**
-	 * Removes annotations from the given editor. The default implementation works for editors that
-	 * implement <code>ITextEditor</code>.
-	 * Subclasses may override this method. 
-	 * @param editor
-	 * @param annotions A set containing the annotations to be removed.
-	 * 			 @see Annotation
-	 */
-	public void removeAnnotations(IEditorPart editor, Set annotations) {
-		if (!(editor instanceof ITextEditor))
-			return;
-		ITextEditor textEditor= (ITextEditor) editor;
-		IDocumentProvider dp= textEditor.getDocumentProvider();
-		if (dp == null)
-			return;
-		IAnnotationModel model= dp.getAnnotationModel(textEditor.getEditorInput());
-		if (model == null)
-			return;
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
-			Annotation[] annotationArray= new Annotation[annotations.size()];
-			ame.replaceAnnotations((Annotation[]) annotations.toArray(annotationArray), Collections.EMPTY_MAP);
-		} else {
-			for (Iterator iter= annotations.iterator(); iter.hasNext();) {
-				Annotation element= (Annotation) iter.next();
-				model.removeAnnotation(element);
-			}
-		}
 	}
 
 	/**
