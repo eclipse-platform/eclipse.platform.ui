@@ -1,6 +1,7 @@
 package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.operation.IRunnableContext;
 
 /*
@@ -59,6 +60,15 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * 
 	 * @return currently displayed tabs, or <code>null</code>
 	 */
-	public ILaunchConfigurationTab[] getTabs();	
+	public ILaunchConfigurationTab[] getTabs();
+	
+	/**
+	 * Returns the mode in which this dialog was opened -
+	 * run or debug.
+	 * 
+	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code>
+	 * @see ILaunchManager
+	 */
+	public String getMode();		
 		
 }

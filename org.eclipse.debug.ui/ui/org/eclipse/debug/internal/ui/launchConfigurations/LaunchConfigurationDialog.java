@@ -1281,7 +1281,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		fMode = mode;
  	}
  	
- 	protected String getMode() {
+ 	/** 
+ 	 * @see ILaunchConfigurationDialog#getMode()
+ 	 */
+ 	public String getMode() {
  		return fMode;
  	}
  	
@@ -2013,18 +2016,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 
-		
-		// save and launch buttons
-		ILaunchConfigurationTab tab = getActiveTab();
-		boolean verified = false;
-		try {
-			verify();
-			verified = true;
-		} catch (CoreException e) {
-		}
-		if (tab != null) {
-			getSaveButton().setEnabled(verified && tab.isValid());
-			getLaunchButton().setEnabled(canLaunch());		
+		if (sel.isEmpty()) {
+			getSaveButton().setEnabled(false);
+			getLaunchButton().setEnabled(false);
+		} else {
+			// save and launch buttons
+			ILaunchConfigurationTab tab = getActiveTab();
+			boolean verified = false;
+			try {
+				verify();
+				verified = true;
+			} catch (CoreException e) {
+			}
+			if (tab != null) {
+				getSaveButton().setEnabled(verified && tab.isValid());
+				getLaunchButton().setEnabled(canLaunch());		
+			}
 		}
 	}
 	
