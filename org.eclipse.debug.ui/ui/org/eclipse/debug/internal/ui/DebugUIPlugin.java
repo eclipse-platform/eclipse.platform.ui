@@ -51,7 +51,7 @@ import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderMan
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
-import org.eclipse.debug.ui.launchVariables.VariableContextManager;
+import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -323,7 +323,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			new Runnable() {
 				public void run() {
 					//initialize the variable context manager
-					VariableContextManager.getDefault();
+					LaunchVariableContextManager.getDefault();
 				}
 			});	
 	}

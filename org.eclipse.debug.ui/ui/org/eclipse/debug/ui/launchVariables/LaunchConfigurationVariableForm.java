@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.List;
  * Visual grouping of controls that allows the user to
  * select a variable and configure it with extra
  * information.
+ * 
  * @since 3.0
  */
 public class LaunchConfigurationVariableForm {

@@ -9,28 +9,27 @@
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 
 /**
- * Prompts the user to choose a folder and expands the selection
+ * Prompts the user to choose a file and expands the selection
  */
-public class FolderPromptExpander extends PromptExpanderBase {
-
-	public FolderPromptExpander() {
+public class FilePromptExpander extends PromptExpanderBase {
+	public FilePromptExpander() {
 		super();
 	}
 	
 	/**
-	 * Prompts the user to choose a folder.
+	 * Prompts the user to choose a file
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		DirectoryDialog dialog = new DirectoryDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
+		FileDialog dialog = new FileDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
 		dialog.setText(dialogMessage);
-		dialog.setFilterPath(lastValue == null ? defaultValue : lastValue);
+		dialog.setFileName(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();
 	}
 

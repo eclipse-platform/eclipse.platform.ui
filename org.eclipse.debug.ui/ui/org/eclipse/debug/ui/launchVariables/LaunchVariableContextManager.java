@@ -30,14 +30,14 @@ import org.eclipse.ui.PlatformUI;
  * Maintains the context used to expand variables. The context is based on
  * the selected resource.
  */
-public class VariableContextManager implements IWindowListener, ISelectionListener {
+public class LaunchVariableContextManager implements IWindowListener, ISelectionListener {
 
 	// singleton
-	private static VariableContextManager fgDefault;
+	private static LaunchVariableContextManager fgDefault;
 	
 	private IResource fSelectedResource = null;
 	
-	private VariableContextManager() {
+	private LaunchVariableContextManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) { //may be running headless
 			workbench.addWindowListener(this);
@@ -53,9 +53,9 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	 * 
 	 * @return VariableContextManager
 	 */
-	public static VariableContextManager getDefault() {
+	public static LaunchVariableContextManager getDefault() {
 		if (fgDefault == null) {
-			fgDefault = new VariableContextManager(); 
+			fgDefault = new LaunchVariableContextManager(); 
 		}
 		return fgDefault;
 	}

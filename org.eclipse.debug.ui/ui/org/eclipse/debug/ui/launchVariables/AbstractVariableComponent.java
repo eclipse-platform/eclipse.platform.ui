@@ -8,11 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables;
 
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
-import org.eclipse.debug.ui.launchVariables.IVariableComponent;
-import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -23,6 +21,7 @@ import org.eclipse.swt.widgets.Group;
 /**
  * The AbstractVariableComponent provides the base implementation of an
  * <code>IVariableComponent</code>.
+ * 
  * @since 3.0
  */
 public abstract class AbstractVariableComponent implements IVariableComponent {

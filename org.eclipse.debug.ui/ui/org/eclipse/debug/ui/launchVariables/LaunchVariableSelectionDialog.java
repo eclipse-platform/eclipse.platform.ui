@@ -13,6 +13,7 @@ package org.eclipse.debug.ui.launchVariables;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.launchVariables.LaunchVariableMessages;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,10 +33,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Dialog that prompts the user to select a launch configuration variable.
  * @since 3.0
  */
-public class VariableSelectionDialog extends SelectionDialog {
+public class LaunchVariableSelectionDialog extends SelectionDialog {
 	private LaunchConfigurationVariableForm form;
 	private Composite formComposite;
-	public VariableSelectionDialog(Shell parent) {
+	public LaunchVariableSelectionDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setTitle(LaunchVariableMessages.getString("VariableSelectionDialog.0")); //$NON-NLS-1$
@@ -98,7 +99,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		form.createContents(formComposite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
-				VariableSelectionDialog.this.setMessage(errorMessage);
+				LaunchVariableSelectionDialog.this.setMessage(errorMessage);
 			}
 
 			public void updateValidState() {

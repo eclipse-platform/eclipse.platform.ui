@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.ui.launchVariables.*;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;

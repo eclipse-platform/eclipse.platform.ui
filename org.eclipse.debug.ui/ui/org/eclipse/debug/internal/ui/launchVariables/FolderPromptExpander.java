@@ -9,29 +9,29 @@
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.ui.launchVariables;
 
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.swt.widgets.DirectoryDialog;
 
 /**
- * Prompts the user to input a string and expands to the value entered
+ * Prompts the user to choose a folder and expands the selection
  */
-public class StringPromptExpander extends PromptExpanderBase {
-	
-	public StringPromptExpander() {
+public class FolderPromptExpander extends PromptExpanderBase {
+
+	public FolderPromptExpander() {
 		super();
 	}
-
+	
 	/**
-	 * Prompts the user to input a string.
+	 * Prompts the user to choose a folder.
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		InputDialog dialog = new InputDialog(null, LaunchVariableMessages.getString("StringPromptExpander.0"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
-		int dialogResult = dialog.open();
-		if (dialogResult == InputDialog.OK) {
-			dialogResultString = dialog.getValue();
-		}
+		DirectoryDialog dialog = new DirectoryDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
+		dialog.setText(dialogMessage);
+		dialog.setFilterPath(lastValue == null ? defaultValue : lastValue);
+		dialogResultString = dialog.open();
 	}
 
 }

@@ -15,9 +15,9 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.launchVariables.*;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
-import org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.WizardDialog;

@@ -25,7 +25,7 @@ import org.eclipse.debug.core.variables.ILaunchVariableConstants;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.VariableSelectionDialog;
+import org.eclipse.debug.ui.launchVariables.LaunchVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -243,7 +243,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		variableButton.setLayoutData(gridData);
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
+				LaunchVariableSelectionDialog dialog= new LaunchVariableSelectionDialog(getShell());
 				if (dialog.open() == SelectionDialog.OK) {
 					argumentField.insert(dialog.getForm().getSelectedVariable());
 				}

@@ -1213,17 +1213,17 @@
          point="org.eclipse.debug.core.contextLaunchVariables">
       <variable
             name="string_prompt"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.StringPromptExpander"
+            expanderClass="org.eclipse.debug.internal.ui.launchVariables.StringPromptExpander"
             description="%string_prompt.description">
       </variable>
       <variable
             name="file_prompt"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.FilePromptExpander"
+            expanderClass="org.eclipse.debug.internal.ui.launchVariables.FilePromptExpander"
             description="%file_prompt.description">
       </variable>
       <variable
             name="folder_prompt"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.FolderPromptExpander"
+            expanderClass="org.eclipse.debug.internal.ui.launchVariables.FolderPromptExpander"
             description="%folder_prompt.description">
       </variable>
    </extension>   
@@ -1237,22 +1237,22 @@
 		<variable
 			name="project"
 			description="%project.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander">
+			expanderClass="org.eclipse.debug.internal.core.variables.ProjectExpander">
 		</variable>
 		<variable
 			name="container"
 			description="%container.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander">
+			expanderClass="org.eclipse.debug.internal.core.variables.ContainerExpander">
 		</variable>
 		<variable
 			name="resource"
 			description="%resource.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander">
+			expanderClass="org.eclipse.debug.internal.core.variables.ResourceExpander">
 		</variable>
 		<variable
 			name="working_set"
 			description="%working_set.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander">
+			expanderClass="org.eclipse.debug.internal.ui.launchVariables.WorkingSetExpander">
 		</variable>
 	</extension>
 	<!-- Variable Components -->

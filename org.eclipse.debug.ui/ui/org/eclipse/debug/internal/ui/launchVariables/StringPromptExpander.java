@@ -9,28 +9,29 @@
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.ui.launchVariables;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.jface.dialogs.InputDialog;
 
 /**
- * Prompts the user to choose a file and expands the selection
+ * Prompts the user to input a string and expands to the value entered
  */
-public class FilePromptExpander extends PromptExpanderBase {
-	public FilePromptExpander() {
+public class StringPromptExpander extends PromptExpanderBase {
+	
+	public StringPromptExpander() {
 		super();
 	}
-	
+
 	/**
-	 * Prompts the user to choose a file
+	 * Prompts the user to input a string.
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		FileDialog dialog = new FileDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
-		dialog.setText(dialogMessage);
-		dialog.setFileName(lastValue == null ? defaultValue : lastValue);
-		dialogResultString = dialog.open();
+		InputDialog dialog = new InputDialog(null, LaunchVariableMessages.getString("StringPromptExpander.0"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
+		int dialogResult = dialog.open();
+		if (dialogResult == InputDialog.OK) {
+			dialogResultString = dialog.getValue();
+		}
 	}
 
 }

@@ -356,6 +356,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 			return null;
 		}
 	
-		return variable.getExpander().getResources(varDef.name, varDef.argument, VariableContextManager.getDefault().getVariableContext());
+		return variable.getExpander().getResources(varDef.name, varDef.argument, LaunchVariableContextManager.getDefault().getVariableContext());
 	}
 }

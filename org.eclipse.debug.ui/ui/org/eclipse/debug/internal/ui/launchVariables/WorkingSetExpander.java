@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.ui.launchVariables;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
