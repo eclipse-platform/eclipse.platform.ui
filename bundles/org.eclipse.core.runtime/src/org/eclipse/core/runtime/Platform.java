@@ -1069,15 +1069,22 @@ public final class Platform {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
 	}
 
-	// TODO see DJ for javadoc
+	/**
+	 * Return the interface into the preference mechanism. The returned
+	 * object can be used for such operations as searching for preference 
+	 * values across multiple scopes and preference import/export.
+	 * 
+	 * @return an object to interface into the preference mechanism
+	 * @since 3.0
+	 */
 	public static IPreferencesService getPreferencesService() {
 		return InternalPlatform.getDefault().getPreferencesService();
 	}
 
 	/**
 	 * Returns the product which was selected when running this Eclipse instance
-	 * or null if none
-	 * @return the current product or null if none
+	 * or <code>null</code> if none
+	 * @return the current product or <code>null</code> if none
 	 * @since 3.0
 	 */
 	public static IProduct getProduct() {
