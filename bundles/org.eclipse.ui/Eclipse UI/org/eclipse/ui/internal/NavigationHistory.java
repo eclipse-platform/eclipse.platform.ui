@@ -1,191 +1,287 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.*;
-import org.eclipse.ui.IEditorPart;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-/**
- */
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.XMLMemento;
+
+
 public class NavigationHistory {
 	
-	private static int NavigationHistoryCapacity = 10;
 	
-	//Separator between back and forward item. Allways between 0 and size - 1;
-	//history[index] is the current item.
-	private int index = -1;
-	//Always between 0 and NavigationHistoryCapacity;
-	//history[size] always == null
-	private int size = 0;
+			private class NavigationHistoryEntry {
+				
+				private IEditorPart fPart;
+				private XMLMemento fMemento;
+				private ISelection fSelection;
+				
+				
+				public NavigationHistoryEntry(IEditorPart part) {
+					fPart= part;
+				}
+				
+				public void gotoEntry() {
+					try {
+						
+						++fIgnoreEntries;
+						
+						if (fPart != null) {
+							fPage.activate(fPart);
+						} else if (fMemento != null) {
+							IEditorPart part= restoreEditor(fMemento);
+							if (part != null) {
+								fPart= part;
+								fMemento= null;
+							}
+						}
+						
+						if (fPart != null && fSelection != null) {
+							ISelectionProvider prov = fPart.getSite().getSelectionProvider();
+							prov.setSelection(fSelection);
+						}
+					} finally {
+						-- fIgnoreEntries;
+					}
+				}
+				
+				public boolean saveEditor() {
+					IEditorInput input = fPart.getEditorInput();
+					IPersistableElement persistable = input.getPersistable();
+					if (persistable == null)
+						return false;
+						
+					fMemento=  XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
+					fMemento.putString(IWorkbenchConstants.TAG_ID, fPart.getSite().getId());
+					fMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+					persistable.saveState(fMemento);
+					fPart= null;
+					return true;
+				}
+				
+				private IEditorPart restoreEditor(IMemento memento) {
+					String factoryID= memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+					IElementFactory factory= WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+					if (factory != null) {
+						IAdaptable element= factory.createElement(memento);
+						if (element instanceof IEditorInput) {
+							IEditorInput input= (IEditorInput) element;
+							String editorID= memento.getString(IWorkbenchConstants.TAG_ID);
+							try {
+								return fPage.openEditor(input, editorID, true);
+							} catch (PartInitException e) {
+								// ignore for now
+							}
+						}
+					}
+					return null;
+				}
+				
+				public String toString() {
+					return "Part<" + fPart + "> Selection<" + fSelection + ">";
+				}
+				
+				public boolean samePart(IEditorPart part) {
+					return fPart == part && part != null;
+				}
+			};
+			
+			
+			private class PartListener implements IPartListener {
+				
+				public void partActivated(IWorkbenchPart part) {}
+			
+				public void partBroughtToTop(IWorkbenchPart part) {}
+				
+				public void partDeactivated(IWorkbenchPart part) {}
+			
+				public void partOpened(IWorkbenchPart part) {}
+				
+				public void partClosed(IWorkbenchPart part) {
+					if (part instanceof IEditorPart) {
+						IEditorPart editor= (IEditorPart) part;
+						
+						Iterator e= fHistory.iterator();
+						while (e.hasNext()) {
+							NavigationHistoryEntry entry= (NavigationHistoryEntry) e.next();
+							if (entry.samePart(editor)) {
+								if (!entry.saveEditor())
+									e.remove();
+							}
+						}
+					}
+				}
+			};	
 	
-	private NavigationHistoryEntry[] history = new NavigationHistoryEntry[NavigationHistoryCapacity];
 	
-	private NavigationHistoryAction backwardAction;
-	private NavigationHistoryAction forwardAction;
-	private WorkbenchPage page;
-	boolean ignoreEntries = false;
-		
-	/**
-	 * Constructor for NavigationHistory.
-	 */
+	
+	private static final int CAPACITY= 50;
+			
+	private NavigationHistoryAction fBackwardAction;
+	private NavigationHistoryAction fForwardAction;
+	private int fIgnoreEntries;
+	private ArrayList fHistory= new ArrayList(10);
+	private WorkbenchPage fPage;
+	private int fCounter;
+	
+	
+	
 	public NavigationHistory(WorkbenchPage page) {
 		super();
-		this.page = page;
-	}
-	
-	public void forward() {
-		if(index < (size - 1)) {
-			index++;	
-			gotoEntry(getEntry());
-			enableActions();
-		}
-	}
-	
-	private void reset() {
-		index = -1; 
-		size = 0;
-		history = new NavigationHistoryEntry[NavigationHistoryCapacity];
-	}
-	
-	public void backward() {
-		//If the editor is deactivated the back button should re-activate the editor.
-		IEditorPart editor = page.getActiveEditor();
-		boolean activateEditor = editor != null && editor != page.getActivePart();
-		if(activateEditor) {
-			NavigationHistoryEntry e = new NavigationHistoryEntry();
-			e.part = editor;
-			gotoEntry(e);
-		} else if(index > 0) {
-			index--;			
-			gotoEntry(getEntry());
-		}
-		enableActions();
+		fPage= page;
+		fPage.addPartListener(new PartListener());
 	}
 	
 	public void setForwardAction(NavigationHistoryAction action) {
-		forwardAction = action;
-		enableActions();
+		fForwardAction= action;
+		updateActions();
 	}
 	
 	public void setBackwardAction(NavigationHistoryAction action) {
-		backwardAction = action;
-		enableActions();
+		fBackwardAction= action;
+		updateActions();
 	}
 	
-	private boolean samePart(NavigationHistoryEntry entry, IEditorPart part) {
-		return entry.part == part;
+	private void commit(NavigationHistoryEntry entry) {
+		
+		int length= fHistory.size();
+		for (int i= fCounter + 1; i < length; i++)
+			fHistory.remove(fCounter + 1);
+			
+		fHistory.add(entry);
+		
+		int delta= fHistory.size() - CAPACITY;
+		for (int i= 0; i < delta; i++)
+			fHistory.remove(0);
+		
+		fCounter= fHistory.size() - 1;
+	}
+	
+	private NavigationHistoryEntry getCurrent() {
+		if (0 <= fCounter && fCounter < fHistory.size())
+			return (NavigationHistoryEntry) fHistory.get(fHistory.size() -1);
+		return null;
+	}
+	
+	private boolean merge(IEditorPart part) {
+		NavigationHistoryEntry entry= getCurrent();
+		if (entry != null)
+			return entry.samePart(part);
+		return false;
 	}
 	
 	public void add(IEditorPart part) {
-		NavigationHistoryEntry e= getEntry();
-		if (e != null && samePart(e, part))
+		
+		if (fIgnoreEntries > 0)
 			return;
-			
-		if(part != null) {
-			e = new NavigationHistoryEntry();
-			e.part = (IEditorPart)part;
-			add(e);
-		} else {
-			enableActions();
+		
+		if (!merge(part)) {
+			if (part != null)
+				commit(new NavigationHistoryEntry((IEditorPart) part));
 		}
+		updateActions();
+	}
+	
+	private boolean merge(IEditorPart part, ISelection selection) {
+		NavigationHistoryEntry entry= getCurrent();
+		if (entry != null && entry.samePart(part)) {
+			if (entry.fSelection == null) {
+				entry.fSelection= selection;
+				return true;
+			} else {
+				return entry.fSelection.equals(selection);
+			}
+		}
+		return false;
 	}
 	
 	public void add(ISelection selection) {
-		if (selection == null || ignoreEntries)
+		
+		if (selection == null || fIgnoreEntries > 0)
 			return;
 
-		IEditorPart part= page.getActiveEditor();			
-		
-		NavigationHistoryEntry e= getEntry();
-		if (e != null && samePart(e, part)) {
-			if (e.selection == null) {
-				e.selection= selection;
-				return;
-			} else if (e.selection.equals(selection)) {
-				return;
+		IEditorPart part= fPage.getActiveEditor();
+		if (!merge(part, selection)) {
+			if (part != null) {
+				NavigationHistoryEntry entry= new NavigationHistoryEntry(part);
+				entry.fSelection= selection;
+				commit(entry);
 			}
 		}
 		
-		e = new NavigationHistoryEntry();
-		e.part = part;
-		e.selection = selection;
-		add(e);
-	}
-	
-	private void add(NavigationHistoryEntry o) {
-		if(ignoreEntries)
-			return;
-		
-		size = index + 1;
-		if(size >= history.length) {
-			System.arraycopy(history,1,history,0,history.length - 1);
-			history[size - 1] = o;
-			size = history.length;
-		} else {
-			index++;
-			history[size] = o;
-			size++;
-			for (int i = size; i < history.length; i++) {
-				history[i] = null;	
-			}
-		}
-		printEntries();
-		enableActions();
-	}
-	
-	private void gotoEntry(NavigationHistoryEntry entry) {
-		printEntries();
-		try {
-			ignoreEntries = true;
-			entry.gotoEntry(page);
-		} finally {
-			ignoreEntries = false;
-		}
-	}
-	
-	private NavigationHistoryEntry getEntry() {
-		return (index <= size && size > 0) ? history[index] : null;
+		updateActions();
 	}
 	
 	private void printEntries() {
-		for (int i = 0; i < size; i++) {
-			String append = "";
-			if(index == i)
-				append = ">>";
-			System.out.println(append + "Index: " + i + " " + history[i]);	
-		};
-	}
-	
-	private void enableActions() {
-		IEditorPart editor = page.getActiveEditor();
-		boolean backward = index > 0 || (editor != null && editor != page.getActivePart());
-		boolean forward = index < (size - 1);
-		if(backwardAction != null)
-			backwardAction.setEnabled(backward);
-		if(forwardAction != null)
-			forwardAction.setEnabled(forward);			
-	}
-	
-	/**
-	 * 	 */
-	private static class NavigationHistoryEntry {
-		private IEditorPart part;
-		private ISelection selection;
-		
-		public void gotoEntry(WorkbenchPage page) {
-			if(part != null) {
-				
-				page.activate(part);
-				
-				if(selection != null) {
-					ISelectionProvider prov = part.getSite().getSelectionProvider();
-					prov.setSelection(selection);
-				}
-			}
+		if (false) {
+			int size= fHistory.size();
+			for (int i= 0; i < size; i++) {
+				String append= fCounter == i ? ">>" : "";
+				System.out.println(append + "Index: " + i + " " + fHistory.get(i));	
+			};
 		}
-		
-		public String toString() {
-			return "Part<" + part + "> Selection<" + selection + ">";
+	}
+	
+	private boolean canForward() {
+		return (0 <= fCounter + 1) && (fCounter + 1 < fHistory.size());
+	}
+	
+	private boolean canBackward() {
+		IEditorPart editor= fPage.getActiveEditor();
+		boolean activateEditor= (editor != null && editor != fPage.getActivePart());
+		return activateEditor || (0 <= fCounter - 1) && (fCounter - 1 < fHistory.size());
+	}
+	
+	private void updateActions() {
+		if (fBackwardAction != null)
+			fBackwardAction.setEnabled(canBackward());
+		if (fForwardAction != null)
+			fForwardAction.setEnabled(canForward());
+	}
+	
+	public void forward() {
+		if (canForward()) {
+			NavigationHistoryEntry e= (NavigationHistoryEntry) fHistory.get(++fCounter);
+			e.gotoEntry();
+			updateActions();
+			printEntries();
+		}
+	}
+	
+	public void backward() {
+		if (canBackward()) {
+			IEditorPart editor= fPage.getActiveEditor();
+			boolean activateEditor= (editor != null && editor != fPage.getActivePart());
+			if(activateEditor) {
+				NavigationHistoryEntry e= new NavigationHistoryEntry(editor);
+				e.gotoEntry();	
+			} 	else {		
+				NavigationHistoryEntry e= (NavigationHistoryEntry) fHistory.get(--fCounter);
+				e.gotoEntry();
+				updateActions();
+				printEntries();
+			}
 		}
 	}
 }

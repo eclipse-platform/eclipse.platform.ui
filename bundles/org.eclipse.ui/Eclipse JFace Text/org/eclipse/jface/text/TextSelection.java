@@ -145,7 +145,23 @@ public class TextSelection implements ITextSelection {
 			return false;
 			
 		TextSelection s= (TextSelection) obj;
-		return s.fDocument == fDocument && s.fOffset == fOffset && s.fLength == fLength;
+		boolean sameRange= (s.fOffset == fOffset && s.fLength == fLength);
+		if (sameRange) {
+			
+			if (s.fDocument == null && fDocument == null)
+				return true;
+			if (s.fDocument == null || fDocument == null)
+				return false;
+			
+			try {
+				String sContent= s.fDocument.get(fOffset, fLength);
+				String content= fDocument.get(fOffset, fLength);
+				return sContent.equals(content);
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		return false;
 	}
 	
 	/*
