@@ -11,8 +11,7 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.text.MessageFormat;
 
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.text.Document;
@@ -33,7 +32,13 @@ import org.eclipse.compare.CompareConfiguration;
  * Convenience and utility methods.
  */
 public class Utilities {
-	
+
+	public static void setEnableComposite(Composite composite, boolean enable) {
+		Control[] children= composite.getChildren();
+		for (int i= 0; i < children.length; i++)
+			children[i].setEnabled(enable);
+	}
+
 	public static boolean getBoolean(CompareConfiguration cc, String key, boolean dflt) {
 		if (cc != null) {
 			Object value= cc.getProperty(key);

@@ -20,7 +20,7 @@ public class BufferedResourceNode extends ResourceNode {
 	 *
 	 * @param resource the resource
 	 */
-	BufferedResourceNode(IResource resource) {
+	public BufferedResourceNode(IResource resource) {
 		super(resource);
 	}
 			

@@ -287,7 +287,7 @@ public class DiffTreeViewer extends TreeViewer {
 		if (fPreferenceChangeListener != null) {
 			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 			if (ps != null)
-				ps.addPropertyChangeListener(fPreferenceChangeListener);
+				ps.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
 		}
 				
