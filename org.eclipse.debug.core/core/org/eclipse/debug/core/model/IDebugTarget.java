@@ -11,14 +11,13 @@ import org.eclipse.debug.core.IBreakpointListener;
 /**
  * A debug target is a debuggable execution context. For example, a debug target
  * may represent a debuggable process or a virtual machine. A debug target is the root
- * of the debug element hierarchy. A debug target has element type <code>DEBUG_TARGET</code>,
- * children of type <code>THREAD</code>, and no parent. Minimally, a debug target supports
- * the following capabilities:
+ * of the debug element hierarchy. A debug target is of element type <code>DEBUG_TARGET</code>,
+ * and contains threads. Minimally, a debug target supports the following capabilities:
  * <ul>
  * <li>terminate
  * <li>suspend/resume
  * <li>breakpoints
- * <li>diconnect
+ * <li>disconnect
  * </ul>
  * <p>
  * Generally, launching a debug session results in the creation of a
@@ -35,7 +34,7 @@ import org.eclipse.debug.core.IBreakpointListener;
  * </p>
  * @see ITerminate
  * @see ISuspendResume
- * @see IBreakpointSupport
+ * @see IBreakpointListener
  * @see IDisconnect
  * @see org.eclipse.debug.core.ILaunch
  */
@@ -45,26 +44,30 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * or <code>null</code> if no system process is associated with
 	 * this debug target.
 	 */
-	IProcess getProcess();
+	public IProcess getProcess();
 	/**
 	 * Returns the threads contained in this debug target. An
 	 * empty collection is returned if this debug target contains
 	 * no threads.
 	 * 
 	 * @return a collection of threads
-	 * @exception DebugException if unable to retrieve threads
-	 * 		from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	IThread[] getThreads() throws DebugException;
+	public IThread[] getThreads() throws DebugException;
 	/**
 	 * Returns the name of this debug target. Name format is debug model
 	 * specific, and should be specified by a debug model.
 	 *
 	 * @return this target's name
-	 * @exception DebugException if unable to retrieve this element's name from
-	 *    the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getName() throws DebugException;
+	public String getName() throws DebugException;
 }
 
 

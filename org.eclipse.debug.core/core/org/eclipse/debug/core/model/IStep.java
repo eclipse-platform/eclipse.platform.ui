@@ -9,7 +9,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * Provides the ability to step into, over, and return
- * from the current statement in a thread.
+ * from the current execution location.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -26,19 +26,19 @@ public interface IStep {
 	 *
 	 * @return whether this element can currently perform a step into
 	 */
-	boolean canStepInto();
+	public boolean canStepInto();
 	/**
 	 * Returns whether this element can currently perform a step over.
 	 *
 	 * @return whether this element can currently perform a step over
 	 */
-	boolean canStepOver();
+	public boolean canStepOver();
 	/**
 	 * Returns whether this element can currently perform a step return.
 	 *
 	 * @return whether this element can currently perform a step return
 	 */
-	boolean canStepReturn();
+	public boolean canStepReturn();
 	/**
 	 * Returns whether this element is currently stepping.
 	 * <p>
@@ -53,8 +53,8 @@ public interface IStep {
 	public boolean isStepping();
 	/**
 	 * Steps into the current statement, generating <code>RESUME</code>
-	 * and <code>SUSPEND</code> events for this thread. Can only be called
-	 * when this thread is suspended. Implementations may choose to implement
+	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
+	 * when the associated thread is suspended. Implementations may choose to implement
 	 * stepping as blocking or non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
@@ -62,11 +62,11 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	void stepInto() throws DebugException;
+	public void stepInto() throws DebugException;
 	/**
 	 * Steps over the current statement, generating <code>RESUME</code>
-	 * and <code>SUSPEND</code> events for this thread. Can only be called
-	 * when this thread is suspended. Implementations may choose to implement
+	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
+	 * when the associated thread is suspended. Implementations may choose to implement
 	 * stepping as blocking or non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
@@ -74,11 +74,11 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	void stepOver() throws DebugException;
+	public void stepOver() throws DebugException;
 	/**
 	 * Steps to the next return statement in the current scope,
 	 * generating <code>RESUME</code> and <code>SUSPEND</code> events for
-	 * this thread. Can only be called when this thread is suspended.
+	 * the associated thread. Can only be called when the associated thread is suspended.
 	 * Implementations may choose to implement stepping as blocking or non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
@@ -86,5 +86,5 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	void stepReturn() throws DebugException;
+	public void stepReturn() throws DebugException;
 }

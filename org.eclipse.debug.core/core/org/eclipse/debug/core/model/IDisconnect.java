@@ -8,7 +8,7 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * Provides the ability to end a debug session with a target program
+ * The ability to end a debug session with a target program
  * and allow the target to continue running.
  * <p>
  * Clients may implement this interface.
@@ -27,7 +27,7 @@ public interface IDisconnect {
 	 * 
 	 * @return whether this element can currently disconnect
 	 */
-	boolean canDisconnect();
+	public boolean canDisconnect();
 	/**
 	 * Disconnects this element from its target. Generally, disconnecting
 	 * ends a debug session with a debug target, but allows the target
