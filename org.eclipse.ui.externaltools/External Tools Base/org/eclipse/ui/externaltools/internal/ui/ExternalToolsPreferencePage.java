@@ -29,7 +29,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	private Button promptForMigrationButton;
 	
 	public ExternalToolsPreferencePage() {
-		setDescription("Preferences for external tools");
+		setDescription("Preferences for external tools:");
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -61,7 +61,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		
 		promptForMigrationButton= new Button(group, SWT.CHECK | SWT.LEFT);
 		promptForMigrationButton.setFont(font);
-		promptForMigrationButton.setText("Always prompt before migrating project builders");
+		promptForMigrationButton.setText("Always &prompt before migrating project builders");
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		return composite;
 	}
