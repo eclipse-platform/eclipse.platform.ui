@@ -515,26 +515,7 @@
                class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
                helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
                id="org.eclipse.team.ccvs.ui.refreshTags">
-         </action>
-	     <action
-				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
-				label="%ConfigureTags.label"
-				tooltip="%ConfigureTags.label"
-                menubarPath="tagGroup"
-				icon="icons/full/clcl16/newstream_wiz.gif"
-				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
-				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory"
-            id="org.eclipse.team.ccvs.ui.BranchCategoryContributions">
-    	 <action
-				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
-				label="%ConfigureTags.label"
-				tooltip="%ConfigureTags.label"
-				icon="icons/full/clcl16/newstream_wiz.gif"
-				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>
+         </action>      
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteResource"
