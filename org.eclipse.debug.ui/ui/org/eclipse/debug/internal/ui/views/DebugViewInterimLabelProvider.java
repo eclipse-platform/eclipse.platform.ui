@@ -24,9 +24,9 @@ import org.eclipse.swt.graphics.Image;
 public class DebugViewInterimLabelProvider implements ILabelProvider {
 
 	/**
-	 * The text label returned by this label provider (value: "<pending...>").
+	 * The text label returned by this label provider (value: "...").
 	 */
-	public final static String PENDING_LABEL= DebugUIViewsMessages.getString("DebugViewInterimLabelProvider.9"); //$NON-NLS-1$
+	public final static String PENDING_LABEL= "...";
 	
 	/**
 	 * The debug model presentation used for computing images.
