@@ -24,10 +24,10 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -278,7 +278,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private void handleChooseButtonPressed() {
 		IWorkingSetSelectionDialog dialog= PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		IWorkingSet[] sets= dialog.getSelection();

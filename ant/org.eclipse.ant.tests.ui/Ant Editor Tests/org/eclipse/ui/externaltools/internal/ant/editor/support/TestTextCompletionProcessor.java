@@ -14,7 +14,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor.support;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import org.eclipse.ant.ui.internal.editor.AntEditorCompletionProcessor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -80,7 +80,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         try {
             tempFile = File.createTempFile("test", null);
         } catch (IOException e) {
-            TestCase.fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
         tempFile.deleteOnExit();
         return tempFile;

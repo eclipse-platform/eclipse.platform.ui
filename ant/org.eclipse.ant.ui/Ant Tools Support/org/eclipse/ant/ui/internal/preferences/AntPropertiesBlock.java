@@ -19,7 +19,6 @@ import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -28,6 +27,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -237,7 +237,7 @@ public class AntPropertiesBlock {
 	private void addProperty() {
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Add_Property_2");  //$NON-NLS-1$
 		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
@@ -258,7 +258,7 @@ public class AntPropertiesBlock {
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Edit_User_Property_5"); //$NON-NLS-1$
 		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{prop.getName(), prop.getValue()});
 	
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 

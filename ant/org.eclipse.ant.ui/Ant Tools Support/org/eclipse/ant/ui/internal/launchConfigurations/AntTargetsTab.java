@@ -32,7 +32,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -43,6 +42,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -141,7 +141,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private void handleOrderPressed() {
 		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray());
 		int ok = dialog.open();
-		if (ok == Dialog.OK) {
+		if (ok == Window.OK) {
 			fOrderedTargets.clear();
 			Object[] targets = dialog.getTargets();
 			for (int i = 0; i < targets.length; i++) {

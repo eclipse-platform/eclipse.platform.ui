@@ -64,7 +64,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected IFile checkFileExists(String fileName) throws CoreException {
-		getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
+		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFile file = getProject().getFolder("buildfiles").getFile(fileName);
 		assertTrue("Could not find file named: " + fileName, file.exists());
 		return file;

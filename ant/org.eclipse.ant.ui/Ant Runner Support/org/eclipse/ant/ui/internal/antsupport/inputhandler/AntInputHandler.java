@@ -14,10 +14,11 @@ package org.eclipse.ant.ui.internal.antsupport.inputhandler;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
+import org.eclipse.ant.ui.internal.antsupport.AntSupportMessages;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ant.ui.internal.antsupport.AntSupportMessages;
 
 /**
  * The default input handler when using Ant within Eclipse.
@@ -56,7 +57,7 @@ public class AntInputHandler extends DefaultInputHandler {
 				};
 		
 				InputDialog dialog= new InputDialog(null, title, prompt, "", validator); //$NON-NLS-1$
-				if (dialog.open() != InputDialog.OK) {
+				if (dialog.open() != Window.OK) {
 					problem[0]= new BuildException(AntSupportMessages.getString("AntInputHandler.Unable_to_respond_to_<input>_request_4")); //$NON-NLS-1$
 				}
 			}

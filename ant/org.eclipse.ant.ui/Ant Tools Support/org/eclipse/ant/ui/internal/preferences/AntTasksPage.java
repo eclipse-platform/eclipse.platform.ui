@@ -19,11 +19,11 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -64,7 +64,7 @@ public class AntTasksPage extends AntPage {
 	 */
 	private void addTask() {
 		AddCustomDialog dialog = getCustomDialog();
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
@@ -138,7 +138,7 @@ public class AntTasksPage extends AntPage {
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
 		dialog.setLibrary(task.getLibrary());
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 

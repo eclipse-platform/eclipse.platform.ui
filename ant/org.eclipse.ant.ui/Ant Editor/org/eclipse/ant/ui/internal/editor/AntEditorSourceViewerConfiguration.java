@@ -93,8 +93,8 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		contentAssistant.enableAutoInsert(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
 		contentAssistant.enableAutoActivation(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		contentAssistant.setAutoActivationDelay(store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
-		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_OVERLAY);
-		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
+		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
 		ColorManager manager= ColorManager.getDefault();	

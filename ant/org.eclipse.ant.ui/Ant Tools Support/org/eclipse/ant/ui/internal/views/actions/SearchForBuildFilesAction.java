@@ -20,9 +20,9 @@ import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -47,7 +47,7 @@ public class SearchForBuildFilesAction extends Action {
 	 */
 	public void run() {
 		SearchForBuildFilesDialog dialog= new SearchForBuildFilesDialog();
-		if (dialog.open() != Dialog.CANCEL) {
+		if (dialog.open() != Window.CANCEL) {
 			final IFile[] files= dialog.getResults();
 			final boolean includeErrorNodes= dialog.getIncludeErrorResults();
 			final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(AntUIPlugin.getStandardDisplay().getActiveShell());

@@ -112,7 +112,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		if (message == null) {
 			message= EMPTY_STRING; 
 		}		
-		return new Status(Status.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, exception);
+		return new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, exception);
 	}
 	
 	/* (non-Javadoc)

@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.ant.ui.internal.dtd.IAtom;
 import org.eclipse.ant.ui.internal.dtd.ParseError;
 import org.eclipse.ant.ui.internal.dtd.util.SortedMap;
+import org.eclipse.ant.ui.internal.dtd.util.SortedMapFactory;
 
 /**
  * NfmParser parses an NFA and returns an equivalent DFA if it can do so in
@@ -209,7 +210,7 @@ public class NfmParser {
 						if (removes[i])
 							iterator.remove();
 					}
-					Dfm.freeMap(map);
+					SortedMapFactory.freeMap(map);
 				}
 			}
 		}
