@@ -94,6 +94,9 @@ class JobInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
+		if(job.isSystem())
+			return ProgressMessages.format("JobInfo.System", //$NON-NLS-1$
+					new Object[] { status.getMessage()});
 		if (status.getCode() == PENDING_STATUS)
 			return ProgressMessages.format("JobInfo.Pending", //$NON-NLS-1$
 			new Object[] { status.getMessage()});

@@ -247,7 +247,10 @@ public class JobProgressManager
 	private boolean isNonDisplayableJob(Job job) {
 		if (job == null)
 			return true;
-		return !debug && job.isSystem();
+		if(debug) //Always display in debug mode
+			return false;
+		else
+			return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
 
 	/**

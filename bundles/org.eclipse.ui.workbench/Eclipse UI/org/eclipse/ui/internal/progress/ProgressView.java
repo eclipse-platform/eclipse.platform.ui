@@ -113,8 +113,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				JobProgressManager provider =
-					(JobProgressManager) viewer.getContentProvider();
+				JobProgressManager provider = JobProgressManager.getInstance();
 				provider.debug = !provider.debug;
 				setChecked(provider.debug);
 				provider.refreshViewers(null);
