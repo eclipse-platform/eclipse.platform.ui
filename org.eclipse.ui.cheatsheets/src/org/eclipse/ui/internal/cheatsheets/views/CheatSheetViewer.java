@@ -52,7 +52,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	//Lists
 	private ArrayList expandRestoreList = new ArrayList();
-	private ArrayList listOfContentItems;
 	private ArrayList viewItemList = new ArrayList();
 
 	//Composites
@@ -80,9 +79,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if(expandRestoreAction != null)
 			expandRestoreAction.setCollapsed(false);
 
-		clearBackgrounds(getViewItemArray());
-		clearIcons(getViewItemArray());
-		collapseAllButtons(getViewItemArray());
+		ViewItem[] items = getViewItemArray();
+		clearBackgrounds(items);
+		clearIcons(items);
+		collapseAllButtons(items);
 		if(isStarted)
 			getNewManager();
 
@@ -112,7 +112,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		introItem.setComplete();
 		introItem.setRestartImage();
 		/* LP-item event */
-//		fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, introItem);
+		// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, introItem);
 
 		ViewItem nextItem = (ViewItem) viewItemList.get(1);
 		if (nextItem.item.isDynamic()) {
@@ -120,17 +120,16 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 		nextItem.setAsCurrentActiveItem();
 		/* LP-item event */
-//		fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
+		// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
 		collapseAllButCurrent(false);
 		
-//		saveHelper.removeState(contentURL.toString());
 		saveCurrentSheet();
 
 
 	}
 
-	/*package*/ void advanceItem(ImageHyperlink mylabel, boolean markAsCompleted) {
-		currentItem = (ViewItem) mylabel.getData();
+	/*package*/ void advanceItem(ImageHyperlink link, boolean markAsCompleted) {
+		currentItem = (ViewItem) link.getData();
 		int index = getIndexOfItem(currentItem);
 
 		if (index < currentItemNum) {
@@ -144,13 +143,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			if (markAsCompleted) {
 				currentItem.setComplete();
 				/* LP-item event */
-//				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_COMPLETED, currentItem);
-//				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_COMPLETED, currentItem);
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
 			} else {
 				currentItem.setSkipped();
 				/* LP-item event */
-//				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_SKIPPED, currentItem);
-//				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_SKIPPED, currentItem);
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, currentItem);
 			}
 		}
 		if (index < viewItemList.size()) {
@@ -163,28 +162,29 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				}
 				nextItem.setAsCurrentActiveItem();
 				/* LP-item event */
-//				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
 				currentItem = nextItem;
 			}
 
 			FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
-			getViewItemArray()[0].setExpanded();
-			getViewItemArray()[0].getMainItemComposite().setFocus();
+			ViewItem[] items = getViewItemArray();
+			items[0].setExpanded();
+			items[0].getMainItemComposite().setFocus();
 			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 		}
 
 		saveCurrentSheet();
 	}
 
-	/*package*/ void advanceSubItem(ImageHyperlink mylabel, boolean markAsCompleted, int subItemIndex) {
+	/*package*/ void advanceSubItem(ImageHyperlink link, boolean markAsCompleted, int subItemIndex) {
 		Label l = null;
 		ArrayList list = null;
 		SubItemCompositeHolder sich = null;
 		CoreItem ciws = null;
 
-		currentItem = (ViewItem) mylabel.getData();
+		currentItem = (ViewItem) link.getData();
 
 		if (currentItem instanceof CoreItem)
 			ciws = (CoreItem) currentItem;
@@ -215,31 +215,15 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		boolean anySkipped = checkContainsSkipped(list);
 
 		if (allAttempted && !anySkipped) {
-			advanceItem(mylabel, true);
+			advanceItem(link, true);
 			return;
 		} else if (allAttempted && anySkipped) {
-			advanceItem(mylabel, false);
+			advanceItem(link, false);
 			return;
 		}
 
 		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		saveCurrentSheet();
-	}
-
-	private void callDisposeOnViewElements() {
-
-		ViewItem[] myitems = getViewItemArray();
-		for (int i = 0; i < myitems.length; i++) {
-			myitems[i].dispose();
-		}
-
-		if(errorPage != null) {
-			errorPage.dispose();
-		}
-
-		if(cheatSheetPage != null) {
-			cheatSheetPage.dispose();
-		}
 	}
 
 	private boolean checkAllAttempted(ArrayList list) {
@@ -272,12 +256,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			props = savedProps;
 		}
 
-		clearBackgrounds(getViewItemArray());
+		ViewItem[] items = getViewItemArray();
+		clearBackgrounds(items);
 
 		if (props == null) {
-			getViewItemArray()[0].setAsCurrentActiveItem();
+			items[0].setAsCurrentActiveItem();
 			/* LP-item event */
-//			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
+			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
 			return;
 		}
 
@@ -387,7 +372,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			// For all other cases, set the current item as the active item.
 			if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
 				currentItem.setCollapsed();
-				getViewItemArray()[0].getMainItemComposite().setFocus();
+				items[0].getMainItemComposite().setFocus();
 				
 				// The cheat sheet has been restored but is also completed so fire both events
 				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
@@ -396,36 +381,36 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				currentItem.setAsCurrentActiveItem();
 
 				// If the intro item is completed, than the cheat sheet has been restored.
-				if(getViewItemArray()[0].isCompleted())
+				if(items[0].isCompleted())
 					getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
 			}
 
 			/* LP-item event */
-//			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
+			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
 		} else {
-			getViewItemArray()[0].setAsCurrentActiveItem();
+			items[0].setAsCurrentActiveItem();
 			/* LP-item event */
-//			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
+			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
 		}
 
 		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		savedProps = null;
 	}
 
-	private void clearBackgrounds(ViewItem[] myview) {
-		for (int i = 0; i < myview.length; i++) {
-			myview[i].setBold(false);
-			myview[i].setOriginalColor();
+	private void clearBackgrounds(ViewItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			items[i].setBold(false);
+			items[i].setOriginalColor();
 		}
 	}
 
-	private void clearIcons(ViewItem[] myview) {
-		for (int i = 0; i < myview.length; i++) {
-			if (myview[i].isCompleted() || myview[i].isExpanded() || myview[i].isSkipped())
+	private void clearIcons(ViewItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].isCompleted() || items[i].isExpanded() || items[i].isSkipped())
 				if (i > 0)
-					 ((CoreItem) myview[i]).setIncomplete();
+					 ((CoreItem) items[i]).setIncomplete();
 				else
-					myview[i].setIncomplete();
+					items[i].setIncomplete();
 		}
 	}
 
@@ -446,9 +431,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 	}
 
-	private void collapseAllButtons(ViewItem[] myview) {
-		for (int i = 1; i < myview.length; i++) {
-			myview[i].setButtonsCollapsed();
+	private void collapseAllButtons(ViewItem[] items) {
+		for (int i = 1; i < items.length; i++) {
+			items[i].setButtonsCollapsed();
 		}
 	}
 
@@ -505,12 +490,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * Disposes of this cheat sheet viewer.
 	 */
 	private void dispose() {
-		if(manager != null)
-			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
-
-		saveCurrentSheet();
-
-		callDisposeOnViewElements();
+		internalDispose();
 
 		if (busyCursor != null)
 			busyCursor.dispose();
@@ -558,13 +538,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return 0;
 	}
 
-	/**
-	 * @return
-	 */
-	/*package*/ ArrayList getListOfContentItems() {
-		return listOfContentItems;
-	}
-
 	/*package*/ CheatSheetManager getManager() {
 		if (manager == null) {
 			getNewManager();
@@ -577,7 +550,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return manager;
 	}
 
-	/*package*/ ViewItem[] getViewItemArray() {
+	private ViewItem[] getViewItemArray() {
 		return (ViewItem[]) viewItemList.toArray(new ViewItem[viewItemList.size()]);
 	}
 
@@ -628,9 +601,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		cheatSheetPage = new CheatSheetPage(cheatSheet, viewItemList, this);
 		cheatSheetPage.createPart(control);
 		hascontent = true;
-		listOfContentItems = cheatSheet.getItems();
 
-		getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
+		getNewManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 
 		checkSavedState();
 
@@ -638,6 +610,26 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		if (currentItem != null && !currentItem.isCompleted())
 			currentItem.getMainItemComposite().setFocus();
+	}
+
+	private void internalDispose() {
+		if(manager != null)
+			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
+
+		saveCurrentSheet();
+
+		ViewItem[] items = getViewItemArray();
+		for (int i = 0; i < items.length; i++) {
+			items[i].dispose();
+		}
+
+		if(errorPage != null) {
+			errorPage.dispose();
+		}
+
+		if(cheatSheetPage != null) {
+			cheatSheetPage.dispose();
+		}
 	}
 	
 	/**
@@ -664,20 +656,20 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 	}
 
-	/*package*/ void runPerformAction(ImageHyperlink mylabel) {
-		CoreItem mycore = null;
-		mylabel.setCursor(busyCursor);
-		currentItem = (ViewItem) mylabel.getData();
-		mycore = (CoreItem) currentItem;
+	/*package*/ void runPerformAction(ImageHyperlink link) {
+		CoreItem coreItem = null;
+		link.setCursor(busyCursor);
+		currentItem = (ViewItem) link.getData();
+		coreItem = (CoreItem) currentItem;
 
 		try {
-			if (mycore != null) {
-				if ((mycore.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE)){// && !(mycore.isCompleted())) {
+			if (coreItem != null) {
+				if ((coreItem.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE)){//TODO? && !(coreItem.isCompleted())) {
 					/* LP-item event */
-//					fireManagerItemEvent(ICheatSheetItemEvent.ITEM_PERFORMED, currentItem);
-					mycore.setRestartImage();
+					// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_PERFORMED, currentItem);
+					coreItem.setRestartImage();
 					//set that item as complete.
-					advanceItem(mylabel, true);
+					advanceItem(link, true);
 					saveCurrentSheet();
 				}
 			}
@@ -686,14 +678,14 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
 		} finally {
-			mylabel.setCursor(null);
+			link.setCursor(null);
 		}
 	}
 
-	/*package*/ void runSubItemPerformAction(ImageHyperlink mylabel, int subItemIndex) {
+	/*package*/ void runSubItemPerformAction(ImageHyperlink link, int subItemIndex) {
 		CoreItem coreItem = null;
-		mylabel.setCursor(busyCursor);
-		currentItem = (ViewItem) mylabel.getData();
+		link.setCursor(busyCursor);
+		currentItem = (ViewItem) link.getData();
 		coreItem = (CoreItem) currentItem;
 
 		try {
@@ -702,7 +694,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					s.getStartButton().setImage(coreItem.restartImage);
-					advanceSubItem(mylabel, true, subItemIndex);
+					advanceSubItem(link, true, subItemIndex);
 					saveCurrentSheet();
 				}
 			}
@@ -711,7 +703,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
 		} finally {
-			mylabel.setCursor(null);
+			link.setCursor(null);
 		}
 	}
 
@@ -729,16 +721,14 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if (element != null && element.equals(contentElement))
 			return;
 
-		if (contentURL != null)
-			saveCurrentSheet();
-
-		// Cleanup previous contents
 		if (getHasContent()) {
-			callDisposeOnViewElements();
+			// Cleanup previous contents
+			internalDispose();
 		}
 
 		// Set the current content to new content
 		this.contentElement = element;
+
 		if (element == null) {
 			currentID = null;
 			this.contentURL = null;
