@@ -441,17 +441,7 @@ private Composite createInfoArea(Composite parent) {
 	GridData data = new GridData(GridData.FILL_BOTH);
 	infoArea.setLayoutData(data);
 	boolean wrapped = parser.isFormatWrapped();
-
-	if (wrapped) {
-		scrolledComposite.addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				// in the wrapped case the height of the StyledText widgets will change as
-				// the width of the info area changes, so recompute the height
-				Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				scrolledComposite.setMinHeight(p.y);
-			}
-		});
-	}
+	int HINDENT = 20;
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
@@ -478,31 +468,36 @@ private Composite createInfoArea(Composite parent) {
 		setLinkRanges(styledText, item.getHelpRanges());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 20;
+		gd.horizontalIndent = HINDENT;
+		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		styledText.setLayoutData(gd);
 		styledText.setData(item);
 		addListeners(styledText);
 	
 		Label spacer = new Label(infoArea, SWT.NONE);
 		spacer.setBackground(background);
-		gd = new GridData(); 
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
 	firstText = sampleStyledText;
 
 	// Create the welcome items
+	Label imageLabel = null;
 	WelcomeItem[] items = getItems();
 	for (int i = 0; i < items.length; i++) {
-		Label image = new Label(infoArea, SWT.NONE);
-		image.setBackground(background);
-		image.setImage(
+		Label label = new Label(infoArea, SWT.NONE);
+		label.setBackground(background);
+		label.setImage(
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM));
 		GridData gd = new GridData(); 
-		gd.horizontalIndent = 20;
+		gd.horizontalIndent = HINDENT;
 		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
-		image.setLayoutData(gd);
+		label.setLayoutData(gd);
+		if (imageLabel == null) {
+			imageLabel = label;
+		}
 
 		StyledText styledText = new StyledText(infoArea, textStyle);
 		this.texts.add(styledText);
@@ -522,7 +517,7 @@ private Composite createInfoArea(Composite parent) {
 			
 		Label spacer = new Label(infoArea, SWT.NONE);
 		spacer.setBackground(background);
-		gd = new GridData(GridData.FILL_HORIZONTAL); 
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 
@@ -544,6 +539,38 @@ private Composite createInfoArea(Composite parent) {
 	}
 	this.scrolledComposite.setExpandHorizontal(true);
 	this.scrolledComposite.setExpandVertical(true);
+
+	// When the welcome editor is resized, we need to set the width hint for
+	// wrapped StyledText widgets so that the wrapped height will be recalculated.
+	if (wrapped && (imageLabel != null)) {
+		// figure out how wide the StyledText widgets should be, do this by first
+		// calculating the width of the area not used by styled text widgets
+		Rectangle bounds = imageLabel.getBounds();
+		final int adjust = HINDENT + bounds.width + layout.verticalSpacing + (layout.marginWidth * 2);
+		final int adjustFirst = HINDENT + (layout.marginWidth * 2);
+		infoArea.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				int w = scrolledComposite.getClientArea().width;
+				// if the horizontal scroll bar exists, we want to wrap to the
+				// minimum wrap width
+				if (w < WRAP_MIN_WIDTH) {
+					w = WRAP_MIN_WIDTH;
+				}
+				for (int i=0; i<texts.size(); i++) {
+					int extent;
+					if (i==0) extent = w - adjustFirst;
+					else extent = w - adjust;
+					StyledText text = (StyledText)texts.get(i);
+					Point p = text.computeSize(extent, SWT.DEFAULT, false);
+					((GridData)text.getLayoutData()).widthHint = p.x;
+				}
+				// reset the scrolled composite height since the height of the 
+				// styled text widgets have changed
+				Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				scrolledComposite.setMinHeight(p.y);
+			}
+		});
+	}
 
 	// Adjust the scrollbar increments
 	if (sampleStyledText == null) {
