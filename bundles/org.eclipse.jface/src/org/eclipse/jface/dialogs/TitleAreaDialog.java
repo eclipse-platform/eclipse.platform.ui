@@ -203,7 +203,11 @@ private Control createTitleArea(Composite parent) {
 	
 	FormData imageData = new FormData();
 	imageData.top = new FormAttachment(0,verticalSpacing);
-	imageData.right = new FormAttachment(100,-1 * horizontalSpacing);
+	
+	// Note: do not use horizontalSpacing on the right as that would be a regression from 
+	// the R2.x style where there was no margin on the right and images are flush to the right 
+	// hand side.  see reopened comments in 41172
+	imageData.right = new FormAttachment(100, 0); // horizontalSpacing
 	titleImage.setLayoutData(imageData);
 	
 	// Title label @ top, left
