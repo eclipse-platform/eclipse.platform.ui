@@ -1247,17 +1247,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	
-	class Resizer2 extends Resizer {
+	class HoverResizer extends Resizer {
 		Canvas fCanvas;
-		public Resizer2(Canvas c, int dir) {
+		public HoverResizer(Canvas c, int dir) {
 			super(c, dir);
 			fCanvas= c;
 		}
 		public void mouseMove(MouseEvent e) {
-			if (showResolveUI())
-				handleMouseMoveOverCenter(fCanvas, e.x, e.y);
-			else
-				super.mouseMove(e);
+			if (!fIsDown && showResolveUI() && handleMouseMoveOverCenter(fCanvas, e.x, e.y))
+				return;
+			super.mouseMove(e);
 		}
 	}
 	
@@ -1276,17 +1275,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				new Resizer(canvas, HORIZONTAL);
 			} else {
 				
-				new Resizer2(canvas, HORIZONTAL);
-				
-//				canvas.addMouseMoveListener(
-//					new MouseMoveListener() {
-//						public void mouseMove(MouseEvent e) {
-//							if (showResolveUI())
-//								handleMouseMoveOverCenter(canvas, e.x, e.y);
-//						}
-//					}
-//				);
-				
+				new HoverResizer(canvas, HORIZONTAL);
+								
 				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);	//$NON-NLS-1$
 				fCenterButton.setText("<");	 //$NON-NLS-1$
 				fCenterButton.pack();
@@ -1309,7 +1299,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return super.createCenter(parent);
 	}
 	
-	private void handleMouseMoveOverCenter(Canvas canvas, int x, int y) {
+	private boolean handleMouseMoveOverCenter(Canvas canvas, int x, int y) {
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		Diff diff= getDiffUnderMouse(canvas, x, y, r);
 		if (diff != null && !diff.isUnresolvedIncomingOrConflicting())
@@ -1337,6 +1327,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fButtonDiff= null;
 			}
 		}
+		return fButtonDiff != null;
 	}
 	
 	/**

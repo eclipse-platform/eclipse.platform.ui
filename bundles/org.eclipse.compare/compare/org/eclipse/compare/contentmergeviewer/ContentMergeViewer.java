@@ -151,13 +151,14 @@ public abstract class ContentMergeViewer extends ContentViewer
 		int fHeight1, fHeight2;
 		int fDirection;
 		boolean fLiveResize;
+		boolean fIsDown;
 		
 		public Resizer(Control c, int dir) {
 			fDirection= dir;
 			fControl= c;
-			fControl.addMouseListener(this);
 			fLiveResize= !(fControl instanceof Sash);
-			
+			fControl.addMouseListener(this);
+			fControl.addMouseMoveListener(this);
 			fControl.addDisposeListener(
 				new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
@@ -190,17 +191,17 @@ public abstract class ContentMergeViewer extends ContentViewer
 			
 			fX= e.x;
 			fY= e.y;
-			fControl.addMouseMoveListener(this);
+			fIsDown= true;
 		}
 		
 		public void mouseUp(MouseEvent e) {
-			fControl.removeMouseMoveListener(this);
+			fIsDown= false;
 			if (!fLiveResize)
 				resize(e);
 		}
 		
 		public void mouseMove(MouseEvent e) {
-			if (fLiveResize)
+			if (fIsDown && fLiveResize)
 				resize(e);
 		}
 		
