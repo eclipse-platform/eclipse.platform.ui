@@ -239,6 +239,17 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	public void testDeleteProject() {
 	}
 	public void testDeleteProjectContents() {
+		//delete the overlapping project - it should delete the children of the linked folder
+		//but leave the actual links intact in the resource tree
+		try {
+			pOverlap.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertDoesNotExistInWorkspace("1.1", new IResource[] {pOverlap, fOverlap, lOverlap, lChildOverlap, lChildLinked});
+		assertDoesNotExistInFileSystem("1.2", new IResource[] {pOverlap, fOverlap, lOverlap, lChildOverlap, lChildLinked,
+			lLinked, fLinked});
+		assertExistsInWorkspace("1.3", new IResource[] {pLinked, fLinked, lLinked});
 	}
 	public void testFileAppendContents() {
 		//linked file
@@ -302,7 +313,61 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		}
 		assertOverlap("3.1", lChildLinked, lChildOverlap);
 	}
+	/**
+	 * Tests moving a file into and out of an overlapping area (similar to
+	 * creation/deletion).
+	 */
 	public void testMoveFile() {
+		IFile destination = pNoOverlap.getFile("MoveDestination");
+		//file in linked folder
+		try {
+			lChildLinked.move(destination.getFullPath(), IResource.NONE, getMonitor());
+			assertDoesNotExistInWorkspace("1.1", lChildLinked);
+			assertDoesNotExistInWorkspace("1.2", lChildOverlap);
+			assertExistsInWorkspace("1.3", destination);
+			assertOverlap("1.4", lChildLinked, lChildOverlap);
+
+			destination.move(lChildLinked.getFullPath(), IResource.NONE, getMonitor());
+			assertExistsInWorkspace("1.5", lChildLinked);
+			assertExistsInWorkspace("1.6", lChildOverlap);
+			assertDoesNotExistInWorkspace("1.7", destination);
+			assertOverlap("1.8", lChildLinked, lChildOverlap);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//duplicate file
+		try {
+			lOverlap.move(destination.getFullPath(), IResource.NONE, getMonitor());
+			assertDoesNotExistInWorkspace("3.1", lOverlap);
+			assertExistsInWorkspace("3.2", lLinked);
+			assertDoesNotExistInFileSystem("3.25", lLinked);
+			assertExistsInWorkspace("3.3", destination);
+			assertOverlap("3.4", lLinked, lOverlap);
+
+			destination.move(lOverlap.getFullPath(), IResource.NONE, getMonitor());
+			assertExistsInWorkspace("3.5", lLinked);
+			assertExistsInWorkspace("3.6", lOverlap);
+			assertDoesNotExistInWorkspace("3.7", destination);
+			assertOverlap("3.8", lLinked, lOverlap);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		//file in duplicate folder
+		try {
+			lChildOverlap.move(destination.getFullPath(), IResource.NONE, getMonitor());
+			assertDoesNotExistInWorkspace("3.1", lChildLinked);
+			assertDoesNotExistInWorkspace("3.2", lChildOverlap);
+			assertExistsInWorkspace("3.3", destination);
+			assertOverlap("3.4", lChildLinked, lChildOverlap);
+
+			destination.move(lChildOverlap.getFullPath(), IResource.NONE, getMonitor());
+			assertExistsInWorkspace("3.5", lChildLinked);
+			assertExistsInWorkspace("3.6", lChildOverlap);
+			assertDoesNotExistInWorkspace("3.7", destination);
+			assertOverlap("3.8", lChildLinked, lChildOverlap);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
 	}
 	public void testMoveFolder() {
 	}
