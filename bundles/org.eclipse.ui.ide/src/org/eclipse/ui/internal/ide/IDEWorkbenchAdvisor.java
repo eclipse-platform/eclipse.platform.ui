@@ -323,7 +323,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void preWindowOpen(IWorkbenchWindowConfigurer windowConfigurer) {
 		
 	    // show the shortcut bar and progress indicator, which are hidden by default
-	    windowConfigurer.setShowShortcutBar(true);
+	    windowConfigurer.setShowPerspectiveBar(true);
+	    windowConfigurer.setShowFastViewBars(true);
 	    windowConfigurer.setShowProgressIndicator(true);
 	    
 		// add the drag and drop support for the editor area
