@@ -51,6 +51,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
+			boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
+			workingSetButton.setEnabled(enabled);
+			workingSetComponent.setEnabled(enabled);
 			updateLaunchConfigurationDialog();
 		}
 	};
@@ -131,6 +134,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		}
 		
 		workingSetButton.setSelection(buildScope != null);
+		workingSetButton.setEnabled(buildScope != null);
 		
 		if (buildScope != null) {
 			LaunchVariableUtil.VariableDefinition variable= LaunchVariableUtil.extractVariableDefinition(buildScope, 0);
@@ -153,6 +157,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 					break;
 			}
 		}
+		boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
+		workingSetButton.setEnabled(enabled);
+		workingSetComponent.setEnabled(enabled);
 	}
 
 	/**
