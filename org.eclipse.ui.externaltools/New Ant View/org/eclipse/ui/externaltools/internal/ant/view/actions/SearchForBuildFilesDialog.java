@@ -1,5 +1,10 @@
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,9 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class SearchForBuildFilesDialog extends InputDialog {
 
@@ -42,7 +45,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private Button workingSetScopeButton;
 
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name to search for", "build.xml", new IInputValidator() {
+		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):", "build.xml", new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
@@ -81,7 +84,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		
 		SelectionAdapter selectionListener= new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						handleRadioButtonSelected();
+						updateOkEnabled();
 					}
 				};
 		
@@ -109,13 +112,17 @@ public class SearchForBuildFilesDialog extends InputDialog {
 					workingSetText.setText(workingSetName);
 					workingSetScopeButton.setSelection(true);
 				}
-				handleRadioButtonSelected();
+				updateOkEnabled();
 			}
 		});
 		return composite;
 	}
 	
-	private void handleRadioButtonSelected() {
+	/**
+	 * Updates the enablement of the "Search" button based on the validity of
+	 * the user's selections.
+	 */
+	private void updateOkEnabled() {
 		if (workingSetScopeButton.getSelection()) {
 			if (searchScopes.isEmpty()) {
 				getErrorMessageLabel().setText("Must select a working set");
@@ -150,21 +157,6 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		}
 		return sets[0].getName();
 	}
-	
-	private void handleBrowseButtonPressed() {
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new WorkbenchLabelProvider());
-		dialog.setElements(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		dialog.setMessage("Choose the projects to search");
-		dialog.setTitle("Choose Search Scope");
-		dialog.setMultipleSelection(true);
-		if (dialog.open() == Dialog.CANCEL) {
-			return;
-		}
-		Object[] projects = dialog.getResult();
-		for (int i = 0; i < projects.length; i++) {
-			searchScopes.add(projects[i]);
-		}
-	}
 
 	/**
 	 * Returns the trimmed user input
@@ -187,12 +179,13 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	protected void okPressed() {
 		String input = getInput();
 		results = new ArrayList(); // Clear previous results
+		StringMatcher matcher= new StringMatcher(input, true, false);
 		if (searchScopes.isEmpty()) {
-			searchForBuildFiles(input, ResourcesPlugin.getWorkspace().getRoot());
+			searchForBuildFiles(matcher, ResourcesPlugin.getWorkspace().getRoot());
 		} else {
 			Iterator iter= searchScopes.iterator();
 			while(iter.hasNext()) {
-				searchForBuildFiles(input, (IContainer) iter.next());
+				searchForBuildFiles(matcher, (IContainer) iter.next());
 			}
 		}
 		super.okPressed();
@@ -202,7 +195,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Searches for files whose name matches the given regular expression in the
 	 * given container.
 	 */
-	private void searchForBuildFiles(String regExp, IContainer container) {
+	private void searchForBuildFiles(StringMatcher matcher, IContainer container) {
 		IResource[] members = null;
 		try {
 			members = container.members();
@@ -212,24 +205,13 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		for (int i = 0; i < members.length; i++) {
 			IResource resource = members[i];
 			if (resource instanceof IContainer) {
-				searchForBuildFiles(regExp, (IContainer) resource);
+				searchForBuildFiles(matcher, (IContainer) resource);
 			} else if (resource instanceof IFile) {
-				if (nameMatches((IFile) resource, regExp)) {
+				if (matcher.match(((IFile) resource).getName())) {
 					results.add(resource);
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns whether the given file's name matches the given regular
-	 * expression.
-	 */
-	private boolean nameMatches(IFile file, String regExp) {
-		if (file.getName().equals(regExp)) {
-			return true;
-		}
-		return false;
 	}
 
 }
