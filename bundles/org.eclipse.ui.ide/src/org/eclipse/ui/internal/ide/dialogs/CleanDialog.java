@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -29,15 +30,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -50,6 +54,15 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @since 3.0
  */
 public class CleanDialog extends MessageDialog {
+    
+    private static final String DIALOG_SETTINGS_SECTION = "CleanDialogSettings"; //$NON-NLS-1$
+    private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
+    private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
+    private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
+    private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+    private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
+    private static final String BUILD_NOW = "BUILD_NOW"; //$NON-NLS-1$
+    
     private Button allButton, selectedButton, buildNowButton;
 
     private CheckboxTableViewer projectNames;
@@ -85,6 +98,7 @@ public class CleanDialog extends MessageDialog {
         this.selection = selection;
         if (this.selection == null)
             this.selection = new Object[0];
+        setShellStyle(SWT.RESIZE | getShellStyle());
     }
 
     /*
@@ -138,11 +152,13 @@ public class CleanDialog extends MessageDialog {
             }
         };
 
+        IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
+        boolean selectSelectedButton= settings.getBoolean(TOGGLE_SELECTED);
         //first row
         allButton = new Button(radioGroup, SWT.RADIO);
         allButton.setText(IDEWorkbenchMessages
                 .getString("CleanDialog.cleanAllButton")); //$NON-NLS-1$
-        allButton.setSelection(true);
+        allButton.setSelection(!selectSelectedButton);
         allButton.addSelectionListener(updateEnablement);
         //empty label to fill rest of grid row
         new Label(radioGroup, SWT.NONE);
@@ -155,6 +171,7 @@ public class CleanDialog extends MessageDialog {
         GridData data = new GridData();
         data.verticalAlignment = SWT.TOP;
         selectedButton.setLayoutData(data);
+        selectedButton.setSelection(selectSelectedButton);
         selectedButton.addSelectionListener(updateEnablement);
         createProjectSelectionTable(radioGroup);
         //only prompt for immediate build if autobuild is off
@@ -162,10 +179,11 @@ public class CleanDialog extends MessageDialog {
             buildNowButton = new Button(parent, SWT.CHECK);
             buildNowButton.setText(IDEWorkbenchMessages
                     .getString("CleanDialog.buildNowButton")); //$NON-NLS-1$
-            buildNowButton.setSelection(true);
+            buildNowButton.setSelection(settings.getBoolean(BUILD_NOW));
             buildNowButton.setLayoutData(new GridData(
                     GridData.HORIZONTAL_ALIGN_BEGINNING));
         }
+        projectNames.getTable().setEnabled(selectSelectedButton);
         return radioGroup;
     }
 
@@ -238,4 +256,100 @@ public class CleanDialog extends MessageDialog {
         boolean enabled = allButton.getSelection() || selection.length > 0;
         getButton(OK).setEnabled(enabled);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#close()
+     */
+    public boolean close() {
+        persistDialogSettings(getShell(), DIALOG_SETTINGS_SECTION);
+        return super.close();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+     */
+    protected Point getInitialLocation(Point initialSize) {
+        Point p = getInitialLocation(DIALOG_SETTINGS_SECTION);
+        return p != null ? p : super.getInitialLocation(initialSize);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialSize()
+     */
+    protected Point getInitialSize() {
+        Point p = super.getInitialSize();
+        return getInitialSize(DIALOG_SETTINGS_SECTION, p);
+    }
+    
+    /**
+     * Returns the initial location which is persisted in the Ant UI Plugin dialog settings
+     * under the provided dialog setttings section name.
+     * If location is not persisted in the settings, the <code>null</code> is returned. 
+     * 
+     * @param dialogSettingsSectionName The name of the dialog settings section
+     * @return The initial location or <code>null</code>
+     */
+    public Point getInitialLocation(String dialogSettingsSectionName) {
+        IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
+        try {
+            int x= settings.getInt(DIALOG_ORIGIN_X);
+            int y= settings.getInt(DIALOG_ORIGIN_Y);
+            return new Point(x,y);
+        } catch (NumberFormatException e) {
+        }
+        return null;
+    }
+    
+    private IDialogSettings getDialogSettings(String dialogSettingsSectionName) {
+        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = settings.getSection(dialogSettingsSectionName);
+        if (section == null) {
+            section = settings.addNewSection(dialogSettingsSectionName);
+        } 
+        return section;
+    }
+    
+    /**
+     * Persists the location and dimensions of the shell and other user settings in the
+     * plugin's dialog settings under the provided dialog settings section name
+     * 
+     * @param shell The shell whose geometry is to be stored
+     * @param dialogSettingsSectionName The name of the dialog settings section
+     */
+    private void persistDialogSettings(Shell shell, String dialogSettingsSectionName) {
+        Point shellLocation = shell.getLocation();
+        Point shellSize = shell.getSize();
+        IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
+        settings.put(DIALOG_ORIGIN_X, shellLocation.x);
+        settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
+        settings.put(DIALOG_WIDTH, shellSize.x);
+        settings.put(DIALOG_HEIGHT, shellSize.y);
+        
+        if (buildNowButton != null) {
+            settings.put(BUILD_NOW, buildNowButton.getSelection());
+        }
+        settings.put(TOGGLE_SELECTED, selectedButton.getSelection());
+    }
+    
+    /**
+     * Returns the initial size which is the larger of the <code>initialSize</code> or
+     * the size persisted in the Ant UI Plugin dialog settings under the provided dialog setttings section name.
+     * If no size is persisted in the settings, the <code>initialSize</code> is returned. 
+     * 
+     * @param initialSize The initialSize to compare against
+     * @param dialogSettingsSectionName The name of the dialog settings section
+     * @return the initial size
+     */
+    private Point getInitialSize(String dialogSettingsSectionName, Point initialSize) {
+        IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
+        try {
+            int x, y;
+            x = settings.getInt(DIALOG_WIDTH);
+            y = settings.getInt(DIALOG_HEIGHT);
+            return new Point(Math.max(x, initialSize.x), Math.max(y, initialSize.y));
+        } catch (NumberFormatException e) {
+        }
+        return initialSize;
+    }
+    
 }
