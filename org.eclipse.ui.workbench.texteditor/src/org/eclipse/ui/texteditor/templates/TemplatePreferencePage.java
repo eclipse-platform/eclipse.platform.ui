@@ -368,6 +368,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	        GridData gd1= new GridData();
 	        gd1.horizontalSpan= 2;
 	        fFormatButton.setLayoutData(gd1);
+	        fFormatButton.setSelection(getPreferenceStore().getBoolean(getFormatterPreferenceKey()));
 		}
 
 		fTableViewer.setInput(fTemplateStore);
@@ -516,13 +517,24 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 	
 	private void updateButtons() {
-		int selectionCount= ((IStructuredSelection) fTableViewer.getSelection()).size();
+		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		int selectionCount= selection.size();
 		int itemCount= fTableViewer.getTable().getItemCount();
+		boolean canRestore= fTemplateStore.getTemplateData(true).length != fTemplateStore.getTemplateData(false).length;
+		boolean canRevert= false;
+		for (Iterator it= selection.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+			if (data.isModified()) {
+				canRevert= true;
+				break;
+			}
+		}
 		
 		fEditButton.setEnabled(selectionCount == 1);
 		fExportButton.setEnabled(selectionCount > 0);
 		fRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
-		fRestoreButton.setEnabled(true);
+		fRestoreButton.setEnabled(canRestore);
+		fRevertButton.setEnabled(canRevert);
 	}
 	
 	private void add() {		
