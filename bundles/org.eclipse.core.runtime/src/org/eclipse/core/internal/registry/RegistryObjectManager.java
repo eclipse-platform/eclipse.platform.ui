@@ -177,9 +177,10 @@ public class RegistryObjectManager implements IObjectManager {
 
 	private Object basicGetObject(int id, byte type) {
 		Object result = cache.get(new Integer(id));
-		if (result == null && fromCache) {
+		if (result != null)
+			return result;
+		if (fromCache)
 			result = load(id, type);
-		}
 		if (result == null)
 			throw new InvalidRegistryObjectException(); //$NON-NLS-1$
 		cache.put(new Integer(id), result);
