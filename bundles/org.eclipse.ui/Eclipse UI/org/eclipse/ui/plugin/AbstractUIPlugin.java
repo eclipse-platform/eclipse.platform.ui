@@ -180,7 +180,7 @@ public abstract class AbstractUIPlugin extends Plugin
 		}
 	
 		/**
-		 * Returns the underlying preference store. Initializing it is required.
+		 * Returns the underlying preference store.
 		 * 
 		 * @return the underlying preference store
 		 */
@@ -450,9 +450,6 @@ public abstract class AbstractUIPlugin extends Plugin
  */
 public AbstractUIPlugin(IPluginDescriptor descriptor) {
 	super(descriptor);
-	
-	// N.B. this plug-ins's core runtime preference store is not created yet
-	preferenceStore = new CompatibilityPreferenceStore();
 }
 
 /** 
@@ -531,7 +528,11 @@ public ImageRegistry getImageRegistry() {
  */
 public IPreferenceStore getPreferenceStore() {
 	// force initialization
-	preferenceStore.initialize();
+	if (preferenceStore == null) {
+		// N.B. this plug-ins's core runtime preference store is not created yet
+		preferenceStore = new CompatibilityPreferenceStore();
+		preferenceStore.initialize();
+	}
 	return preferenceStore;
 }
 
