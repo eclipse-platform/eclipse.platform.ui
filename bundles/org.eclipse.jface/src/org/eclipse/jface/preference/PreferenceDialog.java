@@ -493,6 +493,7 @@ public class PreferenceDialog extends Dialog
 		// Build the tree an put it into the composite.
 		treeViewer = createTreeViewer(parent);
 		treeViewer.setInput(getPreferenceManager());
+		updateTreeFont(JFaceResources.getDialogFont());
 		layoutTreeAreaControl(treeViewer.getControl());
 		return treeViewer.getControl();
 	}
