@@ -44,6 +44,8 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * Implements IWorkingSet
 	 * 
 	 * @see org.eclipse.ui.IWorkingSet#addPropertyChangeListener(IPropertyChangeListener)
+	 * @deprecated use IWorkingSetManager.addPropertyChangeListener instead.
+	 *	newValue of the PropertyChangeEvent will be the changed working set.
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.add(listener);
@@ -137,6 +139,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * Implements IWorkingSet
 	 * 
 	 * @see org.eclipse.ui.IWorkingSet#removePropertyChangeListener(IPropertyChangeListener)
+	 * @deprecated use IWorkingSetManager.removePropertyChangeListener instead.
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.remove(listener);
@@ -171,10 +174,10 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		IAdaptable[] oldElements = elements;
 		
 		internalSetElements(newElements);
-		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();	
-		((WorkingSetManager) workingSetManager).saveState();
-
-		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, oldElements, newElements);		
+		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
+		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);
+		// deprecated event notification		
+		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, oldElements, newElements);
 	}
 	/**
 	 * Create a copy of the elements to store in the receiver.
@@ -208,9 +211,9 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 
 		Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
 		name = newName;
-		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();	
-		((WorkingSetManager) workingSetManager).saveState();
-
+		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
+		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE);
+		// deprecated event notification		
 		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, oldName, newName);
 	}
 }

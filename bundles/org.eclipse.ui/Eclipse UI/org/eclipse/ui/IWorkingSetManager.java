@@ -36,6 +36,18 @@ public interface IWorkingSetManager {
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove";	//$NON-NLS-1$
+	/**
+	 * Change event id when the working set contents changed
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
+	/**
+	 * Change event id when the working set name changed
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange";	//$NON-NLS-1$	
 	 
 	/**
 	 * Adds a property change listener.

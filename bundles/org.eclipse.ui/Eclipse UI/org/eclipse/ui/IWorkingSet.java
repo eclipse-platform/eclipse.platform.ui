@@ -22,19 +22,23 @@ public interface IWorkingSet {
 	 * Change event id when the working set contents changed
 	 *
 	 * @see IPropertyChangeListener
+	 * @deprecated use IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE instead.
 	 */
-	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
+	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE;	//$NON-NLS-1$
 	/**
 	 * Change event id when the working set name changed
 	 *
 	 * @see IPropertyChangeListener
+	 * @deprecated use IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE instead.
 	 */
-	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange";	//$NON-NLS-1$	
+	public static final String CHANGE_WORKING_SET_NAME_CHANGE = IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE;	//$NON-NLS-1$	
 		
 	/**
 	 * Adds a property change listener.
 	 * 
 	 * @param listener the property change listener to add
+	 * @deprecated use IWorkingSetManager.addPropertyChangeListener instead.
+	 *	newValue of the PropertyChangeEvent will be the changed working set.
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 	/**
@@ -53,6 +57,7 @@ public interface IWorkingSet {
 	 * Removes the property change listener.
 	 * 
 	 * @param listener the property change listener to remove
+	 * @deprecated use IWorkingSetManager.removePropertyChangeListener instead.
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
 	/**

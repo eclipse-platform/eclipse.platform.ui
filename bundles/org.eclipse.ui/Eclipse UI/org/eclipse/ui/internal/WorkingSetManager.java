@@ -254,7 +254,7 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	/**
 	 * Saves the working sets in the persistence store
 	 */
-	public void saveState() {
+	private void saveState() {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
 		File stateFile = getWorkingSetStateFile();
 
@@ -269,6 +269,19 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 			MessageDialog.openError((Shell) null, WorkbenchMessages.getString("ProblemSavingWorkingSetState.title"), //$NON-NLS-1$
 			WorkbenchMessages.getString("ProblemSavingWorkingSetState.message")); //$NON-NLS-1$
 		}
+	}
+	/**
+	 * Saves all working sets and fires a property change event for 
+	 * the changed working set.
+	 * Should be called by org.eclipse.ui.internal.WorkingSet only.
+	 * 
+	 * @param changedWorkingSet the working set that has changed
+	 * @param propertyChangeId the changed property. one of 
+	 * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
+	 */
+	public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId) {
+		saveState();
+		firePropertyChange(propertyChangeId, null, changedWorkingSet);
 	}
 	/**
 	 * Saves all persistable working sets in the persistence store.

@@ -55,7 +55,7 @@ public class ResourceNavigator
 	
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
-	private ResourceWorkingSetFilter workingSetFilter;
+	private ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
 
 	/** Property store constant for sort order. */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE"; //$NON-NLS-1$
@@ -110,41 +110,22 @@ public class ResourceNavigator
 	private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
+			Object newValue = event.getNewValue();
+			IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
+			
 			if (IWorkbenchPage.CHANGE_WORKING_SET_REPLACE.equals(property)) {
-				IWorkingSet oldWorkingSet = (IWorkingSet) event.getOldValue();				
-				IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
-				TreeViewer viewer = getTreeViewer();
-
-				if (oldWorkingSet != null) {
-					oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
-				}
-				if (newWorkingSet == null) {					
-					if (workingSetFilter != null) {
-						viewer.removeFilter(workingSetFilter);
-						workingSetFilter = null;
-					}
-				}
-				else {
-					if (workingSetFilter == null) {					
-						workingSetFilter = new ResourceWorkingSetFilter();
-						workingSetFilter.setWorkingSet(newWorkingSet);					
-						viewer.addFilter(workingSetFilter);
-						newWorkingSet.addPropertyChangeListener(propertyChangeListener);	
-					}
-					else {
-						newWorkingSet.addPropertyChangeListener(propertyChangeListener);
-						workingSetFilter.setWorkingSet(newWorkingSet);
-						getResourceViewer().refresh();
-					}
-				}
+				workingSetFilter.setWorkingSet((IWorkingSet) newValue);
+				getResourceViewer().refresh();
 				updateTitle();
 			}
 			else
-			if (IWorkingSet.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
+			if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && 
+				newValue == filterWorkingSet) {
 				updateTitle();
 			}
 			else
-			if (IWorkingSet.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
+			if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) &&
+				newValue == filterWorkingSet) {
 				getResourceViewer().refresh();			
 			}
 		}
@@ -196,14 +177,14 @@ public class ResourceNavigator
 				new WorkbenchLabelProvider(), 
 				getPlugin().getWorkbench().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
+		viewer.addFilter(workingSetFilter);
 		
 		IWorkingSet workingSet = getSite().getPage().getWorkingSet();
 		if (workingSet != null) {
-			workingSetFilter = new ResourceWorkingSetFilter();
 			workingSetFilter.setWorkingSet(workingSet);		
-			viewer.addFilter(workingSetFilter);
-			workingSet.addPropertyChangeListener(propertyChangeListener);				
 		}		
+		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+		workingSetManager.addPropertyChangeListener(propertyChangeListener);				
 		if (memento != null)
 			restoreFilters();
 		viewer.setInput(getInitialInput());
@@ -273,13 +254,13 @@ public class ResourceNavigator
 	 */
 	public void dispose() {
 		IWorkbenchPage page = getSite().getPage();
-		IWorkingSet workingSet = page.getWorkingSet();
 		
 		page.removePartListener(partListener);
 		page.removePropertyChangeListener(propertyChangeListener);
-		if (workingSet != null) {
-			workingSet.removePropertyChangeListener(propertyChangeListener);
-		}		
+
+		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+		workingSetManager.removePropertyChangeListener(propertyChangeListener);
+
 		if (actionGroup != null) {
 			actionGroup.dispose();
 		}
