@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 
 /**
@@ -36,7 +37,6 @@ import org.eclipse.swt.widgets.Tree;
 public class TreeAndListGroup implements ISelectionChangedListener {
 	private Object root;
 	private Object currentTreeSelection;
-	private Collection expandedTreeNodes = new HashSet();
 	private Collection listeners = new HashSet();
 
 	private ITreeContentProvider treeContentProvider;
@@ -172,6 +172,10 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.addSelectionChangedListener(this);
 	}
 	
+	public Table getListTable() {
+		return listViewer.getTable();
+	}
+	
 	public IStructuredSelection getListTableSelection() {
 		ISelection selection=  this.listViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -203,9 +207,6 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 */
 	protected void initialize() {
 		treeViewer.setInput(root);
-		this.expandedTreeNodes = new ArrayList();
-		this.expandedTreeNodes.add(root);
-
 	}
 
 	/**
