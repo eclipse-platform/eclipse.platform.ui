@@ -27,6 +27,30 @@ import org.osgi.service.prefs.Preferences;
 public interface IPreferenceManager {
 
 	/**
+	 * String constant (value of <code>"instance"</code>) used for the 
+	 * scope name for the instance preference scope.
+	 */
+	public static final String SCOPE_INSTANCE = "instance"; //$NON-NLS-1$
+
+	/**
+	 * String constant (value of <code>"configuration"</code>) used for the 
+	 * scope name for the configuration preference scope.
+	 */
+	public static final String SCOPE_CONFIGURATION = "configuration"; //$NON-NLS-1$
+
+	/**
+	 * String constant (value of <code>"user"</code>) used for the 
+	 * scope name for the user preference scope.
+	 */
+	public static final String SCOPE_USER = "user"; //$NON-NLS-1$
+
+	/**
+	 * String constant (value of <code>"default"</code>) used for the 
+	 * scope name for the default preference scope.
+	 */
+	public static final String SCOPE_DEFAULT = "default"; //$NON-NLS-1$
+
+	/**
 	 * Lookup the given key in the specified preference nodes in the given order.
 	 * Return the set value from the first node the key is found in. If the key is not
 	 * defined in any of the given nodes, then return the specified default value.
@@ -290,9 +314,12 @@ public interface IPreferenceManager {
 
 	/**
 	 * Loads preferences from the given file and stores them in the preferences store.
-	 * Existing values are over-ridden by those from the stream. This file must have 
-	 * been written by the <code>exportPreferences</code> method.
-	 * 
+	 * Existing values are over-ridden by those from the stream. The stream is closed
+	 * upon return from this method.
+	 * <p>
+	 * This file must have been written by the <code>exportPreferences</code> 
+	 * method.
+	 * </p>
 	 * @param input the stream to load the preferences from
 	 * @return a status object describing success or detailing failure reasons
 	 * @exception CoreException if there are problems importing the preferences

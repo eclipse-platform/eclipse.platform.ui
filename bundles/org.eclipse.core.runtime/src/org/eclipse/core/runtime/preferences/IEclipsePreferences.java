@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.preferences;
 
-import java.util.EventObject;
 import org.eclipse.core.runtime.IPath;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -33,35 +32,21 @@ public interface IEclipsePreferences extends Preferences {
 	 * @see INodeChangeListener
 	 * @since 3.0
 	 */
-	public class NodeChangeEvent extends EventObject {
-
-		private Preferences child;
-
-		/**
-		 * Create a new change event with the given parent and child.
-		 */
-		public NodeChangeEvent(Preferences parent, Preferences child) {
-			super(parent);
-			this.child = child;
-		}
+	public interface INodeChangeEvent {
 
 		/**
 		 * Return the parent node for this event.
 		 * 
 		 * @return the parent node
 		 */
-		public Preferences getParent() {
-			return (Preferences) getSource();
-		}
+		public Preferences getParent();
 
 		/**
 		 * Return the child node for this event.
 		 * 
 		 * @return the child node
 		 */
-		public Preferences getChild() {
-			return child;
-		}
+		public Preferences getChild();
 	}
 
 	/**
@@ -75,21 +60,21 @@ public interface IEclipsePreferences extends Preferences {
 		 * Notification that a node was added to the preference hierarchy.
 		 * 
 		 * @param event an event specifying the details about the new node
-		 * @see NodeChangeEvent
+		 * @see INodeChangeEvent
 		 * @see IEclipsePreferences#addNodeChangeListener(INodeChangeListener)
 		 * @see IEclipsePreferences#removeNodeChangeListener(INodeChangeListener)
 		 */
-		public void added(NodeChangeEvent event);
+		public void added(INodeChangeEvent event);
 
 		/**
 		 * Notification that a node was removed from the preference hierarchy.
 		 * 
 		 * @param event an event specifying the details about the removed node
-		 * @see NodeChangeEvent
+		 * @see INodeChangeEvent
 		 * @see IEclipsePreferences#addNodeChangeListener(INodeChangeListener)
 		 * @see IEclipsePreferences#removeNodeChangeListener(INodeChangeListener)
 		 */
-		public void removed(NodeChangeEvent event);
+		public void removed(INodeChangeEvent event);
 	}
 
 	/**
@@ -99,32 +84,14 @@ public interface IEclipsePreferences extends Preferences {
 	 * @see IPreferenceChangeListener
 	 * @since 3.0
 	 */
-	public class PreferenceChangeEvent extends EventObject {
-
-		private String key;
-		private Object newValue;
-		public Object _internalData;
-
-		/*
-		 * Create a new change event with the given details.
-		 */
-		public PreferenceChangeEvent(Object node, String key, Object oldValue, Object newValue) {
-			super(node);
-			if (key == null)
-				throw new IllegalArgumentException();
-			this.key = key;
-			this.newValue = newValue;
-			this._internalData = oldValue;
-		}
+	public interface IPreferenceChangeEvent {
 
 		/**
 		 * Return the key of the preference which was changed.
 		 * 
 		 * @return the preference key
 		 */
-		public String getKey() {
-			return key;
-		}
+		public String getKey();
 
 		/**
 		 * Return the new value for the preference or <code>null</code> if 
@@ -132,9 +99,15 @@ public interface IEclipsePreferences extends Preferences {
 		 * 
 		 * @return the new value or <code>null</code>
 		 */
-		public Object getNewValue() {
-			return newValue;
-		}
+		public Object getNewValue();
+
+		/**
+		 * Return the old value for the preference or <code>null</code> if 
+		 * the preference was removed or if it cannot be determined.
+		 * 
+		 * @return the old value or <code>null</code>
+		 */
+		public Object getOldValue();
 	}
 
 	/**
@@ -149,11 +122,11 @@ public interface IEclipsePreferences extends Preferences {
 		 * The given event object describes the change details.
 		 * 
 		 * @param event the event details
-		 * @see PreferenceChangeEvent
+		 * @see IPreferenceChangeEvent
 		 * @see IEclipsePreferences#addPreferenceChangeListener(IPreferenceChangeListener)
 		 * @see IEclipsePreferences#removePreferenceChangeListener(IPreferenceChangeListener)
 		 */
-		public void preferenceChange(PreferenceChangeEvent event);
+		public void preferenceChange(IPreferenceChangeEvent event);
 	}
 
 	/**
@@ -203,7 +176,8 @@ public interface IEclipsePreferences extends Preferences {
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener);
 
 	/**
-	 * Return the preferences node with the given path. 
+	 * Return the preferences node with the given path. The given path must
+	 * not be <code>null</code>.
 	 * <p>
 	 * Functionally equivalent to <code>return node(path.toString());</code>. 
 	 * See the spec of Preferences.node(String) for more details. 
@@ -216,7 +190,8 @@ public interface IEclipsePreferences extends Preferences {
 
 	/**
 	 * Return the boolean value <code>true</code> if a node with the
-	 * given path exists in the preference node hierarchy.
+	 * given path exists in the preference node hierarchy. The given path
+	 * must not be <code>null</code>.
 	 * <p>
 	 * Functionally equivalent to <code>return nodeExists(path.toString());</code>. 
 	 * See the spec of Preferences.node(String) for more details. 
