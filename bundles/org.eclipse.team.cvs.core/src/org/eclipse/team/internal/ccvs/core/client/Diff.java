@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -41,7 +42,19 @@ public class Diff extends Command {
 	protected IStatus doExecute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions,
 								  String[] arguments, ICommandOutputListener listener, IProgressMonitor monitor) throws CVSException {
 		try {
-			return super.doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
+			IStatus status = super.doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
+            if (status.getCode() == CVSStatus.SERVER_ERROR) {
+                if (status.isMultiStatus()) {
+                    IStatus[] children = status.getChildren();
+                    for (int i = 0; i < children.length; i++) {
+                        IStatus child = children[i];
+                        if (child.getMessage().indexOf("[diff aborted]") != -1) { //$NON-NLS-1$
+                            throw new CVSServerException(status);
+                        }
+                    }
+                }
+            }
+            return status;
 		} catch (CVSServerException e) {
 			if (e.containsErrors()) throw e;
 			return e.getStatus();
