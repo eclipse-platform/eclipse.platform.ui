@@ -132,6 +132,15 @@ public abstract class Job extends InternalJob {
 	public static final int RUNNING = 3;
 
 	/**
+	 * Creates a new job with the specified name.  The job name is a human-readable
+	 * value that is displayed to users.  The name does not need to be unique, but it
+	 * must not be <code>null</code>.
+	 * @param name the name of the job.
+	 */
+	public Job(String name)  {
+		super(name);
+	}
+	/**
 	 * Registers a job listener with this job
 	 * Has no effect if an identical listener is already registered.
 	 * 
@@ -180,6 +189,13 @@ public abstract class Job extends InternalJob {
 	 */
 	protected final void done(IStatus result) {
 		super.done(result);
+	}
+	/**
+	 * Returns the human readable name of this job.  The name is never 
+	 * <code>null</code>.
+	 */
+	public final String getName() {
+		return super.getName();
 	}
 	/**
 	 * Returns the priority of this job.  The priority is used as a hint when the job

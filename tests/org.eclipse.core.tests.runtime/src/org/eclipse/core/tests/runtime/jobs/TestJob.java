@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.jobs.Job;
  * 
  */
 class TestJob extends Job {
-	private String name;
 	private int ticks;
 	private int tickLength;
 	private int runCount = 0;
@@ -26,7 +25,7 @@ class TestJob extends Job {
 		this(name, 10, 100);
 	}
 	public TestJob(String name, int ticks, int tickLength) {
-		this.name = name;
+		super(name);
 		this.ticks = ticks;
 		this.tickLength = tickLength;
 	}
@@ -39,7 +38,7 @@ class TestJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		setRunCount(getRunCount()+1);
 		//must have positive work
-		monitor.beginTask(name, ticks <= 0 ? 1 : ticks);
+		monitor.beginTask(getName(), ticks <= 0 ? 1 : ticks);
 		try {
 			for (int i = 0; i < ticks; i++) {
 				monitor.subTask("Tick: " + i);
@@ -60,10 +59,5 @@ class TestJob extends Job {
 	}
 	private synchronized void setRunCount(int count) {
 		runCount = count;
-	}
-	public String toString() {
-		if (name == null)
-			return super.toString();
-		return name + "(" + super.toString() + ")";
 	}
 }

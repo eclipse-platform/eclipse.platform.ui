@@ -11,6 +11,7 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.*;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
@@ -25,6 +26,7 @@ public abstract class InternalJob implements Comparable {
 	private final int jobNumber = nextJobNumber++;
 	private List listeners;
 	private IProgressMonitor monitor;
+	private String name;
 	private int priority = Job.LONG;
 	private ISchedulingRule schedulingRule;
 	/**
@@ -41,6 +43,11 @@ public abstract class InternalJob implements Comparable {
 	 * The job behind me in a queue or list.
 	 */
 	private InternalJob previous;
+	
+	protected InternalJob(String name)  {
+		Assert.isNotNull(name);
+		this.name = name;
+	}
 	/* (non-Javadoc)
 	 * @see Job#addJobListener(IJobChangeListener)
 	 */
@@ -67,6 +74,9 @@ public abstract class InternalJob implements Comparable {
 	}
 	final IProgressMonitor getMonitor() {
 		return monitor;
+	}
+	protected String getName()  {
+		return name;
 	}
 	protected int getPriority() {
 		return priority;
@@ -123,7 +133,7 @@ public abstract class InternalJob implements Comparable {
 		return manager.sleep(this);
 	}
 	public String toString() {
-		return getClass().getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
+		return getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 	protected void wakeUp() {
 		manager.wakeUp(this);

@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.jobs.Job;
 public class Worker extends Thread {
 	//worker number used for naming purposes only
 	private static int nextWorkerNumber = 0;
-	private final WorkerPool pool;
 	private volatile Job currentJob;
-	
+	private final WorkerPool pool;
+
 	public Worker(WorkerPool pool) {
 		super("Worker-" + nextWorkerNumber++); //$NON-NLS-1$
 		this.pool = pool;
@@ -31,19 +31,31 @@ public class Worker extends Thread {
 	public Job currentJob() {
 		return currentJob;
 	}
+	private IStatus handleException(Job job, Throwable t) {
+		t.printStackTrace();
+		String id;
+		try {
+			id = ((PluginClassLoader) job.getClass().getClassLoader()).getPluginDescriptor().getUniqueIdentifier();
+		} catch (ClassCastException e) {
+			//ignore and attribute exception to runtime
+			id = Platform.PI_RUNTIME;
+		}
+		String message = Policy.bind("meta.pluginProblems", id); //$NON-NLS-1$
+		return new Status(Status.ERROR, id, Platform.PLUGIN_ERROR, message, t);
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		try {
 			currentJob = pool.startFirstJob();
-			while (currentJob  != null) {
+			while (currentJob != null) {
 				//if job is null we've been shutdown
 				if (currentJob == null)
 					return;
 				IStatus result = Status.OK_STATUS;
 				try {
-					result = currentJob.run(((InternalJob)currentJob).getMonitor());
+					result = currentJob.run(((InternalJob) currentJob).getMonitor());
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
@@ -63,16 +75,5 @@ public class Worker extends Thread {
 		} finally {
 			pool.endWorker(this);
 		}
-	}
-	private IStatus handleException(Job job, Throwable t) {
-		String id;
-		try {
-			id = ((PluginClassLoader)job.getClass().getClassLoader()).getPluginDescriptor().getUniqueIdentifier();
-		} catch (ClassCastException e) {
-			//ignore and attribute exception to runtime
-			id = Platform.PI_RUNTIME;
-		}
-		String message = Policy.bind("meta.pluginProblems", id); //$NON-NLS-1$
-		return new Status(Status.ERROR, id, Platform.PLUGIN_ERROR, message, t);
 	}
 }

@@ -26,7 +26,7 @@ public class JobQueue {
 	 */
 	public JobQueue() {
 		//compareTo on dummy is never called
-		dummy = new InternalJob() {};
+		dummy = new InternalJob("Queue-Head") {}; //$NON-NLS-1$
 		dummy.setNext(dummy);
 		dummy.setPrevious(dummy);
 	}
