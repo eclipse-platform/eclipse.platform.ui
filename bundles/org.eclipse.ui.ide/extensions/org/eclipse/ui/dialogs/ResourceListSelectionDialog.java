@@ -355,15 +355,12 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     protected String adjustPattern() {
         String text = pattern.getText().trim();
-        if (!text.equals("") && //$NON-NLS-1$
-                text.indexOf('*') == -1 && text.indexOf('?') == -1
-                && text.indexOf('<') == -1) {
-            text = text + "*"; //$NON-NLS-1$
-            return text;
-        }
         if (text.endsWith("<")) { //$NON-NLS-1$
             // the < character indicates an exact match search
             return text.substring(0, text.length() - 1);
+        }
+        if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$
+        	return text + "*"; //$NON-NLS-1$
         }
         return text;
     }
