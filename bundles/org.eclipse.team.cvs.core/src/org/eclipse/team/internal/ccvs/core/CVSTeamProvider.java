@@ -455,30 +455,40 @@ public class CVSTeamProvider extends RepositoryProvider {
 		get(resources, depth, null, progress);
 	}
 	
-	public void get(final IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		try {
-			progress.beginTask(null, 100);
+	public void get(final IResource[] resources, final int depth, final CVSTag tag, IProgressMonitor progress) throws TeamException {
 			
-			// Handle the retrival of the base in a special way
-			if (tag != null && tag.equals(CVSTag.BASE)) {
-				new ReplaceWithBaseVisitor().replaceWithBase(getProject(), resources, depth, Policy.subMonitorFor(progress, 100)); //$NON-NLS-1$
-				return;
-			}
-			
-			// Prepare for the replace (special handling for "cvs added" and "cvs removed" resources
-			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30)); //$NON-NLS-1$
-						
-			// Perform an update, ignoring any local file modifications
-			List options = new ArrayList();
-			options.add(Update.IGNORE_LOCAL_CHANGES);
-			if(depth != IResource.DEPTH_INFINITE) {
-				options.add(Command.DO_NOT_RECURSE);
-			}
-			LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-			update(resources, commandOptions, tag, true /*createBackups*/, Policy.subMonitorFor(progress, 70));
-		} finally {
-			progress.done();
+		// Handle the retrival of the base in a special way
+		if (tag != null && tag.equals(CVSTag.BASE)) {
+			new ReplaceWithBaseVisitor().replaceWithBase(getProject(), resources, depth, progress);
+			return;
 		}
+
+		// Make a connection before preparing for the replace to avoid deletion of resources before a failed connection
+		Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+			new ICVSRunnable() {
+				public void run(IProgressMonitor progress) throws CVSException {
+					// Prepare for the replace (special handling for "cvs added" and "cvs removed" resources
+					progress.beginTask(null, 100);
+					try {
+						new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30)); //$NON-NLS-1$
+									
+						// Perform an update, ignoring any local file modifications
+						List options = new ArrayList();
+						options.add(Update.IGNORE_LOCAL_CHANGES);
+						if(depth != IResource.DEPTH_INFINITE) {
+							options.add(Command.DO_NOT_RECURSE);
+						}
+						LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
+						try {
+							update(resources, commandOptions, tag, true /*createBackups*/, Policy.subMonitorFor(progress, 70));
+						} catch (TeamException e) {
+							throw CVSException.wrapException(e);
+						}
+					} finally {
+						progress.done();
+					}
+				}
+			}, progress);
 	}
 	
 	/**
@@ -767,7 +777,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * 
 	 * @param createBackups if true, creates .# files for updated files
 	 */
-	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, boolean createBackups, IProgressMonitor progress) throws TeamException {
+	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, final boolean createBackups, IProgressMonitor progress) throws TeamException {
 		// Build the local options
 		List localOptions = new ArrayList();
 		
@@ -778,25 +788,19 @@ public class CVSTeamProvider extends RepositoryProvider {
 		
 		// Build the arguments list
 		localOptions.addAll(Arrays.asList(options));
-		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-		String[] arguments = getValidArguments(resources, commandOptions);
+		final LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+		final ICVSResource[] arguments = getCVSArguments(resources);
 
-		IStatus status;
-		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-		progress.beginTask(null, 100);
-		try {
-			// Opening the session takes 20% of the time
-			s.open(Policy.subMonitorFor(progress, 20));
-			status = Command.UPDATE.execute(s, Command.NO_GLOBAL_OPTIONS, commandOptions, arguments,
-				null, Policy.subMonitorFor(progress, 80), createBackups);
-		} finally {
-			progress.done();
-			s.close();
-		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			// XXX diff errors??
-			throw new CVSServerException(status);
-		}
+		Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+			new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					IStatus status = Command.UPDATE.execute(Command.NO_GLOBAL_OPTIONS, commandOptions, arguments,
+						null, monitor);
+					if (status.getCode() == CVSStatus.SERVER_ERROR) {
+						throw new CVSServerException(status);
+					}
+				}
+			}, progress);
 	}
 	
 	/*

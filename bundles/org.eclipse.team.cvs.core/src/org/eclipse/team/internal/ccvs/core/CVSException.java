@@ -83,4 +83,14 @@ public class CVSException extends TeamException {
 		}
 		return new CVSException(status);
 	}
+	
+	/*
+	 * Static helper methods for creating exceptions
+	 */
+	public static CVSException wrapException(TeamException e) {
+		if (e instanceof CVSException)
+			return (CVSException)e;
+		else
+			return new CVSException(e.getStatus());
+	}
 }
