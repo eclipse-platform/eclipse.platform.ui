@@ -233,7 +233,7 @@ public class InstallConfiguration
 	 */
 	public void remove() {
 		// save the configuration
-		if (getURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
+		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
 			UpdateManagerUtils.removeFromFileSystem(file);
@@ -344,7 +344,7 @@ public class InstallConfiguration
 	 */
 	public void saveConfigurationFile(boolean isTransient) throws CoreException {
 		// save the configuration
-		if (getURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
+		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
 			if (isTransient)
