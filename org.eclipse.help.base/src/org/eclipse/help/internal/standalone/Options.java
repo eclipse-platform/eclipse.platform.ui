@@ -18,15 +18,15 @@ import java.util.*;
  */
 public class Options {
 	// Update command parameters' keys
-	public static final String PARAM_FEATUREID = "featureId";
+	public static final String PARAM_FEATUREID = "featureId"; //$NON-NLS-1$
 
-	public static final String PARAM_VERSION = "version";
+	public static final String PARAM_VERSION = "version"; //$NON-NLS-1$
 
-	public static final String PARAM_FROM = "from";
+	public static final String PARAM_FROM = "from"; //$NON-NLS-1$
 
-	public static final String PARAM_TO = "to";
+	public static final String PARAM_TO = "to"; //$NON-NLS-1$
 
-	public static final String PARAM_VERIFYONLY = "verifyOnly";
+	public static final String PARAM_VERIFYONLY = "verifyOnly"; //$NON-NLS-1$
 
 	// debugging
 	private static boolean debug = false;
@@ -116,23 +116,23 @@ public class Options {
 		List parameters = new ArrayList();
 		List param = extractOption(eclipseArgs, "-" + PARAM_FEATUREID); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_FEATUREID + "=" + (String) param.get(0));
+			parameters.add(PARAM_FEATUREID + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_VERSION); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_VERSION + "=" + (String) param.get(0));
+			parameters.add(PARAM_VERSION + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_FROM); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_FROM + "=" + (String) param.get(0));
+			parameters.add(PARAM_FROM + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_TO); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_TO + "=" + (String) param.get(0));
+			parameters.add(PARAM_TO + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_VERIFYONLY); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_VERIFYONLY + "=" + (String) param.get(0));
+			parameters.add(PARAM_VERIFYONLY + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		updateParameters = (String[]) parameters.toArray(new String[parameters
 				.size()]);

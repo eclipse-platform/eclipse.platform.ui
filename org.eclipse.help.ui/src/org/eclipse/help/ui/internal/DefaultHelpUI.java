@@ -9,9 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
+
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
@@ -42,6 +42,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayHelp() {
 		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser(null));
 	}
+
 	/**
 	 * Displays a help resource specified as a url.
 	 * <ul>
@@ -58,6 +59,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		BaseHelpSystem.getHelpDisplay().displayHelpResource(href,
 				useExternalBrowser(href));
 	}
+
 	/**
 	 * Displays context-sensitive help for specified context
 	 * 
@@ -75,9 +77,6 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
-		// if any errors or parsing errors have occurred, display them in a
-		// pop-up
-		ErrorUtil.displayStatus();
 	}
 
 	/**
@@ -90,6 +89,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 		return f1Dialog.isShowing();
 	}
+
 	private boolean useExternalBrowser(String url) {
 		// Use external when modal window is displayed
 		Display display = Display.getCurrent();
@@ -105,8 +105,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.
 		if (url != null) {
-			if (url.indexOf("?noframes=true") > 0
-					|| url.indexOf("&noframes=true") > 0) {
+			if (url.indexOf("?noframes=true") > 0 //$NON-NLS-1$
+					|| url.indexOf("&noframes=true") > 0) { //$NON-NLS-1$
 				return true;
 			}
 		}

@@ -24,8 +24,10 @@ import org.eclipse.help.internal.search.IndexingOperation.*;
 public class SearchManager implements ITocsChangedListener {
 	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
+
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
+
 	/**
 	 * Constructs a Search manager.
 	 */
@@ -33,6 +35,7 @@ public class SearchManager implements ITocsChangedListener {
 		super();
 		HelpPlugin.getDefault().addTocsChangedListener(this);
 	}
+
 	/**
 	 * Public for use by indexing tool
 	 */
@@ -47,6 +50,7 @@ public class SearchManager implements ITocsChangedListener {
 			return (SearchIndexWithIndexingProgress) index;
 		}
 	}
+
 	/**
 	 * Obtains AnalyzerDescriptor that indexing and search should use for a
 	 * given locale.
@@ -158,6 +162,7 @@ public class SearchManager implements ITocsChangedListener {
 			}
 		}
 	}
+
 	/**
 	 * @param pm
 	 * @param index
@@ -190,11 +195,11 @@ public class SearchManager implements ITocsChangedListener {
 			return;
 		} catch (OperationCanceledException oce) {
 			progressDistrib.operationCanceled();
-			HelpBasePlugin.logWarning(HelpBaseResources
-					.getString("Search_cancelled")); //$NON-NLS-1$
+			HelpBasePlugin.logWarning("Search cancelled."); //$NON-NLS-1$
 			throw oce;
 		}
 	}
+
 	/**
 	 * Closes all indexes.
 	 */
@@ -205,6 +210,7 @@ public class SearchManager implements ITocsChangedListener {
 			}
 		}
 	}
+
 	public synchronized void tocsChanged() {
 		Collection activeIndexes = new ArrayList();
 		synchronized (indexes) {

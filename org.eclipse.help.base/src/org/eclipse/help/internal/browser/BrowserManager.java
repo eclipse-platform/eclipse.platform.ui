@@ -9,41 +9,60 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
+
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.service.environment.*;
+
 /**
  * Creates browser by delegating to appropriate browser adapter
  */
 public class BrowserManager {
 	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser"; //$NON-NLS-1$
+
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_CUSTOM = HelpBasePlugin.PLUGIN_ID
 			+ ".custombrowser"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_MOZILLA = HelpBasePlugin.PLUGIN_ID
 			+ ".mozilla"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_NETSCAPE = HelpBasePlugin.PLUGIN_ID
 			+ ".netscape"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_MAC_SYSTEM = HelpBasePlugin.PLUGIN_ID
 			+ ".defaultBrowserMacOSX"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_EMBEDDED = "org.eclipse.help.ui.embeddedbrowser"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_SYSTEM = "org.eclipse.help.ui.systembrowser"; //$NON-NLS-1$
+
 	private static BrowserManager instance;
+
 	private boolean initialized = false;
+
 	private BrowserDescriptor currentBrowserDesc;
+
 	private BrowserDescriptor defaultBrowserDesc;
+
 	private BrowserDescriptor[] browsersDescriptors;
+
 	private BrowserDescriptor internalBrowserDesc;
+
 	private Collection browsers = new ArrayList();
+
 	private boolean alwaysUseExternal = false;
+
 	/**
 	 * Private Constructor
 	 */
 	private BrowserManager() {
 	}
+
 	/**
 	 * Initialize
 	 */
@@ -100,28 +119,40 @@ public class BrowserManager {
 						public boolean isAvailable() {
 							return true;
 						}
+
 						public IBrowser createBrowser() {
 							return new IBrowser() {
 								public void close() {
 								}
+
 								public void displayURL(String url) {
+									HelpBasePlugin
+											.logError(
+													"There is no browser adapter configured to display " //$NON-NLS-1$
+															+ url
+															+ ".  Ensure that you have a required browser and adapter installed, and that the browser program is available on the system path.", //$NON-NLS-1$
+													null);
 									String msg = HelpBaseResources.getString(
 											"no_browsers", url); //$NON-NLS-1$
-									HelpBasePlugin.logError(msg, null);
 									BaseHelpSystem.getDefaultErrorUtil()
 											.displayError(msg);
 								}
+
 								public boolean isCloseSupported() {
 									return false;
 								}
+
 								public boolean isSetLocationSupported() {
 									return false;
 								}
+
 								public boolean isSetSizeSupported() {
 									return false;
 								}
+
 								public void setLocation(int width, int height) {
 								}
+
 								public void setSize(int x, int y) {
 								}
 							};
@@ -141,6 +172,7 @@ public class BrowserManager {
 		setAlwaysUseExternal(HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(ALWAYS_EXTERNAL_BROWSER_KEY));
 	}
+
 	/**
 	 * Obtains singleton instance.
 	 */
@@ -149,6 +181,7 @@ public class BrowserManager {
 			instance = new BrowserManager();
 		return instance;
 	}
+
 	/**
 	 * Creates all adapters, and returns available ones.
 	 */
@@ -189,6 +222,7 @@ public class BrowserManager {
 				.toArray(new BrowserDescriptor[bDescriptors.size()]);
 		return this.browsersDescriptors;
 	}
+
 	/**
 	 * Obtains browsers descriptors.
 	 */
@@ -198,6 +232,7 @@ public class BrowserManager {
 		}
 		return this.browsersDescriptors;
 	}
+
 	/**
 	 * Gets the currentBrowserID.
 	 * 
@@ -211,6 +246,7 @@ public class BrowserManager {
 			return null;
 		return currentBrowserDesc.getID();
 	}
+
 	/**
 	 * Gets the currentBrowserID.
 	 * 
@@ -226,6 +262,7 @@ public class BrowserManager {
 			return getCurrentBrowserID();
 		}
 	}
+
 	/**
 	 * Gets the currentBrowserID.
 	 * 
@@ -239,6 +276,7 @@ public class BrowserManager {
 			return null;
 		return defaultBrowserDesc.getID();
 	}
+
 	/**
 	 * Sets the currentBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
@@ -257,6 +295,7 @@ public class BrowserManager {
 			}
 		}
 	}
+
 	/**
 	 * Sets the defaultBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
@@ -275,6 +314,7 @@ public class BrowserManager {
 			}
 		}
 	}
+
 	/**
 	 * Creates web browser If preferences specify to always use external, the
 	 * parameter will not be honored
@@ -294,12 +334,14 @@ public class BrowserManager {
 
 		}
 	}
+
 	/**
 	 * Creates web browser
 	 */
 	public IBrowser createBrowser() {
 		return createBrowser(true);
 	}
+
 	/**
 	 * Creates web browser for external == false, if no internal browsers are
 	 * present it will create external one
@@ -317,6 +359,7 @@ public class BrowserManager {
 		browsers.add(browser);
 		return browser;
 	}
+
 	/**
 	 * Closes all browsers created
 	 */
@@ -330,18 +373,21 @@ public class BrowserManager {
 			browser.close();
 		}
 	}
+
 	public boolean isEmbeddedBrowserPresent() {
 		if (!initialized) {
 			init();
 		}
 		return internalBrowserDesc != null;
 	}
+
 	public void setAlwaysUseExternal(boolean alwaysExternal) {
 		if (!initialized) {
 			init();
 		}
 		alwaysUseExternal = alwaysExternal || !isEmbeddedBrowserPresent();
 	}
+
 	private boolean isAlwaysUseExternal() {
 		if (!isEmbeddedBrowserPresent()) {
 			return true;

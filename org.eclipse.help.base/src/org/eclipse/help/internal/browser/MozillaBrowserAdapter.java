@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
+
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
@@ -23,17 +24,28 @@ public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
 	// to remote command after mozilla has been called
 	protected static final int DELAY = 5000;
+
 	protected long browserFullyOpenedAt = 0;
+
 	private BrowserThread lastBrowserThread = null;
+
 	private int x, y;
+
 	private int width, height;
+
 	private boolean setLocationPending = false;
+
 	private boolean setSizePending = false;
+
 	protected String executable;
+
 	protected String executableName;
+
 	protected Thread uiThread;
+
 	/**
 	 * Constructor
+	 * 
 	 * @executable executable filename to launch
 	 * @executableName name of the program to display when error occurs
 	 */
@@ -42,11 +54,13 @@ public class MozillaBrowserAdapter implements IBrowser {
 		this.executable = executable;
 		this.executableName = executableName;
 	}
+
 	/*
 	 * @see IBrowser#close()
 	 */
 	public void close() {
 	}
+
 	/*
 	 * @see IBrowser#displayURL(String)
 	 */
@@ -61,24 +75,28 @@ public class MozillaBrowserAdapter implements IBrowser {
 		setLocationPending = false;
 		setSizePending = false;
 	}
+
 	/*
 	 * @see IBrowser#isCloseSupported()
 	 */
 	public boolean isCloseSupported() {
 		return false;
 	}
+
 	/*
 	 * @see IBrowser#isSetLocationSupported()
 	 */
 	public boolean isSetLocationSupported() {
 		return true;
 	}
+
 	/*
 	 * @see IBrowser#isSetSizeSupported()
 	 */
 	public boolean isSetSizeSupported() {
 		return true;
 	}
+
 	/*
 	 * @see IBrowser#setLocation(int, int)
 	 */
@@ -87,6 +105,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		this.y = y;
 		setLocationPending = true;
 	}
+
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
@@ -95,6 +114,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		this.height = height;
 		setSizePending = true;
 	}
+
 	private synchronized String createPositioningURL(String url) {
 		IPath pluginPath = HelpBasePlugin.getDefault().getStateLocation();
 		File outFile = pluginPath.append("mozillaPositon") //$NON-NLS-1$
@@ -127,12 +147,16 @@ public class MozillaBrowserAdapter implements IBrowser {
 			return url;
 		}
 	}
+
 	private class BrowserThread extends Thread {
 		public boolean exitRequested = false;
+
 		private String url;
+
 		public BrowserThread(String urlName) {
 			this.url = urlName;
 		}
+
 		/**
 		 * @param browserCmd
 		 * @return int 0 if success
@@ -153,10 +177,11 @@ public class MozillaBrowserAdapter implements IBrowser {
 				return ret;
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
+				HelpBasePlugin.logError("Launching " + executableName //$NON-NLS-1$
+						+ " has failed.", e); //$NON-NLS-1$
 				String msg = HelpBaseResources.getString(
 						"MozillaBrowserAdapter.executeFailed", //$NON-NLS-1$
 						executableName);
-				HelpBasePlugin.logError(msg, e);
 				BaseHelpSystem.getDefaultErrorUtil()
 						.displayError(msg, uiThread);
 				// return success, so second command does not execute
@@ -164,6 +189,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			}
 			return -1;
 		}
+
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
 		 * necessary to examine ouput to find out failure
@@ -199,6 +225,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			}
 			return false;
 		}
+
 		public void run() {
 			// If browser is opening, wait until it fully opens,
 			waitForBrowser();
@@ -213,6 +240,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 			openBrowser(executable + " " + url); //$NON-NLS-1$
 		}
+
 		private void waitForBrowser() {
 			while (System.currentTimeMillis() < browserFullyOpenedAt)
 				try {

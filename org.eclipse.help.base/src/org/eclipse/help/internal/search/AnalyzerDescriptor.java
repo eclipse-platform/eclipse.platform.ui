@@ -20,7 +20,9 @@ import org.osgi.framework.*;
  */
 public class AnalyzerDescriptor {
 	private Analyzer luceneAnalyzer;
+
 	private String id;
+
 	private String lang;
 
 	/**
@@ -52,6 +54,7 @@ public class AnalyzerDescriptor {
 		}
 
 	}
+
 	/**
 	 * Gets the analyzer.
 	 * 
@@ -123,14 +126,16 @@ public class AnalyzerDescriptor {
 					}
 				}
 			} catch (CoreException ce) {
-				HelpBasePlugin.logError(HelpBaseResources.getString("ES23", //$NON-NLS-1$
-						configElements[i].getAttribute("class"), //$NON-NLS-1$
-						locale), ce);
+				HelpBasePlugin.logError(
+						"Exception occurred creating text analyzer " //$NON-NLS-1$
+								+ configElements[i].getAttribute("class") //$NON-NLS-1$
+								+ " for " + locale + " locale.", ce); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		return this.luceneAnalyzer;
 	}
+
 	/**
 	 * Checks whether analyzer is compatible with a given analyzer
 	 * 

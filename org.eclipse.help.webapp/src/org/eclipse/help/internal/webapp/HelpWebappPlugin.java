@@ -9,24 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.osgi.framework.*;
+
 /**
  * Welp web application plug-in.
  */
 public class HelpWebappPlugin extends Plugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.webapp"; //$NON-NLS-1$
+
 	// debug options
 	public static boolean DEBUG = false;
+
 	public static boolean DEBUG_WORKINGSETS = false;
 
 	protected static HelpWebappPlugin plugin;
+
 	private static BundleContext bundleContext;
+
 	/**
-	 * Logs an Error message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: WebappResources.getString()
-	 * should already have been called
+	 * Logs an Error message with an exception.
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
@@ -35,6 +39,7 @@ public class HelpWebappPlugin extends Plugin {
 				message, ex);
 		HelpWebappPlugin.getDefault().getLog().log(errorStatus);
 	}
+
 	/**
 	 * Logs a Warning message with an exception. Note that the message should
 	 * already be localized to proper local. ie: WebappResources.getString()
@@ -56,6 +61,7 @@ public class HelpWebappPlugin extends Plugin {
 	public static HelpWebappPlugin getDefault() {
 		return plugin;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,6 +78,7 @@ public class HelpWebappPlugin extends Plugin {
 			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

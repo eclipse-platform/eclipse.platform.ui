@@ -15,14 +15,15 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.*;
 
 /**
  * Properties stored in file.
  */
 public class HelpProperties extends Properties {
 	private File file = null;
+
 	protected String name = null;
+
 	/**
 	 * Creates empty Properties for the specified plugin
 	 * 
@@ -34,6 +35,7 @@ public class HelpProperties extends Properties {
 	public HelpProperties(String name, Plugin plugin) {
 		this(name, plugin.getStateLocation().toFile());
 	}
+
 	/**
 	 * Creates empty Properties persisted in the specified directory
 	 * 
@@ -67,8 +69,7 @@ public class HelpProperties extends Properties {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError(HelpBaseResources.getString(
-					"File4", file.getName()), //$NON-NLS-1$
+			HelpPlugin.logError("File " + file.getName() + " cannot be read.", //$NON-NLS-1$ //$NON-NLS-2$
 					null);
 		} finally {
 			if (in != null)
@@ -79,6 +80,7 @@ public class HelpProperties extends Properties {
 		}
 		return loaded;
 	}
+
 	/**
 	 * Saves contents of the table to a file.
 	 * 
@@ -92,9 +94,8 @@ public class HelpProperties extends Properties {
 			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError(HelpBaseResources.getString(
-					"Exception_occurred", //$NON-NLS-1$
-					name, file.getAbsolutePath()), ioe00);
+			HelpPlugin.logError("Exception occurred while saving table " + name //$NON-NLS-1$
+					+ " to file " + file.getAbsolutePath() + ".", ioe00); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			try {
 				if (out != null) {

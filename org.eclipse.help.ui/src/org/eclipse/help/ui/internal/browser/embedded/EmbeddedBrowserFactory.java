@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
@@ -17,15 +16,19 @@ import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.widgets.*;
+
 public class EmbeddedBrowserFactory implements IBrowserFactory {
 	private boolean tested = false;
+
 	private boolean available = false;
+
 	/**
 	 * Constructor.
 	 */
 	public EmbeddedBrowserFactory() {
 		super();
 	}
+
 	/*
 	 * @see IBrowserFactory#isAvailable()
 	 */
@@ -48,6 +51,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 		tested = true;
 		return available;
 	}
+
 	/**
 	 * Must run on UI thread
 	 * 
@@ -69,8 +73,9 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 					// Browser not implemented
 					available = false;
 				} else {
-					HelpUIPlugin.logError(HelpUIResources
-							.getString("EmbeddedBrowserFactory.error"), se); //$NON-NLS-1$
+					HelpUIPlugin
+							.logError(
+									"An error occurred during creation of embedded help browser.", se); //$NON-NLS-1$
 				}
 			}
 			if (sh != null && !sh.isDisposed())
@@ -78,6 +83,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 		}
 		return available;
 	}
+
 	/*
 	 * @see IBrowserFactory#createBrowser()
 	 */

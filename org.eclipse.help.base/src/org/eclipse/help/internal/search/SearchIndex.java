@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
+
 import java.io.*;
 import java.net.*;
 import java.nio.channels.*;
@@ -24,33 +25,54 @@ import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
+
 /**
  * Text search index. Documents added to this index can than be searched against
  * a search query.
  */
 public class SearchIndex {
 	private IndexReader ir;
+
 	private IndexWriter iw;
+
 	private File indexDir;
+
 	private String locale;
+
 	private TocManager tocManager;
+
 	private AnalyzerDescriptor analyzerDescriptor;
+
 	private PluginVersionInfo docPlugins;
+
 	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
+
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions"; //$NON-NLS-1$
+
 	public static final String INDEXED_DOCS_FILE = "indexed_docs"; //$NON-NLS-1$
+
 	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies"; //$NON-NLS-1$
+
 	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene"; //$NON-NLS-1$
+
 	private File inconsistencyFile;
+
 	private HTMLDocParser parser;
+
 	private IndexSearcher searcher;
+
 	private Object searcherCreateLock = new Object();
+
 	private HelpProperties dependencies;
+
 	private boolean closed = false;
+
 	// Collection of searches occuring now
 	private Collection searches = new ArrayList();
+
 	private FileLock lock;
+
 	/**
 	 * Constructor.
 	 * 
@@ -81,10 +103,12 @@ public class SearchIndex {
 				}
 			} catch (OverlappingFileLockException ofle) {
 				// another thread in this process is unzipping
-				// should never be here - one index instance per locale exists in vm
+				// should never be here - one index instance per locale exists
+				// in vm
 			}
 		}
 	}
+
 	/**
 	 * Indexes one document from a stream. Index has to be open and close
 	 * outside of this method
@@ -107,8 +131,12 @@ public class SearchIndex {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					HelpBasePlugin.logError(HelpBaseResources.getString("ES25", //$NON-NLS-1$
-							name), null);
+					HelpBasePlugin
+							.logError(
+									"Help document " //$NON-NLS-1$
+											+ name
+											+ " cannot be opened.  The document will not be indexed.", //$NON-NLS-1$
+									null);
 					return false;
 				}
 				ParsedDocument parsed = new ParsedDocument(parser
@@ -128,11 +156,14 @@ public class SearchIndex {
 			indexedDocs.put(name, "0"); //$NON-NLS-1$
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES16", name, //$NON-NLS-1$
-					indexDir.getAbsolutePath()), e);
+			HelpBasePlugin.logError(
+					"IO exception occurred while adding document " + name //$NON-NLS-1$
+							+ " to index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
+					e);
 			return false;
 		}
 	}
+
 	/**
 	 * Starts additions. To be called before adding documents.
 	 */
@@ -157,10 +188,13 @@ public class SearchIndex {
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES17"), e); //$NON-NLS-1$
+			HelpBasePlugin
+					.logError(
+							"Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
+
 	/**
 	 * Starts deletions. To be called before deleting documents.
 	 */
@@ -175,10 +209,13 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES18"), e); //$NON-NLS-1$
+			HelpBasePlugin
+					.logError(
+							"Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
+
 	/**
 	 * Deletes a single document from the index.
 	 * 
@@ -195,12 +232,15 @@ public class SearchIndex {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES22", name, //$NON-NLS-1$
-					indexDir.getAbsolutePath()), e);
+			HelpBasePlugin
+					.logError("IO exception occurred while removing document " //$NON-NLS-1$
+							+ name + " from index " //$NON-NLS-1$
+							+ indexDir.getAbsolutePath() + ".", e); //$NON-NLS-1$
 			return false;
 		}
 		return true;
 	}
+
 	/**
 	 * Finish additions. To be called after adding documents.
 	 */
@@ -220,10 +260,12 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES19"), e); //$NON-NLS-1$
+			HelpBasePlugin.logError(
+					"Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
+
 	/**
 	 * Finish deletions. To be called after deleting documents.
 	 */
@@ -242,10 +284,13 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES20"), e); //$NON-NLS-1$
+			HelpBasePlugin
+					.logError(
+							"Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
+
 	/**
 	 * Checks if index exists and is usable.
 	 * 
@@ -255,6 +300,7 @@ public class SearchIndex {
 		return indexDir.exists() && !isInconsistent();
 		// assume index exists if directory does
 	}
+
 	/**
 	 * Performs a query search on this index
 	 */
@@ -281,15 +327,18 @@ public class SearchIndex {
 		} catch (QueryTooComplexException qe) {
 			throw qe;
 		} catch (Exception e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES21", //$NON-NLS-1$
-					searchQuery.getSearchWord()), e);
+			HelpBasePlugin.logError(
+					"Exception occurred performing search for: " //$NON-NLS-1$
+							+ searchQuery.getSearchWord() + ".", e); //$NON-NLS-1$
 		} finally {
 			unregisterSearch(Thread.currentThread());
 		}
 	}
+
 	public String getLocale() {
 		return locale;
 	}
+
 	/**
 	 * Returns the list of all the plugins in this session that have declared a
 	 * help contribution.
@@ -302,6 +351,7 @@ public class SearchIndex {
 		}
 		return docPlugins;
 	}
+
 	/**
 	 * We use HelpProperties, but a list would suffice. We only need the key
 	 * values.
@@ -315,6 +365,7 @@ public class SearchIndex {
 			indexedDocs.restore();
 		return indexedDocs;
 	}
+
 	/**
 	 * Gets properties with versions of Lucene plugin and Analyzer used for
 	 * indexing
@@ -327,6 +378,7 @@ public class SearchIndex {
 		}
 		return dependencies;
 	}
+
 	/**
 	 * Gets analyzer identifier from a file.
 	 */
@@ -337,6 +389,7 @@ public class SearchIndex {
 		}
 		return analyzerVersion;
 	}
+
 	/**
 	 * Gets Lucene plugin version from a file.
 	 */
@@ -352,6 +405,7 @@ public class SearchIndex {
 		// of compatibility between post 1.2.1 versions.
 		return currentLuceneVersion.equals(usedLuceneVersion);
 	}
+
 	/**
 	 * Saves Lucene version and analyzer identifier to a file.
 	 */
@@ -367,6 +421,7 @@ public class SearchIndex {
 		}
 		getDependencies().save();
 	}
+
 	/**
 	 * @return Returns true if index has been left in inconsistent state If
 	 *         analyzer has changed to incompatible one, index is treated as
@@ -379,6 +434,7 @@ public class SearchIndex {
 		return !isLuceneCompatible()
 				|| !analyzerDescriptor.isCompatible(readAnalyzerId());
 	}
+
 	/**
 	 * Writes or deletes inconsistency flag file
 	 */
@@ -394,6 +450,7 @@ public class SearchIndex {
 		} else
 			inconsistencyFile.delete();
 	}
+
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
@@ -401,6 +458,7 @@ public class SearchIndex {
 			}
 		}
 	}
+
 	/**
 	 * Closes IndexReader used by Searcher. Should be called on platform
 	 * shutdown, or when TOCs have changed when no more reading from this index
@@ -425,6 +483,7 @@ public class SearchIndex {
 			}
 		}
 	}
+
 	/**
 	 * Finds and unzips prebuild index specified in preferences
 	 */
@@ -489,6 +548,7 @@ public class SearchIndex {
 			}
 		}
 	}
+
 	/**
 	 * Returns true when the index must be updated.
 	 */
@@ -498,28 +558,33 @@ public class SearchIndex {
 		}
 		return getDocPlugins().detectChange();
 	}
+
 	/**
 	 * @return Returns the tocManager.
 	 */
 	public TocManager getTocManager() {
 		return tocManager;
 	}
+
 	private void registerSearch(Thread t) {
 		synchronized (searches) {
 			searches.add(t);
 		}
 	}
+
 	private void unregisterSearch(Thread t) {
 		synchronized (searches) {
 			searches.remove(t);
 		}
 	}
+
 	/**
 	 * @return Returns the closed.
 	 */
 	public boolean isClosed() {
 		return closed;
 	}
+
 	/**
 	 * @return true if lock obtained for this Eclipse instance
 	 * @throws OverlappingFileLockException
@@ -543,6 +608,7 @@ public class SearchIndex {
 		}
 		return false;
 	}
+
 	public synchronized void releaseLock() {
 		if (lock != null) {
 			try {

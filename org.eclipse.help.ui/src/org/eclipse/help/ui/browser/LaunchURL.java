@@ -13,6 +13,7 @@ package org.eclipse.help.ui.browser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -31,10 +32,8 @@ import org.eclipse.ui.*;
  * value of the url attribute should specify a URL to be opened in a browser.
  * </p>
  */
-public class LaunchURL
-		implements
-			IWorkbenchWindowActionDelegate,
-			IExecutableExtension {
+public class LaunchURL implements IWorkbenchWindowActionDelegate,
+		IExecutableExtension {
 	private String url;
 
 	/**
@@ -69,7 +68,10 @@ public class LaunchURL
 		try {
 			browser.displayURL(url);
 		} catch (Exception e) {
-			ErrorUtil.displayErrorDialog(e.getMessage());
+			HelpUIPlugin.logError("Exception occurred when opening URL: " + url //$NON-NLS-1$
+					+ ".", e); //$NON-NLS-1$
+			ErrorUtil.displayErrorDialog(HelpUIResources
+					.getString("LaunchURL.exception")); //$NON-NLS-1$
 		}
 	}
 

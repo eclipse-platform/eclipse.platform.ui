@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
+
 import java.text.*;
 import java.util.*;
 
@@ -30,8 +31,11 @@ public class SearchData extends ActivitiesData {
 
 	// Request parameters
 	private String topicHref;
+
 	private String selectedTopicId = ""; //$NON-NLS-1$
+
 	private String searchWord;
+
 	private String workingSetName;
 
 	// search results
@@ -39,6 +43,7 @@ public class SearchData extends ActivitiesData {
 
 	// percentage of indexing completion
 	private int indexCompletion = 100;
+
 	// QueryException if any
 	private QueryTooComplexException queryException = null;
 
@@ -241,6 +246,7 @@ public class SearchData extends ActivitiesData {
 			wsmgr.setCurrentWorkingSet(""); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Call the search engine, and get results or the percentage of indexed
 	 * documents.
@@ -256,9 +262,8 @@ public class SearchData extends ActivitiesData {
 						results, pm);
 				hits = results.getSearchHits();
 				if (hits == null) {
-					HelpWebappPlugin.logError(HelpBaseResources
-							.getString("index_is_busy"), //$NON-NLS-1$
-							null);
+					HelpWebappPlugin
+							.logWarning("No search results returned.  Help index is in use."); //$NON-NLS-1$
 				}
 				return;
 			} else {
@@ -277,6 +282,7 @@ public class SearchData extends ActivitiesData {
 		}
 
 	}
+
 	private ISearchQuery createSearchQuery() {
 		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch = fieldSearchStr != null ? new Boolean(
@@ -284,6 +290,7 @@ public class SearchData extends ActivitiesData {
 		return new SearchQuery(searchWord, fieldSearch, new ArrayList(),
 				getLocale());
 	}
+
 	private SearchResults createHitCollector() {
 		WorkingSet[] workingSets;
 		if (request.getParameterValues("scopedSearch") == null) { //$NON-NLS-1$
@@ -307,6 +314,7 @@ public class SearchData extends ActivitiesData {
 		}
 		return new SearchResults(workingSets, maxHits, getLocale());
 	}
+
 	/**
 	 * @return WorkingSet[] or null
 	 */
@@ -358,6 +366,7 @@ public class SearchData extends ActivitiesData {
 		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
 		return workingSets;
 	}
+
 	public String getQueryExceptionMessage() {
 		if (queryException == null) {
 			return null;

@@ -30,7 +30,9 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	protected static ISearchHitCollector dummy_collector;
 
 	private boolean started, done, canceled;
+
 	private int totalWork = IProgressMonitor.UNKNOWN;
+
 	private int currWork;
 
 	static {
@@ -46,6 +48,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	public SearchProgressMonitor() {
 		started = done = canceled = false;
 	}
+
 	public void beginTask(String name, int totalWork) {
 		this.totalWork = totalWork;
 		this.started = true;
@@ -84,6 +87,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return 100;
 		return (100 * currWork / totalWork);
 	}
+
 	/**
 	 * Gets the isCancelled.
 	 * 
@@ -164,8 +168,10 @@ public class SearchProgressMonitor implements IProgressMonitor {
 				} catch (Exception e) {
 					progressMonitors.remove(locale);
 					if (HelpBasePlugin.getDefault() != null) {
-						HelpBasePlugin.logError(HelpBaseResources
-								.getString("search_index_update_error"), e); //$NON-NLS-1$
+						HelpBasePlugin
+								.logError(
+										"Problem occurred during indexing of documentation.", //$NON-NLS-1$
+										e);
 					} else {
 						// Plugin has been shut down
 					}
@@ -188,23 +194,28 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 		return pm;
 	}
+
 	static class DummySearchQuery implements ISearchQuery {
 		private String l;
+
 		DummySearchQuery(String loc) {
 			l = loc;
 		}
+
 		/**
 		 * Obtains names of fields in addition to default field
 		 */
 		public Collection getFieldNames() {
 			return new ArrayList();
 		}
+
 		/**
 		 * Obtains search word (user query)
 		 */
 		public String getSearchWord() {
 			return "dummy"; //$NON-NLS-1$
 		}
+
 		/**
 		 * @return true if search only in specified fields, not the default
 		 *         field
@@ -212,6 +223,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		public boolean isFieldSearch() {
 			return false;
 		}
+
 		/**
 		 * Obtains locale
 		 */
@@ -219,6 +231,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return l;
 		}
 	}
+
 	public synchronized static void reinit(String locale) {
 		progressMonitors.remove(locale);
 	}

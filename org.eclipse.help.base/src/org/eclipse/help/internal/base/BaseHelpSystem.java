@@ -26,23 +26,37 @@ public final class BaseHelpSystem {
 
 	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID
 			+ ".webapp"; //$NON-NLS-1$
+
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 
 	public final static String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
+
 	public final static String WORKING_SETS = "workingSets"; //$NON-NLS-1$
+
 	public final static String WORKING_SET = "workingSet"; //$NON-NLS-1$
+
 	public final static int MODE_WORKBENCH = 0;
+
 	public final static int MODE_INFOCENTER = 1;
+
 	public final static int MODE_STANDALONE = 2;
 
 	protected SearchManager searchManager;
+
 	protected WorkingSetManager workingSetManager;
+
 	private int mode = MODE_WORKBENCH;
+
 	private boolean webappStarted = false;
+
 	private IErrorUtil defaultErrorMessenger;
+
 	private IBrowser browser;
+
 	private IBrowser internalBrowser;
+
 	private HelpDisplay helpDisplay = null;
+
 	private boolean webappRunning = false;
 
 	/**
@@ -51,9 +65,11 @@ public final class BaseHelpSystem {
 	private BaseHelpSystem() {
 		super();
 	}
+
 	public static BaseHelpSystem getInstance() {
 		return instance;
 	}
+
 	/**
 	 * Used to obtain Search Manager
 	 * 
@@ -69,6 +85,7 @@ public final class BaseHelpSystem {
 		}
 		return getInstance().searchManager;
 	}
+
 	/**
 	 * Used to obtain Working Set Manager
 	 * 
@@ -100,6 +117,7 @@ public final class BaseHelpSystem {
 			getInstance().helpDisplay = new HelpDisplay();
 		return getInstance().helpDisplay;
 	}
+
 	/**
 	 */
 	public BaseHelpSystem newInstance() {
@@ -133,6 +151,7 @@ public final class BaseHelpSystem {
 			System.out.println("Help System is shut down."); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Called by Platform after loading the plugin
 	 */
@@ -152,13 +171,14 @@ public final class BaseHelpSystem {
 		} catch (Exception e) {
 			HelpBasePlugin.getDefault().getLog().log(
 					new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 0,
-							HelpBaseResources.getString("E005"), //$NON-NLS-1$
+							"Error in launching help.", //$NON-NLS-1$
 							e));
 		}
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Base Help System started."); //$NON-NLS-1$
 		}
 	}
+
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
@@ -171,9 +191,10 @@ public final class BaseHelpSystem {
 					WebappManager.start("helpControl", //$NON-NLS-1$
 							webappPlugin, Path.EMPTY);
 				} catch (CoreException e) {
-					HelpBasePlugin.logError(
-							HelpBaseResources.getString("E042"), //$NON-NLS-1$
-							e);
+					HelpBasePlugin
+							.logError(
+									"Stand-alone help control web application failed to run.", //$NON-NLS-1$
+									e);
 					return false;
 				}
 			}
@@ -181,9 +202,11 @@ public final class BaseHelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e); //$NON-NLS-1$
+				HelpBasePlugin
+						.logError(
+								"The embedded application server could not run help web application.", e); //$NON-NLS-1$
 				BaseHelpSystem.getDefaultErrorUtil().displayError(
-						HelpBaseResources.getString("E043")); //$NON-NLS-1$
+						HelpBaseResources.getString("HelpWebappNotStarted")); //$NON-NLS-1$
 				return false;
 			}
 			getInstance().webappRunning = true;

@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.*;
 /**
  * application org.eclipse.help.indexTool
  */
-public class IndexToolApplication
-		implements
-			IPlatformRunnable,
-			IExecutableExtension {
+public class IndexToolApplication implements IPlatformRunnable,
+		IExecutableExtension {
 
 	/**
 	 * Constructor for IndexToolApplication.
@@ -65,8 +63,7 @@ public class IndexToolApplication
 		} catch (Exception e) {
 			System.out.println(e);
 			e.printStackTrace();
-			HelpBasePlugin.logError(HelpBaseResources
-					.getString("IndexToolApplication.failed"), e); //$NON-NLS-1$
+			HelpBasePlugin.logError("Preindexing failed.", e); //$NON-NLS-1$
 		}
 		return EXIT_OK;
 	}
@@ -99,6 +96,7 @@ public class IndexToolApplication
 			zout.close();
 		}
 	}
+
 	/**
 	 * Recursively deletes directory and files.
 	 * 
@@ -119,6 +117,7 @@ public class IndexToolApplication
 									"IndexToolApplication.cannotDelete", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Adds files in a directory to a zip stream
 	 * 

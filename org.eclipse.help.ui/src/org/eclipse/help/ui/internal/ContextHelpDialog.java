@@ -29,13 +29,21 @@ import org.eclipse.ui.help.*;
  */
 public class ContextHelpDialog {
 	private static ImageRegistry imgRegistry = null;
+
 	private Color backgroundColour = null;
+
 	private IContext context;
+
 	private Color foregroundColour = null;
+
 	private Color linkColour = null;
+
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
+
 	protected Shell parentShell;
+
 	protected Shell shell;
+
 	protected String infopopText;
 
 	/**
@@ -43,9 +51,11 @@ public class ContextHelpDialog {
 	 */
 	class LinkListener extends HyperlinkAdapter {
 		IHelpResource topic;
+
 		public LinkListener(IHelpResource topic) {
 			this.topic = topic;
 		}
+
 		public void linkActivated(Control c) {
 			launchLinks(topic);
 		}
@@ -149,6 +159,7 @@ public class ContextHelpDialog {
 
 		initAccessible(shell);
 	}
+
 	public synchronized void close() {
 		try {
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
@@ -163,6 +174,7 @@ public class ContextHelpDialog {
 		} catch (Throwable ex) {
 		}
 	}
+
 	protected Control createContents(Composite contents) {
 		initAccessible(contents);
 		contents.setBackground(backgroundColour);
@@ -176,10 +188,11 @@ public class ContextHelpDialog {
 		Control c = createLinksArea(contents);
 		if (c != null) {
 			// links exist, make them the only focusable controls
-			contents.setTabList(new Control[]{c});
+			contents.setTabList(new Control[] { c });
 		}
 		return contents;
 	}
+
 	private Control createInfoArea(Composite parent) {
 		// Create the text field.
 		String styledText;
@@ -216,6 +229,7 @@ public class ContextHelpDialog {
 
 		return text;
 	}
+
 	private Control createLink(Composite parent, IHelpResource topic) {
 		Label image = new Label(parent, SWT.NONE);
 		image.setImage(getImage());
@@ -233,6 +247,7 @@ public class ContextHelpDialog {
 		linkManager.registerHyperlink(link, new LinkListener(topic));
 		return link;
 	}
+
 	private Control createLinksArea(Composite parent) {
 		IHelpResource[] relatedTopics = context.getRelatedTopics();
 		if (relatedTopics == null)
@@ -268,6 +283,7 @@ public class ContextHelpDialog {
 		}
 		return composite;
 	}
+
 	/**
 	 * Called when related link has been chosen Opens help viewer with list of
 	 * all related topics
@@ -280,6 +296,7 @@ public class ContextHelpDialog {
 		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic,
 				isParentModal());
 	}
+
 	public synchronized void open() {
 		try {
 			shell.open();
@@ -290,11 +307,13 @@ public class ContextHelpDialog {
 										.toString());
 			}
 		} catch (Throwable e) {
-			HelpUIPlugin.logError(HelpUIResources
-					.getString("ContextHelpDialog.open"), //$NON-NLS-1$
-					e);
+			HelpUIPlugin
+					.logError(
+							"An error occurred when opening context-sensitive help pop-up.", //$NON-NLS-1$
+							e);
 		}
 	}
+
 	private Image getImage() {
 		if (imgRegistry == null) {
 			imgRegistry = HelpUIPlugin.getDefault().getImageRegistry();
@@ -307,6 +326,7 @@ public class ContextHelpDialog {
 		}
 		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);
 	}
+
 	public boolean isShowing() {
 		return (shell != null && !shell.isDisposed() && shell.isVisible());
 	}
@@ -326,8 +346,7 @@ public class ContextHelpDialog {
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = control.toControl(new Point(e.x, e.y));
-				e.childID = (control.getBounds().contains(pt))
-						? ACC.CHILDID_MULTIPLE
+				e.childID = (control.getBounds().contains(pt)) ? ACC.CHILDID_MULTIPLE
 						: ACC.CHILDID_NONE;
 			}
 
@@ -362,13 +381,16 @@ public class ContextHelpDialog {
 		public Description(Composite parent, int style) {
 			super(parent, style);
 		}
+
 		public boolean setFocus() {
 			return false;
 		}
+
 		public boolean isFocusControl() {
 			return false;
 		}
 	}
+
 	private boolean isParentModal() {
 		if (parentShell != null) {
 			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL

@@ -61,7 +61,7 @@ public class ToolbarData extends RequestData {
 		}
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
-				&& "1.2.1".compareTo(getMozillaVersion()) <= 0
+				&& "1.2.1".compareTo(getMozillaVersion()) <= 0 //$NON-NLS-1$
 				|| (isSafari() && "120".compareTo(getSafariVersion()) <= 0)) { //$NON-NLS-1$
 			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
 					getMaximizeTooltip(), preferences.getImagesDirectory()

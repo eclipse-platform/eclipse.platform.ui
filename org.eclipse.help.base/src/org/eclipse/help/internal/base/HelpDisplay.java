@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.base;
+
 import java.io.*;
 import java.net.*;
 
@@ -38,9 +39,14 @@ public class HelpDisplay {
 		// Do not start help view if documentaton is not available, display
 		// error
 		if (HelpSystem.getTocs().length == 0) {
+			HelpBasePlugin.logError(
+					"Failed launching help.  Documentation is not installed.", //$NON-NLS-1$
+					null);
 			// There is no documentation
-			BaseHelpSystem.getDefaultErrorUtil().displayError(
-					HelpBaseResources.getString("WW001")); //$NON-NLS-1$
+			BaseHelpSystem.getDefaultErrorUtil()
+					.displayError(
+							HelpBaseResources
+									.getString("HelpDisplay.docsNotInstalled")); //$NON-NLS-1$
 			//Documentation is not installed.
 			return;
 		}
@@ -123,6 +129,7 @@ public class HelpDisplay {
 			displayHelpURL(getNoframesURL(topicURL), true);
 		}
 	}
+
 	/**
 	 * Display help to search view for given query and selected topic.
 	 * 
@@ -148,6 +155,7 @@ public class HelpDisplay {
 			displayHelpURL(getNoframesURL(topic), true);
 		}
 	}
+
 	/**
 	 * Displays the specified url. The url can contain query parameters to
 	 * identify how help displays the document
@@ -176,15 +184,15 @@ public class HelpDisplay {
 						.displayURL(helpURL);
 			}
 		} catch (Exception e) {
+			HelpBasePlugin.logError(
+					"An exception occurred while launching help.", e); //$NON-NLS-1$
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
 							HelpBaseResources
 									.getString("HelpDisplay.exceptionMessage")); //$NON-NLS-1$
-			HelpBasePlugin.logError(HelpBaseResources.getString(
-					"HelpDisplay.exception", //$NON-NLS-1$
-					e.getMessage()), e);
 		}
 	}
+
 	private String getContextID(IContext context) {
 		if (context instanceof Context)
 			return ((Context) context).getID();

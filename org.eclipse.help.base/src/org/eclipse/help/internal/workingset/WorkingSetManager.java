@@ -31,10 +31,8 @@ import org.xml.sax.*;
  * 
  * @since 2.1
  */
-public class WorkingSetManager
-		implements
-			IHelpWorkingSetManager,
-			ITocsChangedListener {
+public class WorkingSetManager implements IHelpWorkingSetManager,
+		ITocsChangedListener {
 
 	// Note: keep the following constants in sych with the values defined in
 	// IWorkingSetManager.
@@ -48,6 +46,7 @@ public class WorkingSetManager
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
+
 	/**
 	 * Change event id when a working set is removed newValue of the
 	 * PropertyChangeEvent will be null. oldValue will be the removed working
@@ -56,6 +55,7 @@ public class WorkingSetManager
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
+
 	/**
 	 * Change event id when the working set contents changed newValue of the
 	 * PropertyChangeEvent will be the changed working set. oldValue will be
@@ -64,6 +64,7 @@ public class WorkingSetManager
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange"; //$NON-NLS-1$
+
 	/**
 	 * Change event id when the working set name changed. newValue of the
 	 * PropertyChangeEvent will be the changed working set. oldValue will be
@@ -83,12 +84,16 @@ public class WorkingSetManager
 
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
+
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
+
 	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
+
 	private AdaptableTocsArray root;
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
+
 	private static final TransformerFactory transformerFactory = TransformerFactory
 			.newInstance();
 
@@ -178,6 +183,7 @@ public class WorkingSetManager
 					.propertyChange(event);
 		}
 	}
+
 	/**
 	 * Returns a working set by name
 	 *  
@@ -194,6 +200,7 @@ public class WorkingSetManager
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the hash code.
 	 * 
@@ -202,6 +209,7 @@ public class WorkingSetManager
 	public int hashCode() {
 		return workingSets.hashCode();
 	}
+
 	/**
 	 * Implements IWorkingSetManager.
 	 * 
@@ -211,6 +219,7 @@ public class WorkingSetManager
 		return (WorkingSet[]) workingSets.toArray(new WorkingSet[workingSets
 				.size()]);
 	}
+
 	/**
 	 * Returns the file used as the persistence store
 	 * 
@@ -255,24 +264,19 @@ public class WorkingSetManager
 
 				return true;
 			} catch (ParserConfigurationException pce) {
-				String msg = HelpBaseResources
-						.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
-				HelpPlugin.logError(msg, pce);
-				HelpPlugin.logError(HelpBaseResources.getString("E041"), pce); //$NON-NLS-1$
+				HelpPlugin
+						.logError(
+								"DocumentBuilder implementation could not be loaded, to restore working set state.", pce); //$NON-NLS-1$
 				return false;
 			} catch (SAXException se) {
-				String msg = HelpBaseResources.getString(
-						"E018", stateFile.toString()); //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, se);
 				HelpBasePlugin
-						.logError(HelpBaseResources.getString("E041"), se); //$NON-NLS-1$
+						.logError(
+								"Error occurred parsing file " + stateFile.toString() + ", while restoring working set state.", se); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			} catch (IOException ioe) {
-				String msg = HelpBaseResources.getString(
-						"E018", stateFile.toString()); //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, ioe);
-				HelpBasePlugin.logError(
-						HelpBaseResources.getString("E041"), ioe); //$NON-NLS-1$
+				HelpBasePlugin
+						.logError(
+								"Error occurred parsing file " + stateFile.toString() + ", while restoring working set state.", ioe); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 		}
@@ -387,18 +391,17 @@ public class WorkingSetManager
 			stream.close();
 			return true;
 		} catch (ParserConfigurationException pce) {
-			String msg = HelpBaseResources.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
-			HelpPlugin.logError(msg, pce);
+			HelpPlugin.logError(
+					"DocumentBuilder implementation could not be loaded.", pce); //$NON-NLS-1$
 			return false;
 		} catch (TransformerException e) {
-			String message = HelpBaseResources
-					.getString("WorkingSetManager.transformer"); //$NON-NLS-1$
-			HelpPlugin.logError(message, null);
+			HelpPlugin.logError("Problems occurred while saving working sets.", //$NON-NLS-1$
+					null);
 			return false;
 		} catch (IOException e) {
 			stateFile.delete();
-			String message = HelpBaseResources.getString("E40"); //$NON-NLS-1$
-			HelpBasePlugin.logError(message, null);
+			HelpBasePlugin.logError(
+					"Problems occurred while saving working set file.", null); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -417,6 +420,7 @@ public class WorkingSetManager
 			workingSet.saveState(parent);
 		}
 	}
+
 	/**
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
@@ -476,6 +480,7 @@ public class WorkingSetManager
 
 		return null;
 	}
+
 	public String getCurrentWorkingSet() {
 		return HelpBasePlugin.getDefault().getPluginPreferences().getString(
 				BaseHelpSystem.WORKING_SET);
@@ -486,6 +491,7 @@ public class WorkingSetManager
 				BaseHelpSystem.WORKING_SET, workingSet);
 		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
+
 	public void tocsChanged() {
 		saveState();
 		List oldWorkingSets = new ArrayList(workingSets);

@@ -19,25 +19,25 @@ import java.nio.channels.*;
  * should be launched from command line.
  */
 public class EclipseController implements EclipseLifeCycleListener {
-	public static final String CMD_INSTALL = "install";
+	public static final String CMD_INSTALL = "install"; //$NON-NLS-1$
 
-	public static final String CMD_UPDATE = "update";
+	public static final String CMD_UPDATE = "update"; //$NON-NLS-1$
 
-	public static final String CMD_ENABLE = "enable";
+	public static final String CMD_ENABLE = "enable"; //$NON-NLS-1$
 
-	public static final String CMD_DISABLE = "disable";
+	public static final String CMD_DISABLE = "disable"; //$NON-NLS-1$
 
-	public static final String CMD_UNINSTALL = "uninstall";
+	public static final String CMD_UNINSTALL = "uninstall"; //$NON-NLS-1$
 
-	public static final String CMD_SEARCH = "search";
+	public static final String CMD_SEARCH = "search"; //$NON-NLS-1$
 
-	public static final String CMD_LIST = "listFeatures";
+	public static final String CMD_LIST = "listFeatures"; //$NON-NLS-1$
 
-	public static final String CMD_ADDSITE = "addSite";
+	public static final String CMD_ADDSITE = "addSite"; //$NON-NLS-1$
 
-	public static final String CMD_REMOVESITE = "removeSite";
+	public static final String CMD_REMOVESITE = "removeSite"; //$NON-NLS-1$
 
-	public static final String CMD_APPLY = "apply";
+	public static final String CMD_APPLY = "apply"; //$NON-NLS-1$
 
 	// control servlet path
 	private static final String CONTROL_SERVLET_PATH = "/helpControl/control.html"; //$NON-NLS-1$
@@ -183,7 +183,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 					Thread.sleep(200);
 					if (System.currentTimeMillis() > timeLimit) {
 						System.out
-								.println("Shutting down is taking too long.  Will not wait.");
+								.println("Shutting down is taking too long.  Will not wait."); //$NON-NLS-1$
 						break;
 					}
 				}

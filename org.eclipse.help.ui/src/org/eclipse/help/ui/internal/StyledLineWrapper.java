@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.ui.internal;
+
 import java.text.*;
 import java.util.*;
 
-import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -20,14 +18,19 @@ import org.eclipse.swt.custom.*;
 public class StyledLineWrapper implements StyledTextContent {
 	/** Lines after splitting */
 	private ArrayList lines = new ArrayList();
+
 	/** Style ranges, per line */
 	private ArrayList lineStyleRanges = new ArrayList();
+
 	/** Character count */
 	private int charCount = -1;
+
 	/** Line breaker */
 	private static BreakIterator lineBreaker = BreakIterator.getLineInstance();
+
 	/** Beyond this length, lines should wrap */
 	public final static int MAX_LINE_LENGTH = 72;
+
 	/**
 	 * Constructor
 	 */
@@ -36,12 +39,14 @@ public class StyledLineWrapper implements StyledTextContent {
 			text = " "; // use one blank space //$NON-NLS-1$
 		setText(text);
 	}
+
 	/**
 	 * @see StyledTextContent#addTextChangeListener(TextChangeListener)
 	 */
 	public void addTextChangeListener(TextChangeListener l) {
 		// do nothing
 	}
+
 	/**
 	 * @see StyledTextContent#getCharCount()
 	 */
@@ -53,6 +58,7 @@ public class StyledLineWrapper implements StyledTextContent {
 			charCount += ((String) i.next()).length();
 		return charCount;
 	}
+
 	/**
 	 * @see StyledTextContent#getLine(int)
 	 */
@@ -61,6 +67,7 @@ public class StyledLineWrapper implements StyledTextContent {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		return (String) lines.get(i);
 	}
+
 	/**
 	 * @see StyledTextContent#getLineAtOffset(int)
 	 */
@@ -74,6 +81,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		}
 		return line;
 	}
+
 	/**
 	 * @see StyledTextContent#getLineCount()
 	 */
@@ -83,12 +91,14 @@ public class StyledLineWrapper implements StyledTextContent {
 		else
 			return lines.size();
 	}
+
 	/**
 	 * @see StyledTextContent#getLineDelimiter()
 	 */
 	public String getLineDelimiter() {
 		return null;
 	}
+
 	/**
 	 * @see StyledTextContent#getOffsetAtLine(int)
 	 */
@@ -100,6 +110,7 @@ public class StyledLineWrapper implements StyledTextContent {
 			offset += getLine(i).length();
 		return offset;
 	}
+
 	/**
 	 * @see StyledTextContent#getTextRange(int, int)
 	 */
@@ -118,18 +129,21 @@ public class StyledLineWrapper implements StyledTextContent {
 			return range.toString();
 		}
 	}
+
 	/**
 	 * @see StyledTextContent#removeTextChangeListener(TextChangeListener)
 	 */
 	public void removeTextChangeListener(TextChangeListener arg0) {
 		// do nothing
 	}
+
 	/**
 	 * @see StyledTextContent#replaceTextRange(int, int, String)
 	 */
 	public void replaceTextRange(int arg0, int arg1, String arg2) {
 		// do nothing
 	}
+
 	/**
 	 * @see StyledTextContent#setText(String)
 	 */
@@ -139,6 +153,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		processLineBreaks(text);
 		processStyles(text);
 	}
+
 	/**
 	 * Returns the array of styles.
 	 */
@@ -147,6 +162,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		lineStyleRanges.toArray(array);
 		return array;
 	}
+
 	/**
 	 * Create an array of lines with sytles stripped off. Each lines is at most
 	 * MAX_LINE_LENGTH characters.
@@ -197,14 +213,14 @@ public class StyledLineWrapper implements StyledTextContent {
 			}
 		}
 	}
+
 	/**
 	 * Returns the text without the style
 	 */
 	private static String getUnstyledText(String styledText) {
-		String s = TString.change(styledText, ContextsNode.BOLD_TAG, ""); //$NON-NLS-1$
-		s = TString.change(s, ContextsNode.BOLD_CLOSE_TAG, ""); //$NON-NLS-1$
-		return s;
+		return styledText.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/**
 	 * Finds a good line breaking point
 	 */
@@ -219,6 +235,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		}
 		return lastGoodIndex;
 	}
+
 	/**
 	 * Creates all the (bold) style ranges for the text. It is assumed that the
 	 * text has been split across lines.
@@ -227,8 +244,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		// create a new array of styles
 		lineStyleRanges = new ArrayList();
 		// first, remove the line breaks
-		text = TString.change(text, "\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		text = TString.change(text, "\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replaceAll("\n|\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		int offset = 0;
 		do {
 			// create a style

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
+
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -16,6 +17,7 @@ import java.util.*;
 import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
+
 /**
  * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
  * java.text)
@@ -25,6 +27,7 @@ public class DefaultAnalyzer extends Analyzer {
 	 * Constructor for Analyzer.
 	 */
 	private Locale locale;
+
 	public DefaultAnalyzer(String localeString) {
 		super();
 		// Create a locale object for a given locale string
@@ -63,12 +66,16 @@ public class DefaultAnalyzer extends Analyzer {
 
 		if (locale == null) {
 			// Locale is not supported, will use en_US
-			HelpBasePlugin.logError(HelpBaseResources.getString(
-					"ES24", localeString), //$NON-NLS-1$
-					null);
+			HelpBasePlugin
+					.logError(
+							"Text Analyzer could not be created for locale {0}.  An analyzer that extends org.eclipse.help.luceneAnalyzer extension point needs to be plugged in for locale " //$NON-NLS-1$
+									+ localeString
+									+ ", or Java Virtual Machine needs to be upgraded to version with proper support for locale {0}.", //$NON-NLS-1$
+							null);
 			locale = new Locale("en", "US"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
 	/**
 	 * Creates a TokenStream which tokenizes all the text in the provided
 	 * Reader.

@@ -12,9 +12,10 @@ package org.eclipse.help.internal.base.util;
 
 /**
  * Utility interface for displaying an error message. Implementation may output
- * messages in different ways (log, console, pop up window).
+ * messages in different ways (console, pop up window).
  */
 public interface IErrorUtil {
 	public void displayError(String msg);
+
 	public void displayError(String msg, Thread uiThread);
 }

@@ -54,9 +54,14 @@ public class CustomBrowser implements IBrowser {
 			errConsumer.setName("Custom browser adapter error reader"); //$NON-NLS-1$
 			errConsumer.start();
 		} catch (Exception e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString(
-					"CustomBrowser.errorLaunching", url, path), //$NON-NLS-1$
-					e);
+			HelpBasePlugin
+					.logError(
+							"Launching URL \"" //$NON-NLS-1$
+									+ url
+									+ "\" using browser program \"" //$NON-NLS-1$
+									+ path
+									+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
+							e);
 			throw new Exception(HelpBaseResources.getString(
 					"CustomBrowser.errorLaunching", url, path)); //$NON-NLS-1$
 		}
