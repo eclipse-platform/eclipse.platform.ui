@@ -118,7 +118,7 @@ public final class OperationHistoryEvent {
 
 	private IOperationHistory history;
 
-	private IOperation operation;
+	private IUndoableOperation operation;
 
 	/**
 	 * Construct an event for the specified operation history.
@@ -131,7 +131,7 @@ public final class OperationHistoryEvent {
 	 *            the operation involved in the event.
 	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,
-			IOperation operation) {
+			IUndoableOperation operation) {
 		if (history == null)
 			throw new NullPointerException();
 		if (operation == null)
@@ -166,7 +166,7 @@ public final class OperationHistoryEvent {
 	 * @return the operation
 	 */
 
-	public IOperation getOperation() {
+	public IUndoableOperation getOperation() {
 		return operation;
 	}
 

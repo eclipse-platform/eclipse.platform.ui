@@ -29,7 +29,7 @@ import org.eclipse.core.internal.commands.util.Assert;
  * @since 3.1
  * @experimental
  */
-public class OperationContext {
+public class UndoContext {
 
 	/**
 	 * Return a boolean that indicates whether this context should be assigned
@@ -45,7 +45,7 @@ public class OperationContext {
 	 * @return a boolean indicating whether this context should be assigned to
 	 *         the operation.
 	 */
-	public boolean acceptOperation(IOperation operation) {
+	public boolean acceptOperation(IUndoableOperation operation) {
 		Assert.isNotNull(operation);
 		
 		// Always accept any operation

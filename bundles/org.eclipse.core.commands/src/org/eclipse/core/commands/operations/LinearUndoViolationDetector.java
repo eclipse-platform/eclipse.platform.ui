@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.Status;
 public abstract class LinearUndoViolationDetector implements
 		IContextOperationApprover {
 
-	protected abstract IStatus allowLinearRedoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history);
+	protected abstract IStatus allowLinearRedoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history);
 
-	protected abstract IStatus allowLinearUndoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history);
+	protected abstract IStatus allowLinearUndoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history);
 
 	/*
 	 * (non-Javadoc)
@@ -45,16 +45,16 @@ public abstract class LinearUndoViolationDetector implements
 	 * @see org.eclipse.core.operations.IOperationApprover#proceedRedoing(org.eclipse.core.operations.IOperation,
 	 *      org.eclipse.core.operations.IOperationHistory)
 	 */
-	public IStatus proceedRedoing(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	public IStatus proceedRedoing(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 		if (history.getRedoOperation(context) != operation)
 			return allowLinearRedoViolation(operation, context, history);
 
 		return Status.OK_STATUS;
 	}
 
-	public IStatus proceedUndoing(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	public IStatus proceedUndoing(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 		if (history.getUndoOperation(context) != operation)
 			return allowLinearUndoViolation(operation, context, history);
 

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.operations.ObjectOperationContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 
 /**
  * @since 3.1
  */
-public class WorkbenchOperationContext extends ObjectOperationContext {
+public class WorkbenchUndoContext extends ObjectUndoContext {
     
     private String fLabel = ""; //$NON-NLS-1$
     
@@ -23,7 +23,7 @@ public class WorkbenchOperationContext extends ObjectOperationContext {
      * Create an operation context for the workbench using the specified label.
      * @param label - the label for the context
      */
-    public WorkbenchOperationContext(String label) {
+    public WorkbenchUndoContext(String label) {
         super(Workbench.getInstance());
         fLabel = label;
     }

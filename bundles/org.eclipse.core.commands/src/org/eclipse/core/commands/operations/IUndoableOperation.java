@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * <p>
- * IOperation defines an operation that can be executed, undone, and redone.
+ * IUndoableOperation defines an operation that can be executed, undone, and redone.
  * Operations typically have fully defined parameters. That is, they are usually
  * created after the user has been queried for any input needed to define the
  * operation.
@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  * @experimental
  */
-public interface IOperation {
+public interface IUndoableOperation {
 
 	/**
 	 * Add the specified context to the operation. If the context is already
@@ -46,7 +46,7 @@ public interface IOperation {
 	 * @param context -
 	 *            the context to be added
 	 */
-	void addContext(OperationContext context);
+	void addContext(UndoContext context);
 
 	/**
 	 * Returns whether the operation can be executed in its current state.
@@ -97,7 +97,7 @@ public interface IOperation {
 	 * 
 	 * @return the array of contexts
 	 */
-	OperationContext[] getContexts();
+	UndoContext[] getContexts();
 
 	/**
 	 * Return the description that should be used to further describe this
@@ -125,7 +125,15 @@ public interface IOperation {
 	 * @return <code>true</code> if the context is present, <code>false</code>
 	 *         if it is not.
 	 */
-	boolean hasContext(OperationContext context);
+	boolean hasContext(UndoContext context);
+	
+	/**
+	 * Returns whether the operation is a composite operation.
+	 * 
+	 * @return <code>true</code> if the operation is a composite, and <code>false</code> if
+	 * it is not.
+	 */
+	boolean isComposite();
 
 	/**
 	 * Redo the operation. This method should only be called after an operation
@@ -137,6 +145,7 @@ public interface IOperation {
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the redo.
 	 */
+	
 	IStatus redo(IProgressMonitor monitor);
 
 	/**
@@ -146,7 +155,7 @@ public interface IOperation {
 	 * @param context -
 	 *            the context to be removed
 	 */
-	void removeContext(OperationContext context);
+	void removeContext(UndoContext context);
 
 	/**
 	 * Undo the operation. This method should only be called after an operation

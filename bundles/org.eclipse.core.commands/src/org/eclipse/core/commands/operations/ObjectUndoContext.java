@@ -26,7 +26,7 @@ package org.eclipse.core.commands.operations;
  * @since 3.1
  * @experimental
  */
-public class ObjectOperationContext extends OperationContext {
+public class ObjectUndoContext extends UndoContext {
 
 	private IContextOperationApprover fApprover = null;
 
@@ -38,7 +38,7 @@ public class ObjectOperationContext extends OperationContext {
 	 * @param object -
 	 *            the object to be represented.
 	 */
-	public ObjectOperationContext(Object object) {
+	public ObjectUndoContext(Object object) {
 		super();
 		fObject = object;
 	}

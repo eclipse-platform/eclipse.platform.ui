@@ -11,12 +11,13 @@
 
 package org.eclipse.ui.operations;
 
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
-import org.eclipse.core.commands.operations.DefaultOperationHistory;
+import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
-import org.eclipse.core.commands.operations.OperationContext;
-import org.eclipse.ui.internal.WorkbenchOperationContext;
+import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.ui.internal.WorkbenchUndoContext;
 
 /**
  * <p>
@@ -35,33 +36,36 @@ import org.eclipse.ui.internal.WorkbenchOperationContext;
  */
 public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 
-	private WorkbenchOperationContext operationContext;
-
-	private IOperationHistory operationHistory;
+	private WorkbenchUndoContext undoContext;
+	private IOperationApprover approver;
 
 	/**
-	 * Disposes of the history.
+	 * Disposes of anything created by the operation support.
 	 */
 	public void dispose() {
-		if (operationHistory != null) {
-			operationHistory.dispose(null, true, true);
-		}
-		operationHistory = null;
+		/*
+		 * uninstall the operation approver that we added to the operation history
+		 */ 
+		getOperationHistory().removeOperationApprover(approver);
+		/*
+		 * dispose of all operations using our context
+		 */
+		getOperationHistory().dispose(getUndoContext(), true, true);
 	}
 
 	/**
-	 * Returns the operation context for workbench operations.
+	 * Returns the undo context for workbench operations.
 	 * 
 	 * @return the workbench operation context.
 	 * @since 3.1
 	 */
-	public OperationContext getOperationContext() {
-		if (operationContext == null) {
-			operationContext = new WorkbenchOperationContext(
+	public UndoContext getUndoContext() {
+		if (undoContext == null) {
+			undoContext = new WorkbenchUndoContext(
 					"Workbench Context"); //$NON-NLS-1$
-			operationContext.setOperationApprover(new LinearUndoEnforcer());
+			undoContext.setOperationApprover(new LinearUndoEnforcer());
 		}
-		return operationContext;
+		return undoContext;
 	}
 
 	/**
@@ -71,20 +75,23 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 * @since 3.1
 	 */
 	public IOperationHistory getOperationHistory() {
-		if (operationHistory == null) {
-			// create the operation history
-			operationHistory = new DefaultOperationHistory();
+		IOperationHistory history = OperationHistoryFactory.getOperationHistory();
+		/*
+		 * Set up the history if we have not done so before.
+		 */
+		if (approver == null) {
 			/*
 			 * install an operation approver that consults an operation's
 			 * context prior to performing an operation
 			 */
-			operationHistory
-					.addOperationApprover(new ContextConsultingOperationApprover());
-			
-			// set a limit for the workbench operation context
-			operationHistory.setLimit(getOperationContext(), 25);
+			approver = new ContextConsultingOperationApprover();
+			history.addOperationApprover(new ContextConsultingOperationApprover());
+			/*
+			 * set a limit for the workbench undo context
+			 */
+			history.setLimit(getUndoContext(), 25);
 		}
-		return operationHistory;
+		return history;
 	}
 
 }

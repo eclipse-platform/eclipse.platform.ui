@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  * @experimental
  */
-public abstract class AbstractOperation implements IOperation {
+public abstract class AbstractOperation implements IUndoableOperation {
 	private List fContexts = new ArrayList();
 
 	private String fLabel = ""; //$NON-NLS-1$
@@ -45,7 +45,7 @@ public abstract class AbstractOperation implements IOperation {
 		fLabel = label;
 	}
 
-	public void addContext(OperationContext context) {
+	public void addContext(UndoContext context) {
 		if (!fContexts.contains(context)) {
 			fContexts.add(context);
 		}
@@ -94,9 +94,9 @@ public abstract class AbstractOperation implements IOperation {
 	 */
 	public abstract IStatus execute(IProgressMonitor monitor);
 
-	public OperationContext[] getContexts() {
-		return (OperationContext[]) fContexts
-				.toArray(new OperationContext[fContexts.size()]);
+	public UndoContext[] getContexts() {
+		return (UndoContext[]) fContexts
+				.toArray(new UndoContext[fContexts.size()]);
 	}
 
 	/*
@@ -112,8 +112,12 @@ public abstract class AbstractOperation implements IOperation {
 		return fLabel;
 	}
 
-	public boolean hasContext(OperationContext context) {
+	public boolean hasContext(UndoContext context) {
 		return fContexts.contains(context);
+	}
+	
+	public boolean isComposite() {
+		return false;
 	}
 
 	/*
@@ -123,7 +127,7 @@ public abstract class AbstractOperation implements IOperation {
 	 */
 	public abstract IStatus redo(IProgressMonitor monitor);
 
-	public void removeContext(OperationContext context) {
+	public void removeContext(UndoContext context) {
 		fContexts.remove(context);
 	}
 

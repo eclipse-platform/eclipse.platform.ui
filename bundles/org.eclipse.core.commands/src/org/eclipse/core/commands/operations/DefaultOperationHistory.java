@@ -36,7 +36,9 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public class DefaultOperationHistory implements IOperationHistory {
-
+	
+	protected static final int DEFAULT_LIMIT = 20;
+	
 	protected static IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
 			IStatus.INFO, OperationStatus.NOTHING_TO_REDO,
 			"No operation to redo"); //$NON-NLS-1$
@@ -62,24 +64,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 
 	private List fUndo = new ArrayList();
 	
-	/**
-	 * Construct a default operation history with a preconfigured global limit.
-	 */
-	public DefaultOperationHistory() {
-		super();
-		fLimits.put(null, new Integer(100));
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#add(org.eclipse.runtime.operations.IOperation)
 	 */
-	public void add(IOperation operation) {
+	public void add(IUndoableOperation operation) {
 		Assert.isNotNull(operation);
-
+		
 		// flush redo stack for related contexts
-		OperationContext[] contexts = operation.getContexts();
+		UndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
 			flushRedo(contexts[i]);
 		}
@@ -107,15 +101,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 		fListeners.add(listener);
 	}
 
-	public boolean canRedo(OperationContext context) {
+	public boolean canRedo(UndoContext context) {
 		// null context is allowed and passed through
-		IOperation operation = getRedoOperation(context);
+		IUndoableOperation operation = getRedoOperation(context);
 		return (operation != null && operation.canRedo());
 	}
 
-	public boolean canUndo(OperationContext context) {
+	public boolean canUndo(UndoContext context) {
 		// null context is allowed and passed through
-		IOperation operation = getUndoOperation(context);
+		IUndoableOperation operation = getUndoOperation(context);
 		return (operation != null && operation.canUndo());
 	}
 
@@ -126,31 +120,29 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * operation is added.  We check for completeness since implementations may change
 	 * over time.
 	 */
-	private void checkRedoLimit(IOperation operation) {
-		OperationContext [] contexts = operation.getContexts();
+	private void checkRedoLimit(IUndoableOperation operation) {
+		UndoContext [] contexts = operation.getContexts();
 		for (int i=0; i<contexts.length; i++) {
 			int limit = getLimit(contexts[i]);
 			if (limit > 0) forceRedoLimit(contexts[i], limit - 1);
 		}
-		forceRedoLimit(null, getLimit(null) - 1);
 	}
 
 	/**
 	 * Check the undo limit before adding an operation.
 	 */
-	private void checkUndoLimit(IOperation operation) {
-		OperationContext [] contexts = operation.getContexts();
+	private void checkUndoLimit(IUndoableOperation operation) {
+		UndoContext [] contexts = operation.getContexts();
 		for (int i=0; i<contexts.length; i++) {
 			int limit = getLimit(contexts[i]);
 			if (limit > 0) forceUndoLimit(contexts[i], limit - 1);
 		}
-		forceUndoLimit(null, getLimit(null) - 1);
 	}
 
 	/*
 	 * null is valid argument indicating all contexts
 	 */
-	public void dispose(OperationContext context, boolean flushUndo,
+	public void dispose(UndoContext context, boolean flushUndo,
 			boolean flushRedo) {
 		if (flushUndo)
 			flushUndo(context);
@@ -168,7 +160,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param monitor
 	 * @param operation
 	 */
-	protected IStatus doRedo(IProgressMonitor monitor, IOperation operation,
+	protected IStatus doRedo(IProgressMonitor monitor, IUndoableOperation operation,
 			boolean flushOnError) {
 
 		IStatus status = getRedoApproval(operation);
@@ -202,7 +194,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param monitor
 	 * @param operation
 	 */
-	protected IStatus doUndo(IProgressMonitor monitor, IOperation operation,
+	protected IStatus doUndo(IProgressMonitor monitor, IUndoableOperation operation,
 			boolean flushOnError) {
 		IStatus status = getUndoApproval(operation);
 		if (status.isOK()) {
@@ -228,12 +220,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return status;
 	}
 
-	public IStatus execute(IOperation operation, IProgressMonitor monitor) {
+	public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor) {
 		Assert.isNotNull(operation);
-
+		
+		/*
+		 * Execute the operation
+		 */
 		// error if operation is invalid
-		if (!operation.canExecute())
+		if (!operation.canExecute()) {
 			return OPERATION_INVALID_STATUS;
+		}
 		notifyAboutToExecute(operation);
 		IStatus status = operation.execute(monitor);
 
@@ -244,12 +240,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 			add(operation);
 		} else {
 			notifyNotOK(operation);
-		}
+		}		
 		// all other severities are not interpreted. Simply return the status.
 		return status;
 	}
 
-	private IOperation[] filter(List list, OperationContext context) {
+	private IUndoableOperation[] filter(List list, UndoContext context) {
 		/*
 		 * This method is used whenever there is a need to filter the undo or
 		 * redo history on a particular context.  Currently there are no caches
@@ -261,25 +257,25 @@ public class DefaultOperationHistory implements IOperationHistory {
 		
 		// when the context is null, do not filter the list.
 		if (context == null)
-			return (IOperation[]) list.toArray(new IOperation[list.size()]);
+			return (IUndoableOperation[]) list.toArray(new IUndoableOperation[list.size()]);
 
 		// otherwise filter on the context
 		List filtered = new ArrayList();
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext()) {
-			IOperation operation = (IOperation) iterator.next();
+			IUndoableOperation operation = (IUndoableOperation) iterator.next();
 			if (operation.hasContext(context)) {
 				filtered.add(operation);
 			}
 		}
-		return (IOperation[]) filtered.toArray(new IOperation[filtered.size()]);
+		return (IUndoableOperation[]) filtered.toArray(new IUndoableOperation[filtered.size()]);
 	}
 
-	void flushRedo(OperationContext context) {
+	void flushRedo(UndoContext context) {
 		// null context indicates flushing all
 		Object[] filtered = filter(fRedo, context);
 		for (int i = 0; i < filtered.length; i++) {
-			IOperation operation = (IOperation) filtered[i];
+			IUndoableOperation operation = (IUndoableOperation) filtered[i];
 			if (context == null || operation.getContexts().length == 1) {
 				// remove the operation if it only has the context or we are flushing all
 				fRedo.remove(operation);
@@ -291,11 +287,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	void flushUndo(OperationContext context) {
+	void flushUndo(UndoContext context) {
 		// null context indicates flushing all
 		Object[] filtered = filter(fUndo, context);
 		for (int i = 0; i < filtered.length; i++) {
-			IOperation operation = (IOperation) filtered[i];
+			IUndoableOperation operation = (IUndoableOperation) filtered[i];
 			if (context == null || operation.getContexts().length == 1) {
 				// remove the operation if it only has the context or we are flushing all
 				fUndo.remove(operation);
@@ -307,15 +303,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	private void forceRedoLimit(OperationContext context, int max) {
+	private void forceRedoLimit(UndoContext context, int max) {
 		Object[] filtered = filter(fRedo, context);
 		int size = filtered.length;
 		if (size > 0) {
 			int index = 0;
 			while (size > max) {
-				IOperation removed = (IOperation)filtered[index];
+				IUndoableOperation removed = (IUndoableOperation)filtered[index];
 				if (context == null || removed.getContexts().length == 1) {
-					/* remove the operation if we are enforcing the global limit or if
+					/* remove the operation if we are enforcing a global limit or if
 					 * the operation only has the specified context
 					 */
 					fRedo.remove(removed);
@@ -332,15 +328,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	private void forceUndoLimit(OperationContext context, int max) {
+	private void forceUndoLimit(UndoContext context, int max) {
 		Object[] filtered = filter(fUndo, context);
 		int size = filtered.length;
 		if (size > 0) {
 			int index = 0;
 			while (size > max) {
-				IOperation removed = (IOperation)filtered[index];
+				IUndoableOperation removed = (IUndoableOperation)filtered[index];
 				if (context == null || removed.getContexts().length == 1) {
-					/* remove the operation if we are enforcing the global limit or if
+					/* remove the operation if we are enforcing a global limit or if
 					 * the operation only has the specified context
 					 */
 					fUndo.remove(removed);
@@ -362,14 +358,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#getLimit()
 	 */
-	public int getLimit(OperationContext context) {
+	public int getLimit(UndoContext context) {
 		if (!fLimits.containsKey(context)) {
-			return -1;
+			return DEFAULT_LIMIT;
 		}
 		return ((Integer)(fLimits.get(context))).intValue();
 	}
 
-	protected IStatus getRedoApproval(IOperation operation) {
+	protected IStatus getRedoApproval(IUndoableOperation operation) {
 		for (int i = 0; i < fApprovers.size(); i++) {
 			IStatus approval = ((IOperationApprover) fApprovers.get(i))
 					.proceedRedoing(operation, this);
@@ -382,7 +378,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/*
 	 * null is a valid argument indicating the entire history
 	 */
-	public IOperation[] getRedoHistory(OperationContext context) {
+	public IUndoableOperation[] getRedoHistory(UndoContext context) {
 		return filter(fRedo, context);
 	}
 
@@ -390,17 +386,17 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Peek the redo operation. Validity of the operation is not considered.
 	 */
 
-	public IOperation getRedoOperation(OperationContext context) {
+	public IUndoableOperation getRedoOperation(UndoContext context) {
 		if (context == null) {
 			if (fRedo.size() > 0) {
-				IOperation operation = (IOperation) fRedo.get(fRedo.size() - 1);
+				IUndoableOperation operation = (IUndoableOperation) fRedo.get(fRedo.size() - 1);
 				return operation;
 			}
 			return null;
 		}
 
 		for (int i = fRedo.size() - 1; i >= 0; i--) {
-			IOperation operation = (IOperation) fRedo.get(i);
+			IUndoableOperation operation = (IUndoableOperation) fRedo.get(i);
 			if (operation.hasContext(context)) {
 				return operation;
 			}
@@ -408,7 +404,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return null;
 	}
 
-	protected IStatus getUndoApproval(IOperation operation) {
+	protected IStatus getUndoApproval(IUndoableOperation operation) {
 		for (int i = 0; i < fApprovers.size(); i++) {
 			IStatus approval = ((IOperationApprover) fApprovers.get(i))
 					.proceedUndoing(operation, this);
@@ -421,24 +417,24 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/*
 	 * null is a valid argument indicating the entire history
 	 */
-	public IOperation[] getUndoHistory(OperationContext context) {
+	public IUndoableOperation[] getUndoHistory(UndoContext context) {
 		return filter(fUndo, context);
 	}
 
 	/*
 	 * Validity of the returned operation is not considered.
 	 */
-	public IOperation getUndoOperation(OperationContext context) {
+	public IUndoableOperation getUndoOperation(UndoContext context) {
 		if (context == null) {
 			if (fUndo.size() > 0) {
-				IOperation operation = (IOperation) fUndo.get(fUndo.size() - 1);
+				IUndoableOperation operation = (IUndoableOperation) fUndo.get(fUndo.size() - 1);
 				return operation;
 			}
 			return null;
 		}
 
 		for (int i = fUndo.size() - 1; i >= 0; i--) {
-			IOperation operation = (IOperation) fUndo.get(i);
+			IUndoableOperation operation = (IUndoableOperation) fUndo.get(i);
 			if (operation.hasContext(context)) {
 				return operation;
 			}
@@ -446,12 +442,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return null;
 	}
 
-	void internalRemove(IOperation operation) {
+	void internalRemove(IUndoableOperation operation) {
 		operation.dispose();
 		notifyRemoved(operation);
 	}
 
-	protected void notifyAboutToExecute(IOperation operation) {
+	protected void notifyAboutToExecute(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -459,7 +455,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyAboutToRedo(IOperation operation) {
+	protected void notifyAboutToRedo(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_REDO, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -467,7 +463,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyAboutToUndo(IOperation operation) {
+	protected void notifyAboutToUndo(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -475,7 +471,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyAdd(IOperation operation) {
+	protected void notifyAdd(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_ADDED, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -483,7 +479,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyDone(IOperation operation) {
+	protected void notifyDone(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.DONE, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -491,7 +487,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyNotOK(IOperation operation) {
+	protected void notifyNotOK(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_NOT_OK, this, operation);
 
@@ -500,7 +496,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyRedone(IOperation operation) {
+	protected void notifyRedone(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.REDONE, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -508,7 +504,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyRemoved(IOperation operation) {
+	protected void notifyRemoved(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_REMOVED, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -516,7 +512,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	protected void notifyUndone(IOperation operation) {
+	protected void notifyUndone(IUndoableOperation operation) {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.UNDONE, this, operation);
 		for (int i = 0; i < fListeners.size(); i++)
@@ -524,9 +520,9 @@ public class DefaultOperationHistory implements IOperationHistory {
 					.historyNotification(event);
 	}
 
-	public IStatus redo(OperationContext context, IProgressMonitor monitor) {
+	public IStatus redo(UndoContext context, IProgressMonitor monitor) {
 		// null context is allowed and passed through when getting the operation
-		IOperation operation = getRedoOperation(context);
+		IUndoableOperation operation = getRedoOperation(context);
 
 		// info if there is no operation
 		if (operation == null)
@@ -539,7 +535,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return doRedo(monitor, operation, true);
 	}
 
-	public IStatus redoOperation(IOperation operation, IProgressMonitor monitor) {
+	public IStatus redoOperation(IUndoableOperation operation, IProgressMonitor monitor) {
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canRedo()) {
@@ -553,7 +549,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return status;
 	}
 
-	public void remove(IOperation operation) {
+	public void remove(IUndoableOperation operation) {
 		if (fUndo.contains(operation)) {
 			fUndo.remove(operation);
 			internalRemove(operation);
@@ -587,23 +583,30 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#setLimit(int)
 	 */
-	public void setLimit(OperationContext context, int limit) {
-		if (limit <= 0)
-			return;
+	public void setLimit(UndoContext context, int limit) {
+		Assert.isTrue(limit > 0);
+		/*
+		 * The limit checking methods interpret a null context as a global limit to be
+		 * enforced.  We do not wish to support a global limit in this implementation,
+		 * so we throw an exception for a null context.  The rest of the implementation
+		 * can handle a null context, so subclasses can override this if a global limit
+		 * is desired.
+		 */	
+		Assert.isNotNull(context);
 		fLimits.put(context, new Integer(limit));
 		forceUndoLimit(context, limit);
 		forceRedoLimit(context, limit);
 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#undo(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus undo(OperationContext context, IProgressMonitor monitor) {
+	public IStatus undo(UndoContext context, IProgressMonitor monitor) {
 		// null context is allowed and passed through when getting the operation
-		IOperation operation = getUndoOperation(context);
+		IUndoableOperation operation = getUndoOperation(context);
 
 		// info if there is no operation
 		if (operation == null)
@@ -616,7 +619,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return doUndo(monitor, operation, true);
 	}
 
-	public IStatus undoOperation(IOperation operation, IProgressMonitor monitor) {
+	public IStatus undoOperation(IUndoableOperation operation, IProgressMonitor monitor) {
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canUndo()) {

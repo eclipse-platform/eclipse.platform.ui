@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import org.eclipse.core.commands.operations.IOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoViolationDetector;
-import org.eclipse.core.commands.operations.OperationContext;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -56,8 +56,8 @@ public class LinearUndoViolationUserApprover extends
 		fPart = part;
 	}
 
-	protected IStatus allowLinearRedoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 
 		String message = WorkbenchMessages
 				.format(
@@ -80,7 +80,7 @@ public class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		case 1: // don't redo the other changes, and flush them if requested
 			if (fFlushMoreRecentOperations) {
-				IOperation opToRemove;
+				IUndoableOperation opToRemove;
 				while (operation != (opToRemove = history
 						.getRedoOperation(context))) {
 					history.remove(opToRemove);
@@ -102,8 +102,8 @@ public class LinearUndoViolationUserApprover extends
 	 *      org.eclipse.core.operations.OperationContext,
 	 *      org.eclipse.core.operations.IOperationHistory)
 	 */
-	protected IStatus allowLinearUndoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 
 		String message = WorkbenchMessages
 				.format(
@@ -126,7 +126,7 @@ public class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		case 1: // don't undo the other changes, and flush them if requested
 			if (fFlushMoreRecentOperations) {
-				IOperation opToRemove;
+				IUndoableOperation opToRemove;
 				while (operation != (opToRemove = history
 						.getUndoOperation(context))) {
 					history.remove(opToRemove);

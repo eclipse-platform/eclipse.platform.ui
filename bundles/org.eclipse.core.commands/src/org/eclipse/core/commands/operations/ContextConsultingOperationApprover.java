@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.Status;
  */
 public class ContextConsultingOperationApprover implements IOperationApprover {
 
-	public IStatus proceedRedoing(IOperation operation,
+	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history) {
-		OperationContext[] contexts = operation.getContexts();
+		UndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
-			OperationContext context = contexts[i];
+			UndoContext context = contexts[i];
 			IContextOperationApprover approver = context.getOperationApprover();
 			if (approver != null) {
 				IStatus approval = approver.proceedRedoing(operation, context, history);
@@ -46,11 +46,11 @@ public class ContextConsultingOperationApprover implements IOperationApprover {
 		return Status.OK_STATUS;
 	}
 
-	public IStatus proceedUndoing(IOperation operation,
+	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history) {
-		OperationContext[] contexts = operation.getContexts();
+		UndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
-			OperationContext context = contexts[i];
+			UndoContext context = contexts[i];
 			IContextOperationApprover approver = context.getOperationApprover();
 			if (approver != null) {
 				IStatus approval = approver.proceedUndoing(operation, context, history);

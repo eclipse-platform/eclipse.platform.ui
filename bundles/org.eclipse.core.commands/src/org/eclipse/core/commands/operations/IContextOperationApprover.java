@@ -60,7 +60,7 @@ public interface IContextOperationApprover {
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedRedoing(IOperation operation, OperationContext context,
+	IStatus proceedRedoing(IUndoableOperation operation, UndoContext context,
 			IOperationHistory history);
 
 	/**
@@ -82,6 +82,6 @@ public interface IContextOperationApprover {
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedUndoing(IOperation operation, OperationContext context,
+	IStatus proceedUndoing(IUndoableOperation operation, UndoContext context,
 			IOperationHistory history);
 }

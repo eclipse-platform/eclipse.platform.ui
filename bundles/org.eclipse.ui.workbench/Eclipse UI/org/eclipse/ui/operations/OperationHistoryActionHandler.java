@@ -11,7 +11,7 @@
 package org.eclipse.ui.operations;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.OperationContext;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -43,9 +43,9 @@ import org.eclipse.ui.actions.ActionFactory;
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction {
 
-	protected OperationContext fContext = null;
+	protected UndoContext fContext = null;
 
-	protected OperationHistoryActionHandler(OperationContext context) {
+	protected OperationHistoryActionHandler(UndoContext context) {
 		fContext = context;
 	}
 
@@ -72,7 +72,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 * @param context
 	 */
-	public void setContext(OperationContext context) {
+	public void setContext(UndoContext context) {
 		fContext = context;
 		update();
 	}

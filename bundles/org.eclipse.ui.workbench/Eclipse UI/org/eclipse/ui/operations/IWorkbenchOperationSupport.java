@@ -12,7 +12,7 @@
 package org.eclipse.ui.operations;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.OperationContext;
+import org.eclipse.core.commands.operations.UndoContext;
 
 /**
  * An instance of this interface provides support for managing operations and a
@@ -40,11 +40,11 @@ public interface IWorkbenchOperationSupport {
 	public void dispose();
 
 	/**
-	 * Returns the operation context for workbench-wide operations.
+	 * Returns the undo context for workbench-wide operations.
 	 * 
 	 * @return the workbench operation context
 	 */
-	public OperationContext getOperationContext();
+	public UndoContext getUndoContext();
 
 	/**
 	 * Returns the operation history for the workbench.

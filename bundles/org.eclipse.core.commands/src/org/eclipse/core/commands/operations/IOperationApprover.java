@@ -57,7 +57,7 @@ public interface IOperationApprover {
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedRedoing(IOperation operation, IOperationHistory history);
+	IStatus proceedRedoing(IUndoableOperation operation, IOperationHistory history);
 
 	/**
 	 * Return a status indicating whether the specified operation should be
@@ -76,6 +76,6 @@ public interface IOperationApprover {
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedUndoing(IOperation operation, IOperationHistory history);
+	IStatus proceedUndoing(IUndoableOperation operation, IOperationHistory history);
 
 }

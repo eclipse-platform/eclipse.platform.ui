@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.tests.operations;
 
-import org.eclipse.core.commands.operations.IOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.ObjectOperationContext;
-import org.eclipse.core.commands.operations.OperationContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -24,11 +24,11 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.1
  */
 public class WorkbenchOperationHistoryTests extends UITestCase {
-	OperationContext context, c1, c2;
+	UndoContext context, c1, c2;
 
 	IOperationHistory history;
 
-	IOperation op1, op2, op3, op4, op5, op6;
+	IUndoableOperation op1, op2, op3, op4, op5, op6;
 
 	/**
 	 * @param testName
@@ -39,9 +39,9 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	protected void doSetUp() throws Exception {
 		history = fWorkbench.getOperationSupport().getOperationHistory();
-		context = fWorkbench.getOperationSupport().getOperationContext();
-		c1 = new ObjectOperationContext("c1");
-		c2 = new ObjectOperationContext("c2");
+		context = fWorkbench.getOperationSupport().getUndoContext();
+		c1 = new ObjectUndoContext("c1");
+		c2 = new ObjectUndoContext("c2");
 		op1 = new TestOperation("op1", "Test Operation 1");
 		op1.addContext(context);
 		op2 = new TestOperation("op2", "Test Operation 2");

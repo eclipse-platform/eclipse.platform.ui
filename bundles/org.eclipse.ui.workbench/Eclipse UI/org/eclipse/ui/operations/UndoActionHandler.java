@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import org.eclipse.core.commands.operations.OperationContext;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -36,10 +36,10 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 	 * the undo action for the specified operation context.
 	 * 
 	 * @param context -
-	 *            the OperationContext to be used to filter the operations
+	 *            the UndoContext to be used to filter the operations
 	 *            history.
 	 */
-	public UndoActionHandler(OperationContext context) {
+	public UndoActionHandler(UndoContext context) {
 		super(context);
 		setId("OperationHistoryUndoHandler");//$NON-NLS-1$
 	}

@@ -32,13 +32,13 @@ import org.eclipse.core.runtime.Status;
  */
 public class LinearUndoEnforcer extends LinearUndoViolationDetector {
 
-	protected IStatus allowLinearRedoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 		return Status.CANCEL_STATUS;
 	}
 
-	protected IStatus allowLinearUndoViolation(IOperation operation,
-			OperationContext context, IOperationHistory history) {
+	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
+			UndoContext context, IOperationHistory history) {
 		return Status.CANCEL_STATUS;
 	}
 

@@ -79,7 +79,7 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be added to the history
 	 */
-	void add(IOperation operation);
+	void add(IUndoableOperation operation);
 
 	/**
 	 * Add the specified approver to the operation history.
@@ -109,7 +109,7 @@ public interface IOperationHistory {
 	 * @return <code>true</code> if there is a redoable operation,
 	 *         <code>false</code> otherwise.
 	 */
-	boolean canRedo(OperationContext context);
+	boolean canRedo(UndoContext context);
 
 	/**
 	 * Return whether there is an undoable operation available in the given
@@ -120,7 +120,7 @@ public interface IOperationHistory {
 	 * @return <code>true</code> if there is an undoable operation,
 	 *         <code>false</code> otherwise.
 	 */
-	boolean canUndo(OperationContext context);
+	boolean canUndo(UndoContext context);
 
 	/**
 	 * Dispose of the specified context in the history. All operations that have
@@ -138,7 +138,7 @@ public interface IOperationHistory {
 	 *            redo history, <code>false</code> if it should not.
 	 * 
 	 */
-	void dispose(OperationContext context, boolean flushUndo, boolean flushRedo);
+	void dispose(UndoContext context, boolean flushUndo, boolean flushRedo);
 
 	/**
 	 * Execute the specified operation and add it to the operations history if
@@ -178,20 +178,18 @@ public interface IOperationHistory {
 	 * <code>done</code> notification.
 	 * 
 	 */
-	IStatus execute(IOperation operation, IProgressMonitor monitor);
+	IStatus execute(IUndoableOperation operation, IProgressMonitor monitor);
 
 	/**
 	 * Return the limit on the undo and redo history for a particular context.
 	 * 
 	 * @param context -
-	 *            the context whose limit is requested, or <code>null</code> if the global
-	 *            limit is requested
+	 *            the context whose limit is requested
 	 * 
 	 * @return limit - the undo and redo history limit for the specified
-	 *         context, or -1 if there is no limit established for the
 	 *         context.
 	 */
-	int getLimit(OperationContext context);
+	int getLimit(UndoContext context);
 
 	/**
 	 * Get the array of operations in the redo history for a given context. The
@@ -203,7 +201,7 @@ public interface IOperationHistory {
 	 *            requested
 	 * @return the array of operations in the history
 	 */
-	IOperation[] getRedoHistory(OperationContext context);
+	IUndoableOperation[] getRedoHistory(UndoContext context);
 
 	/**
 	 * Get the operation that will next be redone in the given context. This
@@ -217,7 +215,7 @@ public interface IOperationHistory {
 	 *         operation available. There is no guarantee that the returned
 	 *         operation is valid for redo.
 	 */
-	IOperation getRedoOperation(OperationContext context);
+	IUndoableOperation getRedoOperation(UndoContext context);
 
 	/**
 	 * Get the array of operations that can be undone in the specified context.
@@ -229,7 +227,7 @@ public interface IOperationHistory {
 	 *            requested
 	 * @return the array of operations in the history
 	 */
-	IOperation[] getUndoHistory(OperationContext context);
+	IUndoableOperation[] getUndoHistory(UndoContext context);
 
 	/**
 	 * Get the operation that will next be undone in the given context. This
@@ -243,7 +241,7 @@ public interface IOperationHistory {
 	 *         operation available. There is no guarantee that the available
 	 *         operation is valid for the undo.
 	 */
-	IOperation getUndoOperation(OperationContext context);
+	IUndoableOperation getUndoOperation(UndoContext context);
 
 	/**
 	 * Redo the most recently undone operation in the given context
@@ -275,7 +273,7 @@ public interface IOperationHistory {
 	 * <code>redone</code> notification.
 	 * 
 	 */
-	IStatus redo(OperationContext context, IProgressMonitor monitor);
+	IStatus redo(UndoContext context, IProgressMonitor monitor);
 
 	/**
 	 * Redo the specified operation
@@ -303,7 +301,7 @@ public interface IOperationHistory {
 	 * listeners will receive the <code>operationNotOK</code> notification
 	 * instead of the <code>redone</code> notification.
 	 */
-	IStatus redoOperation(IOperation operation, IProgressMonitor monitor);
+	IStatus redoOperation(IUndoableOperation operation, IProgressMonitor monitor);
 
 	/**
 	 * Remove the specified operation from the history. Listeners will be
@@ -313,7 +311,7 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be removed from the history
 	 */
-	void remove(IOperation operation);
+	void remove(IUndoableOperation operation);
 
 	/**
 	 * Remove the specified operation approver from the operation history.
@@ -335,14 +333,13 @@ public interface IOperationHistory {
 	 * Set the limit on the undo and redo history for a particular context.
 	 * 
 	 * @param context -
-	 *            the context whose limit is being set, or null if the global
-	 *            limit is being set
+	 *            the context whose limit is being set
 	 * 
 	 * @param limit -
 	 *            the maximum number of operations that should be kept in the
 	 *            undo or redo history for the specified context.
 	 */
-	void setLimit(OperationContext context, int limit);
+	void setLimit(UndoContext context, int limit);
 
 	/**
 	 * Undo the most recently undone operation in the given context
@@ -373,7 +370,7 @@ public interface IOperationHistory {
 	 * instead of the <code>undone</code> notification.
 	 */
 
-	IStatus undo(OperationContext context, IProgressMonitor monitor);
+	IStatus undo(UndoContext context, IProgressMonitor monitor);
 
 	/**
 	 * Undo the specified operation
@@ -401,6 +398,6 @@ public interface IOperationHistory {
 	 * listeners will receive the <code>operationNotOK</code> notification
 	 * instead of the <code>undone</code> notification.
 	 */
-	IStatus undoOperation(IOperation operation, IProgressMonitor monitor);
+	IStatus undoOperation(IUndoableOperation operation, IProgressMonitor monitor);
 
 }

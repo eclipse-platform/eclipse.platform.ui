@@ -15,11 +15,12 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
-import org.eclipse.core.commands.operations.IOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
-import org.eclipse.core.commands.operations.ObjectOperationContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,10 +32,10 @@ import org.eclipse.core.runtime.Status;
  */
 public class OperationsAPITest extends TestCase {
 
-	ObjectOperationContext c1, c2, c3;
+	ObjectUndoContext c1, c2, c3;
 	IOperationHistory history;
 
-	IOperation op1, op2, op3, op4, op5, op6;
+	IUndoableOperation op1, op2, op3, op4, op5, op6;
 
 	public OperationsAPITest() {
 		super();
@@ -49,10 +50,9 @@ public class OperationsAPITest extends TestCase {
 
 	protected void setUp() throws Exception {
 		history = new DefaultOperationHistory();
-		history.setLimit(null, 10);
-		c1 = new ObjectOperationContext("c1");
-		c2 = new ObjectOperationContext("c2");
-		c3 = new ObjectOperationContext("c3");
+		c1 = new ObjectUndoContext("c1");
+		c2 = new ObjectUndoContext("c2");
+		c3 = new ObjectUndoContext("c3");
 		op1 = new TestOperation("op1", "Test Operation 1");
 		op1.addContext(c1);
 		op2 = new TestOperation("op2", "Test Operation 2");
@@ -92,7 +92,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse(history.canUndo(c3));
 		assertTrue(history.canRedo(c3));
 		history.redo(c3, null);
-		IOperation[] ops = history.getUndoHistory(null);
+		IUndoableOperation[] ops = history.getUndoHistory(null);
 		assertEquals(ops.length, 3);
 		ops = history.getUndoHistory(c3);
 		assertEquals(ops.length, 1);
@@ -116,26 +116,19 @@ public class OperationsAPITest extends TestCase {
 	}
 
 	public void testHistoryLimit() {
-		history.setLimit(null, 3);
-		assertTrue(history.getUndoHistory(null).length == 3);
+		history.setLimit(c1, 2);
+		assertTrue(history.getUndoHistory(c1).length == 2);
 		history.add(op1);
-		history.add(op3);
-		assertTrue(history.getUndoHistory(null).length == 3);
-		assertFalse(history.canUndo(c2));
-		history.setLimit(null, 1);
-		assertTrue(history.getUndoHistory(null).length == 1);
-		history.undo(null, null);
-		assertTrue(history.getRedoHistory(null).length == 1);
-		history.add(op1);
-		history.add(op3);
-		assertTrue(history.getRedoHistory(null).length == 0);
-		assertTrue(history.getUndoHistory(null).length == 1);
-		assertSame(history.getUndoOperation(null), op3);
-		history.setLimit(null, 10);
-		history.add(op2);
-		history.add(op1);
-		assertSame(history.getUndoOperation(null), op1);
-		assertTrue(history.getUndoHistory(null).length == 3);
+		assertTrue(history.getUndoHistory(c1).length == 2);
+		history.setLimit(c2, 1);
+		assertTrue(history.getUndoHistory(c2).length == 1);
+		assertFalse(op2.hasContext(c2));
+		history.undo(c2, null);
+		assertTrue(history.getRedoHistory(c2).length == 1);
+		assertTrue(history.getUndoHistory(c2).length == 0);
+		history.redo(c2, null);
+		assertTrue(history.getRedoHistory(c2).length == 0);
+		assertTrue(history.getUndoHistory(c2).length == 1);
 	}
 	
 	public void testLocalHistoryLimits() {
@@ -178,10 +171,10 @@ public class OperationsAPITest extends TestCase {
 
 		history.addOperationApprover(new IOperationApprover() {
 
-			public IStatus proceedRedoing(IOperation o, IOperationHistory h) {
+			public IStatus proceedRedoing(IUndoableOperation o, IOperationHistory h) {
 				return Status.CANCEL_STATUS;
 			}
-			public IStatus proceedUndoing(IOperation o, IOperationHistory h) {
+			public IStatus proceedUndoing(IUndoableOperation o, IOperationHistory h) {
 				return Status.CANCEL_STATUS;
 			}
 		});
@@ -196,10 +189,10 @@ public class OperationsAPITest extends TestCase {
 	public void testOperationFailure() {
 		history.addOperationApprover(new IOperationApprover() {
 
-			public IStatus proceedRedoing(IOperation o, IOperationHistory h) {
+			public IStatus proceedRedoing(IUndoableOperation o, IOperationHistory h) {
 				return Status.OK_STATUS;
 			}
-			public IStatus proceedUndoing(IOperation o, IOperationHistory h) {
+			public IStatus proceedUndoing(IUndoableOperation o, IOperationHistory h) {
 				if (o == op6)
 					return Status.CANCEL_STATUS;
 				if (o == op5)
@@ -260,5 +253,10 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Shouldn't be able to undo in c1", history.canUndo(c1));
 		assertTrue("Should be able to undo in c2", history.canUndo(c2));
 		assertTrue("Should be able to undo in c3", history.canUndo(c3));
+	}
+	
+	public void testHistoryFactory() {
+		IOperationHistory anotherHistory = OperationHistoryFactory.getOperationHistory();
+		assertNotNull(anotherHistory);
 	}
 }
