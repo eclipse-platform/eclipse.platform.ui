@@ -14,6 +14,7 @@ import org.eclipse.help.internal.HelpSystem;
 
 /**
  * Returns context sensitive help information.
+ * http://server/help/context/plugin.id.context.id
  */
 public class ContextServlet extends HttpServlet {
 	private String locale;
@@ -31,9 +32,10 @@ public class ContextServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8");
 		resp.setHeader("Cache-Control", "max-age=0");
 	
-		String contextId = req.getParameter("contextId");
-		if (contextId == null)
+		String contextId = req.getPathInfo();
+		if (contextId == null || contextId.length() < 2)
 			throw new ServletException();
+		contextId = contextId.substring(1);
 		IContext context = HelpSystem.getContextManager().getContext(contextId);
 		if (context == null)
 			throw new ServletException();
