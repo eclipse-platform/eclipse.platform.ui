@@ -640,6 +640,16 @@ private PluginVersionIdentifier getVersionIdentifier(PluginDescriptorModel descr
 		return new PluginVersionIdentifier("1.0.0");
 	}
 }
+private PluginVersionIdentifier getVersionIdentifier(PluginFragmentModel fragment) {
+	String version = fragment.getVersion();
+	if (version == null)
+		return new PluginVersionIdentifier("1.0.0");
+	try {
+		return new PluginVersionIdentifier(version);
+	} catch (Throwable e) {
+		return new PluginVersionIdentifier("1.0.0");
+	}
+}
 private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel prereq) {
 	String version = prereq.getVersion();
 	return version == null ? null : new PluginVersionIdentifier(version);
@@ -649,17 +659,6 @@ private void linkFragments() {
 	 * to and add it to the list of fragments in this plugin.
 	 */
 	PluginFragmentModel[] fragments = reg.getFragments();
-	HashSet seen = new HashSet(5);
-	// DDW - 'seen' appears to be here to prevent us from
-	// re-processing a fragment.  But it will also prevent
-	// us from processing other versions of this fragment,
-	// even if the next version we encounter is more up-to-
-	// date than this one!!  Can we remove 'seen'?  We
-	// need a mechanism to ensure we pick up the most recent
-	// version of a fragment for a given plugin (consider
-	// the case where a single fragment id has multiple 
-	// versions, and some of these versions are used for
-	// another plugin).
 	for (int i = 0; i < fragments.length; i++) {
 		PluginFragmentModel fragment = fragments[i];
 		if (!requiredFragment(fragment)) {
@@ -674,18 +673,12 @@ private void linkFragments() {
 				error (Policy.bind("parse.fragmentMissingIdName"));
 			continue;
 		}
-		if (seen.contains(fragment.getId()))
-			continue;
-		seen.add(fragment.getId());
 		PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
 		if (plugin == null) {
 			// We couldn't find this fragment's plugin
 			error (Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId()));
 			continue;
 		}
-		// Soft prereq's ???
-		// PluginFragmentModel[] list = reg.getFragments(fragment.getId());
-		// resolvePluginFragments(list, plugin);
 		
 		// Add this fragment to the list of fragments for this plugin descriptor
 		PluginFragmentModel[] list = plugin.getFragments();
@@ -756,7 +749,7 @@ private void resolve() {
 	// roots is a list of those plugin ids that are not a
 	// prerequisite for any other plugin.  Note that roots
 	// contains ids only.
-	
+
 	// walk the dependencies and setup constraints
 	ArrayList orphans = new ArrayList();
 	for (int i = 0; i < roots.size(); i++)
@@ -764,11 +757,11 @@ private void resolve() {
 		// At this point we have set up all the Constraint and
 		// ConstraintsEntry components.  But we may not have found which
 		// plugin is the best match for a given set of constraints.
-	for (int i = 0; i < orphans.size(); i++) {
-		if (!roots.contains(orphans.get(i))) {
-			roots.add(orphans.get(i));
+	for (int j = 0; j < orphans.size(); j++) {
+		if (!roots.contains(orphans.get(j))) {
+			roots.add(orphans.get(j));
 			if (DEBUG_RESOLVE)
-				debug("orphan " + orphans.get(i));
+				debug("orphan " + orphans.get(j));
 		}
 	}
 
@@ -888,6 +881,12 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	// We should now have the IndexEntry for the plugin we 
 	// wish to resolve
 	if (ix == null) {
+		// If this is an optional prerequisite and not a root
+		// node, we can just ignore this prerequisite if there
+		// is no IndexEntry (as there is no corresponding plugin)
+		// and continue processing.
+		if (prq.getOptional() && parent != null && child != null)
+			return cookie;
 		if (parent != null)
 			error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child }));
 		if (DEBUG_RESOLVE)
@@ -1037,16 +1036,13 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 			// Now find the latest version of the fragment with the chosen id
 			PluginFragmentModel latestFragment = null;
 			PluginVersionIdentifier latestVersion = null;
-			PluginVersionIdentifier targetVersion = new PluginVersionIdentifier(plugin.getVersion());
 			for (int i = 0; i < fragments.length; i++) {
 				PluginFragmentModel fragment = fragments[i];
-				PluginVersionIdentifier fragmentVersion = new PluginVersionIdentifier(fragment.getVersion());
-				PluginVersionIdentifier pluginVersion = new PluginVersionIdentifier(fragment.getPluginVersion());
-				if (pluginVersion.getMajorComponent() == targetVersion.getMajorComponent() && pluginVersion.getMinorComponent() == targetVersion.getMinorComponent())
-					if (latestFragment == null || fragmentVersion.isGreaterThan(latestVersion)) {
-						latestFragment = fragment;
-						latestVersion = fragmentVersion;
-					}
+				PluginVersionIdentifier thisVersion = getVersionIdentifier(fragment);
+				if ((latestVersion == null) || (thisVersion.isGreaterThan(latestVersion))) {
+					latestFragment = fragment;
+					latestVersion = thisVersion;
+				}
 			}
 			if (latestFragment != null) {
 				// For the latest version of this fragment id only, apply
@@ -1171,13 +1167,15 @@ private List resolveRootDescriptors() {
 		IndexEntry ix = (IndexEntry) ((Map.Entry) p.next()).getValue();
 		if (ix != null) {
 			List list = ix.versions();
-			if (list.size() > 0) {
-				// DDW - this only removes those prerequisites from the 'latest'
-				// version.  We need to remove all prerequisites.
-				PluginDescriptorModel pd = (PluginDescriptorModel) list.get(0);
-				PluginPrerequisiteModel[] prereqs = pd.getRequires();
-				for (int i = 0; prereqs != null && i < prereqs.length; i++) {
-					ids.remove(prereqs[i].getPlugin());
+			int ixSize = list.size();
+			if (ixSize > 0) {
+				// Remove any prerequisite mentioned in any version of this plugin
+				for (int i = 0; i < ixSize; i++) {
+					PluginDescriptorModel pd = (PluginDescriptorModel) list.get(i);
+					PluginPrerequisiteModel[] prereqs = pd.getRequires();
+					for (int j = 0; prereqs != null && j < prereqs.length; j++) {
+						ids.remove(prereqs[j].getPlugin());
+					}
 				}
 			}
 		}
