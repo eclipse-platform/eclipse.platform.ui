@@ -33,11 +33,11 @@ class TestJob extends Job {
 	/**
 	 * Returns the number of times this job instance has been run.
 	 */
-	public int getRunCount() {
+	public synchronized int getRunCount() {
 		return runCount;
 	}
 	public IStatus run(IProgressMonitor monitor) {
-		runCount++;
+		setRunCount(getRunCount()+1);
 		//must have positive work
 		monitor.beginTask(name, ticks <= 0 ? 1 : ticks);
 		try {
@@ -57,6 +57,9 @@ class TestJob extends Job {
 			monitor.done();
 		}
 		return Status.OK_STATUS;
+	}
+	private synchronized void setRunCount(int count) {
+		runCount = count;
 	}
 	public String toString() {
 		if (name == null)
