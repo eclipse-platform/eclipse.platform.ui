@@ -733,7 +733,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         while (startOfWordToken > 0 
                 && (Character.isJavaIdentifierPart(aDocumentText.charAt(startOfWordToken - 1)) 
                     || '.' == aDocumentText.charAt(startOfWordToken - 1)
-                    )
+					|| '-' == aDocumentText.charAt(startOfWordToken - 1))
                 && !('$' == aDocumentText.charAt(startOfWordToken - 1))) {
             startOfWordToken--;
         }
