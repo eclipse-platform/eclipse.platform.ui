@@ -172,8 +172,10 @@ public class MarkerAnnotation extends Annotation {
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
-		if (image != null)
-			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.CENTER);
+		if (image != null) {
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19184
+			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
+		}
 	}
 	
 	/**
