@@ -51,10 +51,13 @@ public void createLocation() throws CoreException {
 	try {
 		file.mkdirs();
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, "Error trying to create metadata area.", e));
+		String message = Policy.bind("meta.couldNotCreate", file.getAbsolutePath());
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 	}
-	if (!file.canWrite())
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, "Problem trying to create metadata area.", null));
+	if (!file.canWrite()) {
+		String message = Policy.bind("meta.readonly", file.getAbsolutePath());
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
+	}
 }
 public IPath getBackupFilePathFor(IPath file) {
 	return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP);
