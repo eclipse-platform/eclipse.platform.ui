@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
@@ -77,16 +80,23 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	}
 	
 	/**
-	 * Returns the about information of all features.
-	 * @issue should cull features with no missing info
+	 * Returns the about information of all known features, omitting any
+	 * features which are missing this infomration.
+	 * 
+	 * @return a possibly empty list of about infos
 	 */
 	public static AboutInfo[] getFeatureInfos() {
 		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.IFeatureEntry[] entries = conf.getConfiguredFeatureEntries();
-		AboutInfo[] result = new AboutInfo[entries.length];
+		List infos = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
-			result[i] = AboutInfo.readFeatureInfo(entries[i].getFeatureIdentifier());
+			AboutInfo info = AboutInfo.readFeatureInfo(entries[i].getFeatureIdentifier());
+			if (info != null) {
+				infos.add(info);
+			}
 		}
+		AboutInfo[] result = new AboutInfo[infos.size()];
+		infos.toArray(result);
 		return result;
 	}
 }
