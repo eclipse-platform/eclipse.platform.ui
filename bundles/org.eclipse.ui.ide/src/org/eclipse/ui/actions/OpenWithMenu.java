@@ -33,6 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -174,8 +175,7 @@ public void fill(Menu menu, int index) {
 		return;
 	}
 
-	// @issue this use to be a text editor, but now returns system editor!
-	IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
+	IEditorDescriptor defaultEditor = registry.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
 	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file.getName()); // may be null
 	
 	Object[] editors = sorter.sort(registry.getEditors(file.getName()));
@@ -207,8 +207,15 @@ public void fill(Menu menu, int index) {
 	// Add system editor (should never be null)
 	IEditorDescriptor descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 	createMenuItem(menu, descriptor, preferredEditor);
+	
+	// Add system in-place editor (can be null)
+	descriptor = registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+	if (descriptor != null) {
+		createMenuItem(menu, descriptor, preferredEditor);
+	}	
 	createDefaultMenuItem(menu, file);
 }
+
 /**
  * Converts the IAdaptable file to IFile or null.
  */
