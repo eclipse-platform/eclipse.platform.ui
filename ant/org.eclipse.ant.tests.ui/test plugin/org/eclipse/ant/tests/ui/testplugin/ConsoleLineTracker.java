@@ -15,8 +15,6 @@ import java.util.List;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
-import org.eclipse.jdt.internal.debug.core.model.ITimeoutListener;
-import org.eclipse.jdt.internal.debug.core.model.Timer;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -29,20 +27,8 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	
 	private static IConsole console;
 	private static List lines= new ArrayList(); 
-	private static Timer timer= new Timer();
 	
 	private static boolean consoleClosed= false;
-	
-	private static ITimeoutListener timeoutListener= new ITimeoutListener() {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.internal.debug.core.model.ITimeoutListener#timeout()
-		 */
-		public void timeout() {
-			synchronized (lines) {
-				lines.notifyAll();
-			}
-		}
-	};
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
@@ -50,7 +36,6 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public void dispose() {
 		console = null;
 		lines= new ArrayList();
-		timer.stop();
 	}
 
 	/**
@@ -59,7 +44,6 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public synchronized void init(IConsole c) {
 		ConsoleLineTracker.console= c;
 		lines= new ArrayList();
-		timer.stop();
 		consoleClosed= false;
 	}
 
@@ -67,10 +51,6 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
 	public void lineAppended(IRegion line) {
-		if (timer.isStarted()) {
-			timer.stop();
-		}
-		timer.start(timeoutListener, 500);
 		lines.add(line);
 	}
 	
@@ -124,9 +104,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 */
 	public void consoleClosed() {
 		consoleClosed= true;
-		if (timer.isStarted()) {
-			timer.stop();
-		}
+		
 		synchronized (lines) {
 			lines.notifyAll();
 		}
