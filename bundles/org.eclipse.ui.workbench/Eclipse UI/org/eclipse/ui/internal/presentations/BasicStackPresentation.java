@@ -237,6 +237,17 @@ public class BasicStackPresentation extends StackPresentation {
 		PresentationUtil.addDragListener(tabFolder, new Listener() {
 			public void handleEvent(Event event) {
 				Point localPos = new Point(event.x, event.y);
+				// Ignore drags unless they are on the title area
+				if ((tabFolder.getStyle() & SWT.TOP) != 0) {
+					if (localPos.y > tabFolder.getTabHeight()) {
+						return;
+					}
+				} else {
+					if (localPos.y < tabFolder.getBounds().height - tabFolder.getTabHeight()) {
+						return;
+					}
+				}
+				
 				CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
 				if (tabUnderPointer == null) {
