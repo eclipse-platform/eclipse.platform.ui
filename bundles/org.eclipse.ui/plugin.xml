@@ -432,7 +432,7 @@
          </accelerator>    
 
          <accelerator
-               key="F9||Ctrl+X U||Ctrl+/||Ctrl+_"
+               key="F9||Ctrl+X U||Ctrl+_"
                id="org.eclipse.ui.edit.undo">
          </accelerator>
          <accelerator
