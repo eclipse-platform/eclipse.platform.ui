@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -72,7 +71,7 @@ class CopyTaskAction extends TaskAction {
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(getShell(), TaskListMessages.getString("CopyToClipboardProblemDialog.title"), TaskListMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(markers, markerReport);
 		}	
 	}

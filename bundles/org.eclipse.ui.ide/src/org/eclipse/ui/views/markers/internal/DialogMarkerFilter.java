@@ -50,8 +50,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Dialog which allows user to modify all settings of an org.eclipse.ui.views.MarkerFilter object.
@@ -167,7 +167,7 @@ class DialogMarkerFilter extends Dialog {
 		 * Opens the working set selection dialog.
 		 */
 		void selectPressed() {
-			IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+			IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
 			IWorkingSet workingSet = getWorkingSet();
 			
 			if (workingSet != null) {

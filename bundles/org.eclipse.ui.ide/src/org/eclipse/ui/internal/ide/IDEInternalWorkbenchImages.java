@@ -31,16 +31,6 @@ public final class IDEInternalWorkbenchImages {
 
 	/*** Constants for Images ***/
 
-	// toolbar buttons for wizards
-
-	public final static String IMG_CTOOL_IMPORT_WIZ = "IMG_CTOOL_IMPORT_WIZ"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_IMPORT_WIZ_HOVER = "IMG_CTOOL_IMPORT_WIZ_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_IMPORT_WIZ_DISABLED = "IMG_CTOOL_IMPORT_WIZ_DISABLED"; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_EXPORT_WIZ = "IMG_CTOOL_EXPORT_WIZ"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_EXPORT_WIZ_HOVER = "IMG_CTOOL_EXPORT_WIZ_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_EXPORT_WIZ_DISABLED = "IMG_CTOOL_EXPORT_WIZ_DISABLED"; //$NON-NLS-1$
-
 	// other toolbar buttons
 	public final static String IMG_CTOOL_BUILD_EXEC = "IMG_CTOOL_BUILD_EXEC" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_BUILD_EXEC_HOVER = "IMG_CTOOL_BUILD_EXEC_HOVER" ; //$NON-NLS-1$
@@ -125,16 +115,13 @@ public final class IDEInternalWorkbenchImages {
 	public final static String IMG_LCL_SHOWSYNC_RN = "IMG_LCL_SHOWSYNC_RN"; //$NON-NLS-1$
 
 	//wizard images
-	public final static String IMG_WIZBAN_NEW_WIZ = "IMG_WIZBAN_NEW_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_NEWPRJ_WIZ = "IMG_WIZBAN_NEWPRJ_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_NEWFOLDER_WIZ = "IMG_WIZBAN_NEWFOLDER_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_NEWFILE_WIZ = "IMG_WIZBAN_NEWFILE_WIZ"; //$NON-NLS-1$
 
-	public final static String IMG_WIZBAN_IMPORT_WIZ = "IMG_WIZBAN_IMPORT_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_IMPORTDIR_WIZ = "IMG_WIZBAN_IMPORTDIR_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_IMPORTZIP_WIZ = "IMG_WIZBAN_IMPORTZIP_WIZ"; //$NON-NLS-1$
 
-	public final static String IMG_WIZBAN_EXPORT_WIZ = "IMG_WIZBAN_EXPORT_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_EXPORTDIR_WIZ =  "IMG_WIZBAN_EXPORTDIR_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_EXPORTZIP_WIZ = "IMG_WIZBAN_EXPORTZIP_WIZ"; //$NON-NLS-1$
 	

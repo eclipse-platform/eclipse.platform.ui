@@ -22,9 +22,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
-import org.eclipse.ui.internal.registry.ProjectImageRegistry;
+import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
+import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -66,9 +66,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 
 	// IDE workbench extension point names
-	public static final String PL_IMPORT ="importWizards"; //$NON-NLS-1$
-	public static final String PL_EXPORT ="exportWizards"; //$NON-NLS-1$
-	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
 	public static final String PL_MARKER_IMAGE_PROVIDER ="markerImageProviders"; //$NON-NLS-1$
 	public static final String PL_MARKER_HELP ="markerHelp"; //$NON-NLS-1$
 	public static final String PL_MARKER_RESOLUTION ="markerResolution"; //$NON-NLS-1$

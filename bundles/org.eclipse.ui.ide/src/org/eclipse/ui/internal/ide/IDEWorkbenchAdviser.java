@@ -50,6 +50,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -63,12 +64,13 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.EditorAreaDropAdapter;
-import org.eclipse.ui.internal.WorkbenchActionBuilder;
-import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
-import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
-import org.eclipse.ui.internal.roles.IDERoleManager;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
+import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
+import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.ide.roles.IDERoleManager;
+
+//@issue illegal reference to RoleManager (internal to org.eclipse.ui plug-in)
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -858,13 +860,13 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		//final String PATH_MISC = ICONS_PATH+"misc/";
 		//final String PATH_OVERLAY = ICONS_PATH+"ovr16/";
 	
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL+"new_wiz.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_CTOOL+"new_wiz.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL+"new_wiz.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL+"new_wiz.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_CTOOL+"new_wiz.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL+"new_wiz.gif", true); //$NON-NLS-1$
 		
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif", false); //$NON-NLS-1$
 		
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif", false); //$NON-NLS-1$
 	
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC, PATH_ETOOL+"build_exec.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_HOVER, PATH_CTOOL+"build_exec.gif", false); //$NON-NLS-1$
@@ -886,16 +888,16 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV, PATH_CTOOL+"prev_nav.gif", false); //$NON-NLS-1$
 				
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN+"newprj_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFOLDER_WIZ, PATH_WIZBAN+"newfolder_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN+"newfile_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ, PATH_WIZBAN+"importdir_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ, PATH_WIZBAN+"importzip_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif", false); //$NON-NLS-1$
 	

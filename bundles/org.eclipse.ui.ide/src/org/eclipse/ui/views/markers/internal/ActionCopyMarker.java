@@ -26,7 +26,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -109,7 +108,7 @@ public class ActionCopyMarker extends SelectionProviderAction {
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(part.getSite().getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(part.getSite().getShell(), Messages.getString("CopyToClipboardProblemDialog.title"), Messages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(markers, markerReport);
 		}	
 	}

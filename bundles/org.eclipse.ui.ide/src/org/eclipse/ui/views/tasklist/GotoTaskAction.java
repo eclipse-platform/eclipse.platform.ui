@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.ide.DialogUtil;
 
 /**
  * This action opens an editor for the resource

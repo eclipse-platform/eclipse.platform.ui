@@ -18,7 +18,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
-import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
+import org.eclipse.ui.internal.ide.dialogs.InternalErrorDialog;
 
 /**
  * Handles exception while running the event loop.

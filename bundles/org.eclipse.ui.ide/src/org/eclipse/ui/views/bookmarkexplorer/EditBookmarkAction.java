@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Opens a properties dialog allowing the user to edit the bookmark's description. 
@@ -78,7 +78,7 @@ class EditBookmarkAction extends BookmarkAction {
 				},
 				null);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log(null, e.getStatus()); // We don't care
+			IDEWorkbenchPlugin.log(null, e.getStatus()); // We don't care
 		}
 	}
 

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IContainmentAdapter;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 class MarkerFilter implements IFilter {
 	
@@ -452,7 +452,7 @@ class MarkerFilter implements IFilter {
 			setting = settings.get(TAG_WORKING_SET);
 
 			if (setting != null)
-				workingSet = WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSet(setting);					
+				workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setting);					
 		}		
 	}
 	

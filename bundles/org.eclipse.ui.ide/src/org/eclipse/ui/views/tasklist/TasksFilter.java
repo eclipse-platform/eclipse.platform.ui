@@ -15,13 +15,18 @@ package org.eclipse.ui.views.tasklist;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.IContainmentAdapter;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 
 class TasksFilter extends ViewerFilter implements Cloneable {
 
@@ -259,7 +264,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 	 */
 	private void restoreWorkingSet(String workingSetName) {
 		if (workingSetName != null) {
-			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
 			
 			if (workingSet != null) {

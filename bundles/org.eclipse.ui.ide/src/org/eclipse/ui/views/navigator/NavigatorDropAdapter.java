@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 
@@ -266,8 +265,8 @@ public class NavigatorDropAdapter
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
 			getShell(), 
-			WorkbenchMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
-			WorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
+			ResourceNavigatorMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
+			ResourceNavigatorMessages.getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
 		sources = checker.checkReadOnlyResources(sources);
 		MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 		operation.copyResources(sources, target);

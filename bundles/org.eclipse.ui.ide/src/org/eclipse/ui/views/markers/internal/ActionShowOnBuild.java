@@ -12,13 +12,12 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.jface.preference.BooleanPropertyAction;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 
 public class ActionShowOnBuild extends BooleanPropertyAction {
 
 	public ActionShowOnBuild() {
-		// @issue refer to internal workbench and IDE classes
-		super(Messages.getString("showAction.title"), WorkbenchPlugin.getDefault().getPreferenceStore(), IDEInternalPreferences.SHOW_TASKS_ON_BUILD); //$NON-NLS-1$
+		super(Messages.getString("showAction.title"), IDEWorkbenchPlugin.getDefault().getPreferenceStore(), IDEInternalPreferences.SHOW_TASKS_ON_BUILD); //$NON-NLS-1$
 	}
 }

@@ -22,9 +22,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.MarkerTransfer;
-
 
 /**
  * Copies one or more bookmark(s) to the clipboard.
@@ -80,7 +78,7 @@ class CopyBookmarkAction extends BookmarkAction {
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(getView().getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(getView().getShell(), BookmarkMessages.getString("CopyToClipboardProblemDialog.title"), BookmarkMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(markers, markerReport);
 		}	
 	}

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -71,7 +71,7 @@ private void initializeFromPreferences() {
 
 	if (storedPatterns.length() == 0) {
 		// try to migrate patterns from old workbench preference store location
-		IPreferenceStore workbenchPrefs = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore workbenchPrefs = PlatformUI.getWorkbench().getPreferenceStore();
 		storedPatterns = workbenchPrefs.getString(FILTERS_TAG);
 		if (storedPatterns.length() > 0) {
 			viewsPrefs.setValue(FILTERS_TAG, storedPatterns);

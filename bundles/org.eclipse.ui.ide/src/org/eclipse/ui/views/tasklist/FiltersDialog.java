@@ -26,9 +26,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 class FiltersDialog extends Dialog {
 	/**
@@ -237,7 +237,7 @@ class FiltersDialog extends Dialog {
 		 * Opens the working set selection dialog.
 		 */
 		void selectPressed() {
-			IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+			IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
 			IWorkingSet workingSet = getWorkingSet();
 			
 			if (workingSet != null) {

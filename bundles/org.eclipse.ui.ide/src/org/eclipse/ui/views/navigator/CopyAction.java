@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ResourceSelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -156,7 +155,7 @@ private void setClipboard(IResource[] resources, String[] fileNames, String name
 	} catch (SWTError e){
 		if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 			throw e;
-		if (MessageDialog.openQuestion(shell, WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+		if (MessageDialog.openQuestion(shell, ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.title"), ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 			setClipboard(resources, fileNames, names);
 	}	
 }
