@@ -60,8 +60,8 @@ public class ZoomTestCase extends UITestCase {
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		try {
 			project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$
-			file1 = FileUtil.createFile("Test1.java", project); //$NON-NLS-1$
-			file2 = FileUtil.createFile("Test2.java", project); //$NON-NLS-1$
+			file1 = FileUtil.createFile("Test1.txt", project); //$NON-NLS-1$
+			file2 = FileUtil.createFile("Test2.txt", project); //$NON-NLS-1$
 			editor1 = page.openEditor(new FileEditorInput(file1), MockEditorPart.ID1);
 			editor2 = page.openEditor(new FileEditorInput(file2), MockEditorPart.ID2);
 		} catch(PartInitException e) {
