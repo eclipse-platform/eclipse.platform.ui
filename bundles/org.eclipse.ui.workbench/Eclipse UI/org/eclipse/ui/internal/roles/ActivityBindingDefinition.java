@@ -19,33 +19,33 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class RoleActivityBindingDefinition implements IRoleActivityBindingDefinition {
+final class ActivityBindingDefinition implements IActivityBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = RoleActivityBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActivityBindingDefinition.class.getName().hashCode();
 
-	static Map roleActivityBindingDefinitionsByRoleId(Collection roleActivityBindingDefinitions) {
-		if (roleActivityBindingDefinitions == null)
+	static Map activityBindingDefinitionsByRoleId(Collection activityBindingDefinitions) {
+		if (activityBindingDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();			
-		Iterator iterator = roleActivityBindingDefinitions.iterator();
+		Iterator iterator = activityBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IRoleActivityBindingDefinition.class);			
-			IRoleActivityBindingDefinition roleActivityBindingDefinition = (IRoleActivityBindingDefinition) object;
-			String roleId = roleActivityBindingDefinition.getRoleId();
+			Util.assertInstance(object, IActivityBindingDefinition.class);			
+			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) object;
+			String roleId = activityBindingDefinition.getRoleId();
 			
 			if (roleId != null) {
-				Collection roleActivityBindingDefinitions2 = (Collection) map.get(roleId);
+				Collection activityBindingDefinitions2 = (Collection) map.get(roleId);
 					
-				if (roleActivityBindingDefinitions2 == null) {
-					roleActivityBindingDefinitions2 = new HashSet();
-					map.put(roleId, roleActivityBindingDefinitions2);					
+				if (activityBindingDefinitions2 == null) {
+					activityBindingDefinitions2 = new HashSet();
+					map.put(roleId, activityBindingDefinitions2);					
 				}
 	
-				roleActivityBindingDefinitions2.add(roleActivityBindingDefinition);		
+				activityBindingDefinitions2.add(activityBindingDefinition);		
 			}											
 		}				
 	
@@ -60,35 +60,35 @@ final class RoleActivityBindingDefinition implements IRoleActivityBindingDefinit
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	RoleActivityBindingDefinition(String activityId, String pluginId, String roleId) {
+	ActivityBindingDefinition(String activityId, String pluginId, String roleId) {
 		this.activityId = activityId;
 		this.pluginId = pluginId;
 		this.roleId = roleId;
 	}
 	
 	public int compareTo(Object object) {
-		RoleActivityBindingDefinition roleActivityBindingDefinition = (RoleActivityBindingDefinition) object;
-		int compareTo = Util.compare(activityId, roleActivityBindingDefinition.activityId);
+		ActivityBindingDefinition activityBindingDefinition = (ActivityBindingDefinition) object;
+		int compareTo = Util.compare(activityId, activityBindingDefinition.activityId);
 
 		if (compareTo == 0) {		
-			compareTo = Util.compare(pluginId, roleActivityBindingDefinition.pluginId);			
+			compareTo = Util.compare(pluginId, activityBindingDefinition.pluginId);			
 		
 			if (compareTo == 0)	
-				compareTo = Util.compare(roleId, roleActivityBindingDefinition.roleId);				
+				compareTo = Util.compare(roleId, activityBindingDefinition.roleId);				
 		}
 		
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof RoleActivityBindingDefinition))
+		if (!(object instanceof ActivityBindingDefinition))
 			return false;
 
-		RoleActivityBindingDefinition roleActivityBindingDefinition = (RoleActivityBindingDefinition) object;	
+		ActivityBindingDefinition activityBindingDefinition = (ActivityBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, roleActivityBindingDefinition.activityId);
-		equals &= Util.equals(pluginId, roleActivityBindingDefinition.pluginId);
-		equals &= Util.equals(roleId, roleActivityBindingDefinition.roleId);
+		equals &= Util.equals(activityId, activityBindingDefinition.activityId);
+		equals &= Util.equals(pluginId, activityBindingDefinition.pluginId);
+		equals &= Util.equals(roleId, activityBindingDefinition.roleId);
 		return equals;
 	}
 

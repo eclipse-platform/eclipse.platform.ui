@@ -20,7 +20,7 @@ abstract class AbstractRoleRegistry implements IRoleRegistry {
 	private IRoleRegistryEvent roleRegistryEvent;
 	private List roleRegistryListeners;
 	
-	protected List roleActivityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List roleDefinitions = Collections.EMPTY_LIST;	
 	
 	protected AbstractRoleRegistry() {
@@ -37,8 +37,8 @@ abstract class AbstractRoleRegistry implements IRoleRegistry {
 			roleRegistryListeners.add(roleRegistryListener);
 	}
 
-	public List getRoleActivityBindingDefinitions() {
-		return roleActivityBindingDefinitions;
+	public List getActivityBindingDefinitions() {
+		return activityBindingDefinitions;
 	}	
 	
 	public List getRoleDefinitions() {

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.roles;
 
-public interface IRoleActivityBindingDefinition extends Comparable {
+public interface IActivityBindingDefinition extends Comparable {
 
 	String getActivityId();
 

@@ -23,6 +23,8 @@ final class Persistence {
 	final static String PACKAGE_BASE = "roles"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$	
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
+	// TODO roleActivityBinding -> activityBinding
+	final static String TAG_ACTIVITY_BINDING = "roleActivityBinding"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
@@ -30,19 +32,18 @@ final class Persistence {
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	final static String TAG_ROLE = "role"; //$NON-NLS-1$	
 	final static String TAG_ROLE_ID = "roleId"; //$NON-NLS-1$	
-	final static String TAG_ROLE_ACTIVITY_BINDING = "roleActivityBinding"; //$NON-NLS-1$	
 
-	static IRoleActivityBindingDefinition readRoleActivityBindingDefinition(IMemento memento, String pluginIdOverride) {
+	static IActivityBindingDefinition readActivityBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		String roleId = memento.getString(TAG_ROLE_ID);
-		return new RoleActivityBindingDefinition(activityId, pluginId, roleId);
+		return new ActivityBindingDefinition(activityId, pluginId, roleId);
 	}
 
-	static List readRoleActivityBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
+	static List readActivityBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -54,7 +55,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readRoleActivityBindingDefinition(mementos[i], pluginIdOverride));
+			list.add(readActivityBindingDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}	
@@ -87,29 +88,29 @@ final class Persistence {
 		return list;				
 	}	
 
-	static void writeRoleActivityBindingDefinition(IMemento memento, IRoleActivityBindingDefinition roleActivityBindingDefinition) {
-		if (memento == null || roleActivityBindingDefinition == null)
+	static void writeActivityBindingDefinition(IMemento memento, IActivityBindingDefinition activityBindingDefinition) {
+		if (memento == null || activityBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_ACTIVITY_ID, roleActivityBindingDefinition.getActivityId());
-		memento.putString(TAG_PLUGIN_ID, roleActivityBindingDefinition.getPluginId());
-		memento.putString(TAG_ROLE_ID, roleActivityBindingDefinition.getRoleId());
+		memento.putString(TAG_ACTIVITY_ID, activityBindingDefinition.getActivityId());
+		memento.putString(TAG_PLUGIN_ID, activityBindingDefinition.getPluginId());
+		memento.putString(TAG_ROLE_ID, activityBindingDefinition.getRoleId());
 	}
 
-	static void writeRoleActivityBindingDefinitions(IMemento memento, String name, List roleActivityBindingDefinitions) {
-		if (memento == null || name == null || roleActivityBindingDefinitions == null)
+	static void writeActivityBindingDefinitions(IMemento memento, String name, List activityBindingDefinitions) {
+		if (memento == null || name == null || activityBindingDefinitions == null)
 			throw new NullPointerException();
 		
-		roleActivityBindingDefinitions = new ArrayList(roleActivityBindingDefinitions);
-		Iterator iterator = roleActivityBindingDefinitions.iterator();
+		activityBindingDefinitions = new ArrayList(activityBindingDefinitions);
+		Iterator iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IRoleActivityBindingDefinition.class);
+			Util.assertInstance(iterator.next(), IActivityBindingDefinition.class);
 
-		iterator = roleActivityBindingDefinitions.iterator();
+		iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeRoleActivityBindingDefinition(memento.createChild(name), (IRoleActivityBindingDefinition) iterator.next());
+			writeActivityBindingDefinition(memento.createChild(name), (IActivityBindingDefinition) iterator.next());
 	}	
 	
 	static void writeRoleDefinition(IMemento memento, IRoleDefinition roleDefinition) {

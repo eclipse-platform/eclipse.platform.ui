@@ -136,20 +136,20 @@ public final class RoleManager implements IRoleManager {
 				iterator.remove();
 		}
 
-		Map roleActivityBindingDefinitionsByRoleId = RoleActivityBindingDefinition.roleActivityBindingDefinitionsByRoleId(roleRegistry.getRoleActivityBindingDefinitions());
+		Map activityBindingDefinitionsByRoleId = ActivityBindingDefinition.activityBindingDefinitionsByRoleId(roleRegistry.getActivityBindingDefinitions());
 		Map activityBindingsByRoleId = new HashMap();		
 
-		for (Iterator iterator = roleActivityBindingDefinitionsByRoleId.entrySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = activityBindingDefinitionsByRoleId.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String roleId = (String) entry.getKey();
 			
 			if (roleDefinitionsById.containsKey(roleId)) {			
-				Collection roleActivityBindingDefinitions = (Collection) entry.getValue();
+				Collection activityBindingDefinitions = (Collection) entry.getValue();
 				
-				if (roleActivityBindingDefinitions != null)
-					for (Iterator iterator2 = roleActivityBindingDefinitions.iterator(); iterator2.hasNext();) {
-						IRoleActivityBindingDefinition roleActivityBindingDefinition = (IRoleActivityBindingDefinition) iterator2.next();
-						String activityId = roleActivityBindingDefinition.getActivityId();
+				if (activityBindingDefinitions != null)
+					for (Iterator iterator2 = activityBindingDefinitions.iterator(); iterator2.hasNext();) {
+						IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator2.next();
+						String activityId = activityBindingDefinition.getActivityId();
 					
 						if (activityId != null && activityId.length() != 0) {
 							IActivityBinding activityBinding = new ActivityBinding(activityId);	

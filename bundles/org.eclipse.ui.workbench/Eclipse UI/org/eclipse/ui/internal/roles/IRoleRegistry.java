@@ -17,7 +17,7 @@ public interface IRoleRegistry {
 
 	void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 
-	List getRoleActivityBindingDefinitions();
+	List getActivityBindingDefinitions();
 
 	List getRoleDefinitions();
 	

@@ -108,36 +108,36 @@
             id="org.eclipse.team"
             name="Team">
       </activity>           
-      <activityPatternBinding
+      <patternBinding
             activityId="org.eclipse.debugging"
             inclusive="true"
             pattern="org.eclipse.debug.*">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </patternBinding>
+      <patternBinding
             activityId="org.eclipse.externalTools"
             inclusive="true"
             pattern="org.eclipse.ant.*">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </patternBinding>
+      <patternBinding
             activityId="org.eclipse.externalTools"
             inclusive="true"
             pattern="org.eclipse.ui.externaltools.*">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </patternBinding>
+      <patternBinding
             activityId="org.eclipse.javaDevelopment"
             inclusive="true"
             pattern="org.eclipse.jdt.*">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </patternBinding>
+      <patternBinding
             activityId="org.eclipse.plugInDevelopment"
             inclusive="true"
             pattern="org.eclipse.pde.*">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </patternBinding>
+      <patternBinding
             activityId="org.eclipse.team"
             inclusive="true"
             pattern="org.eclipse.team.*">
-      </activityPatternBinding>
+      </patternBinding>
    </extension>
    <extension
          point="org.eclipse.ui.roles">
@@ -161,26 +161,26 @@
             id="org.eclipse.roles.teamRole"
             name="Team">
       </role>
-      <roleActivityBinding
+      <activityBinding
             activityId="org.eclipse.externalTools"
             roleId="org.eclipse.roles.externalToolsRole">
-      </roleActivityBinding>
-      <roleActivityBinding
+      </activityBinding>
+      <activityBinding
             activityId="org.eclipse.debugging"
             roleId="org.eclipse.roles.javaRole">
-      </roleActivityBinding>   
-      <roleActivityBinding
+      </activityBinding>   
+      <activityBinding
             activityId="org.eclipse.javaDevelopment"
             roleId="org.eclipse.roles.javaRole">
-      </roleActivityBinding>      
-      <roleActivityBinding
+      </activityBinding>      
+      <activityBinding
             activityId="org.eclipse.plugInDevelopment"
             roleId="org.eclipse.roles.pdeRole">
-      </roleActivityBinding>
-      <roleActivityBinding
+      </activityBinding>
+      <activityBinding
             activityId="org.eclipse.team"
             roleId="org.eclipse.roles.teamRole">
-      </roleActivityBinding>
+      </activityBinding>
    </extension>   
    <extension
          point="org.eclipse.ui.commands">
