@@ -173,6 +173,10 @@ public class UpdateListener extends CommandOutputListener {
 				} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 					if (updateMessageListener != null) {
 						String filename = message.substring(0, message.length() - 31);
+						// CVS version 12 fix - filenames are returned inside quotes
+						// Fixes bug 49056
+						if (filename.startsWith("`") && filename.endsWith("'")) //$NON-NLS-1$ //$NON-NLS-2$
+							filename = filename.substring(1,filename.length()-1);
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 					return OK;
