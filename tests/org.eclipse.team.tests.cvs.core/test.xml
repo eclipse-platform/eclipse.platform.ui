@@ -54,14 +54,14 @@
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=${performance-loop-count}"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
-      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
       <property name="classname" 
                 value="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
     </ant>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=${performance-loop-count}"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
-      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
       <property name="classname" 
                 value="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
     </ant>
@@ -86,7 +86,7 @@
   <target name="performance" depends="init,performance-suite,cleanup">
     <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
       <property name="includes" value="org*.xml"/>
-      <property name="output-file" value="${plugin-name}.xml"/>
+      <property name="output-file" value="org.eclipse.team.tests.cvs.perf.xml"/>
     </ant>
   </target>
 
