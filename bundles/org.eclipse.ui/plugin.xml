@@ -251,12 +251,14 @@
    	<page id="org.eclipse.ui.propertypages.project.reference"
    	      name="%PropertyPages.project.reference"
           objectClass="org.eclipse.core.resources.IProject"
-          class="org.eclipse.ui.internal.dialogs.ProjectReferencePage">
+          class="org.eclipse.ui.internal.dialogs.ProjectReferencePage"
+          adaptable="true">
    	</page>
    	<page id="org.eclipse.ui.propertypages.info.file"
    	      name="%PropertyPages.info.file"
           objectClass="org.eclipse.core.resources.IResource"
-          class="org.eclipse.ui.internal.dialogs.ResourceInfoPage">
+          class="org.eclipse.ui.internal.dialogs.ResourceInfoPage"
+          adaptable="true">
    	</page>
 </extension>
 
