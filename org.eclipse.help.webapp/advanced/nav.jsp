@@ -32,7 +32,7 @@ FRAMESET {
 	border-top:2px groove;
 	border-left:2px groove;
 	border-right:3px ridge Window;
-	border-bottom:3px ridge Window;
+	border-bottom:2px inset ThreeDShadow;
 }
 <%
 }

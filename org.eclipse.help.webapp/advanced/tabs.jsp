@@ -17,29 +17,35 @@
 <title><%=ServletResources.getString("Tabs", request)%></title>
     
 <style type="text/css">
- 
+
+HTML {
+	border-top:1px solid ThreeDShadow;
+}
+
 BODY {
 	margin:0px;
 	padding:0px;
-	background:WindowText;
+	background:<%=prefs.getToolbarBackground()%>;
 	height:100%;
 }
 
 /* tabs at the bottom */
 .tab {
-	background:<%=prefs.getToolbarBackground()%>;
 	margin:0px;
 	padding:0px;
- 	border-top:1px solid ThreeDShadow;
+ 	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
+	border:1px solid <%=prefs.getToolbarBackground()%>;
 	cursor:default;
 	align:center;
 }
 
 .pressed {
-	background:<%=prefs.getViewBackground()%>;
 	margin:0px;
 	padding:0px;
-	border-top:1px <%=prefs.getViewBackground()%> solid;
+	border-top:1px solid Window;
+	border:1px solid Window;
+	border-top:1px solid <%=prefs.getToolbarBackground()%>;
+	border:1px solid Window;
 	cursor:default;
 	align:center;
 }
