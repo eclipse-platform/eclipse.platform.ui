@@ -10,42 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.core;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.SortedMap;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.core.DeploymentProviderManager;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.StringMatcher;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.core.*;
 
 /**
  * The Team class provides a global point of reference for the global ignore set
@@ -73,9 +43,6 @@ public final class Team {
 	// The ignore list that is read at startup from the persisted file
 	private static SortedMap globalIgnore, pluginIgnore;
 	private static StringMatcher[] ignoreMatchers;
-
-	// Deployment provider manager
-	private static IDeploymentProviderManager deploymentManager;
 	
 	private static class FileTypeInfo implements IFileTypeInfo {
 		private String extension;
@@ -533,7 +500,6 @@ public final class Team {
 				}
 			}
 		}, IResourceChangeEvent.POST_CHANGE);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener((DeploymentProviderManager)getDeploymentManager(), IResourceChangeEvent.PRE_AUTO_BUILD);
 	}
 	
 	/**
@@ -603,17 +569,4 @@ public final class Team {
 		initializePluginPatterns(pTypes, gTypes);
 		return getFileTypeInfo(gTypes);
 	}
-	
-	/**
-	 * Returns the deployment manager. 
-	 * @return the deployment manager
-	 * @since 3.0
-	 */
-	public static IDeploymentProviderManager getDeploymentManager() {
-		if(deploymentManager == null) {
-			deploymentManager = new DeploymentProviderManager();
-		}
-		return deploymentManager;
-	}
-	
 }
