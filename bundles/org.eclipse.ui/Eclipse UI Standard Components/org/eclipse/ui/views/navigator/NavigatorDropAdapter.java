@@ -53,6 +53,11 @@ public class NavigatorDropAdapter
 	 * within the same widget.
 	 */
 	private IResource[] sourceResources;
+	
+	/**
+	 * The last valid operation.
+	 */
+	private int lastValidOperation = DND.DROP_NONE;
 
 	/**
 	 * Constructs a new drop adapter.
@@ -289,7 +294,7 @@ public class NavigatorDropAdapter
 	 */
 	private IStatus performFileDrop(Object data) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
-		mergeStatus(problems, validateTarget(getCurrentTarget()));
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		String[] names = (String[]) data;
@@ -304,7 +309,7 @@ public class NavigatorDropAdapter
 	 */
 	private IStatus performResourceCopy(Shell shell, Object data) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
-		mergeStatus(problems, validateTarget(getCurrentTarget()));
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		IResource[] sources = (IResource[]) data;
@@ -319,7 +324,7 @@ public class NavigatorDropAdapter
 	 */
 	private IStatus performResourceMove(Object data) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
-		mergeStatus(problems, validateTarget(getCurrentTarget()));
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		IResource[] sources = (IResource[]) data;
@@ -371,34 +376,19 @@ public class NavigatorDropAdapter
 		Object target,
 		int dragOperation,
 		TransferData transferType) {
+		if (dragOperation != DND.DROP_NONE) {
+			lastValidOperation = dragOperation;
+		}
 		if (super.validateDrop(target, dragOperation, transferType)) {
 			return true;
 		}
-		if (!validateTarget(target).isOK()) {
-			return false;
-		}
-		IContainer destination = getActualTarget((IResource) target);
-		if (FileTransfer.getInstance().isSupportedType(transferType)) {
-			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
-			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
-			return copyOperation.validateImportDestination(destination, sourceNames) == null;
-		} else if (sourceResources != null) {
-			CopyFilesAndFoldersOperation operation;
-			if (dragOperation == DND.DROP_COPY) {
-				operation = new CopyFilesAndFoldersOperation(getShell());
-			}
-			else {
-				operation = new MoveFilesAndFoldersOperation(getShell());
-			}
-			return operation.validateDestination(destination, sourceResources) == null;			
-		}		
-		return true;
+		return validateTarget(target, transferType).isOK();
 	}
 	
 	/**
 	 * Ensures that the drop target meets certain criteria
 	 */
-	private IStatus validateTarget(Object target) {
+	private IStatus validateTarget(Object target, TransferData transferType) {
 		if (!(target instanceof IResource)) {
 			return info(ResourceNavigatorMessages.getString("DropAdapter.targetMustBeResource")); //$NON-NLS-1$
 		}
@@ -409,6 +399,26 @@ public class NavigatorDropAdapter
 		IContainer destination = getActualTarget(resource);
 		if (destination.getType() == IResource.ROOT) {
 			return error(ResourceNavigatorMessages.getString("DropAdapter.resourcesCanNotBeSiblings")); //$NON-NLS-1$
+		}
+		String message = null;
+		// file import?
+		if (FileTransfer.getInstance().isSupportedType(transferType)) {
+			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
+			message = copyOperation.validateImportDestination(destination, sourceNames);
+		} // drag within same viewer?
+		else if (sourceResources != null) {
+			CopyFilesAndFoldersOperation operation;
+			if (lastValidOperation == DND.DROP_COPY) {
+				operation = new CopyFilesAndFoldersOperation(getShell());
+			}
+			else {
+				operation = new MoveFilesAndFoldersOperation(getShell());
+			}
+			message = operation.validateDestination(destination, sourceResources);
+		}		
+		if (message != null) {
+			return error(message);
 		}
 		return ok();
 	}
