@@ -551,12 +551,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (document != null)
 				document.addDocumentListener(fDocumentListener);		
 				
-			fProposalShell.setVisible(true);
+			/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
+			 * on GTK, setVisible and such may run the event loop
+			 * (see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=47511)
+			 * Since the user may have already canceled the popup or selected
+			 * an entry (ESC or RETURN), we have to double check whether
+			 * the table is still okToUse. See comments below
+			 */
+			fProposalShell.setVisible(true); // may run event loop on GTK
 			// XXX: transfer focus since no verify key listern can be attached
-			if (!fContentAssistSubjectAdapter.supportsVerifyKeyListener())
-				fProposalShell.setFocus();
+			if (!fContentAssistSubjectAdapter.supportsVerifyKeyListener() && Helper.okToUse(fProposalShell))
+				fProposalShell.setFocus(); // may run event loop on GTK ??
 			
-			if (fAdditionalInfoController != null) {
+			if (fAdditionalInfoController != null && Helper.okToUse(fProposalTable)) {
 				fAdditionalInfoController.install(fProposalTable);		
 				fAdditionalInfoController.handleTableSelectionChanged();
 			}
