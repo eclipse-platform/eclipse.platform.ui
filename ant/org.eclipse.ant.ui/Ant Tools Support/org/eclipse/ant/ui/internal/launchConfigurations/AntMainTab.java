@@ -34,6 +34,10 @@ public class AntMainTab extends ExternalToolsMainTab {
 
 	protected Button captureOutputButton;
 	
+	public AntMainTab(boolean runInBackgroundDefaultValue) {
+		super(runInBackgroundDefaultValue);
+	}
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
