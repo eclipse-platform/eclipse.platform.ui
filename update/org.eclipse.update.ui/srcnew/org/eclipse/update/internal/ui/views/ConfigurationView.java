@@ -71,7 +71,7 @@ public class ConfigurationView
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
 	private Action propertiesAction;
-	private SiteStateAction2 siteStateAction;
+	private SiteStateAction siteStateAction;
 	private Action installationHistoryAction;
 	private Action newExtensionLocationAction;
 	private FindUpdatesAction findUpdatesAction;
@@ -469,7 +469,7 @@ public class ConfigurationView
 
 		featureStateAction = new FeatureStateAction();
 
-		siteStateAction = new SiteStateAction2();
+		siteStateAction = new SiteStateAction();
 
 		revertAction = new RevertConfigurationAction("Revert...");
 		WorkbenchHelp.setHelp(

@@ -28,10 +28,10 @@ import org.eclipse.update.operations.*;
  * Window>Preferences>Java>Code Generation.
  */
 
-public class SiteStateAction2 extends Action {
+public class SiteStateAction extends Action {
 	private IConfiguredSite site;
 
-	public SiteStateAction2() {
+	public SiteStateAction() {
 	}
 
 	public void setSite(IConfiguredSite site) {
