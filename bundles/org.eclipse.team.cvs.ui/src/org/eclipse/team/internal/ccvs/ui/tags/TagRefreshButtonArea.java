@@ -120,7 +120,7 @@ public class TagRefreshButtonArea extends DialogArea {
 								fMessageLabel.setText(background && tags.length == 0 ? Policy.bind("TagRefreshButtonArea.7") : ""); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						});
-						if (!background && promptForBestEffort()) {
+						if (!background && tags.length == 0 && promptForBestEffort()) {
 							tagSource.refresh(true, Policy.subMonitorFor(monitor, 30));
 						}
 					} catch (TeamException e) {
