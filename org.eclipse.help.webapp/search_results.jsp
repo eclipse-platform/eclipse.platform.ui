@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Search" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -27,10 +27,16 @@
 <body onload="adjustMargins()" >
  
 <%
-	// Generate the results
-	Search search = (Search)application.getAttribute("org.eclipse.help.search");
-	if (search != null)
-		search.generateResults(request.getQueryString(), out);
+	if(request.getParameter("searchWord")!=null){
+		// Generate the results
+		Search search = (Search)application.getAttribute("org.eclipse.help.search");
+		if (search != null)
+			search.generateResults(request.getQueryString(), out);
+	}else{
+%>
+		<%=WebappResources.getString("doSearch", null)%>
+<%
+	}
 %>
 
 </body>
