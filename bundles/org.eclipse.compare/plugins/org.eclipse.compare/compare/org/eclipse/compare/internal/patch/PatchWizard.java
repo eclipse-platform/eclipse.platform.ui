@@ -34,7 +34,6 @@ import org.eclipse.compare.internal.*;
 	private boolean fHasNewDialogSettings;
 	
 	private InputPatchPage fPatchWizardPage;
-	private PreviewPatchPage fPreviewPatchPage;
 	
 	private Patcher fPatcher;
 	private IResource fTarget;
@@ -97,7 +96,7 @@ import org.eclipse.compare.internal.*;
 		super.addPages();
 		
 		addPage(fPatchWizardPage= new InputPatchPage(this));
-		addPage(fPreviewPatchPage= new PreviewPatchPage(this));
+		addPage(new PreviewPatchPage(this));
 	}
 	
 	/* (non-Javadoc)

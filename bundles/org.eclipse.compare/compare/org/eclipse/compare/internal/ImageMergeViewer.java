@@ -32,7 +32,6 @@ public class ImageMergeViewer extends ContentMergeViewer {
 	
 	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ImageMergeViewerResources"; //$NON-NLS-1$
 		
-	private Object fAncestorImage;
 	private Object fLeftImage;
 	private Object fRightImage;
 
@@ -53,7 +52,6 @@ public class ImageMergeViewer extends ContentMergeViewer {
 
 	protected void updateContent(Object ancestor, Object left, Object right) {
 		
-		fAncestorImage= ancestor;
 		setInput(fAncestor, ancestor);
 		
 		fLeftImage= left;

@@ -49,8 +49,8 @@ public class CompareViewerPane extends ViewForm {
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 * </ul>
 	 */		
-	public CompareViewerPane(Composite parent, int style) {
-		super(parent, style);
+	public CompareViewerPane(Composite container, int style) {
+		super(container, style);
 		
 		marginWidth= 0;
 		marginHeight= 0;

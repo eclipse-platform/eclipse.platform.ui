@@ -14,8 +14,6 @@ package org.eclipse.compare.rangedifferencer;
 
 	static final int INSERT= 0;
 	static final int DELETE= 1;
-	static final int CHANGE= 2;
-	static final int ERROR= 3;
 
 	LinkedRangeDifference fNext;
 

@@ -53,7 +53,6 @@ public class CompareWithPatchAction implements IActionDelegate {
 	}
 	
 	private ISelection fSelection;
-	private boolean fSavedFiles;
 	
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -86,7 +85,6 @@ public class CompareWithPatchAction implements IActionDelegate {
 			workspace.setDescription(description);
 			try {
 				new ProgressMonitorDialog(shell).run(false, false, createRunnable());
-				fSavedFiles= true;
 			} finally {
 				description.setAutoBuilding(autoBuild);
 				workspace.setDescription(description);

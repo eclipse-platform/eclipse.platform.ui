@@ -46,7 +46,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
 	private IContentChangeListener fContentChangedListener;
-	private ICompareInputChangeListener fThreeWayInputChangedListener;
 	private CompareViewerSwitchingPane fParent;
 		
 	/**
@@ -85,7 +84,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				StructureDiffViewer.this.contentChanged(changed);
 			}
 		};
-		fThreeWayInputChangedListener= new ICompareInputChangeListener() {
+		new ICompareInputChangeListener() {
 			public void compareInputChanged(ICompareInput input) {
 				StructureDiffViewer.this.compareInputChanged(input);
 			}
@@ -162,7 +161,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		compareInputChanged(null);
 		
 		fContentChangedListener= null;
-		fThreeWayInputChangedListener= null;
 				
 		super.handleDispose(event);
 	}

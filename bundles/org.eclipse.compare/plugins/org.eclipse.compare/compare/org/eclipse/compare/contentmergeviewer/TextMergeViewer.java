@@ -207,10 +207,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private HashMap fNewLeftRanges= new HashMap();
 	private HashMap fNewRightRanges= new HashMap();
 	
-	private Object fAncestorInput;
-	private Object fLeftInput;
-	private Object fRightInput;
-	
 	private MergeSourceViewer fAncestor;
 	private MergeSourceViewer fLeft;
 	private MergeSourceViewer fRight;
@@ -218,9 +214,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private int fLeftLineCount;
 	private int fRightLineCount;
 	
-	private boolean fLeftContentsChanged;
-	private boolean fRightContentsChanged;
-
 	private boolean fInScrolling;
 	
 	private int fPts[]= new int[8];	// scratch area for polygon drawing
@@ -1575,9 +1568,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAllDiffs= null;
 		fEndOfDocReached= false;
 		
-		fLeftContentsChanged= false;
-		fRightContentsChanged= false;
-		
 		CompareConfiguration cc= getCompareConfiguration();
 		IMergeViewerContentProvider cp= getMergeContentProvider();
 		
@@ -1588,15 +1578,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fLeft.setEditable(leftEditable);
 																					
 		// set new documents
-		fLeftInput= left;
 		setDocument(fLeft, 'L', left);
 		fLeftLineCount= fLeft.getLineCount();
-
-		fRightInput= right;
 		setDocument(fRight, 'R', right);
 		fRightLineCount= fRight.getLineCount();
 		
-		fAncestorInput= ancestor;
 		setDocument(fAncestor, 'A', ancestor);
 					
 		doDiff();
@@ -1678,11 +1664,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IDocument doc= e.getDocument();
 		
 		if (doc == fLeft.getDocument()) {
-			fLeftContentsChanged= true;
 			setLeftDirty(true);
 		} else if (doc == fRight.getDocument()) {
 			setRightDirty(true);
-			fRightContentsChanged= true;
 		}
 
 		updateLines(doc);
@@ -3813,7 +3797,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			fRightLineCount= fRight.getLineCount();
 			setRightDirty(true);
-			fRightContentsChanged= false;
 		} else {
 			if (fRight.getEnabled()) {
 				// copy text
@@ -3827,7 +3810,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			fLeftLineCount= fLeft.getLineCount();
 			setLeftDirty(true);
-			fLeftContentsChanged= false;
 		}
 		doDiff();
 		invalidateLines();

@@ -239,15 +239,15 @@ public class DiffTreeViewer extends TreeViewer {
 		mm.setRemoveAllWhenShown(true);
 		mm.addMenuListener(
 			new IMenuListener() {
-				public void menuAboutToShow(IMenuManager mm) {
-					fillContextMenu(mm);
-					if (mm.isEmpty()) {
+				public void menuAboutToShow(IMenuManager mm2) {
+					fillContextMenu(mm2);
+					if (mm2.isEmpty()) {
 						if (fEmptyMenuAction == null) {
 							fEmptyMenuAction=
 								new Action(Utilities.getString(fBundle, "emptyMenuItem")) {};	//$NON-NLS-1$
 							fEmptyMenuAction.setEnabled(false);
 						}
-						mm.add(fEmptyMenuAction);
+						mm2.add(fEmptyMenuAction);
 					}
 				}
 			}
