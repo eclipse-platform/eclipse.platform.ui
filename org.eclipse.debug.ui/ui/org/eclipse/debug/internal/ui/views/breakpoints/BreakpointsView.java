@@ -481,17 +481,25 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			enabled = false;
 		}
 		Tree tree = getCheckboxViewer().getTree();
-		TreeItem[] items = tree.getItems();
-		for (int i = 0; i < items.length; i++) {
-			items[i].setBackground(color);
-			items[i].setGrayed(!enabled);
-		}
+		updateTreeItems(tree.getItems(), color, !enabled);
 		tree.setBackground(color);
 		if (enabled) {
 			setContentDescription(""); //$NON-NLS-1$
 		} else {
 			setContentDescription(DebugUIViewsMessages.getString("BreakpointsView.19")); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Recursively sets the color and grayed state of the given tree items
+	 */
+	private void updateTreeItems(TreeItem[] items, Color color, boolean gray) {
+	    for (int i = 0; i < items.length; i++) {
+            TreeItem item = items[i];
+            item.setBackground(color);
+            item.setGrayed(gray);
+            updateTreeItems(item.getItems(), color, gray);
+        }
 	}
 	
 }
