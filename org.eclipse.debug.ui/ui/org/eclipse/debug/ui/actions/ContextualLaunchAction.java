@@ -43,6 +43,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -187,7 +188,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			try {
-				if (isApplicable(ext, context)) {
+				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
 				}
 			} catch (CoreException e) {
