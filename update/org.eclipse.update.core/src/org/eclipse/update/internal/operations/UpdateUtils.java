@@ -46,10 +46,7 @@ public class UpdateUtils {
 
 
 	public static void logException(Throwable e) {
-		logException(e, true);
-	}
-
-	public static void logException(Throwable e, boolean showErrorDialog) {
+		
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
@@ -63,20 +60,13 @@ public class UpdateUtils {
 				message = e.toString();
 			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		}
-		log(status, showErrorDialog);
+		log(status);
 	}
 
-	public static void log(IStatus status, boolean showErrorDialog) {
+	public static void log(IStatus status) {
 		if (status.getSeverity() != IStatus.INFO) {
-//			if (showErrorDialog)
-//				ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
-			//ResourcesPlugin.getPlugin().getLog().log(status);
-// Should log on the update plugin's log
-//			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 			UpdateCore.getPlugin().getLog().log(status);
-		} else {
-//			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
-		}
+		} 
 	}
 
 	public static IFeature[] searchSite(String featureId, IConfiguredSite site, boolean onlyConfigured) throws CoreException {
@@ -315,6 +305,11 @@ public class UpdateUtils {
 				getSiteWithFeature(config, affinityID);
 			if (affinitySite != null)
 				return affinitySite;
+		} else {
+			// if this is a patch, collocate with the feature
+			IFeature patchedFeature = getPatchedFeature(newFeature);
+			if (patchedFeature != null)
+				return getSiteWithFeature(config, patchedFeature.getVersionedIdentifier().getIdentifier());
 		}
 		return null;
 	}

@@ -41,7 +41,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private Button addButton;
 	private Button deleteButton;
 	private HashSet added;
-	private JobTargetSites targetSites;
 
 	class JobsContentProvider
 		extends DefaultContentProvider
@@ -73,8 +72,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 					? UpdateUIImages.DESC_EFIX_OBJ
 					: UpdateUIImages.DESC_FEATURE_OBJ;
 			int flags = 0;
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-			if (jobSite == null || jobSite.targetSite == null)
+			if (job.getTargetSite() == null)
 				flags = UpdateLabelProvider.F_ERROR;
 			return provider.get(base, flags);
 		}
@@ -114,6 +112,15 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			if (added == null)
 				added = new HashSet();
 			added.add(csite);
+			
+			// set the site as target for all jobs without a target
+			for (int i=0; jobs != null && i<jobs.length; i++)
+				if (jobs[i].getTargetSite() == null && getSiteVisibility(csite, jobs[i])) {
+					jobs[i].setTargetSite(csite);
+				}
+
+			jobViewer.refresh();
+			
 			siteViewer.setSelection(new StructuredSelection(csite));
 			siteViewer.getControl().setFocus();
 		}
@@ -122,14 +129,23 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			siteViewer.remove(csite);
 			if (added != null)
 				added.remove(csite);
-			IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
-			if (job != null) {
-				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				IConfiguredSite defaultSite = targetSites.computeTargetSite(jobSite);
-				if (defaultSite != null)
-					siteViewer.setSelection(new StructuredSelection(defaultSite));
-			}
-			siteViewer.getControl().setFocus();
+			
+			// remove the target site for all jobs that use it
+			// set the site as target for all jobs without a target
+			boolean refreshJobs = false;
+			for (int i=0; jobs != null && i<jobs.length; i++)
+				if (jobs[i].getTargetSite() == csite) {
+					jobs[i].setTargetSite(null);
+					refreshJobs = true;
+				}
+				
+			pageChanged();
+			
+			jobViewer.refresh();
+			if (refreshJobs) {
+				jobViewer.getControl().setFocus();
+			} else
+				siteViewer.getControl().setFocus();
 		}
 	}
 
@@ -143,12 +159,10 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
-		targetSites = new JobTargetSites(config);
 	}
 
 	public void setJobs(IInstallFeatureOperation[] jobs) {
 		this.jobs = jobs;
-		targetSites.setJobs(jobs);
 	}
 
 	public void dispose() {
@@ -246,10 +260,10 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 				if (job != null) {
 					siteViewer.setInput(job);
-					JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-					addButton.setEnabled(jobSite.affinitySite == null);
-					if (jobSite.targetSite != null) {
-						siteViewer.setSelection(new StructuredSelection(jobSite.targetSite));
+					IConfiguredSite affinitySite = UpdateUtils.getAffinitySite(config, job.getFeature());
+					addButton.setEnabled(affinitySite == null);
+					if (job.getTargetSite() != null) {
+						siteViewer.setSelection(new StructuredSelection(job.getTargetSite()));
 					}
 				}
 			}
@@ -266,8 +280,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		siteViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
-				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				return targetSites.getSiteVisibility((IConfiguredSite) obj, jobSite);
+				return getSiteVisibility((IConfiguredSite) obj, job);
 			}
 		});
 		siteViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -297,7 +310,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	public void setVisible(boolean visible) {
 		if (visible) {
-			targetSites.computeDefaultTargetSites();
+			initializeDefaultTargetSites();
 			jobViewer.setInput(jobs);
 			if (jobViewer.getSelection().isEmpty() && jobs.length > 0)
 				jobViewer.setSelection(new StructuredSelection(jobs[0]));
@@ -318,9 +331,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
 		IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
 		if (job != null) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			if (site != null)
-				jobSite.targetSite = site;
+				job.setTargetSite(site);
 			pageChanged();
 		}
 		updateStatus(site);
@@ -338,7 +350,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void removeSelection() throws CoreException {
 		IStructuredSelection selection = (IStructuredSelection) siteViewer.getSelection();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			config.removeConfiguredSite((IConfiguredSite) iter.next());
+			IConfiguredSite targetSite = (IConfiguredSite) iter.next();
+			config.removeConfiguredSite(targetSite);
 		}
 	}
 
@@ -389,8 +402,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private long computeRequiredSizeFor(IConfiguredSite site) {
 		long totalSize = 0;
 		for (int i = 0; i < jobs.length; i++) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
-			if (site.equals(jobSite.targetSite)) {
+			if (site.equals(jobs[i].getTargetSite())) {
 				long jobSize = site.getSite().getInstallSizeFor(jobs[i].getFeature());
 				if (jobSize == -1)
 					return -1;
@@ -402,26 +414,41 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	private void pageChanged() {
 		boolean empty = false;
-		for (Iterator enum = targetSites.keySet().iterator(); enum.hasNext();) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(enum.next());
-			if (jobSite.targetSite == null) {
+		for (int i=0; jobs!=null && i<jobs.length; i++) {
+			if (jobs[i].getTargetSite() == null) {
 				empty = true;
 				break;
 			}
-			IFeature feature = jobSite.job.getFeature();
+		
+			IFeature feature = jobs[i].getFeature();
 			if (feature.isPatch()) {
 				// Patches must go together with the features
 				// they are patching.
-				JobTargetSite patchedSite = targetSites.findPatchedFeature(feature);
-				if (patchedSite != null
-					&& jobSite.targetSite != null
-					&& patchedSite.targetSite != null
-					&& jobSite.targetSite.equals(patchedSite.targetSite) == false) {
-					UpdateUI.getFormattedMessage(
-						"IntallWizard.TargetPage.patchError", //$NON-NLS-1$
+				
+				// Check current jobs
+				IInstallFeatureOperation patchedFeatureJob = findPatchedFeature(feature);
+				if (patchedFeatureJob != null
+					&& patchedFeatureJob.getTargetSite() != null
+					&& !jobs[i].getTargetSite().equals(patchedFeatureJob.getTargetSite())) {
+					String msg = UpdateUI.getFormattedMessage(
+						"InstallWizard.TargetPage.patchError", //$NON-NLS-1$
 						new String[] {
 							feature.getLabel(),
-							patchedSite.job.getFeature().getLabel()});
+							patchedFeatureJob.getFeature().getLabel()});
+					setErrorMessage(msg);
+					setPageComplete(false);
+					return;
+				}
+				// Check insalled features
+				IFeature patchedFeature = UpdateUtils.getPatchedFeature(feature);
+				if (patchedFeature != null  
+					&& !jobs[i].getTargetSite().equals(feature.getSite().getCurrentConfiguredSite())) {
+					String msg = UpdateUI.getFormattedMessage(
+							"InstallWizard.TargetPage.patchError", //$NON-NLS-1$
+							new String[] {
+								feature.getLabel(),
+								patchedFeature.getLabel()});
+					setErrorMessage(msg);
 					setPageComplete(false);
 					return;
 				}
@@ -430,24 +457,74 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		verifyNotEmpty(empty);
 	}
 	
-	public IConfiguredSite getTargetSite(IInstallFeatureOperation job) {
-		return targetSites.getTargetSite(job);
-	}
-	
-	public JobTargetSite[] getTargetSites() {
-		JobTargetSite[] sites = new JobTargetSite[jobs.length];
-		for (int i = 0; i < jobs.length; i++) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
-			sites[i] = jobSite;
-		}
-		return sites;
-	}
-	
 	void removeAddedSites() {
 		if (added != null) {
-			for (Iterator it = added.iterator(); it.hasNext(); ) 
-				config.removeConfiguredSite((IConfiguredSite) it.next());
+			while (!added.isEmpty()) {
+				Iterator it = added.iterator(); 
+				if (it.hasNext())
+					config.removeConfiguredSite((IConfiguredSite) it.next());
+			}
 		}
 			
+	}
+	
+	private  boolean getSiteVisibility(IConfiguredSite site, IInstallFeatureOperation job) {
+		// Do not allow installing into a non-updateable site
+		if (!site.isUpdatable())
+			return false;
+		
+		// If affinity site is known, only it should be shown
+		IConfiguredSite affinitySite = UpdateUtils.getAffinitySite(config, job.getFeature());
+		if (affinitySite != null) {
+			// Must compare referenced sites because
+			// configured sites themselves may come from 
+			// different configurations
+			return site.getSite().equals(affinitySite.getSite());
+		}
+
+		// Allow installing into any site that is updateable and there is no affinity specified
+		return true;
+	}
+	
+	private void initializeDefaultTargetSites() {
+		for (int i = 0; i < jobs.length; i++) {
+			if (jobs[i].getTargetSite() != null)
+				continue;
+			
+			IConfiguredSite affinitySite =	UpdateUtils.getAffinitySite(config, jobs[i].getFeature());
+			if (affinitySite != null) {
+				jobs[i].setTargetSite(affinitySite);
+				continue;
+			}
+
+			IConfiguredSite defaultSite = UpdateUtils.getDefaultTargetSite(config, jobs[i], false);
+			if (defaultSite != null) {
+				jobs[i].setTargetSite(defaultSite);
+				continue;
+			}
+
+			jobs[i].setTargetSite(getFirstTargetSite(jobs[i]));
+
+		}
+	}
+	
+
+	private IConfiguredSite getFirstTargetSite(IInstallFeatureOperation job) {
+		IConfiguredSite[] sites = config.getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			IConfiguredSite csite = sites[i];
+			if (getSiteVisibility(csite, job)) 
+				return csite;
+		}
+		return null;
+	}
+	
+	public IInstallFeatureOperation findPatchedFeature(IFeature patch) {
+		for (int i=0; i<jobs.length; i++) {
+			IFeature target = jobs[i].getFeature();
+			if (!target.equals(patch) && UpdateUtils.isPatch(target, patch))
+				return jobs[i];
+		}
+		return null;
 	}
 }

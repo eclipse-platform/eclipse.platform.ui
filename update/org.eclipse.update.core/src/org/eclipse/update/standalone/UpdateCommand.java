@@ -131,18 +131,11 @@ public class UpdateCommand extends ScriptedCommand {
 				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.noUpdate", featureId),	null));  //$NON-NLS-1$
 				return false;
 			}
-			JobTargetSite[] jobTargetSites =
-				new JobTargetSite[operations.length];
-			for (int i = 0; i < operations.length; i++) {
-				jobTargetSites[i] = new JobTargetSite();
-				jobTargetSites[i].job = operations[i];
-				jobTargetSites[i].targetSite = operations[i].getTargetSite();
-			}
 
 			// Check for duplication conflicts
 			ArrayList conflicts =
 				DuplicateConflictsValidator.computeDuplicateConflicts(
-					jobTargetSites,
+					operations,
 					getConfiguration());
 			if (conflicts != null) {
 				StandaloneUpdateApplication.exceptionLogged();

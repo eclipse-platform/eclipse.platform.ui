@@ -94,16 +94,7 @@ public class DuplicateConflictsValidator  {
 		IInstallConfiguration config) {
 		Hashtable featureTable = new Hashtable();
 		computePresentState(featureTable, config);
-		computeNewFeatures(jobs, config, featureTable);
-		return computeConflicts(featureTable);
-	}
-
-	public static ArrayList computeDuplicateConflicts(
-		JobTargetSite[] jobSites,
-		IInstallConfiguration config) {
-		Hashtable featureTable = new Hashtable();
-		computePresentState(featureTable, config);
-		computeNewFeatures(jobSites, featureTable);
+		computeNewFeatures(jobs, featureTable);
 		return computeConflicts(featureTable);
 	}
 
@@ -156,27 +147,10 @@ public class DuplicateConflictsValidator  {
 
 	private static void computeNewFeatures(
 		IInstallFeatureOperation[] jobs,
-		IInstallConfiguration config,
 		Hashtable featureTable) {
 		for (int i = 0; i < jobs.length; i++) {
 			IInstallFeatureOperation job = jobs[i];
-			IConfiguredSite targetSite =
-				UpdateUtils.getDefaultTargetSite(config, job);
-			IFeature newFeature = job.getFeature();
-			try {
-				computeNewFeature(newFeature, targetSite, featureTable, null);
-			} catch (CoreException e) {
-			}
-		}
-	}
-
-	private static void computeNewFeatures(
-		JobTargetSite[] jobSites,
-		Hashtable featureTable) {
-		for (int i = 0; i < jobSites.length; i++) {
-			JobTargetSite jobSite = jobSites[i];
-			IInstallFeatureOperation job = jobSite.job;
-			IConfiguredSite targetSite = jobSite.targetSite;
+			IConfiguredSite targetSite = job.getTargetSite();
 			IFeature newFeature = job.getFeature();
 			try {
 				computeNewFeature(newFeature, targetSite, featureTable, null);

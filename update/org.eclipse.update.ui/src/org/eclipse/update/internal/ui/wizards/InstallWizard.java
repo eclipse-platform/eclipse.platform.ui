@@ -87,11 +87,11 @@ public class InstallWizard
 			installCount = 0;
 
 			saveSettings();
-
+			
 			// Check for duplication conflicts
 			ArrayList conflicts =
 				DuplicateConflictsValidator.computeDuplicateConflicts(
-					targetPage.getTargetSites(),
+					selectedJobs,
 					config);
 			if (conflicts != null) {
 				DuplicateConflictsDialog dialog =
@@ -122,13 +122,13 @@ public class InstallWizard
 								optionalFeaturesPage
 									.getUnconfiguredOptionalFeatures(
 									job,
-									targetPage.getTargetSite(job));
+									job.getTargetSite());
 						}
 						IInstallFeatureOperation op =
 							OperationsManager
 								.getOperationFactory()
 								.createInstallOperation(
-								targetPage.getTargetSite(job),
+								job.getTargetSite(),
 								job.getFeature(),
 								optionalFeatures,
 								unconfiguredOptionalFeatures,
