@@ -296,11 +296,17 @@ public class NavigatorDropAdapter
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
-		IContainer target = getActualTarget((IResource) getCurrentTarget());
-		String[] names = (String[]) data;
-		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
-		operation.copyFiles(names, target);
-		
+		final IContainer target = getActualTarget((IResource) getCurrentTarget());
+		final String[] names = (String[]) data;
+		// Run the import operation asynchronously. 
+		// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+		// while the operation executes. Fixes bug 16478.
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
+				operation.copyFiles(names, target);
+			}
+		});
 		return problems;
 	}
 
