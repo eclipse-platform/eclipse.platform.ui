@@ -928,8 +928,11 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public boolean isRunning() {
-		int state = context.getBundle().getState();
-		return state == Bundle.ACTIVE;
+		try {
+			return context.getBundle().getState() == Bundle.ACTIVE;
+		} catch(IllegalStateException e) {
+			return false;
+		}
 	}
 
 	/*
