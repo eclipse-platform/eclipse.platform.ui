@@ -917,7 +917,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty() == IDebugUIConstants.PREF_REUSE_EDITOR) {
+		if (event.getProperty().equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		}
 	}
