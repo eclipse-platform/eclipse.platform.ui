@@ -247,8 +247,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
-		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, true);
-		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);
 		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
 		store.setDefault(ICVSUIConstants.PREF_TEXT_KSUBST, CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION.toMode());
@@ -286,8 +284,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		CVSProviderPlugin.getPlugin().setCvsRshCommand(store.getString(ICVSUIConstants.PREF_CVS_RSH));
 		CVSProviderPlugin.getPlugin().setCvsServer(store.getString(ICVSUIConstants.PREF_CVS_SERVER));
 		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
-		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
-		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));

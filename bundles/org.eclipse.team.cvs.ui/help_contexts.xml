@@ -10,19 +10,66 @@
    	<topic label="Disconnecting from a Repository" href="tasks/tasks-94.htm"/>
    </context>	
 
-   <context  id="tag_configuration_overview" >
-      <description>Configure the branch and version tags that are shown in the workbench. By browing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
-      </description>
-   </context>
+ 	<!-- ********************************** -->
+ 	<!-- TagConfiguration 					-->
+ 	<!-- ********************************** -->
+	
+	<context  id="tag_configuration_overview" >
+   		<description>Configure the branch and version tags that are shown in the workbench. By browing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
+		</description>
+   	</context>
    
     <context  id="tag_configuration_refreshlist" >
       <description>This lists the files that are automatically examined for tags. By default, the .project file	is examined. But in some cases other files may have a more complete tag history and should be examined instead.
       </description>
-   </context>
+   	</context>
    
-   <context  id="tag_configuration_refreshaction" >
+   	<context  id="tag_configuration_refreshaction" >
       <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see don't appear, try changing the list of files to examined via the tag configuration dialog.
       </description>
-   </context>   
+   	</context>
+   	
+ 	<!-- ********************************** -->
+ 	<!-- Preference Pages 					-->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="prune_empty_directories_pref" >
+      <description>Enables pruning of empty directories on update and in the synchronization view. Although pruned directories aren't shown in the workbench there is actually still an empty directory in the repository.
+      </description>
+   	</context>
+   	
+   	<context  id="quietness_level_pref" >
+      <description>Sets the amount of status information CVS prints for a command. In "Somewhat quiet" mode the printing of unimportant informational messages is supressed. The consideration of what is important depends on each command. In "Very quiet" mode all output except what is absolutely necessary to complete the command is suppressed. In "Very Quiet" mode, some cvs servers may not communicate important information about errors that have occured. You may want to consider using "Somewhat quiet" mode instead.
+      </description>
+   	</context>
+   	
+  	<context  id="compression_level_pref" >
+      <description>Sets the compression level on communications with the server if it is supported by the server. Level 1 is minimal compression (very fast/low compression) and level 9 maximum compression (very slow/maximum compression).
+      </description>
+   	</context>
 
+	<context  id="default_keywordmode_pref" >
+      <description>Sets the default keyword substitution mode to use for text files.
+      </description>
+   	</context>
+   	
+	<context  id="comms_timeout_pref" >
+      <description>Sets the amount of time in seconds to wait before timing out from a connection to the CVS server.
+      </description>
+   	</context>
+   	
+   	<context  id="consider_content_pref" >
+      <description>Sets the default compare method for comparing and synchronizing CVS resources. By default timestamps are used to compare CVS files, and this is by far the fastest method. However, in some cases a more accurate comparison can be achieved by comparing file content. This setting can be toggled from within a compare editor or the synchronization view.
+      </description>
+   	</context>
+
+	<context  id="markers_enabled_pref" >
+      <description>Enables markers to be added to the task view for resources that have been locally removed but not committed and resources that have been locally added but not placed under CVS control.
+      </description>
+   	</context>
+   	
+	<context  id="replace_deletion_of_unmanaged_pref" >
+      <description>Allows resources not under CVS control to be deleted when replacing with resources from the repository.
+      </description>
+   	</context>   	
 </contexts>

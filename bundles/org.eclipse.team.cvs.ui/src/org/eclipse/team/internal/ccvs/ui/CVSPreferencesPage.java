@@ -44,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * CVS Preference Page
@@ -65,8 +66,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Combo ksubstCombo;
 	private List ksubstOptions;
 	private Button considerContentsInCompare;
-	private Button promptOnFileDelete;
-	private Button promptOnFolderDelete;
 	private Button showMarkers;
 	private Button replaceUnmanaged;
 	
@@ -76,6 +75,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 
 	public CVSPreferencesPage() {
 		// sort the options by display text
+		setDescription(Policy.bind("CVSPreferencePage.description")); //$NON-NLS-1$
 		KSubstOption[] options = KSubstOption.getAllKSubstOptions();
 		this.ksubstOptions = new ArrayList();
 		for (int i = 0; i < options.length; i++) {
@@ -173,8 +173,12 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent, 2);
 
-		// set F1 help
-//		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, ICVSHelpContextIds.CVS_PREFERENCE_PAGE));
+		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
+		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$		
+		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$		
+		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
+				
+		createLabel(composite, ""); createLabel(composite, "");
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
 		timeoutValue = createTextField(composite);
@@ -207,23 +211,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		ksubstCombo = createCombo(composite, chars);
 		
-		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
-		
-		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$
-		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip")); //$NON-NLS-1$
-		
-		promptOnFileDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFileDelete")); //$NON-NLS-1$
-		promptOnFileDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFileDeleteTooltip")); //$NON-NLS-1$
-
-		promptOnFolderDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFolderDelete")); //$NON-NLS-1$
-		promptOnFolderDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFolderDeleteTooltip")); //$NON-NLS-1$
-
-		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$
-		showMarkers.setToolTipText(Policy.bind("CVSPreferencePage.showAddRemoveMarkersTooltip")); //$NON-NLS-1$
-		
-		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
-		replaceUnmanaged.setToolTipText(Policy.bind("CVSPreferencePage.replaceUnmanagedTooltip")); //$NON-NLS-1$
-		
+		createLabel(composite, ""); createLabel(composite, "");
+				
 		createSaveCombo(composite);
 				
 		initializeValues();
@@ -239,6 +228,15 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 
+		WorkbenchHelp.setHelp(pruneEmptyDirectoriesField, IHelpContextIds.PREF_PRUNE);
+		WorkbenchHelp.setHelp(compressionLevelCombo, IHelpContextIds.PREF_COMPRESSION);
+		WorkbenchHelp.setHelp(quietnessCombo, IHelpContextIds.PREF_QUIET);
+		WorkbenchHelp.setHelp(ksubstCombo, IHelpContextIds.PREF_KEYWORDMODE);
+		WorkbenchHelp.setHelp(timeoutValue, IHelpContextIds.PREF_COMMS_TIMEOUT);
+		WorkbenchHelp.setHelp(considerContentsInCompare, IHelpContextIds.PREF_CONSIDER_CONTENT);
+		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
+		WorkbenchHelp.setHelp(showMarkers, IHelpContextIds.PREF_MARKERS_ENABLED);
+						
 		return composite;
 	}
 	/**
@@ -291,8 +289,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
-		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
-		promptOnFolderDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		
@@ -329,8 +325,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, ((KSubstOption) ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
-		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
-		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, promptOnFolderDelete.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
@@ -348,10 +342,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
-		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(
-			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
-		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(
-			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
@@ -372,19 +362,17 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
-		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		initializeSaveRadios(store.getDefaultInt(PREF_SAVE_DIRTY_EDITORS));
 	}
 
    private void createSaveCombo(Composite composite) {
-		Group group = new Group(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		group.setLayout(layout);
+		Group group = new Group(composite, SWT.NULL);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		group.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		group.setLayout(layout);
 		group.setText(Policy.bind("CVSPreferencePage.Save_dirty_editors_before_CVS_operations_1")); //$NON-NLS-1$
 		
 		never = new Button(group, SWT.RADIO | SWT.LEFT);
