@@ -24,11 +24,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.internal.core.BreakpointManager;
@@ -208,18 +210,11 @@ public class DebugPlugin extends Plugin {
 	private Vector fRunnables = null;
 	
 	/**
-	 * Thread that async runnables are run in
+	 * Job that executes runnables
 	 * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
-	private Thread fAsyncThread = null;
-	
-	/**
-	 * Agent that executes runnables
-	 * 
-	 * @since 2.1
-	 */
-	private AsynchRunner fAsynchRunner = null;
+	private AsynchJob fAsynchJob = null;
 		
 	/**
 	 * Table of status handlers. Keys are {plug-in identifier, status code}
@@ -321,18 +316,14 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		if (fAsynchRunner == null) {
-			// initialize and launch the debug async queue
+		if (fRunnables == null) {
+			// initialize runnables and async job
 			fRunnables= new Vector(10);
-			fAsynchRunner = new AsynchRunner();
-			fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
-			fAsyncThread.start();
+			fAsynchJob = new AsynchJob();
 		}
 		fRunnables.add(r);
 		if (!isDispatching()) {
-			synchronized (fAsynchRunner) {
-				fAsynchRunner.notifyAll();
-			}			
+			fAsynchJob.schedule();
 		} 
 	}
 	
@@ -449,10 +440,8 @@ public class DebugPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		setShuttingDown(true);
 		super.shutdown();
-		if (fAsynchRunner != null) {
-			synchronized (fAsynchRunner) {
-				fAsynchRunner.notifyAll();
-			}
+		if (fAsynchJob != null) {
+			fAsynchJob.cancel();
 		}
 		if (fLaunchManager != null) {
 			fLaunchManager.shutdown();
@@ -759,10 +748,8 @@ public class DebugPlugin extends Plugin {
 			fDispatching--;
 		}
 		if (!isDispatching()) {
-			if (fAsynchRunner != null) {
-				synchronized (fAsynchRunner) {
-					fAsynchRunner.notifyAll();
-				}
+			if (fAsynchJob != null) {
+				fAsynchJob.schedule();
 			}
 		}
 	}
@@ -773,60 +760,49 @@ public class DebugPlugin extends Plugin {
 	private synchronized boolean isDispatching() {
 		return fDispatching > 0;
 	}	
-
+	
 	/**
-	 * Executes runnables after event dispatch is complete, in
-	 * a seperate thread.
+	 * Executes runnables after event dispatch is complete.
 	 * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
-	class AsynchRunner implements Runnable {
-		public void run() {
-			
-			while (!fShuttingDown) {
-				
-				// wait for something to run
-				synchronized (this) {
-					if (fRunnables.isEmpty()) {
-						try {
-							wait();
-						} catch (InterruptedException e) {
-						}
-					}
-				}
-				
-				// exit on shutdown
-				if (fShuttingDown) {
-					return;
-				}
-				
-				// execute any queued runnables
-				executeRunnables();
-			}
-						
-		}
-		
-		/**
-		 * Executes runnables in the queue, and empties the queue
+	class AsynchJob extends Job {
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
-		private void executeRunnables() {
-			if (fShuttingDown || fRunnables.isEmpty()) {
-				return;
+		public boolean shouldRun() {
+			return !fShuttingDown && !fRunnables.isEmpty();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus run(IProgressMonitor monitor) {
+			// Executes runnables and empties the queue
+			Vector v = null;
+			synchronized (fRunnables) {
+				v = fRunnables;
+				fRunnables = new Vector(5);
 			}
-			Vector v = fRunnables;
-			fRunnables = new Vector(5);
+			monitor.beginTask(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1"), v.size()); //$NON-NLS-1$
 			Iterator iter = v.iterator();
 			while (iter.hasNext() && !fShuttingDown) {
+				if (monitor.isCanceled()) {
+					break;
+				}
 				Runnable r = (Runnable)iter.next();
 				try {
 					r.run();
 				} catch (Throwable t) {
 					log(t);
 				}
+				monitor.worked(1);
 			}
-		}		
+			return Status.OK_STATUS;
+		}
+
 	}
-	
+		
 	/**
 	 * Returns an event notifier.
 	 * 
