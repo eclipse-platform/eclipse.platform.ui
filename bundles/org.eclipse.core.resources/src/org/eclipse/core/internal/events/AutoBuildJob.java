@@ -146,7 +146,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.PRE_BUILD);
-				if (shouldBuild())
+				if (shouldBuild()) 
 					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
 			} finally {
 				//building may close the tree, but we are still inside an
@@ -211,7 +211,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			return buildNeeded;
 		} finally {
 			//regardless of the result, clear the build flags for next time
-			forceBuild = avoidBuild = false;
+			forceBuild = avoidBuild = buildNeeded = false;
 		}
 	}
 }
