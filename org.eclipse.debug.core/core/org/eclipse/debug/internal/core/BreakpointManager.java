@@ -237,6 +237,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
+		event.findMarkerDeltas("breakpoint", true);
 		if (delta != null) {
 			try {
 				if (fgVisitor == null) {
@@ -336,7 +337,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// this breakpoint has actually been moved - removed from the Breakpoint manager and deleted
-				final IWorkspace workspace= getWorkspace();
 				final IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {
