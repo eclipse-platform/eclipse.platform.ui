@@ -35,9 +35,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected Properties properties;
 	protected Map children;
-	protected IEclipsePreferences parent;
+	protected final IEclipsePreferences parent;
 	protected boolean removed = false;
-	protected String name;
+	protected final String name;
 	protected ListenerList nodeListeners;
 	protected ListenerList preferenceListeners;
 	protected boolean isLoading = false;
@@ -173,7 +173,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		return properties == null ? defaultValue : properties.getProperty(key, defaultValue);
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
+			return defaultValue;
+		return temp.getProperty(key, defaultValue);
 	}
 
 	/*
@@ -330,7 +334,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				} catch (NumberFormatException e) {
 					// ignore and let oldValue be a String
 				}
-			preferenceChanged(key, oldValue, new Integer(newValue));
+			preferenceChanged(key, oldValue, new Integer(value));
 		}
 	}
 
@@ -343,9 +347,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		int result = defaultValue;
 		if (value != null)
 			try {
@@ -375,7 +381,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				} catch (NumberFormatException e) {
 					// ignore and let oldValue be a String
 				}
-			preferenceChanged(key, oldValue, new Long(newValue));
+			preferenceChanged(key, oldValue, new Long(value));
 		}
 	}
 
@@ -388,9 +394,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		long result = defaultValue;
 		if (value != null)
 			try {
@@ -427,9 +435,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		return value == null ? defaultValue : TRUE.equalsIgnoreCase(value);
 	}
 
@@ -452,7 +462,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				} catch (NumberFormatException e) {
 					// ignore and let oldValue be a String
 				}
-			preferenceChanged(key, oldValue, new Float(newValue));
+			preferenceChanged(key, oldValue, new Float(value));
 		}
 	}
 
@@ -465,9 +475,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		float result = defaultValue;
 		if (value != null)
 			try {
@@ -497,7 +509,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				} catch (NumberFormatException e) {
 					// ignore and let oldValue be a String
 				}
-			preferenceChanged(key, oldValue, new Double(newValue));
+			preferenceChanged(key, oldValue, new Double(value));
 		}
 	}
 
@@ -510,9 +522,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		double result = defaultValue;
 		if (value != null)
 			try {
@@ -551,9 +565,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
+		//Thread safety: copy reference to protect against NPE
+		Properties temp = properties;
+		if (temp == null)
 			return defaultValue;
-		String value = properties.getProperty(key);
+		String value = temp.getProperty(key);
 		return value == null ? defaultValue : value.getBytes();
 	}
 
