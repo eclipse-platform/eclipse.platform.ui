@@ -169,6 +169,7 @@ public abstract class Action implements IAction {
 	 * </p>
 	 */
 	protected Action() {
+	    // do nothing
 	}
 	
 	/**
@@ -569,9 +570,9 @@ public abstract class Action implements IAction {
 	 * @see IPropertyChangeListener#propertyChange
 	 */
 	protected void firePropertyChange(PropertyChangeEvent event) {
-		Object[] listeners = this.listeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		Object[] list = this.listeners.getListeners();
+		for (int i = 0; i < list.length; ++i) {
+			((IPropertyChangeListener) list[i]).propertyChange(event);
 		}
 	}
 	/* (non-Javadoc)
@@ -865,6 +866,7 @@ public abstract class Action implements IAction {
 	 * or override <code>runWithEvent(Event)</code> if they do.
 	 */
 	public void run() {
+	    // do nothing
 	}
 
 	/**
@@ -872,8 +874,6 @@ public abstract class Action implements IAction {
 	 * ignores the event argument, and simply calls <code>run()</code>.
 	 * Subclasses should override this method if they need information 
 	 * from the triggering event, or override <code>run()</code> if not.
-	 * 
-	 * NOTE: This is experimental API, which may change in the future.
 	 *
 	 * @since 2.0
 	 */
