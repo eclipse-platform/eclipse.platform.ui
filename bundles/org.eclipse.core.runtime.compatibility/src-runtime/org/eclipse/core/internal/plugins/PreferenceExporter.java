@@ -46,7 +46,10 @@ public class PreferenceExporter {
 			IPluginDescriptor descriptor = descriptors[i];
 			//save current preferences to ensure most recent values are exported
 			if (descriptor.isPluginActivated()) {
-				descriptor.getPlugin().savePluginPreferences();
+				// XXX: if a real bundle was started through Bundle#start, we don't have its plugin object
+				Plugin pluginObject = descriptor.getPlugin();
+				if (pluginObject != null)
+					pluginObject.savePluginPreferences();
 			}
 			//now merge the plugin preferences into the global preference object
 			if (mergePluginPreferences(descriptor, globalPreferences)) {
