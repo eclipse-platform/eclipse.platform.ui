@@ -15,8 +15,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -117,7 +119,7 @@ public class InternalSearchUI {
 	}
 
 	/**
-	 * Returns the shared instance.
+	 * @return returns the shared instance.
 	 */
 	public static InternalSearchUI getInstance() {
 		if (fgInstance ==null)
@@ -193,27 +195,37 @@ public class InternalSearchUI {
 	}
 	
 	private IStatus doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
-		final IStatus[] temp= new IStatus[1];
 		if (context == null)
 			context= getContext();
 		try {
 			context.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					searchJobStarted(rec);
 					try { 
-						temp[0]= rec.fQuery.run(monitor);
+						IStatus status= rec.fQuery.run(monitor);
+						if (status.matches(IStatus.CANCEL)) {
+							throw new InterruptedException();
+						}
+						if (!status.isOK()) {
+							throw new InvocationTargetException(new CoreException(status));
+						}
+					} catch (OperationCanceledException e) {
+						throw new InterruptedException();
 					} finally {
 						searchJobFinished(rec);
 					}
 				}
 			});
 		} catch (InvocationTargetException e) {
-			temp[0]= new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("InternalSearchUI.error.unexpected"), e.getTargetException());  //$NON-NLS-1$
+			Throwable innerException= e.getTargetException();
+			if (innerException instanceof CoreException) {
+				return ((CoreException) innerException).getStatus();
+			}
+			return new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("InternalSearchUI.error.unexpected"), innerException);  //$NON-NLS-1$
 		} catch (InterruptedException e) {
-			// canceled
-			temp[0]= Status.OK_STATUS;
+			return Status.CANCEL_STATUS;
 		}
-		return temp[0];
+		return Status.OK_STATUS;
 	}
 
 	private IRunnableContext getContext() {

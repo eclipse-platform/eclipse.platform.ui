@@ -9,14 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.ui;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.ui.IWorkbenchWindow;
 /**
  * A facade for access to the new search UI facilities.
@@ -53,12 +57,15 @@ public class NewSearchUI {
 	 * 
 	 * @param query
 	 *            the query to execute
+	 * @deprecated deprecated in 3.1.
+	 * Use {@link #runQueryInBackground(ISearchQuery)} to run a query in background
+	 * or {@link #runQueryInForeground(IRunnableContext, ISearchQuery)} to run it in foreground
 	 */
 	public static void runQuery(ISearchQuery query) {
 		if (query.canRunInBackground())
-			InternalSearchUI.getInstance().runSearchInBackground(query);
+			runQueryInBackground(query);
 		else {
-			IStatus status=InternalSearchUI.getInstance().runSearchInForeground(null, query);
+			IStatus status= runQueryInForeground(null, query);
 			if (status != null) {
 				if (!status.isOK())
 					SearchPlugin.log(status);
@@ -69,6 +76,25 @@ public class NewSearchUI {
 		}
 	}
 	/**
+	 * Runs the given search query. This method will execute the query in a
+	 * background thread and not block until the search is finished. 
+	 * Running a query adds it to the set of known queries and notifies
+	 * any registered <code>IQueryListener</code>s about the addition.
+	 * 
+	 * @param query
+	 *            the query to execute. The query must be able to run in background, that means
+	 *            {@link ISearchQuery#canRunInBackground()} must be <code>true</code>
+	 * @throws IllegalArgumentException Thrown when the passed query is not able to run in background
+	 * @since 3.1
+	 */
+	public static void runQueryInBackground(ISearchQuery query) throws IllegalArgumentException {
+		if (query.canRunInBackground())
+			InternalSearchUI.getInstance().runSearchInBackground(query);
+		else
+			throw new IllegalArgumentException("Query can not be run in background"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Runs the given search query. This method will execute the query in the
 	 * same thread as the caller. This method blocks until the query is
 	 * finished. Running a query adds it to the set of known queries and notifies
@@ -78,7 +104,8 @@ public class NewSearchUI {
 	 *            the runnable context to run the query in
 	 * @param query
 	 *            the query to execute
-	 * @return a status indicating whether the query ran correctly
+	 * @return a status indicating whether the query ran correctly, including {@link IStatus#CANCEL} to signal
+	 *            that the query was cancelled.
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
 		return InternalSearchUI.getInstance().runSearchInForeground(context, query);
@@ -121,7 +148,7 @@ public class NewSearchUI {
 	 * @param query
 	 *            the query
 	 * @return whether the given query is currently running
-	 * @see NewSearchUI#runQuery(ISearchQuery)
+	 * @see NewSearchUI#runQueryInBackground(ISearchQuery)
 	 * @see NewSearchUI#runQueryInForeground(IRunnableContext, ISearchQuery)
 	 */
 	public static boolean isQueryRunning(ISearchQuery query) {

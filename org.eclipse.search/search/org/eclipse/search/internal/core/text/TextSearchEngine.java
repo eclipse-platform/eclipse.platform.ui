@@ -28,6 +28,12 @@ public class TextSearchEngine {
 	
 	/**
 	 * Search for the given pattern.
+	 * @param workspace The workspace
+	 * @param scope scope to search in
+	 * @param visitDerived if set to true, derived matches will be reported
+	 * @param collector the collector for the results
+	 * @param matchLocator match locator
+	 * @return returns the status of the operation
 	 */
 	public IStatus search(IWorkspace workspace, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
 		Assert.isNotNull(workspace);

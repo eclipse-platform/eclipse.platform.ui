@@ -18,24 +18,29 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.swt.widgets.Item;
 
@@ -52,12 +57,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
 
 /* package */ class ReplaceAction2 extends Action {
 	
@@ -147,7 +146,7 @@ import org.eclipse.search.ui.text.Match;
 						}
 						return true;
 					}
-				}, IContainer.NONE);
+				}, IResource.NONE);
 			} catch (CoreException e) {
 				// TODO Don't know yet how to handle this. This is called when we open the context
 				// menu. A bad time to show a dialog.
@@ -235,13 +234,17 @@ import org.eclipse.search.ui.text.Match;
 	}
 
 	private void research(IProgressMonitor monitor, List outOfDateEntries, FileSearchQuery operation) throws CoreException {
-		IStatus status= null;
+		String message= SearchMessages.getString("ReplaceAction2.statusMessage"); //$NON-NLS-1$
+		MultiStatus multiStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, message, null);
 		for (Iterator elements = outOfDateEntries.iterator(); elements.hasNext();) {
 			IFile entry = (IFile) elements.next();
-				status = research(operation, monitor, entry);
+			IStatus status = research(operation, monitor, entry);
 			if (status != null && !status.isOK()) {
-				throw new CoreException(status);
+				multiStatus.add(status);
 			}
+		}
+		if (!multiStatus.isOK()) {
+			throw new CoreException(multiStatus);
 		}
 	}
 
@@ -268,10 +271,10 @@ import org.eclipse.search.ui.text.Match;
 	private IStatus research(FileSearchQuery operation, final IProgressMonitor monitor, IFile entry) {
 		Match[] matches= fPage.getDisplayedMatches(entry);
 		IStatus status= operation.searchInFile(getResult(), monitor, entry);
-		if (status == null || status.isOK()) {
-			for (int i= 0; i < matches.length; i++) {
-				getResult().removeMatch(matches[i]);
-			}
+
+		// always remove old matches
+		for (int i= 0; i < matches.length; i++) {
+			getResult().removeMatch(matches[i]);
 		}
 		return status;
 	}

@@ -11,6 +11,7 @@
 package org.eclipse.search.ui;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 /**
  * Represents a particular search query (in a Java example, a query might
  * be "find all occurrences of 'foo' in workspace"). When it's run method is
@@ -32,9 +33,10 @@ public interface ISearchQuery {
 	 * 
 	 * @param monitor the progress monitor to be used
 	 * 
-	 * @return the status after completion of the search job.
+	 * @return the status after completion of the search job. 
+	 * @throws OperationCanceledException Thrown when the search query has been cancelled.
 	 */
-	IStatus run(IProgressMonitor monitor);
+	IStatus run(IProgressMonitor monitor) throws OperationCanceledException;
 	/**
 	 * Returns a user readable label for this query. This will be used, for
 	 * example to set the <code>Job</code> name if this query is executed in

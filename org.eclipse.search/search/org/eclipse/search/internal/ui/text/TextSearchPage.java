@@ -21,12 +21,27 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.ScopePart;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.FileTypeEditor;
+import org.eclipse.search.internal.ui.util.RowLayouter;
+import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.IReplacePage;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResultPage;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -45,6 +60,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -61,21 +77,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.ISearchHelpContextIds;
-import org.eclipse.search.internal.ui.ScopePart;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.FileTypeEditor;
-import org.eclipse.search.internal.ui.util.RowLayouter;
-import org.eclipse.search.internal.ui.util.SWTUtil;
-import org.eclipse.search.ui.IReplacePage;
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchResultPage;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.NewSearchUI;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
@@ -127,7 +128,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
-		return performNewSearch(false);
+		NewSearchUI.runQueryInBackground(getSearchQuery());
+		return true;
 	}
 	
 	private IRunnableContext getRunnableContext() {
@@ -144,8 +146,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
 	public boolean performReplace() {
-		if (!performNewSearch(true))
+		ISearchQuery searchQuery= getSearchQuery();
+		
+		IStatus status= NewSearchUI.runQueryInForeground(getRunnableContext(), searchQuery);
+		if (status.matches(IStatus.CANCEL)) {
 			return false;
+		}
+		
+		if (!status.isOK()) {
+			ErrorDialog.openError(getShell(), SearchMessages.getString("TextSearchPage.replace.searchproblems.title"), SearchMessages.getString("TextSearchPage.replace.searchproblems.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
@@ -165,7 +176,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return true;
 	}
 
-	private boolean performNewSearch(boolean forground) {
+	private ISearchQuery getSearchQuery() {
 		
 		SearchPatternData patternData= getPatternData();
 		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0) {
@@ -193,14 +204,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		org.eclipse.search.ui.NewSearchUI.activateSearchResultView();
 		scope.addExtensions(patternData.fileNamePatterns);
 	
-		FileSearchQuery wsJob= new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern, fSearchDerived);
-		if (forground) {
-			IStatus status= NewSearchUI.runQueryInForeground(getRunnableContext(), wsJob);
-			return status != null && status.isOK();
-		} else 
-			NewSearchUI.runQuery(wsJob);
-	
-		return true;
+		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern, fSearchDerived);
 	}
 
 	private String getPattern() {
@@ -210,6 +214,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	/**
 	 * Return search pattern data and update previous searches.
 	 * An existing entry will be updated.
+	 * @return the search pattern data
 	 */
 	private SearchPatternData getPatternData() {
 		SearchPatternData match= null;
@@ -301,9 +306,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	//---- Widget creation ------------------------------------------------
 
-	/**
-	 * Creates the page's content.
-	 */
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		readConfiguration();
@@ -526,8 +528,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				String extension= ((IFileEditorInput)elem).getFile().getFileExtension();
 				if (extension == null)
 					return ((IFileEditorInput)elem).getFile().getName();
-				else
-					return "*." + extension; //$NON-NLS-1$
+				return "*." + extension; //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -590,21 +591,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	/**
 	 * Sets the search page's container.
+	 * @param container the container to set
 	 */
 	public void setContainer(ISearchPageContainer container) {
 		fContainer= container;
 	}
 	
-	/**
-	 * Returns the search page's container.
-	 */
 	private ISearchPageContainer getContainer() {
 		return fContainer;
 	}
 	
-	/**
-	 * Returns the current active selection.
-	 */
 	private ISelection getSelection() {
 		return fContainer.getSelection();
 	}

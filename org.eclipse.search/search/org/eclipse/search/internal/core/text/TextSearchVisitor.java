@@ -159,8 +159,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				throw ((CoreException)e1.getCause());
 			}
 		} catch (IOException e) {
-			String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath().makeRelative()); //$NON-NLS-1$
+			addToStatus(new CoreException(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e)));
 		}
 		finally {
 			updateProgressMonitor();

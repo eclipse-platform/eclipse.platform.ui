@@ -10,18 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
@@ -29,6 +17,15 @@ import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 
 public class FileSearchQuery implements ISearchQuery {
@@ -110,7 +107,10 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	/**
-	 * @return
+	 * @param result all result are added to this search result
+	 * @param monitor the progress monitor to use
+	 * @param file the file to search in
+	 * @return returns the status of the operation
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
 		ITextSearchResultCollector collector= new ITextSearchResultCollector() {
@@ -136,8 +136,7 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 		};
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
-		return Status.OK_STATUS; //$NON-NLS-1$
+		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 	
 	public boolean isRegexSearch() {

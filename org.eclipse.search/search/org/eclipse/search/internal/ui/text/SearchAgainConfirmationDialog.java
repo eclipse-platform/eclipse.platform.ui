@@ -93,7 +93,7 @@ public class SearchAgainConfirmationDialog extends Dialog {
 	private void createLabel(Composite parent, String text) {
 		Label message= new Label(parent, SWT.WRAP);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= convertWidthInCharsToPixels(40);
+		gd.widthHint= convertWidthInCharsToPixels(70);
 		message.setLayoutData(gd);
 		message.setText(text);
 	}
@@ -104,7 +104,7 @@ public class SearchAgainConfirmationDialog extends Dialog {
 		viewer.setLabelProvider(new ProxyLabelProvider());
 		viewer.setInput(input);
 		GridData gd= new GridData(GridData.FILL_BOTH);
-		gd.widthHint= convertWidthInCharsToPixels(40);
+		gd.widthHint= convertWidthInCharsToPixels(70);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		viewer.getControl().setLayoutData(gd);
 		return viewer;
