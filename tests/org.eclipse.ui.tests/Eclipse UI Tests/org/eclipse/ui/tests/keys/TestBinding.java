@@ -26,12 +26,21 @@ final class TestBinding extends Binding {
 		 *            The triggers to use in constructing this sequence; must
 		 *            not be <code>null</code>.
 		 */
-		public TestTriggerSequence(final List myTriggers) {
-			super(myTriggers);
+		public TestTriggerSequence() {
+			super(Collections.EMPTY_LIST);
 		}
 
 		public final String format() {
 			return toString();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.bindings.TriggerSequence#getPrefixes()
+		 */
+		public List getPrefixes() {
+			return Collections.EMPTY_LIST;
 		}
 	}
 
@@ -39,8 +48,7 @@ final class TestBinding extends Binding {
 	 * A trigger sequence to be used by all test bindings. This value is never
 	 * <code>null</code>.
 	 */
-	static final TriggerSequence TRIGGER_SEQUENCE = new TestTriggerSequence(
-			Collections.EMPTY_LIST);
+	static final TriggerSequence TRIGGER_SEQUENCE = new TestTriggerSequence();
 
 	/**
 	 * Constructs a new instance of <code>TestBinding</code>
