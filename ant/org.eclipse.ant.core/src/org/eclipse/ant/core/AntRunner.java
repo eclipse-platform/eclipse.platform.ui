@@ -262,8 +262,10 @@ public class AntRunner implements IPlatformRunnable {
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { fBuildFileLocation });
 			// add listeners
-			Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$
-			addBuildListeners.invoke(runner, new Object[] { fBuildListeners });
+			if (fBuildListeners != null) {
+				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$
+				addBuildListeners.invoke(runner, new Object[] { fBuildListeners });
+			}
 			// add build logger
 			if (fBuildLoggerClassName != null) {
 				Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
