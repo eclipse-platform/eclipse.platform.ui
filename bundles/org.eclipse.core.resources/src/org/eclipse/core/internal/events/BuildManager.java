@@ -291,12 +291,16 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 			if (oldInfos != null) 
 				info = (BuilderPersistentInfo) oldInfos.get(builderName);
 		} else if (!(builder instanceof MissingBuilder)) {
-			// if the builder was instantiated, construct a memento with the important info
-			info = new BuilderPersistentInfo();
-			info.setProjectName(project.getName());
-			info.setBuilderName(builderName);
-			info.setLastBuildTree(((InternalBuilder) builder).getLastBuiltTree());
-			info.setInterestingProjects(((InternalBuilder)builder).getInterestingProjects());
+			ElementTree oldTree = ((InternalBuilder) builder).getLastBuiltTree();
+			//don't persist build state for builders that have no last built state
+			if (oldTree != null) {
+				// if the builder was instantiated, construct a memento with the important info
+				info = new BuilderPersistentInfo();
+				info.setProjectName(project.getName());
+				info.setBuilderName(builderName);
+				info.setLastBuildTree(oldTree);
+				info.setInterestingProjects(((InternalBuilder)builder).getInterestingProjects());
+			}
 		}
 		if (info != null)
 			newInfos.put(builderName, info);

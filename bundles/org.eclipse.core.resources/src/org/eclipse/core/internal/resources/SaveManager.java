@@ -1441,8 +1441,12 @@ protected void writeBuilderPersistentInfo(DataOutputStream output, List builders
 				output.writeUTF(interestingProjects[j].getName());
 			ElementTree last = info.getLastBuiltTree();
 			if (last ==null) {
-				//The last tree may be null if this builder was disabled due
-				//to a missing or disabled nature.
+				//try to be resilient if a builder has no last built tree
+				//this shouldn't happen but save must be robust
+				ResourcesPlugin.getPlugin().getLog().log(new Status(
+					IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, 
+					"Internal Error: builder had null tree:" + info.getBuilderName(), //$NON-NLS-1$ (this is an internal error)
+					new RuntimeException()));
 				last = workspace.getElementTree();
 			}
 			trees.add(last);
