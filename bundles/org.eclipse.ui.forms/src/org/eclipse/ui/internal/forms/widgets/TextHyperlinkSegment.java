@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 public class TextHyperlinkSegment extends TextSegment implements
 		IHyperlinkSegment {
 	private String href;
+	private String tooltipText;
 
 	private static final String LINK_FG = "c.___link_fg";
 
@@ -169,5 +170,11 @@ public class TextHyperlinkSegment extends TextSegment implements
 			if (saved != null)
 				gc.setForeground(saved);
 		}
+	}
+	public String getTooltipText() {
+		return tooltipText;
+	}
+	public void setTooltipText(String tooltip) {
+		this.tooltipText = tooltip;
 	}
 }

@@ -372,6 +372,9 @@ public class FormTextModel {
 			TextHyperlinkSegment segment = new TextHyperlinkSegment(text,
 					settings, null);
 			segment.setHref(href);
+			Node alt = atts.getNamedItem("alt");
+			if (alt!=null)
+				segment.setTooltipText(alt.getNodeValue());			
 			segment.setWordWrapAllowed(wrapAllowed);
 			return segment;
 		} else {
@@ -386,6 +389,9 @@ public class FormTextModel {
 					String value = child.getNodeValue();
 					TextHyperlinkSegment ts = new TextHyperlinkSegment(
 							getNormalizedText(value), settings, null);
+					Node alt = atts.getNamedItem("alt");
+					if (alt!=null)
+						ts.setTooltipText(alt.getNodeValue());					
 					parent.add(ts);
 				} else if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
