@@ -896,7 +896,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * See IWorkbenchPage#closeEditor
 	 */
 	public boolean closeEditor(IEditorPart editorPart, boolean save) {
-	    return closeEditors2(new IEditorPart[] { editorPart }, save);
+	    return closeEditors2(new IEditorReference[] { (IEditorReference) getReference(editorPart) }, save);
 	    
 	    /*
 		// Sanity check.
@@ -975,23 +975,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		*/
 	}
 
-	
-
-	
 	private boolean closeEditors2(IEditorReference[] editorReferences, boolean save) {
 		IEditorPart[] editorParts = new IEditorPart[editorReferences.length];
 	    
 		for (int i = 0; i < editorReferences.length; i++) {
 		    editorParts[i] = editorReferences[i].getEditor(false);
+		    
+		    if (editorParts[i] != null && !certifyPart(editorParts[i]))
+		        return false;
 		}
-		
-		return closeEditors2(editorParts, save);
-	}
-	
-	private boolean closeEditors2(IEditorPart[] editorParts, boolean save) {
-	    for (int i = 0; i < editorParts.length; i++)
-	        if (!certifyPart(editorParts[i]))
-	            return false;
 	    
 		if (save) {
 		    if (editorParts.length == 1) {
@@ -1013,8 +1005,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	    for (int i = 0; i < editorParts.length; i++) {
 	        IEditorPart editorPart = editorParts[i];
 	        partWasActive |= editorPart == activePart;
-	        partWasVisible |= editorPart == getActiveEditor();	        
-		    IEditorReference editorReference = (IEditorReference) getReference(editorPart);
+	        partWasVisible |= editorPart == getActiveEditor();
+	    }
+	    
+	    for (int i = 0; i < editorReferences.length; i++) {	        
+		    IEditorReference editorReference = editorReferences[i];
 			activationList.remove(editorReference);			
 			getEditorManager().closeEditor(editorReference);
 			firePartClosed(editorReference);
