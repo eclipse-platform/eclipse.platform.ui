@@ -133,31 +133,15 @@ public class TargetManager {
 		}
 	}
 
-	public static boolean hasProvider(IProject project) throws TeamException {
-		try {
-			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
-			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
-			if (mappingBytes == null) {
-				return false;
-			} else {
-				LocationMapping mapping = new LocationMapping(mappingBytes);
-				Site site =
-					getSite(mapping.getType(), mapping.getURL());
-				return site != null;
-			}
-		} catch (CoreException e) {
-			throw new TeamException("Problems getting default target provider" + project.getName(), e);
-		} catch (IOException e) {
-			throw new TeamException("Problems getting default target provider" + project.getName(), e);
-		}
+	public static Site getSite(String type, URL url) {
+		return getSite(type, url.toExternalForm());
 	}
 
-
-	public static Site getSite(String type, URL id) {
+	public static Site getSite(String type, String urlID) {
 		for (Iterator it = sites.iterator(); it.hasNext();) {
 			Site element = (Site) it.next();
 			if (element.getType().equals(type)
-				&& element.getURL().equals(id)) {
+				&& element.getURL().toExternalForm().equals(urlID)) {
 				return element;
 			}
 		}

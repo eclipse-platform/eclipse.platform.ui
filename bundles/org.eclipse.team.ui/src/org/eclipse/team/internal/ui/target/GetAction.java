@@ -62,10 +62,11 @@ public class GetAction extends TeamAction {	public void run(IAction action) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			try {
-				if(!TargetManager.hasProvider(resource.getProject()))
+				TargetProvider provider = TargetManager.getProvider(resource.getProject());			
+				if(provider == null)
 					return false;
-				if(!TargetManager.getProvider(resource.getProject()).canPut(resource))
-					return false;
+				if(! provider.canPut(resource))
+					return false;	//if one can't don't allow for any
 			} catch (TeamException e) {
 				TeamPlugin.log(IStatus.ERROR, "Exception getting provider", e);
 				return false;
