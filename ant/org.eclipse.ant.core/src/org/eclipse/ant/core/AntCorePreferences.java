@@ -557,7 +557,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (antURLs != null) {
 			result.addAll(Arrays.asList(antURLs));
 		}
-		result.add(getRemoteAntURL());
+		URL remote= getRemoteAntURL();
+		if (remote != null) {
+			result.add(remote);
+		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 	

@@ -58,7 +58,10 @@ public class AntClasspathProvider implements IRuntimeClasspathProvider {
 			if (separateVM) {
 				List fullClasspath= new ArrayList(40);
 				fullClasspath.addAll(Arrays.asList(antURLs));
-				fullClasspath.add(prefs.getRemoteAntURL());
+				URL remote= prefs.getRemoteAntURL();
+				if (remote != null) {
+					fullClasspath.add(remote);
+				}
 				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
 			} else {
 				List fullClasspath= new ArrayList(50);
