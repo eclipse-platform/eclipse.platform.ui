@@ -126,7 +126,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 						} else if (e2 == null) {
 							return 1;
 						} else {
-							return ((EnvironmentVariable)e1).getName().compareTo(((EnvironmentVariable)e2).getName());
+							return ((EnvironmentVariable)e1).getName().compareToIgnoreCase(((EnvironmentVariable)e2).getName());
 						}
 					}
 				});

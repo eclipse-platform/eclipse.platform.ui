@@ -354,7 +354,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 						} else if (e2 == null) {
 							return 1;
 						} else {
-							return ((ISimpleLaunchVariable)e1).getName().compareTo(((ISimpleLaunchVariable)e2).getName());
+							return ((ISimpleLaunchVariable)e1).getName().compareToIgnoreCase(((ISimpleLaunchVariable)e2).getName());
 						}
 					}
 				});
