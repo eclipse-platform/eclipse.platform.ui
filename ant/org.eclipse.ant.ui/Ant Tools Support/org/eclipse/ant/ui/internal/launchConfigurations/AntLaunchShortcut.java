@@ -251,6 +251,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			}
 			if (configs != null && configs.length > 0) {
 				IPath filePath = file.getLocation();
+				if (filePath == null) {
+					reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.12"), new String[] { file.getName() }), null); //$NON-NLS-1$
+				}
 				for (int i = 0; i < configs.length; i++) {
 					ILaunchConfiguration configuration = configs[i];
 					IPath location;
