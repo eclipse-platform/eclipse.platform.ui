@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -24,7 +25,6 @@ import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -698,5 +698,25 @@ public class PageLayout implements IPageLayout {
 	
 	String getTheme() {
 		return this.theme;
+	}
+	
+	/**
+	 * Converts SWT position constants into layout position constants.
+	 * 
+	 * @param swtConstant one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
+	 * @return one of IPageLayout.TOP, IPageLayout.BOTTOM, IPageLayout.LEFT, IPageLayout.RIGHT, or -1 indicating an
+	 * invalid input
+	 * 
+	 * @since 3.0
+	 */
+	public static int swtConstantToLayoutPosition(int swtConstant) {
+		switch(swtConstant) {
+		case SWT.TOP: return IPageLayout.TOP;
+		case SWT.BOTTOM: return IPageLayout.BOTTOM;
+		case SWT.RIGHT: return IPageLayout.RIGHT;
+		case SWT.LEFT: return IPageLayout.LEFT;
+		}
+		
+		return -1;
 	}
 }

@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.util.Geometry;
-
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -30,10 +29,14 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 
 	private TrimLayout layout;
 	private Composite windowComposite;
+	private WorkbenchWindow window;
 		
-	public TrimDropTarget(Composite someComposite) {
+	private static final float edgeDockRatio = 0.25f;
+	
+	public TrimDropTarget(Composite someComposite, WorkbenchWindow theWindow) {
 		layout = (TrimLayout)someComposite.getLayout();
 		windowComposite = someComposite;
+		window = theWindow;
 	}
 	
 	/* (non-Javadoc)
@@ -41,6 +44,8 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 	 */
 	public IDropTarget drag(Control currentControl, Object draggedObject, Point position, final Rectangle dragRectangle) {
 
+		// Handle dropping window trim on the border of the workbench (for example,
+		// the fast view bar)
 		if (draggedObject instanceof IWindowTrim) {
 			final IWindowTrim draggedTrim = (IWindowTrim)draggedObject;
 			
@@ -89,6 +94,63 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 					}
 				}
 			}			
+		}
+		
+		// Handle dropping a view on the border of the workbench (docks the view to the edge).
+		if (draggedObject instanceof ViewPane) {
+			final ViewPane draggedPane = (ViewPane)draggedObject;
+			
+			// Determine which border we're dragging over
+			final Rectangle bounds = Geometry.toDisplay(layout.getCenterControl().getParent(), 
+					layout.getCenterControl().getBounds());
+			
+			// Stores the side as an SWT.* constant
+			final int relativePosition = Geometry.getRelativePosition(bounds, position);
+			// Convert the SWT.* constant into a IPageLayout constant
+			final int layoutPosition = PageLayout.swtConstantToLayoutPosition(relativePosition);
+			
+			// Ignore this drag if we're not on a border
+			if (layoutPosition == -1) {
+				return null;
+			}
+			
+			final RootLayoutContainer sashContainer = window.getActiveWorkbenchPage().getPerspectivePresentation().getLayout();
+
+			return new AbstractDropTarget() {
+				public void drop() {
+					// Drop the part on this border
+					float ratio = (relativePosition == SWT.LEFT || relativePosition == SWT.TOP) ? edgeDockRatio : 1 - edgeDockRatio; 
+					
+					window.getActiveWorkbenchPage().getPerspectivePresentation().derefPart(draggedPane);
+					
+					// Create a new folder and add both items
+					PartTabFolder folder = new PartTabFolder(window.getActiveWorkbenchPage());
+					sashContainer.add(
+						folder,
+						layoutPosition,
+						ratio,
+						null);
+					folder.add(draggedPane);
+				}
+
+				public Cursor getCursor() {
+					// Return a cursor that points in the opposite direction from the current side of
+					// the layout
+					return DragCursors.getCursor(
+							DragCursors.positionToDragCursor(
+							Geometry.getOppositeSide(relativePosition)));
+				}
+				
+				public Rectangle getSnapRectangle() {
+					// Compute the size of the view once docked
+					int sz = (int) (Geometry.getDimension(bounds, !Geometry.isHorizontal(relativePosition)) 
+						* edgeDockRatio);
+					
+					// Extrude the edge of the layout to the given size
+					return Geometry.getExtrudedEdge(bounds, sz, relativePosition); 					
+				}
+			};
+
 		}
 		
 		return null;

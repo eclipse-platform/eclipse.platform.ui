@@ -308,5 +308,37 @@ public class Geometry {
 		Point start = coordinateSystem.toDisplay(toConvert.x, toConvert.y);
 		return new Rectangle(start.x, start.y, toConvert.width, toConvert.height);
 	}
+
+	/**
+	 * Determines where the given point lies with respect to the given rectangle.
+	 * Returns a combination of SWT.LEFT, SWT.RIGHT, SWT.TOP, and SWT.BOTTOM, combined
+	 * with bitwise or (for example, returns SWT.TOP | SWT.LEFT if the point is to the
+	 * upper-left of the rectangle). Returns 0 if the point lies within the rectangle.
+	 * Positions are in screen coordinates (ie: a point is to the upper-left of the
+	 * rectangle if its x and y coordinates are smaller than any point in the rectangle)
+	 *  
+	 * @param boundary boundary rectangle 
+	 * @param toTest point whose relative position to the rectangle is being computed
+	 * @return one of SWT.LEFT | SWT.TOP, SWT.TOP, SWT.RIGHT | SWT.TOP, SWT.LEFT, 0,
+	 * SWT.RIGHT, SWT.LEFT | SWT.BOTTOM, SWT.BOTTOM, SWT.RIGHT | SWT.BOTTOM
+	 * @since 3.0
+	 */
+	public static int getRelativePosition(Rectangle boundary, Point toTest) {
+		int result = 0;
+		
+		if (toTest.x < boundary.x) {
+			result |= SWT.LEFT;
+		} else if (toTest.x >= boundary.x + boundary.width) {
+			result |= SWT.RIGHT;
+		} 
+		
+		if (toTest.y < boundary.y) {
+			result |= SWT.TOP;
+		} else if (toTest.y >= boundary.y + boundary.height) {
+			result |= SWT.BOTTOM;
+		}
+		
+		return result;
+	}
 	
 }

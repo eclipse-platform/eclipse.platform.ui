@@ -18,20 +18,17 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
-
 import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 
@@ -438,6 +435,11 @@ public class PerspectivePresentation {
 	 * drag listeners.
 	 */
 	/* package */ void derefPart(LayoutPart part) {
+		
+		if (part instanceof ViewPane) {
+			page.removeFastView(((ViewPane)part).getViewReference());
+		}
+		
 		// Get vital part stats before reparenting.
 		Window oldWindow = part.getWindow();
 		ILayoutContainer oldContainer = part.getContainer();
@@ -805,14 +807,10 @@ public class PerspectivePresentation {
 			// Determine the position
 			RootLayoutContainer sashContainer =
 				(RootLayoutContainer) newContainer;
-			int relativePosition = IPageLayout.LEFT;
-			if (position == DragCursors.RIGHT)
-				relativePosition = IPageLayout.RIGHT;
-			else if (position == DragCursors.TOP)
-				relativePosition = IPageLayout.TOP;
-			else if (position == DragCursors.BOTTOM)
-				relativePosition = IPageLayout.BOTTOM;
-
+			
+			int relativePosition = PageLayout.swtConstantToLayoutPosition(
+					DragCursors.dragCursorToSwtConstant(position)); 
+				
 			// folder part from detach window is special
 			if (part instanceof PartTabFolder) {
 				Window window = part.getWindow();
@@ -946,6 +944,7 @@ public class PerspectivePresentation {
 		if (e.dropTarget == null
 			&& e.relativePosition != DragCursors.OFFSCREEN) {
 			e.relativePosition = DragCursors.INVALID;
+			
 			//e.dropTarget = null;
 			//e.relativePosition = offScreenPosition;
 			return;
@@ -1050,10 +1049,6 @@ public class PerspectivePresentation {
 		// active fast view.
 		if (e.relativePosition == DragCursors.INVALID) {
 			return;
-		}
-		
-		if (e.dragSource instanceof ViewPane) {
-			page.removeFastView(((ViewPane) e.dragSource).getViewReference());
 		}
 		
 		switch (e.relativePosition) {

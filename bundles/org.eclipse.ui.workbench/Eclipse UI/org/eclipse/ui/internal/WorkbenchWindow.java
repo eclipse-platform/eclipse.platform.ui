@@ -636,7 +636,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			
 		});
 		
-		trimDropTarget = new TrimDropTarget(parent);
+		trimDropTarget = new TrimDropTarget(parent, this);
 		
 		DragUtil.addDragTarget(parent, trimDropTarget);
 		
