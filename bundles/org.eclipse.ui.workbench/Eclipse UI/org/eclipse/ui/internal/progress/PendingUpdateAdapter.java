@@ -32,7 +32,7 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
     /**
      * Set whether or not this has been removed from the tree.
-     * @param removed boolean
+     * @param removedValue boolean
      */
     public void setRemoved(boolean removedValue) {
         this.removed = removedValue;

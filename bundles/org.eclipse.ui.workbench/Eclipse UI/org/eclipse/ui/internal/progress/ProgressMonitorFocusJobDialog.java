@@ -147,7 +147,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
     /**
      * Return the ProgressMonitorWithBlocking for the receiver.
      * 
-     * @return
+     * @return IProgressMonitorWithBlocking
      */
     private IProgressMonitorWithBlocking getBlockingProgressMonitor() {
         return new IProgressMonitorWithBlocking() {
