@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -46,6 +47,11 @@ public class TreeViewer extends AbstractTreeViewer {
      */
     private Tree tree;
 
+    /**
+	 * The color and font collector for the cells.
+	 */
+	private TreeColorAndFontCollector treeColorAndFont = new TreeColorAndFontCollector();
+	
     /**
      * Creates a tree viewer on a newly-created tree control under the given parent.
      * The tree control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
@@ -95,38 +101,57 @@ public class TreeViewer extends AbstractTreeViewer {
      * Method declared in AbstractTreeViewer.
      */
     protected void doUpdateItem(final Item item, Object element) {
-
-        if (item.isDisposed()) {
+		 if (!(item instanceof TreeItem)) return;
+        TreeItem treeItem = (TreeItem)item;
+        if (treeItem.isDisposed()) {
             unmapElement(element);
             return;
         }        
         
         colorAndFontCollector.setFontsAndColors(element);
-        ViewerLabel updateLabel = new ViewerLabel(item.getText(), item
-                .getImage());
-        buildLabel(updateLabel,element);
         
-        //As it is possible for user code to run the event 
-        //loop check here.
-        if (item.isDisposed()) {
-            unmapElement(element);
-            return;
-        }    
-        
-        if (updateLabel.hasNewImage()){
-        	item.setImage(updateLabel.getImage());
-        }
-        
-        if (updateLabel.hasNewText()){
-        	String text = updateLabel.getText();
-            if(text == null)
-            	text = ""; //$NON-NLS-1$
-            item.setText(text);
-        } 
-        
-        if(item instanceof TreeItem)
-        	colorAndFontCollector.applyFontsAndColors((TreeItem) item);
-       
+        IBaseLabelProvider prov = getLabelProvider();
+		ITableLabelProvider tprov = null;
+		if (prov instanceof ITableLabelProvider) {
+			tprov = (ITableLabelProvider) prov;
+		} 
+        int columnCount = tree.getColumnCount();
+		for (int column = 0; column < columnCount || column == 0; column++) {
+			// Similar code in TableViewer.doUpdateItem()
+			String text = "";//$NON-NLS-1$
+			Image image = null;
+			treeColorAndFont.setFontsAndColors(treeItem, element,column);
+
+			if (tprov == null) {
+				if (column == 0) {
+					ViewerLabel updateLabel = new ViewerLabel(treeItem
+							.getText(), treeItem.getImage());
+					buildLabel(updateLabel,element);
+					
+//						As it is possible for user code to run the event 
+		            //loop check here.
+					if (treeItem.isDisposed()) {
+		                unmapElement(element);
+		                return;
+		            }   
+					
+					text = updateLabel.getText();
+					image = updateLabel.getImage();
+				}
+			} else {
+				text = tprov.getColumnText(element, column);
+				image = tprov.getColumnImage(element, column);
+			}
+
+			//Avoid setting text to null
+			if (text == null)
+				text = ""; //$NON-NLS-1$
+			treeItem.setText(column, text);
+			if (treeItem.getImage(column) != image) {
+				treeItem.setImage(column, image);
+			}
+		}
+		colorAndFontCollector.applyFontsAndColors(treeItem);
     }
 
     /* (non-Javadoc)
@@ -183,10 +208,14 @@ public class TreeViewer extends AbstractTreeViewer {
     }
 
     /**
-     * The tree viewer implementation of this <code>Viewer</code> framework
-     * method returns the label provider, which in the case of tree
-     * viewers will be an instance of <code>ILabelProvider</code>.
-     */
+	 * The tree viewer implementation of this <code>Viewer</code> framework
+	 * method ensures that the given label provider is an instance of either
+	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>. If
+	 * it is an <code>ITableLabelProvider</code>, then it provides a separate
+	 * label text and image for each column. If it is an
+	 * <code>ILabelProvider</code>, then it provides only the label text and
+	 * image for the first column, and any remaining columns are blank.
+	 */
     public IBaseLabelProvider getLabelProvider() {
         return super.getLabelProvider();
     }
@@ -253,10 +282,12 @@ public class TreeViewer extends AbstractTreeViewer {
      * of <code>ILabelProvider</code>.
      */
     public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        Assert.isTrue(labelProvider instanceof ILabelProvider);
+        Assert.isTrue(labelProvider instanceof ITableLabelProvider
+                || labelProvider instanceof ILabelProvider);
         super.setLabelProvider(labelProvider);
+        treeColorAndFont = new TreeColorAndFontCollector(labelProvider);
     }
-
+	
     /* (non-Javadoc)
      * Method declared in AbstractTreeViewer.
      */
@@ -310,4 +341,48 @@ public class TreeViewer extends AbstractTreeViewer {
     protected void showItem(Item item) {
         getTree().showItem((TreeItem) item);
     }
+    
+    private class TreeColorAndFontCollector{
+		
+		ITableFontProvider fontProvider = null;
+		ITableColorProvider colorProvider = null;
+		
+		/**
+		 * Create an instance of the receiver. Set the color and font
+		 * providers if provider can be cast to the correct type.
+		 * @param provider IBaseLabelProvider
+		 */
+		public TreeColorAndFontCollector(IBaseLabelProvider provider){
+			if(provider instanceof ITableFontProvider)
+				fontProvider = (ITableFontProvider) provider;
+			if(provider instanceof ITableColorProvider)
+				colorProvider = (ITableColorProvider) provider;
+		}
+		
+		/**
+		 * Create an instance of the receiver with no color and font
+		 * providers.
+		 */
+		public TreeColorAndFontCollector(){
+		}
+		
+		/**
+		 * Set the fonts and colors for the treeItem if there is a color
+		 * and font provider available.
+		 * @param treeItem The item to update.
+		 * @param element The element being represented
+		 * @param column The column index
+		 */
+		public void setFontsAndColors(TreeItem treeItem, Object element, int column){
+			if (colorProvider != null) {
+				treeItem.setBackground(column, colorProvider.getBackground(element,
+						column));
+				treeItem.setForeground(column, colorProvider.getForeground(element,
+						column));
+			}
+			if(fontProvider != null)
+				treeItem.setFont(column,fontProvider.getFont(element,column));
+		}	
+		
+	}
 }

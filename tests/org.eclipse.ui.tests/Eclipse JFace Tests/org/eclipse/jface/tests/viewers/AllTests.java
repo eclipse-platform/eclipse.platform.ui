@@ -15,25 +15,26 @@ import junit.framework.TestSuite;
 
 public class AllTests extends TestSuite {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
-    public static Test suite() {
-        return new AllTests();
-    }
+	public static Test suite() {
+		return new AllTests();
+	}
 
-     public AllTests() {
-        addTestSuite(TreeViewerTest.class);
-        addTestSuite(TableViewerTest.class);
-        addTestSuite(VirtualTableViewerTest.class);
-        addTestSuite(VirtualLazyTableViewerTest.class);
-        addTestSuite(TableTreeViewerTest.class);
-        addTestSuite(TableColorProviderTest.class);
-        addTestSuite(TableFontProviderTest.class);
-        addTestSuite(ListViewerTest.class);
-        addTestSuite(CheckboxTableViewerTest.class);
-        addTestSuite(CheckboxTreeViewerTest.class);
-        addTestSuite(ComboViewerTest.class);
-    }
+	public AllTests() {
+		addTestSuite(TreeViewerTest.class);
+		addTestSuite(TableViewerTest.class);
+		addTestSuite(TreeViewerColumnTest.class);
+		addTestSuite(VirtualTableViewerTest.class);
+		addTestSuite(VirtualLazyTableViewerTest.class);
+		addTestSuite(TableTreeViewerTest.class);
+		addTestSuite(TableColorProviderTest.class);
+		addTestSuite(TableFontProviderTest.class);
+		addTestSuite(ListViewerTest.class);
+		addTestSuite(CheckboxTableViewerTest.class);
+		addTestSuite(CheckboxTreeViewerTest.class);
+		addTestSuite(ComboViewerTest.class);
+	}
 }
