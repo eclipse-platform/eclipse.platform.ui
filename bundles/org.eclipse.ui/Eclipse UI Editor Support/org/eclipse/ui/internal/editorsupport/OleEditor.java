@@ -28,16 +28,33 @@ import org.eclipse.ui.part.FileEditorInput;
 /**
  */
 public class OleEditor extends EditorPart {
+
 	/**
-	 * @version 	1.0
-	 * @author
+	 * The resource listener updates the receiver when
+	 * a change has occured.
 	 */
-	private IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+	private IResourceChangeListener resourceListener =
+		new IResourceChangeListener() {
 
 		/*
-		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 		 */
-		public boolean visit(final IResourceDelta delta) throws CoreException {
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta affectedElement =
+				event.getDelta().findMember(resource.getFullPath());
+			if (affectedElement != null)
+				try {
+					processDelta(affectedElement);
+				} catch (CoreException exception) {
+					//Failed so close the receiver
+					getSite().getPage().closeEditor(OleEditor.this, true);
+				}
+		}
+
+		/*
+		 * Process the delta for the receiver
+		 */
+		private boolean processDelta(final IResourceDelta delta) throws CoreException {
 
 			Runnable runnable = null;
 
@@ -77,7 +94,7 @@ public class OleEditor extends EditorPart {
 		 *
 		 * @param runnable the update code
 		 */
-		protected void update(Runnable runnable) {
+		private void update(Runnable runnable) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 			if (windows != null && windows.length > 0) {
@@ -85,30 +102,6 @@ public class OleEditor extends EditorPart {
 				display.asyncExec(runnable);
 			} else
 				runnable.run();
-		}
-
-	};
-
-	/**
-	 * The resource listener updates the receiver when
-	 * a change has occured.
-	 */
-	private IResourceChangeListener resourceListener =
-		new IResourceChangeListener() {
-
-		/*
-		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-		 */
-		public void resourceChanged(IResourceChangeEvent event) {
-			IResourceDelta affectedElement =
-				event.getDelta().findMember(resource.getFullPath());
-			if (affectedElement != null)
-				try {
-					affectedElement.accept(visitor);
-				} catch (CoreException exception) {
-					//Failed so close the receiver
-					getSite().getPage().closeEditor(OleEditor.this, true);
-				}
 		}
 
 	};
