@@ -502,6 +502,11 @@ public class JobManager implements IJobManager {
 			//can't schedule a job that is already waiting, sleeping, or running
 			if (job.getState() != Job.NONE)
 				return;
+			//if it's a decoration job, don't run it right now if the system is busy
+			if (job.getPriority() == Job.DECORATE) {
+				long minDelay = running.size() * 100;
+				delay = Math.max(delay, minDelay);
+			}
 			if (delay > 0) {
 				job.setStartTime(System.currentTimeMillis() + delay);
 				changeState(job, Job.SLEEPING);
