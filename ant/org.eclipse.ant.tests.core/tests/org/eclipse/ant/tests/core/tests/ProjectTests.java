@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -24,8 +25,10 @@ public class ProjectTests extends AbstractAntTest {
 	public void testBasePropertiesSet() throws CoreException {
 		String buildFileName="TestForEcho.xml"; 
 		run(buildFileName);
+		IFile buildFile= getBuildFile(buildFileName);
+		String fullName= buildFile.getLocation().toFile().getAbsolutePath();
 		assertTrue("eclipse.running should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.running")));
-		assertTrue("ant.file should have been set as the build file name", buildFileName.equals(AntTestChecker.getDefault().getUserProperty("ant.file")));
+		assertTrue("ant.file should have been set as the build file name", fullName.equals(AntTestChecker.getDefault().getUserProperty("ant.file")));
 		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version"));
 	}
 	
