@@ -57,7 +57,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  *  1. The Repository view is not refreshed when the show CVSROOT option is changed
  *  2. There is no help associated with the page
  */
-public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage, ICVSUIConstants {
+public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Button pruneEmptyDirectoriesField;
 	private Text timeoutValue;
@@ -292,7 +292,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		
-		initializeSaveRadios(store.getInt(PREF_SAVE_DIRTY_EDITORS));		
+		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
 
    /**
@@ -327,7 +327,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
-		store.setValue(PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
+		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -364,7 +364,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
-		initializeSaveRadios(store.getDefaultInt(PREF_SAVE_DIRTY_EDITORS));
+		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
 	}
 
    private void createSaveCombo(Composite composite) {
@@ -428,22 +428,22 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		never.setSelection(false);
 		prompt.setSelection(false);
 		switch(option) {
-			case OPTION_AUTOMATIC:
+			case ICVSUIConstants.OPTION_AUTOMATIC:
 				auto.setSelection(true); break;
-			case OPTION_NEVER:
+			case ICVSUIConstants.OPTION_NEVER:
 				never.setSelection(true); break;
-			case OPTION_PROMPT:
+			case ICVSUIConstants.OPTION_PROMPT:
 				prompt.setSelection(true); break;
 		}
 	}
 	
 	protected int getSaveRadio() {
 		if(auto.getSelection()) {
-			return OPTION_AUTOMATIC;
+			return ICVSUIConstants.OPTION_AUTOMATIC;
 		} else if(never.getSelection()) {
-			return OPTION_NEVER;
+			return ICVSUIConstants.OPTION_NEVER;
 		} else {
-			return OPTION_PROMPT;
+			return ICVSUIConstants.OPTION_PROMPT;
 		}
 	}
 }

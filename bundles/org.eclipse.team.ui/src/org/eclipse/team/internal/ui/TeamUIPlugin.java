@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -102,7 +103,8 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	 * Initializes the preferences for this plugin if necessary.
 	 */
 	protected void initializePreferences() {
-		//IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore store = getPreferenceStore();
+		store.setDefault(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING, false);
 	}
 	
 	/**
@@ -143,5 +145,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
+		initializePreferences();
 	}
 }

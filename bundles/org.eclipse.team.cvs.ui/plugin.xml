@@ -479,7 +479,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePage.name"
-            category="org.eclipse.team.ui.TextPreferences"
+            category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ccvs.ui.CVSPreferencesPage"
             id="org.eclipse.team.cvs.ui.CVSPreferences">
       </page>

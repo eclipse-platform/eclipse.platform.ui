@@ -354,16 +354,15 @@ public class SyncView extends ViewPart {
 		top.layout();
 		
 		// Set the sync mode depending on user preference
-		// To do: add the user preference later, just say no for now.
-	//	if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(UIConstants.PREF_ALWAYS_IN_CATCHUP_RELEASE)) {
-	//		freeMode.run();
-	//	} else {
+		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING)) {
+			freeMode.run();
+		} else {
 			if (input.hasIncomingChanges()) {
 				incomingMode.run();
 			} else {
 				outgoingMode.run();
 			}
-	//	}
+		}
 		// Reveal if fast view
 		try {
 			TeamUIPlugin.getActivePage().showView(VIEW_ID);

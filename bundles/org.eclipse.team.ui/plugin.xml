@@ -25,14 +25,19 @@
 <!-- **************** PREFERENCES ******************* -->
    <extension
       point = "org.eclipse.ui.preferencePages">
+      	<page id="org.eclipse.team.ui.TeamPreferences"
+      		class="org.eclipse.team.internal.ui.TeamPreferencePage"
+      		name="%TeamPreferencePage.name">
+      	</page>
        <page id="org.eclipse.team.ui.TextPreferences"
        	  class="org.eclipse.team.internal.ui.TextPreferencePage"
-       	    name="%TextPreferencePage.name">
+       	    name="%TextPreferencePage.name"
+       	    category="org.eclipse.team.ui.TeamPreferences">
        </page>
        <page id="org.eclipse.team.ui.IgnorePreferences"
        	  class="org.eclipse.team.internal.ui.IgnorePreferencePage"
        	    name="%IgnorePreferencePage.name"
-       	    category="org.eclipse.team.ui.TextPreferences">
+       	    category="org.eclipse.team.ui.TeamPreferences">
        </page>
    </extension>
 
