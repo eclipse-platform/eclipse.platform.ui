@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -113,6 +114,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         gridData.widthHint = convertHorizontalDLUsToPixels(400);
         text.setLayoutData(gridData);
         text.setText(getSystemSummary());
+        text.setFont(JFaceResources.getTextFont());
         return outer;
     }
 
