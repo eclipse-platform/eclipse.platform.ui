@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IWorkbenchSite;
@@ -45,6 +46,8 @@ import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.Search;
 import org.eclipse.search.internal.ui.SearchManager;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchResultView;
 import org.eclipse.search.internal.ui.SearchResultViewEntry;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
@@ -135,7 +138,11 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 	}
 
 	private boolean askForResearch(List outOfDateEntries, List outOfSyncEntries) {
-		SearchAgainConfirmationDialog dialog= new SearchAgainConfirmationDialog(fSite.getShell(), outOfSyncEntries, outOfDateEntries);
+		SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
+		ILabelProvider labelProvider= null;
+		if (view != null)
+			labelProvider= view.getLabelProvider();
+		SearchAgainConfirmationDialog dialog= new SearchAgainConfirmationDialog(fSite.getShell(), labelProvider, outOfSyncEntries, outOfDateEntries);
 		return dialog.open() == IDialogConstants.OK_ID;
 	}
 
@@ -167,6 +174,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 			}
 			
 			public void aboutToStart() {
+				// nothing to do
 			}
 			
 			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) throws CoreException {
@@ -183,6 +191,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 			}
 			
 			public void done(){
+				// nothing to do
 			}
 		});
 		IStatus status = operation.getStatus();

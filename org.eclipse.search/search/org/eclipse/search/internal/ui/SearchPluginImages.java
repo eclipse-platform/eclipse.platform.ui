@@ -60,6 +60,8 @@ public class SearchPluginImages {
 	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_FLAT_LAYOUT= NAME_PREFIX + "flatLayout.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT= NAME_PREFIX + "hierarchicalLayout.gif"; //$NON-NLS-1$
 
 	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif"; //$NON-NLS-1$
 

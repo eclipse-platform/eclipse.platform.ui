@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -147,7 +148,11 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				InputStream stream= file.getContents(false);
 				reader= new BufferedReader(new InputStreamReader(stream, ResourcesPlugin.getEncoding()));
 			}
-			fLocator.locateMatches(fProgressMonitor, proxy, reader, fCollector);
+			try {
+				fLocator.locateMatches(fProgressMonitor, reader, new FileMatchCollector(fCollector, proxy));
+			} catch (InvocationTargetException e1) {
+				throw ((CoreException)e1.getCause());
+			}
 		} catch (IOException e) {
 			String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));

@@ -47,6 +47,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
@@ -55,12 +56,13 @@ import org.eclipse.search2.internal.ui.basic.views.RemoveAllResultsAction;
 import org.eclipse.search2.internal.ui.basic.views.RemoveMatchAction;
 import org.eclipse.search2.internal.ui.basic.views.SearchResultsTableViewer;
 import org.eclipse.search2.internal.ui.basic.views.SearchResultsTreeViewer;
+import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
-import org.eclipse.search2.internal.ui.basic.views.ToggleModeAction;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
 
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
+	private static final boolean INITIALLY_FLAT= false;
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
 	private ISearchResultViewPart fViewPart;
@@ -75,7 +77,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private Action fRemoveAllResultsAction;
 	private Action fShowNextAction;
 	private Action fShowPreviousAction;
-	private ToggleModeAction fToggleModeAction;
+	private Action fFlatAction;
+	private Action fHierarchicalAction;
 
 	private int fCurrentMatchIndex= 0;
 
@@ -84,7 +87,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fRemoveResultsAction= new RemoveMatchAction(this);
 		fShowNextAction= new ShowNextResultAction(this);
 		fShowPreviousAction= new ShowPreviousResultAction(this);
-		fToggleModeAction= new ToggleModeAction(this);
+		
+
+		fFlatAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.tooltip"), true); //$NON-NLS-1$ //$NON-NLS-2$
+		fHierarchicalAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"), false); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
+		SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
+		
+		fFlatAction.setChecked(INITIALLY_FLAT);
+		fHierarchicalAction.setChecked(!INITIALLY_FLAT);
+
 		fBatchedUpdates= new HashSet();
 		fListener= new ISearchResultListener() {
 			public void searchResultChanged(SearchResultEvent e) {
@@ -150,9 +163,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
-		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveResultsAction);
+		if (getCurrentMatch() != null)
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveResultsAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
-		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fToggleModeAction);
 	}
 	
 	/** 
@@ -176,22 +189,25 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewerContainer.setLayout(new FillLayout());
-		createViewer(fViewerContainer, false);
+		createViewer(fViewerContainer, INITIALLY_FLAT);
 	}
 	
 	/**
-	 * Toggles the page between tree mode and flat (table) mode.
+	 * Toggles the page between tree mode and flat (table) layout.
 	 */
-	public void toggleMode() {
+	public void setFlatLayout(boolean on) {
+		if (on == isFlatLayout())
+			return;
 		ISelection selection= fViewer.getSelection();
-		boolean newMode= !isFlatMode();
 		ISearchResult result= disconnectViewer();
 		fViewer.getControl().dispose();
 		fViewer= null;
-		createViewer(fViewerContainer, newMode);
+		createViewer(fViewerContainer, on);
 		fViewerContainer.layout(true);
 		connectViewer(result);
 		fViewer.setSelection(selection, true);
+		fFlatAction.setChecked(isFlatLayout());
+		fHierarchicalAction.setChecked(!isFlatLayout());
 	}
 
 	/**
@@ -199,7 +215,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * table.
 	 * @return Whether the page shows a tree or a table.
 	 */
-	public boolean isFlatMode() {
+	public boolean isFlatLayout() {
 		return fViewer instanceof TableViewer;
 	}
 
@@ -299,7 +315,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				}
 			}
 
-			public void run() throws PartInitException {
+			public void run() throws Exception {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 				if (currentPosition != null) {
 					showMatch(match.getElement(), currentPosition.getOffset(), currentPosition.getLength());
@@ -414,6 +430,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
 		}
+		
+		addLayoutMenu(menuManager);
+	}
+
+	private void addLayoutMenu(IMenuManager menuManager) {
+		MenuManager subMenu= new MenuManager(SearchMessages.getString("AbstractTextSearchViewPage.layout.label")); //$NON-NLS-1$
+		subMenu.add(fFlatAction);
+		subMenu.add(fHierarchicalAction);
+		menuManager.add(subMenu);
 	}
 
 	/**

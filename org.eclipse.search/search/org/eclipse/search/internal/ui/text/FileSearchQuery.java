@@ -12,6 +12,7 @@ package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,8 +22,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
@@ -66,7 +67,7 @@ public class FileSearchQuery implements ISearchQuery {
 					start= 0;
 				if (length < 0)
 					length= 0;
-				textResult.addMatch(new Match(resource, start, length));
+				textResult.addMatch(new FileMatch((IFile) resource, start, length));
 			}
 
 			public void done() {
@@ -80,16 +81,51 @@ public class FileSearchQuery implements ISearchQuery {
 	public String getName() {
 		return fName;
 	}
+	
+	public String getSearchString() {
+		return fSearchString;
+	}
 
 	String getSingularLabel() {
 		String[] args= new String[] { fSearchString, fScope.getDescription() };
-		String format= "{0} - 1 match in {1}";
+		String format= "{0} - 1 match in {1}"; //$NON-NLS-1$
 		return MessageFormat.format(format, args);
 	}
 	
 	String getPluralPattern() {
-		String[] args= new String[] { fSearchString, "{0}", fScope.getDescription() };
-		String format= "{0} - {1} match in {2}";
+		String[] args= new String[] { fSearchString, "{0}", fScope.getDescription() }; //$NON-NLS-1$
+		String format= "{0} - {1} match in {2}"; //$NON-NLS-1$
 		return MessageFormat.format(format, args);
+	}
+
+	/**
+	 * @return
+	 */
+	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
+		ITextSearchResultCollector collector= new ITextSearchResultCollector() {
+			public IProgressMonitor getProgressMonitor() {
+				return monitor;
+			}
+
+			public void aboutToStart() {
+				// do nothing
+			}
+
+			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) {
+				IResource resource= proxy.requestResource();
+				if (start < 0)
+					start= 0;
+				if (length < 0)
+					length= 0;
+				result.addMatch(new FileMatch((IFile) resource, start, length));
+			}
+
+			public void done() {
+				// do nothing
+			}
+		};
+		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
+		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, fSearchOptions));
+		return new Status(IStatus.OK, SearchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 	}
 }

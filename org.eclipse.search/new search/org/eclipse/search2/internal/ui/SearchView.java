@@ -250,6 +250,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		
 	private void createActions() {
 		fSearchesDropDownAction= new SearchDropDownAction(this);
+		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
 		fSearchAgainAction= new SearchAgainAction(this);
 	}
 
@@ -263,6 +264,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void searchResultAdded(ISearchResult search) {
 		showSearchResult(search);
+		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
 	}
 
 	public void searchResultRemoved(ISearchResult search) {
@@ -272,6 +274,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			partActivated(fDefaultPart);
 		}
 		fSearchViewStates.remove(search);
+		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
 	}
 
 	public void searchResultChanged(SearchResultEvent e) {

@@ -15,11 +15,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultManager;
+import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 
@@ -211,8 +215,19 @@ public class InternalSearchUI {
 	}
 
 	public void activateSearchView() {
+		IWorkbenchWindow window= SearchPlugin.getActiveWorkbenchWindow();
+		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
+		if (defaultPerspectiveId != null) {
+			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
+				try {
+					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
+				} catch (WorkbenchException ex) {
+					// show view in current perspective
+				}
+			}
+		}
 		try {
-			SearchPlugin.getActiveWorkbenchWindow().getActivePage().showView(SEARCH_VIEW_ID);
+			window.getActivePage().showView(SEARCH_VIEW_ID);
 		} catch (PartInitException ex) {
 			// TODO Auto-generated catch block
 		}

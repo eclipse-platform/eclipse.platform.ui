@@ -12,13 +12,13 @@ package org.eclipse.search.internal.core.text;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
 import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
@@ -61,7 +61,7 @@ public class MatchLocator {
 		return fPattern;
 	}
 	
-	public void locateMatches(IProgressMonitor monitor, IResourceProxy proxy, Reader reader, ITextSearchResultCollector collector) throws CoreException, IOException {
+	public void locateMatches(IProgressMonitor monitor, Reader reader, IMatchCollector collector) throws IOException, InvocationTargetException {
 		int lineCounter= 1;
 		int charCounter=0;
 		boolean eof= false;
@@ -78,7 +78,7 @@ public class MatchLocator {
 					if (fMatcher.find(start)) {
 						start= charCounter + fMatcher.start();
 						int length= fMatcher.end() - fMatcher.start();
-						collector.accept(proxy, line.trim(), start, length, lineCounter);
+						collector.accept(line.trim(), start, length, lineCounter);
 						start= fMatcher.end();
 					}
 					else	// no match in this line

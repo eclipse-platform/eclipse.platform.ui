@@ -26,8 +26,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchResultView;
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 
 /**
@@ -39,17 +37,10 @@ import org.eclipse.search.internal.ui.util.ListContentProvider;
 public class SearchAgainConfirmationDialog extends Dialog {
 	private List fOutOfSync;
 	private List fOutOfDate;
+	private ILabelProvider fLabelProvider;
 	
-	private static class ProxyLabelProvider extends LabelProvider {
-		private ILabelProvider fLabelProvider;
+	private class ProxyLabelProvider extends LabelProvider {
 		
-		ProxyLabelProvider() {
-			SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
-			if (view != null)
-				fLabelProvider= view.getLabelProvider();
-			else
-				fLabelProvider= null;
-		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
@@ -71,10 +62,11 @@ public class SearchAgainConfirmationDialog extends Dialog {
 		
 	}
 	
-	SearchAgainConfirmationDialog(Shell shell, List outOfSync, List outOfDate) {
+	SearchAgainConfirmationDialog(Shell shell, ILabelProvider labelProvider, List outOfSync, List outOfDate) {
 		super(shell);
 		fOutOfSync= outOfSync;
 		fOutOfDate= outOfDate;
+		fLabelProvider= labelProvider;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	

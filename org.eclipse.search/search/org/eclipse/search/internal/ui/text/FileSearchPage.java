@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -28,6 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -43,11 +50,16 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private SortAction fCurrentSortAction;
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
+	private ReplaceAction2 fReplaceAction;
 	
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction("Name", this, FileLabelProvider.SHOW_LABEL_PATH);
 		fSortByPathAction= new SortAction("Path", this, FileLabelProvider.SHOW_PATH_LABEL);
 		fCurrentSortAction= fSortByNameAction;
+	}
+	
+	StructuredViewer internalGetViewer() {
+		return getViewer();
 	}
 
 	protected void configureViewer(StructuredViewer viewer) {
@@ -65,20 +77,39 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		IFile file= (IFile) element;
 		IWorkbenchPage page= SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart editor= IDE.openEditor(page, file, false);
-		if (!(editor instanceof ITextEditor))
-			return;
-		ITextEditor textEditor= (ITextEditor) editor;
-		textEditor.selectAndReveal(offset, length);
+		if (!(editor instanceof ITextEditor)) {
+			showWithMarker(editor, file, offset, length);
+		} else {
+			ITextEditor textEditor= (ITextEditor) editor;
+			textEditor.selectAndReveal(offset, length);
+		}
 	}
+	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) {
+		try {
+			IMarker marker= file.createMarker(SearchUI.SEARCH_MARKER);
+			HashMap attributes= new HashMap(4);
+			attributes.put(IMarker.CHAR_START, new Integer(offset));
+			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			marker.setAttributes(attributes);
+			IDE.gotoMarker(editor, marker);
+			marker.delete();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		addSortActions(mgr);
 		fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
 		fActionGroup.fillContextMenu(mgr);
+		fReplaceAction= new ReplaceAction2(this, (IStructuredSelection) getViewer().getSelection());
+		mgr.add(fReplaceAction);
 	}
 	
 	private void addSortActions(IMenuManager mgr) {
-		if (!isFlatMode())
+		if (!isFlatLayout())
 			return;
 		MenuManager sortMenu= new MenuManager("Sort By");
 		sortMenu.add(fSortByNameAction);
