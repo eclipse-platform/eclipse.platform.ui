@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.net.URL;
+
 import junit.framework.TestCase;
 
 import org.eclipse.ant.core.*;
@@ -14,6 +16,8 @@ import org.eclipse.ant.tests.core.testplugin.AntFileRunner;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 
  
@@ -177,6 +181,16 @@ public abstract class AbstractAntTest extends TestCase {
 		prefs.setCustomTypes(new Type[]{});
 		prefs.setCustomPropertyFiles(new String[]{});
 		prefs.setCustomProperties(new Property[]{});
+		prefs.setAntHome("");
+	}
+	
+	protected String getAntHome() {
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls= prefs.getDefaultAntURLs();
+		URL antjar= urls[0];
+		IPath antHomePath= new Path(antjar.getFile());
+		antHomePath= antHomePath.removeLastSegments(1);
+		return antHomePath.toFile().getAbsolutePath();
 	}
 }
 
