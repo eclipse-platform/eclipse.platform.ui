@@ -9,16 +9,16 @@ import java.util.Set;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.contexts.ContextActivationServiceEvent;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationServiceListener;
-import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
-import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
+import org.eclipse.ui.commands.CommandHandlerServiceEvent;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
+import org.eclipse.ui.internal.commands.AbstractCommandHandlerService;
 
 final class WorkbenchCommandHandlerService
-	extends AbstractContextActivationService {
+	extends AbstractCommandHandlerService {
 
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
@@ -38,8 +38,8 @@ final class WorkbenchCommandHandlerService
 		}
 	};
 
-	private ICompoundContextActivationService compoundContextActivationService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
+	private ICompoundCommandHandlerService compoundCommandHandlerService =
+		CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	private IWorkbench workbench;
 	private Set workbenchWindows = Collections.EMPTY_SET;
 
@@ -49,16 +49,16 @@ final class WorkbenchCommandHandlerService
 
 		this.workbench = workbench;
 
-		compoundContextActivationService
-			.addContextActivationServiceListener(
-				new IContextActivationServiceListener() {
-			public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
-				ContextActivationServiceEvent proxyContextActivationServiceEvent =
-					new ContextActivationServiceEvent(
-						compoundContextActivationService,
-						contextActivationServiceEvent
-							.haveActiveContextIdsChanged());
-				fireContextActivationServiceChanged(contextActivationServiceEvent);
+		compoundCommandHandlerService
+			.addCommandHandlerServiceListener(
+				new ICommandHandlerServiceListener() {
+			public void commandHandlerServiceChanged(CommandHandlerServiceEvent commandHandlerServiceEvent) {
+				CommandHandlerServiceEvent proxyCommandHandlerServiceEvent =
+					new CommandHandlerServiceEvent(
+						compoundCommandHandlerService,
+						commandHandlerServiceEvent
+							.haveActiveCommandIdsChanged());
+				fireCommandHandlerServiceChanged(commandHandlerServiceEvent);
 			}
 		});
 
@@ -66,8 +66,8 @@ final class WorkbenchCommandHandlerService
 		update();
 	}
 
-	public Set getActiveContextIds() {
-		return compoundContextActivationService.getActiveContextIds();
+	public Set getActiveCommandIds() {
+		return compoundCommandHandlerService.getActiveCommandIds();
 	}
 
 	private void update() {
@@ -81,31 +81,31 @@ final class WorkbenchCommandHandlerService
 		for (Iterator iterator = removals.iterator(); iterator.hasNext();) {
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
-			IWorkbenchWindowContextSupport workbenchWindowContextSupport =
-				(IWorkbenchWindowContextSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowContextSupport.class);
+			IWorkbenchWindowCommandSupport workbenchWindowCommandSupport =
+				(IWorkbenchWindowCommandSupport) workbenchWindow.getAdapter(
+					IWorkbenchWindowCommandSupport.class);
 
-			if (workbenchWindowContextSupport != null) {
-				IContextActivationService contextActivationService =
-					workbenchWindowContextSupport.getContextActivationService();
-				compoundContextActivationService
-					.removeContextActivationService(
-					contextActivationService);
+			if (workbenchWindowCommandSupport != null) {
+				ICommandHandlerService commandHandlerService =
+					workbenchWindowCommandSupport.getCommandHandlerService();
+				compoundCommandHandlerService
+					.removeCommandHandlerService(
+					commandHandlerService);
 			}
 		}
 
 		for (Iterator iterator = additions.iterator(); iterator.hasNext();) {
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
-			IWorkbenchWindowContextSupport workbenchWindowContextSupport =
-				(IWorkbenchWindowContextSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowContextSupport.class);
+			IWorkbenchWindowCommandSupport workbenchWindowCommandSupport =
+				(IWorkbenchWindowCommandSupport) workbenchWindow.getAdapter(
+					IWorkbenchWindowCommandSupport.class);
 
-			if (workbenchWindowContextSupport != null) {
-				IContextActivationService contextActivationService =
-					workbenchWindowContextSupport.getContextActivationService();
-				compoundContextActivationService.addContextActivationService(
-					contextActivationService);
+			if (workbenchWindowCommandSupport != null) {
+				ICommandHandlerService commandHandlerService =
+					workbenchWindowCommandSupport.getCommandHandlerService();
+				compoundCommandHandlerService.addCommandHandlerService(
+					commandHandlerService);
 			}
 		}
 

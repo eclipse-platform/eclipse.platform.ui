@@ -73,8 +73,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
 import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -1682,9 +1684,7 @@ private void lastPartClosePerspective() {
  */
 private void init(WorkbenchWindow w, String layoutID, IAdaptable input) 
 	throws WorkbenchException
-{
-	workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
-	
+{	
 	// Save args.
 	this.window = w;
 	this.input = input;
@@ -1706,6 +1706,9 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		perspList.setActive(persp);
 		window.firePerspectiveActivated(this, desc);
 	}
+
+	workbenchPageCommandSupport = new WorkbenchPageCommandSupport(this);
+	workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
 }
 /**
  * See IWorkbenchPage.
@@ -3120,11 +3123,22 @@ private class ActivationList {
 		}
 	}
 	
+	private IWorkbenchPageCommandSupport workbenchPageCommandSupport;
 	private IWorkbenchPageContextSupport workbenchPageContextSupport;
-	
+
+	public IWorkbenchPageCommandSupport getCommandSupport() {
+		return workbenchPageCommandSupport;
+	}
+
+	public IWorkbenchPageContextSupport getContextSupport() {
+		return workbenchPageContextSupport;
+	}
+
 	public Object getAdapter(Class adapter) {
-		if (IWorkbenchPageContextSupport.class.equals(adapter))
-			return workbenchPageContextSupport;
+		if (IWorkbenchPageCommandSupport.class.equals(adapter))
+			return getCommandSupport();
+		else if (IWorkbenchPageContextSupport.class.equals(adapter))
+			return getContextSupport();
 		else
 			return null;
 	}

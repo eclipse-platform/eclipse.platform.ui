@@ -8,7 +8,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 
 public class WorkbenchPageContextSupport
 	implements IWorkbenchPageContextSupport {
-	private ICompoundContextActivationService compoundActivityService;
+	private ICompoundContextActivationService compoundContextActivationService;
 	private WorkbenchPage workbenchPage;
 
 	public WorkbenchPageContextSupport(WorkbenchPage workbenchPage) {
@@ -16,7 +16,7 @@ public class WorkbenchPageContextSupport
 			throw new NullPointerException();
 
 		this.workbenchPage = workbenchPage;
-		compoundActivityService =
+		compoundContextActivationService =
 			ContextActivationServiceFactory
 				.getCompoundContextActivationService();
 	}
@@ -27,6 +27,6 @@ public class WorkbenchPageContextSupport
 		if (perspective != null)
 			return perspective.getCompoundContextActivationService();
 		else
-			return compoundActivityService;
+			return compoundContextActivationService;
 	}
 }

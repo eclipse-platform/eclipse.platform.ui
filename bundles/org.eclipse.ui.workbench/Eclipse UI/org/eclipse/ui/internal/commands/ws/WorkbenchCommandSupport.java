@@ -1,40 +1,41 @@
 package org.eclipse.ui.internal.commands.ws;
 
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.ContextManagerFactory;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IContextManager;
-import org.eclipse.ui.contexts.IMutableContextManager;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.CommandManagerFactory;
+import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 
-public class WorkbenchCommandSupport implements IWorkbenchContextSupport {
-	private IMutableContextManager mutableContextManager;
-	private WorkbenchCommandHandlerService workbenchContextActivationService;	
-	private ICompoundContextActivationService compoundContextActivationService;
-	
+public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
+	private ICompoundCommandHandlerService compoundCommandHandlerService;
+	private /* TODO IMutableCommandManager */ ICommandManager mutableCommandManager;
+	private WorkbenchCommandHandlerService workbenchCommandHandlerService;
+
 	public WorkbenchCommandSupport(IWorkbench workbench) {
 		if (workbench == null)
 			throw new NullPointerException();
-			
-		mutableContextManager =
-			ContextManagerFactory.getMutableContextManager();
-		compoundContextActivationService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
-		workbenchContextActivationService = new WorkbenchCommandHandlerService(workbench);
+
+		mutableCommandManager =
+			CommandManagerFactory.getCommandManager(); /* TODO getMutableCommandManager */
+		compoundCommandHandlerService =
+			CommandHandlerServiceFactory
+				.getCompoundCommandHandlerService();
+		workbenchCommandHandlerService =
+			new WorkbenchCommandHandlerService(workbench);
 	}
 
-	public IContextManager getContextManager() {
-		// TODO need to proxy this to prevent casts to IMutableContextManager
-		return mutableContextManager;
-	}
-	
-	public IContextActivationService getContextActivationService() {
-		return workbenchContextActivationService;		
+	public ICommandHandlerService getCommandHandlerService() {
+		return workbenchCommandHandlerService;
 	}
 
-	public ICompoundContextActivationService getCompoundContextActivationService() {
-		return compoundContextActivationService;
+	public ICommandManager getCommandManager() {
+		// TODO need to proxy this to prevent casts to IMutableCommandManager
+		return mutableCommandManager;
+	}
+
+	public ICompoundCommandHandlerService getCompoundCommandHandlerService() {
+		return compoundCommandHandlerService;
 	}
 }

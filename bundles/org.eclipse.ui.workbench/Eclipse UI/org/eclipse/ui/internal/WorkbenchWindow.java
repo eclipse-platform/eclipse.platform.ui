@@ -74,12 +74,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -437,6 +439,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			getWindowConfigurer().getActionBarConfigurer(),
 			FILL_ALL_ACTION_BARS);
 
+		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
 		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
 	}
 
@@ -1935,11 +1938,22 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		getAdvisor().fillActionBars(this, configurer, flags);
 	}
 
+	private IWorkbenchWindowCommandSupport workbenchWindowCommandSupport;
 	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
 
+	public IWorkbenchWindowCommandSupport getCommandSupport() {
+		return workbenchWindowCommandSupport;
+	}
+
+	public IWorkbenchWindowContextSupport getContextSupport() {
+		return workbenchWindowContextSupport;
+	}
+
 	public Object getAdapter(Class adapter) {
-		if (IWorkbenchWindowContextSupport.class.equals(adapter))
-			return workbenchWindowContextSupport;
+		if (IWorkbenchWindowCommandSupport.class.equals(adapter))
+			return getCommandSupport();
+		else if (IWorkbenchWindowContextSupport.class.equals(adapter))
+			return getContextSupport();
 		else
 			return null;
 	}

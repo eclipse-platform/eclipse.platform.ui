@@ -1,21 +1,21 @@
 package org.eclipse.ui.internal.commands.ws;
 
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
+import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 
 public class WorkbenchWindowCommandSupport
-	implements IWorkbenchWindowContextSupport {
-	private WorkbenchWindowCommandHandlerService workbenchWindowContextActivationService;	
+	implements IWorkbenchWindowCommandSupport {
+	private WorkbenchWindowCommandHandlerService workbenchWindowCommandHandlerService;	
 	
 	public WorkbenchWindowCommandSupport(IWorkbenchWindow workbenchWindow) {
 		if (workbenchWindow == null)
 			throw new NullPointerException();
 			
-		workbenchWindowContextActivationService = new WorkbenchWindowCommandHandlerService(workbenchWindow);
+		workbenchWindowCommandHandlerService = new WorkbenchWindowCommandHandlerService(workbenchWindow);
 	}
 
-	public IContextActivationService getContextActivationService() {
-		return workbenchWindowContextActivationService;		
+	public ICommandHandlerService getCommandHandlerService() {
+		return workbenchWindowCommandHandlerService;		
 	}
 }

@@ -1,20 +1,20 @@
 package org.eclipse.ui.internal.commands.ws;
 
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.IMutableContextActivationService;
-import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.IMutableCommandHandlerService;
+import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
 
 public class WorkbenchPartSiteCommandSupport
-	implements IWorkbenchPartSiteContextSupport {
-	private IMutableContextActivationService mutableContextActivationService;
+	implements IWorkbenchPartSiteCommandSupport {
+	private IMutableCommandHandlerService mutableCommandHandlerService;
 
 	public WorkbenchPartSiteCommandSupport() {
-		mutableContextActivationService =
-			ContextActivationServiceFactory
-				.getMutableContextActivationService();
+		mutableCommandHandlerService =
+			CommandHandlerServiceFactory
+				.getMutableCommandHandlerService();
 	}
 
-	public IMutableContextActivationService getMutableContextActivationService() {
-		return mutableContextActivationService;
+	public IMutableCommandHandlerService getMutableCommandHandlerService() {
+		return mutableCommandHandlerService;
 	}
 }

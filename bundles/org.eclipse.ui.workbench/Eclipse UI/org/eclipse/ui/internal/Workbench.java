@@ -86,8 +86,10 @@ import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -757,23 +759,25 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 		
+		
+		// begin the initialization of the activity, command, and context mangers
+		
 		workbenchActivitySupport = new WorkbenchActivitySupport();
+		workbenchCommandSupport = new WorkbenchCommandSupport(this);
 		workbenchContextSupport = new WorkbenchContextSupport(this);
 		
+		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
+				workbenchCommandsAndContexts.commandManagerListener);
+				
 		workbenchContextSupport.getContextManager().addContextManagerListener(
 				workbenchCommandsAndContexts.contextManagerListener);
-
-		// create a command manager
-		commandManager = CommandManagerFactory.getCommandManager();
-		commandManager.addCommandManagerListener(
-				workbenchCommandsAndContexts.commandManagerListener);
 
 		// establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 
 			public Integer getAccelerator(String commandId) {
 				Integer accelerator = null;
-				ICommand command = commandManager.getCommand(commandId);
+				ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 				if (command.isDefined()) {
 					List keySequenceBindings = command.getKeySequenceBindings();
@@ -797,7 +801,7 @@ public final class Workbench implements IWorkbench {
 
 			public String getAcceleratorText(String commandId) {
 				String acceleratorText = null;
-				ICommand command = commandManager.getCommand(commandId);
+				ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 				if (command.isDefined()) {
 					List keySequenceBindings = command.getKeySequenceBindings();
@@ -815,13 +819,13 @@ public final class Workbench implements IWorkbench {
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence =
 				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-				return commandManager.isPerfectMatch(keySequence)
-				|| commandManager.isPartialMatch(keySequence);
+				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
+				|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
 			}
 
 			public final boolean isActive(final String commandId) {
 				if (commandId != null) {
-					final ICommand command = commandManager.getCommand(commandId);
+					final ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 					if (command != null)
 						return command.isDefined() && command.isActive();
@@ -840,6 +844,8 @@ public final class Workbench implements IWorkbench {
 		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
 		workbenchCommandsAndContexts.updateActiveIds();		
+		
+		// end the initialization of the activity, command, and context managers
 
 		
 		// allow the workbench configurer to initialize
@@ -875,7 +881,7 @@ public final class Workbench implements IWorkbench {
 			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
 
-		// initialize activities
+		// initialize activity helper. TODO why does this belong here and not up further in the main initialization section for activities?
 		activityHelper = ActivityPersistanceHelper.getInstance();
 
 		// attempt to restore a previous workbench state
@@ -1858,18 +1864,33 @@ public final class Workbench implements IWorkbench {
 		return ProgressManager.getInstance();
 	}
 	
+	private IWorkbenchActivitySupport workbenchActivitySupport;
+	private IWorkbenchCommandSupport workbenchCommandSupport;
+	private IWorkbenchContextSupport workbenchContextSupport;
+
+	public IWorkbenchActivitySupport getActivitySupport() {
+		return workbenchActivitySupport;
+	}
+
+	public IWorkbenchCommandSupport getCommandSupport() {
+		return workbenchCommandSupport;
+	}
+
+	public IWorkbenchContextSupport getContextSupport() {
+		return workbenchContextSupport;
+	}
+
 	/* TODO: reduce visibility, or better - get rid of entirely */
 	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
-		new WorkbenchCommandsAndContexts(this);	
+		new WorkbenchCommandsAndContexts(this);
 	private WorkbenchKeyboard keyboard;
 	private ActivityPersistanceHelper activityHelper;
-	
-	private IWorkbenchActivitySupport workbenchActivitySupport;
-	private IWorkbenchContextSupport workbenchContextSupport;
-	
+
 	public Object getAdapter(Class adapter) {
 		if (IWorkbenchActivitySupport.class.equals(adapter))
-			return workbenchActivitySupport;
+			return getActivitySupport();
+		else if (IWorkbenchCommandSupport.class.equals(adapter))
+			return workbenchCommandSupport;
 		else if (IWorkbenchContextSupport.class.equals(adapter))
 			return workbenchContextSupport;
 		else
@@ -1877,20 +1898,14 @@ public final class Workbench implements IWorkbench {
 	}
 
 	public IActivityManager getActivityManager() {
-		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class);
-		return workbenchActivitySupport != null ? workbenchActivitySupport.getActivityManager() : null; 
+		return getActivitySupport().getActivityManager();
+	}
+
+	public ICommandManager getCommandManager() {
+		return getCommandSupport().getCommandManager();
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
-		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getAdapter(IWorkbenchActivitySupport.class);
-		
-		if (workbenchActivitySupport != null)
-			workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds); 
+		getActivitySupport().setEnabledActivityIds(enabledActivityIds);
 	}	
-	
-	ICommandManager commandManager;
-	
-	public ICommandManager getCommandManager() {
-		return commandManager;
-	}
 }

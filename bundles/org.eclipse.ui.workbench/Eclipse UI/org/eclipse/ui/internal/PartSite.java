@@ -30,11 +30,11 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
 import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.ws.WorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPartSiteContextSupport;
-import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -78,6 +78,7 @@ public class PartSite implements IWorkbenchPartSite {
 		this.page = page;
 		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
 		extensionName = "Unknown Name"; //$NON-NLS-1$
+		workbenchPartSiteCommandSupport = new WorkbenchPartSiteCommandSupport();
 		workbenchPartSiteContextSupport = new WorkbenchPartSiteContextSupport();
 	}
 	
@@ -310,13 +311,22 @@ public class PartSite implements IWorkbenchPartSite {
 		job.schedule(delay);
 	}
 	
+	private IWorkbenchPartSiteCommandSupport workbenchPartSiteCommandSupport;
 	private IWorkbenchPartSiteContextSupport workbenchPartSiteContextSupport;
-	
+
+	public IWorkbenchPartSiteCommandSupport getWorkbenchPartSiteCommandSupport() {
+		return workbenchPartSiteCommandSupport;
+	}
+
+	public IWorkbenchPartSiteContextSupport getWorkbenchPartSiteContextSupport() {
+		return workbenchPartSiteContextSupport;
+	}
+
 	public Object getAdapter(Class adapter) {
-		if (IWorkbenchPartSiteContextSupport.class.equals(adapter))
-			return workbenchPartSiteContextSupport;
-		else if (IWorkbenchSiteProgressService.class.equals(adapter))
-			return new WorkbenchSiteProgressService(this);
+		if (IWorkbenchPartSiteCommandSupport.class.equals(adapter))
+			return getWorkbenchPartSiteCommandSupport();
+		else if (IWorkbenchPartSiteContextSupport.class.equals(adapter))
+			return getWorkbenchPartSiteContextSupport();
 		else
 			return null;
 	}
