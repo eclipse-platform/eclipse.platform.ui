@@ -800,7 +800,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void computeChangeStamp() {
 		computeFeaturesChangeStamp();
 		computePluginsChangeStamp();
-		changeStamp = configLocation.hashCode() ^ featuresChangeStamp ^ pluginsChangeStamp;
+		changeStamp = featuresChangeStamp ^ pluginsChangeStamp;
 		changeStampIsValid = true;
 	}
 		
