@@ -47,7 +47,6 @@
                   os="win32">
             </implementation>
             <implementation
-                  style="css/shared_swt.properties"
                   kind="swt">
             </implementation>
          </presentation>
