@@ -2536,83 +2536,112 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Handles an external change of the editor's input element.
+	 * Returns the progress monitor related to this editor.
+	 * @return the progress monitor related to this editor
+	 * @since 2.1
 	 */
-	protected void handleEditorInputChanged() {
+	protected IProgressMonitor getProgressMonitor() {
 		
-		String title;
-		String msg;
-		Shell shell= getSite().getShell();
+		IProgressMonitor pm= null;
 		
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider == null) {
-			// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
-			close(false);
-			return;
-		}
-		
-		IEditorInput input= getEditorInput();
-		if (provider.isDeleted(input)) {
+		IStatusLineManager manager= getStatusLineManager();
+		if (manager != null)
+			pm= manager.getProgressMonitor();
 			
-			if (isSaveAsAllowed()) {
+		return pm != null ? pm : new NullProgressMonitor();
+	}
+	
+		/**
+		 * Handles an external change of the editor's input element.
+		 */
+		protected void handleEditorInputChanged() {
 			
-				title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
-				msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
+			String title;
+			String msg;
+			Shell shell= getSite().getShell();
+			
+			final IDocumentProvider provider= getDocumentProvider();
+			if (provider == null) {
+				// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
+				close(false);
+				return;
+			}
+			
+			final IEditorInput input= getEditorInput();
+			if (provider.isDeleted(input)) {
 				
-				String[] buttons= {
-					EditorMessages.getString("Editor.error.activated.deleted.save.button.save"), //$NON-NLS-1$
-					EditorMessages.getString("Editor.error.activated.deleted.save.button.close"), //$NON-NLS-1$
-				};
+				if (isSaveAsAllowed()) {
+				
+					title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
+					msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
 					
-				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
-				
-				if (dialog.open() == 0) {
-					NullProgressMonitor pm= new NullProgressMonitor();
-					performSaveAs(pm);
-					if (pm.isCanceled())
-						handleEditorInputChanged();
+					String[] buttons= {
+						EditorMessages.getString("Editor.error.activated.deleted.save.button.save"), //$NON-NLS-1$
+						EditorMessages.getString("Editor.error.activated.deleted.save.button.close"), //$NON-NLS-1$
+					};
+						
+					MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
+					
+					if (dialog.open() == 0) {
+						IProgressMonitor pm= getProgressMonitor();
+						performSaveAs(pm);
+						if (pm.isCanceled())
+							handleEditorInputChanged();
+					} else {
+						close(false);
+					}
+					
 				} else {
-					close(false);
+					
+					title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
+					msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
+					if (MessageDialog.openConfirm(shell, title, msg))
+						close(false);
 				}
 				
 			} else {
 				
-				title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
-				msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
-				if (MessageDialog.openConfirm(shell, title, msg))
-					close(false);
-			}
-			
-		} else {
-			
-			title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
-			msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
+				title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
+				msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
 				
-			if (MessageDialog.openQuestion(shell, title, msg)) {
-				try {
-										
-					if (provider instanceof IDocumentProviderExtension) {
-						IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-						extension.synchronize(input);
-					} else {	
-						doSetInput(input);
-					}
-
-
-				} catch (CoreException x) {
+				if (MessageDialog.openQuestion(shell, title, msg)) {
+					
 					title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
 					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
-					ErrorDialog.openError(shell, title, msg, x.getStatus());
+					
+					if (provider instanceof IDocumentProviderExtension) {
+						WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
+							protected void execute(final IProgressMonitor monitor) throws CoreException {
+								IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+								extension.synchronize(input);
+							}
+						};
+						
+						try {
+							operation.run(getProgressMonitor());
+						} catch (InterruptedException x) {
+						} catch (InvocationTargetException x) {
+							Throwable t= x.getTargetException();
+							MessageDialog.openError(shell, title, msg + t.getMessage());
+						} 
+					
+					} else {
+						
+						try {
+							doSetInput(input);
+						} catch (CoreException x) {
+							ErrorDialog.openError(shell, title, msg, x.getStatus());
+						}
+					}
 				}
-			} 
-			
-//			// disabled because of http://bugs.eclipse.org/bugs/show_bug.cgi?id=15166
-//			else {
-//				markEditorAsDirty();
-//			}
-
+				
+	//			// disabled because of http://bugs.eclipse.org/bugs/show_bug.cgi?id=15166
+	//			else {
+	//				markEditorAsDirty();
+	//			}
+	
+			}
 		}
-	}
 
 //	/**
 //	 * Marks this editor and its editor input as dirty.
@@ -2651,7 +2680,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * Changed Behavior to make sure that if called inside a regular save (because
 		 * of deletion of input element) there is a way to report back to the caller.
 		 */
-		performSaveAs(new NullProgressMonitor());
+		performSaveAs(getProgressMonitor());
 	}
 	
 	/**
@@ -3013,7 +3042,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (p == null)
 			return;
 			
-		performRevertOperation(createRevertOperation(), new NullProgressMonitor());
+		performRevertOperation(createRevertOperation(), getProgressMonitor());
 	}
 	
 	/**
