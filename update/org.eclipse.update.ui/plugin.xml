@@ -31,7 +31,7 @@
             id="org.eclipse.update.ui.softwareUpdates">
          <action
                label="%actionSets.updateManager.label"
-               class="org.eclipse.update.internal.ui.manager.UpdateManagerAction"
+               class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/helpEnd"
                id="org.eclipse.update.ui.updateManager">
          </action>
@@ -76,7 +76,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspective.label"
-            class="org.eclipse.update.internal.ui.manager.UpdatePerspective"
+            class="org.eclipse.update.internal.ui.UpdatePerspective"
             id="org.eclipse.update.ui.UpdatePerspective">
       </perspective>
    </extension>

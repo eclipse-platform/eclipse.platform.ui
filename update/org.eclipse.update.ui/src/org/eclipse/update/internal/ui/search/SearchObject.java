@@ -28,10 +28,10 @@ public class SearchObject extends NamedModelObject {
 	private static final String KEY_MY_COMPUTER = "Search.myComputer";
 	private static final String KEY_CONTACTING = "Search.contacting";
 	private static final String KEY_CHECKING = "Search.checking";
-	private static final String SETTINGS_SECTION = "search";
-	private static final String S_MY_COMPUTER = "searchMyComputer";
-	private static final String S_BOOKMARKS = "searchBookmarks";
-	private static final String S_DISCOVERY = "searchDiscovery";
+	protected static final String S_MY_COMPUTER = "searchMyComputer";
+	protected static final String S_BOOKMARKS = "searchBookmarks";
+	protected static final String S_DISCOVERY = "searchDiscovery";
+	protected static final String S_DRIVES = "searchDrives";
 
 	private Vector result = new Vector();
 	private boolean searchInProgress;
@@ -42,8 +42,8 @@ public class SearchObject extends NamedModelObject {
 	private String categoryId;
 	private boolean categoryFixed;
 	private Hashtable settings = new Hashtable();
-	private boolean persistent=true;
-	private boolean instantSearch=false;
+	private boolean persistent = true;
+	private boolean instantSearch = false;
 
 	class SearchAdapter extends MonitorAdapter {
 		public void done() {
@@ -71,19 +71,19 @@ public class SearchObject extends NamedModelObject {
 	public boolean isCategoryFixed() {
 		return categoryFixed;
 	}
-	
+
 	public boolean isPersistent() {
 		return persistent;
 	}
-	
+
 	public void setPersistent(boolean value) {
 		this.persistent = value;
 	}
-	
+
 	public boolean isInstantSearch() {
 		return instantSearch;
 	}
-	
+
 	public void setInstantSearch(boolean value) {
 		this.instantSearch = value;
 	}
@@ -104,34 +104,42 @@ public class SearchObject extends NamedModelObject {
 		return settings;
 	}
 
-	public static boolean getSearchMyComputer() {
-		return getSettingsSection().getBoolean(S_MY_COMPUTER);
+	public boolean getSearchMyComputer() {
+		return getBooleanValue(S_MY_COMPUTER);
 	}
 
-	public static void setSearchMyComputer(boolean value) {
-		getSettingsSection().put(S_MY_COMPUTER, value);
+	public void setSearchMyComputer(boolean value) {
+		settings.put(S_MY_COMPUTER, value ? "true" : "false");
 	}
 
-	public static void setSearchBookmarks(boolean value) {
-		getSettingsSection().put(S_BOOKMARKS, value);
+	public void setSearchBookmarks(boolean value) {
+		setBooleanValue(S_BOOKMARKS, value);
 	}
-	public static boolean getSearchBookmarks() {
-		return getSettingsSection().getBoolean(S_BOOKMARKS);
-	}
-	
-	public static void setSearchDiscovery(boolean value) {
-		getSettingsSection().put(S_DISCOVERY, value);
-	}
-	public static boolean getSearchDiscovery() {
-		return getSettingsSection().getBoolean(S_DISCOVERY);
+	public boolean getSearchBookmarks() {
+		return getBooleanValue(S_BOOKMARKS);
 	}
 
-	private static IDialogSettings getSettingsSection() {
-		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection(SETTINGS_SECTION);
-		if (section == null)
-			section = master.addNewSection(SETTINGS_SECTION);
-		return section;
+	public void setSearchDiscovery(boolean value) {
+		setBooleanValue(S_DISCOVERY, value);
+	}
+	public boolean getSearchDiscovery() {
+		return getBooleanValue(S_DISCOVERY);
+	}
+	public String getDriveSettings() {
+		return (String)settings.get(S_DRIVES);
+	}
+	public void setDriveSettings(String drives) {
+		settings.put(S_DRIVES, drives);
+	}
+
+	private boolean getBooleanValue(String key) {
+		String value = (String) settings.get(key);
+		if (value != null && value.equals("true"))
+			return true;
+		return false;
+	}
+	private void setBooleanValue(String key, boolean value) {
+		settings.put(key, value ? "true" : "false");
 	}
 
 	/**
@@ -314,7 +322,7 @@ public class SearchObject extends NamedModelObject {
 	private void initializeMyComputerSites(IProgressMonitor monitor) {
 		Vector sites = new Vector();
 		MyComputer myComputer = new MyComputer();
-		MyComputerSearchSettings settings = new MyComputerSearchSettings();
+		MyComputerSearchSettings settings = new MyComputerSearchSettings(this);
 		myComputer.collectSites(sites, settings, monitor);
 		if (sites.size() > 0) {
 			myComputerSites = (ISite[]) sites.toArray(new ISite[sites.size()]);
@@ -330,7 +338,8 @@ public class SearchObject extends NamedModelObject {
 		}
 	}
 	private void addBookmarks(ArrayList result) {
-		if (getSearchBookmarks()==false) return;
+		if (getSearchBookmarks() == false)
+			return;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		SiteBookmark[] bookmarks = model.getBookmarkLeafs();
 		for (int i = 0; i < bookmarks.length; i++) {

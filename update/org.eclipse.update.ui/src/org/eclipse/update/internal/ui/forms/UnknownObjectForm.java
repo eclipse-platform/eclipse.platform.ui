@@ -1,8 +1,9 @@
-package org.eclipse.update.internal.ui.manager;
+package org.eclipse.update.internal.ui.forms;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
@@ -16,14 +17,13 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
-import java.text.MessageFormat;
-
-public class DiscoveryFolderForm extends UpdateWebForm {
-	private SiteBookmark currentBookmark;
-	private static final String KEY_TITLE = "DiscoveryFolderPage.title";
-	private static final String KEY_DESC = "DiscoveryFolderPage.desc";
+import org.eclipse.swt.events.*;
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+
+public class UnknownObjectForm extends UpdateWebForm {
+private Object currentObj;
 	
-public DiscoveryFolderForm(UpdateFormPage page) {
+public UnknownObjectForm(UpdateFormPage page) {
 	super(page);
 }
 
@@ -32,7 +32,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+	setHeadingText("");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
@@ -46,11 +46,21 @@ protected void createContents(Composite parent) {
 	layout.horizontalSpacing = 0;
 	layout.verticalSpacing = 20;
 	layout.numColumns = 1;
-	
-	FormWidgetFactory factory = getFactory();
-	
-	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
+
+	FormWidgetFactory factory = getFactory();	
+	factory.createComposite(parent);
+	TableData td = new TableData();
+	td.align = TableData.FILL;
 }
 
+public void expandTo(Object obj) {
+	String name = "";
+	
+	if (obj != null && obj instanceof ModelObject)
+		name = obj.toString();
+	setHeadingText(name);
+	((Composite)getControl()).layout();
+	getControl().redraw();
+	currentObj = obj;
+}
 }

@@ -14,7 +14,7 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.manager.RevertSection;
+import org.eclipse.update.internal.ui.forms.RevertSection;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 

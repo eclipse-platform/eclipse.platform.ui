@@ -1,4 +1,4 @@
-package org.eclipse.update.internal.ui.manager;
+package org.eclipse.update.internal.ui.forms;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -16,10 +16,9 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -208,7 +207,6 @@ public class SearchForm extends UpdateWebForm {
 				myComputerCheck = factory.createButton(expansion, null, SWT.CHECK);
 				myComputerCheck.setText(
 					UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_CHECK));
-				myComputerCheck.setSelection(searchObject.getSearchMyComputer());
 				myComputerCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						myComputerSettings.setEnabled(myComputerCheck.getSelection());
@@ -219,11 +217,10 @@ public class SearchForm extends UpdateWebForm {
 				myComputerSettings = factory.createButton(expansion, null, SWT.PUSH);
 				myComputerSettings.setText(
 					UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_MORE));
-				myComputerSettings.setEnabled(myComputerCheck.getSelection());
 				myComputerSettings.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						MyComputerSearchDialog sd =
-							new MyComputerSearchDialog(myComputerSettings.getShell());
+							new MyComputerSearchDialog(myComputerSettings.getShell(), searchObject);
 						sd.create();
 						sd.getShell().setText(UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_TITLE));
 						sd.open();
@@ -232,7 +229,6 @@ public class SearchForm extends UpdateWebForm {
 				GridData gd;
 				discoveryCheck = factory.createButton(expansion, null, SWT.CHECK);
 				discoveryCheck.setText(UpdateUIPlugin.getResourceString(KEY_DISCOVERY_CHECK));
-				discoveryCheck.setSelection(searchObject.getSearchDiscovery());
 				discoveryCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchDiscovery(discoveryCheck.getSelection());
@@ -244,7 +240,6 @@ public class SearchForm extends UpdateWebForm {
 
 				bookmarkCheck = factory.createButton(expansion, null, SWT.CHECK);
 				bookmarkCheck.setText(UpdateUIPlugin.getResourceString(KEY_BOOKMARK_CHECK));
-				bookmarkCheck.setSelection(searchObject.getSearchBookmarks());
 				bookmarkCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchBookmarks(bookmarkCheck.getSelection());
@@ -493,6 +488,13 @@ public class SearchForm extends UpdateWebForm {
 		searchButton.getParent().layout(true);
 	}
 
+	private void updateScopeSettings(SearchObject sobj) {
+		myComputerCheck.setSelection(sobj.getSearchMyComputer());
+		myComputerSettings.setEnabled(sobj.getSearchMyComputer());
+		discoveryCheck.setSelection(sobj.getSearchDiscovery());
+		bookmarkCheck.setSelection(sobj.getSearchBookmarks());
+	}
+
 	public void expandTo(Object obj) {
 		if (obj instanceof SearchObject) {
 			inputChanged((SearchObject) obj);
@@ -514,12 +516,12 @@ public class SearchForm extends UpdateWebForm {
 				searchObject = obj;
 				updateHeadingText(searchObject);
 				selectCategory(obj);
+				updateScopeSettings(obj);
 				searchResultSection.setSearchObject(searchObject);
 				if (searchObject.isSearchInProgress()) {
 					// sync up with the search
 					catchUp();
-				}
-				else if (searchObject.isInstantSearch()) {
+				} else if (searchObject.isInstantSearch()) {
 					searchObject.setInstantSearch(false);
 					getControl().getDisplay().asyncExec(new Runnable() {
 						public void run() {

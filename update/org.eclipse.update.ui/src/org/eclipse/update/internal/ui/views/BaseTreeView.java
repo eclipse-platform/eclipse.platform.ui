@@ -10,9 +10,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.manager.UpdatePerspective;
 
 /**
  * Insert the type's description here.

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.*;
-import org.eclipse.update.internal.ui.manager.UIProblemHandler;
+import org.eclipse.update.internal.ui.forms.UIProblemHandler;
 
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;

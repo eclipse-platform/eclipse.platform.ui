@@ -15,7 +15,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.manager.*;
+import org.eclipse.update.internal.ui.forms.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;

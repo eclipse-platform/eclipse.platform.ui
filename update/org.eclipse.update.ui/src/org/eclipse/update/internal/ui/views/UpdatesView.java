@@ -622,7 +622,7 @@ public class UpdatesView
 		}
 	}
 
-	public void selectSiteBookmark(SiteBookmark bookmark) {
-		viewer.setSelection(new StructuredSelection(bookmark), true);
+	public void setSelection(IStructuredSelection selection) {
+		viewer.setSelection(selection, true);
 	}
 }

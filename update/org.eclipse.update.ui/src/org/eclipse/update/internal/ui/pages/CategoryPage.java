@@ -4,7 +4,7 @@ package org.eclipse.update.internal.ui.pages;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.internal.ui.manager.CategoryForm;
+import org.eclipse.update.internal.ui.forms.CategoryForm;
 import org.eclipse.update.internal.ui.parts.UpdateFormPage;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.ui.forms.internal.*;

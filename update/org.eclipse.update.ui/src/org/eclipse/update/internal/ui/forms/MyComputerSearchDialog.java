@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.update.internal.ui.manager;
+package org.eclipse.update.internal.ui.forms;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.*;
@@ -31,6 +31,7 @@ public class MyComputerSearchDialog extends Dialog {
 	Image driveImage;
 	CheckboxTableViewer viewer;
 	boolean loaded=false;
+	SearchObject search;
 	
 	class DriveContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object [] getElements(Object input) {
@@ -52,10 +53,10 @@ public class MyComputerSearchDialog extends Dialog {
 	 * Constructor for MyComputerSearchDialog.
 	 * @param parentShell
 	 */
-	public MyComputerSearchDialog(Shell parentShell) {
+	public MyComputerSearchDialog(Shell parentShell, SearchObject search) {
 		super(parentShell);
 		driveImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-		settings = new MyComputerSearchSettings();
+		settings = new MyComputerSearchSettings(search);
 	}
 	
 	public void buttonPressed(int id) {

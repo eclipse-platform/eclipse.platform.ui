@@ -15,7 +15,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.security.*;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 import org.eclipse.update.internal.security.*;
-import org.eclipse.update.internal.ui.manager.*;
+import org.eclipse.update.internal.ui.forms.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 

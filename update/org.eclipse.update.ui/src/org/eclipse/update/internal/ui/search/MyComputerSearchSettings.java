@@ -15,8 +15,7 @@ import java.util.Vector;
  */
 public class MyComputerSearchSettings {
 	private static final String SECTION = "myComputerSearchSettings";
-	private static final String DRIVES = "drives";
-	private IDialogSettings settings;
+	SearchObject search;
 	private Vector drives = new Vector();
 	private boolean masterSettings=false;
 	
@@ -24,13 +23,8 @@ public class MyComputerSearchSettings {
 		return false;
 	}
 
-	public MyComputerSearchSettings() {
-		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection(SECTION);
-		if (section == null) {
-			section = master.addNewSection(SECTION);
-		}
-		settings = section;
+	public MyComputerSearchSettings(SearchObject search) {
+		this.search = search;
 		load();
 	}
 
@@ -52,7 +46,7 @@ public class MyComputerSearchSettings {
 	}
 
 	private void load() {
-		String drivesString = settings.get(DRIVES);
+		String drivesString = search.getDriveSettings();
 		if (drivesString != null) {
 			StringTokenizer stok = new StringTokenizer(drivesString, File.pathSeparator);
 			while (stok.hasMoreTokens()) {
@@ -71,6 +65,6 @@ public class MyComputerSearchSettings {
 			buf.append(drive.encode());
 			buf.append(File.pathSeparator);
 		}
-		settings.put(DRIVES, buf.toString());
+		search.setDriveSettings(buf.toString());
 	}
 }
