@@ -19,4 +19,5 @@ public interface IParagraph {
 	public boolean getAddVerticalSpace();
 	public ITextSegment findSegmentAt(int x, int y);
 	public void paint(GC gc, int width, Locator loc, int lineHeight, Hashtable objectTable, IHyperlinkSegment selectedLink);
+	public String getAccessibleText();
 }

@@ -5,6 +5,8 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -14,7 +16,6 @@ public class FormEngine extends Canvas {
 	public static final String URL_HANDLER_ID = "urlHandler";
 	boolean hasFocus;
 	boolean paragraphsSeparated = true;
-	String text;
 	TextModel model;
 	Hashtable objectTable = new Hashtable();
 	public int marginWidth = 0;
@@ -130,6 +131,56 @@ public class FormEngine extends Canvas {
 				handleMouseMove(e);
 			}
 		});
+		initAccessible();
+	}
+
+	private String getAcessibleText() {
+		return model.getAccessibleText();
+	}
+
+	private void initAccessible() {
+		Accessible accessible = getAccessible();
+		accessible.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getAcessibleText();
+			}
+
+			public void getHelp(AccessibleEvent e) {
+				e.result = getToolTipText();
+			}
+		});
+
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point pt = toControl(new Point(e.x, e.y));
+				e.childID =
+					(getBounds().contains(pt))
+						? ACC.CHILDID_SELF
+						: ACC.CHILDID_NONE;
+			}
+
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = getBounds();
+				Point pt = toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 0;
+			}
+
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_TEXT;
+			}
+
+			public void getState(AccessibleControlEvent e) {
+				e.detail = ACC.STATE_READONLY;
+			}
+		});
 	}
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
@@ -179,7 +230,7 @@ public class FormEngine extends Canvas {
 						model.getHyperlinkSettings().getHyperlinkCursor());
 				}
 			} else {
-				if (entered!=null) {
+				if (entered != null) {
 					exitLink(entered);
 					paintLinkHover(entered, false);
 					entered = null;
@@ -243,13 +294,14 @@ public class FormEngine extends Canvas {
 		if (action != null)
 			action.linkExited(link);
 	}
-	
+
 	private void paintLinkHover(IHyperlinkSegment link, boolean hover) {
 		GC gc = new GC(this);
-		
+
 		HyperlinkSettings settings = getHyperlinkSettings();
-		
-		gc.setForeground(hover?settings.getActiveForeground():settings.getForeground());
+
+		gc.setForeground(
+			hover ? settings.getActiveForeground() : settings.getForeground());
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == getSelectedLink());

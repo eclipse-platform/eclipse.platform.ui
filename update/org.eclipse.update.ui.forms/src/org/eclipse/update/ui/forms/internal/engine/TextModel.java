@@ -38,6 +38,18 @@ public class TextModel implements ITextModel {
 		return (IParagraph[]) paragraphs.toArray(
 			new IParagraph[paragraphs.size()]);
 	}
+	
+	public String getAccessibleText() {
+		if (paragraphs == null)
+			return "";
+		StringBuffer sbuf = new StringBuffer();
+		for (int i=0; i<paragraphs.size(); i++) {
+			IParagraph paragraph  = (IParagraph)paragraphs.get(i);
+			String text = paragraph.getAccessibleText();
+			sbuf.append(text);
+		}
+		return sbuf.toString();
+	}
 
 	/*
 	 * @see ITextModel#parse(String)

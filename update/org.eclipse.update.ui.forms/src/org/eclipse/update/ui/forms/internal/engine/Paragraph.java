@@ -4,11 +4,11 @@
  */
 package org.eclipse.update.ui.forms.internal.engine;
 
-import java.util.Vector;
-import java.util.StringTokenizer;
-import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
+
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
 
 /**
  * @version 	1.0
@@ -121,6 +121,21 @@ public class Paragraph implements IParagraph {
 		} else {
 			loc.y += lineHeight;
 		}
+	}
+	public String getAccessibleText() {
+		IParagraphSegment [] segments = getSegments();
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		for (int i = 0; i < segments.length; i++) {
+			IParagraphSegment segment = segments[i];
+			if (segment instanceof ITextSegment) {
+				String text = ((ITextSegment)segment).getText();
+				writer.print(text);
+			}
+		}
+		writer.println();
+		swriter.flush();
+		return swriter.toString();
 	}
 	public ITextSegment findSegmentAt(int x, int y) {
 		if (segments!=null) {
