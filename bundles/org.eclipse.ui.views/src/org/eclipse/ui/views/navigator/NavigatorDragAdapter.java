@@ -154,6 +154,10 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 				return;
 			}
 		}
+		if (selection.isEmpty()) {
+			event.doit = false;
+			return;
+		}
 		LocalSelectionTransfer.getInstance().setSelection(selection);
 		event.doit = true;
 	}
