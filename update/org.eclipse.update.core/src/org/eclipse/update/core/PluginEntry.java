@@ -43,6 +43,21 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 	public void setVersionedIdentifier(VersionedIdentifier identifier) {
 		setPluginIdentifier(identifier.getIdentifier());
 		setPluginVersion(identifier.getVersion().toString());
+	}	
+
+	/**
+	 * Compares two plugin entries for equality
+	 * 
+	 * @param object plugin entry object to compare with
+	 * @return <code>true</code> if the two entries are equal, 
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
+	public boolean equals(Object object) {
+		if (!(object instanceof IPluginEntry))
+			return false;
+		IPluginEntry e = (IPluginEntry) object;
+		return getVersionedIdentifier().equals(e.getVersionedIdentifier());
 	}
 
 }

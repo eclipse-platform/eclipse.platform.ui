@@ -58,10 +58,10 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public boolean equals(Object object) {
-		if (!(object instanceof Feature))
+		if (!(object instanceof IFeature))
 			return false;
 		IFeature f = (IFeature) object;
-		return super.equals(object);
+		return getVersionedIdentifier().equals(f.getVersionedIdentifier());
 	}
 
 	/**

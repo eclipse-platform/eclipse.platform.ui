@@ -152,9 +152,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		}
 		IFeature feature = null;
 		try {
-			featureReference.getFeature();
+			feature = featureReference.getFeature();
 		} catch (CoreException e){};
-		if (feature == null){
+		if (feature == null) {
 			//DEBUG
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
 				URL url = featureReference.getURL();
@@ -222,39 +222,26 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	}
 
 	/**
-	 * returns an array of string corresponding to plugins file
-	 * It will include the include list providing the objects in the include list
-	 * are not 'unconfigured' if the type is Exclude or 'configured' if the type is Include
+	 * Calculates the plugin list for the policy. 
+	 * For "INCLUDE" policy, this corresponds to the plugins for 
+	 * configured features. For "EXCLUDE" policy, this corresponds to the
+	 * plugins for unconfigured features that are not referenced
+	 * by any configured features.
 	 */
 	public String[] getPluginPath(ISite site, String[] pluginRead)
 		throws CoreException {
 
-		// which features should we write based on the policy
-		IFeatureReference[] arrayOfFeatureRef = null;
+		String[] result;				
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (getUnconfiguredFeatures() != null)
-				arrayOfFeatureRef = getUnconfiguredFeatures();
+			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
+			//           are configured
+			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
+			String[] configured = getPluginString(site, getConfiguredFeatures());
+			result = delta(configured, unconfigured);
 		} else {
-			if (getConfiguredFeatures() != null)
-				arrayOfFeatureRef = getConfiguredFeatures();
+			// INCLUDE: return configured plugins
+			result = getPluginString(site, getConfiguredFeatures());
 		}
-	
-		String[] pluginToWrite = getPluginString(site, arrayOfFeatureRef);
-
-		// remove from include the plugins that should not be saved 
-		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (getConfiguredFeatures() != null)
-				arrayOfFeatureRef = getConfiguredFeatures();
-		} else {
-			if (getUnconfiguredFeatures() != null)
-				arrayOfFeatureRef = getUnconfiguredFeatures();
-		}
-
-		String[] pluginNotToWrite = getPluginString(site, arrayOfFeatureRef);
-
-		String[] included = delta(pluginNotToWrite, pluginRead);
-		String[] result = union(included, pluginToWrite);
-
 		return result;
 	}
 

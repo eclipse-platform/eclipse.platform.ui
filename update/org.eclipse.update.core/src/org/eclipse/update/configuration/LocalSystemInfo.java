@@ -169,73 +169,7 @@ public class LocalSystemInfo {
 		}
 		return SIZE_UNKNOWN;
 	}
-	
-	/**
-	 * Determines volume label.
-	 * Returns the label of the volume containing the specified
-	 * path.
-	 * @param path file path. May contain path elements beyond
-	 * the volume "root"
-	 * @return volume label (as string), or <code>null</code> if
-	 * the label cannot be determined.
-	 * @since 2.0
-	 * @deprecated use getVolumes().getLabel() instead
-	 */
-	public static String getLabel(File path) {
-		if (hasNatives) {
-			try {
-				return nativeGetLabel(path);
-			} catch (UnsatisfiedLinkError e) {
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Determines volume type.
-	 * Returns the type of the volume containing the specified
-	 * path.
-	 * @param path file path. May contain path elements beyond
-	 * the volume "root"
-	 * @return volume type
-	 * @see LocalSystemInfo#VOLUME_UNKNOWN
-	 * @see LocalSystemInfo#VOLUME_INVALID_PATH
-	 * @see LocalSystemInfo#VOLUME_REMOVABLE
-	 * @see LocalSystemInfo#VOLUME_FIXED
-	 * @see LocalSystemInfo#VOLUME_REMOTE
-	 * @see LocalSystemInfo#VOLUME_CDROM
-	 * @see LocalSystemInfo#VOLUME_FLOPPY_3
-	 * @see LocalSystemInfo#VOLUME_FLOPPY_5
-	 * @since 2.0
-	 * @deprecated use getVolumes().getType() instead
-	 */
-	public static int getType(File path) {
-		if (hasNatives) {
-			try {
-				return nativeGetType(path);
-			} catch (UnsatisfiedLinkError e) {
-			}
-		}
-		return VOLUME_UNKNOWN;
-	}
-	
-	/**
-	 * Lists the file system mount points.
-	 * @return array of absolute file paths representing mount
-	 * points, or <code>null</code> if none found
-	 * @since 2.0
-	 * @deprecated use getVolumes() instead
-	 */
-	public static String[] listMountPoints() {
-		if (hasNatives) {
-			try {
-				String[] mountPoints = nativeListMountPoints();
-				return mountPoints;
-			} catch (UnsatisfiedLinkError e) {
-			}
-		}
-		return null;
-	}
+
 
 	/**
 	 * Lists the file system volume.
@@ -315,6 +249,70 @@ public class LocalSystemInfo {
 		for (int i=0; i< listeners.size(); i++) {
 			((ILocalSystemInfoListener)listeners.get(i)).systemInfoChanged(volume,changeType);
 		}
+	}
+		
+	/*
+	 * Determines volume label.
+	 * Returns the label of the volume containing the specified
+	 * path.
+	 * @param path file path. May contain path elements beyond
+	 * the volume "root"
+	 * @return volume label (as string), or <code>null</code> if
+	 * the label cannot be determined.
+	 * @since 2.0
+	 */
+	private static String getLabel(File path) {
+		if (hasNatives) {
+			try {
+				return nativeGetLabel(path);
+			} catch (UnsatisfiedLinkError e) {
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * Determines volume type.
+	 * Returns the type of the volume containing the specified
+	 * path.
+	 * @param path file path. May contain path elements beyond
+	 * the volume "root"
+	 * @return volume type
+	 * @see LocalSystemInfo#VOLUME_UNKNOWN
+	 * @see LocalSystemInfo#VOLUME_INVALID_PATH
+	 * @see LocalSystemInfo#VOLUME_REMOVABLE
+	 * @see LocalSystemInfo#VOLUME_FIXED
+	 * @see LocalSystemInfo#VOLUME_REMOTE
+	 * @see LocalSystemInfo#VOLUME_CDROM
+	 * @see LocalSystemInfo#VOLUME_FLOPPY_3
+	 * @see LocalSystemInfo#VOLUME_FLOPPY_5
+	 * @since 2.0
+	 */
+	private static int getType(File path) {
+		if (hasNatives) {
+			try {
+				return nativeGetType(path);
+			} catch (UnsatisfiedLinkError e) {
+			}
+		}
+		return VOLUME_UNKNOWN;
+	}
+	
+	/*
+	 * Lists the file system mount points.
+	 * @return array of absolute file paths representing mount
+	 * points, or <code>null</code> if none found
+	 * @since 2.0
+	 */
+	private static String[] listMountPoints() {
+		if (hasNatives) {
+			try {
+				String[] mountPoints = nativeListMountPoints();
+				return mountPoints;
+			} catch (UnsatisfiedLinkError e) {
+			}
+		}
+		return null;
 	}
 		
 	/*

@@ -328,7 +328,7 @@ public class InstallConfiguration
 			for (int j = 0; j < configuredFeaturesRef.length; j++) {
 				IFeature feature = null;
 				try {
-					configuredFeaturesRef[j].getFeature();
+					feature = configuredFeaturesRef[j].getFeature();
 				} catch (CoreException e) {
 				}
 
