@@ -217,9 +217,15 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	 * Helper method for creating a pop up menu in the rendering for a control.
 	 * Call this method when a context menu is required for a control
 	 * in a rendering.
-	 * 
-	 * TODO: document the menu identifier scheme for action contributions
-	 * 
+	 * <p>
+	 * To contribute an action to a rendering, an <code>objectContribution</code> can
+	 * be used on a rendering implementation class itself using a 
+	 * <code>popupMenus</code> extension. Additionaly, the context menu created
+	 * by this method is registered with an identifier of this rendering's container.
+	 * Actions may also be contributed to the context menu specifically by using a 
+	 * <code>viewerContribution</code> on a <code>popupMenus</code> extension
+	 * that has a <code>targetID</code> refering to this rendering container's identifier. 
+	 * </p>
 	 * <p>
 	 * Clients are expected to become a menu listener for their pop  up 
 	 * menu if they require to fill the context menu for the rendering.
@@ -234,11 +240,7 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 			fPopupMenuMgr.setRemoveAllWhenShown(true);
 			IMemoryRenderingSite site = fContainer.getMemoryRenderingSite();
 			String menuId = fContainer.getId();
-			
-			//TODO: using container id for the menu seems like a bad idea - how
-			// will clients now the container id? which can change in different
-			// hosts for memory renderings. 
-			
+						
 			ISelectionProvider selProvider = site.getViewSite().getSelectionProvider();
 			
 			// must add additions seperator before registering the menu
