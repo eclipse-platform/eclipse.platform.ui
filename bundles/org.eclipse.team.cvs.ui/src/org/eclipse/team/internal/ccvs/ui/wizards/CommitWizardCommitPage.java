@@ -208,6 +208,8 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 	 * Expand the sync elements and update the page enablement
 	 */
 	protected void updateForModelChange() {
+        Control control = getControl();
+        if (control == null || control.isDisposed()) return;
 		expand();
 		updateEnablements();
 	}
