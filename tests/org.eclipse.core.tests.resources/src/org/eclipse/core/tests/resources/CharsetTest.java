@@ -501,6 +501,34 @@ public class CharsetTest extends ResourceTest {
 	}
 
 	/**
+	 * See bug 67606.
+	 * 
+	 * TODO enable when bug is fixed
+	 */
+	public void _testBug67606() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		final IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			final IFile file = project.getFile("file.txt");
+			ensureExistsInWorkspace(file, true);
+			project.setDefaultCharset("FOO", getMonitor());
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					assertEquals("0.9", "FOO", file.getCharset());
+					file.setCharset("BAR", getMonitor());
+					assertEquals("1.0", "BAR", file.getCharset());
+					file.move(project.getFullPath().append("file2.txt"), IResource.NONE, monitor);
+					IFile file2 = project.getFile("file2.txt");
+					assertExistsInWorkspace(file2, false);
+					assertEquals("2.0", "BAR", file.getCharset());
+				}
+			}, null);
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}
+	}
+
+	/**
 	 * Check that we are broadcasting the correct resource deltas when
 	 * making encoding changes.
 	 *
