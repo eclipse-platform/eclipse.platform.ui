@@ -11,6 +11,9 @@ import java.io.*;
  * It can be used to obtain multiple readers for the same document.
  */
 public class ParsedDocument {
+	// Limit on how many characters will be indexed
+	// from a large document
+	private static final int charsLimit = 1000000;
 	Reader reader;
 	boolean read;
 	char[] docChars;
@@ -34,13 +37,31 @@ public class ParsedDocument {
 		CharArrayWriter writer = new CharArrayWriter();
 		char[] buf = new char[4096];
 		int n;
+		int charsWritten = 0;
 		try {
 			while (0 <= (n = reader.read(buf))) {
-				writer.write(buf, 0, n);
+				if (charsWritten < charsLimit) {
+					if (n > charsLimit - charsWritten) {
+						// do not exceed the specified limit of characters
+						writer.write(buf, 0, charsLimit - charsWritten);
+						charsWritten = charsLimit;
+					} else {
+						writer.write(buf, 0, n);
+						charsWritten += n;
+					}
+				} else {
+					// do not break out of the loop
+					// keep reading to avoid breaking pipes
+				}
 			}
 		} catch (IOException ioe) {
 			// do not do anything, will use characters read so far
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ioe2) {
+			}
 		}
-		docChars=writer.toCharArray();
+		docChars = writer.toCharArray();
 	}
 }
