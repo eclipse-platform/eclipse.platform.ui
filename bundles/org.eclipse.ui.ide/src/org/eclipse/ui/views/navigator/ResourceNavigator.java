@@ -799,7 +799,6 @@ public class ResourceNavigator
 		if (obj instanceof IFile && selection.size() == 1) {
 			IFile file = (IFile) obj;
 			IWorkbenchPage page = getSite().getPage();
-			//Using internal WorkbenchPage. Must change.
 			IEditorPart editor = page.findEditor(new FileEditorInput(file));
 			if(editor != null) {
 				page.bringToTop(editor);
