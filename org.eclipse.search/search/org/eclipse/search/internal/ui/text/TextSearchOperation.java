@@ -55,11 +55,17 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}	
 
 	String getSingularLabel() {
-		return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-1$
+		if (fPattern == null || fPattern.length() < 1)
+			return SearchMessages.getFormattedString("FileSearchOperation.singularLabelPostfix", new String[] {fScope.getDescription()}); //$NON-NLS-1$
+		else
+			return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-1$
 	}
 
 	String getPluralLabelPattern() {
-		return SearchMessages.getFormattedString("TextSearchOperation.pluralLabelPatternPostfix", new String[] {fPattern, "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+		if (fPattern == null || fPattern.length() < 1)
+			return SearchMessages.getFormattedString("FileSearchOperation.pluralLabelPatternPostfix", new String[] {"{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+		else
+			return SearchMessages.getFormattedString("TextSearchOperation.pluralLabelPatternPostfix", new String[] {fPattern, "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	ImageDescriptor getImageDescriptor() {
