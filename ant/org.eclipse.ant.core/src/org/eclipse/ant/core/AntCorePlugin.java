@@ -11,16 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.internal.core.AntCorePreferences;
-import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+
 /**
  * The plug-in runtime class for the Ant Core plug-in.
  */
-public class AntCorePlugin extends Plugin implements IAntCoreConstants {
+public class AntCorePlugin extends Plugin {
 
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -96,6 +96,23 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 * Ant project.
 	 */
 	public static final String ECLIPSE_PROGRESS_MONITOR = "eclipse.progress.monitor"; //$NON-NLS-1$
+	
+	/**
+	 * Status code indicating an error occurred running a script.
+	 * @since 2.1	 */
+	public static final int ERROR_RUNNING_SCRIPT = 1;
+	
+	/**
+	 * Status code indicating an error occurred due to a malformed URL.
+	 * @since 2.1
+	 */
+	public static final int ERROR_MALFORMED_URL = 2;
+	
+	/**
+	 * Status code indicating an error occurred as a library was not specified
+	 * @since 2.1
+	 */
+	public static final int ERROR_LIBRARY_NOT_SPECIFIED = 3;
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.

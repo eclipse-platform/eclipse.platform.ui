@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.Status;
 /**
  * Entry point for running Ant scripts inside Eclipse.
  */
-public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
+public class AntRunner implements IPlatformRunnable {
 
-	protected String fBuildFileLocation = DEFAULT_BUILD_FILENAME;
+	protected String fBuildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
 	protected List fBuildListeners;
 	protected Vector fTargets;
 	protected Map fUserProperties;
@@ -60,7 +60,7 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
 		if (buildFileLocation == null) {
-			fBuildFileLocation = DEFAULT_BUILD_FILENAME;
+			fBuildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
 		} else {
 			fBuildFileLocation = buildFileLocation;
 		}
@@ -229,16 +229,16 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 			}
 			return targets;
 		} catch (NoClassDefFoundError e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
 			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e));
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e));
 		}
 	}
 
@@ -255,7 +255,7 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		long startTime = 0;
-		if (DEBUG_BUILDFILE_TIMING) {
+		if (IAntCoreConstants.DEBUG_BUILDFILE_TIMING) {
 			startTime = System.currentTimeMillis();
 		}
 		try {
@@ -298,23 +298,23 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 			Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
 			run.invoke(runner, null);
 		} catch (NoClassDefFoundError e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
 			// J9 throws NoClassDefFoundError nested in a InvocationTargetException
 			if ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException)) {
-				throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), realException)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), realException)); //$NON-NLS-1$
 			}
 			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? "Build Failed." : e.getMessage(); //$NON-NLS-1$
-			IStatus status= new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e);
+			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
 			throw new CoreException(status);
 		} finally {
-			if (DEBUG_BUILDFILE_TIMING) {
+			if (IAntCoreConstants.DEBUG_BUILDFILE_TIMING) {
 				long finishTime = System.currentTimeMillis();
 				System.out.println(InternalCoreAntMessages.getString("AntRunner.Buildfile_run_took___9") + (finishTime - startTime) + InternalCoreAntMessages.getString("AntRunner._milliseconds._10")); //$NON-NLS-1$ //$NON-NLS-2$
 			}

@@ -87,7 +87,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				result.add(task);
 			} catch (MalformedURLException e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -107,7 +107,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				result.add(type);
 			} catch (MalformedURLException e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -121,7 +121,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				result.add(new URL(urls[i]));
 			} catch (MalformedURLException e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -148,7 +148,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			if (library == null) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{task.getTaskName()}), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{task.getTaskName()}), null); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -159,7 +159,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				defaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -179,7 +179,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			if (library == null) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{type.getTypeName()}), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{type.getTypeName()}), null); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -190,7 +190,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				defaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -216,7 +216,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				defaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -242,7 +242,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 			destination.add(new URL("file:" + tools.getAbsolutePath())); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -256,7 +256,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				destination.add(Platform.asLocalURL(url));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
