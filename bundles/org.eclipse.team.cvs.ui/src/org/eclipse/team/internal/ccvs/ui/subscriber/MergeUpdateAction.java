@@ -13,20 +13,13 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -193,22 +186,29 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		}
 	}
 	
-	private void ensureContainerExists(SyncInfo info) throws TeamException {
+	private boolean ensureContainerExists(SyncInfo info) throws TeamException {
 		IResource local = info.getLocal();
 		// make sure that the parent exists
 		if (!local.exists()) {
-			ensureContainerExists(getParent(info));
+			if (!ensureContainerExists(getParent(info))) {
+				return false;
+			}
 		}
 		// make sure that the folder sync info is set;
 		if (info instanceof CVSSyncInfo) {
 			CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
-			cvsInfo.makeInSync();
+			IStatus status = cvsInfo.makeInSync();
+			if (status.getSeverity() == IStatus.ERROR) {
+				logError(status);
+				return false;
+			}
 		}
 		// create the folder if it doesn't exist
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
 		if (!cvsFolder.exists()) {
 			cvsFolder.mkdir();
 		}
+		return true;
 	}
 	
 	/* (non-Javadoc)

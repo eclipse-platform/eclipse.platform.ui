@@ -74,7 +74,11 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 					return false;
 				}
 			}
-			cvsInfo.makeOutgoing(Policy.subMonitorFor(monitor, 80));
+			IStatus status = cvsInfo.makeOutgoing(Policy.subMonitorFor(monitor, 80));
+			if (status.getSeverity() == IStatus.ERROR) {
+				logError(status);
+				return false;
+			}
 			return true;
 		} finally {
 			monitor.done();

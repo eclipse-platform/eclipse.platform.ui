@@ -35,9 +35,14 @@ import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 public abstract class CVSSubscriberAction extends SubscriberAction {
 	
+	/*
+	 * Indicate that the resource is out of sync if the sync state is not IN_SYNC
+	 * or if the local doesn't exist but the remote does.
+	 */
 	protected boolean isOutOfSync(SyncInfo resource) {
 		if (resource == null) return false;
-		return (!(resource.getKind() == 0) || ! resource.getLocal().exists());
+		return (!(resource.getKind() == 0) || 
+				(! resource.getLocal().exists() && resource.getRemote() != null));
 	}
 	
 	protected void makeInSync(SyncInfo[] folders) throws TeamException {
@@ -51,17 +56,36 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		}
 	}
 	
-	protected void makeInSync(SyncInfo info) throws TeamException {
+	protected boolean makeInSync(SyncInfo info) throws TeamException {
 		if (isOutOfSync(info)) {
 			SyncInfo parent = getParent(info);
-			if (parent != null) {
-				makeInSync(parent);
+			if (parent == null) {
+				if (info.getLocal().getType() == IResource.ROOT) {
+					// ROOT should be null
+					return true;
+				} else {
+					// No other ancestors should be null. Log the problem.
+					CVSUIPlugin.log(IStatus.WARNING, Policy.bind("CVSSubscriberAction.0", info.getLocal().getFullPath().toString()), null); //$NON-NLS-1$
+					return false;
+				}
+			} else {
+				if (!makeInSync(parent)) {
+					// The failed makeInSync will log any errors
+					return false;
+				}
 			}
-			if (info == null) return;
 			if (info instanceof CVSSyncInfo) {
 				CVSSyncInfo cvsInfo= (CVSSyncInfo) info;
-				cvsInfo.makeInSync();
+				IStatus status = cvsInfo.makeInSync();
+				if (status.getSeverity() == IStatus.ERROR) {
+					logError(status);
+					return false;
+				}
+				return true;
 			}
+			return false;
+		} else {
+			return true;
 		}
 	}
 	
@@ -82,8 +106,19 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		if (info == null) return;
 		if (info instanceof CVSSyncInfo) {
 			CVSSyncInfo cvsInfo= (CVSSyncInfo) info;
-			cvsInfo.makeOutgoing(monitor);
+			IStatus status = cvsInfo.makeOutgoing(monitor);
+			if (status.getSeverity() == IStatus.ERROR) {
+				logError(status);
+			}
 		}
+	}
+
+	/**
+	 * Log an error associated with an operation.
+	 * @param status
+	 */
+	protected void logError(IStatus status) {
+		CVSUIPlugin.log(status);
 	}
 
 	/**

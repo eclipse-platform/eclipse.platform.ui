@@ -7,7 +7,7 @@
 package org.eclipse.team.internal.ccvs.core;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -55,9 +55,10 @@ public class CVSMergeSyncInfo extends CVSSyncInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncInfo#makeOutgoing(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void makeOutgoing(IProgressMonitor monitor) throws TeamException {
+	public IStatus makeOutgoing(IProgressMonitor monitor) throws TeamException {
 		// Make the resource outgoing by marking it as merged with the subscriber
 		CVSMergeSubscriber subscriber = (CVSMergeSubscriber)getSubscriber();
 		subscriber.merged(new IResource[] {getLocal() });
+		return Status.OK_STATUS;
 	}
 }
