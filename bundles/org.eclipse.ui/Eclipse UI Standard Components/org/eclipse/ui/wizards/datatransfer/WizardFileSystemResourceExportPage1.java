@@ -27,8 +27,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	// widgets
 	private Combo				destinationNameField;
 	private Button				destinationBrowseButton;
-	protected Button				overwriteExistingFilesCheckbox;
-	protected Button				createDirectoryStructureCheckbox;
+	protected Button			overwriteExistingFilesCheckbox;
+	protected Button			createDirectoryStructureButton;
+	protected Button			createSelectionOnlyButton;
 
 	// constants
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
@@ -113,18 +114,25 @@ protected void createDestinationGroup(Composite parent) {
  */
 
 protected void createOptionsGroupButtons(Group optionsGroup) {
-	// overwrite... checkbox
-	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
-	overwriteExistingFilesCheckbox.setText(DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
-	
-	// create directory structure checkbox
-	createDirectoryStructureCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
-	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
-	createDirectoryStructureCheckbox.addListener(SWT.Selection,this);
-	
-		// initial setup
-	createDirectoryStructureCheckbox.setSelection(false);
+		// overwrite... checkbox
+		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+		overwriteExistingFilesCheckbox.setText(
+			DataTransferMessages.getString("ExportFile.overwriteExisting"));
+		//$NON-NLS-1$
+
+		// create directory structure radios
+		createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+		createDirectoryStructureButton.setText(
+			DataTransferMessages.getString("FileExport.createDirectoryStructure"));
+		createDirectoryStructureButton.setSelection(false);
+
+		// create directory structure radios
+		createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+		createSelectionOnlyButton.setText(
+			DataTransferMessages.getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$}
+		createSelectionOnlyButton.setSelection(true);
 }
+
 /**
  * Attempts to ensure that the specified directory exists on the local file system.
  * Answers a boolean indicating success.
@@ -168,7 +176,7 @@ protected boolean ensureTargetIsValid(File targetDirectory) {
  *  @return boolean
  */
 protected boolean executeExportOperation(FileSystemExportOperation op) {
-	op.setCreateLeadupStructure(createDirectoryStructureCheckbox.getSelection());
+	op.setCreateLeadupStructure(createDirectoryStructureButton.getSelection());
 	op.setOverwriteFiles(overwriteExistingFilesCheckbox.getSelection());
 	
 	try {
@@ -297,7 +305,7 @@ protected void internalSaveWidgetValues() {
 
 		settings.put(
 			STORE_CREATE_STRUCTURE_ID,
-			createDirectoryStructureCheckbox.getSelection());
+			createDirectoryStructureButton.getSelection());
 
 	}
 }
@@ -321,8 +329,9 @@ protected void restoreWidgetValues() {
 		overwriteExistingFilesCheckbox.setSelection(
 			settings.getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
 
-		createDirectoryStructureCheckbox.setSelection(
-			settings.getBoolean(STORE_CREATE_STRUCTURE_ID));
+		boolean createDirectories = settings.getBoolean(STORE_CREATE_STRUCTURE_ID);
+		createDirectoryStructureButton.setSelection(createDirectories);
+		createSelectionOnlyButton.setSelection(!createDirectories);
 	}
 }
 /**

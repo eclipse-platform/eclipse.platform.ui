@@ -81,7 +81,8 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
 
 	// initial setup
-	createDirectoryStructureCheckbox.setSelection(true);
+	createDirectoryStructureButton.setSelection(true);
+	createSelectionOnlyButton.setSelection(false);
 	compressContentsCheckbox.setSelection(true);
 }
 /**
@@ -142,7 +143,7 @@ protected boolean ensureTargetIsValid() {
  *  (iff it's a container).  Answer a boolean indicating success.
  */
 protected boolean executeExportOperation(ZipFileExportOperation op) {
-	op.setCreateLeadupStructure(createDirectoryStructureCheckbox.getSelection());
+	op.setCreateLeadupStructure(createDirectoryStructureButton.getSelection());
 	op.setUseCompression(compressContentsCheckbox.getSelection());
 	
 	try {
@@ -268,7 +269,7 @@ protected void internalSaveWidgetValues() {
 
 		settings.put(
 			STORE_CREATE_STRUCTURE_ID,
-			createDirectoryStructureCheckbox.getSelection());
+			createDirectoryStructureButton.getSelection());
 
 		settings.put(
 			STORE_COMPRESS_CONTENTS_ID,
@@ -295,8 +296,11 @@ protected void restoreWidgetValues() {
 		overwriteExistingFilesCheckbox.setSelection(
 			settings.getBoolean(STORE_OVERWRITE_EXISTING_FILE_ID));
 
-		createDirectoryStructureCheckbox.setSelection(
-			settings.getBoolean(STORE_CREATE_STRUCTURE_ID));
+		boolean setStructure =
+			settings.getBoolean(STORE_CREATE_STRUCTURE_ID);
+			
+		createDirectoryStructureButton.setSelection(setStructure);
+		createSelectionOnlyButton.setSelection(!setStructure);
 
 		compressContentsCheckbox.setSelection(
 			settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));

@@ -210,19 +210,28 @@ public void createControl(Composite parent) {
  *	Create the import options specification widgets.
  */
 protected void createOptionsGroupButtons(Group optionsGroup) {
-	
-	// overwrite... checkbox
-	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
-	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
-	// create containers checkbox
-	createContainerStructureButton = new Button(optionsGroup,SWT.RADIO);
-	createContainerStructureButton.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
-	// create containers checkbox
-	createOnlySelectedButton = new Button(optionsGroup,SWT.RADIO);
-	createOnlySelectedButton.setText(DataTransferMessages.getString("FileImport.createSelectedFolders")); //$NON-NLS-1$
-	
-}
+		// overwrite... checkbox
+		overwriteExistingResourcesCheckbox = new Button(optionsGroup, SWT.CHECK);
+		overwriteExistingResourcesCheckbox.setText(
+			DataTransferMessages.getString("FileImport.overwriteExisting"));
+		//$NON-NLS-1$
+
+		// create containers radio
+		createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
+		createContainerStructureButton.setText(
+			DataTransferMessages.getString("FileImport.createComplete"));
+		//$NON-NLS-1$
+		createContainerStructureButton.setSelection(false);
+		
+		// create selection only radio
+		createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
+		createOnlySelectedButton.setText(
+			DataTransferMessages.getString("FileImport.createSelectedFolders"));
+		createOnlySelectedButton.setSelection(true);
+		
+
+	}
 /**
  *	Create the group for creating the root directory
  */
@@ -638,10 +647,10 @@ protected void restoreWidgetValues() {
 		overwriteExistingResourcesCheckbox.setSelection(
 			settings.getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
 
-		if(settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID))
-			createContainerStructureButton.setSelection(true);
-		else
-			createOnlySelectedButton.setSelection(true);
+		boolean createStructure =
+			settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID);
+		createContainerStructureButton.setSelection(createStructure);
+		createOnlySelectedButton.setSelection(!createStructure);
 
 	}
 }
