@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
@@ -37,13 +36,6 @@ public final class UIPlugin extends AbstractUIPlugin {
 		inst = this;
 	}
 	
-	/**
-	 * Create an instance of the UIPlugin.
-	 */
-	public UIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		inst = this;
-	}
 	/**
 	 * Returns the image registry for this plugin.
 	 *
@@ -87,9 +79,8 @@ public final class UIPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-	    // This should not be called.
+	    // Do nothing.  This should not be called.
 	    // Prefs are initialized in UIPreferenceInitializer.
-	    throw new UnsupportedOperationException();
 	}
 
     /* (non-Javadoc)
