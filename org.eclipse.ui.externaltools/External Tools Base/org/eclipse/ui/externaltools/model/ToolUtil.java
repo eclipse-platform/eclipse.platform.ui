@@ -7,7 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
  
 Contributors:
-**********************************************************************/
+	IBM Corp. - Initial implementation
+	Tomasz Stanczak - Fix for Bug 29504
+*********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -179,42 +181,47 @@ public final class ToolUtil {
 
 		VariableDefinition varDef = extractVariableTag(dirLocation, 0);
 		// Return if no variable found
-		if (varDef.start < 0)
+		if (varDef.start < 0) {
 			return dirLocation;
-		
-		// Disallow text before/after variable
-		if (varDef.start != 0 || (varDef.end < dirLocation.length() && varDef.end != -1)) {
-			String msg = ToolMessages.getString("ToolUtil.dirLocVarBetweenText"); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
 		}
 		
-		// Invalid variable format
-		if (varDef.name == null || varDef.name.length() == 0 || varDef.end == -1) {
-			String msg = ToolMessages.getString("ToolUtil.dirLocVarFormatWrong"); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
+		StringBuffer buffer= new StringBuffer();
+		int start= 0;
+		while (varDef.start >= 0) {
+			// Invalid variable format
+			if (varDef.name == null || varDef.name.length() == 0 || varDef.end == -1) {
+				String msg = ToolMessages.getString("ToolUtil.dirLocVarFormatWrong"); //$NON-NLS-1$
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
+			
+			// Append text before the variable
+			buffer.append(dirLocation.substring(start, varDef.start));
+			
+			// Lookup the variable if it exist
+			PathLocationVariableRegistry registry;
+			registry = ExternalToolsPlugin.getDefault().getDirectoryLocationVariableRegistry();
+			PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
+			if (variable == null) {
+				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
+			
+			// Expand the variable into a IPath if possible
+			IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
+			if (path == null) {
+				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
+			buffer.append(path.toOSString());
+			start= varDef.end;
+			varDef= extractVariableTag(dirLocation, start);
 		}
-		
-		// Lookup the variable if it exist
-		PathLocationVariableRegistry registry;
-		registry = ExternalToolsPlugin.getDefault().getDirectoryLocationVariableRegistry();
-		PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
-		if (variable == null) {
-			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
-		}
-		
-		// Expand the variable into a IPath if possible
-		IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
-		if (path == null) {
-			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
-		}
-		
-		return path.toOSString();
+		// Append text remaining after the variables
+		buffer.append(dirLocation.substring(start));
+		return buffer.toString();
 	}
 	
 	/**
@@ -234,42 +241,49 @@ public final class ToolUtil {
 
 		VariableDefinition varDef = extractVariableTag(fileLocation, 0);
 		// Return if no variable found
-		if (varDef.start < 0)
+		if (varDef.start < 0) {
 			return fileLocation;
-		
-		// Disallow text before/after variable
-		if (varDef.start != 0 || (varDef.end < fileLocation.length() && varDef.end != -1)) {
-			String msg = ToolMessages.getString("ToolUtil.fileLocVarBetweenText"); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
 		}
 		
-		// Invalid variable format
-		if (varDef.name == null || varDef.name.length() == 0 || varDef.end == -1) {
-			String msg = ToolMessages.getString("ToolUtil.fileLocVarFormatWrong"); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
-		}
+		StringBuffer buffer= new StringBuffer();
+		int start= 0;
+		while (varDef.start >= 0) {
+			// Invalid variable format
+			if (varDef.name == null || varDef.name.length() == 0 || varDef.end == -1) {
+				String msg = ToolMessages.getString("ToolUtil.fileLocVarFormatWrong"); //$NON-NLS-1$
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
+			
+			// Append text before the variable
+			buffer.append(fileLocation.substring(start, varDef.start));
 		
-		// Lookup the variable if it exist
-		PathLocationVariableRegistry registry;
-		registry = ExternalToolsPlugin.getDefault().getFileLocationVariableRegistry();
-		PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
-		if (variable == null) {
-			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.fileLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
-		}
+			// Lookup the variable if it exist
+			PathLocationVariableRegistry registry;
+			registry = ExternalToolsPlugin.getDefault().getFileLocationVariableRegistry();
+			PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
+			if (variable == null) {
+				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.fileLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
 		
-		// Expand the variable into a IPath if possible
-		IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
-		if (path == null) {
-			String msg = MessageFormat.format("The variable {0} with argument {1} could not be expanded to a valid path.", new Object[] {varDef.name, varDef.argument});
-			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-			return null;
+			// Expand the variable into a IPath if possible
+			IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
+			if (path == null) {
+				String msg = MessageFormat.format("The variable {0} with argument {1} could not be expanded to a valid path.", new Object[] {varDef.name, varDef.argument});
+				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+				return null;
+			}
+			buffer.append(path.toOSString());
+			start= varDef.end;
+			varDef= extractVariableTag(fileLocation, start);
 		}
+		// Append text remaining after the variables
+		buffer.append(fileLocation.substring(start));
+		return buffer.toString();
 		
-		return path.toString();
+
 	}
 	
 	/**
