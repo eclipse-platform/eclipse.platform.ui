@@ -11,22 +11,22 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.INavigableControl;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -55,10 +55,14 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	// other view actions
 	private Action collapseAll;
 	private Action refreshSelectionAction;
-	private Action toggleViewerType;
 	private Action refreshViewContents;
+	
+	private Action toggleLayoutFlatAction;
+	private Action toggleLayoutHierarchicalAction;
 	private ExpandAllAction expandAll;
 	private SelectAllAction selectAllAction;
+	private NavigateAction gotoNext;
+	private NavigateAction gotoPrevious;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
@@ -101,24 +105,11 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		expandAll = new ExpandAllAction(this);
 		
-		IKeyBindingService kbs = getSyncView().getSite().getKeyBindingService();
-		IAction a= new Action() {
-			public void run() {
-				getSyncView().gotoDifference(INavigableControl.NEXT);
-			}
-		};
-		Utils.initAction(a, "action.selectNextChange."); //$NON-NLS-1$
-		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectNextChange");	//$NON-NLS-1$
-		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.NEXT, a);
+		gotoNext = new NavigateAction(this, INavigableControl.NEXT);
+		gotoPrevious = new NavigateAction(this, INavigableControl.PREVIOUS);
 		
-		a= new Action() {
-			public void run() {
-				getSyncView().gotoDifference(INavigableControl.PREVIOUS);
-			}
-		};
-		Utils.initAction(a, "action.selectPreviousChange."); //$NON-NLS-1$
-		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectPreviousChange");	//$NON-NLS-1$
-		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, a);
+		toggleLayoutFlatAction = new ToggleViewAction(getSyncView(), ISynchronizeView.TABLE_VIEW);
+		toggleLayoutHierarchicalAction = new ToggleViewAction(getSyncView(), ISynchronizeView.TREE_VIEW);
 		
 		collapseAll = new Action() {
 			public void run() {
@@ -140,9 +131,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			}
 		};
 		Utils.initAction(refreshViewContents, "action.refreshViewContents."); //$NON-NLS-1$
-		
-		
-		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
 				
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -172,20 +160,32 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		
+		// Setup toolbars
 		IToolBarManager manager = actionBars.getToolBarManager();
 		manager.add(chooseSubscriberAction);
 		manager.add(new Separator());
 		directionsFilters.fillActionBars(actionBars);
 		manager.add(new Separator());
-		manager.add(chooseChangeFilterAction);		
 		manager.add(collapseAll);
-		manager.add(toggleViewerType);
+		manager.add(new Separator());
+		manager.add(gotoNext);
+		manager.add(gotoPrevious);	
 		
+		// Setup drop down menu
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
 		dropDownMenu.add(refreshViewContents);
 		dropDownMenu.add(new Separator());
+		
+		MenuManager layoutMenu = new MenuManager(Policy.bind("action.layout.label")); //$NON-NLS-1$
+		layoutMenu.add(toggleLayoutFlatAction);
+		layoutMenu.add(toggleLayoutHierarchicalAction);
+		dropDownMenu.add(layoutMenu);		
+		dropDownMenu.add(new Separator());
 		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
+		
+		dropDownMenu.add(gotoNext);
+		dropDownMenu.add(gotoPrevious);
 		
 		refactoringActions.fillActionBars(actionBars);
 	}
@@ -253,11 +253,12 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	 */
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
-		refreshSelectionAction.setEnabled(input != null);
-		toggleViewerType.setEnabled(input != null);
+		refreshSelectionAction.setEnabled(input != null);		
 		chooseSubscriberAction.setEnabled(input != null);
 		chooseChangeFilterAction.setEnabled(input != null);
 		collapseAll.setEnabled(input != null);
+		toggleLayoutFlatAction.setEnabled(input != null);
+		toggleLayoutHierarchicalAction.setEnabled(input != null);
 		// refresh the selected filter
 		refreshFilters();
 	}

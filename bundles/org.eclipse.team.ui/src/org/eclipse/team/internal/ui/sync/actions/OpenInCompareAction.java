@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.sync.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -34,9 +33,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
- * Opens a compare editor on a selected SyncInfo object
+ * Action to open a compare editor from a SyncInfo object.
+ * 
+ * @see SyncInfoCompareInput
+ * @since 3.0
  */
 public class OpenInCompareAction extends Action {
 	
@@ -47,34 +50,38 @@ public class OpenInCompareAction extends Action {
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
 
-	public void run() {	
-		openEditor();
+	public void run() {
+		ISelection selection = viewer.getViewer().getSelection();
+		Object obj = ((IStructuredSelection)selection).getFirstElement();
+		SyncInfo info = getSyncInfo(obj);	
+		openCompareEditor(viewer, info, true /* keep focus */);		
 	}
 	
-	private void openEditor() {
-		CompareEditorInput input = getCompareInput();
+	public static SyncInfoCompareInput openCompareEditor(SynchronizeView viewer, SyncInfo info, boolean keepFocus) {
+		SyncInfoCompareInput input = getCompareInput(info);
 		if(input != null) {
-			if (!prefetchFileContents()) return;
-			IEditorPart editor = reuseCompareEditor((SyncInfoCompareInput)input);
+			if (!prefetchFileContents(viewer, info)) return null;
+			IEditorPart editor = findReusableCompareEditor(viewer.getSite().getPage());
 			if(editor != null && editor instanceof IReusableEditor) {
-				CompareUI.openCompareEditor(input);
-				// should be enabled once  Bug 38770 is fixed
-				//((IReusableEditor)editor).setInput(input);
+				CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
 			} else {
 				CompareUI.openCompareEditor(input);
 			}
-			// This could be a user preference.
-			//SynchronizeView.showInActivePage(viewer.getSite().getPage());
-		}		
+			
+			if(keepFocus) {
+				 SynchronizeView.showInActivePage(viewer.getSite().getPage());
+			}
+			return input;
+		}
+		return null;
 	}
-	
-	/*
+
+	/**
 	 * Prefetching the file contents will cache them for use by the compare editor
+	 * so that the compare editor doesn't have to perform file transfers. This will
+	 * make the transfer cancellable.
 	 */
-	private boolean prefetchFileContents() {
-		ISelection selection = viewer.getViewer().getSelection();
-		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		SyncInfo info = getSyncInfo(obj);
+	private static boolean prefetchFileContents(SynchronizeView viewer, SyncInfo info) {
 		final IRemoteResource remote = info.getRemote();
 		final IRemoteResource base = info.getBase();
 		if (remote != null || base != null) {
@@ -100,58 +107,78 @@ public class OpenInCompareAction extends Action {
 		return true;
 	}
 	
-	private CompareEditorInput getCompareInput() {
-		ISelection selection = viewer.getViewer().getSelection();
-		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		SyncInfo info = getSyncInfo(obj);
+	/**
+	 * Returns a SyncInfoCompareInput instance for the current selection.
+	 */
+	private static SyncInfoCompareInput getCompareInput(SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
 			return new SyncInfoCompareInput(info);								
 		}
 		return null;
 	}				
 
-	private SyncInfo getSyncInfo(Object obj) {
-		return (SyncInfo)TeamAction.getAdapter(obj, SyncInfo.class);
-	}
-
-	private IEditorPart reuseCompareEditor(SyncInfoCompareInput input) {
-		IWorkbenchPage page = viewer.getSite().getPage();
+	/**
+	 * Returns an editor that can be re-used. An open compare editor that
+	 * has un-saved changes cannot be re-used.
+	 */
+	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
 		IEditorReference[] editorRefs = page.getEditorReferences();
 		
-		IEditorPart editor = page.findEditor(input);
-		if(editor == null) {
-			for (int i = 0; i < editorRefs.length; i++) {
-				IEditorPart part = editorRefs[i].getEditor(true);
-				if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput) {
-					if(! part.isDirty()) {	
-						// should be removed once Bug 38770 is fixed					
-						page.closeEditor(part, true /*save changes if required */);		
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorPart part = editorRefs[i].getEditor(true);
+			if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput) {
+				if(! part.isDirty()) {	
+					return part;	
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Close a compare editor that is opened on the given IResource.
+	 * 
+	 * @param site the view site in which to close the editors 
+	 * @param resource the resource to use to find the compare editor
+	 */
+	public static void closeCompareEditorFor(final IWorkbenchPartSite site, final IResource resource) {
+		site.getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IEditorPart editor = findOpenCompareEditor(site, resource);
+				if(editor != null) {
+					site.getPage().closeEditor(editor, true /*save changes if required */);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Returns an editor handle if a SyncInfoCompareInput compare editor is opened on 
+	 * the given IResource.
+	 * 
+	 * @param site the view site in which to search for editors
+	 * @param resource the resource to use to find the compare editor
+	 * @return an editor handle if found and <code>null</code> otherwise
+	 */
+	public static IEditorPart findOpenCompareEditor(IWorkbenchPartSite site, IResource resource) {
+		IWorkbenchPage page = site.getPage();
+		IEditorReference[] editorRefs = page.getEditorReferences();						
+		for (int i = 0; i < editorRefs.length; i++) {
+			final IEditorPart part = editorRefs[i].getEditor(false /* don't restore editor */);
+			if(part != null) {
+				IEditorInput input = part.getEditorInput();
+				if(part != null && input instanceof SyncInfoCompareInput) {
+					SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
+					if(inputInfo.getLocal().equals(resource)) {
+						return part;
 					}
 				}
 			}
 		}
-		return editor;
+		return null;
 	}
 	
-	public static void closeCompareEditorFor(final SynchronizeView viewer, final IResource resource) {
-		viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page = viewer.getSite().getPage();
-				IEditorReference[] editorRefs = page.getEditorReferences();
-						
-				for (int i = 0; i < editorRefs.length; i++) {
-					final IEditorPart part = editorRefs[i].getEditor(false /* don't restore editor */);
-					if(part != null) {
-						IEditorInput input = part.getEditorInput();
-						if(part != null && input instanceof SyncInfoCompareInput) {
-							SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
-							if(inputInfo.getLocal().equals(resource)) {
-										page.closeEditor(part, true /*save changes if required */);
-							}
-						}
-					}
-				}
-			}
-		});				
+	public static SyncInfo getSyncInfo(Object obj) {
+		return (SyncInfo)TeamAction.getAdapter(obj, SyncInfo.class);
 	}
 }

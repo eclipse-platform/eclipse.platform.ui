@@ -222,7 +222,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			
 				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
-				gotoDifference(INavigableControl.NEXT);
 			}
 		});
 		updateTitle();
@@ -250,7 +249,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			createViewer(composite);
 			composite.layout();
 			if(oldSelection == null || oldSelection.size() == 0) {
-				gotoDifference(INavigableControl.NEXT);
+				//gotoDifference(INavigableControl.NEXT);
 			} else {
 				viewer.setSelection(oldSelection, true);
 			}
@@ -764,7 +763,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		IResource[] resources =event.getRemovedResources();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			OpenInCompareAction.closeCompareEditorFor(this, resource);
+			OpenInCompareAction.closeCompareEditorFor(this.getSite(), resource);
 		}
 	}
 
@@ -829,13 +828,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		} else {
 			// Select All in a tree doesn't really work well
 		}
-	}
-	
-	public boolean gotoDifference(int direction) {
-		if(viewer instanceof INavigableControl) {
-			return ((INavigableControl)viewer).gotoDifference(direction);
-		}
-		return false;
 	}
 	
 	private IPreferenceStore getStore() {
