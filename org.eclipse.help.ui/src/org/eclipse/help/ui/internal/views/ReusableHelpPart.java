@@ -486,7 +486,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	public void startSearch(String phrase) {
 		showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
 		SearchPart part = (SearchPart)findPart(IHelpUIConstants.HV_FSEARCH);
-		if (part!=null)
+		if (part!=null && phrase!=null)
 			part.startSearch(phrase);
 	}
 

@@ -47,6 +47,23 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayHelp() {
 		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser(null));
 	}
+	
+	public void displaySearch() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null && isActiveShell(window)) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					IViewPart part = page.showView(HELP_VIEW_ID);
+					if (part!=null) {
+						HelpView view = (HelpView)part;
+						view.startSearch(null);
+					}
+				} catch (PartInitException e) {
+				}
+			}
+		}
+	}
 
 	/**
 	 * Displays a help resource specified as a url.
@@ -84,10 +101,12 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
+					IWorkbenchPart activePart = page.getActivePart();
+					Control c = window.getShell().getDisplay().getFocusControl();
 					IViewPart part = page.showView(HELP_VIEW_ID);
 					if (part!=null) {
 						HelpView view = (HelpView)part;
-						view.displayContext(context);
+						view.displayContext(context, activePart, c);
 					}
 					return;
 				} catch (PartInitException e) {

@@ -120,7 +120,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	 * @param toolkit
 	 * @param style
 	 */
-	public AllTopicsPart(Composite parent, FormToolkit toolkit) {
+	public AllTopicsPart(Composite parent, final FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -175,6 +175,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		});
 
 		treeViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
+			private TreeItem lastItem;
 			public void mouseMove(MouseEvent e) {
 				Point p = new Point(e.x, e.y);
 				TreeItem item = treeViewer.getTree().getItem(p);
@@ -183,8 +184,18 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 					if (obj instanceof IHelpResource) {
 						treeViewer.getTree().setCursor(
 								FormsResources.getHandCursor());
+						if (lastItem==null || !lastItem.equals(item)) {
+							if (lastItem!=null)
+								lastItem.setForeground(null);
+							item.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
+							lastItem = item;
+						}
 						return;
 					}
+				}
+				else if (lastItem!=null) {
+					lastItem.setForeground(null);
+					lastItem=null;
 				}
 				treeViewer.getTree().setCursor(null);
 			}

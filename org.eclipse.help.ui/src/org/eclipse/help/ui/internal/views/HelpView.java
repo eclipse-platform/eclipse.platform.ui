@@ -304,16 +304,9 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		return IHelpUIConstants.HV_CONTEXT_HELP_PAGE;
 	}
 	
-	public void displayContext(IContext context) {
+	public void displayContext(IContext context, IWorkbenchPart part, Control control) {
 		if (reusableHelpPart!=null) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			IPartService service = window.getPartService();
-			IWorkbenchPartReference aref = service.getActivePartReference();
-			if (aref!=null) {
-				IWorkbenchPart part = aref.getPart(true);
-				Control control = window.getShell().getDisplay().getFocusControl();
-				reusableHelpPart.update(context, part, control);
-			}
+			reusableHelpPart.update(context, part, control);
 		}
 	}
 	/* (non-Javadoc)
@@ -325,5 +318,9 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	public void setFocus() {
 		if (reusableHelpPart != null)
 			reusableHelpPart.setFocus();
+	}
+	public void startSearch(String phrase) {
+		if (reusableHelpPart != null)
+			reusableHelpPart.startSearch(phrase);
 	}
 }
