@@ -93,6 +93,15 @@
 		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.LiveHelpURLHandler"/> 
 	</extension> 
 	
+	<!-- For remote install, run this application -->
+	<!-- ======================================== -->
+	<extension id="servletFacade" point="org.eclipse.core.runtime.applications">
+		<application> 
+			<run class="org.eclipse.help.internal.ServletFacade">
+			</run>
+		</application>
+	</extension>
+
    <!-- ================================================================ -->
    <!-- Declares an extension point for pre-built indexes                -->
    <!-- ================================================================ -->
