@@ -193,13 +193,24 @@ public class AntTestChecker {
 		nameOfListeners= new ArrayList();
 	}
 	
-	
-	public String getLastMessageLogged() {
-		if (messages.isEmpty()) {
-			return null;
-		}
-		return (String) messages.get(messages.size() - 1);
-	}
+	/**
+     * Return the message n from the last:
+     * e.g. getLoggedMessage(0) returns the most recent message
+     * 
+	 * @param n message index
+	 * @return the nth last message
+	 */
+    public String getLoggedMessage(int n) {
+        n = messages.size() - (n + 1);
+        if ((n < 0) || (n >= messages.size())) {
+            return null;
+        }
+        return (String) messages.get(n);
+    }
+
+    public String getLastMessageLogged() {
+        return getLoggedMessage(0);
+    }
 	
 	public void setUserProperties(Hashtable userProperties) {
 		this.userProperties= userProperties;

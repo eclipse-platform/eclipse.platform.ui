@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class OptionTests extends AbstractAntTest {
 	
+	protected static final String UNKNOWN_ARG= "Unknown argument: ";
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
 	protected static final String VERSION= "Apache Ant version 1.5.3 compiled on April 9 2003";
 	 
@@ -83,12 +84,12 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests passing an unrecognized argument
 	 */
-	public void testUnknownArg() throws CoreException {
-		
+	public void testUnknownArg() throws CoreException {	
 		run("TestForEcho.xml", new String[]{"-listenr"});
-		//unknown arg, print usage
-		assertTrue("Two message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 2);
-		assertTrue("Should have printed the usage", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
+        assertTrue("Unrecognized option message should have been logged before successful build",
+					(AntTestChecker.getDefault().getMessagesLoggedCount() == 6)
+					 && (getLoggedMessage(5).startsWith(UNKNOWN_ARG))
+                     && (getLastMessageLogged().startsWith(BUILD_SUCCESSFUL)));
 	}
 	
 	/**

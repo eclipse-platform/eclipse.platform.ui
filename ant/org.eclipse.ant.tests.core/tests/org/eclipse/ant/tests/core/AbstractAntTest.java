@@ -165,9 +165,20 @@ public abstract class AbstractAntTest extends TestCase {
 		}
 		return null;
 	}
+    
+    /**
+     * Return the log message n from the last:
+     * e.g. getLoggedMessage(0) returns the most recent message
+     * 
+     * @param n message index
+     * @return the nth last message
+     */
+    protected String getLoggedMessage(int n) {
+        return AntTestChecker.getDefault().getLoggedMessage(n);
+    }
 	
 	protected String getLastMessageLogged() {
-		return AntTestChecker.getDefault().getLastMessageLogged();
+		return getLoggedMessage(0);
 	}
 	
 	protected void assertSuccessful() {
