@@ -56,7 +56,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testOutgoingChanges"));
+		//return new CVSTestSetup(new SyncElementTest("testFileConflict"));
 	}
 	
 	/*
@@ -308,8 +308,7 @@ public class SyncElementTest extends EclipseTest {
 		// Catch up to the file1.txt conflict using UPDATE with ignoreLocalChanges
 		getProvider(project).update(new IResource[] {project.getFile("file1.txt")}, 
 												 new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE}, 
-												 null, null, DEFAULT_MONITOR);
-		JUnitTestCase.waitMsec(1500); // XXX Stab in the dark for releng test failure						 
+												 null, null, DEFAULT_MONITOR);					 
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
@@ -396,8 +395,12 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.IN_SYNC });
 				
 		// Catch-up to conflicting cases using UPDATE
-		// XXX SPECIAL CASE: We need to unmanage the resources before getting the remote
+		// XXX SPECIAL CASE: We need to unmanage the resources and delete it before getting the remote
 		makeIncoming(tree, new String[] {"add1a.txt"});
+		IFile file = project.getFile("add1a.txt");
+		file.delete(false, DEFAULT_MONITOR);
+		file = project.getFile("add2a.txt");
+		file.delete(false, DEFAULT_MONITOR);
 		getProvider(project).update(new IResource[] {project.getFile("add1a.txt"), project.getFile("add2a.txt")}, 
 												 new Command.LocalOption[] {Command.DO_NOT_RECURSE}, 
 												 null, null, DEFAULT_MONITOR);
