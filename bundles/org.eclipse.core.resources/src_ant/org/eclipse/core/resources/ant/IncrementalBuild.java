@@ -30,22 +30,28 @@ public class IncrementalBuild extends Task {
 	private int kind = IncrementalProjectBuilder.INCREMENTAL_BUILD;
 
 	/**
-	 * Unique identifier constant (value <code>"KIND_INCREMENTAL"</code>)
+	 * Unique identifier constant (value <code>"incremental"</code>)
 	 * indicating that an incremental build should be performed.
 	 */
 	public final static String KIND_INCREMENTAL = "incremental"; //$NON-NLS-1$
 
 	/**
-	 * Unique identifier constant (value <code>"KIND_FULL"</code>)
+	 * Unique identifier constant (value <code>"full"</code>)
 	 * indicating that a full build should be performed.
 	 */
 	public final static String KIND_FULL = "full"; //$NON-NLS-1$
 
 	/**
-	 * Unique identifier constant (value <code>"KIND_AUTO"</code>)
+	 * Unique identifier constant (value <code>"auto"</code>)
 	 * indicating that an auto build should be performed.
 	 */
 	public final static String KIND_AUTO = "auto"; //$NON-NLS-1$
+
+	/**
+	 * Unique identifier constant (value <code>"clean"</code>)
+	 * indicating that a CLEAN build should be performed.
+	 */
+	public final static String KIND_CLEAN = "clean"; //$NON-NLS-1$
 
 	/**
 	 * Constructs an <code>IncrementalBuild</code> instance.
@@ -90,8 +96,10 @@ public class IncrementalBuild extends Task {
 
 	/**
 	 * Sets the receiver's kind> attribute.  This value must be one
-	 * of <code>IncrementalBuild.KIND_FULL</code>, <code>IncrementalBuild.KIND_AUTO</code>,
-	 * <code>IncrementalBuild.KIND_INCR</code>.
+	 * of: <code>IncrementalBuild.KIND_FULL</code>, 
+	 * <code>IncrementalBuild.KIND_AUTO</code>,
+	 * <code>IncrementalBuild.KIND_INCREMENTAL</code>,
+	 * <code>IncrementalBuild.KIND_CLEAN</code>.
 	 * 
 	 * @param value the receiver's kind attribute
 	 */
@@ -100,6 +108,8 @@ public class IncrementalBuild extends Task {
 			kind = IncrementalProjectBuilder.FULL_BUILD;
 		else if (IncrementalBuild.KIND_AUTO.equalsIgnoreCase(value))
 			kind = IncrementalProjectBuilder.AUTO_BUILD;
+		else if (IncrementalBuild.KIND_CLEAN.equalsIgnoreCase(value))
+			kind = IncrementalProjectBuilder.CLEAN_BUILD;
 		else if (IncrementalBuild.KIND_INCREMENTAL.equalsIgnoreCase(value))
 			kind = IncrementalProjectBuilder.INCREMENTAL_BUILD;
 	}
