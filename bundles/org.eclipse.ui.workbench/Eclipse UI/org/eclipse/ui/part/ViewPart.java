@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
 /**
  * Abstract base implementation of all workbench views.
@@ -91,19 +87,5 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
  * Method declared on IViewPart.
  */
 public void saveState(IMemento memento){
-}
-/**
- * Progress on a job that blocks the site has begun.
- * @param Job the job starting.
- */
-public void progressStart(Job job){
-}
-
-/**
- * Progress on a job that blocks the site has finished.
- * @param Job the job finishing.
- */
-public void progressEnd(Job job){
-	
 }
 }

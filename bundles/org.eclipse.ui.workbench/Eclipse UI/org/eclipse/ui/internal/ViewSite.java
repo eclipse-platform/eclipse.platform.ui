@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * A view container manages the services for a view.
@@ -35,30 +33,5 @@ public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
 public IViewPart getViewPart() {
 	return (IViewPart)getPart();
 }
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void progressEnd(Job job) {
-		PartPane pane = getPane();
-		if(pane instanceof ViewPane)
-			((ViewPane) pane).progressEnd(job);
-		
-		IViewPart viewPart = getViewPart();
-		if(viewPart instanceof ViewPart)
-			((ViewPart) viewPart).progressEnd(job);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void progressStart(Job job) {
-		PartPane pane = getPane();
-		if(pane instanceof ViewPane)
-			((ViewPane) pane).progressStart(job);
-		
-		IViewPart viewPart = getViewPart();
-		if(viewPart instanceof ViewPart)
-			((ViewPart) viewPart).progressStart(job);
-	}
 
 }

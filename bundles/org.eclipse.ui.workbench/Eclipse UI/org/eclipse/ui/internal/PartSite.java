@@ -33,6 +33,7 @@ import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -299,17 +300,25 @@ public class PartSite implements IWorkbenchPartSite {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd()
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void progressEnd(Job job) {
-
+		getPane().progressEnd(job);
+		
+		IWorkbenchPart part = getPart();
+		if(part instanceof WorkbenchPart)
+			((WorkbenchPart) part).progressEnd(job);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart()
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void progressStart(Job job) {
-
+		getPane().progressStart(job);
+		
+		IWorkbenchPart part = getPart();
+		if(part instanceof WorkbenchPart)
+			((WorkbenchPart) part).progressStart(job);
 	}
 
 }

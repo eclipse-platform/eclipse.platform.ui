@@ -11,13 +11,20 @@
 package org.eclipse.ui.part;
 
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
 
@@ -262,5 +269,18 @@ protected void setTitleToolTip(String text) {
 	this.toolTip = text;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
+/**
+ * Progress on a job that blocks the site has finished.
+ * @param Job the job finishing.
+ */
+public void progressEnd(Job job) {
+	
+}
 
+/**
+ * Progress on a job that blocks the site has begun.
+ * @param Job the job starting.
+ */
+public void progressStart(Job job) {
+}
 }
