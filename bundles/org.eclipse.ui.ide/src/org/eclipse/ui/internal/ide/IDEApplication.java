@@ -183,9 +183,9 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 					.openError(
 							shell,
 							IDEWorkbenchMessages
-									.getString("IDEApplication.workspaceCannotBeSetTitle"), //$NON-NLS-1$
+									.getString("IDEApplication.workspaceCannotLockTitle"), //$NON-NLS-1$
 							IDEWorkbenchMessages
-									.getString("IDEApplication.workspaceCannotBeSetMessage")); //$NON-NLS-1$
+									.getString("IDEApplication.workspaceCannotLockMessage")); //$NON-NLS-1$
 			return false;
 		}
 
