@@ -43,7 +43,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	//Widgets for perspective switching when creating new projects
 	private Button openProjectInNewWindowButton;
-	private Button replaceProjectButton;
+	private Button openProjectInSameWindowButton;
 	private Button switchOnNewProjectButton;
 	
 	// hashtable mapping accelerator configuration names to accelerator configuration
@@ -57,7 +57,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
 
 	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
-	private static final String OPEN_REPLACE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.replacePerspective"); //$NON-NLS-1$
+	private static final String OPEN_SAME_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
 	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
 
 	/**
@@ -244,36 +244,32 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
 
-		//Open New Window button
-		this.openProjectInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_PROJECT_LABEL);
-		this.openProjectInNewWindowButton.setSelection(this.newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-
-		this.openProjectInNewWindowButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-			}
-		});
-
-		//Replace button
-		this.replaceProjectButton = createRadioButton(buttonComposite, OPEN_REPLACE_PROJECT_LABEL);
-		this.replaceProjectButton.setSelection(this.newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-
-		this.replaceProjectButton.addSelectionListener(new SelectionAdapter() {
+		// Open same window button
+		openProjectInSameWindowButton = createRadioButton(buttonComposite, OPEN_SAME_WINDOW_PROJECT_LABEL);
+		openProjectInSameWindowButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
+		openProjectInSameWindowButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
 			}
 		});
 
-		//No switch button
-		this.switchOnNewProjectButton = createRadioButton(buttonComposite, DO_NOT_SWITCH_PERSPECTIVES);
-		this.switchOnNewProjectButton.setSelection(this.newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
+		// Open New Window button
+		openProjectInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_PROJECT_LABEL);
+		openProjectInNewWindowButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
+		openProjectInNewWindowButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
+			}
+		});
 
-		this.switchOnNewProjectButton.addSelectionListener(new SelectionAdapter() {
+		// No switch button
+		switchOnNewProjectButton = createRadioButton(buttonComposite, DO_NOT_SWITCH_PERSPECTIVES);
+		switchOnNewProjectButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
+		switchOnNewProjectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
 			}
 		});
-
 	}
 	/**
 	 * Utility method that creates a radio button instance
@@ -347,9 +343,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *	@see IWorkbenchPreferencePage
 	 */
 	public void init(IWorkbench aWorkbench) {
-		this.workbench = aWorkbench;
+		workbench = aWorkbench;
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		this.newProjectPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
+		newProjectPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 
 //		acceleratorInit(aWorkbench);
 	}
@@ -383,9 +379,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		//Project perspective preferences
 		String projectPreference = store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-		this.newProjectPerspectiveSetting = projectPreference;
+		newProjectPerspectiveSetting = projectPreference;
+		openProjectInSameWindowButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 		openProjectInNewWindowButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		replaceProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 		switchOnNewProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
 
 		super.performDefaults();
