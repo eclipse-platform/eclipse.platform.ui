@@ -11,6 +11,28 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20030114
+<h2>What's new in this drop</h2>
+<p><b>New Action Definition API</b></p>
+<p>When defining an action via the actionSets, editorActions, or popupMenus
+extension points, there is new support for radio style behavior. A new attribute
+called &quot;style&quot; was added and can have one of the following values:
+&quot;push&quot;, &quot;radio&quot;, &quot;toggle&quot;, and &quot;pulldown&quot;.
+The previous &quot;pulldown&quot; attribute has been deprecated. Also, the
+previous &quot;state&quot; attribute has a new purpose when the
+&quot;style&quot; attribute is defined. See the extension point documentation
+for details on how to use these attributes. Actions defined prior to this change
+are still supported for backward compatibility, but developers are encouraged to
+use the new attributes.</p>
+<h3>Other highlights</h3>
+<h2>Known deficiencies</h2>
+<h2>Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;chfield=bug_status&amp;chfieldfrom=2002%2F12%2F16&amp;chfieldto=2003%2F01%2F14&amp;product=Platform&amp;component=UI&amp;cmdtype=doit&amp;&amp;order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/12/16 and 2003/01/14.
+<p>&nbsp;
+<hr SIZE="0" WIDTH="100%">
+
 Eclipse Integration Build 200201216
 <h2>What's new in this drop</h2>
 <p><b>Support added for drag-and-drop from view to editor area</b>.
@@ -22,7 +44,6 @@ targets:
 <li>MarkerTransfer</li>
 <li>EditorInputTransfer (new)</li>
 </ul>
-</p>
 <p><b>Preference added for showing Tasks view when errors in build</b>.
 </p>
 <h3>Other highlights</h3>
