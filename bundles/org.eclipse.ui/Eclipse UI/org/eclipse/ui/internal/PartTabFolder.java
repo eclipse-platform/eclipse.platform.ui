@@ -13,8 +13,8 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -99,8 +99,15 @@ public void add(String name, int index, LayoutPart part)
 public void add(LayoutPart child) {
 	int index = getItemCount();
 	String label = "";//$NON-NLS-1$
-	if (child instanceof PartPane)
-		label = ((PartPane)child).getPartReference().getTitle();
+	if (child instanceof PartPane) {
+		String id = ((PartPane)child).getPartReference().getId();
+		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+		IViewDescriptor desc = reg.find(id);
+		if(desc != null)
+			label = desc.getLabel();
+		else
+			label = ((PartPane)child).getPartReference().getTitle();
+	}
 	add(label, index, child);
 }
 /**
