@@ -297,8 +297,11 @@ private String getDateStringValue(IResource resource) {
 	}
 	else {
 		File localFile = location.toFile();
-		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
-		return format.format(new Date(localFile.lastModified()));
+		if (localFile.exists()) {
+			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+			return format.format(new Date(localFile.lastModified()));
+		}
+		return NOT_EXIST_TEXT;
 	}
 }
 /**
@@ -370,9 +373,12 @@ private String getSizeString(IFile file) {
 	}
 	else {
 		File localFile = location.toFile();
-		String bytesString = Long.toString(localFile.length());
 		
-		return MessageFormat.format(BYTES_LABEL, new Object[] {bytesString});
+		if (localFile.exists()) {
+			String bytesString = Long.toString(localFile.length());
+			return MessageFormat.format(BYTES_LABEL, new Object[] {bytesString});
+		}
+		return NOT_EXIST_TEXT;
 	}
 }
 /**
