@@ -4,6 +4,7 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ class WizardFileSystemResourceImportPage1
 	// widgets
 	protected Combo sourceNameField;
 	protected Button overwriteExistingResourcesCheckbox;
-	protected Button createContainerStructureCheckbox;
+	protected Button createContainerStructureButton;
+	protected Button createOnlySelectedButton;
 	protected Button sourceBrowseButton;
 	protected Button selectTypesButton;
 	protected Button selectAllButton;
@@ -208,14 +210,18 @@ public void createControl(Composite parent) {
  *	Create the import options specification widgets.
  */
 protected void createOptionsGroupButtons(Group optionsGroup) {
-
+	
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 	// create containers checkbox
-	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK);
-	createContainerStructureCheckbox.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
+	createContainerStructureButton = new Button(optionsGroup,SWT.RADIO);
+	createContainerStructureButton.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
+	// create containers checkbox
+	createOnlySelectedButton = new Button(optionsGroup,SWT.RADIO);
+	createOnlySelectedButton.setText(DataTransferMessages.getString("FileImport.createSelectedFolders")); //$NON-NLS-1$
+	
 }
 /**
  *	Create the group for creating the root directory
@@ -580,7 +586,7 @@ protected boolean importResources(List fileSystemObjects) {
  * Initializes the specified operation appropriately.
  */
 protected void initializeOperation(ImportOperation op) {
-	op.setCreateContainerStructure(createContainerStructureCheckbox.getSelection());
+	op.setCreateContainerStructure(createContainerStructureButton.getSelection());
 	op.setOverwriteResources(overwriteExistingResourcesCheckbox.getSelection());
 }
 /**
@@ -632,8 +638,10 @@ protected void restoreWidgetValues() {
 		overwriteExistingResourcesCheckbox.setSelection(
 			settings.getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
 
-		createContainerStructureCheckbox.setSelection(
-			settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID));
+		if(settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID))
+			createContainerStructureButton.setSelection(true);
+		else
+			createOnlySelectedButton.setSelection(true);
 
 	}
 }
@@ -659,7 +667,7 @@ protected void saveWidgetValues() {
 
 		settings.put(
 			STORE_CREATE_CONTAINER_STRUCTURE_ID,
-			createContainerStructureCheckbox.getSelection());
+			createContainerStructureButton.getSelection());
 
 	}
 }
