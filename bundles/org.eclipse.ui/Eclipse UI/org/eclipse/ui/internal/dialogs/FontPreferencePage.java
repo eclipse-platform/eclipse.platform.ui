@@ -411,6 +411,19 @@ public class FontPreferencePage
 		return super.performOk();
 	}
 	
+	/**
+	 * Return the GridData that sets the height of the
+	 * button to maintain the Eclipse look and feel.
+	 * Set the text before this method is called so that
+	 * the width calculation takes it into account.
+	 */
 	
+	private void setButtonLayoutData(Button button){
+		GridData data = new GridData();
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
+	}
 
 }
