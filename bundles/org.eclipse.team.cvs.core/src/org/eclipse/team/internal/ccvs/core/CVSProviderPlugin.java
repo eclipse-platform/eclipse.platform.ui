@@ -686,7 +686,7 @@ public class CVSProviderPlugin extends Plugin {
 		for (int i = 0; i < repos.length; i++) {
 			CVSRepositoryLocation root = (CVSRepositoryLocation)repos[i];
 			dos.writeUTF(root.getLocation());
-			dos.writeUTF("unused"); // place holder for an additional configuration parameter //$NON-NLS-1$
+			dos.writeUTF("cvs"); // place holder for cureently unused remote program name //$NON-NLS-1$
 		}
 	}
 		
