@@ -20,7 +20,7 @@ package org.eclipse.update.configuration;
  * (repeatedly) as the API evolves.
  * </p>
  * @since 2.0
- * @deprecated Do not use this interface.
+ * @deprecated Do not use this interface. The extension point deltaHandler has been deprecated.
  */
 public interface IInstallDeltaHandler{
 
