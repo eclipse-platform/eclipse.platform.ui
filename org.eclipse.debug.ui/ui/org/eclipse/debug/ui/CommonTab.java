@@ -109,6 +109,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     // Console Output widgets
     private Button fConsoleOutput;
     private Button fFileOutput;
+    private Button fFileBrowse;
     private Text fFileText;
 	
 	/* (non-Javadoc)
@@ -120,6 +121,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
+		comp.setFont(parent.getFont());
 		
 		Group group = new Group(comp, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -128,7 +130,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setText(LaunchConfigurationsMessages.getString("CommonTab.0")); //$NON-NLS-1$
-		group.setFont(parent.getFont());
+		group.setFont(comp.getFont());
 				
 		setLocalRadioButton(new Button(group, SWT.RADIO));
 		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
@@ -213,6 +215,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
         group.setLayoutData(gd);
         group.setLayout(new GridLayout(3, false));
+        group.setFont(parent.getFont());
         
         fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.5")); //$NON-NLS-1$
         gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
@@ -229,19 +232,18 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
         fFileText.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, true, false));
-        final Button browse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
-        browse.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
         
         fFileOutput.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean enabled = fFileOutput.getSelection();
                 fFileText.setEnabled(enabled);
-                browse.setEnabled(enabled);
+                fFileBrowse.setEnabled(enabled);
                 updateLaunchConfigurationDialog();
             }
         });
         
-        browse.addSelectionListener(new SelectionAdapter() {
+        fFileBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
                 FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
@@ -400,9 +402,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateConsoleOutput(configuration);
 	}
 	
-	/**
-     * @param configuration
-     */
     protected void updateConsoleOutput(ILaunchConfiguration configuration) {
         boolean outputToConsole = true;
         String outputFile = null;
@@ -414,12 +413,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         }
         
         fConsoleOutput.setSelection(outputToConsole);
-        if (outputFile != null) {
-            fFileOutput.setSelection(true);
+        boolean haveOutputFile= outputFile != null;
+        if (haveOutputFile) {
             fFileText.setText(outputFile);
-        } else {
-            fFileOutput.setSelection(false);
-        }
+        } 
+        fFileOutput.setSelection(haveOutputFile);
+        fFileText.setEnabled(haveOutputFile);
+        fFileBrowse.setEnabled(haveOutputFile);
     }
 
     protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
