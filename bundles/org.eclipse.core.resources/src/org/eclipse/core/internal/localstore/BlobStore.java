@@ -47,7 +47,7 @@ public UniversalUniqueIdentifier addBlob(File target, boolean moveContents) thro
 	File dir = folderFor(uuid);
 	if (!dir.exists())
 		if (!dir.mkdirs()) {
-			String message = Policy.bind("fileOverFolder", dir.getAbsolutePath()); //$NON-NLS-1$
+			String message = Policy.bind("localstore.couldNotCreateFolder", dir.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(dir.getAbsolutePath()), message, null);
 		}
 	File destination = fileFor(uuid);
