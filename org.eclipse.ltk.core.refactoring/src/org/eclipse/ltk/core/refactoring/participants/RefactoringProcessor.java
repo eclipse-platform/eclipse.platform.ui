@@ -81,11 +81,12 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	/**
 	 * Checks whether the processor is applicable to the elements to be
 	 * refactored or not. If <code> false</code> is returned the processor is
-	 * interpreted to be not usable.
+	 * interpreted to be unusable.
 	 * 
 	 * @return <code>true</code> if the processor is applicable to the
 	 *         elements; otherwise <code>false</code> is returned.
-	 * @throws CoreException is the test fails
+	 * @throws CoreException is the test fails. The processor is treated as
+	 *  unusable if this method throws an exception
 	 */
 	public abstract boolean isApplicable() throws CoreException;
 
@@ -137,7 +138,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during final condition
-	 *  checking If this happens the final condition checking is interpreted as failed.
+	 *  checking. If this happens the final condition checking is interpreted as failed.
 	 * 
 	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 

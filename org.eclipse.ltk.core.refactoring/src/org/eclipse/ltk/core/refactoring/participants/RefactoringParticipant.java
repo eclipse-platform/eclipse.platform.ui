@@ -67,9 +67,10 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	
 	/**
 	 * Initializes the participant. This method is called by the framework when a
-	 * participant gets instantiated. It is not intended to be called by normal
-	 * clients.
-	 * 
+	 * participant gets instantiated. 
+	 * <p>
+	 * This method isn't intended to be extended or reimplemented by clients.
+	 * </p>
 	 * @param processor the processor this participant is associated with
 	 * @param element the element to be refactored
 	 * @param arguments the refactoring arguments
@@ -89,7 +90,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	}
 	
 	/**
-	 * Initialize the participant with the element to be refactored.
+	 * Initializes the participant with the element to be refactored.
 	 * If this method returns <code>false</code> then the framework
 	 * will consider the participant as not being initialized and the 
 	 * participant will be dropped by the framework.
@@ -119,7 +120,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * Checks the conditions of the refactoring participant. 
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
-	 * has the severity <code>RefactoringStatus#FATAL</code>.
+	 * has the severity of <code>RefactoringStatus#FATAL</code>.
 	 * </p>
 	 * <p>
 	 * This method can be called more than once.

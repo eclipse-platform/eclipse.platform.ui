@@ -48,7 +48,12 @@ public class ValidateEditChecker implements IConditionChecker {
 	/**
 	 * The context passed to the validate edit call.
 	 * 
-	 * @param context the context passed to the validate edit call
+	 * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is
+	 * to be used to parent any dialogs with the user, or <code>null</code> if
+	 * there is no UI context (declared as an <code>Object</code> to avoid any
+	 * direct references on the SWT component)
+	 * 
+	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
 	public ValidateEditChecker(Object context) {
 		fContext= context;

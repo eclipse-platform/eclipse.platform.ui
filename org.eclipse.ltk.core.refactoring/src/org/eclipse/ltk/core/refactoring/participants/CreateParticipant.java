@@ -11,13 +11,12 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * Copy participants are to participate in refactorings that copy elements. A copy
- * participant can't assume that its associated refactoring processor is
- * a copy processor. A copy operation might be a side effect of another
- * refactoring operation.  
+ * A participant to participate in refactorings that create elements. A create
+ * participant can't assume that its associated processor is of a specific type.
+ * A create could be triggered as a side effect of another refactoring.
  * <p>
- * Copy participants are registered via the extension point <code>
- * org.eclipse.ltk.core.refactoring.copyParticipants</code>. Extensions to
+ * Create participants are registered via the extension point <code>
+ * org.eclipse.ltk.core.refactoring.createParticipants</code>. Extensions to
  * this extension point must therefore extend this abstract class.
  * </p>
  * 

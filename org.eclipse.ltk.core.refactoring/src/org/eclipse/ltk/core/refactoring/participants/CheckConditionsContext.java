@@ -62,13 +62,13 @@ public class CheckConditionsContext {
 	}
 	
 	/**
-	 * Adds the given condition checker. An assertion will be
+	 * Adds the given condition checker. An exception will be
 	 * thrown if a checker of the same type already exists in
 	 * this context.
 	 * 
 	 * @param checker the checker to add
 	 * @throws CoreException if a checker of the same type already
-	 *  exists.
+	 *  exists
 	 */
 	public void add(IConditionChecker checker) throws CoreException {
 		Object old= fCheckers.put(checker.getClass(), checker);
