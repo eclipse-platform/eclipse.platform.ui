@@ -103,7 +103,8 @@
 		<view
 			id="org.eclipse.ui.externaltools.LogConsoleView"
 	  		name="%View.logConsole"
-			icon="icons/full/clcl16/log_console_view.gif"
+			icon="icons/full/cview16/log_console_view.gif"
+			fastViewWidthRatio="0.75"
 			category="org.eclipse.ui.externaltools.views"
 			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
 		</view>
