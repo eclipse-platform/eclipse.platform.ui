@@ -141,20 +141,14 @@ public class Search extends Object {
 		if (fOperation == null)
 			return;
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
-		IWorkspaceDescription workspaceDesc= SearchPlugin.getWorkspace().getDescription();
-		boolean isAutoBuilding= workspaceDesc.isAutoBuilding();
-		if (isAutoBuilding)
-			// disable auto-build during search operation
-			SearchPlugin.setAutoBuilding(false);
+		boolean isAutoBuilding= SearchPlugin.setAutoBuilding(false);
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, fOperation);
 		} catch (InvocationTargetException ex) {
 			ExceptionHandler.handle(ex, shell, SearchMessages.getString("Search.Error.search.title"), SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		} catch(InterruptedException e) {
 		} finally {
-			if (isAutoBuilding)
-				// enable auto-building again
-				SearchPlugin.setAutoBuilding(true);
+			SearchPlugin.setAutoBuilding(isAutoBuilding);
 		}
 	}
 	

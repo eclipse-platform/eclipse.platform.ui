@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -32,10 +36,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -56,6 +56,11 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -64,10 +69,6 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -82,14 +83,16 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.Match;
+
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.Match;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
@@ -220,16 +223,15 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 
 	protected Control createPageArea(Composite parent) {
+		initializeDialogUnits(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.REPLACE_DIALOG);
 		Composite result= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		result.setLayout(layout);
 		layout.numColumns= 2;
 		
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		
 		initializeDialogUnits(result);
 		
@@ -289,23 +291,37 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		return result;
 	}
 	
-	protected void createButtonsForButtonBar(Composite parent) {
-		fReplaceButton= createButton(parent, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
-		fReplaceAllInFileButton= createButton(parent, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
+	protected Control createButtonBar(Composite parent) {
+		Composite composite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 0;   // createActionButton increments 
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+		fReplaceButton= createActionButton(composite, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
+		fReplaceAllInFileButton= createActionButton(composite, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
 
-		Label filler= new Label(parent, SWT.NONE);
+		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		
-		fReplaceAllButton= createButton(parent, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
-		fSkipButton= createButton(parent, SKIP, SearchMessages.getString("ReplaceDialog.skip"), false); //$NON-NLS-1$
-		fSkipFileButton= createButton(parent, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
+		fReplaceAllButton= createActionButton(composite, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
+		fSkipButton= createActionButton(composite, SKIP, SearchMessages.getString("ReplaceDialog.skip"), false); //$NON-NLS-1$
+		fSkipFileButton= createActionButton(composite, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
 
-		filler= new Label(parent, SWT.NONE);
+		filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-		super.createButtonsForButtonBar(parent);
-		((GridLayout)parent.getLayout()).numColumns= 4;
+		super.createButtonsForButtonBar(composite);  // cancel button
+
+		layout.numColumns= 4;   // createActionButton increments 
+		
+		return composite;
 	}
-	
+		
 	private void enableButtons() {
 		fSkipButton.setEnabled(hasNextMarker());
 		fSkipFileButton.setEnabled(hasNextFile());

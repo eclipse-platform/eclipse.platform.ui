@@ -16,15 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.search.internal.ui.util.PixelConverter;
-import org.eclipse.search.internal.ui.util.SWTUtil;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.NewSearchUI;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -36,11 +28,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.NewSearchUI;
+
+import org.eclipse.search.internal.ui.util.PixelConverter;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class ScopePart {
 
@@ -65,15 +71,15 @@ public class ScopePart {
 	private IWorkingSet[] fWorkingSets;
 
 	// Reference to its search page container (can be null)
-	private ISearchPageContainer fSearchPageContainer;
+	private SearchDialog fSearchDialog;
 
 	/**
 	 * Returns a new scope part with workspace as initial scope.
 	 * The part is not yet created.
-	 * @param searchPageContainer The parent container
+	 * @param searchDialog The parent container
 	 * @param searchEnclosingProjects If true, add the 'search enclosing project' radio button
 	 */
-	public ScopePart(ISearchPageContainer searchPageContainer, boolean searchEnclosingProjects) {
+	public ScopePart(SearchDialog searchDialog, boolean searchEnclosingProjects) {
 		IDialogSettings dialogSettings= SearchPlugin.getDefault().getDialogSettings();
 		fSettingsStore= dialogSettings.getSection(DIALOG_SETTINGS_KEY);
 		if (fSettingsStore == null)
@@ -85,7 +91,7 @@ public class ScopePart {
 		fCanSearchEnclosingProjects= searchEnclosingProjects;
 		if (!fCanSearchEnclosingProjects && fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE)
 			fScope= ISearchPageContainer.WORKSPACE_SCOPE;
-		fSearchPageContainer= searchPageContainer;
+		fSearchDialog= searchDialog;
 		restoreState();
 	}
 	
@@ -108,11 +114,12 @@ public class ScopePart {
 
 	private void restoreState() {
 		String[] lruWorkingSetNames= fSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
+		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		if (lruWorkingSetNames != null) {
 			Set existingWorkingSets= new HashSet(lruWorkingSetNames.length);
 			for (int i= 0; i < lruWorkingSetNames.length; i++) {
 				String name= lruWorkingSetNames[i];
-				IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+				IWorkingSet workingSet= workingSetManager.getWorkingSet(name);
 				if (workingSet != null)
 					existingWorkingSets.add(workingSet);
 			}
@@ -122,7 +129,7 @@ public class ScopePart {
 			// Backward compatibility
 			String workingSetName= fSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
 			if (workingSetName != null) {
-				IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+				IWorkingSet workingSet= workingSetManager.getWorkingSet(workingSetName);
 				if (workingSet != null) {
 					fWorkingSets= new IWorkingSet[] { workingSet };
 					saveState();
@@ -166,32 +173,10 @@ public class ScopePart {
 				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
 			}
 		}
-		switch (fScope) {
-			case ISearchPageContainer.WORKSPACE_SCOPE :
-				fUseWorkspace.setSelection(true);
-				fUseSelection.setSelection(false);
-				fUseProject.setSelection(false);
-				fUseWorkingSet.setSelection(false);
-				break;
-			case ISearchPageContainer.SELECTION_SCOPE :
-				fUseWorkspace.setSelection(false);
-				fUseSelection.setSelection(true);
-				fUseProject.setSelection(false);
-				fUseWorkingSet.setSelection(false);
-				break;
-			case ISearchPageContainer.WORKING_SET_SCOPE :
-				fUseWorkspace.setSelection(false);
-				fUseSelection.setSelection(false);
-				fUseProject.setSelection(false);
-				fUseWorkingSet.setSelection(true);
-				break;
-			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE :
-				fUseWorkspace.setSelection(false);
-				fUseSelection.setSelection(false);
-				fUseProject.setSelection(true);
-				fUseWorkingSet.setSelection(false);
-				break;
-		}
+		fUseWorkspace.setSelection(scope == ISearchPageContainer.WORKSPACE_SCOPE);
+		fUseSelection.setSelection(scope == ISearchPageContainer.SELECTION_SCOPE);
+		fUseProject.setSelection(scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE);
+		fUseWorkingSet.setSelection(scope == ISearchPageContainer.WORKING_SET_SCOPE);
 
 		updateSearchPageContainerActionPerformedEnablement();
 		fSettingsStore.put(STORE_SCOPE, fScope);
@@ -199,11 +184,7 @@ public class ScopePart {
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
-		boolean newState= fScope != ISearchPageContainer.WORKING_SET_SCOPE || fWorkingSets != null;
-		if (fSearchPageContainer instanceof SearchDialog)
-			 ((SearchDialog) fSearchPageContainer).setPerformActionEnabledFromScopePart(newState);
-		else if (fSearchPageContainer != null)
-			fSearchPageContainer.setPerformActionEnabled(newState);
+		fSearchDialog.notifyScopeSelectionChanged();
 	}
 
 	/**
@@ -280,9 +261,8 @@ public class ScopePart {
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
-		ISelection selection= fSearchPageContainer.getSelection();
-		fUseSelection.setEnabled((selection instanceof IStructuredSelection && 
-				!fSearchPageContainer.getSelection().isEmpty()));
+		ISelection selection= fSearchDialog.getSelection();
+		fUseSelection.setEnabled(selection instanceof IStructuredSelection && !selection.isEmpty());
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 8;
@@ -291,9 +271,7 @@ public class ScopePart {
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
 		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
-		fUseProject.setEnabled((selection instanceof IStructuredSelection && 
-								!fSearchPageContainer.getSelection().isEmpty()) ||
-								hasFocusEditor());
+		fUseProject.setEnabled(selection instanceof IStructuredSelection && !selection.isEmpty() || hasFocusEditor());
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
@@ -372,10 +350,8 @@ public class ScopePart {
 	}
 
 	private boolean handleChooseWorkingSet() {
-		IWorkingSetSelectionDialog dialog=
-			PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
-				fUseSelection.getShell(),
-				true);
+		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog= workingSetManager.createWorkingSetSelectionDialog(fUseSelection.getShell(), true);
 
 		if (fWorkingSets != null)
 			dialog.setSelection(fWorkingSets);
@@ -395,8 +371,7 @@ public class ScopePart {
 			// test if selected working set has been removed
 			int i= 0;
 			while (i < fWorkingSets.length) {
-				if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName())
-					== null)
+				if (workingSetManager.getWorkingSet(fWorkingSets[i].getName()) == null)
 					break;
 				i++;
 			}

@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,14 +39,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -104,7 +102,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private Button fIgnoreCase;
 	private Combo fExtensions;
 	private Button fIsRegExCheckbox;
-	private Label fStatusLabel;
+	private CLabel fStatusLabel;
 	private Button fSearchDerivedCheckbox;
 
 	private ISearchPageContainer fContainer;
@@ -185,23 +183,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return true;
 	}
 	
-	private IRunnableContext getRunnableContext() {
-		IRunnableContext context=  null;
-		context= getContainer().getRunnableContext();
-			
-		Shell shell= fPattern.getShell();
-		if (context == null)
-			context= new ProgressMonitorDialog(shell);
-		return context;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
 	public boolean performReplace() {
 		ISearchQuery searchQuery= getSearchQuery();
 		
-		IStatus status= NewSearchUI.runQueryInForeground(getRunnableContext(), searchQuery);
+		IStatus status= NewSearchUI.runQueryInForeground(getContainer().getRunnableContext(), searchQuery);
 		if (status.matches(IStatus.CANCEL)) {
 			return false;
 		}
@@ -313,10 +301,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private String getSearchOptions() {
 		StringBuffer result= new StringBuffer();
 		if (!ignoreCase())
-			result.append("i"); //$NON-NLS-1$
+			result.append('i');
 
 		if (fIsRegExSearch)
-			result.append("r"); //$NON-NLS-1$
+			result.append('r');
 
 		return result.toString();	
 	}
@@ -354,7 +342,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	final void updateOKStatus() {
 		boolean regexStatus= validateRegex();
 		boolean hasFilePattern= fExtensions.getText().length() > 0;
-		getContainer().setPerformActionEnabled(regexStatus && hasFilePattern && getContainer().hasValidScope());
+		getContainer().setPerformActionEnabled(regexStatus && hasFilePattern);
 	}
 
 	//---- Widget creation ------------------------------------------------
@@ -364,11 +352,18 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		readConfiguration();
 		
 		Composite result= new Composite(parent, SWT.NONE);
+		result.setFont(parent.getFont());
 		GridLayout layout= new GridLayout(2, false);
-		layout.horizontalSpacing= 10;
 		result.setLayout(layout);
 		
 		addTextPatternControls(result);
+		
+		Label separator= new Label(result, SWT.NONE);
+		separator.setVisible(false);
+		GridData data= new GridData(GridData.FILL, GridData.FILL, false, false, 2, 1);
+		data.heightHint= convertHeightInCharsToPixels(1) / 3;
+		separator.setLayoutData(data);
+		
 		addFileNameControls(result);
 
 		setControl(result);
@@ -381,7 +376,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			try {
 				Pattern.compile(fPattern.getText());
 			} catch (PatternSyntaxException e) {
-				statusMessage(true, e.getLocalizedMessage());
+				String locMessage= e.getLocalizedMessage();
+				int i= 0;
+				while (i < locMessage.length() && "\n\r".indexOf(locMessage.charAt(i)) == -1) { //$NON-NLS-1$
+					i++;
+				}
+				statusMessage(true, locMessage.substring(0, i)); // only take first line
 				return false;
 			}
 			statusMessage(false, ""); //$NON-NLS-1$
@@ -398,6 +398,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		Label label= new Label(group, SWT.LEAD);
 		label.setText(SearchMessages.getString("SearchPage.containingText.text")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		label.setFont(group.getFont());
 
 		// Pattern combo
 		fPattern= new Combo(group, SWT.SINGLE | SWT.BORDER);
@@ -415,7 +416,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				updateOKStatus();
 			}
 		});
-		fPattern.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		fPattern.setFont(group.getFont());
+		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
+		data.widthHint= convertWidthInCharsToPixels(50);
+		fPattern.setLayoutData(data);
 		
 		fIgnoreCase= new Button(group, SWT.CHECK);
 		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
@@ -426,10 +430,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		fIgnoreCase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fIgnoreCase.setFont(group.getFont());
 
 		// Text line which explains the special characters
-		fStatusLabel= new Label(group, SWT.LEAD);
-		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fStatusLabel= new CLabel(group, SWT.LEAD);
+		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		fStatusLabel.setFont(group.getFont());
+		fStatusLabel.setAlignment(SWT.LEFT);
+		fStatusLabel.setText(SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
 
 		// RegEx checkbox
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
@@ -446,6 +454,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fIsRegExCheckbox.setFont(group.getFont());
 	}
 
 	private void handleWidgetSelected() {
@@ -533,7 +542,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			if (ch == '*' || ch == '?' || ch == '\\')
 				sbOut.append("\\"); //$NON-NLS-1$
 			sbOut.append(ch);
-			i= i+1;
+			i++;
 		}
 		return sbOut.toString();
 	}
@@ -559,19 +568,25 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		Label label= new Label(group, SWT.LEAD);
 		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.text")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-
+		label.setFont(group.getFont());
+		
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateOKStatus();
 			}
 		});
-		fExtensions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
+		data.widthHint= convertWidthInCharsToPixels(50);
+		fExtensions.setLayoutData(data);
+		fExtensions.setFont(group.getFont());
 		
 		Button button= new Button(group, SWT.PUSH);
 		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
-		button.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		SWTUtil.setButtonDimensionHint(button);
+		GridData gridData= new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
+		gridData.widthHint= SWTUtil.getButtonWidthHint(button);	
+		button.setLayoutData(gridData);
+		button.setFont(group.getFont());
 		
 		IEditorRegistry editorRegistry= SearchPlugin.getDefault().getWorkbench().getEditorRegistry();
 		fFileTypeEditor= new FileTypeEditor(editorRegistry, fExtensions, button);
@@ -580,6 +595,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		Label description= new Label(group, SWT.LEAD);
 		description.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
 		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		description.setFont(group.getFont());
 		
 		fSearchDerivedCheckbox= new Button(group, SWT.CHECK);
 		fSearchDerivedCheckbox.setText(SearchMessages.getString("TextSearchPage.searchDerived.label")); //$NON-NLS-1$
@@ -592,10 +608,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-	}
-	
-	public boolean isValid() {
-		return true;
+		fSearchDerivedCheckbox.setFont(group.getFont());
 	}
 
 	/**
@@ -618,19 +631,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
 		int elementCount= 0;
 		IProject firstProject= null;
-		if (getSelection() instanceof IStructuredSelection && !getSelection().isEmpty()) {
-			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
+		ISelection selection= getSelection();
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			Iterator iter= ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
-				Object selection= iter.next();
+				Object curr= iter.next();
 
 				IResource resource= null;			
-				if (selection instanceof IResource)
-					resource= (IResource)selection;
-				else if (selection instanceof IAdaptable) {
+				if (curr instanceof IResource)
+					resource= (IResource)curr;
+				else if (curr instanceof IAdaptable) {
 					if (isProjectScope)
-						resource= (IProject)((IAdaptable)selection).getAdapter(IProject.class);
+						resource= (IProject) ((IAdaptable)curr).getAdapter(IProject.class);
 					if (resource == null)
-						resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
+						resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
 				}
 				if (resource != null) {
 					if (isProjectScope) {
@@ -646,7 +660,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		} else if (isProjectScope) {
 			IProject editorProject= getEditorProject();
-			if (editorProject != null)scope.add(editorProject);
+			if (editorProject != null)
+				scope.add(editorProject);
 		}
 		if (isProjectScope) {
 			if (elementCount > 1)

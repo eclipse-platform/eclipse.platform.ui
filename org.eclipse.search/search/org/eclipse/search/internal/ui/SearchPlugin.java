@@ -214,15 +214,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return null;	
 	}
 
-	static void setAutoBuilding(boolean state) {
+	static boolean setAutoBuilding(boolean state) {
 		IWorkspaceDescription workspaceDesc= getWorkspace().getDescription();
-		workspaceDesc.setAutoBuilding(state);
-		try {
-			getWorkspace().setDescription(workspaceDesc);
+		boolean isAutobuilding= workspaceDesc.isAutoBuilding();
+		
+		if (isAutobuilding != state) {
+			workspaceDesc.setAutoBuilding(state);
+			try {
+				getWorkspace().setDescription(workspaceDesc);
+			}
+			catch (CoreException ex) {
+				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			}
 		}
-		catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
-		}
+		return isAutobuilding;
 	}
 
 	/**

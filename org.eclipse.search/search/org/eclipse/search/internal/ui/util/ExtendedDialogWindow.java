@@ -11,12 +11,10 @@
 package org.eclipse.search.internal.ui.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
@@ -33,6 +31,7 @@ import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -42,15 +41,16 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 
-public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableContext {
+public abstract class ExtendedDialogWindow extends Dialog implements IRunnableContext {
 	
 	private Control fContents;
 	private Button fCancelButton;
-	private Set fActionButtons;
+	private List fActionButtons;
 	// The number of long running operation executed from the dialog.	
 	private long fActiveRunningOperations;
 
 	// The progress monitor
+	private boolean fUseEmbeddedProgressMonitorPart;
 	private ProgressMonitorPart fProgressMonitorPart;
 	private MessageDialog fWindowClosingDialog;
 	private static final String FOCUS_CONTROL= "focusControl"; //$NON-NLS-1$
@@ -60,10 +60,19 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 
 	public ExtendedDialogWindow(Shell shell) {
 		super(shell);
-		fActionButtons= new HashSet();
+		fActionButtons= new ArrayList();
+		
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
 	//---- Hooks to reimplement in subclasses -----------------------------------
+	
+	/**
+	 * @param enable Use the embedded progress monitor part
+	 */
+	public void setUseEmbeddedProgressMonitorPart(boolean enable) {
+		fUseEmbeddedProgressMonitorPart= enable;
+	}
 	
 	/**
 	 * Hook called when the user has pressed the button to perform
@@ -121,33 +130,22 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * @return The created control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite result= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		layout.horizontalSpacing= 0;
-		layout.verticalSpacing= 0;
-		result.setLayout(layout);
-		result.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite result= (Composite) super.createDialogArea(parent);
 		
 		fContents= createPageArea(result);
 		fContents.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		// Insert a progress monitor
-		GridLayout pmlayout= new GridLayout();
-		pmlayout.numColumns= 1;
-		fProgressMonitorPart= new ProgressMonitorPart(result, pmlayout, SWT.DEFAULT);
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		fProgressMonitorPart.setLayoutData(gd);
-		fProgressMonitorPart.setVisible(false);
+		if (fUseEmbeddedProgressMonitorPart) {
+			// Insert a progress monitor
+			fProgressMonitorPart= new ProgressMonitorPart(result, new GridLayout(), SWT.DEFAULT);
+			fProgressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			fProgressMonitorPart.setVisible(false);
+			applyDialogFont(fProgressMonitorPart);
+		}
 
-
-		
 		Label separator= new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		applyDialogFont(result);
 		return result;
 	}
 
@@ -189,20 +187,16 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		try {
 			fActiveRunningOperations++;
 			state= aboutToStart(fork && cancelable);
-			ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
+			if (fUseEmbeddedProgressMonitorPart) {
+				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
+			} else {
+				new ProgressMonitorDialog(getShell()).run(fork, cancelable, runnable);
+			}
 		} finally {
 			if (state != null)
 				stopped(state);
 			fActiveRunningOperations--;
 		}
-	}
-
-	/**
-	 * @return Returns the progress monitor. If the wizard dialog doesn't
-	 * have a progress monitor <code>null</code> is returned.
-	 */
-	protected IProgressMonitor getProgressMonitor() {
-		return fProgressMonitorPart;
 	}
 	
 	/**
@@ -236,9 +230,11 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 			if (focusControl != null)
 				savedState.put(FOCUS_CONTROL, focusControl);
 				
-			// Attach the progress monitor part to the cancel button
-			fProgressMonitorPart.attachToCancelComponent(fCancelButton);
-			fProgressMonitorPart.setVisible(true);
+			if (fUseEmbeddedProgressMonitorPart) {
+				// Attach the progress monitor part to the cancel button
+				fProgressMonitorPart.attachToCancelComponent(fCancelButton);
+				fProgressMonitorPart.setVisible(true);
+			}
 		}
 		
 		return savedState;
@@ -254,9 +250,10 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		Assert.isTrue( savedState instanceof HashMap);
 		Shell shell= getShell();
 		if (shell != null) {
-	
-			fProgressMonitorPart.setVisible(false);	
-			fProgressMonitorPart.removeFromCancelComponent(fCancelButton);
+			if (fUseEmbeddedProgressMonitorPart) {
+				fProgressMonitorPart.setVisible(false);	
+				fProgressMonitorPart.removeFromCancelComponent(fCancelButton);
+			}
 					
 			HashMap state= (HashMap)savedState;
 			restoreUIState(state);

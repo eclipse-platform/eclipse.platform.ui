@@ -93,10 +93,7 @@ public class SearchManager implements IResourceChangeListener {
 				monitor.done();
 			}
 		};
-		boolean isAutoBuilding= SearchPlugin.getWorkspace().isAutoBuilding();
-		if (isAutoBuilding)
-			// disable auto-build during search operation
-			SearchPlugin.setAutoBuilding(false);
+		boolean isAutoBuilding= SearchPlugin.setAutoBuilding(false);
 		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 			dialog.run(true, true, op);
@@ -106,9 +103,7 @@ public class SearchManager implements IResourceChangeListener {
 			// Do nothing. Operation has been canceled.
 		} finally {
 			SearchPlugin.getWorkspace().addResourceChangeListener(this);
-			if (isAutoBuilding)
-				// enable auto-building again
-				SearchPlugin.setAutoBuilding(true);				
+			SearchPlugin.setAutoBuilding(isAutoBuilding);	
 		}
 
 		// clear searches
@@ -137,10 +132,7 @@ public class SearchManager implements IResourceChangeListener {
 				internalSetCurrentSearch(search, monitor);
 			}
 		};
-		boolean isAutoBuilding= SearchPlugin.getWorkspace().isAutoBuilding();
-		if (isAutoBuilding)
-			// disable auto-build during search operation
-			SearchPlugin.setAutoBuilding(false);
+		boolean isAutoBuilding= SearchPlugin.setAutoBuilding(false);
 		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 			dialog.run(true, true, op);
@@ -149,10 +141,7 @@ public class SearchManager implements IResourceChangeListener {
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		} finally {
-			SearchPlugin.getWorkspace().addResourceChangeListener(this);
-			if (isAutoBuilding)
-				// enable auto-building again
-				SearchPlugin.setAutoBuilding(true);				
+			SearchPlugin.setAutoBuilding(isAutoBuilding);		
 		}
 		
 		getPreviousSearches().remove(search);
