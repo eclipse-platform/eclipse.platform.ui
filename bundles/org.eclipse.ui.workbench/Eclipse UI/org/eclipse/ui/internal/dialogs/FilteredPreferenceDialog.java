@@ -158,11 +158,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	}
 	
 	/**
-	 * Set the search results of the receiver to be filteredIds.
+	 * Show only the supplied ids.
 	 * 
 	 * @param filteredIds
 	 */
-	public void setSearchResults(String[] filteredIds) {
+	public void showOnly(String[] filteredIds) {
+		filteredTree.getViewer().addFilter(new PreferenceNodeFilter(filteredIds));
 
 	}
 

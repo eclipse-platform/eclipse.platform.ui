@@ -225,7 +225,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
 			String[] filteredIds) {
 		WorkbenchPreferenceDialog dialog = createDialogOn(preferencePageId);
-		dialog.setSearchResults(filteredIds);
+		dialog.showOnly(filteredIds);
 		return dialog;
 	}
 
@@ -749,17 +749,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	}
 
-	/**
-	 * Highlight all nodes that match text;
-	 * 
-	 * @param text
-	 */
-	protected void highlightHits(String text) {
-		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
-
-		group.highlightHits(text);
-		getTreeViewer().refresh();
-	}
 
 	/**
 	 * Import a preference file.
@@ -919,23 +908,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		this.pageData = pageData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setSearchResults(java.lang.String[])
-	 */
-	public void setSearchResults(String[] filteredIds) {
-
-		WorkbenchPreferenceGroup[] groups = getGroups();
-		
-		if(groups.length == 0){
-			super.setSearchResults(filteredIds);
-			return;
-		}
-		for (int i = 0; i < groups.length; i++) {
-			WorkbenchPreferenceGroup group = groups[i];
-			group.highlightIds(filteredIds);
-		}
-		
-	}
 
 	/**
 	 * Set te text and images for the group in the item.

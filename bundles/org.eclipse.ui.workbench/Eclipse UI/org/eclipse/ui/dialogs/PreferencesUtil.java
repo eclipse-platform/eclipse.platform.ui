@@ -57,7 +57,7 @@ public final class PreferencesUtil {
 				.createDialogOn(preferencePageId);
 		dialog.setPageData(data);
 		if (displayedIds != null)
-			dialog.setSearchResults(displayedIds);
+			dialog.showOnly(displayedIds);
 
 		if (data != null) {
 			IPreferencePage page = dialog.getCurrentPage();
@@ -108,7 +108,7 @@ public final class PreferencesUtil {
 		action.select(propertyPageId, data);
 		PropertyDialog dialog = (PropertyDialog) action.createDialog();
 		if (displayedIds != null)
-			dialog.setSearchResults(displayedIds);
+			dialog.showOnly(displayedIds);
 		return dialog;
 
 	}
