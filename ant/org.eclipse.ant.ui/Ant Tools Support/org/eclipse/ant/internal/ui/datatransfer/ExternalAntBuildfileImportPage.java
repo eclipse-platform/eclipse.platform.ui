@@ -354,6 +354,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 	/**
 	 * Creates a new project resource based on the Ant buildfile.
+	 * The classpath is configured based on the classpath of the javac declaration in the buildfile.
 	 *
 	 * @return the created project resource, or <code>null</code> if the project
 	 *    was not created
