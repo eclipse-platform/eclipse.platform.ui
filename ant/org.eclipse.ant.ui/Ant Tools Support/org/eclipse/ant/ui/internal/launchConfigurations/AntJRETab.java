@@ -46,9 +46,10 @@ import org.eclipse.swt.widgets.Label;
 
 public class AntJRETab extends JavaJRETab {
 
-	private static final String XERCES_IMPL= new String("xercesImpl.jar"); //$NON-NLS-1$
-	private static final String XERCES_API= new String("xml-apis.jar"); //$NON-NLS-1$
-	private static final String XERCES_PARSER_API= new String("xmlParserAPIs.jar"); //$NON-NLS-1$
+	private static final String XERCES_IMPL= "xercesImpl.jar"; //$NON-NLS-1$
+	private static final String XERCES_API= "xml-apis.jar"; //$NON-NLS-1$
+	private static final String XERCES_PARSER_API= "xmlParserAPIs.jar"; //$NON-NLS-1$
+	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.ui.internal.antsupport.InternalAntRunner"; //$NON-NLS-1$
 	
 	private Button updateClasspathButton;
 	private IVMInstall previousJRE;
@@ -66,8 +67,10 @@ public class AntJRETab extends JavaJRETab {
 		
 		label= new Label((Composite) control, SWT.NULL);
 		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
+		label.setFont(parent.getFont());
 		
 		updateClasspathButton= new Button((Composite) control, SWT.PUSH);
+		updateClasspathButton.setFont(parent.getFont());
 		updateClasspathButton.setText(AntLaunchConfigurationMessages.getString("AntJRETab.10")); //$NON-NLS-1$
 		updateClasspathButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -111,7 +114,9 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
 		} else {
 			super.performApply(configuration);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.apache.tools.ant.Main"); //$NON-NLS-1$
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
+			//configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Djava.compiler=NONE -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,suspend=y,server=y");
+			//configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		}
 		setLaunchConfigurationWorkingCopy(configuration);

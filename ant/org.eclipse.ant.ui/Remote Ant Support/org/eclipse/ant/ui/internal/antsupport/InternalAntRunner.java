@@ -103,8 +103,6 @@ import org.apache.tools.ant.util.FileUtils;
  */
 public class InternalAntRunner {
 
-//	private IProgressMonitor monitor;
-
 	private List buildListeners;
 
 	private String buildFileLocation;
@@ -187,17 +185,6 @@ public class InternalAntRunner {
 	public void addBuildLogger(String className) {
 		loggerClassname = className;
 	}
-
-	/**
-	 * Adds user properties.
-	 */
-	public void addUserProperties(Map properties) {
-		if (userProperties == null) {
-			userProperties= new HashMap(properties.size());
-		}
-		
-		userProperties.putAll(properties);
-	}
 	
 	/**
 	 * Adds user property files.
@@ -270,20 +257,6 @@ public class InternalAntRunner {
 		project.log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString().trim()})); //$NON-NLS-1$
 	}
 
-//	private void createMonitorBuildListener(Project project) {
-//		if (monitor == null) {
-//			return;
-//		}
-//		List chosenTargets = targets;
-//		if (chosenTargets == null || chosenTargets.isEmpty()) {
-//			chosenTargets = new ArrayList(1);
-//			String defltTarget= project.getDefaultTarget();
-//			if (defltTarget != null) {
-//				chosenTargets.add(defltTarget);
-//			}
-//		}
-//		project.addBuildListener(new ProgressBuildListener(project, chosenTargets, monitor));
-//	}
 
 	/**
 	 * Logs a message with the client that lists the targets
@@ -395,12 +368,14 @@ public class InternalAntRunner {
 					return;
 				}
 			}
-			
+
 			addBuildListeners(getCurrentProject());
 		
 			processProperties(argList);
+			setProperties(getCurrentProject());
 			
 			addInputHandler(getCurrentProject());
+			
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 
@@ -424,7 +399,6 @@ public class InternalAntRunner {
 			
 			parseBuildFile(getCurrentProject());
 			validateDefaultTarget();
-			//createMonitorBuildListener(getCurrentProject());
 			
 			if (projectHelp) {
 				printHelp(getCurrentProject());
@@ -435,6 +409,7 @@ public class InternalAntRunner {
 			if (extraArguments != null) {
 				printArguments(getCurrentProject());
 			}
+			
 			System.setSecurityManager(new AntSecurityManager(originalSM));
 			
 			if (targets != null && !targets.isEmpty()) {
@@ -497,6 +472,7 @@ public class InternalAntRunner {
 	 * 			can return <code>null</code> if no logging is to occur
 	 */
 	private BuildLogger createLogger() {
+		System.out.println(loggerClassname);
 		if (loggerClassname == null) {
 			buildLogger= new DefaultLogger();
 		} else if (!"".equals(loggerClassname)) { //$NON-NLS-1$
@@ -950,6 +926,17 @@ public class InternalAntRunner {
 			}
 		}
 	}
+	
+	private void setProperties(Project project) {
+		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
+		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
+		if (userProperties != null) {
+			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
+			}
+		} 
+	}
 
 	/**
 	 * Print the project description, if any
@@ -1097,13 +1084,6 @@ public class InternalAntRunner {
 		return result;
 	}
 
-//	/**
-//	 * Sets the build progress monitor.
-//	 */
-//	public void setProgressMonitor(IProgressMonitor monitor) {
-//		this.monitor = monitor;
-//	}
-
 	private Project getCurrentProject() {
 		return currentProject;
 	}
@@ -1173,6 +1153,4 @@ public class InternalAntRunner {
 		InputHandlerSetter setter= new InputHandlerSetter();
 		setter.setInputHandler(project, inputHandlerClassname);
     }
-	
-	
 }
