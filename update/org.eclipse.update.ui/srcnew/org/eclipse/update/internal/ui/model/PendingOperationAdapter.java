@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.update.internal.ui.wizards;
+package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
