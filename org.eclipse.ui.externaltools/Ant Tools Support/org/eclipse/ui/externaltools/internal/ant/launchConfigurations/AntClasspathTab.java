@@ -480,10 +480,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			upButton.setEnabled(false);
 			upUserButton.setEnabled(false);
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-			/*URL[] extensionURLs= prefs.getDefaultURLs();
-			List allURLs= new ArrayList();
-			allURLs.addAll(Arrays.asList(prefs.getAntURLs()));
-			allURLs.addAll(Arrays.asList(extensionURLs));*/
 			antTableViewer.setInput(prefs.getAntURLs());
 			userTableViewer.setInput(prefs.getCustomURLs());
 		}
@@ -512,8 +508,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/* (non-Javadoc)
-		 * Method declared on AntPage.
-		 */
+	 * Method declared on AntPage.
+	 */
 	protected void tableSelectionChanged(IStructuredSelection selection) {
 		ExternalToolsContentProvider contentProvider = (ExternalToolsContentProvider) antTableViewer.getContentProvider();
 		Object[] elements = contentProvider.getElements(null);
@@ -538,10 +534,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 		downButton.setEnabled(notEmpty && !last);
 	}
 
-	/**
-	 * Method createUserTable.
-	 * @param top
-	 */
 	private void createUserTable(Composite top) {
 		Table table = new Table(top, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -598,13 +590,12 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-		 * Returns the currently listed objects in the table.  Returns null
-		 * if this widget has not yet been created or has been disposed.
-		 */
-		protected List getAntURLs() {
-			Object[] elements = antContentProvider.getElements(null);
-			return Arrays.asList(elements);
-		}
+	 * Returns the currently listed objects in the table.
+	 */
+	protected List getAntURLs() {
+		Object[] elements = antContentProvider.getElements(null);
+		return Arrays.asList(elements);
+	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -624,13 +615,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 		}
 		if (urlStrings == null) {
 			useDefaultButton.setSelection(true);
-			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-			/*URL[] extensionURLs= prefs.getDefaultURLs();
-			List allURLs= new ArrayList();
-			allURLs.addAll(Arrays.asList(prefs.getAntURLs()));
-			allURLs.addAll(Arrays.asList(extensionURLs));*/
-			antTableViewer.setInput(prefs.getAntURLs());
-			userTableViewer.setInput(prefs.getCustomURLs());
 		} else {
 			String antHomeString= null;
 			try {

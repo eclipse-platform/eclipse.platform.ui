@@ -106,13 +106,13 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		
 		List contents = classpathPage.getContents();
-		if (contents != null) {
+		if (contents != null && !contents.isEmpty()) {
 			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
 			prefs.setAntURLs(urls);
 		}
 		
 		contents = classpathPage.getUserURLs();
-		if (contents != null) {
+		if (contents != null && !contents.isEmpty()) {
 			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
 			prefs.setCustomURLs(urls);
 		}
@@ -121,19 +121,19 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		prefs.setAntHome(antHome);
 		
 		contents = tasksPage.getContents();
-		if (contents != null) {
+		if (contents != null && !contents.isEmpty()) {
 			Task[] tasks = (Task[]) contents.toArray(new Task[contents.size()]);
 			prefs.setCustomTasks(tasks);
 		}
 		
 		contents = typesPage.getContents();
-		if (contents != null) {
+		if (contents != null && !contents.isEmpty()) {
 			Type[] types = (Type[]) contents.toArray(new Type[contents.size()]);
 			prefs.setCustomTypes(types);
 		}
 		
 		contents = propertiesPage.getContents();
-		if (contents != null) {
+		if (contents != null && !contents.isEmpty()) {
 			Property[] properties = (Property[]) contents.toArray(new Property[contents.size()]);
 			prefs.setCustomProperties(properties);
 		}

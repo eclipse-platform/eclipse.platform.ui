@@ -283,10 +283,6 @@ public class AntClasspathPage extends AntPage {
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		/*URL[] extensionURLs= prefs.getDefaultURLs();
-		List allURLs= new ArrayList();
-		allURLs.addAll(Arrays.asList(prefs.getAntURLs()));
-		allURLs.addAll(Arrays.asList(extensionURLs));*/
 		getTableViewer().setInput(prefs.getAntURLs());
 		userTableViewer.setInput(Arrays.asList(prefs.getCustomURLs()));
 		String antHomePath= prefs.getAntHome();
