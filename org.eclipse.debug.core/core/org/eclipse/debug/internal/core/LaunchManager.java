@@ -103,8 +103,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Types of notifications
 	 */
-	private static final int REGISTERED = 0;
-	private static final int DEREGISTERED = 1;
+	public static final int ADDED = 0;
+	public static final int REMOVED= 1;
+	public static final int CHANGED= 2;
 
 	/**
 	 * Collection of launches
@@ -138,12 +139,19 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#deregisterLaunch(ILaunch)
 	 */
 	public void deregisterLaunch(ILaunch launch) {
+		removeLaunch(launch);
+	}
+	
+	/**
+	 * @see ILaunchManager#removeLaunch(ILaunch)
+	 */
+	public void removeLaunch(ILaunch launch) {
 		if (launch == null) {
 			return;
 		}
 		fLaunches.remove(launch);
-		fireUpdate(launch, DEREGISTERED);
-	}
+		fireUpdate(launch, REMOVED);
+	}	
 
 	/**
 	 * @see ILaunchManager#findLaunch(IProcess)
@@ -170,8 +178,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		synchronized (fLaunches) {
 			for (int i= 0; i < fLaunches.size(); i++) {
 				ILaunch l= (ILaunch) fLaunches.elementAt(i);
-				if (target.equals(l.getDebugTarget())) {
-					return l;
+				IDebugTarget[] targets = l.getDebugTargets();
+				for (int j = 0; j < targets.length; j++) {
+					if (target.equals(targets[j])) {
+						return l;
+					}
 				}
 			}
 		}
@@ -186,11 +197,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		for (int i= 0; i < copiedListeners.length; i++) {
 			ILaunchListener listener = (ILaunchListener)copiedListeners[i];
 			switch (update) {
-				case REGISTERED:
-					listener.launchRegistered(launch);
+				case ADDED:
+					listener.launchAdded(launch);
 					break;
-				case DEREGISTERED:
-					listener.launchDeregistered(launch);
+				case REMOVED:
+					listener.launchRemoved(launch);
+					break;
+				case CHANGED:
+					listener.launchChanged(launch);
 					break;
 			}
 		}
@@ -200,16 +214,17 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getDebugTargets()
 	 */
 	public IDebugTarget[] getDebugTargets() {
-		List targets= new ArrayList(fLaunches.size());
+		List allTargets= new ArrayList(fLaunches.size());
 		if (fLaunches.size() > 0) {
 			Iterator e= fLaunches.iterator();
 			while (e.hasNext()) {
-				IDebugTarget target= ((ILaunch) e.next()).getDebugTarget();
-				if (target != null)
-					targets.add(target);
+				IDebugTarget[] targets= ((ILaunch) e.next()).getDebugTargets();
+				for (int i = 0; i < targets.length; i++) {
+					allTargets.add(targets[i]);
+				}
 			}
 		}
-		return (IDebugTarget[])targets.toArray(new IDebugTarget[targets.size()]);
+		return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
 	}
 
 	/**
@@ -300,9 +315,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#registerLaunch(ILaunch)
 	 */
 	public void registerLaunch(ILaunch launch) {
-		fLaunches.add(launch);
-		fireUpdate(launch, REGISTERED);
+		addLaunch(launch);
 	}
+	
+	/**
+	 * @see ILaunchManager#addLaunch(ILaunch)
+	 */
+	public void addLaunch(ILaunch launch) {
+		fLaunches.add(launch);
+		fireUpdate(launch, ADDED);
+	}	
 	
 	/**
 	 * @see ILaunchManager#removeLaunchListener(ILaunchListener)

@@ -88,18 +88,26 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	/**
 	 * Do nothing.
 	 * 
-	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(ILaunch launch) {
+	public void launchRemoved(ILaunch launch) {
 	}
+	
+	/**
+	 * Do nothing.
+	 * 
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}	
 
 	/** 
 	 * Switch to the perspective specified by the
 	 * launch configuration.
 	 * 
-	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(ILaunch launch) {
+	public void launchAdded(ILaunch launch) {
 		String perspectiveId = null;
 		// check event filters
 		if (DebugUIPlugin.getDefault().showLaunch(launch)) {

@@ -46,7 +46,7 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 			launch= ((IProcess) element).getLaunch();
 		}
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		lManager.deregisterLaunch(launch);
+		lManager.removeLaunch(launch);
 	}
 
 	/**

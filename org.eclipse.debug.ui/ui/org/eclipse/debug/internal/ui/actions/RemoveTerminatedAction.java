@@ -58,7 +58,7 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 			if (elements[i] instanceof ILaunch) {
 				ILaunch launch = (ILaunch)elements[i];
 				if (launch.isTerminated()) {
-					manager.deregisterLaunch(launch);
+					manager.removeLaunch(launch);
 				}
 			}
 		}

@@ -54,8 +54,17 @@ public interface ILaunchManager {
 	 * if an identical launch is not already registered.
 	 *
 	 * @param launch the launch to deregister
+	 * @deprecated use removeLaunch(ILaunch)
 	 */
 	public void deregisterLaunch(ILaunch launch);
+	/**
+	 * Removes the specified launch and notifies listeners.
+	 * Has no effect if an identical launch is not already
+	 * registered.
+	 *
+	 * @param launch the launch to remove
+	 */
+	public void removeLaunch(ILaunch launch);	
 	/**
 	 * Returns the launch the given process is contained in, or <code>null</code>
 	 * if no registered launches contains the process.
@@ -127,8 +136,16 @@ public interface ILaunchManager {
 	 * launch is already registered.
 	 * 
 	 * @param launch the launch to register
+	 * @deprecated use addLaunch(ILaunch)
 	 */
 	public void registerLaunch(ILaunch launch);
+	/**
+	 * Adds the specified launch and notifies listeners. Has no
+	 * effect if an identical launch is already registered.
+	 * 
+	 * @param launch the launch to add
+	 */
+	public void addLaunch(ILaunch launch);	
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
 	 * Has no effect if an identical listener is not already registerd.

@@ -204,9 +204,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 
 	/**
-	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(final ILaunch launch) {
+	public void launchRemoved(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
 				remove(launch);
@@ -234,11 +234,17 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 
 		getView().asyncExec(r);
 	}
+	
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(final ILaunch launch) {
+	}
 
 	/**
-	 * @see ILaunchListener
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(final ILaunch newLaunch) {
+	public void launchAdded(final ILaunch newLaunch) {
 		Runnable r= new Runnable() {
 			public void run() {		
 				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
@@ -247,7 +253,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					for (int i= 0; i < launches.length; i++) {
 						ILaunch launch= (ILaunch)launches[i];
 						if (launch != newLaunch && launch.isTerminated()) {
-							lManager.deregisterLaunch(launch);
+							lManager.removeLaunch(launch);
 						}
 					}
 				}

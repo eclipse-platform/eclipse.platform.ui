@@ -63,7 +63,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public ILaunch launch(String mode) throws CoreException {
 		ILaunch launch = getDelegate().launch(this, mode);
 		if (launch != null) {
-			getLaunchManager().registerLaunch(launch);
+			getLaunchManager().addLaunch(launch);
 		}
 		return launch;
 	}

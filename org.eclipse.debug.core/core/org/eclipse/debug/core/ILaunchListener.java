@@ -7,7 +7,9 @@ package org.eclipse.debug.core;
 
 /**
  * A launch listener is notified of launches as they
- * are registered and deregistered with the launch manager.
+ * are added and removed from the launch manager. Also,
+ * when a process or debug target is added to a launch]
+ * listeners are notified of a change.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -19,17 +21,30 @@ package org.eclipse.debug.core;
  * </p>
  * @see ILaunch
  */
-public interface ILaunchListener {
+public interface ILaunchListener {	
 	/**
-	 * Notifies this listener that the specified launch has been deregistered.
+	 * Notifies this listener that the specified
+	 * launch has been removed.
 	 *
-	 * @param launch the deregistered launch
+	 * @param launch the removed launch
+	 * @since 2.0
 	 */
-	public void launchDeregistered(ILaunch launch);
+	public void launchRemoved(ILaunch launch);
 	/**
-	 * Notifies this listener that the specified launch has been registered.
+	 * Notifies this listener that the specified launch
+	 * has been added.
 	 * 
-	 * @param launch the registered launch
+	 * @param launch the newly added launch
+	 * @since 2.0
 	 */
-	public void launchRegistered(ILaunch launch);
+	public void launchAdded(ILaunch launch);	
+	/**
+	 * Notifies this listener that the specified launch
+	 * has changed. For example, a process or debug target
+	 * has been added to the launch.
+	 * 
+	 * @param launch the changed launch
+	 * @since 2.0
+	 */
+	public void launchChanged(ILaunch launch);	
 }

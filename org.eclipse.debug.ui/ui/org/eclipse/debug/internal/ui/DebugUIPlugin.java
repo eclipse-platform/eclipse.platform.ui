@@ -359,7 +359,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			logError(e);
 		}
 		for (int i = 0; i < launches.length; i++) {
-			launchRegistered(launches[i]);
+			launchAdded(launches[i]);
 		}
 		
 		// startup the perspective manager
@@ -507,9 +507,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 	
 	/**
-	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(final ILaunch launch) {
+	public void launchRemoved(final ILaunch launch) {
 		getDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
@@ -526,13 +526,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			}
 		});
 	}
+	
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {	
+	}
 
 	/**
 	 * Must not assume that will only be called from the UI thread.
 	 *
-	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(final ILaunch launch) {
+	public void launchAdded(final ILaunch launch) {
 		if (launch.getLaunchConfiguration() != null) {
 			// new launch configuration processing
 			//return;

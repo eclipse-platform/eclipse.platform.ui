@@ -8,6 +8,7 @@ package org.eclipse.debug.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -17,6 +18,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.core.LaunchManager;
 
 /**
  * A launch is the result of launching a debug session
@@ -45,10 +47,12 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 public class Launch extends PlatformObject implements ILaunch {
 	
 	/**
-	 * The target being debugged, or <code>null</code> if
-	 * there is no debug target.
+	 * The debug targets associated with this
+	 * launch (the primary target is the first one
+	 * in this collection), or empty if
+	 * there are no debug targets.
 	 */
-	private IDebugTarget fTarget= null;
+	private List fTargets= new ArrayList();
 
 	/**
 	 * The element that was launched.
@@ -61,9 +65,10 @@ public class Launch extends PlatformObject implements ILaunch {
 	private ILauncher fLauncher= null;
 
 	/**
-	 * The system processes resulting from the launch.
+	 * The system processes asscoiated with
+	 * this launch, or empty if none.
 	 */
-	private IProcess[] fProcesses= null;
+	private List fProcesses= new ArrayList();
 
 	/**
 	 * The source locator to use in the debug session
@@ -75,16 +80,18 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * The mode this launch was launched in.
 	 */
 	private String fMode;
-	 
-	/**
-	 * Collection of children.
-	 */
-	private List fChildren= null;
 	
 	/**
 	 * Table of client defined attributes
 	 */
 	private HashMap fAttributes;	
+	
+	/**
+	 * Flag indiating that change notification should
+	 * be suppressed. <code>true</code> until this
+	 * launch has been initialzied.
+	 */
+	private boolean fSuppressChange = true;
 	
 	/**
 	 * Constructs a launch with the specified attributes. A launch must
@@ -105,10 +112,10 @@ public class Launch extends PlatformObject implements ILaunch {
 		setLauncher(launcher);			
 		setElement(launchedElement);
 		setSourceLocator(locator);
-		setProcesses(processes);
-		setDebugTarget(target);
+		addProcesses(processes);
+		addDebugTarget(target);
 		setLaunchMode(mode);
-		initialize();
+		fSuppressChange = false;
 	}
 	
 	/**
@@ -130,10 +137,10 @@ public class Launch extends PlatformObject implements ILaunch {
 		setLauncher(null);			
 		setElement(launchConfiguration);
 		setSourceLocator(locator);
-		setProcesses(processes);
-		setDebugTarget(target);
+		addProcesses(processes);
+		addDebugTarget(target);
 		setLaunchMode(mode);
-		initialize();
+		fSuppressChange = false;
 	}	
 	
 	/**
@@ -147,25 +154,19 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see ILaunch#getChildren()
 	 */
 	public final Object[] getChildren() {
-		return fChildren.toArray();
+		ArrayList children = new ArrayList(getDebugTargets0());
+		children.addAll(getProcesses0());
+		return children.toArray();
 	}
 
 	/**
 	 * @see ILaunch#getDebugTarget()
 	 */
 	public final IDebugTarget getDebugTarget() {
-		return fTarget;
-	}
-
-	/**
-	 * Sets the debug target associated with this
-	 * launch.
-	 * 
-	 * @param debugTarget the debug target associated
-	 *  with this launch, or <code>null</code> if none.
-	 */
-	private void setDebugTarget(IDebugTarget debugTarget) {
-		fTarget = debugTarget;
+		if (!getDebugTargets0().isEmpty()) {
+			return (IDebugTarget)getDebugTargets0().get(0);
+		}
+		return null;
 	}
 	
 	/**
@@ -206,22 +207,18 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see ILaunch#getProcesses()
 	 */
 	public final IProcess[] getProcesses() {
-		return fProcesses;
+		return (IProcess[])getProcesses0().toArray(new IProcess[getProcesses0().size()]);
 	}
-
+	
 	/**
-	 * Sets the processes associated with this launch.
+	 * Returns the processes associated with this
+	 * launch, in its internal form - a list.
 	 * 
-	 * @param processes the processes associated with
-	 *  this launch - <code>null</code> or empty if none.
+	 * @return list or processes
 	 */
-	private void setProcesses(IProcess[] processes) {
-		if (processes == null) {
-			fProcesses= new IProcess[0];
-		} else {
-			fProcesses= processes;
-		}
-	}
+	protected List getProcesses0() {
+		return fProcesses;
+	}	
 	
 	/**
 	 * @see ILaunch#getSourceLocator()
@@ -243,45 +240,24 @@ public class Launch extends PlatformObject implements ILaunch {
 	}	
 
 	/**
-	 * Build the children collection for this launch -
-	 * a collection of the processes and debug target
-	 * associated with this launch.
-	 */
-	private final void initialize() {
-
-		IProcess[] ps= getProcesses();
-		if (ps != null) {
-			fChildren= new ArrayList(ps.length + 1);
-			for (int i= 0; i < ps.length; i++) {
-				fChildren.add(ps[i]);
-			}
-		}
-		if (getDebugTarget() != null) {
-			if (fChildren == null) {
-				fChildren= new ArrayList(1);
-			}
-			fChildren.add(getDebugTarget());
-		}
-		if (fChildren == null) {
-			fChildren= Collections.EMPTY_LIST;
-		}
-	}
-
-	/**
 	 * @see ITerminate#isTerminated()
 	 */
 	public final boolean isTerminated() {
-		IProcess[] ps = getProcesses();
-		
-		for (int i = 0; i < ps.length; i++) {
-			if (!ps[i].isTerminated()) {
+
+		Iterator processes = getProcesses0().iterator();
+		while (processes.hasNext()) {
+			IProcess process = (IProcess)processes.next();
+			if (!process.isTerminated()) {
 				return false;
 			}
 		}
 		
-		IDebugTarget target = getDebugTarget();
-		if (target != null) {
-			return target.isTerminated() || target.isDisconnected();
+		Iterator targets = getDebugTargets0().iterator();
+		while (targets.hasNext()) {
+			IDebugTarget target = (IDebugTarget)targets.next();
+			if (!(target.isTerminated() || target.isDisconnected())) {
+				return false;
+			}
 		}
 		
 		return true;
@@ -293,37 +269,38 @@ public class Launch extends PlatformObject implements ILaunch {
 	public final void terminate() throws DebugException {
 		MultiStatus status= 
 			new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Launch.terminate_failed"), null); //$NON-NLS-1$
-		IProcess[] ps= getProcesses();
 		
 		// terminate the system processes
-		if (ps != null) {
-			for (int i = 0; i < ps.length; i++) {
-				IProcess process = ps[i];
-				if (process.canTerminate()) {
-					try {
-						process.terminate();
-					} catch (DebugException e) {
-						status.merge(e.getStatus());
-					}
+		Iterator processes = getProcesses0().iterator();
+		while (processes.hasNext()) {
+			IProcess process = (IProcess)processes.next();
+			if (process.canTerminate()) {
+				try {
+					process.terminate();
+				} catch (DebugException e) {
+					status.merge(e.getStatus());
 				}
 			}
 		}
 		
-		// disconnect debug target if it is still connected
-		IDebugTarget target= getDebugTarget();
-		if (target != null) {
-			if (target.canTerminate()) {
-				try {
-					target.terminate();
-				} catch (DebugException e) {
-					status.merge(e.getStatus());
-				}
-			} else {
-				if (target.canDisconnect()) {
+		// terminate or disconnect debug target if it is still alive
+		Iterator targets = getDebugTargets0().iterator();
+		while (targets.hasNext()) {
+			IDebugTarget target= (IDebugTarget)targets.next();
+			if (target != null) {
+				if (target.canTerminate()) {
 					try {
-						target.disconnect();
-					} catch (DebugException de) {
-						status.merge(de.getStatus());
+						target.terminate();
+					} catch (DebugException e) {
+						status.merge(e.getStatus());
+					}
+				} else {
+					if (target.canDisconnect()) {
+						try {
+							target.disconnect();
+						} catch (DebugException de) {
+							status.merge(de.getStatus());
+						}
 					}
 				}
 			}
@@ -385,6 +362,71 @@ public class Launch extends PlatformObject implements ILaunch {
 			return null;
 		}
 		return (String)fAttributes.get(key);
+	}
+
+	/**
+	 * @see ILaunch#getDebugTargets()
+	 */
+	public IDebugTarget[] getDebugTargets() {
+		return (IDebugTarget[])fTargets.toArray(new IDebugTarget[fTargets.size()]);
+	}
+	
+	/**
+	 * Returns the debug targets associated with this
+	 * launch, in its internal form - a list
+	 * 
+	 * @return list of debug targets
+	 */
+	protected List getDebugTargets0() {
+		return fTargets;
+	}	
+
+	/**
+	 * @see ILaunch#addDebugTarget(IDebugTarget)
+	 */
+	public final void addDebugTarget(IDebugTarget target) {
+		if (target != null) {
+			if (!getDebugTargets0().contains(target)) {
+				getDebugTargets0().add(target);
+			}
+		}
+	}
+	
+	/**
+	 * @see ILaunch#addProcess(IProcess)
+	 */
+	public final void addProcess(IProcess process) {
+		if (process != null) {
+			if (!getProcesses0().contains(process)) {
+				getProcesses0().add(process);
+				fireChanged();
+			}
+		}
+	}
+	
+	/**
+	 * Adds the given processes to this lanuch.
+	 * 
+	 * @param processes processes to add
+	 */
+	protected void addProcesses(IProcess[] processes) {
+		if (processes != null) {
+			for (int i = 0; i < processes.length; i++) {
+				addProcess(processes[i]);
+				fireChanged();
+			}
+		}
+	}
+	
+	/**
+	 * Notifies listeners that this launch has changed.
+	 * Has no effect of this launch has not yet been
+	 * properly created/initialized.
+	 */
+	protected void fireChanged() {
+		if (!fSuppressChange) {
+			((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).fireUpdate(this, LaunchManager.CHANGED);
+		}
 	}
 
 }

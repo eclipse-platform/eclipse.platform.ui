@@ -68,12 +68,12 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 								if (next instanceof IDebugElement) {
 									identifiers.add(((IDebugElement)next).getModelIdentifier());
 								} else if (next instanceof ILaunch) {
-									IDebugTarget target= ((ILaunch)next).getDebugTarget();
-									if (target != null) {
-										identifiers.add(target.getModelIdentifier());
+									IDebugTarget[] targets= ((ILaunch)next).getDebugTargets();
+									for (int j = 0; j < targets.length; j++) {
+										identifiers.add(targets[j].getModelIdentifier());
 									}
 								} else if (next instanceof IProcess) {
-									IDebugTarget target= ((IProcess)next).getLaunch().getDebugTarget();
+									IDebugTarget target= (IDebugTarget)((IProcess)next).getAdapter(IDebugTarget.class);
 									if (target != null) {
 										identifiers.add(target.getModelIdentifier());
 									}

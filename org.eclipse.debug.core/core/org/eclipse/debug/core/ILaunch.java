@@ -33,10 +33,12 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 */
 	public Object[] getChildren();
 	/**
-	 * Returns the debug target associated with this launch, or <code>null</code>
-	 * if no debug target is associated with this launch.
+	 * Returns the primary debug target associated with this launch, or <code>null</code>
+	 * if no debug target is associated with this launch. All debug targets 
+	 * associated with this launch may be retrieved by
+	 * <code>getDebugTargets()</code>.
 	 *
-	 * @return the debug target associated with this launch, or <code>null</code>
+	 * @return the primary debug target associated with this launch, or <code>null</code>
 	 */
 	public IDebugTarget getDebugTarget();
 	/**
@@ -61,6 +63,38 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return array of processes
 	 */
 	public IProcess[] getProcesses();
+	
+	/**
+	 * Returns all the debug targets associatd with this launch,
+	 * or an empty collection if no debug targets are associated
+	 * with this launch. The primary debug target is the first
+	 * in the collection (if any).
+	 *
+	 * @return array of debug targets
+	 * @since 2.0
+	 */
+	public IDebugTarget[] getDebugTargets();
+	
+	/**
+	 * Adds the given debug target to this launch. Has no effect
+	 * if the given debug target is already associated with this
+	 * launch.
+	 *
+	 * @param target debug target to add to this launch
+	 * @since 2.0
+	 */
+	public void addDebugTarget(IDebugTarget target);	
+	
+	/**
+	 * Adds the given process to this launch. Has no effect
+	 * if the given process is already associated with this
+	 * launch.
+	 *
+	 * @param process the process to add to this launch
+	 * @since 2.0
+	 */
+	public void addProcess(IProcess process);		
+		
 	/**
 	 * Returns the source locator to use for locating source elements for
 	 * the debug target associated with this launch, or <code>null</code>

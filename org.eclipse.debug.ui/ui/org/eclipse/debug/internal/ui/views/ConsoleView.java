@@ -354,9 +354,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * in this view's page (to provide a 'process context'),
 	 * show the output of the current process.
 	 * 
-	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(ILaunch launch) {
+	public void launchRemoved(ILaunch launch) {
 		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
 		if (view == null) {
 			setViewerInput(DebugUITools.getCurrentProcess());
@@ -368,14 +368,21 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * in this view's page (to provide a 'process context'),
 	 * show the output of the current process.
 	 * 
-	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(ILaunch launch) {
+	public void launchAdded(ILaunch launch) {
 		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
 		if (view == null) {
 			setViewerInput(DebugUITools.getCurrentProcess());
 		}
 	}
+	
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+	
 
 }
 
