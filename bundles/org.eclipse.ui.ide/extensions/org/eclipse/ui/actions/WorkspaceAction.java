@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,15 +66,9 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
  */
 public abstract class WorkspaceAction extends SelectionListenerAction {
     /**
-     * Multi status containing the errors detected when running the operation or
-     * <code>null</code> if no errors detected.
-     */
-    private MultiStatus errorStatus;
-
-    /**
      * The shell in which to show the progress and problems dialog.
      */
-    private Shell shell;
+    private final Shell shell;
 
     /**
      * Creates a new action with the given text.
@@ -110,16 +104,20 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
     /**
      * Runs <code>invokeOperation</code> on each of the selected resources, reporting
      * progress and fielding cancel requests from the given progress monitor.
+     * <p>
+     * Note that if an action is running in the background, the same action instance
+     * can be executed multiple times concurrently.  This method must not access
+     * or modify any mutable state on action class.
      *
      * @param monitor a progress monitor
+     * @return The result of the execution
      */
-    final void execute(IProgressMonitor monitor) {
+    final IStatus execute(List resources, IProgressMonitor monitor) {
+    	MultiStatus errors = null;
         //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
-        List resources = getActionResources();
         if (shouldPerformResourcePruning()) {
             resources = pruneResources(resources);
         }
-        Iterator resourcesEnum = resources.iterator();
         // 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
         monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
         // Fix for bug 31768 - Don't provide a task name in beginTask
@@ -127,6 +125,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
         // call setTaskName as its the only was to assure the task name is
         // set in the monitor (see bug 31824)
         monitor.setTaskName(getOperationMessage());
+        Iterator resourcesEnum = resources.iterator();
         try {
             while (resourcesEnum.hasNext()) {
                 IResource resource = (IResource) resourcesEnum.next();
@@ -135,11 +134,12 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
                     invokeOperation(resource, new SubProgressMonitor(monitor,
                             1000));
                 } catch (CoreException e) {
-                    recordError(e);
+                    errors = recordError(errors, e);
                 }
                 if (monitor.isCanceled())
                     throw new OperationCanceledException();
             }
+            return errors == null ? Status.OK_STATUS : errors;
         } finally {
             monitor.done();
         }
@@ -280,11 +280,12 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @param error a <code>CoreException</code>
      */
-    private void recordError(CoreException error) {
-        if (errorStatus == null)
-            errorStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH,
+    private MultiStatus recordError(MultiStatus errors, CoreException error) {
+        if (errors == null)
+        	errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH,
                     IStatus.ERROR, getProblemsMessage(), error);
-        errorStatus.merge(error.getStatus());
+        errors.merge(error.getStatus());
+        return errors;
     }
 
     /**
@@ -299,10 +300,11 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * </p>
      */
     public void run() {
+    	final IStatus[] errorStatus = new IStatus[1];
         try {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
                 public void execute(IProgressMonitor monitor) {
-                    WorkspaceAction.this.execute(monitor);
+                    errorStatus[0] = WorkspaceAction.this.execute(getActionResources(), monitor);
                 }
             };
             new ProgressMonitorJobsDialog(shell).run(true, true, op);
@@ -318,11 +320,10 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
             displayError(e.getTargetException().getMessage());
         }
         // If errors occurred, open an Error dialog & build a multi status error for it
-        if (errorStatus != null) {
+        if (errorStatus[0] != null && !errorStatus[0].isOK()) {
             ErrorDialog.openError(shell, getProblemsTitle(), null, // no special message
-                    errorStatus);
+                    errorStatus[0]);
         }
-        errorStatus = null;
     }
 
     /**
@@ -411,8 +412,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @since 3.1
      */
     public void runInBackground(ISchedulingRule rule, final Object [] jobFamilies) {
-
-        Job backgroundJob = new Job(removeMnemonics(getText())) {
+    	//obtain a copy of the selected resources before the job is forked
+    	final List resources = new ArrayList(getActionResources());
+        Job job = new WorkspaceJob(removeMnemonics(getText())) {
         	
         	/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
@@ -421,7 +423,6 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 				if (jobFamilies == null || family == null) {
 					return false;
 				}
-				
 				for (int i = 0; i < jobFamilies.length; i++) {
 					if (family.equals(jobFamilies[i])) {
 						return true;
@@ -431,35 +432,15 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 			}
 			
             /* (non-Javadoc)
-             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+             * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
              */
-            protected IStatus run(IProgressMonitor monitor) {
-
-                monitor.beginTask("", 1); //$NON-NLS-1$
-                // Fix for bug 31768 - Don't provide a task name in beginTask
-                // as it will be appended to each subTask message. Need to
-                // call setTaskName as its the only was to assure the task name is
-                // set in the monitor (see bug 31824)
-                monitor.setTaskName(getOperationMessage());
-                WorkspaceAction.this.execute(monitor);
-                monitor.done();
-
-                IStatus returnStatus = Status.OK_STATUS;
-
-                //If errors occurred, open an Error dialog & build a multi status error for it
-                if (errorStatus != null) {
-                    returnStatus = errorStatus;
-                    errorStatus = null;
-                }
-                return returnStatus;
+            public IStatus runInWorkspace(IProgressMonitor monitor) {
+                return WorkspaceAction.this.execute(resources, monitor);
             }
-
         };
-
         if (rule != null)
-            backgroundJob.setRule(rule);
-        backgroundJob.setUser(true);
-        backgroundJob.schedule();
-
+            job.setRule(rule);
+        job.setUser(true);
+        job.schedule();
     }
 }
