@@ -39,7 +39,7 @@ public final class AntUIPlugin extends AbstractUIPlugin {
 				plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				Policy.bind("exception.missingResourceBundle"),
 				Policy.bind("exception.missingResourceBundle.message"),
-				new Status(IStatus.ERROR,PI_ANTUI,0,e.getMessage(),e));
+				new Status(IStatus.ERROR,PI_ANTUI,0,Policy.bind("exception.missingResourceBundle.message"),e));
 			return null;
 		}
 	}

@@ -38,12 +38,10 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate {
 			ProjectHelper.configureProject(antProject,new File(sourceFile.getLocation().toOSString()));
 		} catch (Exception e) {
 			// If the document is not well-formated for example
-			IStatus status = new Status(
-				IStatus.ERROR,
-				AntUIPlugin.PI_ANTUI,
-				IStatus.ERROR,
-				e.getMessage(),
-				e);
+			String message = e.getMessage();
+			if (message == null)
+				message = Policy.bind("error.antParsingError");
+			IStatus status = new Status(IStatus.ERROR,AntUIPlugin.PI_ANTUI,IStatus.ERROR,message,e);
 			ErrorDialog.openError(
 				AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),
 				Policy.bind("error.antScriptError"),
