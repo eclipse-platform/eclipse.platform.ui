@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
@@ -65,6 +65,69 @@ public class OperationValidator implements IOperationValidator{
 	private static final String KEY_NO_LICENSE =
 		"ActivityConstraints.noLicense";
 
+	/**
+	 * The feature status provide info about the broken features and 
+	 * what is wrong.
+	 */
+	private static class FeatureStatus implements IStatus {
+		IStatus status;
+		IFeature feature;
+		
+		public FeatureStatus(IFeature feature, IStatus status) {
+			this.status = status;
+			this.feature = feature;
+		}
+		public IStatus[] getChildren() {
+			return status.getChildren();
+		}
+		public int getCode() {
+			return status.getCode();
+		}
+		public Throwable getException() {
+			return status.getException();
+		}
+		public String getMessage() {
+			return status.getMessage();
+		}
+		public String getPlugin() {
+			return status.getPlugin();
+		}
+		public int getSeverity() {
+			return status.getSeverity();
+		}
+		public boolean isMultiStatus() {
+			return status.isMultiStatus();
+		}
+		public boolean isOK() {
+			return status.isOK();
+		}
+		public boolean matches(int severityMask) {
+			return status.matches(severityMask);
+		}
+		public IFeature getFeature() {
+			return feature;
+		}
+		public boolean equals(Object obj) {
+			if (!(obj instanceof FeatureStatus))
+				return false;
+			FeatureStatus fs = (FeatureStatus)obj;
+			// only check for feature, regardless of status type
+			if (fs.getFeature() == feature)
+				return true;
+			else if (fs.getFeature() == null && feature == null)
+				return fs.getMessage().equals(getMessage());
+			else if (fs.getFeature() == null && feature != null)
+				return false;
+			else if (fs.getFeature() != null && feature == null)
+				return false;
+			else if (fs.getFeature().equals(feature))
+				return true;
+			else
+				return false;
+		}
+
+	}
+	
 	/*
 	 * Called by UI before performing operation
 	 */
@@ -94,7 +157,7 @@ public class OperationValidator implements IOperationValidator{
 		validateUnconfigure(feature, status);
 
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 	
 	/*
@@ -108,9 +171,9 @@ public class OperationValidator implements IOperationValidator{
 		// check proposed change
 		ArrayList status = new ArrayList();
 		validateConfigure(feature, status);
-
+		
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 
 	/**
@@ -126,7 +189,7 @@ public class OperationValidator implements IOperationValidator{
 		validateReplaceVersion(feature, anotherFeature, status);
 
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 	
 	/*
@@ -164,7 +227,7 @@ public class OperationValidator implements IOperationValidator{
 		validateRevert(config, status);
 
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -181,17 +244,7 @@ public class OperationValidator implements IOperationValidator{
 		validatePendingChanges(jobs, status);
 
 		// report status
-		return createReportStatus(beforeStatus, status);
-	}
-	private IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
-		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -1268,14 +1321,48 @@ public class OperationValidator implements IOperationValidator{
 						message });
 		}
 
-		return new Status(
+		IStatus status = new Status(
 			IStatus.ERROR,
 			UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
 			IStatus.OK,
 			fullMessage,
 			null);
+		return new FeatureStatus(feature, status);
 	}
-
+	
+	private static IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0){
+				ArrayList combined = new ArrayList();
+				combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus));
+				combined.add(createMultiStatus("ActivityConstraints.afterMessage", status));
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined);
+			} else {
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+			}
+		}
+		return null;
+	}
+	
+	private static IStatus createCombinedReportStatus(ArrayList beforeStatus, ArrayList status ) {
+		if (isBetterStatus(beforeStatus, status))
+			return null;
+		
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0){
+				ArrayList combined = new ArrayList();
+				combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus));
+				combined.add(createMultiStatus("ActivityConstraints.afterMessage", status));
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined);
+			} else {
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+			}
+		}
+		return null;		
+	}
+	
 	private static ArrayList createList(String commaSeparatedList) {
 		ArrayList list = new ArrayList();
 		if (commaSeparatedList != null) {
@@ -1288,5 +1375,41 @@ public class OperationValidator implements IOperationValidator{
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * Returns true if status is a subset of beforeStatus
+	 * @param beforeStatus
+	 * @param status
+	 * @return
+	 */
+	private static boolean isBetterStatus(ArrayList beforeStatus, ArrayList status) {
+		// if no status at all, then it's a subset
+		if (status == null || status.size() == 0)
+			return true;
+		// there is some status, so if there is no initial status, then it's not a subset
+		if (beforeStatus == null || beforeStatus.size() == 0)
+			return false;
+		// quick check
+		if (beforeStatus.size() < status.size())
+			return false;
+		
+		// check if all the status elements appear in the original status
+		for (int i=0; i<status.size(); i++) {
+			IStatus s = (IStatus)status.get(i);
+			// if this is not a feature status, something is wrong, so return false
+			if (!(s instanceof FeatureStatus))
+				return false;
+			FeatureStatus fs = (FeatureStatus)s;
+			// check against all status elements
+			boolean found = false;
+			for (int j=0; !found && j<beforeStatus.size(); j++) {
+				if (fs.equals(beforeStatus.get(j)))
+					found = true;
+			}
+			if (!found)
+				return false;
+		}
+		return true;
 	}
 }
