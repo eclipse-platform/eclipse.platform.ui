@@ -45,7 +45,7 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		public int compare(Object obj1, Object obj2) {
 			String name1 = ((ILaunchConfigurationType)obj1).getName();
 			String name2 = ((ILaunchConfigurationType)obj2).getName();
-			return name1.compareTo(name2);
+			return name1.compareToIgnoreCase(name2);
 		}
 	}
 	

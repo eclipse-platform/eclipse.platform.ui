@@ -931,7 +931,7 @@ class ShortcutComparator implements Comparator {
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(Object a, Object b) {
-		return ((LaunchShortcutExtension)a).getLabel().compareTo(((LaunchShortcutExtension)b).getLabel());
+		return ((LaunchShortcutExtension)a).getLabel().compareToIgnoreCase(((LaunchShortcutExtension)b).getLabel());
 	}
 
 }
