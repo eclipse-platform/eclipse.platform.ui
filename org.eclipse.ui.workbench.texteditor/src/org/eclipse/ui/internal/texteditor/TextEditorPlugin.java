@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
@@ -56,17 +55,6 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 * @since 3.0
 	 */
 	private QuickDiffExtensionsRegistry fQuickDiffExtensionRegistry;
-
-	/**
-	 * Creates a plug-in instance.
-	 * 
-	 * @param descriptor the plug-in descriptor
-	 */
-	public TextEditorPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		Assert.isTrue(fgPlugin == null);
-		fgPlugin= this;
-	}
 
 	/**
 	 * Creates a plug-in instance.
