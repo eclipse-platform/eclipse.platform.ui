@@ -323,9 +323,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(antHome);
 		}
 		
-		if (separateVM) {
-			commandLine.append(" -logger "); //$NON-NLS-1$
-			commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+		if (separateVM) { 
+			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
+				commandLine.append(" -logger "); //$NON-NLS-1$
+				commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+			}
 		} else {
 			commandLine.append(" -inputhandler "); //$NON-NLS-1$
 			commandLine.append(INPUT_HANDLER_CLASS);
