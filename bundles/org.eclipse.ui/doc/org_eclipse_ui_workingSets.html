@@ -1,0 +1,68 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Eclipse Workbench Extension Point: Working Sets</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Working Sets</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.workingSets
+<p><b><i>Description: </i></b>
+This extension point is used to define a working set dialog. Working sets
+contain a number of elements of type IAdaptable and can be used to group
+elements for presentation to the user or for operations on a set of elements. A
+working set dialog is used to create and edit working sets that contain elements
+of a specific type.<p>The Workbench provides menu items to select a working set
+for the current page and to clear the currently set working set from the page.
+To select a working set the user is presented with a list of working sets that
+exist in the workbench. From that list a working set can be selected and edited
+using one of the dialogs defined using this extension point. The resource
+navigator uses the active page working set to filter elements from the navigator
+view. Only parents and children of working set elements are shown in the view,
+in addition to the working set elements themselves.<p><b>Note:</b> The issue of
+determining which working set dialog is used to define new working sets is being
+worked on. At this time only the default resource based dialog is used and
+therefore no custom working set dialog can be used for editing working sets
+either.
+
+<p><b><i>Since:</i></b> Release 2.0
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT workingSet EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST workingSet</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elementClass&nbsp;&nbsp; CDATA #REQUIRED</tt>
+
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dialogClass&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id -</b> a unique name that can be used to identify this working set dialog.</li>
+
+<li>
+<b>elementClass</b> - the fully qualified Java class name of the element type that the working set dialog displays and edits.</li>
+<li>
+<b>dialogClass</b> - the fully qualified name of a Java class implementing org.eclipse.ui.dialogs.IWorkingSetDialog.</li>
+</ul>
+<b><i>Examples:</i></b>
+<p>Following is an example of the how the resource working set dialog extension
+is defined to display and edit generic IResource elements.:
+<p><code>&nbsp;&nbsp;&nbsp; &lt;extension point=&quot;org.eclipse.ui.workingSets&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;workingSet<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.ui.resourceWorkingSetDialog&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elementClass=&quot;org.eclipse.core.resources.IResource&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dialogClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetDialog&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/workingSet&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;/extension&gt;</code><p><b><i>API Information</i>: </b>The value of the
+<code>dialogClass</code> attribute must represent a class that implements the <tt>org.eclipse.ui.dialogs.IWorkingSetDialog</tt>
+interface.&nbsp;
+<p><b><i>Supplied Implementation: </i></b>The workbench provides a working set
+dialog for creating and editing working sets that contain elements of type
+IResource.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>

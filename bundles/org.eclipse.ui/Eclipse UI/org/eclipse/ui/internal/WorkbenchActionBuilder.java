@@ -310,16 +310,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(subMenu);
 			new ShowViewMenu(subMenu, window, true);
 		}
-		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
-		
-		selectWorkingSetAction = new SelectWorkingSetAction(window);
-		clearWorkingSetAction = new ClearWorkingSetAction(window);
-		// Temporary option to enable working sets
-		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean("ENABLE_WORKING_SETS")) {
-			menu.add(selectWorkingSetAction);
-			menu.add(clearWorkingSetAction);
-		}
+		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));	
 		menu.add(new Separator());
 		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
 		menu.add(editActionSetAction = new EditActionSetsAction(window));
@@ -376,6 +367,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		menu.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 		menu.add(workbenchEditorsAction);
+		selectWorkingSetAction = new SelectWorkingSetAction(window);
+		clearWorkingSetAction = new ClearWorkingSetAction(window);
+		// Temporary option to enable working sets
+		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean("ENABLE_WORKING_SETS")) {
+			menu.add(selectWorkingSetAction);
+			menu.add(clearWorkingSetAction);
+		}
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new SwitchToWindowMenu(window, true));
 		
