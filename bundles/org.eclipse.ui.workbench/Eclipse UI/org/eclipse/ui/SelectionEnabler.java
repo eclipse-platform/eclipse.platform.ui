@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,14 +24,20 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SimpleWildcardTester;
+import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * This is a helper class that works with PluginAction
- * to quickly test if the action should be enabled
- * without loading the contributing plugin. An object
- * of this class is created in PluginAction if attribute
- * "enablesFor" is seen in the configuration.
+ * Determines the enablement status given a selection. This calculation
+ * is done based on the definition of the <code>enablesFor</code> attribute,
+ * <code>enablement</code> element, and the <code>selection</code> element
+ * found in the <code>IConfigurationElement</code> provided.
+ * <p>
+ * This class can be instantiated by clients. It is not intended to be extended.
+ * </p>
+ * 
+ * @since 3.0
  * 
  * @issue The dependency on org.eclipse.jface.text for ITextSelection must be severed
  * Nick suggests it may be possible to do with IActionFilter
@@ -41,18 +47,20 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * As an interim solution, use reflection to access selections
  * implementing ITextSelection
  */
-public class SelectionEnabler {
-	public static final int ONE_OR_MORE = -1;
+public final class SelectionEnabler {
 	private static final String ATT_NAME = "name";//$NON-NLS-1$
 	private static final String ATT_CLASS = "class";//$NON-NLS-1$
+
 	public static final int UNKNOWN = 0;
-	public static final int MULTIPLE = -5;
-	public static final int ANY_NUMBER =  -2;
+	public static final int ONE_OR_MORE = -1;
+	public static final int ANY_NUMBER = -2;
 	public static final int NONE_OR_ONE = -3;
-	public static final int NONE        = -4;
+	public static final int NONE = -4;
+	public static final int MULTIPLE = -5;
+
 	private List classes = new ArrayList();;
 	private ActionExpression enablementExpression;
-	private int mode=UNKNOWN;
+	private int mode = UNKNOWN;
 
 	public static class SelectionClass {
 		public String className;
@@ -91,7 +99,7 @@ public class SelectionEnabler {
 	 * not available
 	 * @since 3.0
 	 */
-	public static Class getTextSelectionClass() {
+	private static Class getTextSelectionClass() {
 		if (iTextSelectionClass != null) {
 			// tried before and succeeded
 			return iTextSelectionClass;
@@ -137,13 +145,15 @@ public class SelectionEnabler {
  * ActionEnabler constructor.
  */
 public SelectionEnabler(IConfigurationElement configElement) {
+	super();
+	if (configElement == null) {
+		throw new IllegalArgumentException();
+	}
 	parseClasses(configElement);
-	
 }
 /**
- * Returns true if given selection matches the
- * conditions specified in the registry for
- * this action.
+ * Returns true if the given selection matches the conditions 
+ * specified in <code>IConfirgurationElement</code>.
  */
 public boolean isEnabledForSelection(ISelection selection) {
 	// Optimize it.

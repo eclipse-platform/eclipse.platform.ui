@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IActionDelegateWithEvent;
