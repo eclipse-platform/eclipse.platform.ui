@@ -203,7 +203,7 @@ public class DecorationScheduler {
 
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
-					monitor.subTask(WorkbenchMessages.getString("DecorationScheduler.DecoratingSubtask") + reference.toString()); //$NON-NLS-1$
+					monitor.subTask(WorkbenchMessages.format("DecorationScheduler.DecoratingSubtask", new Object[] {reference.getElement().toString()})); //$NON-NLS-1$
 					//Don't decorate if there is already a pending result
 					Object element = reference.getElement();
 					Object adapted = reference.getAdaptedElement();
@@ -277,7 +277,7 @@ public class DecorationScheduler {
 								//prevent multiple updates and clear the cache.
 								pendingUpdate.add(element);
 							}
-						};
+						}
 					}
 
 					// Only notify listeners when we have exhausted the
@@ -288,7 +288,7 @@ public class DecorationScheduler {
 				}
 				monitor.worked(80);
 				return Status.OK_STATUS;
-			};
+			}
 		};
 
 		decorationJob.setPriority(Job.DECORATE);
