@@ -164,6 +164,20 @@ final class Context implements Comparable, IContext {
 	}
 
 	public String toString() {
-		return '[' + Boolean.toString(active) + ',' + id + ',' + name + ',' + description + ',' + parentId + ',' + pluginId + ']';
+		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append('[');
+		stringBuffer.append(active);
+		stringBuffer.append(',');
+		stringBuffer.append(id);
+		stringBuffer.append(',');
+		stringBuffer.append(name);
+		stringBuffer.append(',');
+		stringBuffer.append(description);
+		stringBuffer.append(',');
+		stringBuffer.append(parentId);
+		stringBuffer.append(',');
+		stringBuffer.append(pluginId);
+		stringBuffer.append(']');
+		return stringBuffer.toString();
 	}
 }

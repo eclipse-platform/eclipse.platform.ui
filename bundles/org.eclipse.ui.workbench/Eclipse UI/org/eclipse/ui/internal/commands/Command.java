@@ -164,6 +164,20 @@ final class Command implements Comparable, ICommand {
 	}
 
 	public String toString() {
-		return '[' + Boolean.toString(active) + ',' + id + ',' + name + ',' + categoryId + ',' + description + ',' + pluginId + ']';
+		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append('[');
+		stringBuffer.append(active);
+		stringBuffer.append(',');
+		stringBuffer.append(id);
+		stringBuffer.append(',');
+		stringBuffer.append(name);
+		stringBuffer.append(',');
+		stringBuffer.append(categoryId);
+		stringBuffer.append(',');
+		stringBuffer.append(description);
+		stringBuffer.append(',');
+		stringBuffer.append(pluginId);
+		stringBuffer.append(']');
+		return stringBuffer.toString();
 	}
 }
