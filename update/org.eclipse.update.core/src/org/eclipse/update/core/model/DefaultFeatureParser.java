@@ -1274,7 +1274,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			msg = Policy.bind("DefaultFeatureParser.ErrorlineColumnMessage", values);
 			//$NON-NLS-1$
 		}
-		error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
+		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
 	}
 
 	/*
@@ -1308,7 +1308,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	private void internalError(String message) {
 		error(
-			new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
+			new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
 	}
 
 	/*

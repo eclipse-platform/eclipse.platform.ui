@@ -667,7 +667,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			msg = Policy.bind("DefaultSiteParser.ErrorLineColumnMessage", values);
 			//$NON-NLS-1$
 		}
-		error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
+		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
 	}
 
 	/*

@@ -173,16 +173,18 @@ public class Utilities {
 		// check the case of a multistatus
 		IStatus status;
 		if (e instanceof CoreException){
-			status = new MultiStatus( id, IStatus.ERROR, s, e);
-			((MultiStatus)status).addAll(((CoreException)e).getStatus());		
+			status = new MultiStatus( id, IStatus.OK, s, e);
+			IStatus childrenStatus = ((CoreException)e).getStatus();
+			((MultiStatus)status).add(childrenStatus);		
+			((MultiStatus)status).addAll(childrenStatus);		
 		} else {
 			StringBuffer completeString = new StringBuffer();
 			if (s!=null)
 				completeString.append(s);
 			if (e!=null){
-				completeString.append("\r\n[");
+				completeString.append("[");
 				completeString.append(e.toString());
-				completeString.append("]\r\n");
+				completeString.append("]");
 			}
 			status = new Status(IStatus.ERROR, id, IStatus.OK, completeString.toString(), e);
 		}	
@@ -212,28 +214,32 @@ public class Utilities {
 		
 		// check if core exception
 		if (e1 instanceof CoreException){
-			multi.addAll(((CoreException)e1).getStatus());
+			IStatus childStatus = ((CoreException)e1).getStatus();
+			multi.add(childStatus);
+			multi.addAll(childStatus);
 		} else {
 			StringBuffer completeString = new StringBuffer();
 			if (s!=null)
 				completeString.append(s);
 			if (e1!=null){
-				completeString.append("\r\n[");
+				completeString.append("[");
 				completeString.append(e1.toString());
-				completeString.append("]\r\n");
+				completeString.append("]");
 			}
 			multi.add(new Status(IStatus.ERROR, id, 0, completeString.toString(), e1));			
 		}
 		
 		// check if core exception
 		if (e2 instanceof CoreException){
-			multi.addAll(((CoreException)e2).getStatus());
+			IStatus childStatus = ((CoreException)e2).getStatus();
+			multi.add(childStatus);
+			multi.addAll(childStatus);
 		} else {
 			StringBuffer completeString = new StringBuffer(s);
 			if (e2!=null){
-				completeString.append("\r\n[");
+				completeString.append("[");
 				completeString.append(e2.toString());
-				completeString.append("]\r\n");
+				completeString.append("]");
 			}
 			multi.add(new Status(IStatus.ERROR, id, 0, completeString.toString(), e2));			
 		}

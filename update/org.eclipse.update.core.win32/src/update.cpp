@@ -72,8 +72,14 @@ int getWindowsVersion(){
 	
 	if(!(GetVersionEx((OSVERSIONINFO *)&osvi))){
 		if (DEBUG)
-			printf("UNKNOWN VERSION: Cannot execute GetVersionEx\n");				 	
-		return UNKNOWN;
+			printf("UNKNOWN VERSION: Cannot execute GetVersionEx\n");
+		// if OSVERSIONEX doesn't work, try OSVERSIONINFO
+		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);			 	
+		if(!(GetVersionEx((OSVERSIONINFO *)&osvi))){
+		if (DEBUG)
+			printf("UNKNOWN VERSION: Cannot execute GetVersionEx\n");
+			return UNKNOWN;
+		}
 	}
 	
 	switch(osvi.dwPlatformId){
@@ -420,8 +426,8 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_update_configuration_LocalSystem
 	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
 		// windows 95 or other
 		if (DEBUG)
-			printf("Unsupported Windows: %i\n",win);		
-		return returnArray;
+			printf("Unsupported Windows: %i\n",win);	
+		return NULL;
 	}
 
 	for (drive = 0; drive < 32; drive++) {

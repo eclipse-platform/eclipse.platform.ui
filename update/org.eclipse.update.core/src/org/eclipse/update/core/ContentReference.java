@@ -128,7 +128,7 @@ public class ContentReference {
 	 * @return input size, or @see #UNKNOWN_SIZE if size cannot be determined.
 	 * @since 2.0
 	 */
-	public long getInputSize() {
+	public long getInputSize() throws IOException {
 		if (file != null)
 			return file.length();
 		else if (url != null) {
@@ -139,6 +139,14 @@ public class ContentReference {
 				} catch (IOException e) {
 					return ContentReference.UNKNOWN_SIZE;
 				}
+				// did the server return an error code ?
+				if (connection instanceof HttpURLConnection) {
+					int result =
+						((HttpURLConnection) connection).getResponseCode();
+					if (result != HttpURLConnection.HTTP_OK) {
+						throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] { this.toString(), new Integer(result)})); //$NON-NLS-1$						
+					}
+				}				
 			}
 			long size = connection.getContentLength();
 			return size == -1 ? ContentReference.UNKNOWN_SIZE : size;
