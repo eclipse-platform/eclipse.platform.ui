@@ -58,7 +58,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = "platform.xml"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
@@ -67,9 +66,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
 
-	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id"; //$NON-NLS-1$
-	private static final String INIT_DEFAULT_PLUGIN_ID = "feature.default.plugin.id"; //$NON-NLS-1$
-	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
@@ -90,9 +86,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// files are usually provided by external installation programs. They are located
 		// relative to this configuration URL.
 		configureExternalLinks();
-
-		// pick up any first-time default settings (relative to install location)
-		loadInitializationAttributes();
 
 		// Validate sites in the configuration. Causes any sites that do not exist to
 		// be removed from the configuration
@@ -343,7 +336,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 
 	public String getApplicationIdentifier() {
-		String feature = config.getDefaultFeature();
+		// Return the app if defined in system properties
+		String application = System.getProperty(ECLIPSE_APPLICATION);
+		if (application != null)
+			return application;
+
+		// Otherwise, try to get it from the primary feature (aka product)
+		String feature = getPrimaryFeatureIdentifier();
 
 		// lookup application for feature (specified or defaulted)
 		if (feature != null) {
@@ -362,10 +361,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getPrimaryFeatureIdentifier()
 	 */
 	public String getPrimaryFeatureIdentifier() {
-		String primaryFeatureId = null;
-		if (config.getDefaultFeature() != null)
-			primaryFeatureId = config.getDefaultFeature(); // return customized default if set
-		else
+		// Return the product if defined in system properties
+		String primaryFeatureId = System.getProperty(ECLIPSE_PRODUCT);
+		if (primaryFeatureId == null)
 			primaryFeatureId = DEFAULT_FEATURE_ID; // return hardcoded default
 		
 		// check if feature exists
@@ -1095,58 +1093,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return prop.trim();
 	}
 
-	private void loadInitializationAttributes() {
-
-		// look for the product initialization file relative to the install location
-		URL url = getInstallURL();
-
-		// load any initialization attributes. These are the default settings for
-		// key attributes (eg. default primary feature) supplied by the packaging team.
-		// They are always reloaded on startup to pick up any changes due to
-		// "native" updates.
-		Properties initProps = new Properties();
-		InputStream is = null;
-		try {
-			URL initURL = new URL(url, CONFIG_FILE_INIT);
-			is = initURL.openStream();
-			initProps.load(is);
-			Utils.debug("Defaults from " + initURL.toExternalForm()); //$NON-NLS-1$
-		} catch (IOException e) {
-			return; // could not load default settings
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					// ignore ...
-				}
-			}
-		}
-
-		// use default settings if supplied
-		String initId = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
-		if (initId != null) {
-			String application = loadAttribute(initProps, INIT_DEFAULT_FEATURE_APPLICATION, null);
-			String initPluginId = loadAttribute(initProps, INIT_DEFAULT_PLUGIN_ID, null);
-			if (initPluginId == null)
-				initPluginId = initId;
-			IFeatureEntry fe = findConfiguredFeatureEntry(initId);
-
-			if (fe == null) {
-				// bug 26896 : setup optimistic reconciliation if the primary feature has changed or is new
-				// create entry if not exists
-				fe = createFeatureEntry(initId, null, initPluginId, null, true, application, null);
-				configureFeatureEntry(fe);
-			} 
-			if (config != null)
-				config.setDefaultFeature(initId);
-			if (ConfigurationActivator.DEBUG) {
-				Utils.debug("    Default primary feature: " + initId); //$NON-NLS-1$
-				if (application != null)
-					Utils.debug("    Default application    : " + application); //$NON-NLS-1$
-			}
-		}
-	}
 
 //
 //	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {

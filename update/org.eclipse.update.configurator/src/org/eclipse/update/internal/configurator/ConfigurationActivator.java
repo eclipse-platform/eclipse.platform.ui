@@ -23,7 +23,7 @@ import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;
 import org.osgi.util.tracker.*;
 
-public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider {
+public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
 
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	public static final String INSTALL_LOCATION = "osgi.installLocation";
@@ -71,13 +71,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {		
 			Utils.debug("Same last time stamp *****");
-			if (System.getProperty("eclipse.application") == null && application != null) {
+			if (System.getProperty(ECLIPSE_APPLICATION) == null && application != null) {
 				Utils.debug("no eclipse.application, setting it and returning");
-				System.setProperty("eclipse.application", application);
+				System.setProperty(ECLIPSE_APPLICATION, application);
 			}
-			if (System.getProperty("eclipse.product") == null && product != null) {
+			if (System.getProperty(ECLIPSE_PRODUCT) == null && product != null) {
 				Utils.debug("no eclipse.product, setting it and returning");
-				System.setProperty("eclipse.product", product);
+				System.setProperty(ECLIPSE_PRODUCT, product);
 			}
 			return;
 		}
@@ -190,10 +190,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			
-			if (System.getProperty("eclipse.application") == null && configuration.getApplicationIdentifier() != null)
-				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
-			if (System.getProperty("eclipse.product") == null && configuration.getPrimaryFeatureIdentifier() != null)
-				System.setProperty("eclipse.product", configuration.getPrimaryFeatureIdentifier());
+			if (System.getProperty(ECLIPSE_APPLICATION) == null && configuration.getApplicationIdentifier() != null)
+				System.setProperty(ECLIPSE_APPLICATION, configuration.getApplicationIdentifier());
+			if (System.getProperty(ECLIPSE_PRODUCT) == null && configuration.getPrimaryFeatureIdentifier() != null)
+				System.setProperty(ECLIPSE_PRODUCT, configuration.getPrimaryFeatureIdentifier());
 			
 			// keep track of the last config successfully processed
 			writePlatformConfigurationTimeStamp();

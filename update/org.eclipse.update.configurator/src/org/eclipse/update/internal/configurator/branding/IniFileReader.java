@@ -202,8 +202,7 @@ public class IniFileReader {
 		if (bundle == null)
 			return null;
 		else {
-			String name = (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
-			return Platform.getResourceString(bundle, name);
+			return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
 		}
 	}
 	
@@ -216,8 +215,7 @@ public class IniFileReader {
 		if (bundle == null)
 			return null;
 		else {
-			String provider = (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
-			return Platform.getResourceString(bundle, provider);
+			return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
 		}
 	}
 	
