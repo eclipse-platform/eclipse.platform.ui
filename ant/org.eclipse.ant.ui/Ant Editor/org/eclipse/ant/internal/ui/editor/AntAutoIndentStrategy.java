@@ -53,14 +53,29 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 		if (node == null) {
 			return;
 		}
-		StringBuffer buf= new StringBuffer(c.text);
-		buf.append(XmlDocumentFormatter.getLeadingWhitespace(node.getOffset(), d));
-		if (!nextNodeIsEndTag(c.offset, d)) {
-			buf.append(XmlDocumentFormatter.createIndent());
-		}
 		
-		fAccumulatedChange+= buf.length();
-		c.text= buf.toString();
+		try {
+			StringBuffer correct= XmlDocumentFormatter.getLeadingWhitespace(node.getOffset(), d);
+			if (!nextNodeIsEndTag(c.offset, d)) {
+				correct.append(XmlDocumentFormatter.createIndent());
+			}
+			StringBuffer buf= new StringBuffer(c.text);
+			buf.append(correct);
+			fAccumulatedChange+= buf.length();
+			
+			int line= d.getLineOfOffset(position);
+			IRegion reg= d.getLineInformation(line);
+			int lineEnd= reg.getOffset() + reg.getLength();
+			int contentStart= findEndOfWhiteSpace(d, c.offset, lineEnd);
+			
+			c.length=  Math.max(contentStart - c.offset, 0);
+			c.caretOffset= c.offset + buf.length();
+			c.shiftsCaret= false;
+			c.text= buf.toString();
+	
+		} catch (BadLocationException e) {
+			AntUIPlugin.log(e);
+		}
 	}
 	
 	private boolean nextNodeIsEndTag(int offset, IDocument document) {
@@ -68,6 +83,8 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			return false;
 		}
 		try {
+			IRegion lineRegion= document.getLineInformationOfOffset(offset);
+			offset= findEndOfWhiteSpace(document, offset, lineRegion.getOffset() + lineRegion.getLength());
 			String nextChars= document.get(offset, 2).trim();
 			if ("</".equals(nextChars) || "/>".equals(nextChars)) { //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
@@ -192,8 +209,7 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	
 	/**
 	 * Cuts the visual equivalent of <code>toDelete</code> characters out of the
-	 * indentation of line <code>line</code> in <code>document</code>. Leaves
-	 * leading comment signs alone.
+	 * indentation of line <code>line</code> in <code>document</code>.
 	 * 
 	 * @param document the document
 	 * @param line the line
@@ -264,9 +280,9 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	 * is initialized with a substring of that length of <code>correct</code>.
 	 * 
 	 * @param correct the correct indentation
-	 * @param current the current indentation (migth contain non-whitespace)
+	 * @param current the current indentation (might contain non-whitespace)
 	 * @param difference a string buffer - if the return value is positive, it will be cleared and set to the substring of <code>current</code> of that length
-	 * @return the difference in lenght of <code>correct</code> and <code>current</code> 
+	 * @return the difference in length of <code>correct</code> and <code>current</code> 
 	 */
 	private int subtractIndent(CharSequence correct, CharSequence current, StringBuffer difference) {
 		int c1= computeVisualLength(correct);
@@ -292,7 +308,7 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	 *  
 	 * @return the number of spaces displayed for a tabulator in the editor
 	 */
-	private static int getVisualTabLengthPreference() {
+	private int getVisualTabLengthPreference() {
 		return AntUIPlugin.getDefault().getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 }
