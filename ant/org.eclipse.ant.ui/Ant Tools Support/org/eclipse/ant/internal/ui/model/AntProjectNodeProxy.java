@@ -258,4 +258,15 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return super.getBuildFileResource();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		if (fProject == null) {
+			if (fBuildFileName != null) {
+				return fBuildFileName;
+			}
+		}
+		return super.toString();
+	}
 }
