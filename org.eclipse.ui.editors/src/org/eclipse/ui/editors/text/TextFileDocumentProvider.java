@@ -106,6 +106,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		public int fCount;
 		public ITextFileBuffer fTextFileBuffer;
 		public IAnnotationModel fModel;
+		public boolean fCachedReadOnlyState;
 	}
 	
 	protected class FileBufferListener implements IFileBufferListener  {
@@ -358,6 +359,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			
 			FileInfo info= createEmptyFileInfo();
 			info.fTextFileBuffer= fileBuffer;
+			info.fCachedReadOnlyState= isSystemFileReadOnly(info);
 			
 			IFile file= getWorkspaceFileAtLocation(location);
 			if (file != null && file.exists())
@@ -617,14 +619,21 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			return info.fTextFileBuffer.isStateValidated();
 		return ((IDocumentProviderExtension) getParentProvider()).isStateValidated(element);
 	}
-
+	
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#updateStateCache(java.lang.Object)
 	 */
 	public void updateStateCache(Object element) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info == null)
+		if (info != null) {
+			boolean isReadOnly= isSystemFileReadOnly(info);
+			// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469 for the dirty bit check
+			if (!info.fCachedReadOnlyState && isReadOnly && info.fTextFileBuffer.isDirty())
+				info.fTextFileBuffer.resetStateValidation();
+			info.fCachedReadOnlyState= isReadOnly;
+		} else {
 			((IDocumentProviderExtension) getParentProvider()).updateStateCache(element);
+		}
 	}
 
 	/*

@@ -157,6 +157,13 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	public boolean isStateValidated() {
 		return true;
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#resetStateValidation()
+	 */
+	public void resetStateValidation() {
+		// nop
+	}
 
 	/**
 	 * Sends out the notification that the file serving as document input has been moved.

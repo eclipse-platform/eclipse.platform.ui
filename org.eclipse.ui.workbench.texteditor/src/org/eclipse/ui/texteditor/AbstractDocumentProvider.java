@@ -684,7 +684,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected boolean invalidatesState(Object element, boolean wasReadOnly) {
 		Assert.isTrue(PR10806_UC5_ENABLED != PR14469_ENABLED);
-		boolean readOnlyChanged= (isReadOnly(element) != wasReadOnly);
+		boolean readOnlyChanged= (isReadOnly(element) != wasReadOnly && !wasReadOnly);
 		if (PR14469_ENABLED)
 			return readOnlyChanged && !canSaveDocument(element);
 		return readOnlyChanged;
