@@ -468,7 +468,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 								fLocalLastEditPosition= null;
 							}
 						}
-						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, getEditorSite().getId(), getSelectionProvider().getSelection(), fLocalLastEditPosition));
+						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, getEditorSite().getId(), fLocalLastEditPosition));
 					}
 				}
 			}

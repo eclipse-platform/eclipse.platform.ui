@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.texteditor;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IEditorInput;
 
@@ -27,25 +26,20 @@ public final class EditPosition {
 	private final IEditorInput fEditorInput;
 	/** The editor ID */
 	private final String fEditorId;
-	/** The selection */
-	private final ISelection fSelection;
 	/** The position */
 	private final Position fPosition;
 	
 	/**
 	 * Creates a new edit position.
-	 * 
 	 * @param editorInput the editor input
 	 * @param editorId the editor ID
-	 * @param selection the selection
 	 * @param pos the position
 	 */
-	public EditPosition(IEditorInput editorInput, String editorId, ISelection selection, Position pos) {
+	public EditPosition(IEditorInput editorInput, String editorId, Position pos) {
 		Assert.isNotNull(editorInput);
 		Assert.isNotNull(editorId);
 		fEditorId= editorId;
 		fEditorInput= editorInput;
-		fSelection= selection;
 		fPosition= pos;
 	}
 
@@ -65,15 +59,6 @@ public final class EditPosition {
 	 */
 	String getEditorId() {
 		return fEditorId;
-	}
-
-	/**
-	 * Returns the selection of this edit position.
-	 *
-	 * @return the selection of this edit position
-	 */
-	ISelection getSelection() {
-		return fSelection;
 	}
 
 	/**
