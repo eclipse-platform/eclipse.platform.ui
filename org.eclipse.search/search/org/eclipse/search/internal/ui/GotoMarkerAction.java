@@ -11,7 +11,8 @@ class GotoMarkerAction extends Action {
 	private SearchResultViewer fViewer;
 
 	public GotoMarkerAction(SearchResultViewer viewer) {
-		super(SearchPlugin.getResourceString("SearchResultView.gotoMarker.text"), SearchPluginImages.DESC_CLCL_SEARCH_GOTO);
+		super(SearchPlugin.getResourceString("SearchResultView.gotoMarker.text"));
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_GOTO);
 		setToolTipText(SearchPlugin.getResourceString("SearchResultView.gotoMarker.tooltip"));
 		fViewer= viewer;
 	}

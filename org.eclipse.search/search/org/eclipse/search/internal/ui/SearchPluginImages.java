@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 
@@ -32,53 +33,41 @@ public class SearchPluginImages {
 	// The plugin registry
 	private final static ImageRegistry PLUGIN_REGISTRY= SearchPlugin.getDefault().getImageRegistry();
 
-	private static final String T_OBJS= "full/obj16/";
-	private static final String T_OVR= "full/ovr16/";
-	private static final String T_WIZBAN= "full/wizban/";
-	private static final String T_CLCL= "full/clcl16/";
-	private static final String T_CTOOL= "full/ctool16/";
-	private static final String T_VIEW= "full/view16/";
+	private static final String T= "full/";
 
-	private static final String NAME_PREFIX= "org.eclipse.search.ui";
+	public static final String T_OBJ= T + "obj16/";
+	public static final String T_WIZBAN= T + "wizban/";
+	public static final String T_LCL= "lcl16/";
+	public static final String T_TOOL= "tool16/";
+	public static final String T_VIEW= "view16/";
+
+	private static final String NAME_PREFIX= "org.eclipse.search.ui.";
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	// Define image names
-	public static final String IMG_CTOOL_SEARCH= NAME_PREFIX + "search.gif";
+	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif";
 
-	public static final String IMG_CLCL_SEARCH_STOP= NAME_PREFIX + "search_stop.gif";
-	public static final String IMG_CLCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif";
-	public static final String IMG_CLCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif";
-	public static final String IMG_CLCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif";
-	public static final String IMG_CLCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif";
-	public static final String IMG_CLCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif";
-	public static final String IMG_CLCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif";
-	public static final String IMG_CLCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif";
+	public static final String IMG_LCL_SEARCH_STOP= NAME_PREFIX + "search_stop.gif";
+	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif";
+	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif";
+	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif";
+	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif";
+	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif";
+	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif";
+	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif";
 
-	public static final String IMG_CVIEW_SEARCHRES= NAME_PREFIX + "searchres.gif";
+	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif";
 
-	public static final String IMG_OBJS_TSEARCH= NAME_PREFIX + "tsearch_obj.gif";
-	public static final String IMG_OBJS_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif";
-	public static final String IMG_OBJS_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif";
+	public static final String IMG_OBJ_TSEARCH= NAME_PREFIX + "tsearch_obj.gif";
+	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif";
+	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif";
 
 	
 	
 	// Define images
-	public static final ImageDescriptor DESC_CTOOL_SEARCH= createManaged(T_CTOOL, IMG_CTOOL_SEARCH);
-
-	public static final ImageDescriptor DESC_CLCL_SEARCH_STOP= createManaged(T_CLCL, IMG_CLCL_SEARCH_STOP);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_REM= createManaged(T_CLCL, IMG_CLCL_SEARCH_REM);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_REM_ALL= createManaged(T_CLCL, IMG_CLCL_SEARCH_REM_ALL);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_NEXT= createManaged(T_CLCL, IMG_CLCL_SEARCH_NEXT);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_PREV= createManaged(T_CLCL, IMG_CLCL_SEARCH_PREV);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_GOTO= createManaged(T_CLCL, IMG_CLCL_SEARCH_GOTO);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_SORT= createManaged(T_CLCL, IMG_CLCL_SEARCH_SORT);
-	public static final ImageDescriptor DESC_CLCL_SEARCH_HISTROY= createManaged(T_CLCL, IMG_CLCL_SEARCH_HISTORY);
-
-	public static final ImageDescriptor DESC_CVIEW_SEARCHRES= createManaged(T_CLCL, IMG_CVIEW_SEARCHRES);
-	
-	public static final ImageDescriptor DESC_OBJS_TSEARCH= createManaged(T_OBJS, IMG_OBJS_TSEARCH);
-	public static final ImageDescriptor DESC_OBJS_TSEARCH_DPDN= createManaged(T_OBJS, IMG_OBJS_TSEARCH_DPDN);
-	public static final ImageDescriptor DESC_OBJS_SEARCHMARKER= createManaged(T_OBJS, IMG_OBJS_SEARCHMARKER);
+	public static final ImageDescriptor DESC_OBJ_TSEARCH= createManaged(T_OBJ, IMG_OBJ_TSEARCH);
+	public static final ImageDescriptor DESC_OBJ_TSEARCH_DPDN= createManaged(T_OBJ, IMG_OBJ_TSEARCH_DPDN);
+	public static final ImageDescriptor DESC_OBJ_SEARCHMARKER= createManaged(T_OBJ, IMG_OBJ_SEARCHMARKER);
 
 	public static Image get(String key) {
 		return PLUGIN_REGISTRY.get(key);
@@ -103,5 +92,15 @@ public class SearchPluginImages {
 			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.incorrectIconLocation.");
 			return null;
 		}
+	}
+
+	/**
+	 * Sets all available image descriptors for the given action.
+	 */	
+	public static void setImageDescriptors(IAction action, String type, String relPath) {
+		relPath= relPath.substring(NAME_PREFIX_LENGTH);
+		action.setDisabledImageDescriptor(create(T + "d" + type, relPath));
+		action.setHoverImageDescriptor(create(T + "c" + type, relPath));
+		action.setImageDescriptor(create(T + "e" + type, relPath));
 	}
 }

@@ -9,7 +9,8 @@ import org.eclipse.jface.action.Action;
 class RemoveAllSearchesAction extends Action {
 
 	public RemoveAllSearchesAction() {
-		super(SearchPlugin.getResourceString("SearchResultView.removeAllSearches.text"), SearchPluginImages.DESC_CLCL_SEARCH_REM_ALL);
+		super(SearchPlugin.getResourceString("SearchResultView.removeAllSearches.text"));
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);
 		setToolTipText(SearchPlugin.getResourceString("SearchResultView.removeAllSearches.tooltip"));
 	}
 	

@@ -15,7 +15,8 @@ import org.eclipse.search.ui.SearchUI;
 class RemoveAllResultsAction extends Action {
 
 	public RemoveAllResultsAction() {
-		super(SearchPlugin.getResourceString("SearchResultView.removeAllResults.text"), SearchPluginImages.DESC_CLCL_SEARCH_REM_ALL);
+		super(SearchPlugin.getResourceString("SearchResultView.removeAllResults.text"));
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);
 		setToolTipText(SearchPlugin.getResourceString("SearchResultView.removeAllResults.tooltip"));
 	}
 	

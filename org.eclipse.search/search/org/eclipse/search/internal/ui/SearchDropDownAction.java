@@ -26,7 +26,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 		fViewer= viewer;
 		setText(SearchPlugin.getResourceString("SearchResultView.previousSearches.text"));
 		setToolTipText(SearchPlugin.getResourceString("SearchResultView.previousSearches.tooltip"));
-		setImageDescriptor(SearchPluginImages.DESC_CLCL_SEARCH_HISTROY);
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
 		setMenuCreator(this);
 	}
 

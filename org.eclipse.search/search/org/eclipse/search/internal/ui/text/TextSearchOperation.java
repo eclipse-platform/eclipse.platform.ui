@@ -58,6 +58,6 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}
 	
 	ImageDescriptor getImageDescriptor() {
-		return SearchPluginImages.DESC_OBJS_TSEARCH_DPDN;
+		return SearchPluginImages.DESC_OBJ_TSEARCH_DPDN;
 	}
 }

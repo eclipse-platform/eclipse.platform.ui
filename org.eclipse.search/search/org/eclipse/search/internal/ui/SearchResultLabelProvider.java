@@ -17,7 +17,7 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	
 	private static class FileLabelProvider extends LabelProvider {
 
-		private Image fImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJS_TSEARCH_DPDN);
+		private Image fImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TSEARCH_DPDN);
 		
 		public String getText(Object element) {
 			if (!(element instanceof ISearchResultViewEntry))

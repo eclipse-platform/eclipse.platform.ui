@@ -100,7 +100,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SearchPlugin.getResourceString("SearchDialog.title"));
-		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_CTOOL_SEARCH));
+		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
 	}
 
 	public IWorkspace getWorkspace() {

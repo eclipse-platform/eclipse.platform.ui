@@ -27,10 +27,10 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 	public SortDropDownAction(SearchResultViewer viewer) {
 		super(SearchPlugin.getResourceString("SortDropDownAction.label"));
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SORT);
 		fViewer= viewer;
 		fCheckedId= "";
 		setToolTipText(SearchPlugin.getResourceString("SortDropDownAction.tooltip"));
-		setImageDescriptor(SearchPluginImages.DESC_CLCL_SEARCH_SORT);
 		setMenuCreator(this);
 	}
 

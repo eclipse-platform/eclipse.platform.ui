@@ -75,7 +75,7 @@ public final class SearchUI {
 	 * @return the shared image
 	 */
 	public static Image getSearchMarkerImage() {
-		return SearchPluginImages.get(SearchPluginImages.IMG_OBJS_SEARCHMARKER);
+		return SearchPluginImages.get(SearchPluginImages.IMG_OBJ_SEARCHMARKER);
 	}
 
 	/**

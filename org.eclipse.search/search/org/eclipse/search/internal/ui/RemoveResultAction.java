@@ -23,7 +23,8 @@ class RemoveResultAction extends Action {
 	private ISelectionProvider fSelectionProvider;
 
 	public RemoveResultAction(ISelectionProvider provider) {
-		super(SearchPlugin.getResourceString("SearchResultView.remove.text"), SearchPluginImages.DESC_CLCL_SEARCH_REM);
+		super(SearchPlugin.getResourceString("SearchResultView.remove.text"));
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 		setToolTipText(SearchPlugin.getResourceString("SearchResultView.remove.tooltip"));
 		fSelectionProvider= provider;
 	}
