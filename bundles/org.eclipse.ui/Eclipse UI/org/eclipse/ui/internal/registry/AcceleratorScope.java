@@ -189,11 +189,20 @@ public class AcceleratorScope {
 	 */
 	private static int convertEvent(KeyEvent event) {
 		char upper = Character.toUpperCase(event.character);
-    	if(((event.stateMask & SWT.CONTROL) != 0) && (event.keyCode == 0))
-			if (0 <= upper && upper < 32) 
+		if(((event.stateMask & (SWT.CONTROL | SWT.SHIFT)) != 0) && (event.keyCode == 0)) {
+			if (upper == 0);
+				//TBD: What is the diff between CTRL+SHIFT and CTRL+SHIFT+@
+			if (0 < upper && upper <= 26) 
 				return event.stateMask | upper + 64;
-    	return event.stateMask | event.keyCode | upper;
-    }
+			if (26 < upper && upper <= 30) 
+				return(event.stateMask & ~SWT.SHIFT) | upper + 64;		
+			if (upper == 31)
+				return (event.stateMask & ~SWT.SHIFT) | (int)'_';
+			if((upper > 32 && upper <= 64) || (upper > 90 && upper != 127))
+				return (event.stateMask & ~SWT.SHIFT) | upper;
+		}
+		return event.stateMask | event.keyCode | upper;
+	}
     /**
      * Process a key event. Find a action associated with the event
      * and run the action. Returns true if an action was found otherwise
