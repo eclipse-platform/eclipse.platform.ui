@@ -302,7 +302,7 @@ public class Site extends SiteModel implements ISite{
 						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 						if (pluginEntries != null) {
 							for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
-								allPluginID.add(entries[indexEntries].getVersionedIdentifier());
+								allPluginID.add(pluginEntries[indexEntries].getVersionedIdentifier());
 							}
 						}
 					}

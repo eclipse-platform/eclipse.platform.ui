@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.security.CertificatePair;
+import org.eclipse.update.internal.security.JarVerification;
 import org.eclipse.update.internal.security.JarVerificationResult;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.core.Policy;
@@ -41,6 +43,12 @@ public class JarVerificationService implements IFeatureVerification {
 	 * the Shell
 	 */
 	private Shell shell;
+
+	/**
+	 * 
+	 */
+	private CertificatePair trustedCertificate = null;
+
 	/**
 	 * If no shell, create a new shell 
 	 */
@@ -83,24 +91,42 @@ public class JarVerificationService implements IFeatureVerification {
 	 * returns an JarVerificationResult
 	 * The monitor can be null.
 	 */
-	private JarVerificationResult okToInstall(final File jarFile, final String id, final String featureName, final String providerName, InstallMonitor monitor) {
+	private JarVerificationResult okToInstall(
+		final File jarFile,
+		final String id,
+		final String featureName,
+		final String providerName,
+		InstallMonitor monitor) {
 
 		jarVerifier.setMonitor(monitor);
-		result= jarVerifier.verify(jarFile);
+		result = jarVerifier.verify(jarFile);
 
 		switch (getResult().getResultCode()) {
-			case JarVerifier.UNKNOWN_ERROR :
+			case JarVerification.UNKNOWN_ERROR :
 				{
-					getResult().setResultCode(JarVerificationResult.ERROR_INSTALL);					
+					getResult().setResultCode(JarVerification.ERROR_INSTALL);
 					break;
 				}
-			case JarVerifier.VERIFICATION_CANCELLED :
+			case JarVerification.VERIFICATION_CANCELLED :
 				{
-					getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);							
+					getResult().setResultCode(JarVerification.CANCEL_INSTALL);
 					break;
 				}
+
 			default :
 				{
+
+					if (trustedCertificate != null) {
+						// check if this is not a user accepted certificate for this feature
+						CertificatePair[] pairs = getResult().getRootCertificates();
+						for (int i = 0; i < pairs.length; i++) {
+							if (trustedCertificate.equals(pairs[i])) {
+								getResult().setResultCode(JarVerification.OK_TO_INSTALL);
+								return getResult();
+							}
+						}
+					}
+					
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							getResult().setResultCode(openWizard(jarFile, id, featureName, providerName));
@@ -114,55 +140,82 @@ public class JarVerificationService implements IFeatureVerification {
 	/**
 	 * 
 	 */
-	private int openWizard(File jarFile, String id, String componentName, String providerName) {
+	private int openWizard(
+		File jarFile,
+		String id,
+		String componentName,
+		String providerName) {
 
 		int code;
 
-		//	JarVerifierWizard wizard = new JarVerifierWizard(jarFile, componentName, verificationResult);
-		//	WizardDialog dialog = new WizardDialog(shell, wizard);
-
-		JarVerificationDialog dialog = new JarVerificationDialog(shell, id, componentName, providerName, jarFile, result);
+		JarVerificationDialog dialog =
+			new JarVerificationDialog(
+				shell,
+				id,
+				componentName,
+				providerName,
+				jarFile,
+				result);
 		dialog.open();
 
-		if (JarVerificationDialog.COMPONENT_TO_INSTALL)
-			code = JarVerificationResult.OK_TO_INSTALL;
+		trustedCertificate = dialog.getCertificate();
+
+		if (dialog.okToInstall())
+			code = JarVerification.OK_TO_INSTALL;
 		else
-			code = JarVerificationResult.CANCEL_INSTALL;
+			code = JarVerification.CANCEL_INSTALL;
 
 		return code;
-	
+
 	}
-	
+
 	/*
 	 * @see IFeatureVerification#verify(IFeature feature,ContentReference[], InstallMonitor)
 	 */
-	public void verify(IFeature feature,ContentReference[] references, InstallMonitor monitor) throws CoreException {
-		if (references==null || references.length==0) return ;
-		
+	public void verify(
+		IFeature feature,
+		ContentReference[] references,
+		InstallMonitor monitor)
+		throws CoreException {
+		if (references == null || references.length == 0)
+			return;
+
 		try {
-		for (int i = 0; i < references.length; i++) {
-			if (references[i] instanceof JarContentReference){
-				JarContentReference jarReference = (JarContentReference)references[i];
-				result = okToInstall(jarReference.asFile(),feature.getVersionedIdentifier().toString(),feature.getLabel(),feature.getProvider(),monitor);
-				if (result.getResultCode()==JarVerificationResult.CANCEL_INSTALL){
-					throw newCoreException(Policy.bind("JarVerificationService.CancelInstall"),result.getResultException()); //$NON-NLS-1$
+			for (int i = 0; i < references.length; i++) {
+				if (references[i] instanceof JarContentReference) {
+					JarContentReference jarReference = (JarContentReference) references[i];
+					result =
+						okToInstall(
+							jarReference.asFile(),
+							feature.getVersionedIdentifier().toString(),
+							feature.getLabel(),
+							feature.getProvider(),
+							monitor);
+					if (result.getResultCode() == JarVerification.CANCEL_INSTALL) {
+						throw newCoreException(
+							Policy.bind("JarVerificationService.CancelInstall"), 	//$NON-NLS-1$
+							result.getResultException());
+					}
+					if (result.getResultCode() == JarVerification.ERROR_INSTALL) {
+						throw newCoreException(
+							Policy.bind("JarVerificationService.UnsucessfulVerification"),	//$NON-NLS-1$
+							result.getResultException());
+					}
 				}
-				if (result.getResultCode()==JarVerificationResult.ERROR_INSTALL){
-					throw newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),result.getResultException()); //$NON-NLS-1$
-				}				
 			}
-		}
-		} catch (IOException e){
-					throw newCoreException(Policy.bind("JarVerificationService.ErrorDuringVerification"),e);			 //$NON-NLS-1$
+		} catch (IOException e) {
+			throw newCoreException(Policy.bind("JarVerificationService.ErrorDuringVerification"),e); 	//$NON-NLS-1$
 		}
 	}
 
 	/**
 	 * 
 	 */
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
-	}	
+	private CoreException newCoreException(String s, Throwable e)
+		throws CoreException {
+		String id =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
+	}
 
 }

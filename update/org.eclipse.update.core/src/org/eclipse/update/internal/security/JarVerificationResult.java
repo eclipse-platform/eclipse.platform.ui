@@ -15,10 +15,6 @@ import java.util.List;
  */
 public class JarVerificationResult {
 
-	public static final int ASK_USER = -1;
-	public static final int CANCEL_INSTALL = 0;
-	public static final int ERROR_INSTALL = 1;
-	public static final int OK_TO_INSTALL = 2;
 
 	private int resultCode;
 	private int verificationCode;
@@ -88,6 +84,7 @@ public class JarVerificationResult {
 	 */
 	public CertificatePair[] getRootCertificates() {
 		if (rootCertificates == null) {
+			rootCertificates = new CertificatePair[0];			
 			List rootCertificatesList = new ArrayList();
 			if (certificates != null && certificates.size() > 0) {
 				Iterator iter = certificates.iterator();
@@ -123,9 +120,9 @@ public class JarVerificationResult {
 				}
 
 			}
-
+			
 			if (rootCertificatesList.size() > 0) {
-				rootCertificates = new CertificatePair[certificates.size()];
+				rootCertificates = new CertificatePair[certificates.size()];				
 				rootCertificatesList.toArray(rootCertificates);
 			}
 		}

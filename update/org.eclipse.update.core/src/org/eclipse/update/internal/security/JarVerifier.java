@@ -50,12 +50,6 @@ public class JarVerifier {
 	private String jarFileName;
 
 	//RESULT VALUES
-	public static final int NOT_SIGNED = 0;
-	public static final int CORRUPTED = 1;
-	public static final int INTEGRITY_VERIFIED = 2;
-	public static final int SOURCE_VERIFIED = 3;
-	public static final int UNKNOWN_ERROR = 4;
-	public static final int VERIFICATION_CANCELLED = 5;
 
 	/**
 	 * Default Constructor
@@ -69,10 +63,8 @@ public class JarVerifier {
 		this.monitor = monitor;
 	}
 	/**
-	 * Returns the list of certificates of the keystore.
+	 * Returns the list of the keystores.
 	 *
-	 * Can be optimize, within an operation, we only need to get the
-	 * list of certificate once.
 	 */
 	private List getKeyStores() throws CoreException {
 		if (listOfKeystores == null) {
@@ -80,20 +72,20 @@ public class JarVerifier {
 			KeyStores listOfKeystoreHandles = new KeyStores();
 			InputStream in = null;
 			KeyStore keystore = null;
+			KeystoreHandle handle = null;
 			while (listOfKeystoreHandles.hasNext()) {
 				try {
-					KeystoreHandle handle = listOfKeystoreHandles.next();
+					handle = listOfKeystoreHandles.next();
 					in = handle.getLocation().openStream();
 					try {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
 					} catch (NoSuchAlgorithmException e) {
-						throw newCoreException("Unable to find encryption algorithm", e);
-
+						throw newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption",handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (CertificateException e) {
-						throw newCoreException("Unable to load a certificate in the keystore", e);
+						throw newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate",handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (KeyStoreException e) {
-						throw newCoreException("Unable to find provider for the keystore type", e);
+						throw newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore",handle.getType()), e); //$NON-NLS-1$
 					} finally {
 						if (in != null) {
 							try {
@@ -121,17 +113,14 @@ public class JarVerifier {
 	 */
 	private void initializeVariables(File jarFile) throws IOException {
 		result = new JarVerificationResult();
-		result.setVerificationCode(UNKNOWN_ERROR);
-		result.setResultCode(JarVerificationResult.ASK_USER);
-		result.setResultException(
-			new Exception(
-				Policy.bind("JarVerifier.InvalidJarFile", jarFile.getAbsolutePath())));
-		//$NON-NLS-1$
+		result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
+		result.setResultCode(JarVerification.ASK_USER);
+		result.setResultException(null);
 		JarFile jar = new JarFile(jarFile);
 		entries = jar.size();
 		try {
 			jar.close();
-		} catch (java.io.IOException ex) {
+		} catch (IOException ex) {
 			// unchecked
 		}
 		jarFileName = jarFile.getName();
@@ -153,7 +142,7 @@ public class JarVerifier {
 				}
 			}
 		} catch (KeyStoreException e) {
-			throw newCoreException("KeyStore not loaded", e);
+			throw newCoreException(Policy.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -168,8 +157,7 @@ public class JarVerifier {
 		byte[] buffer = new byte[4096];
 		JarEntry ent;
 		if (monitor != null)
-			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFileName), entries);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFileName), entries);//$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			while ((ent = jis.getNextJarEntry()) != null) {
 				list.add(ent);
@@ -180,7 +168,7 @@ public class JarVerifier {
 				}
 			}
 		} catch (IOException e) {
-			result.setVerificationCode(UNKNOWN_ERROR);
+			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (monitor != null)
@@ -228,11 +216,11 @@ public class JarVerifier {
 			// as verifyIntegrity already did it
 
 			// verify source certificate
-			if (result.getVerificationCode() == INTEGRITY_VERIFIED)
+			if (result.getVerificationCode() == JarVerification.JAR_INTEGRITY_VERIFIED)
 				verifyAuthentication();
 
 		} catch (Exception e) {
-			result.setVerificationCode(UNKNOWN_ERROR);
+			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
 			result.setResultException(e);
 		}
 
@@ -256,7 +244,7 @@ public class JarVerifier {
 		for (int i = 0; i < entries.length; i++) {
 			certificateFound = existsInKeystore(entries[i].getRoot());
 			if (certificateFound) {
-				result.setVerificationCode(SOURCE_VERIFIED);
+				result.setVerificationCode(JarVerification.JAR_SOURCE_VERIFIED);
 				result.setFoundCertificate(entries[i]);
 				return;
 			}
@@ -293,18 +281,18 @@ public class JarVerifier {
 				}
 
 				if (certificateFound)
-					result.setVerificationCode(INTEGRITY_VERIFIED);
+					result.setVerificationCode(JarVerification.JAR_INTEGRITY_VERIFIED);
 				else
-					result.setVerificationCode(NOT_SIGNED);
+					result.setVerificationCode(JarVerification.JAR_NOT_SIGNED);
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
 			// but content has changed since signed
-			result.setVerificationCode(CORRUPTED);
+			result.setVerificationCode(JarVerification.JAR_CORRUPTED);
 		} catch (InterruptedException e) {
-			result.setVerificationCode(VERIFICATION_CANCELLED);
+			result.setVerificationCode(JarVerification.VERIFICATION_CANCELLED);
 		} catch (Exception e) {
-			result.setVerificationCode(UNKNOWN_ERROR);
+			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (jis != null) {

@@ -28,7 +28,7 @@ public class KeyStores {
 	/**
 	 * Default keystore type in java.security file
 	 */	
-    private static final String DEFAULT_KEYSTORE_TYPE = "keystore.type";
+    private static final String DEFAULT_KEYSTORE_TYPE = "keystore.type"; //$NON-NLS-1$
 
 	/**
 	 * List of KeystoreHandle pointing of valid KeyStores
@@ -136,7 +136,7 @@ public class KeyStores {
 		char[] buff = new char[4096];
 		
 		
-		int indexOf$ = location.indexOf("${");
+		int indexOf$ = location.indexOf("${"); //$NON-NLS-1$
 		int indexOfCurly = location.indexOf('}',indexOf$);
 		if (indexOf$!=-1 && indexOfCurly!=-1){
 			String prop = System.getProperty(location.substring(indexOf$+2,indexOfCurly));
@@ -160,7 +160,7 @@ public class KeyStores {
 
 			if (contentBuff.length()>0){			
 				String content = new String(contentBuff);
-				int indexOfKeystore = content.indexOf("keystore");
+				int indexOfKeystore = content.indexOf("keystore"); //$NON-NLS-1$
 				if (indexOfKeystore != -1){
 					int indexOfSemiColumn = content.indexOf(';',indexOfKeystore);
 					return getKeystoreFromString(content.substring(indexOfKeystore,indexOfSemiColumn),url);
