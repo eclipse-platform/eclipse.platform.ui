@@ -46,6 +46,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -1210,20 +1211,28 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         fontChangeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-                FontDefinition definition = getSelectedFontDefinition();
+            	final FontDefinition definition = getSelectedFontDefinition();
                 if (definition != null) {
-                    FontDialog fontDialog = new FontDialog(fontChangeButton
+                    final FontDialog fontDialog = new FontDialog(fontChangeButton
                             .getShell());
-                    FontData[] currentData = getFontValue(definition);
-                    fontDialog.setFontList(currentData);
-                    if (fontDialog.open() != null) {
+                    fontDialog.setFontList(getFontValue(definition));
+                    final FontData [] data = new FontData[1];
+
+                    //opening a font dialog can be very slow on some platforms - wrap it
+	            	BusyIndicator.showWhile(event.display, new Runnable() {
+	            		public void run() {		
+	            			data[0] = fontDialog.open();
+	            		}
+				    }); 
+	            	
+                    if (data[0] != null) {
                         setFontPreferenceValue(definition, fontDialog
                                 .getFontList());
                         setRegistryValue(definition, fontDialog.getFontList());
-                    }
-
-                    updateFontControls(definition);
-                }
+                    }	            	
+		
+		            updateFontControls(definition);
+            	}
             }
         });
 
