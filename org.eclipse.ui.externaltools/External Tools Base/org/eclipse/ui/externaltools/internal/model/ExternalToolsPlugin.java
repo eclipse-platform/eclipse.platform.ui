@@ -113,7 +113,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public void log(Throwable exception) {
 		//this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		getLog().log(newErrorStatus("Error logged from External Tools UI: ", exception)); //$NON-NLS-1$
+		getLog().log(newErrorStatus("Internal error logged from External Tools UI: ", exception)); //$NON-NLS-1$
 	}
 
 	/**
