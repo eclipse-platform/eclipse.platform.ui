@@ -2295,8 +2295,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			Throwable t= x.getTargetException();
 			if (t instanceof CoreException) {
                 CoreException e= (CoreException)t;
-                if (e.getStatus().getException() != null)
-                    throw new PartInitException(e.getStatus());
+                IStatus status= e.getStatus();
+                /*
+                /* XXX: Remove unpacking of CoreException once the following bug is
+                 *		fixed: https://bugs.eclipse.org/bugs/show_bug.cgi?id=81640
+                 */ 
+                if (status.getException() != null)
+                    throw new PartInitException(status);
+               	throw new PartInitException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), t));
             }
 			throw new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
 		}
