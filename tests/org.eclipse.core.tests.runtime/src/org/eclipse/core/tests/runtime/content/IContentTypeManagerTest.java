@@ -34,14 +34,14 @@ public class IContentTypeManagerTest extends TestCase {
 	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.runtime.tests.root-element PUBLIC \"org.eclipse.core.runtime.tests.root-elementId\" \"org.eclipse.core.runtime.tests.root-element.dtd\" ><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.runtime.tests.root-element/>";	
+	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
 
 	public static Test suite() {
-//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
+		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
 
@@ -178,9 +178,9 @@ public class IContentTypeManagerTest extends TestCase {
 		assertEquals("3.1", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 		// test with no BOM
 		description = text.getDescriptionFor(new ByteArrayInputStream(MINIMAL_XML.getBytes("ISO-8859-1")), options);
-		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));				
+		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 	}
-	
+
 	/*
 	 * Tests both text and byte stream-based getDescriptionFor methods.
 	 */
@@ -303,7 +303,7 @@ public class IContentTypeManagerTest extends TestCase {
 		assertEquals("4.0", 3, selected.length);
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
 		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
-		assertTrue("4.3", appropriate == selected[2]);		
+		assertTrue("4.3", appropriate == selected[2]);
 	}
 
 	/**
@@ -550,25 +550,25 @@ public class IContentTypeManagerTest extends TestCase {
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
 		assertTrue("4.0", contentTypes.length > 0);
 		assertEquals("4.1", dtdElement, contentTypes[0]);
-		
+
 		// bug 67975
-		IContentDescription description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16BE,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16BE")}), "fake.xml", IContentDescription.ALL);
+		IContentDescription description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16BE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16BE")}), "fake.xml", IContentDescription.ALL);
 		assertTrue("5.0", description != null);
 		assertEquals("5.1", rootElement, description.getContentType());
 		assertEquals("5.2", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
-		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16LE,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16LE")}), "fake.xml", IContentDescription.ALL);
+		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16LE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16LE")}), "fake.xml", IContentDescription.ALL);
 		assertTrue("6.0", description != null);
 		assertEquals("6.1", rootElement, description.getContentType());
 		assertEquals("6.2", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
 		// due to bug 67048, the test below fails with Crimson parser (does not handle UTF-8 BOMs)
-//		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_8,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-8")}), "fake.xml", IContentDescription.ALL);
-//		assertTrue("7.0", description != null);
-//		assertEquals("7.1", rootElement, description.getContentType());
-//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));		
+		//		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_8,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-8")}), "fake.xml", IContentDescription.ALL);
+		//		assertTrue("7.0", description != null);
+		//		assertEquals("7.1", rootElement, description.getContentType());
+		//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));		
 	}
-	
+
 	/**
 	 * Bug 66976
 	 */
@@ -576,13 +576,13 @@ public class IContentTypeManagerTest extends TestCase {
 		int bufferLimit = ContentTypeManager.MARK_LIMIT * 4;
 		// create a long XML comment as prefix 
 		StringBuffer comment = new StringBuffer("<!--");
-		for(int i = 0;i < bufferLimit; i++)
+		for (int i = 0; i < bufferLimit; i++)
 			comment.append('*');
 		comment.append("-->");
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");		
+		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
 		IContentType selected = manager.findContentTypeFor(getInputStream(comment + XML_ROOT_ELEMENT_NO_DECL, "US-ASCII"), "fake.xml");
 		assertNotNull("1.0", selected);
-		assertEquals("1.1", rootElement,  selected);
+		assertEquals("1.1", rootElement, selected);
 	}
 }
