@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * SubTaskInfo is the class that displays a subtask in the 
@@ -42,6 +43,8 @@ class SubTaskInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
+		if (taskName == null)
+			return ProgressMessages.getString("SubTaskInfo.UndefinedTaskName"); //$NON-NLS-1$
 		return taskName;
 	}
 
@@ -78,6 +81,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object arg0) {
-		return taskName.compareTo(((SubTaskInfo) arg0).taskName);
+		return getDisplayString().compareTo(
+			((SubTaskInfo) arg0).getDisplayString());
 	}
 }

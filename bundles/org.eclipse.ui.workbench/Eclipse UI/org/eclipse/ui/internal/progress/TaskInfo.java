@@ -17,11 +17,9 @@ import org.eclipse.core.runtime.jobs.Job;
  * assumed that there is only one task running at a time -
  * any previous tasks in a Job will be deleted.
  */
-public class TaskInfo extends SubTaskInfo{
+public class TaskInfo extends SubTaskInfo {
 	double preWork = 0;
 	int totalWork = 0;
-
-	
 
 	/**
 	 * Create a new instance of the receiver with the supplied total
@@ -30,8 +28,8 @@ public class TaskInfo extends SubTaskInfo{
 	 * @param taskName
 	 * @param total
 	 */
-	TaskInfo(Job parentJob, String taskName, int total) {	
-		super(parentJob,taskName);
+	TaskInfo(Job parentJob, String taskName, int total) {
+		super(parentJob, taskName);
 		totalWork = total;
 	}
 
@@ -46,15 +44,23 @@ public class TaskInfo extends SubTaskInfo{
 
 	/**
 	 * Get the display string for the task.
+	 * @return String
 	 */
 	String getDisplayString() {
 		int done = (int) (preWork * 100 / totalWork);
-		String[] messageValues = new String[3];
-		messageValues[0] = job.getName();
-		messageValues[1] = taskName;
-		messageValues[2] = String.valueOf(done);
-		return ProgressMessages.format("JobInfo.DoneMessage",messageValues); //$NON-NLS-1$
-		
+		if (taskName == null) {
+			String[] messageValues = new String[2];
+			messageValues[0] = job.getName();
+			messageValues[1] = String.valueOf(done);
+			return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+		} else {
+			String[] messageValues = new String[3];
+			messageValues[0] = job.getName();
+			messageValues[1] = taskName;
+			messageValues[2] = String.valueOf(done);
+			return ProgressMessages.format("JobInfo.DoneMessage", messageValues); //$NON-NLS-1$
+		}
+
 	}
 
 }
