@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -123,8 +124,8 @@ public final class ImageCache {
 		 * Constructs a new instance of <code>ReferenceCleanerThread</code>.
 		 * 
 		 * @param referenceQueue
-		 *            The reference queue to check for garbage; mmmmm....
-		 *            garbage. This value must not be <code>null</code>.
+		 *            The reference queue to check for garbage. This value must
+		 *            not be <code>null</code>.
 		 * @param map
 		 *            The map to check for values; must not be <code>null</code>.
 		 *            It is expected that the keys are <code>Reference</code>
@@ -198,30 +199,21 @@ public final class ImageCache {
 	}
 
 	/**
+	 * The thread responsible for cleaning out images that are no longer needed.
+	 */
+	private final ReferenceCleanerThread imageCleaner;
+
+	/**
 	 * The thread responsible for cleaning out greyed images that are no longer
 	 * needed.
 	 */
 	private final ReferenceCleanerThread greyCleaner;
 
 	/**
-	 * A map of image descriptors to the corresponding greyed images. The image
-	 * descriptors are actually weak references to image descriptors. As the
-	 * weak references become suitable for collection, the corresponding images
-	 * (i.e., native resources) will be disposed. This value may be empty, but
-	 * it is never <code>null</code>.
+	 * The thread responsible for cleaning out disabled images that are no
+	 * longer needed.
 	 */
-	private final Map greyMap = new HashMap();
-
-	/**
-	 * A queue of references waiting to be garbage collected. This value is
-	 * never <code>null</code>. This is the queue for <code>greyMap</code>.
-	 */
-	private final ReferenceQueue greyReferenceQueue = new ReferenceQueue();
-
-	/**
-	 * The thread responsible for cleaning out images that are no longer needed.
-	 */
-	private final ReferenceCleanerThread imageCleaner;
+	private final ReferenceCleanerThread disabledCleaner;
 
 	/**
 	 * A map of image descriptors to the corresponding loaded images. The image
@@ -233,10 +225,41 @@ public final class ImageCache {
 	private final Map imageMap = new HashMap();
 
 	/**
+	 * A map of image descriptors to the corresponding greyed images. The image
+	 * descriptors are actually weak references to image descriptors. As the
+	 * weak references become suitable for collection, the corresponding images
+	 * (i.e., native resources) will be disposed. This value may be empty, but
+	 * it is never <code>null</code>.
+	 */
+	private final Map greyMap = new HashMap();
+
+	/**
+	 * A map of image descriptors to the corresponding disabled images. The
+	 * image descriptors are actually weak references to image descriptors. As
+	 * the weak references become suitable for collection, the corresponding
+	 * images (i.e., native resources) will be disposed. This value may be
+	 * empty, but it is never <code>null</code>.
+	 */
+	private final Map disabledMap = new HashMap();
+
+	/**
 	 * A queue of references waiting to be garbage collected. This value is
 	 * never <code>null</code>. This is the queue for <code>imageMap</code>.
 	 */
 	private final ReferenceQueue imageReferenceQueue = new ReferenceQueue();
+
+	/**
+	 * A queue of references waiting to be garbage collected. This value is
+	 * never <code>null</code>. This is the queue for <code>greyMap</code>.
+	 */
+	private final ReferenceQueue greyReferenceQueue = new ReferenceQueue();
+
+	/**
+	 * A queue of references waiting to be garbage collected. This value is
+	 * never <code>null</code>. This is the queue for
+	 * <code>disabledMap</code>.
+	 */
+	private final ReferenceQueue disabledReferenceQueue = new ReferenceQueue();
 
 	/**
 	 * The image to display when no image is available. This value is
@@ -251,9 +274,12 @@ public final class ImageCache {
 	public ImageCache() {
 		greyCleaner = new ReferenceCleanerThread(greyReferenceQueue, greyMap);
 		imageCleaner = new ReferenceCleanerThread(imageReferenceQueue, imageMap);
+		disabledCleaner = new ReferenceCleanerThread(disabledReferenceQueue,
+				disabledMap);
 
 		greyCleaner.start();
 		imageCleaner.start();
+		disabledCleaner.start();
 
 	}
 
@@ -268,10 +294,8 @@ public final class ImageCache {
 			missingImage = null;
 		}
 
-		/*
-		 * Stop the image cleaner thread, clear all of the weak references and
-		 * dispose of all of the images.
-		 */
+		// Stop the image cleaner thread, clear all of the weak references and
+		// dispose of all of the images.
 		imageCleaner.stopCleaning();
 		final Iterator imageItr = imageMap.entrySet().iterator();
 		while (imageItr.hasNext()) {
@@ -287,10 +311,8 @@ public final class ImageCache {
 		}
 		imageMap.clear();
 
-		/*
-		 * Stop the greyed image cleaner thread, clear all of the weak
-		 * references and dispose of all of the greyed images.
-		 */
+		// Stop the greyed image cleaner thread, clear all of the weak
+		// references and dispose of all of the greyed images.
 		greyCleaner.stopCleaning();
 		final Iterator greyItr = greyMap.entrySet().iterator();
 		while (greyItr.hasNext()) {
@@ -305,46 +327,23 @@ public final class ImageCache {
 			}
 		}
 		greyMap.clear();
-	}
 
-	/**
-	 * Returns the greyed image (i.e., disabled) for the given image descriptor.
-	 * This caches the result so that future attempts to get the greyed image
-	 * for the same descriptor will only access the cache. When the last
-	 * reference to the image descriptor is dropped, the image will be cleaned
-	 * up. This clean up makes no time guarantees about how long this will take.
-	 * 
-	 * @param descriptor
-	 *            The image descriptor for which a greyed image should be
-	 *            created; may be <code>null</code>.
-	 * @return The greyed image, either newly created or from the cache. This
-	 *         value is <code>null</code> if the parameter passed in is
-	 *         <code>null</code>.
-	 */
-	public final Image getGrayImage(final ImageDescriptor descriptor) {
-		if (descriptor == null) {
-			return null;
+		// Stop the disabled image cleaner thread, clear all of the weak
+		// references and dispose of all of the disabled images.
+		disabledCleaner.stopCleaning();
+		final Iterator disabledItr = disabledMap.entrySet().iterator();
+		while (disabledItr.hasNext()) {
+			final Map.Entry entry = (Map.Entry) disabledItr.next();
+
+			final WeakReference reference = (WeakReference) entry.getKey();
+			reference.clear();
+
+			final Image image = (Image) entry.getValue();
+			if ((image != null) && (!image.isDisposed())) {
+				image.dispose();
+			}
 		}
-
-		// Try to load a cached image.
-		final HashableWeakReference key = new HashableWeakReference(descriptor,
-				imageReferenceQueue);
-		final Object value = greyMap.get(key);
-		if (value instanceof Image) {
-			key.clear();
-			return (Image) value;
-		}
-
-		// Try to create a grey image from the regular image.
-		final Image image = getImage(descriptor);
-		if (image != null) {
-			final Image greyImage = new Image(null, image, SWT.IMAGE_GRAY);
-			greyMap.put(key, greyImage);
-			return greyImage;
-		}
-
-		// All attempts have failed.
-		return null;
+		disabledMap.clear();
 	}
 
 	/**
@@ -358,10 +357,76 @@ public final class ImageCache {
 	 *            The image descriptor for which an image should be created; may
 	 *            be <code>null</code>.
 	 * @return The image, either newly created or from the cache. This value is
-	 *         <code>null</code> if the parameter passed in is
+	 *         <code>null</code> if the descriptor parameter passed in is
 	 *         <code>null</code>.
 	 */
 	public final Image getImage(final ImageDescriptor descriptor) {
+		return getImage(descriptor, true);
+	}
+
+	/**
+	 * Returns the regular image (i.e., enabled) for the given image descriptor.
+	 * This caches the result so that future attempts to get the image for the
+	 * same descriptor will only access the cache. When the last reference to
+	 * the image descriptor is dropped, the image will be cleaned up. This clean
+	 * up makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which an image should be created; may
+	 *            be <code>null</code>.
+	 * @param returnMissingImageOnError
+	 *            Flag that determines if a default image is returned on error.
+	 * @return The image, either newly created or from the cache. This value is
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
+	 */
+	public final Image getImage(final ImageDescriptor descriptor,
+			final boolean returnMissingImageOnError) {
+		return getImage(descriptor, returnMissingImageOnError, Display
+				.getCurrent());
+	}
+
+	/**
+	 * Returns the regular image (i.e., enabled) for the given image descriptor.
+	 * This caches the result so that future attempts to get the image for the
+	 * same descriptor will only access the cache. When the last reference to
+	 * the image descriptor is dropped, the image will be cleaned up. This clean
+	 * up makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which an image should be created; may
+	 *            be <code>null</code>.
+	 * @param device
+	 *            The device on which to create the image.
+	 * @return The image, either newly created or from the cache. This value is
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
+	 */
+	public final Image getImage(final ImageDescriptor descriptor,
+			final Device device) {
+		return getImage(descriptor, true, device);
+	}
+
+	/**
+	 * Returns the regular image (i.e., enabled) for the given image descriptor.
+	 * This caches the result so that future attempts to get the image for the
+	 * same descriptor will only access the cache. When the last reference to
+	 * the image descriptor is dropped, the image will be cleaned up. This clean
+	 * up makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which an image should be created; may
+	 *            be <code>null</code>.
+	 * @param returnMissingImageOnError
+	 *            Flag that determines if a default image is returned on error.
+	 * @param device
+	 *            The device on which to create the image.
+	 * @return The image, either newly created or from the cache. This value is
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
+	 */
+	public final Image getImage(final ImageDescriptor descriptor,
+			final boolean returnMissingImageOnError, final Device device) {
 		if (descriptor == null) {
 			return null;
 		}
@@ -376,7 +441,8 @@ public final class ImageCache {
 		}
 
 		// Use the descriptor to create the image.
-		final Image image = descriptor.createImage();
+		final Image image = descriptor.createImage(returnMissingImageOnError,
+				device);
 		imageMap.put(key, image);
 		return image;
 	}
@@ -394,5 +460,128 @@ public final class ImageCache {
 		}
 
 		return missingImage;
+	}
+
+	/**
+	 * Returns the greyed image for the given image descriptor. This caches the
+	 * result so that future attempts to get the greyed image for the same
+	 * descriptor will only access the cache. When the last reference to the
+	 * image descriptor is dropped, the image will be cleaned up. This clean up
+	 * makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which a greyed image should be
+	 *            created; may be <code>null</code>.
+	 * @return The greyed image, either newly created or from the cache. This
+	 *         value is <code>null</code> if the descriptor parameter passed
+	 *         in is <code>null</code>.
+	 */
+	public final Image getGrayImage(final ImageDescriptor descriptor) {
+		return getGrayImage(descriptor, Display.getCurrent());
+	}
+
+	/**
+	 * Returns the greyed image for the given image descriptor. This caches the
+	 * result so that future attempts to get the greyed image for the same
+	 * descriptor will only access the cache. When the last reference to the
+	 * image descriptor is dropped, the image will be cleaned up. This clean up
+	 * makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which a greyed image should be
+	 *            created; may be <code>null</code>.
+	 * @param device
+	 *            The device on which to create the image.
+	 * @return The greyed image, either newly created or from the cache. This
+	 *         value is <code>null</code> if the descriptor parameter passed
+	 *         in is <code>null</code>.
+	 */
+	public final Image getGrayImage(final ImageDescriptor descriptor,
+			final Device device) {
+		if (descriptor == null) {
+			return null;
+		}
+
+		// Try to load a cached image.
+		final HashableWeakReference key = new HashableWeakReference(descriptor,
+				imageReferenceQueue);
+		final Object value = greyMap.get(key);
+		if (value instanceof Image) {
+			key.clear();
+			return (Image) value;
+		}
+
+		// Try to create a grey image from the regular image.
+		final Image image = getImage(descriptor);
+		if (image != null) {
+			final Image greyImage = new Image(device, image, SWT.IMAGE_GRAY);
+			greyMap.put(key, greyImage);
+			return greyImage;
+		}
+
+		// All attempts have failed.
+		return null;
+	}
+
+	/**
+	 * Returns the disabled image for the given image descriptor. This caches
+	 * the result so that future attempts to get the disabled image for the same
+	 * descriptor will only access the cache. When the last reference to the
+	 * image descriptor is dropped, the image will be cleaned up. This clean up
+	 * makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which a disabled image should be
+	 *            created; may be <code>null</code>.
+	 * @return The disabled image, either newly created or from the cache. This
+	 *         value is <code>null</code> if the descriptor parameter passed
+	 *         in is <code>null</code>.
+	 */
+	public final Image getDisabledImage(final ImageDescriptor descriptor) {
+		return getDisabledImage(descriptor, Display.getCurrent());
+	}
+
+	/**
+	 * Returns the disabled image for the given image descriptor. This caches
+	 * the result so that future attempts to get the disabled image for the same
+	 * descriptor will only access the cache. When the last reference to the
+	 * image descriptor is dropped, the image will be cleaned up. This clean up
+	 * makes no time guarantees about how long this will take.
+	 * 
+	 * @param descriptor
+	 *            The image descriptor for which a disabled image should be
+	 *            created; may be <code>null</code>.
+	 * @param device
+	 *            The device on which to create the image.
+	 * @return The disabled image, either newly created or from the cache. This
+	 *         value is <code>null</code> if the descriptor parameter passed
+	 *         in is <code>null</code>.
+	 */
+	public final Image getDisabledImage(final ImageDescriptor descriptor,
+			final Device device) {
+		if (descriptor == null) {
+			return null;
+		}
+
+		// Try to load a cached image.
+		final HashableWeakReference key = new HashableWeakReference(descriptor,
+				imageReferenceQueue);
+		final Object value = disabledMap.get(key);
+		if (value instanceof Image) {
+			key.clear();
+			return (Image) value;
+		}
+
+		// Try to create a disabled image from the regular image.
+		final Image image = getImage(descriptor);
+		if (image != null) {
+			final Image disabledImage = new Image(device, image,
+					SWT.IMAGE_DISABLE);
+			disabledMap.put(key, disabledImage);
+			return disabledImage;
+		}
+
+		// All attempts have failed.
+		return null;
 	}
 }
