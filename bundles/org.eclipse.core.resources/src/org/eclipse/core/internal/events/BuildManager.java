@@ -274,9 +274,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		deltaTreeCache.flush();
 	}
 	public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
+		if (!canRun(trigger))
+			return;
 		try {
-			if (!canRun(trigger))
-				return;
 			building = true;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
 			basicBuild(project, trigger, status, monitor);
