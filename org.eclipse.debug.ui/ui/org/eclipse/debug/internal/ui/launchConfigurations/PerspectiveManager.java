@@ -107,16 +107,14 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	public void launchAdded(ILaunch launch) {
 		String perspectiveId = null;
 		// check event filters
-		if (!isPrivate(launch)) {
-			try {
-				perspectiveId = getPerspectiveId(launch);
-			} catch (CoreException e) {
-				String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
-				switchFailed(e, name);
-			}
-			if (perspectiveId != null) {
-				switchToPerspective(perspectiveId);
-			}
+		try {
+			perspectiveId = getPerspectiveId(launch);
+		} catch (CoreException e) {
+			String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
+			switchFailed(e, name);
+		}
+		if (perspectiveId != null) {
+			switchToPerspective(perspectiveId);
 		}
 	}
 
@@ -277,18 +275,4 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		return perspectiveId;
 	}
 	
-	/**
-	 * Returns whether the given launch is private
-	 */
-	protected boolean isPrivate(ILaunch launch) {
-		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		if (config != null) {
-			try {
-				return config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-		return false;
-	}
 }
