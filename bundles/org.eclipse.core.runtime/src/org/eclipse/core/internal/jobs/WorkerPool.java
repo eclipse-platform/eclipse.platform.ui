@@ -151,7 +151,8 @@ class WorkerPool {
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			return;
-		} else if (threadCount > MAX_THREADS) {
+		} else if (JobManager.DEBUG || (threadCount > MAX_THREADS && MAX_THREADS != DEFAULT_MAX_THREADS)) {
+			//report a potential problem, but not if the user has explicitly changed the size of the thread pool
 			String msg = "The job manager has stopped allocating worker threads because too many background tasks are running."; //$NON-NLS-1$
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, msg, null));
 		}
