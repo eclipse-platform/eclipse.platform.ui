@@ -645,12 +645,15 @@ public class EditorManager {
 	 */
 	public void openSystemEditor(final IFile input) throws PartInitException {
 		// Start busy indicator.
-		final boolean result[] = new boolean[1];
+		final boolean result[] = {false};
 		BusyIndicator.showWhile(getDisplay(), new Runnable() {
 			public void run() {
 				// Open file using shell.
-				String path = input.getLocation().toOSString();
-				result[0] = Program.launch(path);
+				IPath location = input.getLocation();
+				if(location != null) {
+					String path = location.toOSString();
+					result[0] = Program.launch(path);
+				}
 			}
 		});
 

@@ -33,17 +33,22 @@ public ExternalEditor(IFile newFile, EditorDescriptor editorDescriptor) {
 public void open() throws CoreException {
 
 	Program program = this.descriptor.getProgram();
-	if (program == null)
+	if (program == null) {
 		openWithUserDefinedProgram();
-	else {
-		String path = file.getLocation().toOSString();
-		if (!program.execute(path)) 
-			throw new CoreException(new Status(
-				Status.ERROR, 
-				WorkbenchPlugin.PI_WORKBENCH, 
-				0, 
-				WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {path}), //$NON-NLS-1$
-				null));
+	} else {
+		String path = new String();
+		IPath location = file.getLocation();
+		if(location != null) {
+			path = location.toOSString();
+			if(program.execute(path))
+				return;
+		}
+		throw new CoreException(new Status(
+			Status.ERROR, 
+			WorkbenchPlugin.PI_WORKBENCH, 
+			0, 
+			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {path}), //$NON-NLS-1$
+			null));
 	}
 }
 /**
@@ -80,8 +85,17 @@ public void openWithUserDefinedProgram() throws CoreException {
 		// assume it is on the path
 		programFileName = descriptor.getFileName();
 
-	// Get the full path of the file to open	
-	String path = file.getLocation().toOSString();
+	// Get the full path of the file to open
+	IPath location = file.getLocation();
+	if(location == null) {
+		throw new CoreException(new Status(
+			Status.ERROR, 
+			WorkbenchPlugin.PI_WORKBENCH, 
+			0, 
+			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {programFileName}), //$NON-NLS-1$
+			null));
+	}
+	String path = location.toOSString();
 
 	// Open the file
 	
