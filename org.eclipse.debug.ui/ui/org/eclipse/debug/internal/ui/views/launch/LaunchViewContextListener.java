@@ -350,22 +350,22 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @see org.eclipse.ui.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.ui.contexts.ContextManagerEvent)
 	 */
 	public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
-		String[] enabled = getNewlyEnabledContexts(contextManagerEvent);
-		String[] disabled = getNewlyDisabledContexts(contextManagerEvent);
+		Set enabled = getNewlyEnabledContexts(contextManagerEvent);
+		Set disabled = getNewlyDisabledContexts(contextManagerEvent);
 		contextActivated(enabled);
 		contextsDisabled(disabled);
 	}
 	
-	private String[] getNewlyEnabledContexts(ContextManagerEvent contextManagerEvent) {
+	private Set getNewlyEnabledContexts(ContextManagerEvent contextManagerEvent) {
 	    Set set = new HashSet(contextManagerEvent.getContextManager().getEnabledContextIds());
 	    set.removeAll(contextManagerEvent.getPreviouslyEnabledContextIds());
-	    return (String[]) set.toArray(new String[set.size()]);
+	    return set;
 	}
 
-	private String[] getNewlyDisabledContexts(ContextManagerEvent contextManagerEvent) {
+	private Set getNewlyDisabledContexts(ContextManagerEvent contextManagerEvent) {
 	    Set set = new HashSet(contextManagerEvent.getPreviouslyEnabledContextIds());
 	    set.removeAll(contextManagerEvent.getContextManager().getEnabledContextIds());
-	    return (String[]) set.toArray(new String[set.size()]);
+	    return set;
 	}
 
 	/**
@@ -375,9 +375,9 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @param contextId the ID of the context that has been
 	 * 	submitted for enablement
 	 */
-	public void contextActivated(String[] contextIds) {
+	public void contextActivated(Set contextIds) {
 		IWorkbenchPage page= getActiveWorkbenchPage();
-		if (page == null || contextIds.length == 0) {
+		if (page == null || contextIds.size() == 0) {
 			return;
 		}
 		Set viewsToShow= new HashSet();
@@ -429,13 +429,14 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @param viewIdsShow a Set into which this method can store the
 	 *  collection of view identifiers (String) that should be brought to top
 	 */
-	private void computeViewActivation(String[] contextIds, Set viewIdsToOpen, Set viewIdsShow) {
+	private void computeViewActivation(Set contextIds, Set viewIdsToOpen, Set viewIdsShow) {
 		IWorkbenchPage page = getActiveWorkbenchPage();
 		if (page == null) {
 			return;
 		}
-		for (int i = 0; i < contextIds.length; i++) {
-			String contextId = contextIds[i];
+		Iterator contexts = getLeafContexts(contextIds).iterator();
+		while (contexts.hasNext()) {
+			String contextId = (String) contexts.next();
 			Iterator configurationElements= getConfigurationElements(contextId).iterator();
 			while (configurationElements.hasNext()) {
 				IConfigurationElement element = (IConfigurationElement) configurationElements.next();
@@ -455,15 +456,48 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	
 	/**
+	 * Returns a set containing the leaf context ids in the givne
+	 * set. That is, any entry in the set which is a parent of an
+	 * entry in the set is removed.
+	 * 
+	 * @param contextIds
+	 * @return
+	 */
+	private Set getLeafContexts(Set contextIds) {
+		Set leaves = new HashSet(contextIds.size());
+		leaves.addAll(contextIds);
+		Iterator contexts = contextIds.iterator();
+		IContextManager manager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
+		while (contexts.hasNext()) {
+			String contextId = (String) contexts.next();
+			IContext context = manager.getContext(contextId);
+			String parentId = null;
+			try {
+				parentId = context.getParentId();
+			} catch (NotDefinedException e) {
+			}
+			while (parentId != null) {
+				leaves.remove(parentId);
+				try {
+					parentId = manager.getContext(parentId).getParentId();
+				} catch (NotDefinedException e1) {
+					parentId = null;
+				}
+			}
+		}
+		return leaves;
+	}
+	
+	/**
 	 * The given contexts have been disabled. Close all views
 	 * associated with these contexts that aren't associated
 	 * with other active contexts.
 	 * 
 	 * @param contexts
 	 */
-	public void contextsDisabled(String[] contexts) {
+	public void contextsDisabled(Set contexts) {
 		IWorkbenchPage page= getActiveWorkbenchPage();
-		if (page == null || contexts.length == 0) {
+		if (page == null || contexts.size() == 0) {
 			return;
 		}
 		page.removePartListener(this);
@@ -487,11 +521,13 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @return the identifiers of the views which should be closed
 	 *  when the given contexts disable 
 	 */
-	public Set getViewIdsToClose(String[] contextIds) {
+	public Set getViewIdsToClose(Set contextIds) {
 		Set viewIdsToClose= new HashSet();
 		Set viewIdsToKeepOpen= getViewIdsForEnabledContexts();
-		for (int i = 0; i < contextIds.length; i++) {
-			List list = getConfigurationElements(contextIds[i]);
+		Iterator contexts = contextIds.iterator();
+		while (contexts.hasNext()) {
+			String contextId = (String) contexts.next();
+			List list = getConfigurationElements(contextId);
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				IConfigurationElement element = (IConfigurationElement) iter.next();
@@ -669,7 +705,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			}
 		}
 		submitContexts(contextIds, launch);
-		contextActivated((String[]) contextsAlreadyEnabled.toArray(new String[0]));
+		contextActivated(contextsAlreadyEnabled);
 	}
 
 	/**
