@@ -49,19 +49,15 @@ public class DragTestSuite extends TestSuite {
 	public DragTestSuite() {
 		String resNav = IPageLayout.ID_RES_NAV;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
-		
+				
 		// Drag sources for views
 		TestDragSource[] viewDragSources = new TestDragSource[] {
-			new ViewDragSource(resNav, false, true),
-			new ViewDragSource(resNav, true, true),
-			new ViewDragSource(probView, false, true),
-			new ViewDragSource(probView, true, true),
 			new ViewDragSource(resNav, false),
 			new ViewDragSource(resNav, true),
 			new ViewDragSource(probView, false),
 			new ViewDragSource(probView, true)
 		};
-		
+				
 		// Drag sources for editors
 		TestDragSource[] editorDragSources = new TestDragSource[] {
 			new EditorDragSource(0, false),
@@ -93,7 +89,7 @@ public class DragTestSuite extends TestSuite {
 			new ViewDropTarget(probView, SWT.BOTTOM),
 			new ViewDropTarget(probView, SWT.CENTER)
 		};
-
+		
 		// Drop targets that will only be tested for editors
 		AbstractTestDropTarget[] editorDropTargets = new AbstractTestDropTarget[] {
 			// A view
@@ -122,9 +118,26 @@ public class DragTestSuite extends TestSuite {
 			new WindowDropTarget(SWT.RIGHT)				
 		};
 		
+		// Drag sources for maximized views
+		TestDragSource[] maximizedViewDragSources = new TestDragSource[] {
+			new ViewDragSource(resNav, false, true),
+			new ViewDragSource(resNav, true, true),
+			new ViewDragSource(probView, false, true),
+			new ViewDragSource(probView, true, true)		
+		};
+		
+		// Drop targets that will only be tested for maximized views (we only need to ensure
+		// that the view will become un-maximized -- the regular view test cases will excercise
+		// the remainder of the view dragging code). We need to drag each kind of maximized view
+		// to something that couldn't be seen while the view is maximized -- like the editor area).
+		AbstractTestDropTarget[] maximizedViewDropTargets = new AbstractTestDropTarget[] {
+			new EditorAreaDropTarget(SWT.RIGHT)
+		};
+		
 		Map expectedResults = loadExpectedResults();
 		
 		// Now generate all test cases
+		addAllCombinations(maximizedViewDragSources, maximizedViewDropTargets, expectedResults);
 		addAllCombinations(viewDragSources, viewDropTargets, expectedResults);
 		addAllCombinations(viewDragSources, commonDropTargets, expectedResults);
 		addAllCombinations(editorDragSources, editorDropTargets, expectedResults);
