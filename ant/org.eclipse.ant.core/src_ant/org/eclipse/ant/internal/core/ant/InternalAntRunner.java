@@ -68,10 +68,8 @@ import java.util.*;
 
 import org.apache.tools.ant.*;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.internal.core.*;
-import org.eclipse.ant.internal.core.Policy;
 import org.eclipse.ant.internal.core.Task;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ant.internal.core.Type;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
@@ -265,6 +263,8 @@ public void run() {
 			return;
 		}
 		createMonitorBuildListener(project);
+		if (extraArguments != null)
+			project.log(Policy.bind("label.arguments", extraArguments)); //$NON-NLS-1$
 		if (targets != null && !targets.isEmpty())
 			project.executeTargets(targets);
 		else
