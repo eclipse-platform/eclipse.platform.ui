@@ -13,12 +13,6 @@ package org.eclipse.debug.internal.core.variables;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * @author jburns
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public class LaunchVariableMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.core.variables.LaunchVariableMessages"; //$NON-NLS-1$
@@ -26,11 +20,8 @@ public class LaunchVariableMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private LaunchVariableMessages() {
-
-		// TODO Auto-generated constructor stub
 	}
 	public static String getString(String key) {
-		// TODO Auto-generated method stub
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {
