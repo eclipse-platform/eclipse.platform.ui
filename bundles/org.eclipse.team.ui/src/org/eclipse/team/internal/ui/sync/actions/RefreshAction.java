@@ -58,8 +58,11 @@ class RefreshAction extends Action {
 					resources = input.roots();
 				}
 				if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
+					// Cancel the scheduled background refresh but ensure it gets rescheduled
+					// to run later.
+					TeamUIPlugin.getPlugin().getRefreshJob().setRestartOnCancel(true);
 					Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
-					RefreshSubscriberJob job = new RefreshSubscriberJob(input.getSubscriber(), resources);
+					RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), input.getSubscriber(), resources);
 					job.schedule();
 				} else {
 					runBlocking(input.getSubscriber(), resources);

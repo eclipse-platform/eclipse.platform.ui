@@ -182,7 +182,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshAllRegisteredSubscribersJob();
+		refreshJob = new RefreshAllRegisteredSubscribersJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
 			// start once the platform has started and stabilized
