@@ -23,6 +23,8 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
  */
 public abstract class AbstractSourceContainer implements ISourceContainer {
 	
+	public static final Object[] EMPTY = new Object[0];
+	
 	/**
 	 * Throws an exception with the given message and underlying exception.
 	 * 

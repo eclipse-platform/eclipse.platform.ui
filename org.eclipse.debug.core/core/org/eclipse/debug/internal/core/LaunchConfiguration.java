@@ -177,6 +177,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	protected void initializeSourceLocator(ILaunch launch) throws CoreException {
 		if (launch.getSourceLocator() == null) {
 			String type = getAttribute(ATTR_SOURCE_LOCATOR_ID, (String)null);
+			if (type == null) {
+				// TODO: make API on config type?
+				type = getType().getAttribute("sourceLocatorId"); //$NON-NLS-1$
+			}
 			if (type != null) {
 				IPersistableSourceLocator locator = getLaunchManager().newSourceLocator(type);
 				String memento = getAttribute(ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);

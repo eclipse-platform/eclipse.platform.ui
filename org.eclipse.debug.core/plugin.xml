@@ -133,6 +133,11 @@
 			class="org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainerType"
             id="org.eclipse.debug.core.containerType.default">
       </sourceContainerType>    
+      <sourceContainerType
+            name="%containerName.archive"
+			class="org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType"
+            id="org.eclipse.debug.core.containerType.archive">
+      </sourceContainerType>      
    </extension>
 
 </plugin>

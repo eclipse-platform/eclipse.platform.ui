@@ -93,7 +93,7 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 		}			
 		
 		if(sources.isEmpty())
-			return new Object[0];
+			return EMPTY;
 		return sources.toArray();
 	}
 	

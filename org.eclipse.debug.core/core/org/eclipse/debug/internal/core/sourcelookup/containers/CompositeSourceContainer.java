@@ -56,7 +56,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 			}
 		}
 		if (results == null) {
-			return new Object[0];
+			return EMPTY;
 		}
 		return results.toArray();
 	}

@@ -40,6 +40,7 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -441,6 +442,7 @@ public class DebugPlugin extends Plugin {
 		}
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+		SourceLookupUtils.shutdown();
 	}
 	
 	/**
