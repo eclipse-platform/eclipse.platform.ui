@@ -54,6 +54,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * @see FolderSyncInfo
  */
 public class EclipseSynchronizer {	
+	private boolean isWorkspaceModifiable = true;
 	private static final String IS_DIRTY_INDICATOR = SyncInfoCache.IS_DIRTY_INDICATOR;
 	private static final String NOT_DIRTY_INDICATOR = SyncInfoCache.NOT_DIRTY_INDICATOR;
 	private static final String RECOMPUTE_INDICATOR = SyncInfoCache.RECOMPUTE_INDICATOR; 
@@ -757,6 +758,10 @@ public class EclipseSynchronizer {
 		if (changedFolders.isEmpty() && changedResources.isEmpty()) {
 			return SyncInfoCache.STATUS_OK;
 		}
+		if (!isWorkspaceModifiable()) {
+			// if the workspace is closed for modification, we'll wait until the next commit
+			return SyncInfoCache.STATUS_OK;
+		}
 		List errors = new ArrayList();
 		try {
 			/*** prepare operation ***/
@@ -1225,6 +1230,12 @@ public class EclipseSynchronizer {
 		return (IContainer[]) folders.toArray(new IContainer[folders.size()]);
 	}
 	
+	/**
+	 * Obtain the CVS sync lock while running the given ICVSRunnable.
+	 * @param job
+	 * @param monitor
+	 * @throws CVSException
+	 */
 	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
@@ -1234,6 +1245,22 @@ public class EclipseSynchronizer {
 		} finally {
 			endOperation(Policy.subMonitorFor(monitor, 35));
 			monitor.done();
+		}
+	}
+	
+	/**
+	 * Run the given ICVSRunnable ensuring that the workspace lock is never acquired
+	 * 
+	 * @param job
+	 * @param monitor
+	 * @throws CVSException
+	 */
+	public void runWithoutWorkspaceLock(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+		try {
+			isWorkspaceModifiable = false;
+			EclipseSynchronizer.this.run(job, monitor);
+		} finally {
+			isWorkspaceModifiable = true;
 		}
 	}
 	
@@ -1381,4 +1408,11 @@ public class EclipseSynchronizer {
 		}
 	}
 	
+	/**
+	 * @return boolean
+	 */
+	public boolean isWorkspaceModifiable() {
+		return isWorkspaceModifiable;
+	}
+
 }

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -36,9 +37,11 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.ui.ISharedImages;
@@ -92,27 +95,18 @@ public class CVSLightweightDecorator
 	// Keep track of deconfigured projects
 	private Set deconfiguredProjects = new HashSet();
 
-	public static boolean isDirty(final ICVSResource cvsFile) {
+	public static boolean isDirty(final ICVSResource cvsResource) {
 		try {
 			final boolean[] isDirty = new boolean[] { false };
 
-			// DECORATOR investigate the implications of not calling isModified() in a 
-			// workspace runnable. Maybe adding a check to EclipseSynchronizer such
-			// that the workspace is never modified (e.g. resulting in a delta) during this
-			// operation.
-
-			//			EclipseSynchronizer.getInstance().run(new ICVSRunnable() {
-			//				public void run(IProgressMonitor monitor) throws CVSException {
-			//					// file is dirty or file has been merged by an update
-			//					if(!cvsFile.isIgnored()) {
-			//						isDirty[0] = cvsFile.isModified();
-			//					}
-			//				}
-			//			}, null);
-
-			if (!cvsFile.isIgnored()) {
-				isDirty[0] = cvsFile.isModified();
-			}
+			EclipseSynchronizer.getInstance().runWithoutWorkspaceLock(new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					// file is dirty or file has been merged by an update
+					if(!cvsResource.isIgnored()) {
+						isDirty[0] = cvsResource.isModified();
+					}
+				}
+			}, null);
 
 			return isDirty[0];
 		} catch (CVSException e) {

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
@@ -220,9 +221,11 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		try {
 			if (info == null) {
 				if (container.exists() || container.isPhantom()) {
+					ensureWorkspaceModifiable(container);
 					getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, container, IResource.DEPTH_ZERO);
 				}
 			} else {
+				ensureWorkspaceModifiable(container);
 				getWorkspaceSynchronizer().setSyncInfo(FOLDER_SYNC_KEY, container, getBytes(info));
 			}
 		} catch (CoreException e) {
@@ -255,8 +258,10 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				// ensure that the sync info is not already set to the same thing.
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
-				if (oldBytes == null || !Util.equals(syncBytes, oldBytes))
+				if (oldBytes == null || !Util.equals(syncBytes, oldBytes)) {
+					ensureWorkspaceModifiable(resource);
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
+				}
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
@@ -345,5 +350,15 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 			}
 		}
 		return indicator;
+	}
+	
+	/**
+	 * 
+	 */
+	protected void ensureWorkspaceModifiable(IResource resource) throws CVSException {
+		if (!EclipseSynchronizer.getInstance().isWorkspaceModifiable()) {
+			throw new CVSException(Policy.bind("EclipseSynchronizer.workspaceClosedForResource", resource.getFullPath().toString()));
+		}
+		
 	}
 }
