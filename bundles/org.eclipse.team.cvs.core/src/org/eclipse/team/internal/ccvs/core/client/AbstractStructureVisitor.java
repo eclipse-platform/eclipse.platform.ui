@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -96,7 +97,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		Policy.checkCanceled(monitor);
 		
 		boolean exists = mFolder.exists();
-		boolean isCVSFolder = mFolder.isCVSFolder();
+		FolderSyncInfo info = mFolder.getFolderSyncInfo();
+		boolean isCVSFolder = info != null;
 		
 		// We are only interested in folders that exist or are CVS folders
 		// A folder could be a non-existant CVS folder if it is a holder for outgoing file deletions
@@ -106,7 +108,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		if (isLastSent(mFolder)) return;
 		
 		// Do not send virtual directories
-		if (isCVSFolder && mFolder.getFolderSyncInfo().isVirtualDirectory()) {
+        if (isCVSFolder && info.isVirtualDirectory()) {
 			return;
 		}
 
@@ -133,7 +135,6 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		session.sendDirectory(localPath, remotePath);
 
 		// Send any directory properties to the server
-		FolderSyncInfo info = mFolder.getFolderSyncInfo();
 		if (info != null) {
 
 			if (info.getIsStatic()) {
@@ -168,9 +169,9 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// Send the file's entry line to the server
 		byte[] syncBytes = mFile.getSyncBytes();
 		boolean isManaged = syncBytes != null;
+		
 		if (isManaged) {
-			sendPendingNotification(mFile);
-			session.sendEntry(syncBytes, ResourceSyncInfo.getTimestampToServer(syncBytes, mFile.getTimeStamp()));
+		    sendPendingNotification(mFile);
 		} else {
 			// If the file is not managed, send a questionable to the server if the file exists locally
 			// A unmanaged, locally non-existant file results from the explicit use of the file name as a command argument
@@ -183,24 +184,46 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			// else we are probably doing an import so send the file contents below
 		}
 		
-		// If the file exists, send the appropriate indication to the server
-		if (mFile.exists()) {
-			if (mFile.isModified(null)) {
-				boolean binary = ResourceSyncInfo.isBinary(syncBytes);
-				if (sendModifiedContents) {
-					session.sendModified(mFile, binary, sendBinary, monitor);
+		// Determine if we need to send the contents.
+		boolean sendContents = mFile.exists() && mFile.isModified(monitor);
+		if (ResourceSyncInfo.isDeletion(syncBytes)) {
+		    sendEntryLineToServer(mFile, syncBytes);
+		} else if (sendContents) {
+		    // Perform the send of modified contents in a sheduling rule to ensure that
+		    // the contents are not modified while we are sending them
+		    try {
+		        Platform.getJobManager().beginRule(mFile.getIResource(), monitor);
+		        
+				sendEntryLineToServer(mFile, syncBytes);
+				if (mFile.exists() && mFile.isModified(null)) {
+					boolean binary = ResourceSyncInfo.isBinary(syncBytes);
+					if (sendModifiedContents) {
+						session.sendModified(mFile, binary, sendBinary, monitor);
+					} else {
+						session.sendIsModified(mFile, binary, monitor);
+					}
 				} else {
-					session.sendIsModified(mFile, binary, monitor);
+					session.sendUnchanged(mFile);
 				}
-			} else {
-				session.sendUnchanged(mFile);
-			}
+		    } finally {
+		        Platform.getJobManager().endRule(mFile.getIResource());
+		    }
+		} else {
+		    sendEntryLineToServer(mFile, syncBytes);
+			session.sendUnchanged(mFile);
 		}
 		
 		monitor.worked(1);
 	}
 
-	protected void sendPendingNotification(ICVSFile mFile) throws CVSException {
+    private void sendEntryLineToServer(ICVSFile mFile, byte[] syncBytes) throws CVSException {
+        if (syncBytes != null) {
+            String syncBytesToServer = ResourceSyncInfo.getTimestampToServer(syncBytes, mFile.getTimeStamp());
+            session.sendEntry(syncBytes, syncBytesToServer);
+        }
+    }
+
+    protected void sendPendingNotification(ICVSFile mFile) throws CVSException {
 		NotifyInfo notify = mFile.getPendingNotification();
 		if (notify != null) {
 			sendFolder(mFile.getParent());

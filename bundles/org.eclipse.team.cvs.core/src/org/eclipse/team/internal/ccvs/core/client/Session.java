@@ -415,7 +415,7 @@ public class Session {
 	 * @param remoteDir the path of the remote directory relative to repositoryRoot
 	 */
 	public void sendDirectory(String localDir, String remoteDir) throws CVSException {
-		if (localDir.length() == 0) localDir = "."; //$NON-NLS-1$
+		if (localDir.length() == 0) localDir = CURRENT_LOCAL_FOLDER; //$NON-NLS-1$
 		connection.writeLine("Directory " + localDir); //$NON-NLS-1$
 		connection.writeLine(remoteDir);
 	}
@@ -424,7 +424,7 @@ public class Session {
 	 * Sends a Directory request for the localRoot.
 	 */
 	public void sendLocalRootDirectory() throws CVSException {
-		sendDirectory(".", localRoot.getRemoteLocation(localRoot)); //$NON-NLS-1$
+		sendDirectory(CURRENT_LOCAL_FOLDER, localRoot.getRemoteLocation(localRoot)); //$NON-NLS-1$
 	}
 
 	/**

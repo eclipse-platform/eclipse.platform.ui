@@ -14,7 +14,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -297,31 +296,21 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			count++;
 			Policy.checkCanceled(monitor);
 		}
-		ISchedulingRule rule = getSchedulingRule(resource);
 		try {
-			Platform.getJobManager().beginRule(rule, Policy.subMonitorFor(monitor, 1));
+			changedResources = super.refresh(resource, depth, Policy.subMonitorFor(monitor, 99));
+		} catch (TeamException e) {
+		    // Try to properly handle exceptions that are due to project modifications
+		    // performed while the refresh was happening
 			if (!resource.getProject().isAccessible()) {
 				// The project is closed so silently skip it
 				return new IResource[0];
 			}
-			changedResources = super.refresh(resource, depth, Policy.subMonitorFor(monitor, 99));
+			throw e;
 		} finally {
-			Platform.getJobManager().endRule(rule);
 			monitor.done();
 		}
 		if (changedResources == null) return new IResource[0];
 		return changedResources;
-	}
-	
-	/**
-	 * Return the scheduling rule that should be obtained for the given resource.
-	 * This method is invoked from <code>refresh(IResource, int, IProgressMonitor)</code>.
-	 * By default, the resource's project is returned. Subclasses may override.
-	 * @param resource the resource being refreshed
-	 * @return a scheduling rule or <code>null</code>
-	 */
-	protected ISchedulingRule getSchedulingRule(IResource resource) {
-		return resource.getProject();
 	}
 	
 	private boolean isJobInFamilyRunning(Object family) {

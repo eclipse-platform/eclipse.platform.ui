@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -260,6 +261,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#getChild(String)
 	 */
 	public ICVSResource getChild(String namedPath) throws CVSException {
+	    if (namedPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
+	        return this;
+	    }
 		IPath path = new Path(namedPath);
 		if(path.segmentCount()==0) {
 			 return this;
