@@ -151,5 +151,29 @@
   its associated console is closed (i.e. all of its streams are closed), by implementing 
   the new interface <code>IConsoleLineTrackerExtension</code>. The notification 
   indicates that no more output will be appended to the console.</p>
+<h3>Launch Configuration Tab Enhancements</h3>
+<p>Two methods have been added to the <code>ILaunchConfigurationTab</code> interface 
+  - activated and deactivated. These new life cycle methods are called when a 
+  tab is entered and exited respectively. Existing implementations of <code>ILaunchConfigurationTab</code> 
+  that subclass the abstract class provided by the debug plug-in (<code>AbstractLaunchConfigurationTab</code>) 
+  will maintain binary compatibility, as the methods have been added in the abstract 
+  class.</p>
+<p>In prior releases, a tab was sent the message <code>initializeFrom</code> when 
+  it was activated, and <code>performApply</code> when it was deactivated. In 
+  this way, the launch configuration tab framework provided inter-tab communication 
+  via a launch configuration (by updating the configuration with current attribute 
+  values when a tab is exited, and updating the newly entered tab). However, since 
+  many tabs do not perform inter-tab communication, this can be inefficient. As 
+  well, there was no way to distinguish between a tab being activated, and a tab 
+  displaying a selected launch configuration for the first time. The newly added 
+  methods allow tabs to distinguish between activation and initialization, and 
+  deactivation and saving current values. </p>
+<p>To avoid breaking the behavior of current tab implementations, the default 
+  implementation of <code>activated</code>, provided by the abstract tab, calls 
+  <code>initializeFrom</code>. And, the default implementation of <code>deactivated</code> 
+  calls <code>performApply</code>. Tabs wishing to take advantage of the new API 
+  should override these methods as required. Generally, for tabs that do not perform 
+  inter-tab communication, a correct implementation of these methods is to do 
+  nothing.</p>
 </body>
 </html>
