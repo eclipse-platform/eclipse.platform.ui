@@ -450,12 +450,17 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		return name;
 	}
 
+	private KeySequence mode = KeySequence.getInstance();
+	
 	private KeySequence getMode() {
-		return ((CommandManager) workbench.getCommandManager()).getMode();	
+		return mode;	
 	}
 
-	private void setMode(KeySequence keySequence) {
-		((CommandManager) workbench.getCommandManager()).setMode(keySequence);
+	private void setMode(KeySequence mode) {
+		if (mode == null)
+			throw new NullPointerException();
+		
+		this.mode = mode;
 		updateModeStatusLines();
 	}
 	
