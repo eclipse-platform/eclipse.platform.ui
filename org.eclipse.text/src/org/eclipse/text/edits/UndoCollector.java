@@ -46,7 +46,7 @@ import org.eclipse.jface.text.IDocumentListener;
 	
 	private static int getDelta(DocumentEvent event) {
 		String text= event.getText();
-		return (text == null ? -event.getLength() : text.length()) - event.getLength();
+		return text == null ? -event.getLength() : (text.length() - event.getLength());
 	}		
 
 	public void documentAboutToBeChanged(DocumentEvent event) {
@@ -59,6 +59,7 @@ import org.eclipse.jface.text.IDocumentListener;
 			Assert.isTrue(false, "Can't happen"); //$NON-NLS-1$
 		}
 
-		undo.add(new ReplaceEdit(offset, event.getText().length(), currentText));
+		String newText = event.getText();
+		undo.add(new ReplaceEdit(offset, newText != null ? newText.length() : 0, currentText));
 	}
 }
