@@ -494,7 +494,14 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		featureEntries = null;
 		pluginEntries = null;
 	}
-
+	
+	public void refreshPlugins() {
+		// reset computed values. Will be updated on next access.
+		pluginsChangeStamp = 0;
+		changeStamp = 0;
+		pluginEntries = null;
+	}
+	
 	public void addFeatureEntry(IFeatureEntry feature) {
 		if (featureEntries == null)
 			featureEntries = new HashMap();

@@ -421,6 +421,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			siteEntry = runtimeConfiguration.createSiteEntry(urlToCheck, sitePolicy);
 		else {
 			siteEntry.setSitePolicy(sitePolicy);
+			((SiteEntry)siteEntry).refreshPlugins();
 			if (tempConfig != null) // [19958] remove reused entries from list
 				tempConfig.unconfigureSite(siteEntry);
 		}
