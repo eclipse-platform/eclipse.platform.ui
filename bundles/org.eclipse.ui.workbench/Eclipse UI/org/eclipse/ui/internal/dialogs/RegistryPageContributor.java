@@ -17,15 +17,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.internal.ObjectContributorManager;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 /**
  * This property page contributor is created from page entry
@@ -84,7 +87,7 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
 	ppage = (IWorkbenchPropertyPage)WorkbenchPlugin.createExtension(
 		pageElement, PropertyPagesRegistryReader.ATT_CLASS);
 
-	Class resourceClass = ObjectContributorManager.getResourceClass();
+	Class resourceClass = LegacyResourceSupport.getResourceClass();
 	if (isResourceContributor && resourceClass != null) {
 		ppage.setElement((IAdaptable) element.getAdapter(resourceClass));
 	} else {
@@ -157,7 +160,7 @@ public boolean isApplicableTo(Object object) {
 	// If this is a resource contributor and the object is not a resource but
 	// is an adaptable then get the object's resource via the adaptable mechanism.
 	Object testObject = object;
-	Class resourceClass = ObjectContributorManager.getResourceClass();
+	Class resourceClass = LegacyResourceSupport.getResourceClass();
 	if (isResourceContributor
 	    && resourceClass != null
 		&& !(resourceClass.isInstance(object))

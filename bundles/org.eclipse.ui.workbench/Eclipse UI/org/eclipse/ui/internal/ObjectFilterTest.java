@@ -28,6 +28,7 @@ public class ObjectFilterTest {
 	 * Create a new object filter. 
 	 */	
 	public ObjectFilterTest() {
+		// do nothing
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class ObjectFilterTest {
 			return false;
 		
 		// be careful to avoid dependence on IResource.class, which may not be present
-		Class resourceClass = ObjectContributorManager.getResourceClass();
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
 		if (resourceClass == null) {
 			return false;
 		}

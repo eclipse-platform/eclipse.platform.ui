@@ -33,7 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,7 +42,6 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
 
@@ -55,6 +53,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -65,7 +65,6 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class represents the TOP of the workbench UI world

@@ -328,7 +328,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// ISV toolbar.
 		isvToolBarShell = new Shell(control.getShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
 		isvToolBarShell.setBackground(new Color(isvToolBarShell.getDisplay(), 255, 255, 255));
-		isvToolBarShell.setTransparent(75);
+		//isvToolBarShell.setTransparent(75);
 
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 1;

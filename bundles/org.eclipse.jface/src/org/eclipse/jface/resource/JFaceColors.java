@@ -64,10 +64,15 @@ public class JFaceColors {
 		// map returns null and the code should fall through to the default color map
 		if (!getUseDefaultTheme()) {
 			Color temp;
+			if ((temp = getUserColor(d, SCHEME_TAB_BACKGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_BACKGROUND, temp);
+			if ((temp = getUserColor(d, SCHEME_TAB_FOREGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_FOREGROUND, temp);
 			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_BACKGROUND)) != null)
 				UserColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, temp);
 			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_FOREGROUND)) != null)
 				UserColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, temp);
+			
 		}
 	}
 	

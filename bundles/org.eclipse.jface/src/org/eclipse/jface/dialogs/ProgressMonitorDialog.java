@@ -264,6 +264,15 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
 		});
 	}
 }
+protected void cancelPressed() {
+	//NOTE: this was previously done from a listener installed on the cancel
+	//button.  On GTK, the listener installed by Dialog.createButton is called
+	//first and this was throwing an exception because the cancel button
+	//was already disposed
+	cancel.setEnabled(false);
+	progressMonitor.setCanceled(true);
+	super.cancelPressed();
+}
 /* (non-Javadoc)
  * Method declared on Window.
  */
@@ -317,14 +326,6 @@ protected void createButtonsForButtonBar(Composite parent) {
 	if(arrowCursor == null)
 		arrowCursor = new Cursor(cancel.getDisplay(),SWT.CURSOR_ARROW);		
 	cancel.setCursor(arrowCursor);
-	cancel.addListener(SWT.Selection,
-		new Listener() {
-			public void handleEvent(Event e) {
-				cancel.setEnabled(false);
-				progressMonitor.setCanceled(true);
-			}
-		}
-	);
 	setOperationCancelButtonEnabled(enableCancelButton);
 }
 
@@ -503,7 +504,8 @@ protected Image getImage() {
  * Set the message in the message label.
  */
 private void setMessage(String messageString) {
-	message = messageString;
+	//must not set null text in a label
+	message = messageString == null ? "" : messageString;
 	if (messageLabel == null || messageLabel.isDisposed())
 		return;
 	messageLabel.setText(message);

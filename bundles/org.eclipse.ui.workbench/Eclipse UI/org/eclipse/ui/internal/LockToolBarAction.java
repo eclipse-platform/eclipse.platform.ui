@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWindowListener;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -22,7 +22,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class LockToolBarAction
 		extends Action 
-		implements IWindowListener, ActionFactory.IWorkbenchAction {
+		implements ActionFactory.IWorkbenchAction {
 			
 	/**
 	 * The workbench window; or <code>null</code> if this
@@ -55,7 +55,6 @@ public class LockToolBarAction
 			}
 		});
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
-		this.workbenchWindow.getWorkbench().addWindowListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -70,34 +69,6 @@ public class LockToolBarAction
 		((WorkbenchWindow) workbenchWindow).lockToolBar(locked);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowActivated(IWorkbenchWindow window){
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowDeactivated(IWorkbenchWindow window) {
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowClosed(IWorkbenchWindow window) {
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowOpened(IWorkbenchWindow window) {
-		setChecked(((WorkbenchWindow)window).isToolBarLocked());
-	}   
-
 	/* (non-Javadoc)
 	 * Method declared on ActionFactory.IWorkbenchAction.
 	 */

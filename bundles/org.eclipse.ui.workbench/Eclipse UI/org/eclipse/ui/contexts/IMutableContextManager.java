@@ -14,8 +14,8 @@ package org.eclipse.ui.contexts;
 import java.util.Set;
 
 /**
- * An instance of this interface allows clients to manage contexts, as
- * defined by the extension point <code>org.eclipse.ui.contexts</code>.
+ * An instance of this interface allows clients to manage contexts, as defined
+ * by the extension point <code>org.eclipse.ui.contexts</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>

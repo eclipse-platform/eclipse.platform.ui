@@ -244,7 +244,7 @@ public class DecoratorManager
 		//Get any adaptions to IResource (when resources are available)
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			Class contributorResourceAdapterClass = ObjectContributorManager.getIContributorResourceAdapterClass();
+			Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
 			if (contributorResourceAdapterClass == null) {
 				return null;
 			}
@@ -253,7 +253,7 @@ public class DecoratorManager
 				// reflective equivalent of
 				//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
 				try {
-					Class c = ObjectContributorManager.getDefaultContributorResourceAdapterClass();
+					Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
 					Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
 					resourceAdapter = m.invoke(null, new Object[0]);
 				} catch (Exception e) {

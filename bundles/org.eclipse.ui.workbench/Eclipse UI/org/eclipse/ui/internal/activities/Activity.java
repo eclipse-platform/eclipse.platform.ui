@@ -23,6 +23,7 @@ import org.eclipse.ui.activities.IActivityActivityBinding;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {
@@ -40,7 +41,6 @@ final class Activity implements IActivity {
 	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
-	private String parentId;
 	private transient String string;
 
 	Activity(String id) {
@@ -86,15 +86,8 @@ final class Activity implements IActivity {
 					if (compareTo == 0) {
 						compareTo = Util.compare(id, castedObject.id);
 
-						if (compareTo == 0) {
+						if (compareTo == 0)
 							compareTo = Util.compare(name, castedObject.name);
-
-							if (compareTo == 0)
-								compareTo =
-									Util.compare(
-										parentId,
-										castedObject.parentId);
-						}
 					}
 				}
 			}
@@ -121,7 +114,6 @@ final class Activity implements IActivity {
 		equals &= Util.equals(enabled, castedObject.enabled);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
 		return equals;
 	}
 
@@ -154,13 +146,6 @@ final class Activity implements IActivity {
 		return name;
 	}
 
-	public String getParentId() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-
-		return parentId;
-	}
-
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -173,7 +158,6 @@ final class Activity implements IActivity {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
 
@@ -305,18 +289,6 @@ final class Activity implements IActivity {
 		return false;
 	}
 
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
-
-		return false;
-	}
-
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
@@ -332,8 +304,6 @@ final class Activity implements IActivity {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

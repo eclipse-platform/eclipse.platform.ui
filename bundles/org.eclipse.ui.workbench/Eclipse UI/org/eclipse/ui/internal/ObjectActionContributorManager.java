@@ -321,7 +321,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		if (objects == null || objects.size() == 0) {
 			return null;
 		}
-		Class resourceClass = ObjectContributorManager.getResourceClass();
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
 		if (resourceClass == null) {
 			// resources plug-in not loaded - no resources. period.
 			return null;

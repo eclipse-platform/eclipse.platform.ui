@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ImageBindingDefinition implements IImageBindingDefinition {
+public final class ImageBindingDefinition implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -34,9 +34,9 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IImageBindingDefinition.class);
-			IImageBindingDefinition imageBindingDefinition =
-				(IImageBindingDefinition) object;
+			Util.assertInstance(object, ImageBindingDefinition.class);
+			ImageBindingDefinition imageBindingDefinition =
+				(ImageBindingDefinition) object;
 			String commandId = imageBindingDefinition.getCommandId();
 
 			if (commandId != null) {

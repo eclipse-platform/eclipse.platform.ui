@@ -21,9 +21,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+
+import org.eclipse.ui.internal.util.Util;
 
 final class KeySequenceBindingNode {
 
@@ -210,7 +211,7 @@ final class KeySequenceBindingNode {
 		return keyStrokeNodeByKeyStrokeMap;
 	}
 
-	static Map getAssignmentsByActivityIdKeySequence(
+	static Map getAssignmentsByContextIdKeySequence(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence prefix) {
 		Map assignmentsByActivityIdByKeySequence = new HashMap();
@@ -225,7 +226,7 @@ final class KeySequenceBindingNode {
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
 			Map childAssignmentsByActivityIdByKeySequence =
-				getAssignmentsByActivityIdKeySequence(
+				getAssignmentsByContextIdKeySequence(
 					keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap,
 					keySequence);
 

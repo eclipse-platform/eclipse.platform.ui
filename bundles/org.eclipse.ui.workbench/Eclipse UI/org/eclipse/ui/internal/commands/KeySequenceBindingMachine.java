@@ -20,8 +20,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+
+import org.eclipse.ui.internal.util.Util;
 
 final class KeySequenceBindingMachine {
 
@@ -171,7 +172,7 @@ final class KeySequenceBindingMachine {
 		keySequenceBindings0 =
 			Util.safeCopy(
 				keySequenceBindings0,
-				IKeySequenceBindingDefinition.class);
+				KeySequenceBindingDefinition.class);
 
 		if (!this.keySequenceBindings[0].equals(keySequenceBindings0)) {
 			this.keySequenceBindings[0] = keySequenceBindings0;
@@ -186,7 +187,7 @@ final class KeySequenceBindingMachine {
 		keySequenceBindings1 =
 			Util.safeCopy(
 				keySequenceBindings1,
-				IKeySequenceBindingDefinition.class);
+				KeySequenceBindingDefinition.class);
 
 		if (!this.keySequenceBindings[1].equals(keySequenceBindings1)) {
 			this.keySequenceBindings[1] = keySequenceBindings1;
@@ -218,12 +219,12 @@ final class KeySequenceBindingMachine {
 				Iterator iterator = keySequenceBindings[i].iterator();
 
 				while (iterator.hasNext()) {
-					IKeySequenceBindingDefinition keySequenceBindingDefinition =
-						(IKeySequenceBindingDefinition) iterator.next();
+					KeySequenceBindingDefinition keySequenceBindingDefinition =
+						(KeySequenceBindingDefinition) iterator.next();
 					KeySequenceBindingNode.add(
 						tree,
 						keySequenceBindingDefinition.getKeySequence(),
-						keySequenceBindingDefinition.getActivityId(),
+						keySequenceBindingDefinition.getContextId(),
 						keySequenceBindingDefinition.getKeyConfigurationId(),
 						i,
 						keySequenceBindingDefinition.getPlatform(),

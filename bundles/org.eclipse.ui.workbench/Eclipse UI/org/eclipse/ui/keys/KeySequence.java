@@ -14,9 +14,7 @@ package org.eclipse.ui.keys;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import org.eclipse.ui.internal.util.Util;
@@ -51,7 +49,7 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class KeySequence implements Comparable {
-	
+
 	/**
 	 * An empty key sequence instance for use by everyone.
 	 */
@@ -65,33 +63,13 @@ public final class KeySequence implements Comparable {
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
 	 */
-	private final static int HASH_INITIAL =
-		KeySequence.class.getName().hashCode();
-
-	/**
-	 * The delimiter for <code>KeyStrokes</code> objects in the formal string
-	 * representation.
-	 */
-	public final static char KEY_STROKE_DELIMITER = '\u0020';
-
-	/**
-	 * An internal constant used to find the translation of the key delimiter
-	 * in the resource bundle.
-	 */
-	private final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+	private final static int HASH_INITIAL = KeySequence.class.getName().hashCode();
 
 	/**
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed
 	 * during parsing of the formal string representation.
 	 */
-	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
-
-	/**
-	 * The resource bundle used by <code>format()</code> to translate formal
-	 * string representations by locale.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(KeySequence.class.getName());
+	public final static String KEY_STROKE_DELIMITERS = KeyFormatter.KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**
 	 * Gets an instance of <code>KeySequence</code>.
@@ -115,9 +93,7 @@ public final class KeySequence implements Comparable {
 	 *         given key stroke appended to the end. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public static KeySequence getInstance(
-		KeySequence keySequence,
-		KeyStroke keyStroke) {
+	public static KeySequence getInstance(KeySequence keySequence, KeyStroke keyStroke) {
 		if (keySequence == null || keyStroke == null)
 			throw new NullPointerException();
 
@@ -177,14 +153,12 @@ public final class KeySequence implements Comparable {
 	 *             if the given formal string representation could not be
 	 *             parsed to a valid key sequence.
 	 */
-	public static KeySequence getInstance(String string)
-		throws ParseException {
+	public static KeySequence getInstance(String string) throws ParseException {
 		if (string == null)
 			throw new NullPointerException();
 
 		List keyStrokes = new ArrayList();
-		StringTokenizer stringTokenizer =
-			new StringTokenizer(string, KEY_STROKE_DELIMITERS);
+		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_STROKE_DELIMITERS);
 
 		while (stringTokenizer.hasMoreTokens())
 			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
@@ -214,14 +188,6 @@ public final class KeySequence implements Comparable {
 	 * The list of key strokes for this key sequence.
 	 */
 	private List keyStrokes;
-
-	/**
-	 * The cached formal string representation for this object. Because <code>KeySequence</code>
-	 * objects are immutable, their formal string representations need only to
-	 * be computed once. After the first call to <code>toString()</code>,
-	 * the computed value is cached here for all subsequent calls.
-	 */
-	private transient String string;
 
 	/**
 	 * Constructs an instance of <code>KeySequence</code> given a list of key
@@ -270,34 +236,28 @@ public final class KeySequence implements Comparable {
 	}
 
 	/**
-	 * Returns the formal string representation of this key sequence,
-	 * translated for the user's current platform and locale.
+	 * Formats this key sequence into the native look.
 	 * 
-	 * @return The formal string representation of this key sequence,
-	 *         translated for the user's current platform and locale.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return A string representation for this key sequence using the native
+	 *         look; never <code>null</code>.
 	 */
 	public String format() {
-		int i = 0;
-		String keyStrokeDelimiter =
-			Util.translateString(
-				RESOURCE_BUNDLE,
-				KEY_STROKE_DELIMITER_KEY,
-				Character.toString(KEY_STROKE_DELIMITER),
-				false,
-				false);
-		StringBuffer stringBuffer = new StringBuffer();
+		return format(FormatManager.NATIVE);
+	}
 
-		for (Iterator iterator = keyStrokes.iterator(); iterator.hasNext();) {
-			if (i != 0)
-				stringBuffer.append(keyStrokeDelimiter);
-
-			KeyStroke keyStroke = (KeyStroke) iterator.next();
-			stringBuffer.append(keyStroke.format());
-			i++;
-		}
-
-		return stringBuffer.toString();
+	/**
+	 * Formats this key sequence into the given <code>format</code>.
+	 * 
+	 * @param format
+	 *            The integer constant representing the format you want. This
+	 *            value must be one of the constants defined in the <code>FormatManager</code>.
+	 *            If it is not, then it the <code>FormalKeyFormatter</code>
+	 *            is used.
+	 * @return A string representation for this key sequence in the given
+	 *         format; never <code>null</code>.
+	 */
+	public String format(int format) {
+		return FormatManager.getFormatter(format).format(this);
 	}
 
 	/**
@@ -374,24 +334,6 @@ public final class KeySequence implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		if (string == null) {
-			int i = 0;
-			StringBuffer stringBuffer = new StringBuffer();
-
-			for (Iterator iterator = keyStrokes.iterator();
-				iterator.hasNext();
-				) {
-				if (i != 0)
-					stringBuffer.append(KEY_STROKE_DELIMITER);
-
-				KeyStroke keyStroke = (KeyStroke) iterator.next();
-				stringBuffer.append(keyStroke.toString());
-				i++;
-			}
-
-			string = stringBuffer.toString();
-		}
-
-		return string;
+		return format(FormatManager.FORMAL);
 	}
 }

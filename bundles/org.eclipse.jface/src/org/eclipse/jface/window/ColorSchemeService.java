@@ -72,20 +72,20 @@ public class ColorSchemeService {
 //		control.setForeground(
 //			JFaceColors.getSchemeForeground(control.getDisplay()));
 
-		if (control instanceof CBanner) {
-			setCBannerColors((CBanner)control);
-		}
+//		if (control instanceof CBanner) {
+//			setCBannerColors((CBanner)control);
+//		}
 	}
 
-	/**
-	 * @param banner
-	 */
-	public static void setCBannerColors(CBanner control) {
-		Display d = control.getDisplay();
-		control.setBackground(JFaceColors.getSchemeBackground(d));
-		control.setForeground(JFaceColors.getTabFolderSelectionBackground(d));		
-		
-	}
+//	/**
+//	 * @param banner
+//	 */
+//	public static void setCBannerColors(CBanner control) {
+//		Display d = control.getDisplay();
+//		control.setBackground(JFaceColors.getSchemeBackground(d));
+//		control.setForeground(JFaceColors.getTabFolderSelectionBackground(d));		
+//		
+//	}
 
 	public static void setTabColors(CTabFolder2 control) {
 		Display d = control.getDisplay();

@@ -11,11 +11,11 @@
 package org.eclipse.ui.internal.activities.ws;
 
 /**
- * Abstract baseclass for objects that wish to respond to filtering states.
+ * Baseclass for objects that wish to respond to filtering states.
  * 
  * @since 3.0
  */
-public abstract class FilterableObject {
+public class FilterableObject {
 
 	/**
 	 * Whether this object is filtering.
@@ -33,7 +33,7 @@ public abstract class FilterableObject {
 	}
 
 	/**
-     * @return whether this objectis currently set to filter its content
+     * @return whether this object is currently set to filter its content
      *         based on activity enablement.
      */
 	public boolean getFiltering() {

@@ -8,25 +8,25 @@ import org.eclipse.ui.internal.WorkbenchPage;
 
 public class WorkbenchPageContextSupport
 	implements IWorkbenchPageContextSupport {
-	private ICompoundContextActivationService compoundActivityService;
+	private ICompoundContextActivationService compoundContextActivationService;
 	private WorkbenchPage workbenchPage;
-	
+
 	public WorkbenchPageContextSupport(WorkbenchPage workbenchPage) {
 		if (workbenchPage == null)
 			throw new NullPointerException();
-		
+
 		this.workbenchPage = workbenchPage;
-		compoundActivityService =
-		ContextActivationServiceFactory
-		.getCompoundContextActivationService();
+		compoundContextActivationService =
+			ContextActivationServiceFactory
+				.getCompoundContextActivationService();
 	}
 
 	public ICompoundContextActivationService getCompoundContextActivationService() {
 		Perspective perspective = workbenchPage.getActivePerspective();
-		
+
 		if (perspective != null)
 			return perspective.getCompoundContextActivationService();
-		else 
-			return compoundActivityService;
-	}	
+		else
+			return compoundContextActivationService;
+	}
 }

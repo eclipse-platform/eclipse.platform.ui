@@ -11,12 +11,10 @@
 
 package org.eclipse.ui.keys;
 
-import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -41,12 +39,12 @@ public final class ModifierKey extends Key {
 	 * given the formal string representation of a modifier key.
 	 */
 	static SortedMap modifierKeysByName = new TreeMap();
-	
+
 	/**
 	 * The name of the 'Alt' key.
 	 */
-	private final static String ALT_NAME = "ALT"; //$NON-NLS-1$
-	
+	public final static String ALT_NAME = "ALT"; //$NON-NLS-1$
+
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
 	 * represents the 'Alt' key.
@@ -56,7 +54,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Command' key.
 	 */
-	private final static String COMMAND_NAME = "COMMAND"; //$NON-NLS-1$
+	public final static String COMMAND_NAME = "COMMAND"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
@@ -67,8 +65,8 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Ctrl' key.
 	 */
-	private final static String CTRL_NAME = "CTRL"; //$NON-NLS-1$
-	
+	public final static String CTRL_NAME = "CTRL"; //$NON-NLS-1$
+
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
 	 * represents the 'Ctrl' key.
@@ -78,7 +76,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'M1' key.
 	 */
-	private final static String M1_NAME = "M1"; //$NON-NLS-1$	
+	public final static String M1_NAME = "M1"; //$NON-NLS-1$	
 
 	/**
 	 * The name of the 'M2' key.
@@ -89,23 +87,16 @@ public final class ModifierKey extends Key {
 	 * The name of the 'M3' key.
 	 */
 	private final static String M3_NAME = "M3"; //$NON-NLS-1$
-	
+
 	/**
 	 * The name of the 'M4' key.
 	 */
 	private final static String M4_NAME = "M4"; //$NON-NLS-1$
-	
-	/**
-	 * The resource bundle used by <code>format()</code> to translate key
-	 * names by locale.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(ModifierKey.class.getName());
-	
+
 	/**
 	 * The name of the 'Shift' key.
 	 */
-	private final static String SHIFT_NAME = "SHIFT"; //$NON-NLS-1$	
+	public final static String SHIFT_NAME = "SHIFT"; //$NON-NLS-1$	
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
@@ -123,7 +114,7 @@ public final class ModifierKey extends Key {
 		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
 		modifierKeysByName.put(M4_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Constructs an instance of <code>ModifierKey</code> given a name.
 	 * 
@@ -132,29 +123,5 @@ public final class ModifierKey extends Key {
 	 */
 	private ModifierKey(String name) {
 		super(name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.Key#format()
-	 */
-	public String format() {
-		// TODO consider platform-specific resource bundles.
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
-			if (ALT_NAME.equals(name))
-				return Character.toString('\u2325');
-
-			if (COMMAND_NAME.equals(name))
-				return Character.toString('\u2318');
-
-			if (CTRL_NAME.equals(name))
-				return Character.toString('\u2303');
-
-			if (SHIFT_NAME.equals(name))
-				return Character.toString('\u21E7');
-		}
-
-		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
 	}
 }

@@ -78,12 +78,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -263,9 +265,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// let the application do further configuration
 		getAdvisor().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
-		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
-				
-		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);		
+		getAdvisor().fillActionBars(
+			this,
+			getWindowConfigurer().getActionBarConfigurer(),
+			FILL_ALL_ACTION_BARS);
+
+		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
+		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
 	}
 	/**
 	 * Return the style bits for the fastView bar.
@@ -930,17 +936,17 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
 			IMutableContextActivationService mutableContextActivationService =
-				ContextActivationServiceFactory
-					.getMutableContextActivationService();
+				ContextActivationServiceFactory.getMutableContextActivationService();
 			IWorkbenchContextSupport workbenchContextSupport =
-				(IWorkbenchContextSupport) getWorkbenchImpl().getAdapter(IWorkbenchContextSupport
-					.class);
-			workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(mutableContextActivationService);			
+				(IWorkbenchContextSupport) getWorkbenchImpl().getAdapter(
+					IWorkbenchContextSupport.class);
+			workbenchContextSupport
+				.getCompoundContextActivationService()
+				.addContextActivationService(
+				mutableContextActivationService);
 			keyBindingService =
 				new KeyBindingService(
-					getWorkbenchImpl()
-						.workbenchCommandsAndContexts
-						.getActionService(),
+					getWorkbenchImpl().workbenchCommandsAndContexts.getActionService(),
 					mutableContextActivationService);
 			updateActiveActions();
 		}
@@ -1036,19 +1042,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return PlatformUI.getWorkbench();
 	}
 	public String getToolbarLabel(String actionSetId) {
-		ActionSetRegistry registry =
-			WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
 		if (actionSet != null) {
 			return actionSet.getLabel();
 		} else {
-			if (IWorkbenchActionConstants
-				.TOOLBAR_FILE
-				.equalsIgnoreCase(actionSetId))
+			if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId))
 				return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
-			if (IWorkbenchActionConstants
-				.TOOLBAR_NAVIGATE
-				.equalsIgnoreCase(actionSetId))
+			if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId))
 				return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
 		}
 		return null;
@@ -1887,7 +1888,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
 		getAdvisor().fillActionBars(this, configurer, flags);
 	}
-	/*
+	private IWorkbenchWindowCommandSupport workbenchWindowCommandSupport;	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.window.Window#initializeBounds()
@@ -1898,19 +1899,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}	
 	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
 	
-	public Object getAdapter(Class adapter) {
-		if (IWorkbenchWindowContextSupport.class.equals(adapter))
-			return workbenchWindowContextSupport;
-		else
-			return null;
-	}
-
+	
 	/**
 	 * Set the layout data for the contents of the window.
 	 *  
 	 */
 	private void setLayoutDataForContents() {
-
 		FormData topData = new FormData();
 
 		topData.top = new FormAttachment(0);
@@ -1954,18 +1948,38 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	}
 
+	public IWorkbenchWindowContextSupport getContextSupport() {
+		return workbenchWindowContextSupport;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindow#getCommandSupport()
+	 */
+	public IWorkbenchWindowCommandSupport getCommandSupport() {
+		return workbenchWindowCommandSupport;
+	}
+	
 	/**
 	 * Returns the fast view bar.
 	 */
 	public ToolBarManager getFastViewBar() {
 		return fastViewBar;
 	}
-
+	
 	/**
 	 * Returns the perspective bar.
 	 */
 	public ToolBarManager getPerspectiveBar() {
 		return perspectiveBar;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchWindowCommandSupport.class.equals(adapter))
+			return getCommandSupport();
+		else if (IWorkbenchWindowContextSupport.class.equals(adapter))
+			return getContextSupport();
+		else
+			return null;
 	}
 
 	/**

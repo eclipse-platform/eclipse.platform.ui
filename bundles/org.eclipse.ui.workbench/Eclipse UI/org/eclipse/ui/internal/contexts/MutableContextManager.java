@@ -23,11 +23,13 @@ import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextContextBinding;
 import org.eclipse.ui.contexts.IMutableContextManager;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextManager
@@ -52,11 +54,11 @@ public final class MutableContextManager
 
 		return false;
 	}
-
-	private Map contextsById = new WeakHashMap();
 	private Map contextContextBindingsByParentContextId = new HashMap();
 	private Map contextDefinitionsById = new HashMap();
 	private IContextRegistry contextRegistry;
+
+	private Map contextsById = new WeakHashMap();
 	private Set definedContextIds = new HashSet();
 	private Set enabledContextIds = new HashSet();
 
@@ -111,16 +113,14 @@ public final class MutableContextManager
 			String contextId = (String) iterator.next();
 			IContext context = getContext(contextId);
 			Set childContextIds = new HashSet();
-			Set contextContextBindings =
-				context.getContextContextBindings();
+			Set contextContextBindings = context.getContextContextBindings();
 
 			for (Iterator iterator2 = contextContextBindings.iterator();
 				iterator2.hasNext();
 				) {
 				IContextContextBinding contextContextBinding =
 					(IContextContextBinding) iterator2.next();
-				childContextIds.add(
-					contextContextBinding.getChildContextId());
+				childContextIds.add(contextContextBinding.getChildContextId());
 			}
 
 			childContextIds.removeAll(requiredContextIds);
@@ -130,8 +130,7 @@ public final class MutableContextManager
 	}
 
 	private void notifyContexts(Map contextEventsByContextId) {
-		for (Iterator iterator =
-			contextEventsByContextId.entrySet().iterator();
+		for (Iterator iterator = contextEventsByContextId.entrySet().iterator();
 			iterator.hasNext();
 			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -197,11 +196,9 @@ public final class MutableContextManager
 						iterator2.hasNext();
 						) {
 						ContextContextBindingDefinition contextContextBindingDefinition =
-							(ContextContextBindingDefinition) iterator2
-								.next();
+							(ContextContextBindingDefinition) iterator2.next();
 						String childContextId =
-							contextContextBindingDefinition
-								.getChildContextId();
+							contextContextBindingDefinition.getChildContextId();
 
 						if (contextDefinitionsById
 							.containsKey(childContextId)) {
@@ -222,8 +219,7 @@ public final class MutableContextManager
 									contextContextBindings);
 							}
 
-							contextContextBindings.add(
-								contextContextBinding);
+							contextContextBindings.add(contextContextBinding);
 						}
 					}
 			}
@@ -249,11 +245,9 @@ public final class MutableContextManager
 			enabledContextIdsChanged = true;
 		}
 
-		Map contextEventsByContextId =
-			updateContexts(contextsById.keySet());
+		Map contextEventsByContextId = updateContexts(contextsById.keySet());
 
-		if (definedContextIdsChanged
-			|| enabledContextIdsChanged)
+		if (definedContextIdsChanged || enabledContextIdsChanged)
 			fireContextManagerChanged(
 				new ContextManagerEvent(
 					this,
@@ -275,8 +269,7 @@ public final class MutableContextManager
 		if (!this.enabledContextIds.equals(enabledContextIds)) {
 			this.enabledContextIds = enabledContextIds;
 			contextManagerChanged = true;
-			contextEventsByContextId =
-				updateContexts(this.definedContextIds);
+			contextEventsByContextId = updateContexts(this.definedContextIds);
 		}
 
 		if (contextManagerChanged)
@@ -287,28 +280,9 @@ public final class MutableContextManager
 			notifyContexts(contextEventsByContextId);
 	}
 
-	private Map updateContexts(Collection contextIds) {
-		Map contextEventsByContextId = new TreeMap();
-
-		for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
-			String contextId = (String) iterator.next();
-			Context context = (Context) contextsById.get(contextId);
-
-			if (context != null) {
-				ContextEvent contextEvent = updateContext(context);
-
-				if (contextEvent != null)
-					contextEventsByContextId.put(contextId, contextEvent);
-			}
-		}
-
-		return contextEventsByContextId;
-	}
-
 	private ContextEvent updateContext(Context context) {
 		Set contextContextBindings =
-			(Set) contextContextBindingsByParentContextId.get(
-				context.getId());
+			(Set) contextContextBindingsByParentContextId.get(context.getId());
 		boolean contextContextBindingsChanged =
 			context.setContextContextBindings(
 				contextContextBindings != null
@@ -316,15 +290,12 @@ public final class MutableContextManager
 					: Collections.EMPTY_SET);
 		ContextDefinition contextDefinition =
 			(ContextDefinition) contextDefinitionsById.get(context.getId());
-		boolean definedChanged =
-			context.setDefined(contextDefinition != null);
+		boolean definedChanged = context.setDefined(contextDefinition != null);
 		boolean enabledChanged =
 			context.setEnabled(enabledContextIds.contains(context.getId()));
 		boolean nameChanged =
 			context.setName(
-				contextDefinition != null
-					? contextDefinition.getName()
-					: null);
+				contextDefinition != null ? contextDefinition.getName() : null);
 		boolean parentIdChanged =
 			context.setParentId(
 				contextDefinition != null
@@ -345,5 +316,23 @@ public final class MutableContextManager
 				parentIdChanged);
 		else
 			return null;
+	}
+
+	private Map updateContexts(Collection contextIds) {
+		Map contextEventsByContextId = new TreeMap();
+
+		for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
+			String contextId = (String) iterator.next();
+			Context context = (Context) contextsById.get(contextId);
+
+			if (context != null) {
+				ContextEvent contextEvent = updateContext(context);
+
+				if (contextEvent != null)
+					contextEventsByContextId.put(contextId, contextEvent);
+			}
+		}
+
+		return contextEventsByContextId;
 	}
 }

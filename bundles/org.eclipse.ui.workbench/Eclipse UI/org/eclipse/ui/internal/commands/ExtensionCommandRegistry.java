@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.registry.IConfigurationElement;
-import org.eclipse.core.runtime.registry.IExtension;
-import org.eclipse.core.runtime.registry.IExtensionDelta;
-import org.eclipse.core.runtime.registry.IExtensionRegistry;
-import org.eclipse.core.runtime.registry.IRegistryChangeEvent;
-import org.eclipse.core.runtime.registry.IRegistryChangeListener;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
@@ -191,7 +191,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readActiveKeyConfigurationDefinition(IConfigurationElement configurationElement) {
-		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
+		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
 			Persistence.readActiveKeyConfigurationDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -202,7 +202,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readActivityBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityBindingDefinition activityBindingDefinition =
+		ContextBindingDefinition activityBindingDefinition =
 			Persistence.readActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -212,7 +212,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readCategoryDefinition(IConfigurationElement configurationElement) {
-		ICategoryDefinition categoryDefinition =
+		CategoryDefinition categoryDefinition =
 			Persistence.readCategoryDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -222,7 +222,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readCommandDefinition(IConfigurationElement configurationElement) {
-		ICommandDefinition commandDefinition =
+		CommandDefinition commandDefinition =
 			Persistence.readCommandDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -232,7 +232,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readImageBindingDefinition(IConfigurationElement configurationElement) {
-		IImageBindingDefinition imageBinding =
+		ImageBindingDefinition imageBinding =
 			Persistence.readImageBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -242,7 +242,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readKeyConfigurationDefinition(IConfigurationElement configurationElement) {
-		IKeyConfigurationDefinition keyConfigurationDefinition =
+		KeyConfigurationDefinition keyConfigurationDefinition =
 			Persistence.readKeyConfigurationDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -252,7 +252,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readKeySequenceBindingDefinition(IConfigurationElement configurationElement) {
-		IKeySequenceBindingDefinition keySequenceBindingDefinition =
+		KeySequenceBindingDefinition keySequenceBindingDefinition =
 			Persistence.readKeySequenceBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));

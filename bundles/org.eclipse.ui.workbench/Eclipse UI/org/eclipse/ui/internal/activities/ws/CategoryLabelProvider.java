@@ -38,15 +38,6 @@ public class CategoryLabelProvider extends LabelProvider {
 		this.activityManager = activityManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		return null;
-	}
-
 	/**
 	 * Provide label text for a given <code>ICategory</code>.
 	 * 
@@ -64,6 +55,15 @@ public class CategoryLabelProvider extends LabelProvider {
 		} catch (NotDefinedException e) {
 			return category.getId();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	 */
+	public Image getImage(Object element) {
+		return null;
 	}
 
 	/*

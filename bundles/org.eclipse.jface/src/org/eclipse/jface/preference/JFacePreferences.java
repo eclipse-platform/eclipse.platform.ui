@@ -32,6 +32,11 @@ public final class JFacePreferences {
 	public static final String SCHEME_TAB_SELECTION_FOREGROUND = JFaceColors.SCHEME_TAB_SELECTION_FOREGROUND;
 	//Identifier for the Color Scheme Selected Tab Background Colour
 	public static final String SCHEME_TAB_SELECTION_BACKGROUND = JFaceColors.SCHEME_TAB_SELECTION_BACKGROUND;
+	//Identifier for the Color Scheme Tab Foreground Colour
+	public static final String SCHEME_TAB_FOREGROUND = JFaceColors.SCHEME_TAB_FOREGROUND;
+	//Identifier for the Color Scheme Tab Background Colour
+	public static final String SCHEME_TAB_BACKGROUND = JFaceColors.SCHEME_TAB_BACKGROUND;
+	
 	public static final String SCHEME_BACKGROUND_COLOR = JFaceColors.SCHEME_BACKGROUND; //$NON-NLS-1$
 	//Identifier for the Color Scheme Foreground Colour
 	public static final String SCHEME_FOREGROUND_COLOR = JFaceColors.SCHEME_FOREGROUND;

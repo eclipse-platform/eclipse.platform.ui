@@ -32,11 +32,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.CategoryEvent;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.CommandManagerEvent;
-import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.KeyConfigurationEvent;
 import org.eclipse.ui.commands.NotDefinedException;
@@ -88,9 +88,9 @@ public final class CommandManager implements ICommandManager {
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
-			IKeyConfigurationDefinition keyConfigurationDefinition =
+			KeyConfigurationDefinition keyConfigurationDefinition =
 				(
-					IKeyConfigurationDefinition) keyConfigurationDefinitionsById
+					KeyConfigurationDefinition) keyConfigurationDefinitionsById
 						.get(
 					id);
 			visited.add(id);
@@ -109,8 +109,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) iterator.next();
+			ContextBindingDefinition activityBindingDefinition =
+				(ContextBindingDefinition) iterator.next();
 
 			if (activityBindingDefinition.getCommandId() == null)
 				iterator.remove();
@@ -121,8 +121,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IImageBindingDefinition imageBindingDefinition =
-				(IImageBindingDefinition) iterator.next();
+			ImageBindingDefinition imageBindingDefinition =
+				(ImageBindingDefinition) iterator.next();
 
 			if (imageBindingDefinition.getCommandId() == null
 				|| imageBindingDefinition.getImageUri() == null)
@@ -147,13 +147,16 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = keySequenceBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IKeySequenceBindingDefinition keySequenceBindingDefinition =
-				(IKeySequenceBindingDefinition) iterator.next();
-			String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
+			KeySequenceBindingDefinition keySequenceBindingDefinition =
+				(KeySequenceBindingDefinition) iterator.next();
+			String keyConfigurationId =
+				keySequenceBindingDefinition.getKeyConfigurationId();
 			KeySequence keySequence =
 				keySequenceBindingDefinition.getKeySequence();
 
-			if (keyConfigurationId == null || keySequence == null || !validateKeySequence(keySequence))
+			if (keyConfigurationId == null
+				|| keySequence == null
+				|| !validateKeySequence(keySequence))
 				iterator.remove();
 		}
 	}
@@ -428,7 +431,7 @@ public final class CommandManager implements ICommandManager {
 			String activeActivityId = (String) iterator.next();
 
 			if (activityBindings
-				.contains(new ActivityBinding(activeActivityId)));
+				.contains(new ContextBinding(activeActivityId)));
 			return true;
 		}
 
@@ -505,8 +508,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = categoryDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) iterator.next();
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) iterator.next();
 			String name = categoryDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -526,8 +529,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = commandDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICommandDefinition commandDefinition =
-				(ICommandDefinition) iterator.next();
+			CommandDefinition commandDefinition =
+				(CommandDefinition) iterator.next();
 			String name = commandDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -549,8 +552,8 @@ public final class CommandManager implements ICommandManager {
 			keyConfigurationDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			IKeyConfigurationDefinition keyConfigurationDefinition =
-				(IKeyConfigurationDefinition) iterator.next();
+			KeyConfigurationDefinition keyConfigurationDefinition =
+				(KeyConfigurationDefinition) iterator.next();
 			String name = keyConfigurationDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -561,8 +564,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = commandDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICommandDefinition commandDefinition =
-				(ICommandDefinition) iterator.next();
+			CommandDefinition commandDefinition =
+				(CommandDefinition) iterator.next();
 			String categoryId = commandDefinition.getCategoryId();
 
 			if (categoryId != null
@@ -589,9 +592,9 @@ public final class CommandManager implements ICommandManager {
 		String activeKeyConfigurationId = null;
 
 		if (!activeKeyConfigurationDefinitions.isEmpty()) {
-			IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
+			ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
 				(
-					IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions
+					ActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions
 						.get(
 					activeKeyConfigurationDefinitions.size() - 1);
 			activeKeyConfigurationId =
@@ -603,12 +606,15 @@ public final class CommandManager implements ICommandManager {
 				activeKeyConfigurationId = null;
 		}
 
-		// TODO - if null, pick the first key configuration in sorted order by id?
-		if (activeKeyConfigurationId == null && !keyConfigurationDefinitionsById.isEmpty()) {
-			SortedSet sortedSet = new TreeSet(keyConfigurationDefinitionsById.keySet());
-			activeKeyConfigurationId = (String) sortedSet.first(); 
-		}		
-		
+		// TODO - if null, pick the first key configuration in sorted order by
+		// id?
+		if (activeKeyConfigurationId == null
+			&& !keyConfigurationDefinitionsById.isEmpty()) {
+			SortedSet sortedSet =
+				new TreeSet(keyConfigurationDefinitionsById.keySet());
+			activeKeyConfigurationId = (String) sortedSet.first();
+		}
+
 		this.categoryDefinitionsById = categoryDefinitionsById;
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;
@@ -657,8 +663,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = activityBindingDefinitions.iterator();
 			iterator.hasNext();
 			) {
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) iterator.next();
+			ContextBindingDefinition activityBindingDefinition =
+				(ContextBindingDefinition) iterator.next();
 			String activityId = activityBindingDefinition.getActivityId();
 			String commandId = activityBindingDefinition.getCommandId();
 			SortedSet sortedSet =
@@ -669,7 +675,7 @@ public final class CommandManager implements ICommandManager {
 				activityBindingsByCommandId.put(commandId, sortedSet);
 			}
 
-			sortedSet.add(new ActivityBinding(activityId));
+			sortedSet.add(new ContextBinding(activityId));
 		}
 
 		this.activityBindingsByCommandId = activityBindingsByCommandId;
@@ -734,7 +740,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public void setActionsById(Map actionsById) {
-		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);
+		actionsById = Util.safeCopy(actionsById, String.class, IHandler.class);
 
 		if (!Util.equals(actionsById, this.actionsById)) {
 			this.actionsById = actionsById;
@@ -745,7 +751,7 @@ public final class CommandManager implements ICommandManager {
 				) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String commandId = (String) entry.getKey();
-				IAction action = (IAction) entry.getValue();
+				IHandler action = (IHandler) entry.getValue();
 
 				if (commandId != null && action instanceof ActionHandler) {
 					ActionHandler actionHandler = (ActionHandler) action;
@@ -906,8 +912,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private CategoryEvent updateCategory(Category category) {
-		ICategoryDefinition categoryDefinition =
-			(ICategoryDefinition) categoryDefinitionsById.get(category.getId());
+		CategoryDefinition categoryDefinition =
+			(CategoryDefinition) categoryDefinitionsById.get(category.getId());
 		boolean definedChanged =
 			category.setDefined(categoryDefinition != null);
 		boolean descriptionChanged =
@@ -943,8 +949,8 @@ public final class CommandManager implements ICommandManager {
 				activityBindings != null
 					? new ArrayList(activityBindings)
 					: Collections.EMPTY_LIST);
-		ICommandDefinition commandDefinition =
-			(ICommandDefinition) commandDefinitionsById.get(command.getId());
+		CommandDefinition commandDefinition =
+			(CommandDefinition) commandDefinitionsById.get(command.getId());
 		boolean categoryIdChanged =
 			command.setCategoryId(
 				commandDefinition != null
@@ -1022,8 +1028,8 @@ public final class CommandManager implements ICommandManager {
 				Util.equals(
 					activeKeyConfigurationId,
 					keyConfiguration.getId()));
-		IKeyConfigurationDefinition keyConfigurationDefinition =
-			(IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(
+		KeyConfigurationDefinition keyConfigurationDefinition =
+			(KeyConfigurationDefinition) keyConfigurationDefinitionsById.get(
 				keyConfiguration.getId());
 		boolean definedChanged =
 			keyConfiguration.setDefined(keyConfigurationDefinition != null);

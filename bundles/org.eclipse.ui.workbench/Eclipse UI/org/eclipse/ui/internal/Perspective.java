@@ -56,6 +56,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -187,7 +189,12 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	fastViews = new ArrayList(2);
 }
 
+private final ICompoundCommandHandlerService compoundCommandHandlerService = CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 private final ICompoundContextActivationService compoundContextActivationService = ContextActivationServiceFactory.getCompoundContextActivationService();
+
+public ICompoundCommandHandlerService getCompoundCommandHandlerService() {
+	return compoundCommandHandlerService;
+}
 
 public ICompoundContextActivationService getCompoundContextActivationService() {
 	return compoundContextActivationService;
@@ -656,7 +663,7 @@ private void loadPredefinedPersp(
 
 	// Create layout factory.
 	RootLayoutContainer container = new RootLayoutContainer(page);
-	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea);
+	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 
 	// Run layout engine.
 	factory.createInitialLayout(layout);

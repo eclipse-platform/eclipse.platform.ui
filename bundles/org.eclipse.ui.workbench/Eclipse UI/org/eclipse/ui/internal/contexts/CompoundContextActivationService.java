@@ -27,11 +27,10 @@ public final class CompoundContextActivationService
 	extends AbstractContextActivationService
 	implements ICompoundContextActivationService {
 	private Set activeContextIds = new HashSet();
-
 	private final IContextActivationServiceListener contextActivationServiceListener =
 		new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
-			refreshActiveContextIds();
+			update();
 		}
 	};
 	private final HashSet contextActivationServices = new HashSet();
@@ -46,7 +45,7 @@ public final class CompoundContextActivationService
 		contextActivationService.addContextActivationServiceListener(
 			contextActivationServiceListener);
 		contextActivationServices.add(contextActivationService);
-		refreshActiveContextIds();
+		update();
 	}
 
 	public Set getActiveContextIds() {
@@ -60,22 +59,7 @@ public final class CompoundContextActivationService
 		contextActivationServices.remove(contextActivationService);
 		contextActivationService.removeContextActivationServiceListener(
 			contextActivationServiceListener);
-		refreshActiveContextIds();
-	}
-
-	private void refreshActiveContextIds() {
-		Set activeContextIds = new HashSet();
-
-		for (Iterator iterator = contextActivationServices.iterator();
-			iterator.hasNext();
-			) {
-			IContextActivationService contextActivationService =
-				(IContextActivationService) iterator.next();
-			activeContextIds.addAll(
-				contextActivationService.getActiveContextIds());
-		}
-
-		setActiveContextIds(activeContextIds);
+		update();
 	}
 
 	private void setActiveContextIds(Set activeContextIds) {
@@ -88,5 +72,20 @@ public final class CompoundContextActivationService
 			fireContextActivationServiceChanged(
 				new ContextActivationServiceEvent(this, true));
 		}
+	}
+
+	private void update() {
+		Set activeContextIds = new HashSet();
+
+		for (Iterator iterator = contextActivationServices.iterator();
+			iterator.hasNext();
+			) {
+			IContextActivationService contextActivationService =
+				(IContextActivationService) iterator.next();
+			activeContextIds.addAll(
+				contextActivationService.getActiveContextIds());
+		}
+
+		setActiveContextIds(activeContextIds);
 	}
 }

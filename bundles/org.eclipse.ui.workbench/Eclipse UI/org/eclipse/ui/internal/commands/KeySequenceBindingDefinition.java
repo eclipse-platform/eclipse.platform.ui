@@ -17,11 +17,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
+import org.eclipse.ui.internal.util.Util;
+
 public final class KeySequenceBindingDefinition
-	implements IKeySequenceBindingDefinition {
+	implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -36,9 +37,9 @@ public final class KeySequenceBindingDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeySequenceBindingDefinition.class);
-			IKeySequenceBindingDefinition keySequenceBindingDefinition =
-				(IKeySequenceBindingDefinition) object;
+			Util.assertInstance(object, KeySequenceBindingDefinition.class);
+			KeySequenceBindingDefinition keySequenceBindingDefinition =
+				(KeySequenceBindingDefinition) object;
 			String commandId = keySequenceBindingDefinition.getCommandId();
 
 			if (commandId != null) {
@@ -144,7 +145,7 @@ public final class KeySequenceBindingDefinition
 		return equals;
 	}
 
-	public String getActivityId() {
+	public String getContextId() {
 		return activityId;
 	}
 

@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
@@ -35,30 +36,12 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IdentifierEvent;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableActivityManager
 	extends AbstractActivityManager
 	implements IMutableActivityManager {
-
-	static boolean isActivityDefinitionChildOf(
-		String ancestor,
-		String id,
-		Map activityDefinitionsById) {
-		Collection visited = new HashSet();
-
-		while (id != null && !visited.contains(id)) {
-			ActivityDefinition activityDefinition =
-				(ActivityDefinition) activityDefinitionsById.get(id);
-			visited.add(id);
-
-			if (activityDefinition != null
-				&& Util.equals(id = activityDefinition.getParentId(), ancestor))
-				return true;
-		}
-
-		return false;
-	}
 
 	private Map activitiesById = new WeakHashMap();
 	private Map activityActivityBindingsByParentActivityId = new HashMap();
@@ -230,7 +213,7 @@ public final class MutableActivityManager
 			IdentifierEvent identifierEvent =
 				(IdentifierEvent) entry.getValue();
 			Identifier identifier =
-				(Identifier) categoriesById.get(identifierId);
+				(Identifier) identifiersById.get(identifierId);
 
 			if (identifier != null)
 				identifier.fireIdentifierChanged(identifierEvent);
@@ -256,14 +239,6 @@ public final class MutableActivityManager
 			if (name == null || name.length() == 0)
 				iterator.remove();
 		}
-
-		for (Iterator iterator = activityDefinitionsById.keySet().iterator();
-			iterator.hasNext();
-			)
-			if (!isActivityDefinitionChildOf(null,
-				(String) iterator.next(),
-				activityDefinitionsById))
-				iterator.remove();
 
 		Collection categoryDefinitions = new ArrayList();
 		categoryDefinitions.addAll(activityRegistry.getCategoryDefinitions());
@@ -579,26 +554,19 @@ public final class MutableActivityManager
 				activityDefinition != null
 					? activityDefinition.getName()
 					: null);
-		boolean parentIdChanged =
-			activity.setParentId(
-				activityDefinition != null
-					? activityDefinition.getParentId()
-					: null);
 
 		if (activityActivityBindingsChanged
 			|| activityPatternBindingsChanged
 			|| definedChanged
 			|| enabledChanged
-			|| nameChanged
-			|| parentIdChanged)
+			|| nameChanged)
 			return new ActivityEvent(
 				activity,
 				activityActivityBindingsChanged,
 				activityPatternBindingsChanged,
 				definedChanged,
 				enabledChanged,
-				nameChanged,
-				parentIdChanged);
+				nameChanged);
 		else
 			return null;
 	}

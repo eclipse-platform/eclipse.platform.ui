@@ -11,18 +11,25 @@
 
 package org.eclipse.ui.actions;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -125,6 +132,20 @@ public class NewWizardAction
 		IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
 		if (selection instanceof IStructuredSelection) {
 			selectionToPass = (IStructuredSelection) selection;
+		} else {
+			// @issue the following is resource-specific legacy code
+			// Build the selection from the IFile of the editor
+			Class resourceClass = LegacyResourceSupport.getResourceClass();
+			if (resourceClass != null) {
+				IWorkbenchPart part = workbenchWindow.getPartService().getActivePart();
+				if (part instanceof IEditorPart) {
+					IEditorInput input = ((IEditorPart) part).getEditorInput();
+					Object resource = input.getAdapter(resourceClass);
+					if (resource != null) {
+						selectionToPass = new StructuredSelection(resource);
+					}
+				}
+			}
 		}
 
 		wizard.init(workbenchWindow.getWorkbench(), selectionToPass);

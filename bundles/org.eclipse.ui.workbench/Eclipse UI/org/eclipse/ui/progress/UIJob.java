@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public abstract class UIJob extends Job {
-	private Display display;
+	private Display cachedDisplay;
 
 
 	/**
@@ -41,9 +41,6 @@ public abstract class UIJob extends Job {
 	public UIJob(String name) {
 		
 		super(name);
-		Display currentDisplay;
-		if(PlatformUI.isWorkbenchRunning())
-			setDisplay(PlatformUI.getWorkbench().getDisplay());
 		
 	}
 
@@ -82,7 +79,7 @@ public abstract class UIJob extends Job {
 
 		Display asyncDisplay = getDisplay();
 
-		if (asyncDisplay == null || display.isDisposed()) {
+		if (asyncDisplay == null || asyncDisplay.isDisposed()) {
 			return Status.CANCEL_STATUS;
 		}
 		asyncDisplay.asyncExec(new Runnable() {
@@ -121,13 +118,17 @@ public abstract class UIJob extends Job {
 	 */
 	public void setDisplay(Display runDisplay) {
 		Assert.isNotNull(runDisplay);
-		display = runDisplay;
+		cachedDisplay = runDisplay;
 	}
 	/**
 	 * Returns the display for use by the receiver. 
+	 * @return Display or <code>null</code>.
 	 */
 	public Display getDisplay() {
-		return display;
+		//If it was not set get it from the workbench
+		if(cachedDisplay == null && PlatformUI.isWorkbenchRunning())
+			return PlatformUI.getWorkbench().getDisplay();
+		return cachedDisplay;
 	}
 
 }

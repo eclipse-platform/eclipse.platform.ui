@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandDefinition
-	implements Comparable, ICommandDefinition {
+	implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -37,8 +37,8 @@ public final class CommandDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICommandDefinition.class);
-			ICommandDefinition commandDefinition = (ICommandDefinition) object;
+			Util.assertInstance(object, CommandDefinition.class);
+			CommandDefinition commandDefinition = (CommandDefinition) object;
 			String id = commandDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -59,8 +59,8 @@ public final class CommandDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICommandDefinition.class);
-			ICommandDefinition commandDefinition = (ICommandDefinition) object;
+			Util.assertInstance(object, CommandDefinition.class);
+			CommandDefinition commandDefinition = (CommandDefinition) object;
 			String name = commandDefinition.getName();
 
 			if (allowNullNames || name != null) {
