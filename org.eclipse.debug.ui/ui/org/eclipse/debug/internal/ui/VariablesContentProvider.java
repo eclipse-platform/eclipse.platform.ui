@@ -91,6 +91,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	 * this object can be garbage-collected.
 	 */
 	public void dispose() {
+		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 }

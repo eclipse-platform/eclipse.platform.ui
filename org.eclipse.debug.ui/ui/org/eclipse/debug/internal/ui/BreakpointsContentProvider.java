@@ -33,6 +33,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	 * @see IContentProvider
 	 */
 	public void dispose() {
+		super.dispose();
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 	}
 
@@ -43,7 +44,9 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 		if (breakpoint.exists()) {		
 			asyncExec(new Runnable() {
 				public void run() {
-					((TableViewer)fViewer).add(breakpoint);
+					if (!isDisposed()) {
+						((TableViewer)fViewer).add(breakpoint);
+					}
 				}
 			});
 		}
@@ -55,7 +58,9 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	public void breakpointRemoved(final IMarker breakpoint, IMarkerDelta delta) {
 		asyncExec(new Runnable() {
 			public void run() {
-				((TableViewer)fViewer).remove(breakpoint);
+				if (!isDisposed()) {
+					((TableViewer)fViewer).remove(breakpoint);
+				}
 			}
 		});
 	}
@@ -67,7 +72,9 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 		if (breakpoint.exists()) {
 			asyncExec(new Runnable() {
 				public void run() {
-					refresh(breakpoint);
+					if (!isDisposed()) {
+						refresh(breakpoint);
+					}
 				}
 			});
 		}

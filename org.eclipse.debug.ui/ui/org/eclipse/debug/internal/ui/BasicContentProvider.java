@@ -10,7 +10,23 @@ import org.eclipse.debug.core.DebugEvent;import org.eclipse.jface.viewers.*;im
 public abstract class BasicContentProvider implements IStructuredContentProvider {
 
 	protected StructuredViewer fViewer;
+	protected boolean fDisposed= false;
 
+	/**
+	 * @see IContentProvider#dispose
+	 */
+	public void dispose() {
+		fDisposed= true;
+	}
+	
+	/**
+	 * Returns whether this content provider has already
+	 * been disposed.
+	 */
+	protected boolean isDisposed() {
+		return fDisposed;
+	}
+	
 	/**
 	 * @see IContentProvider#inputChanged
 	 */
@@ -61,7 +77,9 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				doHandleDebugEvent(event);
+				if (!isDisposed()) {
+					doHandleDebugEvent(event);
+				}
 			}
 		};
 		

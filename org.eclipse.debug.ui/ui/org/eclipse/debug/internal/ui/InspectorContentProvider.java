@@ -110,6 +110,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 * @see IContentProvider
 	 */
 	public void dispose() {
+		super.dispose();
 		fInspectorList = new InspectorList(0);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
@@ -153,8 +154,10 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	protected void remove(final Object element) {
 		Runnable r= new Runnable() {
 			public void run() {			
-				((TreeViewer)fViewer).remove(element);
-				enableRemoveAllFromInspectorAction();
+				if (!isDisposed()) {
+					((TreeViewer)fViewer).remove(element);
+					enableRemoveAllFromInspectorAction();
+				}
 			}
 		};
 		asyncExec(r);
@@ -166,9 +169,11 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	protected void removeAll() {
 		Runnable r= new Runnable() {
 				public void run() {	
-					fInspectorList.getList().clear();
-					refresh();
-					enableRemoveAllFromInspectorAction();
+					if (!isDisposed()) {
+						fInspectorList.getList().clear();
+						refresh();
+						enableRemoveAllFromInspectorAction();
+					}
 				}
 			};
 		asyncExec(r);
@@ -182,11 +187,13 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 		if (parent != null) {
 			Runnable r= new Runnable() {
 				public void run() {	
-					TreeViewer tempViewer= (TreeViewer)fViewer;		
-					tempViewer.add(parent, element);				
-					tempViewer.setExpandedState(element, true);
-					tempViewer.setSelection(new StructuredSelection(element));
-					enableRemoveAllFromInspectorAction();
+					if (!isDisposed()) {
+						TreeViewer tempViewer= (TreeViewer)fViewer;		
+						tempViewer.add(parent, element);				
+						tempViewer.setExpandedState(element, true);
+						tempViewer.setSelection(new StructuredSelection(element));
+						enableRemoveAllFromInspectorAction();
+					}
 				}
 			};
 			asyncExec(r);

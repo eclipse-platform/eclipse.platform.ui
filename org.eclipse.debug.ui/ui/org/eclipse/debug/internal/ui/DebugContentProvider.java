@@ -221,8 +221,10 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	public void launchDeregistered(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				remove(launch);
-				updateButtons();
+				if (!isDisposed()) {
+					remove(launch);
+					updateButtons();
+				}
 			}
 		};
 
@@ -235,11 +237,13 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	public void launchRegistered(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				insert(launch);
-				if (!DebugUIPlugin.getDefault().userPreferenceToSwitchPerspective(true)) {
-					Object dt = launch.getDebugTarget();
-					if (dt != null) {
-						selectAndReveal(dt);
+				if (!isDisposed()) {
+					insert(launch);
+					if (!DebugUIPlugin.getDefault().userPreferenceToSwitchPerspective(true)) {
+						Object dt = launch.getDebugTarget();
+						if (dt != null) {
+							selectAndReveal(dt);
+						}
 					}
 				}
 			}
@@ -253,6 +257,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	 * this object can be garbage-collected.
 	 */
 	public void dispose() {
+		super.dispose();
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.removeDebugEventListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);
