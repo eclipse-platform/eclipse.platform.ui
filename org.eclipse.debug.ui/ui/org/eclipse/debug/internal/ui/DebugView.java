@@ -88,14 +88,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 		}
 	}
 	
-	/**
-	 * @see IViewPart#init(IViewSite)
-	 */
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
-		getSite().getPage().addPartListener(this);
-	}
-	
 	protected void configureView(Composite parent) {
 		WorkbenchHelp.setHelp(
 			parent,
@@ -557,4 +549,13 @@ public class DebugView extends LaunchesView implements IPartListener {
 			}
 		}
 	}
+	
+	/**
+	 * @see IWorkbenchPart
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		DebugUIPlugin.getDefault().addSelectionProvider(getViewer(), this);
+	}
+
 }

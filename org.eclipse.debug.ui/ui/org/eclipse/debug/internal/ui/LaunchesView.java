@@ -27,13 +27,17 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
+public class LaunchesView extends AbstractDebugView implements IPartListener, ISelectionChangedListener, IDoubleClickListener {
 
 	protected SelectionProviderAction fTerminateAction;
 	protected RemoveTerminatedAction fRemoveTerminatedAction;
@@ -98,8 +102,6 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
 		initializeActions(lv);
-		// register this viewer as the debug UI selection provider
-		DebugUIPlugin.getDefault().addSelectionProvider(lv, this);
 
 		// create context menu
 		createContextMenu(lv.getTree());
@@ -353,5 +355,53 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	protected void setTerminateAndRemoveAction(SelectionProviderAction terminateAndRemoveAction) {
 		fTerminateAndRemoveAction = terminateAndRemoveAction;
 	}
+	
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+	}
+	
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
 
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+		if (part == this) {
+			// remove this viewer as the debug UI selection provider
+			DebugUIPlugin.getDefault().removeSelectionProvider(getViewer(), this);
+		}
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		if (part == this) {
+			// register this viewer as the debug UI selection provider
+			DebugUIPlugin.getDefault().addSelectionProvider(getViewer(), this);
+			//ensure that all downstream listeners
+			//know the current selection..switching from another view
+			DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
+		}			
+	}
+	
+	/**
+	 * @see IViewPart#init(IViewSite)
+	 */
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		getSite().getPage().addPartListener(this);
+	}	
 }

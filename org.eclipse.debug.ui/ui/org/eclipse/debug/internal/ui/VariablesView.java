@@ -143,21 +143,13 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 				setViewerInput((IStructuredSelection)sel);
 			}
 		}
-		if (!(part instanceof DebugView)) {
-			return;
-		}
-		if (!(sel instanceof IStructuredSelection)) {
-			return;
-		}
-
-		setViewerInput((IStructuredSelection)sel);
 	}
 
 	protected void setViewerInput(IStructuredSelection ssel) {
 		IStackFrame frame= null;
 		if (ssel.size() == 1) {
 			Object input= ssel.getFirstElement();
-			if (input != null && input instanceof IStackFrame) {
+			if (input instanceof IStackFrame) {
 				frame= (IStackFrame)input;
 			}
 		}
