@@ -305,7 +305,7 @@ public class ChangesSection extends Composite {
 		composite.setLayoutData(data);	
 
 		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText("Show Errors");
+		link.setText(Policy.bind("ChangesSection.8")); //$NON-NLS-1$
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				showErrors();
@@ -315,7 +315,7 @@ public class ChangesSection extends Composite {
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText("Reset View");
+		link.setText(Policy.bind("ChangesSection.9")); //$NON-NLS-1$
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				participant.getSubscriberSyncInfoCollector().reset();
@@ -324,18 +324,18 @@ public class ChangesSection extends Composite {
 		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
-		createDescriptionLabel(composite, "Errors have occurred calculating the synchronization state for {0}" + participant.getName());
+		createDescriptionLabel(composite, Policy.bind("ChangesSection.10", participant.getName())); //$NON-NLS-1$
 
 		return composite;
 	}
 	
 	/* private */ void showErrors() {
 		ITeamStatus[] status = participant.getSubscriberSyncInfoCollector().getSyncInfoTree().getErrors();
-		String title = "Errors Populating View";
+		String title = Policy.bind("ChangesSection.11"); //$NON-NLS-1$
 		if (status.length == 1) {
 			ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
 		} else {
-			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, "Multiple errors occurred while attempting to populate the view.", null);
+			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, Policy.bind("ChangesSection.12"), null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}

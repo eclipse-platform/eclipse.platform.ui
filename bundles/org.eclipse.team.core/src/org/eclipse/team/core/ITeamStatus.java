@@ -20,7 +20,7 @@ public interface ITeamStatus extends IStatus {
 	
 	/**
 	 * An error occurred trying to obtain the <code>SyncInfo</code> for a single resource.
-	 * The error will be cleared when the set is reset or when a sync info is added to 
+	 * The error will be cleared when the set is reset or possibly when a sync info is added to 
 	 * the set for the resource for which the error occurred.
 	 */
 	public static final int RESOURCE_SYNC_INFO_ERROR = 1;
@@ -30,6 +30,13 @@ public interface ITeamStatus extends IStatus {
 	 * The error will be cleared when the set is reset. 
 	 */
 	public static final int SYNC_INFO_SET_ERROR = 2;
+
+	/**
+	 * The collection of sync info for a sync info set has been cancelled so the
+	 * contents fdo not reflect the state of the system.
+	 * The error will be cleared when the set is reset. 
+	 */
+	public static final int SYNC_INFO_SET_CANCELLATION = 3;
 	
 	/**
 	 * Return the resource associated with this status.

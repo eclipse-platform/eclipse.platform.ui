@@ -386,6 +386,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 							Policy.subMonitorFor(monitor, 64));
 					break;
 			}
+		} catch (OperationCanceledException e) {
+			// the job has been cancelled. 
+			// Clear the queue and propogate the cancellation through the sets.
+			resultCache.clear();
+			syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Policy.bind("SubscriberEventHandler.12"), e, ResourcesPlugin.getWorkspace().getRoot())); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			// handle the exception and keep processing
 			handleException(new TeamException(Policy.bind("SubscriberEventHandler.10"), e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, Policy.bind("SubscriberEventHandler.11", event.getResource().getFullPath().toString(), e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$

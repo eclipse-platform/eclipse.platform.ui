@@ -307,6 +307,8 @@ abstract public class Subscriber {
 		SyncInfoSet set,
 		IProgressMonitor monitor) {
 		
+		Policy.checkCanceled(monitor);
+		
 		if (resource.getType() != IResource.FILE
 			&& depth != IResource.DEPTH_ZERO) {
 			try {

@@ -191,6 +191,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {
+							Policy.checkCanceled(monitor);
 							if (innerResource.getType() != IResource.FILE) {
 								monitor.subTask(Policy.bind("CVSWorkspaceSubscriber.1", innerResource.getFullPath().toString())); //$NON-NLS-1$
 							}
