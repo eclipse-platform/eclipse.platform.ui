@@ -28,13 +28,11 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * An action which gets a text operation target from its text editor.
  * <p>
  * The action is initially associated with a text editor via the constructor,
- * but can subsequently be changed using <code>setEditor</code>.
- * </p>
+ * but can subsequently be changed using <code>setEditor</code>.</p>
  * <p>
  * If this class is used as is, it works by asking the text editor for its
  * text operation target adapter (using <code>getAdapter(ITextOperationTarget.class)</code>. 
- * The action runs this operation with the pre-configured opcode.
- * </p>
+ * The action runs this operation with the pre-configured opcode.</p>
  */
 public final class TextOperationAction extends TextEditorAction {
 	

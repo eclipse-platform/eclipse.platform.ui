@@ -27,8 +27,8 @@ public interface IReadOnlyDependent {
 	 * would be enabled given the writable state described by <code>isWritable</code>.
 	 * <code>isEnabled()</code> and <code>isEnabled(boolean)</code> holds the following
 	 * invariants:
-	 * 	isEnabled() == false, iff isEnabled(true) == false || isEnabled(false) == false
-	 * 	isEnabled() == true, iff isEnabled(true) == true || isEnabled(false) == true
+	 * 	isEnabled() == false, if isEnabled(true) == false || isEnabled(false) == false
+	 * 	isEnabled() == true, if isEnabled(true) == true || isEnabled(false) == true
 	 * 
 	 * @param isWritable
 	 * @return the hypothetical enable state of the action

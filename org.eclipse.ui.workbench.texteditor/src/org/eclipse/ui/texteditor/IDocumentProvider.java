@@ -37,12 +37,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </ul>
  * Text editors use document providers to bridge the gap between their input elements and the
  * documents they work on. A single document provider may be shared between multiple editors;
- * the methods take the editors' input elements as a parameter.<p>
+ * the methods take the editors' input elements as a parameter.
+ * <p>
  * This interface may be implemented by clients; or subclass the standard 
- * abstract base class <code>AbstractDocumentProvider</code>.
+ * abstract base class <code>AbstractDocumentProvider</code>.</p>
  *
- * @see IDocument
- * @see AbstractDocumentProvider
+ * @see org.eclipse.jface.text.IDocument
+ * @see org.eclipse.ui.texteditor.AbstractDocumentProvider
  */
 public interface IDocumentProvider {
 	

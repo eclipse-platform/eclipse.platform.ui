@@ -37,7 +37,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * Annotation representing a marker on a resource in the workspace.
  * This class may be instantiated or be subclassed.
  *
- * @see IMarker
+ * @see org.eclipse.core.resources.IMarker
  */
 public class MarkerAnnotation extends Annotation {
 	
@@ -133,7 +133,7 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	/*
-	 * @see Object#hashCode
+	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
 		return fMarker.hashCode();
@@ -186,7 +186,7 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	/*
-	 * @see Annotation#paint
+	 * @see Annotation#paint(GC, Canvas, Rectangle)
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());

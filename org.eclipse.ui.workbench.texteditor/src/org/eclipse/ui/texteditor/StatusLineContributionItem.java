@@ -60,7 +60,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	}
 	
 	/*
-	 * @see IStatusField#setText
+	 * @see IStatusField#setText(String)
 	 */
 	public void setText(String text) {
 		fText= text;
@@ -97,7 +97,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	/**
 	 * Returns the width hint for this label.
 	 * 
-	 * @param control
+	 * @param control the root control of this label
 	 * @return the width hint for this label
 	 * @since 2.1
 	 */

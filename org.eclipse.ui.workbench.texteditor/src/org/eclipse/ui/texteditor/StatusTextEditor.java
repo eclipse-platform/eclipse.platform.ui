@@ -40,7 +40,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	private Control fStatusControl;
 
 	/*
-	 * @see IWorkbenchPart#createPartControl(Composite)
+	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 
@@ -90,10 +90,12 @@ public class StatusTextEditor extends AbstractTextEditor {
 	}
 	
 	/**
-	 * Creates the status control for the given status. May be overridden by subclasses.
+	 * Creates the status control for the given status.
+	 * May be overridden by subclasses.
 	 * 
 	 * @param parent the parent control
 	 * @param status the status
+	 * @return the new status control
 	 */
 	protected Control createStatusControl(Composite parent, IStatus status) {
 		InfoForm infoForm= new InfoForm(parent);

@@ -32,18 +32,19 @@ import org.eclipse.jface.text.Assert;
  * A marker annotation model whose underlying source of markers is 
  * a resource in the workspace.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
+ * This class may be instantiated; it is not intended to be subclassed.</p>
  */
 public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
 
 
 	/**
 	 * Internal resource change listener.
+	 * 
+	 * @see IResourceChangeListener
 	 */
 	class ResourceChangeListener implements IResourceChangeListener {
 		/*
-		 * @see IResourceChangeListener#resourceChanged
+		 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
@@ -58,10 +59,12 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	
 	/**
 	 * Internal resource delta visitor.
+	 * 
+	 * @see IResourceDeltaVisitor
 	 */
 	class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		/*
-		 * @see IResourceDeltaVisitor#visit
+		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta != null && fResource.equals(delta.getResource())) {
@@ -72,13 +75,13 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		}
 	};
 	
-	/** The workspace */
+	/** The workspace. */
 	private IWorkspace fWorkspace;
-	/** The resource */
+	/** The resource. */
 	private IResource fResource;
-	/** The resource change listener */
+	/** The resource change listener. */
 	private IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
-	/** The resource delta visitor */
+	/** The resource delta visitor. */
 	private IResourceDeltaVisitor fResourceDeltaVisitor= new ResourceDeltaVisitor();
 
 	
@@ -95,7 +98,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	}
 
 	/*
-	 * @see AnnotationModel#isAcceptable
+	 * @see AbstractMarkerAnnotationModel#isAcceptable(IMarker)
 	 */
 	protected boolean isAcceptable(IMarker marker) {
 		return marker != null && fResource.equals(marker.getResource());
@@ -104,7 +107,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	/**
 	 * Updates this model to the given marker deltas.
 	 *
-	 * @param markerDeltas the list of marker deltas
+	 * @param markerDeltas the array of marker deltas
 	 */
 	protected void update(IMarkerDelta[] markerDeltas) {
 		

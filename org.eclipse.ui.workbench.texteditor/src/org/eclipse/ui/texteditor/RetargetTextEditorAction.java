@@ -28,7 +28,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * menus or action bars which can be retargeted to dynamically changing actions,
  * for example, those which come from the active editor. This action assumes that
  * the "wrapped" action sends out property change events in response to state
- * changes. It uses these change notification to adapt its enabling state and
+ * changes. It uses these change notifications to adapt its enabling state and
  * its visual presentation.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -36,16 +36,16 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public final class RetargetTextEditorAction extends ResourceAction {
 	
-	/** The target action */
+	/** The target action. */
 	private IAction fAction;
-	/** The default label if there is no target action */
+	/** The default label if there is no target action. */
 	private String fDefaultText;
 	/**
 	 * The local help listener
 	 * @since 2.1
 	 */
 	private HelpListener fLocalHelpListener;
-	/** The listener to pick up changes of the target action */
+	/** The listener to pick up changes of the target action. */
 	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			update(event);
@@ -198,6 +198,8 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	}
 
 	/**
+	 * Installs the help listener.
+	 * 
 	 * @since 2.1
 	 */
 	private void installHelpListener() {
@@ -222,6 +224,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * The <code>RetargetTextEditorAction</code> implementation of this method declared on
 	 * <code>IAction</code> stores the help listener in a local field. The
 	 * supplied listener is only used if there is no handler.
+	 * 
 	 * @since 2.1
 	 */
 	public void setHelpListener(HelpListener listener) {
@@ -229,7 +232,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	}
 	
 	/*
-	 * @see Action#run()
+	 * @see IAction#run()
 	 */
 	public void run() {
 		if (fAction != null)

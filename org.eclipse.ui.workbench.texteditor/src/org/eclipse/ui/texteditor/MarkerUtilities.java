@@ -48,7 +48,7 @@ public final class MarkerUtilities {
 	 * @param marker the marker
 	 * @return the ending character offset, or <code>-1</code> if not set
 	 * @see IMarker#CHAR_END
-	 * @see IMarker#getAttribute(java.lang.String,int)
+	 * @see IMarker#getAttribute(java.lang.String, int)
 	 */
 	public static int getCharEnd(IMarker marker) {
 		return getIntAttribute(marker, IMarker.CHAR_END, -1);
@@ -176,6 +176,10 @@ public final class MarkerUtilities {
 	
 	/**
 	 * Sets the specified attribute of the given marker as an integer.
+	 * 
+	 * @param marker the marker
+	 * @param attributeName the attribute name
+	 * @param value the int value
 	 */
 	private static void setIntAttribute(IMarker marker, String attributeName, int value) {
 		try {
@@ -227,8 +231,7 @@ public final class MarkerUtilities {
 	/**
 	 * Creates a marker on the given resource with the given type and attributes.
 	 * <p>
-	 * This method modifies the workspace (progress is not reported to the user).
-	 * </p>
+	 * This method modifies the workspace (progress is not reported to the user).</p>
 	 *
 	 * @param resource the resource
 	 * @param attributes the attribute map (key type: <code>String</code>, 

@@ -22,7 +22,7 @@ class TextUtilities {
 	 * Copied from JFace text
 	 */	
 	
-	
+	/** Array with all possible line delimiters. */
 	public final static String[] fgDelimiters= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	
 	
@@ -104,6 +104,8 @@ class TextUtilities {
 	
 	/**
 	 * Returns whether the text equals one of the given compare strings.
+	 * 
+	 * @return the index of the first string that matches <code>text</code> or <code>-1</code> if none of the string matches
 	 */
 	public static int equals(String[] compareStrings, String text) {
 		for (int i= 0; i < compareStrings.length; i++) {

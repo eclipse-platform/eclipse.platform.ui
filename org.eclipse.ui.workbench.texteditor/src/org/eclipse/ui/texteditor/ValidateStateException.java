@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 public class ValidateStateException extends CoreException {
 
 	/*
-	 * @see org.eclipse.core.runtime.CoreException#CoreException(IStatus)
+	 * @see CoreException#CoreException(org.eclipse.core.runtime.IStatus)
 	 */
 	 public ValidateStateException(IStatus status) {
 		super(status);

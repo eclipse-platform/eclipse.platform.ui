@@ -119,6 +119,10 @@ public abstract class ResourceAction extends Action {
 	}	
 
 	/**
+	 * Initializes this action using the given bundle and prefix.
+	 * 
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys, or <code>null</code> if none
 	 * @since 2.1
 	 */
 	private void initialize(ResourceBundle bundle, String prefix) {

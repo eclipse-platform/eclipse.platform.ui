@@ -103,6 +103,12 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	}
 	
 	/**
+	 * Tells whether the given offset is visible in the given text viewer.
+	 * 
+	 * @param viewer the text viewer
+	 * @param offset the offset to check
+	 * @return <code>true</code> if the given offset is visible in the given text viewer
+	 * 
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ITextViewer viewer, int offset) {

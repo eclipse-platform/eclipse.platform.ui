@@ -47,10 +47,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/** The string representing rendered tab */
 	private final static String TAB= EditorMessages.getString("Editor.FindIncremental.render.tab"); //$NON-NLS-1$
+
 	/**
+	 * The string representing reverse
 	 * @since 2.1
 	 */
 	private final static String REVERSE= EditorMessages.getString("Editor.FindIncremental.reverse"); //$NON-NLS-1$
+	/**
+	 * The string representing wrapped
+	 * @since 2.1
+	 */
 	private final static String WRAPPED= EditorMessages.getString("Editor.FindIncremental.wrapped"); //$NON-NLS-1$
 
 	/** The text viewer to operate on */
@@ -95,12 +101,17 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	private String fPrevFindString= ""; //$NON-NLS-1$
 
 	/**
+	 * Data structure for a search result.
 	 * @since 2.1
 	 */
 	private class SearchResult {
 		int selection, length, index, findLength;
 		boolean found, forward;
 
+		/**
+		 * Creates a new search result data object and fills
+		 * it with the current values of this target.
+		 */
 		public SearchResult() {
 			Point p= fTarget.getSelection();
 			selection= p.x;
@@ -114,13 +125,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	/**
-	 * @since 2.1
+	 * Stores the search result.
 	 */
 	private void saveState() {
 		fSessionStack.push(new SearchResult());
 	}
 
 	/**
+	 * Restores the search result.
+	 *  
 	 * @since 2.1
 	 */
 	private void restoreState() {
@@ -559,35 +572,35 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	/*
-	 * @see MouseListener#mouseDoubleClick(MouseEvent)
+	 * @see MouseListener##mouseDoubleClick(MouseEvent)
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
 		leave();		
 	}
 
 	/*
-	 * @see MouseListener#mouseDown(MouseEvent)
+	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDown(MouseEvent e) {
 		leave();
 	}
 
 	/*
-	 * @see MouseListener#mouseUp(MouseEvent)
+	 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseUp(MouseEvent e) {
 		leave();
 	}
 
 	/*
-	 * @see FocusListener#focusGained(FocusEvent)
+	 * @see FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 	 */
 	public void focusGained(FocusEvent e) {
 		leave();
 	}
 
 	/*
-	 * @see FocusListener#focusLost(FocusEvent)
+	 * @see FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 	 */
 	public void focusLost(FocusEvent e) {
 		leave();
@@ -666,7 +679,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	/*
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 * @see ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 * @since 2.1
 	 */
 	public void selectionChanged(SelectionChangedEvent e) {

@@ -41,14 +41,14 @@ public class SaveAction extends TextEditorAction {
 	}
 	
 	/*
-	 * @see IAction#run
+	 * @see IAction#run()
 	 */
 	public void run() {
 		getTextEditor().getSite().getPage().saveEditor(getTextEditor(), false);
 	}
 	
 	/*
-	 * @see TextEditorAction#update
+	 * @see TextEditorAction#update()
 	 */
 	public void update() {
 		setEnabled(getTextEditor().isDirty());

@@ -41,14 +41,14 @@ public class RevertToSavedAction extends TextEditorAction {
 	}
 	
 	/*
-	 * @see IAction#run
+	 * @see IAction#run()
 	 */
 	public void run() {
 		getTextEditor().doRevertToSaved();
 	}
 	
 	/*
-	 * @see TextEditorAction#update
+	 * @see TextEditorAction#update()
 	 */
 	public void update() {
 		setEnabled(getTextEditor().isDirty());

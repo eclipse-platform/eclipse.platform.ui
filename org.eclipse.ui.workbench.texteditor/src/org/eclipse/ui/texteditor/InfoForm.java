@@ -56,7 +56,7 @@ public class InfoForm {
 	
 	/**
 	 * Creates a new info form.
-	 * @param parent the parent
+	 * @param parent the parent composite
 	 */
 	public InfoForm(Composite parent) {
 
@@ -150,8 +150,8 @@ public class InfoForm {
 		fText.setText(info);
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	/**
+	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePropertyChange(PropertyChangeEvent event) {		
 		

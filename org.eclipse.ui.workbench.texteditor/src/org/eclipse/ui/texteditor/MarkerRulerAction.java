@@ -114,9 +114,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	
 	/**
-	 * Returns this action's editor.
+	 * Returns this action's text editor.
 	 *
-	 * @return this action's editor
+	 * @return this action's text editor
 	 */
 	protected ITextEditor getTextEditor() {
 		return fTextEditor;
@@ -270,7 +270,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns all markers which include the ruler's line of activity.
 	 *
-	 * @return all markers which include the ruler's line of activity
+	 * @return all a list of markers which include the ruler's line of activity
 	 */
 	protected List getMarkers() {
 
@@ -346,7 +346,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * map of attributes.
 	 *
 	 * @param attributes the map of attributes
-	 * @return <code>true</code> if the map of attributes has successfuly been initialized 
+	 * @return <code>true</code> if the map of attributes has successfully been initialized 
 	 */
 	protected boolean askForLabel(Map attributes) {
 

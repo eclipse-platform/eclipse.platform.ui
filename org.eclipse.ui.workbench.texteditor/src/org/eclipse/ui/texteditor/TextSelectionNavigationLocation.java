@@ -31,6 +31,8 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * 2.1 - WORK_IN_PROGRESS do not use.
+ * 
+ * @since 2.1
  */
 public class TextSelectionNavigationLocation extends NavigationLocation {
 	
@@ -47,7 +49,10 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	
 	
 	/**
-	 * @since 2.1
+	 * Creates a new text selection navigation location.
+	 * 
+	 * @param part the text editor part
+	 * @param initialize a boolean indicating whether to initialize the new instance from the current selection 
 	 */
 	public TextSelectionNavigationLocation(ITextEditor part, boolean initialize) {
 		super(part);
@@ -73,11 +78,24 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		}
 	}
 	
+	/**
+	 * Returns the text editor's document.
+	 * 
+	 * @param the text editor
+	 * @return the document of the given text editor
+	 */
 	private IDocument getDocument(ITextEditor part) {
 		IDocumentProvider provider= part.getDocumentProvider();
 		return provider.getDocument(part.getEditorInput());
 	}
 	
+	/**
+	 * Installs the given position on the given document.
+	 * 
+	 * @param document the document
+	 * @param position the position
+	 * @return <code>true</code> if the position could be installed
+	 */
 	private boolean  installOnDocument(IDocument document, Position position) {
 		
 		if (document != null && position != null) {
@@ -98,6 +116,13 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return false;
 	}
 	
+	/**
+	 * Uninstalls the given position from the given document.
+	 * 
+	 * @param document the document
+	 * @param position the position
+	 * @return <code>true</code> if the position could be uninstalled
+	 */
 	private boolean uninstallFromDocument(IDocument document, Position position) {
 		
 		if (document != null && position != null) {
@@ -119,12 +144,19 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return false;
 	}
 	
+	/*
+	 * @see Object#toString()
+	 */
 	public String toString() {
 		return "Selection<" + fPosition + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
-	 * @since 2.1
+	 * Tells whether this location is equal to the current
+	 * location in the given text editor.
+	 * 
+	 * @param part the text editor
+	 * @return <code>true</code> if the locations are equal
 	 */
 	private boolean equalsLocationOf(ITextEditor part) {
 		
@@ -161,7 +193,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 
 	/**
-	 * @since 2.1
+	 * Releases the state of this location.
 	 */
 	public void releaseState() {
 		// deactivate
@@ -173,7 +205,10 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	/**
-	 * @since 2.1
+	 * Merges the given location into this one.
+	 * 
+	 * @param location the location to merge into this one
+	 * @return <code>true<code> if merging was successful
 	 */
 	public boolean mergeInto(INavigationLocation location) {
 		
@@ -199,7 +234,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	/**
-	 * @since 2.1
+	 * Restores this location.
 	 */
 	public void restoreLocation() {
 		if (fPosition == null || fPosition.isDeleted)
@@ -211,7 +246,12 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			editor.selectAndReveal(fPosition.offset, fPosition.length);
 		}
 	}
-	
+
+	/**
+	 * Restores the object state from the given memento.
+	 * 
+	 * @param memento the memento 
+	 */
 	public void restoreState(IMemento memento) {
 		
 		IEditorPart part= getEditorPart();
@@ -239,6 +279,11 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		}
 	}
 	
+	/**
+	 * Stores the object state into the given memento.
+	 * 
+	 * @param memento the memento 
+	 */
 	public void saveState(IMemento memento) {
 		if (fSavedPosition != null) {
 			memento.putInteger(IWorkbenchConstants.TAG_X, fSavedPosition.offset);
@@ -247,6 +292,11 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		}
 	}
 	
+	/**
+	 * Hook method which is called when the given editor has been saved.
+	 * 
+	 * @param part the editor part
+	 */
 	public void partSaved(IEditorPart part) {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=25440
 		if (fPosition == null || fPosition.isDeleted())
@@ -256,7 +306,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	/**
-	 * @since 2.1
+	 * Updates the this location.
 	 */
 	public void update() {
 		IEditorPart part= getEditorPart();

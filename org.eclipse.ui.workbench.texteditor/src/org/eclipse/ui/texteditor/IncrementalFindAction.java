@@ -42,7 +42,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	private boolean fForward;
 	
 	/**
-	 * Creates a new incremental find action for the given text editor. 
+	 * Creates a new incremental find action for the given workbench part. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -50,7 +50,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param editor the text editor
+	 * @param workbenchPart the workbench part
 	 * @param forward <code>true</code> if the search direction is forward
 	 * @see ResourceAction#ResourceAction
 	 * @since 2.1
@@ -63,7 +63,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
-	 * Creates a new incremental find action for the given text editor. 
+	 * Creates a new incremental find action for the given workbench window. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -86,7 +86,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	}
 
 	/*
-	 *	@see IAction#run
+	 * @see IAction#run()
 	 */
 	public void run() {
 

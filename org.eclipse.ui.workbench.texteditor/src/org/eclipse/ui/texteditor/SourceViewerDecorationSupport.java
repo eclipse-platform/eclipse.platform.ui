@@ -38,14 +38,19 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
+ * Support for source viewer decoration.
+ * 
  * @since 2.1
  */
 public class SourceViewerDecorationSupport {
 	
 	
+	/*
+	 * @see IPropertyChangeListener
+	 */
 	private class FontPropertyChangeListener implements IPropertyChangeListener {
 		/*
-		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			if (fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
@@ -137,6 +142,9 @@ public class SourceViewerDecorationSupport {
 		updateOverviewDecorations();
 	}
 
+	/**
+	 * Updates the text docorations for all configured annotation types.
+	 */
 	private void updateTextDecorations() {
 		
 		StyledText widget= fSourceViewer.getTextWidget();
@@ -226,8 +234,8 @@ public class SourceViewerDecorationSupport {
 	 * @param type the annotation type
 	 * @param colorKey the preference key for the color
 	 * @param editorKey the preference key for the presentation in the text area
-	 * @param overviewRulerKey the preference key for the presentation in the
-	 *          overview  ruler
+	 * @param overviewRulerKey the preference key for the presentation in the overview  ruler
+	 * @param layer the layer
 	 */
 	public void setAnnotationPainterPreferenceKeys(Object type, String colorKey, String editorKey, String overviewRulerKey, int layer) {
 		AnnotationPreference info= new AnnotationPreference(type, colorKey, editorKey, overviewRulerKey, layer);
@@ -285,6 +293,12 @@ public class SourceViewerDecorationSupport {
 		fSymbolicFontName= symbolicFontName;
 	}
 	
+	/**
+	 * Returns the annotation preference for the given key.
+	 * 
+	 * @param preferenceKey the preference key string
+	 * @return the annotation preference
+	 */
 	private AnnotationPreference getAnnotationPreferenceInfo(String preferenceKey) {
 		Iterator e= fAnnotationTypeKeyMap.values().iterator();
 		while (e.hasNext()) {
@@ -295,6 +309,10 @@ public class SourceViewerDecorationSupport {
 		return null;
 	}
 	
+	
+	/*
+	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
+ 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		
 		String p= event.getProperty();		
@@ -387,6 +405,12 @@ public class SourceViewerDecorationSupport {
 				
 	}
 	
+	/**
+	 * Returns the shared color for the given key.
+	 * 
+	 * @param key the color key string
+	 * @return the shared color for the given key
+	 */
 	private Color getColor(String key) {
 		if (fPreferenceStore != null) {
 			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, key);
@@ -395,10 +419,22 @@ public class SourceViewerDecorationSupport {
 		return null;
 	}
 	
+	/**
+	 * Returns the shared color for the given RGB.
+	 * 
+	 * @param rgb the rgb
+	 * @return the shared color for the given rgb
+	 */
 	private Color getColor(RGB rgb) {
 		return fSharedTextColors.getColor(rgb);
 	}
 	
+	/**
+	 * Returns the color of the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the color of the annotation type
+	 */
 	private Color getAnnotationTypeColor(Object annotationType) {
 		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
@@ -406,6 +442,12 @@ public class SourceViewerDecorationSupport {
 		return null;
 	}
 	
+	/**
+	 * Returns the layer of the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the layer
+	 */
 	private int getAnnotationTypeLayer(Object annotationType) {
 		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
@@ -413,6 +455,9 @@ public class SourceViewerDecorationSupport {
 		return 0;
 	}
 	
+	/**
+	 * Enables showing of matching characters.
+	 */
 	private void showMatchingCharacters() {
 		if (fMatchingCharacterPainter == null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -423,7 +468,10 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
-	
+
+	/**
+	 * Disables showing of matching characters.
+	 */
 	private void hideMatchingCharacters() {
 		if (fMatchingCharacterPainter != null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -436,12 +484,20 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Tells whether matching charaters are shown.
+	 * 
+	 * @return <code>true</code> if the matching characters are shown
+	 */
 	private boolean areMatchingCharactersShown() {
 		if (fPreferenceStore != null && fMatchingCharacterPainterEnableKey != null)
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnableKey);
 		return false;
 	}
 	
+	/**
+	 * Shows the cursor line.
+	 */	
 	private void showCursorLine() {
 		if (fCursorLinePainter == null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -452,7 +508,10 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
-	
+
+	/**
+	 * Hides the cursor line.
+	 */	
 	private void hideCursorLine() {
 		if (fCursorLinePainter != null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -465,12 +524,20 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Tells whether the cursor line is shown.
+	 * 
+	 * @return <code>true</code> f the cursor line is shown
+	 */
 	private boolean isCursorLineShown() {
 		if (fPreferenceStore != null)
 			return fPreferenceStore.getBoolean(fCursorLinePainterEnableKey);
 		return false;
 	}
 	
+	/**
+	 * Shows the margin.
+	 */	
 	private void showMargin() {
 		if (fMarginPainter == null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -486,7 +553,10 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
-	
+
+	/**
+	 * Hides the margin.
+	 */	
 	private void hideMargin() {
 		if (fMarginPainter != null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -501,13 +571,23 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
-	
+
+	/**
+	 * Tells whether the margin is shown.
+	 * 
+	 * @return <code>true</code> if the margin is shown
+	 */	
 	private boolean isMarginShown() {
 		if (fPreferenceStore != null)
 			return fPreferenceStore.getBoolean(fMarginPainterEnableKey);
 		return false;
 	}
 	
+	/**
+	 * Enables annotations for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 */
 	private void showAnnotations(Object annotationType) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
@@ -521,6 +601,9 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Shuts down the annotation painter.
+	 */
 	private void shutdownAnnotationPainter() {
 		if (!fAnnotationPainter.isPaintingAnnotations()) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -535,6 +618,11 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 
+	/**
+	 * Hides annotations for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 */
 	private void hideAnnotations(Object annotationType) {
 		if (fAnnotationPainter != null) {
 			fAnnotationPainter.removeAnnotationType(annotationType);
@@ -542,6 +630,12 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Tells whether annotations are shown for the given type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if the annotations are shown
+	 */	
 	private boolean areAnnotationsShown(Object annotationType) {
 		if (fPreferenceStore != null) {
 			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
@@ -550,7 +644,13 @@ public class SourceViewerDecorationSupport {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Tells whether annotation overview is enabled for the given type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if the annotation overview is shown
+	 */	
 	private boolean isAnnotationOverviewShown(Object annotationType) {
 		if (fPreferenceStore != null) {
 			if (fOverviewRuler != null) {
@@ -561,7 +661,12 @@ public class SourceViewerDecorationSupport {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Enable annotation overview for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 */	
 	private void showAnnotationOverview(Object annotationType) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
@@ -571,6 +676,10 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Hides the annotation overview for the given type.
+	 * @param annotationType the annotation type
+	 */
 	private void hideAnnotationOverview(Object annotationType) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.removeAnnotationType(annotationType);
@@ -578,6 +687,10 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Hides the annotation overview.
+	 * @param annotationType the annotation type
+	 */
 	public void hideAnnotationOverview() {
 		if (fOverviewRuler != null) {
 			Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
@@ -587,6 +700,12 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Sets the annotion overview color for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param color the color
+	 */
 	private void setAnnotationOverviewColor(Object annotationType, Color color) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.setAnnotationTypeColor(annotationType, color);

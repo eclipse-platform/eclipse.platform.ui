@@ -27,14 +27,13 @@ import org.eclipse.ui.IEditorPart;
  * delivers a textual presentation (<code>IDocument</code>) of the editor's input. 
  * The editor works on the document and forwards all input element related calls,
  * such as  <code>save</code>, to the document provider. The provider also delivers
- * the input's annotation model which is used to control the editor's vertical ruler.
- * </p>
+ * the input's annotation model which is used to control the editor's vertical ruler.</p>
  * <p>
  * Clients may implement this interface from scratch, but the recommended way is to 
  * subclass the abstract base class <code>AbstractTextEditor</code>.
  * </p>
  * 
- * @see IDocumentProvider
+ * @see org.eclipse.ui.texteditor.IDocumentProvider
  * @see org.eclipse.jface.text.source.IAnnotationModel
  */
 public interface ITextEditor extends IEditorPart {
@@ -57,8 +56,7 @@ public interface ITextEditor extends IEditorPart {
 	/**
 	 * Returns whether the text in this text editor can be changed by the user.
 	 *
-	 * @return <code>true</code> if it can be edited, and <code>false</code>
-	 *   if it is read-only
+	 * @return <code>true</code> if it can be edited, and <code>false</code> if it is read-only
 	 */
 	boolean isEditable();
 		
@@ -73,7 +71,7 @@ public interface ITextEditor extends IEditorPart {
 	 *
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it
-	 * @see #getAction
+	 * @see #getAction(String)
 	 */
 	void setAction(String actionID, IAction action);
 	
@@ -82,7 +80,7 @@ public interface ITextEditor extends IEditorPart {
 	 *
 	 * @param actionId the action id
 	 * @return the action, or <code>null</code> if none
-	 * @see #setAction
+	 * @see #setAction(String, IAction)
 	 */
 	IAction getAction(String actionId);
 	
@@ -97,12 +95,12 @@ public interface ITextEditor extends IEditorPart {
 	 * on unmodified. Thus, action activation codes and action accelerators
 	 * differ in their model of event consumption. The key code parameter
 	 * can be <code>-1</code> to indicate a wild card. The state mask
-	 * parameter can be SWT.DEFAULT to indicate a wild card
+	 * parameter can be SWT.DEFAULT to indicate a wild card.
 	 * 
 	 * @param actionId the action id
-	 * @param character the activation code character
-	 * @param keyCode the activation code key code or <code>-1</code> for wild card
-	 * @param stateMask the activation code state mask or <code>SWT.DEFAULT</code> for wild card
+	 * @param activationCharacter the activation code character
+	 * @param activationKeyCode the activation code key code or <code>-1</code> for wild card
+	 * @param activationStateMask the activation code state mask or <code>SWT.DEFAULT</code> for wild card
 	 */
 	void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask);
 	
@@ -121,7 +119,7 @@ public interface ITextEditor extends IEditorPart {
 	 *
 	 * @return <code>true</code> if only the highlighted range is shown, and
 	 *   <code>false</code> if this editor shows the entire text of the document
-	 * @see #showHighlightRangeOnly
+	 * @see #showHighlightRangeOnly(boolean)
 	 */
 	boolean showsHighlightRangeOnly();
 	
@@ -132,7 +130,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @param showHighlightRangeOnly <code>true</code> if only the highlighted
 	 *   range is shown, and <code>false</code> if this editor shows the entire
 	 *   text of the document
-	 * @see #showsHighlightRangeOnly
+	 * @see #showsHighlightRangeOnly()
 	 */
 	void showHighlightRangeOnly(boolean showHighlightRangeOnly);
 	
@@ -144,7 +142,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @param moveCursor <code>true</code> if the cursor should be moved to
 	 *   the start of the highlighted range, and <code>false</code> to leave
 	 *   the cursor unaffected
-	 * @see #getHighlightRange
+	 * @see #getHighlightRange()
 	 */
 	void setHighlightRange(int offset, int length, boolean moveCursor);
 	
@@ -152,7 +150,7 @@ public interface ITextEditor extends IEditorPart {
 	 * Returns the highlighted range of this text editor.
 	 *
 	 * @return the highlighted range
-	 * @see #setHighlightRange
+	 * @see #setHighlightRange(int, int, boolean)
 	 */
 	IRegion getHighlightRange();
 	
