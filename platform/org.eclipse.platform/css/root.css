@@ -12,7 +12,6 @@ body {
 	/* since IE doesn't support min-width, try expression */
 	width:expression(document.body.clientWidth < 611? "611px": "auto" );
 }
-#presentation-title { margin-left : 10px; }
 
 .page-content {
 	min-width : 611px;
@@ -57,6 +56,7 @@ body {
 
 #navigation-links a {
 	width : 80px;
+	height : 80px;
 	position : absolute;
 	top : -70px;
 	text-align : center;
@@ -69,7 +69,7 @@ body {
 }
 
 #navigation-links a .link-label, #navigation-links a .text {
-	font-size : 11pt;
+	font-size : 10pt;
 }
 
 
@@ -97,20 +97,20 @@ body {
 a#overview img { background-image : url(graphics/obj_64/overview_obj.gif); }
 a#overview:hover img { background-image : url(graphics/obj_64/hovoverview_obj.gif); }
 
-a#tutorials { left : 80px; }  
+a#tutorials { left : 85px; }  
 a#tutorials img { background-image : url(graphics/obj_64/tutorials_obj.gif); }
 a#tutorials:hover img { background-image : url(graphics/obj_64/hovtutorials_obj.gif); }
-a#tutorials:hover p .text { left : -80px; }
+a#tutorials:hover p .text { left : -85px; }
 
-a#samples { left : 160px;}
+a#samples { left : 165px;}
 a#samples img { background-image : url(graphics/obj_64/examples_obj.gif); }
 a#samples:hover img { background-image : url(graphics/obj_64/hovexamples_obj.gif); }
-a#samples:hover p .text { left : -160px; }
+a#samples:hover p .text { left : -165px; }
 
-a#news { left : 240px;}
+a#news { left : 245px;}
 a#news img { background-image : url(graphics/obj_64/whatsnew_obj.gif); }
 a#news:hover img { background-image : url(graphics/obj_64/hovwhatsnew_obj.gif); }
-a#news:hover p .text { left : -240px; }
+a#news:hover p .text { left : -245px; }
 
 a#workbench { 
 	position : absolute; 

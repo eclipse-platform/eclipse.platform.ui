@@ -16,7 +16,7 @@
 
 
 
-<!--
+<!-- 
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -114,10 +114,10 @@
                     </img>
 	    	 	</div>
 	         	<include path="root/navigation-links"/>
-	         	<text id="overview-title">
+	         	<text id="page-title">
 	         		%overview.title
 	         	</text>
-	            <text id="overview-text">
+	            <text id="page-description">
 	               %overview.text
 	            </text>
 	            <div id="overview-links">
@@ -151,10 +151,10 @@
                     </img>
 	    	 </div>
 	         <include path="root/navigation-links"/>
-	         <text id="tutorials-title">
+	         <text id="page-title">
 	         	%tutorials.title
 	         </text>
-            <text id="tutorials-text">
+            <text id="page-description">
                %tutorials.text
             </text>
             <img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
@@ -170,16 +170,16 @@
                     </img>
 	    	</div>
 	        <include path="root/navigation-links"/>
-	        <text id="samples-title">
+	        <text id="page-title">
 	         	%samples.title
 	        </text>
-            <text id="samples-text">
+            <text id="page-description">
                %samples.text
             </text>
             <div
                   label="%samples.swt.label"
                   id="swt">
-               <text>
+               <text id="group-description">
                   %samples.swt.text
                </text>
                <link
@@ -202,7 +202,7 @@
             <div
                   label="%samples.workbench.label"
                   id="workbench">
-               <text>
+               <text id="group-description">
                   %samples.workbench.text
                </text>
                <link
@@ -244,41 +244,43 @@
                     </img>
 	    	</div>
 	        <include path="root/navigation-links"/>
-	        <text id="whatsnew-title">
+	        <text id="page-title">
 	         	%news.title
 	        </text>
-            <link
-                  url="about:blank;"
-                  label="%news.newandnoteworthy.label"
-                  id="new-and-noteworthy">
-               <text>
-                  %news.newandnoteworthy.text
-               </text>
-            </link>
-            <link
-                  url="about:blank;"
-                  label="%news.migration.label"
-                  id="migration">
-               <text>
-                  %news.migration.text
-               </text>
-            </link>
-            <link
-                  url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.update.ui&amp;class=org.eclipse.update.internal.ui.InstallWizardAction"
-                  label="%news.updates.label"
-                  id="updates">
-               <text>
-                  %news.updates.text
-               </text>
-            </link>
-            <link
-                  url="http://www.eclipse.org"
-                  label="%news.eclipse.label"
-                  id="eclipse">
-               <text>
-                  %news.updates.text
-               </text>
-            </link>
+	        <div id="page-links">
+	            <link
+	                  url="about:blank;"
+	                  label="%news.newandnoteworthy.label"
+	                  id="new-and-noteworthy">
+	               <text>
+	                  %news.newandnoteworthy.text
+	               </text>
+	            </link>
+	            <link
+	                  url="about:blank;"
+	                  label="%news.migration.label"
+	                  id="migration">
+	               <text>
+	                  %news.migration.text
+	               </text>
+	            </link>
+	            <link
+	                  url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.update.ui&amp;class=org.eclipse.update.internal.ui.InstallWizardAction"
+	                  label="%news.updates.label"
+	                  id="updates">
+	               <text>
+	                  %news.updates.text
+	               </text>
+	            </link>
+	            <link
+	                  url="http://www.eclipse.org"
+	                  label="%news.eclipse.label"
+	                  id="eclipse">
+	               <text>
+	                  %news.updates.text
+	               </text>
+	            </link>
+            </div>
             <img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
 	        </img>
          </page>

@@ -1,6 +1,7 @@
-html, body, div, h1, p, a { margin : 0px; padding : 0px; }
+html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
 
 body {
+	font-family : Arial;
 	overflow : auto;
 	background-repeat : no-repeat;
 	background-position : bottom right;
@@ -9,15 +10,51 @@ body {
 div { overflow : visible; }
 .page-content { overflow : visible; }
 
+/* set up font sizes */
 h1 {
+	padding-top : 5px;
 	font-size : 13pt;
 	color : #42454A;
 }
 
 h2 {
-	font-size : 14pt;
+	font-size : 13pt;
 	font-weight : normal;
 	color : #7B8694;
+}
+
+p #page-title {
+	font-size : 14pt;
+	font-weight : bold;
+	color : #8C96A2;
+}
+
+p #page-description { 
+	font-size : 10pt;
+}
+
+
+H4 .div-label {
+	font-size : 10pt;
+	font-weight : bold;
+	padding : 10px;
+	margin-bottom : 5px;
+}
+
+a .link-label {
+	font-size : 10pt;
+	font-weight : normal;
+}
+
+a .text {
+	font-size : 8pt;
+	font-weight : normal;
+}
+
+p #group-description {
+	font-size : 10pt;
+	font-weight : normal;
+	padding : 10px;
 }
 
 a {
@@ -32,6 +69,61 @@ a img {
 	background-repeat : no-repeat;
 }
 
-#presentation-header { background-color : #BCCEE4; }
-h1 #presentation-title {  }
 
+h1 #presentation-title {
+	margin-left : 10px;
+}
+
+/* Navigation */
+#navigation-links {
+	position : relative;
+	top : -115px;
+	left : 10px;
+	height : 60;
+	width : 100px;
+}
+
+#navigation-links a {
+	width : 70px;
+	height : 60px;
+	position : absolute;
+	top : 0;
+	text-align : center;
+}
+
+#navigation-links a img, a#workbench a img {
+	height : 40px;
+	width : 40px;
+	vertical-align : middle;
+}
+#navigation-links a .link-label {
+	font-size : 8pt;
+	font-weight : normal;
+}
+
+#navigation-links a .text {
+	display : none;
+}
+
+#navigation-links a:hover, a#workbench:hover { border-right : 5px; }
+
+/* properties for each of the navigation-links  */
+a#overview img { background-image : url(graphics/obj_32/overview_obj.gif); }
+a#overview:hover img { background-image : url(graphics/obj_32/hovoverview_obj.gif); }
+
+a#tutorials { left : 55px; }  
+a#tutorials img { background-image : url(graphics/obj_32/tutorials_obj.gif); }
+a#tutorials:hover img { background-image : url(graphics/obj_32/hovtutorials_obj.gif); }
+
+a#samples { left : 110px; }
+a#samples img { background-image : url(graphics/obj_32/examples_obj.gif); }
+a#samples:hover img { background-image : url(graphics/obj_32/hovexamples_obj.gif); }
+
+a#news { left : 170px; }
+a#news img { background-image : url(graphics/obj_32/whatsnew_obj.gif); }
+a#news:hover img { background-image : url(graphics/obj_32/hovwhatsnew_obj.gif); }
+
+a#workbench { left : 280px; width : 200px; text-align : left;}
+a#workbench span { display : inline; }
+a#workbench img { background-image : url(graphics/obj_32/workbench_obj.gif); }
+a#workbench:hover img { background-image : url(graphics/obj_32/hovworkbench_obj.gif); }

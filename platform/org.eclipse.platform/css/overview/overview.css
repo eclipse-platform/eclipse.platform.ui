@@ -16,11 +16,6 @@ body {
 	width:expression(document.body.clientWidth < 850? "850px": "auto" );
 }
 
-#presentation-title {
-	font-weight : normal;
-	margin-left : 10px;
-}
-
 .page-content {
 	overflow : visible;
 	min-height : 600px;
@@ -28,7 +23,6 @@ body {
 	/* since IE doesn't support min-width, try expression */
 	width:expression(document.body.clientWidth < 850? "850px": "auto" );
 }
-
 
 #background-image {
 	position : relative;
@@ -42,103 +36,42 @@ body {
 #background-image img {
 	height : 120px;
 	width : 850px;
-
 }
 
-/* don't display the page title */
-#page-header {
-	display : none;
-}
+/* don't display the page title, it is generated into the wrong position */
+#page-header { display : none; }
 
 /* use this as the page title */
-p #overview-title {
-	font-size : 15pt;
-	font-weight : bold;
-	color : #7B8694;
+p #page-title {
 	position : relative;
 	top : -100px;
 	left : 10px;
 }
 
-#navigation-links {
-	position : relative;
-	top : -100px;
-	left : 20px;
-	height : 60;
-	width : 100px;
-}
-
-#navigation-links a {
-	width : 60px;
-	height : 60px;
-	position : absolute;
-	top : 0;
-	text-indent : 0;
-}
-
-#navigation-links a img, #workbench a img {
-	height : 40px;
-	width : 40px;
-	vertical-align : middle;
-}
-
-#navigation-links a .link-label, #navigation-links a .text {
-	display : none;
-}
-#navigation-links a:hover, a#workbench:hover { border-right : 5px; }
-
-/* properties for each of the navigation-links  */
-a#overview img { background-image : url(../graphics/obj_32/overview_obj.gif); }
-a#overview:hover img { background-image : url(../graphics/obj_32/hovoverview_obj.gif); }
-
-a#tutorials { left : 50px; }  
-a#tutorials img { background-image : url(../graphics/obj_32/tutorials_obj.gif); }
-a#tutorials:hover img { background-image : url(../graphics/obj_32/hovtutorials_obj.gif); }
-
-a#samples { left : 100px; }
-a#samples img { background-image : url(../graphics/obj_32/examples_obj.gif); }
-a#samples:hover img { background-image : url(../graphics/obj_32/hovexamples_obj.gif); }
-
-a#news { left : 150px; }
-a#news img { background-image : url(../graphics/obj_32/whatsnew_obj.gif); }
-a#news:hover img { background-image : url(../graphics/obj_32/hovwhatsnew_obj.gif); }
-
-a#workbench { left : 200px; }
-a#workbench img { background-image : url(../graphics/obj_32/workbench_obj.gif); }
-a#workbench:hover img { background-image : url(../graphics/obj_32/hovworkbench_obj.gif); }
-
 /* The real content of the overview page: */
-p #overview-text { 
-	font-size : 10pt;
+p #page-description { 
 	position : relative;
 	top : -90px;
 	width : 90%;
 	padding : 10px;
 }
 
-a#basics img { background-image : url(../graphics/obj_48/wbbasics_obj.gif); }
-a#basics:hover img { background-image : url(../graphics/obj_48/hovwbbasics_obj.gif); }
-
-a#team img { background-image : url(../graphics/obj_48/team_obj.gif); }
-a#team:hover img { background-image : url(../graphics/obj_48/hovteam_obj.gif); }
-
 #overview-links {
-	width : 500px;
-	
-}
-
-#overview-links a { 
-	display : block; 
-	height : 60px; 
-	text-align : left; 
-	text-indent : 20px;
+	width : 850px;
+	height : 150px;
 	position : relative;
+	left : 50%;
+	margin-left : -425px;
 	top : -50px;
 }
 
-#overview-links a .link-label {
-	font-size : 10pt;
-	font-weight : normal;
+#overview-links a { 
+	display : block;
+	height : 60px; 
+	width : 400px;
+	text-align : left; 
+	text-indent : 20px;
+	position : absolute;
 }
 
 #overview-links a img {
@@ -147,19 +80,30 @@ a#team:hover img { background-image : url(../graphics/obj_48/hovteam_obj.gif); }
 	vertical-align : middle;
 }
 
-#overview-links a p span { display : none; }
+#overview-links a .link-label {
+	position : relative;
+	top : -10px;
+}
+
+#overview-links a p .text {
+	display : block;
+	margin-left : 60px;
+	margin-top : -20px;
+}
 
 #overview-links a:hover { border-right : 5px; }
 
-#overview-links a:hover p span {
-	display : block;
-	font-size : 8pt;
-	font-weight : normal;
-	margin-left : 60px;
-	margin-top : -12px;
-}
+a#basics img { background-image : url(../graphics/obj_48/wbbasics_obj.gif); }
+a#basics:hover img { background-image : url(../graphics/obj_48/hovwbbasics_obj.gif); }
+
+a#team { left : 425px; }
+a#team img { background-image : url(../graphics/obj_48/team_obj.gif); }
+a#team:hover img { background-image : url(../graphics/obj_48/hovteam_obj.gif); }
 
 #eclipse-wordmark {
+	position : absolute;
+	bottom : 10px;
+	left : 20px;
 	height : 23px;
 	width : 71px;
 }
