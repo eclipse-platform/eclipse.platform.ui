@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -29,7 +30,11 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -272,7 +277,7 @@ public class RoleManager implements IActivityListener {
 	//done after creation to prevent problems with dependant
 	//classes referring to the startup state.
 	protected void startup() {
-		
+
 		if (readRoles()) {
 			//recent activities expire after an hour - create this irre
 			recentActivities = new RecentActivityManager(3600000L);
@@ -455,5 +460,29 @@ public class RoleManager implements IActivityListener {
 	 * @return a delta calculator usable by the calling thread. */
 	private ActivityDeltaCalculator getDeltaCalculator() {
 		return (ActivityDeltaCalculator) deltaCalcs.get();
+	}
+
+	/**
+	 * Return the list of perspective descriptors in the supplied registry
+	 * filtered for roles if appropriate.
+	 * 
+	 * @param registry
+	 * @return IPerspectiveDescriptor[]
+	 */
+	public IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
+		if (isFiltering()) {
+			ArrayList filtered = new ArrayList();
+			IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+			for (int i = 0; i < descriptors.length; i++) {
+				if (isEnabledId(descriptors[i].getId()))
+					filtered.add(descriptors[i]);
+			}
+
+			IPerspectiveDescriptor[] returnValue = new IPerspectiveDescriptor[filtered.size()];
+			filtered.toArray(returnValue);
+			return returnValue;
+		}
+
+		return registry.getPerspectives();
 	}
 }

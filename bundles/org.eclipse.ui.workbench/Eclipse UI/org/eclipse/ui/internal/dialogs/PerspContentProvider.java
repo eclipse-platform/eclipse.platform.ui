@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 public class PerspContentProvider implements IStructuredContentProvider {
 /**
@@ -26,7 +27,7 @@ public void dispose() {
 public Object[] getElements(Object element) {
 	if (element instanceof IPerspectiveRegistry) {
 		IPerspectiveRegistry reg = (IPerspectiveRegistry)element;
-		return reg.getPerspectives();
+		return RoleManager.getInstance().filteredPerspectives(reg);
 	}
 	return null;
 }

@@ -211,19 +211,23 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
-		Iterator enum = getChildren().iterator();
+		
+		//Do not filter if looking up by id as the user 
+		//must have worken up state to have got this far
+		Iterator enum = children.iterator();
 		while (enum.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
 			if (desc.getId().equals(id))
 				return desc;
 		}
+		
 		return null;
 	}
 	/**
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
-		Iterator enum = getChildren().iterator();
+		Iterator enum = children.iterator();
 		while (enum.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
 			if (desc.getLabel().equals(label))
@@ -244,11 +248,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		ArrayList filteredChildren = getChildren(); 
-		int nSize = filteredChildren.size();
+		int nSize = children.size();
 		IPerspectiveDescriptor[] retArray = new IPerspectiveDescriptor[nSize];
 		for (int nX = 0; nX < nSize; nX++) {
-			retArray[nX] = (IPerspectiveDescriptor) filteredChildren.get(nX);
+			retArray[nX] = (IPerspectiveDescriptor) children.get(nX);
 		}
 		return retArray;
 	}
@@ -454,21 +457,5 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Step 3. Use internal workbench default.
 		defaultPerspID = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
-	}
-	
-	private ArrayList getChildren(){
-		if(RoleManager.getInstance().isFiltering()){
-			RoleManager manager = RoleManager.getInstance();
-			ArrayList filtered = new ArrayList();
-			Iterator childIterator = children.iterator();
-			while(childIterator.hasNext()){
-				IPerspectiveDescriptor next = (IPerspectiveDescriptor) childIterator.next();
-				if(manager.isEnabledId(next.getId()))
-					filtered.add(next);
-			}
-			return filtered;
-		}
-			
-		return children;
 	}
 }
