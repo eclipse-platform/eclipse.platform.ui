@@ -1134,11 +1134,14 @@ public Item scrollUp(int x, int y) {
 }
 /**
  * Sets the auto-expand level.
- * The value 0 means that there is no auto expand. 
- * 1 means that the root is expanded so that its children are visible,
- * but the root's grandchildren are not; and so on.
+ * The value 0 means that there is no auto-expand; 
+ * 1 means that top-level elements are expanded, but not their children;
+ * 2 means that top-level elements are expanded, and their children, 
+ * but not grandchildren; and so on.
+ * <p>
  * The value <code>ALL_LEVELS</code> means that all subtrees should be
  * expanded.
+ * </p>
  *
  * @param level non-negative level, or <code>ALL_LEVELS</code> to expand
  *  all levels of the tree
