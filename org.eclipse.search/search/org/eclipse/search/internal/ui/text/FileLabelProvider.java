@@ -88,7 +88,7 @@ public class FileLabelProvider extends LabelProvider {
 		if (matchCount == 0)
 			return text;
 		if (matchCount == 1)
-			return fLabelProvider.getText(element)+ " (" + 1 + " match)"; //$NON-NLS-1$ //$NON-NLS-2$
+			return text+ " (" + 1 + " match)"; //$NON-NLS-1$ //$NON-NLS-2$
 		return text + " (" + matchCount + " matches)"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
