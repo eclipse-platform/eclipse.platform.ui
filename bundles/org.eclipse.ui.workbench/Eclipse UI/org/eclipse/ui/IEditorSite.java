@@ -1,9 +1,15 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 
 /**
  * The primary interface between an editor part and the outside world.
@@ -13,16 +19,26 @@ package org.eclipse.ui;
  * </p>
  */
 public interface IEditorSite extends IWorkbenchPartSite {
-/**
- * Returns the editor action bar contributor for this editor.
- * <p>
- * An action contributor is responsable for the creation of actions.
- * By design, this contributor is used for one or more editors of the same type.
- * Thus, the contributor returned by this method is not owned completely
- * by the editor.  It is shared.
- * </p>
- *
- * @return the editor action bar contributor, or <code>null</code> if none exists
- */
-public IEditorActionBarContributor getActionBarContributor();
+
+	/**
+	 * Returns the action bar contributor for this editor.
+	 * <p>
+	 * An action contributor is responsable for the creation of actions.
+	 * By design, this contributor is used for one or more editors of the same type.
+	 * Thus, the contributor returned by this method is not owned completely
+	 * by the editor - it is shared.
+	 * </p>
+	 *
+	 * @return the editor action bar contributor, or <code>null</code> if none exists
+	 */
+	public IEditorActionBarContributor getActionBarContributor();
+
+	/**
+	 * Returns the action bars for this part site. Editors of the same type
+	 * share the same action bars. Contributions to the action bars are done
+	 * by the <code>IEditorActionBarContributor</code>.
+	 *
+	 * @return the action bars
+	 */
+	public IActionBars getActionBars();
 }

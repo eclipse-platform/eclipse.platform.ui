@@ -1,9 +1,15 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 
 /**
  * The primary interface between a view part and the outside world.
@@ -13,12 +19,12 @@ package org.eclipse.ui;
  * </p>
  */
 public interface IViewSite extends IWorkbenchPartSite {
-/**
- * Returns the action bars for this part site.
- * Views have exclusive use of their site's action bars.
- *
- * @return the action bars
- */
-public IActionBars getActionBars();
 
+	/**
+	 * Returns the action bars for this part site.
+	 * Views have exclusive use of their site's action bars.
+	 *
+	 * @return the action bars
+	 */
+	public IActionBars getActionBars();
 }
