@@ -1,9 +1,18 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.views.framelist.TreeFrame;
 import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 
@@ -40,7 +49,19 @@ protected TreeFrame createFrame(Object input) {
  * Also updates the navigator's title.
  */
 protected void frameChanged(TreeFrame frame) {
-	super.frameChanged(frame);
-	navigator.updateTitle();
+	IResource resource = (IResource) frame.getInput();
+	IProject project = resource.getProject();
+	
+	if (project != null && project.isOpen() == false) {
+		MessageDialog.openInformation(
+			navigator.getViewSite().getShell(), 
+			ResourceNavigatorMessages.getString("NavigatorFrameSource.closedProject.title"),
+			ResourceNavigatorMessages.format("NavigatorFrameSource.closedProject.message", new Object[]{project.getName()}));
+		navigator.getFrameList().back();
+	}
+	else {
+		super.frameChanged(frame);
+		navigator.updateTitle();
+	}
 }
 }
