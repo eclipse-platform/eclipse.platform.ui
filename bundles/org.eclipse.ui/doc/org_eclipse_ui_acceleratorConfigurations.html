@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Eclipse Workbench Extension Point: Accelerator Configurations</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 5.50.4613.1700" name=GENERATOR></HEAD>
+<BODY vLink=#800080 link=#0000ff>
+<CENTER>
+<H1>Accelerator Configurations</H1></CENTER><B><I>Identifier: 
+</I></B>org.eclipse.ui.acceleratorConfigurations 
+<P><B><I>Description: </I></B>This extension point is used to register accelerator configuration 
+extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows
+the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may 
+be active at a time.
+<P>An accelerator configuration represents a general style or theme of accelerators for Workbench actions. For example, the
+Workbench provides  the "Emacs" accelerator configuration. When the "Emacs"
+accelerator configuration is active, accelerators belonging to accelerator sets registered to the "Emacs" configuration are active. 
+These accelerators are defined to mimic the accelerators in Emacs (a popular text editor amongst Linux users).
+<P>
+<P>An accelerator set registers with an accelerator configuration by listing the configuration's id as the value of its 
+"configurationId" attribute (see the Accelerator Sets extension point). Many accelerator sets can be registered to the same accelerator configuration.
+<P>Note the accelerator configuration name presented to the user is the same as the value of the attribute "name" of the 
+extension element of org.eclipse.ui.acceleratorConfigurations extension point. 
+<P><B><I>Since:</I></B> Release 2.0 
+<P><B><I>Configuration Markup:</I></B> 
+<P><TT>&nbsp;&nbsp; &lt;!ELEMENT acceleratorConfiguration EMPTY&gt;</TT> <BR><TT>&nbsp;&nbsp; 
+&lt;!ATTLIST acceleratorConfiguration</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA 
+#REQUIRED</TT> <BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA 
+#REQUIRED</TT> <BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+description&nbsp;&nbsp;&nbsp; CDATA 
+#REQUIRED</TT> <BR><TT>&nbsp;&nbsp; &gt;</TT> 
+<UL>
+  <LI><B>id -</B> a unique name that can be used to identify this accelerator configuration. 
+  <LI><B>name</B> - a translatable name of the accelerator configuration to be presented to the 
+  user. </LI>
+  <LI><B>description</B> - a short description of the accelerator configuration. </LI>
+</UL>
+
+<P><B><I>Examples:</I></B> 
+<P>Following is an example of an accelerator configuration extension: 
+<P><TT>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.acceleratorConfigurations"&gt;</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;acceleratorConfiguration</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.ui.viAcceleratorConfiguration"</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name="VI"</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description="VI style accelerator configuration"&gt;</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/acceleratorConfiguration&gt;</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;acceleratorConfiguration</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.ui.jonDoeAcceleratorConfiguration"</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name="Jon Doe"</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description="Jon Doe's personal accelerator configuration"&gt;</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/acceleratorConfiguration&gt;</TT> 
+<BR><TT>&nbsp;&nbsp; &lt;/extension&gt;</TT> 
+<P><B><I>API Information:</I></B>None.
+<P><B><I>Supplied Implementation: </I></B>The workbench provides the Default and Emacs accelerator configurations.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>

@@ -99,6 +99,8 @@ NMTOKEN #REQUIRED</tt>
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; accelerator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; definitionId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; menubarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; toolbarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -143,6 +145,13 @@ the accelerator for the action. This is the integer value resulting from
 a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT)
 and a character code. For example, for Ctrl+Z use <tt>SWT.CTRL | 'Z' =
 (1&lt;&lt;18)|'Z' = 262234</tt>.</li>
+
+<li>
+<b>definitionId</b> - the id specified in the action definition. Only needed
+when an action set specifies accelerators through the key binding service. See
+the extension points <a href="org_eclipse_ui_actionDefinitions.html">Action Definitions</a>
+and <a href="org_eclipse_ui_acceleratorSets.html">Accelerator Sets</a>
+</li>
 
 <li>
 <b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
