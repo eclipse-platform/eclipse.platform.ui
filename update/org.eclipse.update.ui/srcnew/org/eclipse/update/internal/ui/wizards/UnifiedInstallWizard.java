@@ -290,15 +290,14 @@ public class UnifiedInstallWizard
 	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
 	 */
 	public void objectChanged(Object object, String property) {
-		// TODO Auto-generated method stub
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsAdded(java.lang.Object, java.lang.Object[])
 	 */
 	public void objectsAdded(Object parent, Object[] children) {
-		// TODO Auto-generated method stub
-		System.out.println(parent);
+		if (!(parent instanceof InstallOperation))
+			return;
 		InstallOperation job = (InstallOperation)parent;
 		IFeature oldFeature = job.getOldFeature();
 		if (oldFeature == null && job.getOptionalFeatures() != null) 
@@ -311,8 +310,6 @@ public class UnifiedInstallWizard
 	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsRemoved(java.lang.Object, java.lang.Object[])
 	 */
 	public void objectsRemoved(Object parent, Object[] children) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
