@@ -402,6 +402,7 @@ public class OperationsManager implements IAdaptable {
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 
 				boolean needsRestart = installJob.execute(subMonitor);
+				addPendingChange(installJob);
 
 				installJob.markProcessed();
 				//may need to fire with a different parent
