@@ -362,6 +362,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
+  	 */		
+	public boolean canSave() {
+ 		return isValid(null);
+	}
+	
+	/**
 	 * Validates the content of the location field.
 	 */
 	protected boolean validateLocation() {
@@ -564,5 +571,4 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			return form;
 		}
 	}
-
 }
