@@ -14,7 +14,8 @@ import java.util.jar.*;
 /**
  * Parses MANIFEST.MF
  */
-public class BundleManifest {
+public class BundleManifest implements IConfigurationConstants {
+	private File manifestFile;
 	private PluginEntry pluginEntry;
 	private IOException exception;
 	/**
@@ -22,6 +23,7 @@ public class BundleManifest {
 	 */
 	public BundleManifest(File manifest) {
 		super();
+		manifestFile = manifest;
 		if (manifest.exists() && !manifest.isDirectory()) {
 			try {
 				parse(new FileInputStream(manifest));
@@ -29,15 +31,15 @@ public class BundleManifest {
 			}
 		}
 	}
-	/**
-	 * Constructor for local file
-	 */
-	public BundleManifest(InputStream input) {
-		super();
-		if (input != null) {
-			parse(input);
-		}
-	}
+	//	/**
+	//	 * Constructor for local file
+	//	 */
+	//	public BundleManifest(InputStream input) {
+	//		super();
+	//		if (input != null) {
+	//			parse(input);
+	//		}
+	//	}
 	/**
 	 * Parses manifest, creates PluginEntry if manifest is valid, stores
 	 * exception if any occurs
@@ -63,6 +65,14 @@ public class BundleManifest {
 					version));
 			pluginEntry.isFragment(hostPlugin != null
 					&& hostPlugin.length() > 0);
+			// Set URL
+			File pluginDir = manifestFile.getParentFile();
+			if (pluginDir != null) {
+				pluginDir = pluginDir.getParentFile();
+			}
+			if (pluginDir != null)
+				pluginEntry.setURL(PLUGINS + "/" + pluginDir.getName() + "/");
+			//
 		} catch (IOException ioe) {
 			exception = ioe;
 		}
