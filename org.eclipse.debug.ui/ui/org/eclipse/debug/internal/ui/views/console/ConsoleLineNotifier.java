@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
 
@@ -42,10 +41,8 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	 */
 	private ProcessConsole fConsole = null;
 	
-	/**
-	 * Connects this notifier to the given console.
-	 *  
-	 * @param console
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
 	 */
 	public void connect(IConsole console) {
 	    if (console instanceof ProcessConsole) {
@@ -61,8 +58,8 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	    }
 	}
 	
-	/**
-	 * Disposes this notifier 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
 	 */
 	public synchronized void disconnect() {
 	    if (fConsole == null) {
