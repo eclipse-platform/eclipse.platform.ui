@@ -10,6 +10,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+import org.eclipse.core.internal.events.ILifecycleListener;
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -20,7 +22,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * This factory delegates to the TeamHook to obtain an appropriate factory
  * for the resource that the operation is proposing to modify.
  */
-class Rules implements IResourceRuleFactory {
+class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Map of project names to the factory for that project.
 	 */
@@ -35,6 +37,7 @@ class Rules implements IResourceRuleFactory {
 	Rules(Workspace workspace) {
 		this.root = workspace.getRoot();
 		this.teamHook = workspace.getTeamHook();
+		workspace.addLifecycleListener(this);
 	}
 
 	/**
@@ -84,6 +87,21 @@ class Rules implements IResourceRuleFactory {
 			projectsToRules.put(destination.getFullPath().segment(0), fac);
 		}
 		return fac;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.events.ILifecycleListener#handleEvent(org.eclipse.core.internal.events.LifecycleEvent)
+	 */
+	public void handleEvent(LifecycleEvent event) {
+		//clear resource rule factory for projects that are about to be closed
+		//or deleted. It is ok to do this during a PRE event because the rule
+		//has already been obtained at this point.
+		switch (event.kind) {
+			case LifecycleEvent.PRE_PROJECT_CLOSE :
+			case LifecycleEvent.PRE_PROJECT_DELETE :
+			case LifecycleEvent.PRE_PROJECT_MOVE :
+				setRuleFactory((IProject) event.resource, null);
+		}
 	}
 
 	/**
