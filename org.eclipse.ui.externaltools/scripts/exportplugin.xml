@@ -17,10 +17,12 @@
 		<mkdir dir="${dest}" />
 		<delete dir="${dest}/lib"/>
 		<mkdir dir="${dest}/lib"/>
-		<jar 
-			jarfile="${dest}/externaltools.jar"
-			basedir="bin"
-		/>
+		<jar jarfile="${dest}/externaltools.jar">
+			<fileset dir="bin">
+				<exclude name="org/eclipse/ui/externaltools/internal/ant/inputhandler/*"/>
+				<exclude name="org/eclipse/ui/externaltools/internal/ant/logger/*"/>
+			</fileset>
+		</jar>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/externaltoolssrc.zip">
 			<fileset dir="Ant Runner Support"/>
