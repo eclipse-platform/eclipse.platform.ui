@@ -57,14 +57,25 @@ public class QueryBuilder {
 	 * Splits user query into tokens and returns a list of QueryWordsToken's.
 	 */
 	private List tokenizeUserQuery(String searchWords) {
-		List tokenList = new ArrayList();
+	    List tokenList = new ArrayList();
 		//Divide along quotation marks
-		StringTokenizer qTokenizer = new StringTokenizer(searchWords.trim(),
-				"\"", true); //$NON-NLS-1$
+		//StringTokenizer qTokenizer = new StringTokenizer(searchWords.trim(),
+		//		"\"", true); //$NON-NLS-1$
 		boolean withinQuotation = false;
 		String quotedString = ""; //$NON-NLS-1$
-		int termCount = 0;
-		// keep track of number of terms to disallow too many
+		int termCount = 0;// keep track of number of terms to disallow too many
+
+		int fromIndex = -1;
+		searchWords = searchWords.trim();
+		while((fromIndex = searchWords.indexOf("\"", fromIndex+1))!= -1){
+			withinQuotation = !withinQuotation;
+		}
+		if( withinQuotation ) {
+			searchWords = searchWords + "\"";
+			withinQuotation = !withinQuotation;
+		}
+		
+		StringTokenizer qTokenizer = new StringTokenizer(searchWords,"\"",true); //$NON-NLS-1$
 		int orCount = 0; // keep track of number of ORs to disallow too many
 		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
