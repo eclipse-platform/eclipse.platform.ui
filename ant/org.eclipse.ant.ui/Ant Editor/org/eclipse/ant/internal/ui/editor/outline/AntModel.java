@@ -84,7 +84,7 @@ public class AntModel {
 	
 	private Map fTaskToNode= new HashMap();
 
-	private List fProperties= null;
+	private List fTaskNodes= new ArrayList();
 	
 	private Map fEntityNameToPath;
 
@@ -197,7 +197,7 @@ public class AntModel {
 		if (region == null ) {
 			fStillOpenElements= new Stack();
 			fTaskToNode= new HashMap();
-			fProperties= null;
+			fTaskNodes= new ArrayList();
 			fNodeBeingResolved= null;
 			fLastNode= null;
 		}
@@ -371,7 +371,7 @@ public class AntModel {
 		String textToParse=  input.get();
 		fProjectNode.reset();
 		fTaskToNode= new HashMap();
-		fProperties= null;
+		fTaskNodes= new ArrayList();
 		return textToParse;
 	}
 
@@ -437,19 +437,15 @@ public class AntModel {
 	}
 
 	private void resolveBuildfile() {	
-		resolveProperties();
-		Collection nodes= fTaskToNode.values();
-		Collection nodeCopy= new ArrayList();
-		nodeCopy.addAll(nodes);
+		Collection nodeCopy= new ArrayList(fTaskNodes.size());
+		nodeCopy.addAll(fTaskNodes);
 		Iterator iter= nodeCopy.iterator();
 		while (iter.hasNext()) {
 			AntTaskNode node = (AntTaskNode) iter.next();
-			if (!(node instanceof AntPropertyNode)) {
-				fNodeBeingResolved= node;
-				if (node.configure(false)) {
-					//resolve any new elements
-					resolveBuildfile();
-				}
+			fNodeBeingResolved= node;
+			if (node.configure(false)) {
+				//resolve any new elements that may have been added
+				resolveBuildfile();
 			}
 		}
 		fNodeBeingResolved= null;
@@ -496,16 +492,6 @@ public class AntModel {
 			}
 		}
 		
-	}
-
-	private void resolveProperties() {
-		if (fProperties != null) {
-			Iterator itr= fProperties.iterator();
-			while (itr.hasNext()) {
-				AntPropertyNode node = (AntPropertyNode)itr.next();
-				node.configure(false);
-			}
-		}
 	}
 
 	public void handleBuildException(BuildException e, AntElementNode node, int severity) {
@@ -591,7 +577,7 @@ public class AntModel {
 		if (fIncrementalTarget != null) {
 			return;
 		}
-		fProjectNode= new AntProjectNode(project, this);
+		fProjectNode= new AntProjectNode((AntModelProject)project, this);
 		fStillOpenElements.push(fProjectNode);
 		computeOffset(fProjectNode, line, column);
 	}
@@ -614,10 +600,16 @@ public class AntModel {
 			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(taskNode);
 		}
 		fTaskToNode.put(newTask, taskNode);
+		
 		fStillOpenElements.push(taskNode);
 		computeOffset(taskNode, line, column);
 		if (fNodeBeingResolved instanceof AntImportNode) {
 			taskNode.setImportNode(fNodeBeingResolved);
+			//place the node in the collection right after the import node
+			int index= fTaskNodes.indexOf(fNodeBeingResolved) + 1;
+			fTaskNodes.add(index, taskNode);
+		} else {
+			fTaskNodes.add(taskNode);
 		}
 	}
 	
@@ -633,10 +625,6 @@ public class AntModel {
 		String taskName= newTask.getTaskName();
 		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
 			newNode= new AntPropertyNode(newTask, attributes);
-			if (fProperties == null) {
-				fProperties= new ArrayList();
-			}
-			fProperties.add(newNode);
 		} else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
 			newNode= new AntImportNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("macrodef")  //$NON-NLS-1$

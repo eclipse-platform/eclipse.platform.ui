@@ -29,6 +29,9 @@ package org.eclipse.ant.internal.ui.editor.outline;
  */
 
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 
@@ -36,15 +39,25 @@ import org.apache.tools.ant.Project;
  * Derived from the original Ant Project class
  * This class allows property values to be written multiple times.
  * This facilitates incremental parsing of the Ant build file
- * It also attempts to ensure that we clean up after ourselves.
+ * It also attempts to ensure that we clean up after ourselves and allows
+ * more manipulation of properties resulting from incremental parsing
  */
 public class AntModelProject extends Project {
+	
+	private Map fCurrentProperties= new HashMap();
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#setNewProperty(java.lang.String, java.lang.String)
 	 */
 	public void setNewProperty(String name, String value) {
-		// always allow property values to be over-written
+		
+		if (fCurrentProperties.get(name) != null) {
+			return;
+		} 
+		//always property values to be over-written for this parse session
+		//there is currently no way to remove properties from the Apache Ant project
+		//the project resets it properties for each parse...see reset()
+		fCurrentProperties.put(name, value);
 		super.setProperty(name, value);
 	}
 	
@@ -58,5 +71,13 @@ public class AntModelProject extends Project {
 			BuildListener listener = (BuildListener) e.nextElement();
 			removeBuildListener(listener);
 		}
+	}
+	
+	public void reset() {
+		getTargets().clear();
+		setDefault(null);
+		setDescription(null);
+		setName(""); //$NON-NLS-1$
+		fCurrentProperties= new HashMap();
 	}
 }

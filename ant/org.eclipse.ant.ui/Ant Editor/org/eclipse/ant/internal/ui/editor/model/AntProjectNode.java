@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.AntModelProject;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -23,11 +24,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntProjectNode extends AntElementNode {
 
-	private Project fProject;
+	private AntModelProject fProject;
 	private AntModel fModel;
 	private Map fNameToDefiningNodeMap;
 	
-	public AntProjectNode(Project project, AntModel antModel) {
+	public AntProjectNode(AntModelProject project, AntModel antModel) {
 		super("project"); //$NON-NLS-1$
 		fProject= project;
 		fModel= antModel;
@@ -67,10 +68,7 @@ public class AntProjectNode extends AntElementNode {
 	 */
 	public void reset() {
 		super.reset();
-		fProject.getTargets().clear();
-		fProject.setDefault(null);
-		fProject.setDescription(null);
-		fProject.setName(""); //$NON-NLS-1$
+		fProject.reset();
 		if (fNameToDefiningNodeMap != null) {
 			getAntModel().setNamesOfOldDefiningNodes(fNameToDefiningNodeMap.keySet());
 		}
