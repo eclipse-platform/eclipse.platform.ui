@@ -466,7 +466,7 @@ public final void savePluginPreferences() {
 	} catch (IOException e) {
 		// problems saving preference store - quietly ignore
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("IOException writing to preference file " + prefFile);
+			System.out.println("IOException writing to preference file " + prefFile); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 	} finally {
@@ -476,7 +476,7 @@ public final void savePluginPreferences() {
 			} catch (IOException e) {
 				// ignore problems with close
 				if (InternalPlatform.DEBUG_PREFERENCES) {
-					System.out.println("IOException closing preference file " + prefFile);
+					System.out.println("IOException closing preference file " + prefFile); //$NON-NLS-1$
 					e.printStackTrace();
 				}
 			}
