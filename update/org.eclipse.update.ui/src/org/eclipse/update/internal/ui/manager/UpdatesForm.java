@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.wizard.*;
+import java.lang.reflect.InvocationTargetException;
 
 public class UpdatesForm extends UpdateWebForm {
 	private Label descLabel;
@@ -29,7 +30,7 @@ public class UpdatesForm extends UpdateWebForm {
 	private Button searchButton;
 	private PageBook pagebook;
 	private SearchMonitor monitor;
-	private boolean inSearch = false;
+	private AvailableUpdates updates;
 	
 class SearchMonitor extends ProgressMonitorPart {
 	public SearchMonitor(Composite parent) {
@@ -38,10 +39,17 @@ class SearchMonitor extends ProgressMonitorPart {
 		fLabel.setBackground(factory.getBackgroundColor());
 		fProgressIndicator.setBackground(factory.getBackgroundColor());
 	}
+	public void done() {
+		super.done();
+		updateButtonText();
+		enableOptions(true);
+	}
 }
 	
 public UpdatesForm(UpdateFormPage page) {
 	super(page);
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	updates = model.getUpdates();
 }
 
 public void dispose() {
@@ -137,33 +145,44 @@ private void reflow() {
 }
 
 private void performSearch() {
-	if (inSearch) {
-		performCancel();
-		return;
+	if (updates.isSearchInProgress()) {
+		stopSearch();
 	}
-	inSearch = true;
-	updateButtonText();
-	monitor.beginTask("Searching...", 5);
-	for (int i=0; i<5; i++) {
-		try {
-			Thread.currentThread().sleep(2000);
-			monitor.worked(1);
-		}
-		catch (InterruptedException e) {
-		}
+	else {
+		if (!startSearch()) return;
 	}
-	monitor.done();
-	inSearch = false;
 	updateButtonText();
 }
 
-private void performCancel() {
-	monitor.done();
-	inSearch = false;
-	updateButtonText();
+private boolean startSearch() {
+	try {
+	   updates.attachProgressMonitor(monitor);
+	   updates.startSearch(getControl().getDisplay());
+	   enableOptions(false);
+	}
+	catch (InvocationTargetException e) {
+		UpdateUIPlugin.logException(e);
+		return false;
+	}
+	catch (InterruptedException e) {
+		UpdateUIPlugin.logException(e);
+		return false;
+	}
+	return true;
+}
+
+private void stopSearch() {
+	updates.stopSearch();
+	updates.detachProgressMonitor(monitor);
+	enableOptions(true);
+}
+
+private void enableOptions(boolean enable) {
+	cdromCheck.setEnabled(enable);
 }
 
 private void updateButtonText() {
+	boolean inSearch = updates.isSearchInProgress();
 	if (inSearch)
 		searchButton.setText("&Cancel");
 	else

@@ -11,15 +11,27 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import java.lang.reflect.InvocationTargetException;
 
 public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
 
 	private Vector updates = new Vector();
 	private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
+	private BackgroundThread searchThread;
+	private boolean debug = false;
+
+class SearchAdapter extends MonitorAdapter {
+	public void done() {
+		searchInProgress = false;
+	}
+}
 	
 	public AvailableUpdates() {
 		backgroundProgress = new BackgroundProgressMonitor();
+		backgroundProgress.addProgressMonitor(new SearchAdapter());
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -72,9 +84,34 @@ public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
 		backgroundProgress.removeProgressMonitor(monitor);
 	}
 	
-	public void startSearch() {
+	public void startSearch(Display display) throws InvocationTargetException, InterruptedException {
 		if (searchInProgress) return;
-		searchInProgress=true;
+		backgroundProgress.setDisplay(display);
+		IRunnableWithProgress operation = getSearchOperation();
+		searchThread = new BackgroundThread(operation, backgroundProgress, Display.getDefault());
+		searchInProgress = true;
+		searchThread.start();
+		Throwable throwable= searchThread.getThrowable();
+		if (throwable != null) {
+			if (debug) {
+				System.err.println("Exception in search background thread:");//$NON-NLS-1$
+				throwable.printStackTrace();
+				System.err.println("Called from:");//$NON-NLS-1$
+				// Don't create the InvocationTargetException on the throwable,
+				// otherwise it will print its stack trace (from the other thread).
+				new InvocationTargetException(null).printStackTrace();
+			}
+			if (throwable instanceof InvocationTargetException) {
+				throw (InvocationTargetException) throwable;
+			} else if (throwable instanceof InterruptedException) {
+				throw (InterruptedException) throwable;
+			} else if (throwable instanceof OperationCanceledException) {
+				// See 1GAN3L5: ITPUI:WIN2000 - ModalContext converts OperationCancelException into InvocationTargetException
+				throw new InterruptedException(throwable.getMessage());
+			} else {
+				throw new InvocationTargetException(throwable);
+			}	
+		}
 	}
 	
 	public boolean isSearchInProgress() {
@@ -82,7 +119,31 @@ public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
 	}
 	
 	public void stopSearch() {
-		if (!searchInProgress) return;
-		searchInProgress = false;
+		if (!searchInProgress || searchThread==null) return;
+		backgroundProgress.setCanceled(true);
+	}
+	
+	public IRunnableWithProgress getSearchOperation() {
+		return new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				doSearch(monitor);
+			}
+		};
+	}
+	
+	private void doSearch(IProgressMonitor monitor) {
+		backgroundProgress.beginTask("Searching...", 5);
+		for (int i=0; i<5; i++) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			try {
+				Thread.currentThread().sleep(2000);
+				monitor.worked(1);
+			}
+			catch (InterruptedException e) {
+			}
+		}
+		monitor.done();
 	}
 }
