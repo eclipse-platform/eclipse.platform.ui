@@ -807,8 +807,8 @@ public class Patcher {
 						store(getRejected(failed), file, pm);
 						try {
 							IMarker marker= file.createMarker(MARKER_TYPE);
-							marker.setAttribute(marker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
-							marker.setAttribute(marker.PRIORITY, IMarker.PRIORITY_HIGH);
+							marker.setAttribute(IMarker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
+							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 						} catch (CoreException ex) {
 						}
 					}

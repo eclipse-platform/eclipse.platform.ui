@@ -178,7 +178,7 @@ public class TimeoutContext {
 			fProgressIndicator= new ProgressIndicator(c);
 			gd= new GridData();
 			gd.heightHint= 15;
-			gd.horizontalAlignment= gd.FILL;
+			gd.horizontalAlignment= GridData.FILL;
 			gd.grabExcessHorizontalSpace= true;
 			gd.horizontalSpan= 2;
 			fProgressIndicator.setLayoutData(gd);
