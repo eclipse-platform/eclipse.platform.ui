@@ -3127,7 +3127,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Returns an iterator over the opened perspectives
 	 */
 	protected IPerspectiveDescriptor[] getOpenedPerspectives() {
-		Perspective opened[] = perspList.getSortedPerspectives();
+		Perspective opened[] = perspList.getOpenedPerspectives();
 		IPerspectiveDescriptor[] result =
 			new IPerspectiveDescriptor[opened.length];
 		for (int i = 0; i < result.length; i++) {
