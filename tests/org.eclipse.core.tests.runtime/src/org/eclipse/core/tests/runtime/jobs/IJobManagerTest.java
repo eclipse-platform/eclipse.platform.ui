@@ -152,7 +152,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule("testBeginRuleNoEnd");
 		Job job = new Job("testBeginRuleNoEnd") {
 			protected IStatus run(IProgressMonitor monitor) {
-				Platform.getJobManager().beginRule(rule, null);
+				monitor.beginTask(getName(), 1);
+				try {
+					Platform.getJobManager().beginRule(rule, null);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
 				return Status.OK_STATUS;
 			}
 		};

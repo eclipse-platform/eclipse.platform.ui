@@ -23,7 +23,7 @@ public class FussyProgressProvider extends ProgressProvider {
 	private ArrayList monitors = new ArrayList();
 
 	public IProgressMonitor createMonitor(Job job) {
-		IProgressMonitor result = new FussyProgressMonitor();
+		IProgressMonitor result = new FussyProgressMonitor(job);
 		monitors.add(result);
 		return result;
 	}

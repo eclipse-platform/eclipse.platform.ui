@@ -12,6 +12,7 @@ package org.eclipse.core.tests.harness;
 
 import junit.framework.AssertionFailedError;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * This class can be used for testing progress monitoring.
@@ -44,9 +45,18 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 	private String taskName;
 	private int totalWork;
 	private double workedSoFar = 0;
-
+	private Job job;
 	public FussyProgressMonitor() {
 		prepare();
+	}
+	/**
+	 * Creates a fussy progress monitor that is associated with a particular job.
+	 * On assertion failure the job name will be included in the failure message.
+	 * @param job
+	 */
+	public FussyProgressMonitor(Job job) {
+		this();
+		this.job = job;
 	}
 
 	/**
@@ -60,6 +70,8 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 			return;
 		if (!condition) {
 			hasFailed = true;
+			if (job != null)
+				reason += " in job: " + job.getName();
 			throw new FussyProgressAssertionFailed(reason);
 		}
 		//Assert.assert(reason, condition);
