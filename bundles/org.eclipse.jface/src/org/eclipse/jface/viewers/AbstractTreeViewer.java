@@ -1196,6 +1196,18 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		oldCnt= getItemCount(tree);
 
 	Item[] items = getChildren(widget);
+	
+	// save the expanded elements
+	HashSet expanded = new HashSet(); // assume num expanded is small
+	for (int i = 0; i < items.length; ++i) {
+		if (getExpanded(items[i])) {
+			Object element = items[i].getData();
+			if (element != null) {
+				expanded.add(element);
+			}
+		}
+	}
+	
 	int min = Math.min(elementChildren.length, items.length);
 
 	// Note: In the code below, doing disassociate calls before associate calls is important,
@@ -1238,6 +1250,8 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		if (item.getData() == null) {
 			Object newElement = elementChildren[i];
 			associate(newElement, item);
+			// restore expanded state for items that changed position
+			setExpanded(item, expanded.contains(newElement));
 			updatePlus(item, newElement);
 			updateItem(item, newElement);
 		}
