@@ -11,16 +11,19 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -56,7 +59,8 @@ public class PerspectiveSwitcher {
     private WorkbenchWindow window;
     private CBanner topBar;
     private int style;
-
+    private List MRUList = new ArrayList();
+    
     private Composite parent;
     private Composite trimControl;
     private Label trimSeparator;
@@ -74,8 +78,7 @@ public class PerspectiveSwitcher {
 	// the switcher is disposed.
 	private Menu popupMenu;
 	private Menu genericMenu;
-	private List radioButtons = new ArrayList(4);
-
+	
 	private static final int INITIAL = -1;
 	private static final int TOP_RIGHT = 1;
 	private static final int TOP_LEFT = 2;
@@ -84,7 +87,11 @@ public class PerspectiveSwitcher {
 	private int currentLocation = INITIAL;
 	
 	private static final int SEPARATOR_LENGTH = 20;
-	
+
+	private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+
+	private IPropertyChangeListener propertyChangeListener;
+
 	private Listener popupListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MenuDetect) {
@@ -92,11 +99,20 @@ public class PerspectiveSwitcher {
 			}
 		}
 	};
+	private DisposeListener toolBarListener;
 
 	public PerspectiveSwitcher(WorkbenchWindow window, CBanner topBar, int style) {
 	    this.window = window;
 	    this.topBar = topBar;
 	    this.style = style;
+	    setPropertyChangeListener();
+	    // this listener will only be run when the Shell is being disposed
+		// and each WorkbenchWindow has its own PerspectiveSwitcher
+		toolBarListener = new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+		};
 	}
 
 	private static int convertLocation(String preference) {
@@ -122,9 +138,115 @@ public class PerspectiveSwitcher {
 	    if (perspectiveBar == null)
 	        return;
 
-		perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
+	    PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(perspective, workbenchPage);
+
+	    int index = Math.max(1, getItemInsertionIndex());
+		perspectiveBar.insert(index, item);
 		perspectiveBar.update(false);
+		ensureVisible(index, workbenchPage);
+		MRUList.add(0, perspective);
+	}
+	
+	/**
+	 * Method to insure that an item at a given position is visible
+	 * @param index the index of the item to ensure visible
+	 * @param page the workbench page containing the perspective
+	 */
+	private void ensureVisible(int index, WorkbenchPage page) {
+		if (index == 1)
+			return;
+		
+		ToolItem[] items = perspectiveBar.getControl().getItems();
+		ToolItem current = items[index];
+		Rectangle barBounds = perspectiveBar.getControl().getBounds();
+		while (!barBounds.intersects(current.getBounds()) && index > 1)
+			index = relocateLRU(index, page);
+		
 		setCoolItemSize(coolItem);
+	}
+
+	/**
+	 * Method to get the insertion position of a new item
+	 * @return the index at which a new item should be inserted
+	 */
+	private int getItemInsertionIndex() {
+		if (!perspectiveBar.getControl().isVisible())
+			return perspectiveBar.getControl().getItems().length;
+		
+		ToolItem[] items = perspectiveBar.getControl().getItems();
+		if (items.length > 1) { 
+			Rectangle barBounds = perspectiveBar.getControl().getBounds();
+			// find the first non-visible item
+			for (int i = 1; i < items.length; i++) {
+				ToolItem toolItem = items[i];
+				if (!barBounds.intersects(toolItem.getBounds()))
+					return i;
+			}
+			// they are all visible
+			return items.length;
+		}
+		// insert at the beginning
+		return 1;
+	}
+
+	/**
+	 * Method that removes the most recently used and visible 
+	 * perspective button and places it at a given index
+	 * @param index the position at which the removed button should
+	 * be relocated
+	 * @param page the workbench page containing the perspective button
+	 */
+	private int relocateLRU(int index, WorkbenchPage page) {
+		// if the MRU list does not contain entries, do nothing
+		if (MRUList.size() < 1)
+			return -1;
+		
+		// get the perspective bar bounds
+		Rectangle barBounds = perspectiveBar.getControl().getBounds();
+		boolean isVis = false;
+		IPerspectiveDescriptor descriptor = null;
+		IContributionItem item = null;
+		// loop through the MRU list and find the visible LRU item  
+		for (int MRUindex = MRUList.size() - 1; !isVis && MRUindex >= 0; MRUindex--) {
+			descriptor = (IPerspectiveDescriptor)MRUList.get(MRUindex);
+			item = findPerspectiveShortcut(descriptor, page);
+			ToolItem tItem = ((PerspectiveBarContributionItem)item).getToolItem();
+			isVis = barBounds.intersects(tItem.getBounds());
+		}
+		// remove and add the found item at the given index in parameter
+		if (item != null) {
+			PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
+			PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
+			perspectiveBar.remove(contribItem);
+			contribItem.dispose();
+			perspectiveBar.insert(index, newItem);
+			perspectiveBar.update(false);
+		}
+		else
+			return -1;
+		
+		// the item to be removed next should be placed at
+		// the given index -1 since we already removed an item 
+		// prior to the given index
+		return --index;
+	}
+
+	/**
+	 * @return a list with the visible perspective tool items
+	 */
+	private List getVisibleItems() {
+		ArrayList list = new ArrayList();
+		
+		ToolItem[] items = perspectiveBar.getControl().getItems();
+		Rectangle barBounds = perspectiveBar.getControl().getBounds();
+		for (int i = 0; i < items.length; i++) {
+			ToolItem toolItem = items[i];
+			if (!barBounds.intersects(toolItem.getBounds()))
+				return list;
+			else
+				list.add(toolItem);
+		}
+		return list;
 	}
 
 	public IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
@@ -152,6 +274,7 @@ public class PerspectiveSwitcher {
 			item.dispose();
 			perspectiveBar.update(false);
 			setCoolItemSize(coolItem);
+			MRUList.remove(perspective);
 		}
 	}
 
@@ -219,10 +342,30 @@ public class PerspectiveSwitcher {
 		}
  	}
 
-	public void selectPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page, boolean selected) {
+ 	public void selectPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page, boolean selected) {
 		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		if (item != null && (item instanceof PerspectiveBarContributionItem))
+		if (item != null && (item instanceof PerspectiveBarContributionItem)) {
+			if (selected) {
+				// check if not visible and ensure visible
+				PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
+				Rectangle barBounds = perspectiveBar.getControl().getBounds();
+				if (!barBounds.intersects(contribItem.getToolItem().getBounds())) {
+					// remove and add as the first non-visible
+					int index = Math.max(1, getItemInsertionIndex());
+					PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
+					perspectiveBar.remove(contribItem);
+					contribItem.dispose();
+					perspectiveBar.insert(index, newItem);
+					perspectiveBar.update(false);
+					// ensure visible
+					ensureVisible(index, (WorkbenchPage)window.getActivePage());
+				}
+			    MRUList.remove(perspective);
+			    MRUList.add(0, perspective);
+			}
+		    // select or de-select
 		    ((PerspectiveBarContributionItem) item).setSelection(selected);
+		}
 	}
 
 	public void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc, IPerspectiveDescriptor newDesc, WorkbenchPage page) {
@@ -236,24 +379,14 @@ public class PerspectiveSwitcher {
 	}
 
 	public void dispose() {
-	    disposeChildControls();
-
-	    Iterator i = radioButtons.iterator();
-	    while (i.hasNext())
-	        ((RadioMenu)i.next()).dispose();
+	    if (propertyChangeListener != null) {
+	    	apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
+	    	propertyChangeListener = null;
+	    }
+	    toolBarListener = null;
 	}
 
 	private void disposeChildControls() {
-
-		if (toolbarWrapper != null) {
-			toolbarWrapper.dispose();
-			toolbarWrapper = null;
-	    }
-	    
-	    if (perspectiveBar != null) {
-	        perspectiveBar.dispose();
-	        perspectiveBar = null;
-	    }
 
 	    if (trimControl != null) {
 	        trimControl.dispose();
@@ -268,11 +401,21 @@ public class PerspectiveSwitcher {
 	    if (perspectiveCoolBar != null) {
 	        perspectiveCoolBar.dispose();
 	        perspectiveCoolBar = null;
-	    }
+	    } 
 
+	    if (toolbarWrapper != null) {
+			toolbarWrapper.dispose();
+			toolbarWrapper = null;
+	    }
+	    
+	    if (perspectiveBar != null) {
+	        perspectiveBar.dispose();
+	        perspectiveBar = null;
+	    }
+	    
 		perspectiveCoolBarWrapper = null;
 	}
-
+ 
 	/**
 	 * Ensures the control has been set for the argument location.  If the control
 	 * already exists and can be used the argument location, nothing happens.  Updates
@@ -290,14 +433,38 @@ public class PerspectiveSwitcher {
                 return;
         }
 
+		if (perspectiveBar != null)
+			perspectiveBar.getControl().removeDisposeListener(toolBarListener);
 		// otherwise dispose the current controls and make new ones
 		disposeChildControls();
 	    if (newLocation == LEFT)
 		    createControlForLeft();
 		else
 	        createControlForTop();
+	    
+	    perspectiveBar.getControl().addDisposeListener(toolBarListener);
 	}
 
+	private void setPropertyChangeListener() {
+		propertyChangeListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+				if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
+						.equals(propertyChangeEvent.getProperty())) {
+					if (perspectiveBar == null)
+						return;
+					IContributionItem[] items = perspectiveBar.getItems();
+					for (int i = 0; i < items.length; i++) {
+						items[i].update();
+					}
+					perspectiveBar.update(true);
+					setCoolItemSize(coolItem);
+					
+				}
+			}
+		};
+		apiPreferenceStore.addPropertyChangeListener(propertyChangeListener);
+	}
 	private void createControlForLeft() {
 	    trimControl = new Composite(parent, SWT.NONE);
 
@@ -345,8 +512,9 @@ public class PerspectiveSwitcher {
 		coolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (e.detail == SWT.ARROW) {
-				    if (perspectiveBar != null)
+				    if (perspectiveBar != null) {
 				        perspectiveBar.handleChevron(e);
+				    }
 				}
 			}
 		});
@@ -358,7 +526,7 @@ public class PerspectiveSwitcher {
 	 * @param coolItem
 	 * @param toolbarWrapper
 	 */
-	private void setCoolItemSize(final CoolItem coolItem) {
+ 	private void setCoolItemSize(final CoolItem coolItem) {
 		// there is no coolItem when the bar is on the left
 		if (currentLocation == LEFT)
 			return;
@@ -367,6 +535,20 @@ public class PerspectiveSwitcher {
 		if (toolbar == null) 
 			return;
 		
+		// calculate the minimum width
+/*		int minWidth = 0;
+		if (perspectiveBar.getControl().getItemCount() > 0)
+			minWidth = perspectiveBar.getControl().getItem(0).getBounds().width +
+						PerspectiveBarContributionItem.getMaxWidth(perspectiveBar.getControl().getItem(0).getImage()) +
+						 50;
+		Point coolBarSize = coolItem.getParent().getSize();
+
+		if (coolBarSize.x < minWidth) {
+			Composite banner = coolItem.getParent().getParent().getParent();
+			if (banner instanceof CBanner)
+				((CBanner)banner).setRightWidth(minWidth);
+		}
+*/		
 		Rectangle area = perspectiveCoolBar.getClientArea();
 		int rowHeight = toolbar.getItem(0).getBounds().height;
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
@@ -381,6 +563,7 @@ public class PerspectiveSwitcher {
 		int w = wrappedSize.y <= h ? wrappedSize.x : wrappedSize.x + 1;
 		coolItem.setSize(coolItem.computeSize(w, h));
 	}
+	
 	private void showPerspectiveBarPopup(Point pt) {
 	    if (perspectiveBar == null)
 	        return;
@@ -560,8 +743,9 @@ public class PerspectiveSwitcher {
 				boolean preference = showtextMenuItem.getSelection();
                 PrefUtil.getAPIPreferenceStore()
                         .setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, preference);
-                LayoutUtil.resize(perspectiveBar.getControl());	
+                setCoolItemSize(coolItem);
 			}
 		});
 	}
+
 }

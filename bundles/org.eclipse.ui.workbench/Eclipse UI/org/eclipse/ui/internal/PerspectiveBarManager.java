@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -57,24 +56,9 @@ public class PerspectiveBarManager extends ToolBarManager {
                 toolbar.setFont(getFont());
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContributionManager.
-     */
-    public void add(IContributionItem item) {
-    	if (item instanceof PerspectiveBarNewContributionItem)
-    		super.add(item);
-    	else {
-            if (allowItem(item)) {
-            	item.setParent(this);
-            	// perspective bar always has a PerspectiveBarNewContributionItem first, so insert after it.
-            	insert(1, item);
-            	itemAdded(item);
-            }
-        }
-    }
-    
-    // TODO begin refactor this out? it is not good that we know we are inside a CoolBar
-    private CoolBar coolBar;
+	// TODO begin refactor this out? it is not good that we know we are inside a
+	// CoolBar
+	private CoolBar coolBar;
     private Menu popup;
     
 	public void handleChevron(SelectionEvent event) {
@@ -143,13 +127,12 @@ public class PerspectiveBarManager extends ToolBarManager {
 					//rotate the selected item in and the other items right
 					// don't touch the "Open" item
 					MenuItem menuItem = (MenuItem)e.widget;
-					PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)menuItem.getData("IContributionItem"); //$NON-NLS-1$
-					PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
-					remove(contribItem);
-					contribItem.dispose();
-					insert(1, newItem);
-					update(false);
-					newItem.select();
+					Object item = menuItem.getData("IContributionItem"); //$NON-NLS-1$
+					if (item instanceof PerspectiveBarContributionItem) {
+						PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
+						update(false);
+						contribItem.select();
+					}
 				}
 			});
 		}

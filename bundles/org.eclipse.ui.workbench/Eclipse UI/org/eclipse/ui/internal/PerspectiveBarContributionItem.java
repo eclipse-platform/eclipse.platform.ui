@@ -11,11 +11,8 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,37 +28,17 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IPerspectiveDescriptor perspective;
 
-    private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-            .getPreferenceStore();
     private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
     private ToolItem toolItem = null;
     private Image image;
     private WorkbenchPage workbenchPage;
 
-    private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
-                    .equals(propertyChangeEvent.getProperty()) || IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR.equals(propertyChangeEvent.getProperty())) {
-                update();
-                IContributionManager parent = getParent();
-                if (parent != null) {
-                    parent.update(true);
-/*                    if (parent instanceof PerspectiveBarManager)
-                            ((PerspectiveBarManager) parent).layout(true);*/
-                }
-            }
-        }
-    };
-
     public PerspectiveBarContributionItem(IPerspectiveDescriptor perspective,
             WorkbenchPage workbenchPage) {
         super(perspective.getId());
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
-        preferenceStore.addPropertyChangeListener(propertyChangeListener);
-        apiPreferenceStore.addPropertyChangeListener(propertyChangeListener);
     }
     
 	/* (non-Javadoc)
@@ -69,12 +46,14 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 	 */
 	public void dispose() {
 		super.dispose();
-        preferenceStore.removePropertyChangeListener(propertyChangeListener);
-        apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 		if (image != null && !image.isDisposed()) {
 			image.dispose();
 			image = null;
 		}
+		apiPreferenceStore = null;
+		workbenchPage = null;
+		perspective = null;
+		
 	}
 
     public void fill(ToolBar parent, int index) {
@@ -86,14 +65,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 toolItem = new ToolItem(parent, SWT.CHECK);
 
             if (image == null || image.isDisposed()) {
-	            ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
-	            if (imageDescriptor != null) {
-	            	image = imageDescriptor.createImage();
-	            } else {
-	            	image = WorkbenchImages.getImageDescriptor(
-	                        IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
-	                        .createImage();
-	            }
+	            createImage();
             }
             toolItem.setImage(image);
                 
@@ -111,6 +83,24 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         }
     }
 
+    private void createImage() {
+    	ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
+        if (imageDescriptor != null) {
+        	image = imageDescriptor.createImage();
+        } else {
+        	image = WorkbenchImages.getImageDescriptor(
+                    IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
+                    .createImage();
+        }	
+    } 
+    
+    Image getImage(){
+    	if (image == null) {
+    		createImage();
+    	}
+    	return image;
+    }
+    
     public void select() {
     	if (workbenchPage.getPerspective() != perspective) {
     		workbenchPage.setPerspective(perspective);
@@ -160,6 +150,10 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     IPerspectiveDescriptor getPerspective() {
         return perspective;
     }
+    
+    ToolItem getToolItem() {
+    	return toolItem;
+    }
 
     public boolean handles(IPerspectiveDescriptor perspective,
             WorkbenchPage workbenchPage) {
@@ -177,6 +171,10 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 toolItem.setSelection(b);
     }
 
+    static int getMaxWidth(Image image) {
+    	return image.getBounds().width * 5;
+    }
+    
     private static final String ellipsis = "..."; //$NON-NLS-1$
 
     protected String shortenText(String textValue, ToolItem item) {
@@ -184,7 +182,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 return null;
         String returnText = textValue;
         GC gc = new GC(item.getDisplay());
-        int maxWidth = item.getImage().getBounds().width * 5;
+        int maxWidth = getMaxWidth(item.getImage());
         if (gc.textExtent(textValue).x >= maxWidth) {
         	for (int i = textValue.length(); i > 0; i--) {
         		String test = textValue.substring(0, i);
