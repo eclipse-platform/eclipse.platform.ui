@@ -173,6 +173,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			if (delta == null) {
 				return false;
 			}
+			if (usingConfigurationStyleLaunching()) {
+				return true;
+			}
 			if (delta.getKind() != IResourceDelta.REMOVED) {
 				return true;
 			}
