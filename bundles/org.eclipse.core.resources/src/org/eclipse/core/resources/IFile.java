@@ -39,7 +39,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that have an unknown character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_UNKNOWN = 0;
 	/**
@@ -47,7 +47,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the US-ASCII character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details 
 	 */
 	public int ENCODING_US_ASCII = 1;
 	/**
@@ -56,7 +56,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * also known as ISO-LATIN-1.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_ISO_8859_1 = 2;
 	/**
@@ -64,7 +64,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the UTF-8 character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_UTF_8 = 3;
 	/**
@@ -72,7 +72,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the UTF-16BE character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_UTF_16BE = 4;
 	/**
@@ -80,7 +80,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the UTF-16LE character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_UTF_16LE = 5;
 	/**
@@ -88,7 +88,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the UTF-16 character encoding scheme.
 	 * 
 	 * @see IFile#getEncoding()
-	 * @deprecated
+	 * @deprecated see getEncoding for details
 	 */
 	public int ENCODING_UTF_16 = 6;
 
