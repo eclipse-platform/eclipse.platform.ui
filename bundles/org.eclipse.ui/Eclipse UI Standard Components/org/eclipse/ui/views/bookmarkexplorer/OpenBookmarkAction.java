@@ -7,6 +7,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import java.util.*;
