@@ -36,6 +36,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -1512,5 +1513,9 @@ public void setOldPartID(String oldPartID) {
 		}
 	}
 	
+}
+
+public void toggleFastViewZoom() {
+	fastViewPane.toggleZoom();
 }
 }

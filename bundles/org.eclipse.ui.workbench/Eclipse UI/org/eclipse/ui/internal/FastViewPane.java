@@ -472,4 +472,16 @@ public class FastViewPane {
 		return currentPane;
 	}
 
+	/**
+	 * Zooms or unzooms the fast view pane.
+	 *
+	 */
+	public void toggleZoom() {
+		if (site.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+			site.setState(IStackPresentationSite.STATE_RESTORED);
+		} else {
+			site.setState(IStackPresentationSite.STATE_MAXIMIZED);
+		}
+	}
+		
 }
