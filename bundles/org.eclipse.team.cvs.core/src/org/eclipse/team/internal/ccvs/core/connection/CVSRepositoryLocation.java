@@ -791,11 +791,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				// Allow two ticks in case of a retry
 				monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
 				
-				// If we have a username and password, use them to attempt a connection
-				if ((user != null) && (password != null)) {
-					return createConnection(password, monitor);
-				}
-				
 				// Get the repository in order to ensure that the location is known by CVS.
 				// (The get will record the location if it's not already recorded.
 				if (!KnownRepositories.getInstance().isKnownRepository(getLocation())) {

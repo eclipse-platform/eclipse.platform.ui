@@ -42,6 +42,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSRepositoryPropertiesPage extends PropertyPage {
+	private static final String FAKE_PASSWORD = "*********"; //$NON-NLS-1$
 	ICVSRepositoryLocation location;
 	
 	// Widgets
@@ -181,7 +182,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		};
 		passwordText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				passwordChanged = true;
+				passwordChanged = !passwordText.getText().equals(FAKE_PASSWORD);
 			}
 		});
 		userText.addListener(SWT.Modify, connectionInfoChangedListener);
@@ -309,7 +310,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		methodType.select(methodType.indexOf(method));
 		info = location.getUserInfo(true);
 		userText.setText(info.getUsername());
-		passwordText.setText("*********"); //$NON-NLS-1$
+		passwordText.setText(FAKE_PASSWORD);
 		hostText.setText(location.getHost());
 		int port = location.getPort();
 		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
@@ -573,7 +574,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		Properties result = new Properties();
 		result.setProperty("connection", methodType.getText()); //$NON-NLS-1$
 		result.setProperty("user", userText.getText()); //$NON-NLS-1$
-		result.setProperty("password", passwordText.getText()); //$NON-NLS-1$
+		if (passwordChanged) {
+			result.setProperty("password", passwordText.getText()); //$NON-NLS-1$
+		}
 		result.setProperty("host", hostText.getText()); //$NON-NLS-1$
 		if (useCustomPort.getSelection()) {
 			result.setProperty("port", portText.getText()); //$NON-NLS-1$
