@@ -587,7 +587,8 @@ public class FontPreferencePage
 		getApplyButton().setFont(appliedDialogFont);
 		getDefaultsButton().setFont(appliedDialogFont);
 
-		oldFont.dispose();
+		if(oldFont != null)
+			oldFont.dispose();
 
 	}
 
