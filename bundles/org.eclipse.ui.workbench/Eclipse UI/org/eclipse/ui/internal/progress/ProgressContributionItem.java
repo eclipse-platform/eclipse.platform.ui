@@ -6,66 +6,81 @@
  */
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.jobs.IJobListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
-public class ProgressContributionItem
-	extends ContributionItem
-	implements IProgressMonitor {
-
-	interface ProgressContributionListener {
-
-		/**
-		 * Refresh the listener for the TaskInfo. If info is
-		 * null refresh the entire tree.
-		 * @param info
-		 */
-		public void refresh(TaskInfo info);
-	}
-
-	private final ProgressService service;
+public class ProgressContributionItem extends ContributionItem {
 
 	private AnimatedCanvas canvas;
-	private ArrayList statuses = new ArrayList();
-	private TaskInfoWithProgress currentStatus;
-	Collection listeners = new ArrayList();
 
-	ProgressContributionItem(ProgressService service, String id) {
+	public ProgressContributionItem(String id) {
 		super(id);
-		this.service = service;
-	}
+		JobManager.getInstance().addJobListener(new IJobListener() {
 
-	void addListener(ProgressContributionListener listener) {
-		listeners.add(listener);
-	}
-
-	void removeListener(ProgressContributionListener listener) {
-		listeners.remove(listener);
-	}
-
-	private void refreshListeners(final TaskInfo info) {
-
-		canvas.getControl().getDisplay().asyncExec(new Runnable() {
+			int jobCount = 0;
 			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
 			 */
-			public void run() {
-				Iterator iterator = listeners.iterator();
-				while (iterator.hasNext()) {
-					ProgressContributionListener listener =
-						(ProgressContributionListener) iterator.next();
-					listener.refresh(info);
-				}
+			public void aboutToRun(Job job) {
+				incrementJobCount();
 			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToSchedule(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void aboutToSchedule(Job job) {
+
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
+			 */
+			public void finished(Job job, IStatus result) {
+				decrementJobCount();
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void paused(Job job) {
+				decrementJobCount();
+
+			}		
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#resumed(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void resumed(Job job) {
+				// XXX Auto-generated method stub
+
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void running(Job job) {
+				// XXX Auto-generated method stub
+
+			}
+
+			private void incrementJobCount() {
+				if (jobCount == 0)
+					setEnabledImage();
+				jobCount++;
+			}
+
+			private void decrementJobCount() {
+				if (jobCount == 1)
+					setDisabledImage();
+				jobCount--;
+			}
+
 		});
 	}
+
 	public void fill(Composite parent) {
 		if (canvas == null) {
 			canvas = new AnimatedCanvas("running.gif", "back.gif");
@@ -93,81 +108,4 @@ public class ProgressContributionItem
 		canvas.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
-	 */
-	public void beginTask(String name, int totalWork) {
-		currentStatus = new TaskInfoWithProgress(name, totalWork);
-		statuses.add(currentStatus);
-		setEnabledImage();
-		refreshListeners(currentStatus);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
-	public void done() {
-		// XXX Auto-generated method stub
-
-		setDisabledImage();
-		statuses.clear();
-		refreshListeners(currentStatus);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
-	 */
-	public void internalWorked(double work) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
-	 */
-	public boolean isCanceled() {
-		// XXX Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
-	 */
-	public void setCanceled(boolean value) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
-	 */
-	public void setTaskName(String name) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
-	 */
-	public void subTask(String name) {
-		TaskInfo info = currentStatus.addSubtask(name);
-		refreshListeners(info);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
-	 */
-	public void worked(int work) {
-		// XXX Auto-generated method stub
-		currentStatus.addWork(work);
-	}
-
-	TaskInfoWithProgress[] getStatuses() {
-		TaskInfoWithProgress[] infos =
-			new TaskInfoWithProgress[statuses.size()];
-		statuses.toArray(infos);
-		return infos;
-	}
 }

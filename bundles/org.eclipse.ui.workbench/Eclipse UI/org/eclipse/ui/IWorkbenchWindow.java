@@ -71,8 +71,6 @@ public IWorkbenchPage[] getPages();
  */
 public IPartService getPartService();
 
-public IProgressService getProgressService();
-
 public ISelectionService getSelectionService();
 /**
  * Returns this workbench window's shell.

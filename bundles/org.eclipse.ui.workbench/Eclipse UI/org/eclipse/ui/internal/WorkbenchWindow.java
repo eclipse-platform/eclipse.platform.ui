@@ -19,6 +19,7 @@ import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -54,7 +55,6 @@ public class WorkbenchWindow
 	private WWinPerspectiveService perspectiveService =
 		new WWinPerspectiveService(this);
 	private WWinKeyBindingService keyBindingService;
-	private IProgressService progressService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
@@ -280,7 +280,7 @@ public class WorkbenchWindow
 		addStatusLine();
 		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
-		getProgressService();
+		addProgressItem();
 
 		updateBarVisibility();
 
@@ -1981,20 +1981,41 @@ public class WorkbenchWindow
 		}
 	}
 
-	public IProgressService getProgressService() {
-		if (progressService == null) {
-			progressService = new ProgressService(this);
-		}
-		return progressService;
+	public void addProgressItem() {
+		getStatusLineManager().add(
+			new ProgressContributionItem("org.eclipse.ui.progress"));
 	}
 
 	/* (non-Javadoc)
 			 * @see org.eclipse.ui.IWorkbenchWindow#queueJob(java.lang.String, org.eclipse.jface.operation.IRunnableWithProgress)
 			 */
-	public void queueJob(IRunnableWithProgress runnable)
+	public void queueJob(final IRunnableWithProgress runnable)
 		throws InterruptedException, InvocationTargetException {
-			ProgressServiceJob job = new ProgressServiceJob(runnable);
-			JobManager.getInstance().schedule(job,0);
+		Job job = new Job() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					runnable.run(monitor);
+					return Status.OK_STATUS;
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				} catch (InvocationTargetException e) {
+					return new Status(
+						IStatus.ERROR,
+						WorkbenchPlugin
+							.getDefault()
+							.getDescriptor()
+							.getUniqueIdentifier(),
+						IStatus.ERROR,
+						"Error invoking job",
+						e);
+				}
+			}
+
+		};
+		JobManager.getInstance().schedule(job, 0);
 	}
 
 }

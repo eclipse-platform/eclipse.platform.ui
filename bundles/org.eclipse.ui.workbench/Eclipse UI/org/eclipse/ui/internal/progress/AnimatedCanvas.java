@@ -1,13 +1,16 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class AnimatedCanvas {
 
@@ -143,17 +146,24 @@ public class AnimatedCanvas {
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
-				public int run(IProgressMonitor monitor) {
+				public IStatus run(IProgressMonitor monitor) {
 					try {
 						animateLoop();
-						return 0;
+						return Status.OK_STATUS;
 					} catch (final SWTException e) {
-						e.printStackTrace();
-						return 1;
+						return new Status(
+							IStatus.ERROR,
+							WorkbenchPlugin
+								.getDefault()
+								.getDescriptor()
+								.getUniqueIdentifier(),
+							IStatus.ERROR,
+							"Error invoking job",
+							e);
 					}
 				}
 			};
-			JobManager.getInstance().schedule(animateJob,0);
+			JobManager.getInstance().schedule(animateJob, 0);
 		}
 	}
 	/*

@@ -31,7 +31,7 @@ public class ProgressLabelProvider implements ILabelProvider {
 	 */
 	public String getText(Object element) {
 		// XXX Auto-generated method stub
-		return ((TaskInfo) element).getDisplayString();
+		return ((JobInfo) element).getDisplayString();
 	}
 
 	/* (non-Javadoc)

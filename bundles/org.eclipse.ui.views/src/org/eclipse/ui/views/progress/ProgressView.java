@@ -37,10 +37,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @since 2.0
 	 */
 	protected void initContentProvider(TreeViewer viewer) {
-		viewer.setContentProvider(
-			new ProgressContentProvider(
-				getSite().getWorkbenchWindow(),
-				viewer));
+		viewer.setContentProvider(new ProgressContentProvider());
 	}
 
 	/**
