@@ -99,7 +99,7 @@ public abstract class Command extends Request {
 	public static final KSubstOption KSUBST_TEXT_KEYWORDS_ONLY = new KSubstOption("-kk"); //$NON-NLS-1$
 
 	/*** Default command output listener ***/
-	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
+	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
 		new ICommandOutputListener() {
 			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				return OK;

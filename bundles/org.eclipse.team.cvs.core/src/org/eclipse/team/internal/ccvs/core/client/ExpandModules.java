@@ -23,6 +23,6 @@ public class ExpandModules extends Request {
 	public IStatus execute(Session session, String[] modules, IProgressMonitor monitor) throws CVSException {
 		// Reset the module expansions before the responses arrive
 		session.resetModuleExpansion();
-		return executeRequest(session, null, monitor);
+		return executeRequest(session, Command.DEFAULT_OUTPUT_LISTENER, monitor);
 	}
 }

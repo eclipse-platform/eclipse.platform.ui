@@ -129,20 +129,23 @@ public class Checkout extends Command {
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 100);
-		// Execute the expand-modules command. 
-		// This will put the expansions in the session for later retrieval
-		IStatus status = Request.EXPAND_MODULES.execute(session, arguments, Policy.subMonitorFor(monitor, 10));
-		if (status.getCode() == CVSStatus.SERVER_ERROR)
-			return status;
-		
-		// If -d is not included in the local options, then send -N (do not shorten directory paths)
-		// to the server (as is done by other cvs clients)
-		if (findOption(localOptions, "-d") == null) { //$NON-NLS-1$
-			if ( ! DO_NOT_SHORTEN.isElementOf(localOptions)) {
-				LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
-				newLocalOptions[0] = DO_NOT_SHORTEN;
-				System.arraycopy(localOptions, 0, newLocalOptions, 1, localOptions.length);
-				localOptions = newLocalOptions;
+
+		if ( ! FETCH_MODULE_ALIASES.isElementOf(localOptions)) {
+			// Execute the expand-modules command. 
+			// This will put the expansions in the session for later retrieval
+			IStatus status = Request.EXPAND_MODULES.execute(session, arguments, Policy.subMonitorFor(monitor, 10));
+			if (status.getCode() == CVSStatus.SERVER_ERROR)
+				return status;
+			
+			// If -d is not included in the local options, then send -N (do not shorten directory paths)
+			// to the server (as is done by other cvs clients)
+			if (findOption(localOptions, "-d") == null) { //$NON-NLS-1$
+				if ( ! DO_NOT_SHORTEN.isElementOf(localOptions)) {
+					LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
+					newLocalOptions[0] = DO_NOT_SHORTEN;
+					System.arraycopy(localOptions, 0, newLocalOptions, 1, localOptions.length);
+					localOptions = newLocalOptions;
+				}
 			}
 		}
 		
