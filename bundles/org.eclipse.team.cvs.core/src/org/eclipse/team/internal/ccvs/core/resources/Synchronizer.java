@@ -162,6 +162,7 @@ public class Synchronizer {
 	public void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
 		
 		Assert.isNotNull(info);
+		Assert.isTrue(info.getName().equals(file.getName()));
 		
 		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
 								
@@ -282,7 +283,7 @@ public class Synchronizer {
 		folderConfigCache.clear();
 		
 		// Program error if clear is called with pending changes.
-		Assert.isTrue(!invalidatedEntryFiles.isEmpty() || !invalidatedFolderConfigs.isEmpty());
+		Assert.isTrue(invalidatedEntryFiles.isEmpty() && invalidatedFolderConfigs.isEmpty());
 					
 		invalidatedEntryFiles.clear();
 		invalidatedFolderConfigs.clear();

@@ -224,7 +224,11 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 * @see ICVSFolder#isCVSFolder()
 	 */
 	public boolean isCVSFolder() {
-		return SyncFileUtil.getCVSSubdirectory(ioResource).exists();
+		try {
+			return Synchronizer.getInstance().getFolderSync(ioResource) != null;
+		} catch(CVSException e) {
+			return false;
+		}
 	}
 	/*
 	 * @see ICVSResource#unmanage()
