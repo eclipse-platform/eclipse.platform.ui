@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
 
 /**
  * @since 3.0

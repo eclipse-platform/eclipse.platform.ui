@@ -9,10 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.editors.text;
+package org.eclipse.ui.texteditor;
+
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * @deprecated use <code>org.eclipse.ui.texteditor.ISchedulingRuleProvider</code> instead
+ * A scheduling rule provider provides a scheduling rule which 
+ * can be used when running operations.
+ * 
+ * @since 3.0
  */
-public interface ISchedulingRuleProvider extends org.eclipse.ui.texteditor.ISchedulingRuleProvider {
+public interface ISchedulingRuleProvider {
+	
+	/**
+	 * Returns the scheduling rule.
+	 * 
+	 * @return a scheduling rule or <code>null</code> if none 
+	 */
+	ISchedulingRule getSchedulingRule();
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -245,6 +246,58 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 3.0
 	 */
 	protected abstract IRunnableContext getOperationRunner(IProgressMonitor monitor);
+	
+	/**
+	 * Returns the scheduling rule required for executing
+	 * <code>synchronize</code> on the given element. This default
+	 * implementation returns <code>null</code>.
+	 * 
+	 * @param element the element
+	 * @return the scheduling rule for <code>synchronize</code>
+	 * @since 3.0
+	 */
+	protected ISchedulingRule getSynchronizeRule(Object element) {
+		return null;
+	}
+	
+	/**
+	 * Returns the scheduling rule required for executing
+	 * <code>validateState</code> on the given element. This default
+	 * implementation returns <code>null</code>.
+	 * 
+	 * @param element the element
+	 * @return the scheduling rule for <code>validateState</code>
+	 * @since 3.0
+	 */
+	protected ISchedulingRule getValidateStateRule(Object element) {
+		return null;
+	}
+	
+	/**
+	 * Returns the scheduling rule required for executing
+	 * <code>save</code> on the given element. This default
+	 * implementation returns <code>null</code>.
+	 * 
+	 * @param element the element
+	 * @return the scheduling rule for <code>save</code>
+	 * @since 3.0
+	 */
+	protected ISchedulingRule getSaveRule(Object element) {
+		return null;
+	}
+	
+	/**
+	 * Returns the scheduling rule required for executing
+	 * <code>reset</code> on the given element. This default
+	 * implementation returns <code>null</code>.
+	 * 
+	 * @param element the element
+	 * @return the scheduling rule for <code>reset</code>
+	 * @since 3.0
+	 */
+	protected ISchedulingRule getResetRule(Object element) {
+		return null;
+	}
 	
 	/**
 	 * Returns the element info object for the given element.
@@ -512,13 +565,18 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return;
 				
-		DocumentProviderOperation operation= new DocumentProviderOperation() {
+		class ResetOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
+			
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				doResetDocument(element, monitor);
 			}
-		};
+			
+			public ISchedulingRule getSchedulingRule() {
+				return getResetRule(element);
+			}
+		}
 		
-		executeOperation(operation, getProgressMonitor());	
+		executeOperation(new ResetOperation(), getProgressMonitor());	
 	}
 	
 
@@ -530,8 +588,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return;
 				
-		DocumentProviderOperation operation= new DocumentProviderOperation() {
-			public void execute(IProgressMonitor monitor) throws CoreException {
+		class SaveOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
+			
+			protected void execute(IProgressMonitor monitor) throws CoreException {
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info != null) {
 					if (info.fDocument != document) {
@@ -552,9 +611,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 					doSaveDocument(monitor, element, document, overwrite);
 				}
 			}
-		};
+			
+			public ISchedulingRule getSchedulingRule() {
+				return getSaveRule(element);
+			}
+		}
 		
-		executeOperation(operation, monitor);
+		executeOperation(new SaveOperation(), monitor);
 	}
 	
 	/**
@@ -746,7 +809,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return;
 		
-		DocumentProviderOperation operation= new DocumentProviderOperation() {
+		class ValidateStateOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
+			
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info == null)
@@ -758,9 +822,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				info.fIsStateValidated= true;
 				fireElementStateValidationChanged(element, true);
 			}
-		};
+			
+			public ISchedulingRule getSchedulingRule() {
+				return getValidateStateRule(element);
+			}
+		}
 		
-		executeOperation(operation, getProgressMonitor());
+		executeOperation(new ValidateStateOperation(), getProgressMonitor());
 	}
 	
 	/**
@@ -913,14 +981,19 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		
 		if (element == null)
 			return;
+		
+		class SynchronizeOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 			
-		DocumentProviderOperation operation= new DocumentProviderOperation() {
-			public void execute(IProgressMonitor monitor) throws CoreException {
+			protected void execute(IProgressMonitor monitor) throws CoreException {
 				doSynchronize(element, monitor);
 			}
-		};
-		
-		executeOperation(operation, getProgressMonitor());
+			
+			public ISchedulingRule getSchedulingRule() {
+				return getSynchronizeRule(element);
+			}
+		}
+					
+		executeOperation(new SynchronizeOperation(), getProgressMonitor());
 	}
 	
 	/*

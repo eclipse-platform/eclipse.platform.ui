@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -71,6 +73,12 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.0
 	 */
 	private WorkspaceOperationRunner fOperationRunner;
+	/** 
+	 * The scheduling rule factory.
+	 * @since 3.0 
+	 */
+	private IResourceRuleFactory fResourceRuleFactory;
+
 	
 	/**
 	 * Runnable encapsulating an element state change. This runnable ensures 
@@ -295,6 +303,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	public FileDocumentProvider() {
 		super();
+		fResourceRuleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
 	}
 	
 	/**
@@ -819,5 +828,57 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			fOperationRunner = new WorkspaceOperationRunner();
 		fOperationRunner.setProgressMonitor(monitor);
 		return fOperationRunner;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getResetRule(java.lang.Object)
+	 */
+	protected ISchedulingRule getResetRule(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			return fResourceRuleFactory.modifyRule(input.getFile());
+		} else {
+			return null;
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSaveRule(java.lang.Object)
+	 */
+	protected ISchedulingRule getSaveRule(Object element) {
+		if (element instanceof IFileEditorInput) {			
+			IFileEditorInput input= (IFileEditorInput) element;
+			IFile file= input.getFile();
+			if (file.exists())
+				return fResourceRuleFactory.modifyRule(input.getFile());
+			else
+				return fResourceRuleFactory.createRule(input.getFile());
+		} else {
+			return null;
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSynchronizeRule(java.lang.Object)
+	 */
+	protected ISchedulingRule getSynchronizeRule(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			return fResourceRuleFactory.refreshRule(input.getFile());
+		} else {
+			return null;
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getValidateStateRule(java.lang.Object)
+	 */
+	protected ISchedulingRule getValidateStateRule(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
+		} else {
+			return null;
+		}
 	}
 }

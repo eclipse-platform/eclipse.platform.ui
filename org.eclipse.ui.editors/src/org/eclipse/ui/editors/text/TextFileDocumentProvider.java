@@ -66,6 +66,7 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
+import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 /**
