@@ -8,20 +8,32 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.ui.internal.search;
+package org.eclipse.help.search;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.search.*;
 
 /**
- * A general-purpose web query engine that allows users to provide the query
- * string themselves.
+ * This implementation of <code>ISearchEngine</code> interface performs search
+ * by running a query on the remote web site using the provided query URL.
+ * Instances of this engine type are required to supply the URL template with
+ * the query string replaced with the substitution string
+ * <code>{expression}</code>.
+ * <p>
+ * This class is made public in order to be instantiated and parametrized
+ * directly in the extentsions. Clients are required to supply the required URL
+ * template as a parameter <code>url</code>.
+ * 
+ * <p>
+ * This class is not expected to be subclassed or otherwise accessed
+ * programmatically.
+ * 
+ * @since 3.1
  */
-public class WebSearch implements ISearchEngine {
+public final class WebSearch implements ISearchEngine {
 	public static final char C_START = '{';
 
 	public static final char C_STOP = '}';
@@ -84,6 +96,10 @@ public class WebSearch implements ISearchEngine {
 
 		public boolean getForceExternalWindow() {
 			return true;
+		}
+
+		public String toAbsoluteHref(String href, boolean frames) {
+			return href;
 		}
 	}
 

@@ -109,4 +109,7 @@ public class SearchHit implements ISearchEngineResult {
 	public boolean getForceExternalWindow() {
 		return false;
 	}
+	public String toAbsoluteHref(String href, boolean frames) {
+		return href;
+	}
 }

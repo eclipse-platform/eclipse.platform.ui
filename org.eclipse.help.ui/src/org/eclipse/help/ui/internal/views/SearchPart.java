@@ -447,6 +447,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(),
 				scopeSetManager, descManager);
 		dialog.setInput(scopeSetManager);
+		dialog.create();
+		dialog.getShell().setText(HelpUIResources.getString("ScopeSetDialog.wtitle"));
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();
 			if (set != null)

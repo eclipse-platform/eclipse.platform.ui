@@ -82,4 +82,8 @@ public class LocalHelp implements ISearchEngine {
 	 */
 	public void cancel() {
 	}
+
+	public String toAbsoluteHref(String href, boolean frames) {
+		return null;
+	}
 }

@@ -239,7 +239,8 @@ public class EngineResultSection {
 				buff.append("<p>"); //$NON-NLS-1$
 				if (cat.getHref() != null) {
 					buff.append("<a bold=\"true\" href=\""); //$NON-NLS-1$
-					buff.append(escapeSpecialChars(cat.getHref()));
+					String absoluteHref = hit.toAbsoluteHref(cat.getHref(), true); 
+					buff.append(escapeSpecialChars(absoluteHref));
 					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
 					buff.append("</a>"); //$NON-NLS-1$
@@ -260,7 +261,7 @@ public class EngineResultSection {
 			buff.append("<a href=\""); //$NON-NLS-1$
 			if (hit.getForceExternalWindow())
 				buff.append("nw:"); //$NON-NLS-1$
-			buff.append(escapeSpecialChars(hit.getHref()));
+			buff.append(escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false)));
 			buff.append("\""); //$NON-NLS-1$
 			if (hit.getCategory() != null) {
 				buff.append(" alt=\""); //$NON-NLS-1$
@@ -273,7 +274,7 @@ public class EngineResultSection {
 			if (!hit.getForceExternalWindow()) {
 				buff.append(" <a href=\""); //$NON-NLS-1$ 
 				buff.append("nw:");//$NON-NLS-1$ 
-				buff.append(escapeSpecialChars(hit.getHref()));
+				buff.append(escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true)));
 				buff.append("\"><img href=\""); //$NON-NLS-1$ 
 				buff.append(IHelpUIConstants.IMAGE_NW);
 				buff.append("\" alt=\""); //$NON-NLS-1$

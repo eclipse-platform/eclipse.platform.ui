@@ -101,4 +101,17 @@ public interface ISearchEngineResult {
 	 * can be chosen by the help system.
 	 */
 	boolean getForceExternalWindow();
+	/**
+	 * Converts a relative href into absolute according to the
+	 * search engine base URL.
+	 * @param href the relative href to make absolute
+	 * @param frames if <code>true</code>, the resulting href can 
+	 * contain frames in a form suitable for presentation in 
+	 * a standalone web browser. Otherwise, the resulting href
+	 * should be without frames and suitable for presentation
+	 * in the embedded web browser inside the workbench. 
+	 * @return the absolute href that can be used to
+	 * navigate to the reference as-is
+	 */
+	String toAbsoluteHref(String href, boolean frames);
 }

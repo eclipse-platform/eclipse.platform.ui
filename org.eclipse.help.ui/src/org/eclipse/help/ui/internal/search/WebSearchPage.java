@@ -50,6 +50,7 @@ public class WebSearchPage extends RootScopePage {
 				validate();
 			}
 		});
+		urlText.setEditable(getEngineDescriptor().isUserDefined());
 		updateControls();
 		return 2;
 	}
