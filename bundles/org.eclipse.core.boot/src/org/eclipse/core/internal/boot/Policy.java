@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Policy {
 	private static ResourceBundle bundle;
-	private static String bundleName = "org.eclipse.core.internal.boot.Messages";
+	private static String bundleName = "org.eclipse.core.internal.boot.messages";
 
 	static {
 		relocalize();
