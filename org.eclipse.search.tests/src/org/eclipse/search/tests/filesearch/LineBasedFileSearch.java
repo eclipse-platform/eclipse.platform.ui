@@ -123,7 +123,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
 		ITextSearchResultCollector collector= new LineBasedTextSearchResultCollector(textResult, pm);
-		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, false, collector, new MatchLocator(getSearchString(), isCaseSensitive(), isRegexSearch()));
+		return new TextSearchEngine().search(fScope, false, collector, new MatchLocator(getSearchString(), isCaseSensitive(), isRegexSearch()), true);
 	}
 	
 

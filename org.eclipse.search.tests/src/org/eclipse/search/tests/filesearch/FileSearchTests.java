@@ -120,7 +120,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("hello", false, true);
 		
 		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
-		engine.search(fProject.getWorkspace(), scope, true, collector, matchLocator);
+		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
@@ -145,7 +145,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("mor*", false, false);
 		
 		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
-		engine.search(fProject.getWorkspace(), scope, true, collector, matchLocator);
+		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 6, results.length);
@@ -167,7 +167,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("mo?e", false, false);
 		
 		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
-		engine.search(fProject.getWorkspace(), scope, true, collector, matchLocator);
+		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
@@ -196,7 +196,7 @@ public class FileSearchTests extends TestCase {
 			// search in Junit sources
 
 			TextSearchScope scope= new TextSearchScope("test-project", new IResource[] {project});
-			engine.search(project.getWorkspace(), scope, true, collector, matchLocator);
+			engine.search(scope, true, collector, matchLocator, true);
 
 			TestResult[] results= collector.getResults();
 			assertEquals("Number of total results", 748, results.length);
@@ -228,7 +228,7 @@ public class FileSearchTests extends TestCase {
 			MatchLocator matchLocator= new MatchLocator("hello", false, true);
 
 			TextSearchScope scope= new TextSearchScope("test-project", new IResource[] {fProject});
-			engine.search(fProject.getWorkspace(), scope, true, collector, matchLocator);
+			engine.search(scope, true, collector, matchLocator, true);
 
 			TestResult[] results= collector.getResults();
 			assertEquals("Number of total results", 4, results.length);
