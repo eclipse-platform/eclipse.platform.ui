@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.ICategory;
 import org.xml.sax.SAXException;
 /**
  * Abstract Class that implements most of the behavior of a feature
@@ -80,7 +81,16 @@ public abstract class AbstractFeature implements IFeature {
 	private String nl;
 	private String os;
 	private String ws;
-
+	
+	/**
+	 * category String; From teh XML file
+	 */
+	private String categoryString;
+
+	/**
+	 * category : delegate to teh site
+	 */
+	private ICategory category;
 	/**
 	 * List of ID representing the *bundles/archives*
 	 *  coming with the feature
@@ -237,7 +247,14 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return license;
 	}
-
+
+	/**
+	 * @see IFeature#getCategory()
+	 */
+	public ICategory getCategory() {
+		if (category==null) category = ((AbstractSite)getSite()).getCategory(categoryString);
+		return category;
+	}
 	/**
 	 * @see IFeature#getImage()
 	 */
@@ -270,7 +287,15 @@ public abstract class AbstractFeature implements IFeature {
 		if (ws == null && !isInitialized)init();		
 		return ws;
 	}
-	
+	
+	/**
+	 * Gets the categoryString
+	 * @return Returns a String
+	 */
+	public String getCategoryString() {
+		return categoryString;
+	}
+	
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -388,7 +413,14 @@ public abstract class AbstractFeature implements IFeature {
 	public void setWS(String ws) {
 		this.ws = ws;
 	}
-
+
+	/**
+	 * Sets the categoryString
+	 * @param categoryString The categoryString to set
+	 */
+	public void setCategoryString(String categoryString) {
+		this.categoryString = categoryString;
+	}
 	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */

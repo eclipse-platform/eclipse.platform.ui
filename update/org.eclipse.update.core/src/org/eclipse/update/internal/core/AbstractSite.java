@@ -276,7 +276,8 @@ public abstract class AbstractSite implements ISite {
 			if (categories == null)	initializeSite();
 			//FIXME: I do not like this pattern.. List or Array ???
 			if (!categories.isEmpty()) {
-				result = (ICategory[]) categories.toArray(new ICategory[categories.size()]);
+				result = new ICategory[categories.size()];
+				categories.toArray(result);
 			}
 		}
 		return result;
@@ -292,5 +293,35 @@ public abstract class AbstractSite implements ISite {
 		}
 		this.categories.add(category);
 	}	
+	
+	/**
+	 * returns the associated ICategory
+	 */
+	public ICategory getCategory(String key) {
+		ICategory result = null;
+		boolean found = false;		
+		
+		if (isManageable) {
+			if (categories == null)	initializeSite();
+				Iterator iter = categories.iterator();
+				ICategory currentCategory;
+				while (iter.hasNext() && !found){
+					currentCategory = (ICategory)iter.next();
+					if (currentCategory.getName().equals(key)){
+						result= currentCategory;
+						found = true;
+					}
+				}
+		}
+		
+		//DEBUG:
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS && !found){
+			UpdateManagerPlugin.getPlugin().debug("Cannot find:"+key+" category in site:"+this.getURL().toExternalForm());
+			if (!isManageable)UpdateManagerPlugin.getPlugin().debug("The Site is not manageable. Does not contain ste.xml");
+			if (categories==null || categories.isEmpty())UpdateManagerPlugin.getPlugin().debug("The Site does not contain any categories.");
+		}
+		
+		return result;
+	}
 
 }

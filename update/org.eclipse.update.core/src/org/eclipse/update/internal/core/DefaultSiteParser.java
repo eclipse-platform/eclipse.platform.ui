@@ -199,13 +199,12 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * @see DefaultHandler#endElement(String, String, String)
 	 */
-	public void endElement(String arg0, String arg1, String arg2)
+	public void endElement (String uri, String localName, String qName)
 		throws SAXException {
-		super.endElement(arg0, arg1, arg2);
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getPlugin().debug("End Element:"+arg0+":"+arg1+":"+arg2);
+			UpdateManagerPlugin.getPlugin().debug("End Element:"+uri+":"+localName+":"+qName);
 		}
 		
 	}
