@@ -36,7 +36,7 @@ function selectTopic(topic)
 
 </head>
 
-<body onload="onloadHandler('Content');parent.loadedTOC=null;">
+<body onload="onloadHandler('', 'Content');parent.loadedTOC=null;">
 
 <ul class='expanded'>
 <% 

@@ -44,7 +44,7 @@
 	<base target="MainFrame">
 </head>
 
-<body onload="onloadHandler('<%=label%>')">
+<body onload="onloadHandler('<%=tocHref%>', '<%=label%>')">
 
 	<ul><li class='bookshelf'>
     <a target='_self' href='javascript:window.location.replace("tocs.jsp")'><nobr>Bookshelf</nobr></a>

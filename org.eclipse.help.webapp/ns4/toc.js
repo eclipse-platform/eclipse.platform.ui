@@ -220,8 +220,10 @@ function adjustMargins()
 /**
  * Handles the onload event
  */
-function onloadHandler(title)
+function onloadHandler(toc, title)
 {
+	parent.parent.MainFrame.location="home.jsp?toc="+toc;
+
 	// little change for mozilla margins
 	if (isMozilla)
 		adjustMargins();
