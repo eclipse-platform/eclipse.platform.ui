@@ -71,7 +71,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
-		createRunInBackgroundComponent(mainComposite);
+		createLaunchInBackgroundComposite(mainComposite);
 		createBuildScheduleComponent(mainComposite);
 		
 		workingSetComponent= DebugUITools.getVariableComponentManager().getComponent(IExternalToolConstants.VAR_WORKING_SET);
@@ -79,14 +79,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	}
 	
 	/**
-	 * Creates the controls needed to edit the run in background
+	 * Creates the controls needed to edit the launch in background
 	 * attribute of an external tool
 	 *
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createRunInBackgroundComponent(Composite parent) {
+	protected void createLaunchInBackgroundComposite(Composite parent) {
 		fLaunchInBackgroundButton = new Button(parent, SWT.CHECK);
-		fLaunchInBackgroundButton.setText("Run in bac&kground");
+		fLaunchInBackgroundButton.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.14")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
