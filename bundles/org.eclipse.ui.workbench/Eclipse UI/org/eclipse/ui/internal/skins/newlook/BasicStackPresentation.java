@@ -92,6 +92,17 @@ public class BasicStackPresentation extends StackPresentation {
 				current.setFocus();
 			}
 		}
+		
+		public void mouseDoubleClick(MouseEvent e) {
+			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
+			
+			if (site.getState() == IPresentationSite.STATE_MAXIMIZED) {
+				site.setState(IPresentationSite.STATE_RESTORED);
+			} else {
+				site.setState(IPresentationSite.STATE_MAXIMIZED);
+			}
+		}
+		
 	};
 	
 	private Listener menuListener = new Listener() {
@@ -352,7 +363,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	protected void initTab(CTabItem tabItem, IPresentablePart part) {
 		tabItem.setText(part.getName());
-		tabItem.setToolTipText(part.getTitleToolTip());
+		//tabItem.setToolTipText(part.getTitleToolTip());
 		
 		Image tabImage = part.getTitleImage();
 		if (tabImage != null) {
