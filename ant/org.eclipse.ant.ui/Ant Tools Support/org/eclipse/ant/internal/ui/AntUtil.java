@@ -269,14 +269,24 @@ public final class AntUtil {
 	}
 	
 	private static IDocument getDocument(File buildFile) {
-		InputStream in;
-		try {
-			in = new FileInputStream(buildFile);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-		String initialContent= getStreamContentAsString(in);
-		return new Document(initialContent);
+	    InputStream in= null;
+	    try {
+            in = new FileInputStream(buildFile);
+            String content= getStreamContentAsString(in);
+            if (content != null) {
+                return new Document(content);
+            }
+            return null;
+        } catch (FileNotFoundException e) {
+            return null;
+        } finally {
+	        if (in != null) {
+	            try {
+					in.close();
+				} catch (IOException x) {
+				}
+	        }
+        }
 	}
 	
 	private static String getStreamContentAsString(InputStream inputStream) {
@@ -287,21 +297,26 @@ public final class AntUtil {
 			AntUIPlugin.log(e);
 			return ""; //$NON-NLS-1$
 		}
-
-		return getReaderContentAsString( new BufferedReader(reader));
+		BufferedReader bufferedReader= null;
+		try {
+		    bufferedReader= new BufferedReader(reader);
+		    return getReaderContentAsString(bufferedReader);
+		} finally {
+		    try {
+                bufferedReader.close();
+            } catch (IOException e1) {
+            }
+		}
 	}
 	
 	private static String getReaderContentAsString(BufferedReader bufferedReader) {
 		StringBuffer result = new StringBuffer();
 		try {
-			String line= bufferedReader.readLine();
-
-			while(line != null) {
-				if(result.length() != 0) {
-					result.append("\n"); //$NON-NLS-1$
-				}
-				result.append(line);
-				line = bufferedReader.readLine();
+		    char[] readBuffer= new char[2048];
+			int n= bufferedReader.read(readBuffer);
+			while (n > 0) {
+			    result.append(readBuffer, 0, n);
+				n= bufferedReader.read(readBuffer);
 			}
 		} catch (IOException e) {
 			AntUIPlugin.log(e);
