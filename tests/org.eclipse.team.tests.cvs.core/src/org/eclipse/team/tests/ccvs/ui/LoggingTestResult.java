@@ -9,12 +9,16 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
+import junit.runner.BaseTestRunner;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 public class LoggingTestResult extends TestResult {
 	protected Stack groupStack;
@@ -22,22 +26,17 @@ public class LoggingTestResult extends TestResult {
 	protected PrintStream logStream;
 	protected Stack /* of String */ elements;
 	protected String indent;
-	protected boolean loggingEnabled;
 	
+	/**
+	 * Creates a logging test result.
+	 * @param logStream the output stream, or null to disable logging
+	 */
 	public LoggingTestResult(PrintStream logStream) {
 		this.logStream = logStream;
 		this.elements = new Stack();
 		this.indent = "";
-		this.loggingEnabled = true;
 		groupStack = new Stack();
 		currentTask = null;
-	}
-	
-	/**
-	 * Enables or disables logging.
-	 */
-	public void setLogging(boolean loggingEnabled) {
-		this.loggingEnabled = loggingEnabled;
 	}
 	
 	/**
@@ -63,7 +62,12 @@ public class LoggingTestResult extends TestResult {
 	 * @param error the exception that occurred 
 	 */
 	public void addError(Test test, Throwable error) {
-		printAbort("error", error);
+		IStatus status = null;
+		if (error instanceof CoreException) {
+			CoreException ex = (CoreException) error;
+			status = ex.getStatus();
+		}
+		printAbort("error", error, status);
 		super.addError(test, error);
 	}
 	
@@ -73,7 +77,7 @@ public class LoggingTestResult extends TestResult {
 	 * @param error the exception that occurred
 	 */
 	public void addFailure(Test test, AssertionFailedError error) {
-		printAbort("failure", error);
+		printAbort("failure", error, null);
 		super.addFailure(test, error);
 	}
 	
@@ -148,20 +152,6 @@ public class LoggingTestResult extends TestResult {
 		currentTask = null;
 	}
 	
-	/**
-	 * Returns the name of the active group, or null if none.
-	 */
-	public String getGroupName() {
-		return groupStack.isEmpty() ? null : (String) groupStack.peek();
-	}
-	
-	/**
-	 * Returns the name of the active task, or null if none.
-	 */
-	public String getTaskName() {
-		return (currentTask == null) ? null : currentTask.getName();
-	}
-
 	protected void startXMLElement(String name, String[] attributes, String[] values) {
 		println(formatXMLElement(name, attributes, values, false));
 		elements.push(name);
@@ -195,23 +185,52 @@ public class LoggingTestResult extends TestResult {
 		String name = (String) elements.pop();
 		println("</" + name + ">");
 	}
+
+	protected void printXMLElementData(String line) {
+		// XXX need to escape certain characters in element data
+		println(line);
+	}
 	
-	protected void printAbort(String type, Throwable error) {
+	protected void printAbort(String type, Throwable error, IStatus status) {
 		String message = error.getMessage();
 		if (message == null) message = "";
 		startXMLElement("abort", new String[] { "type", "message" },
 			new String[] { type, message });
-		if (loggingEnabled) {
-			// XXX need to escape certain characters
-			// XXX need a better way of serializing the stack trace
-			error.printStackTrace(logStream);
+		if (status != null) printStatus(status);
+		printStackTrace(error);
+		endXMLElement();
+	}
+	
+	protected void printStatus(IStatus status) {
+		startXMLElement("status", new String[] { "severity", "code", "plugin", "message" },
+			new String[] {
+				Integer.toString(status.getSeverity()),
+				Integer.toString(status.getCode()),
+				status.getPlugin(), status.getMessage() });
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; ++i) {
+				printStatus(children[i]);
+			}
+		}
+		endXMLElement();
+	}
+	
+	protected void printStackTrace(Throwable error) {
+		// XXX need a better way to serialize the stack trace
+		String trace = BaseTestRunner.getFilteredTrace(error);
+		StringTokenizer tok = new StringTokenizer(trace, "\r\n");
+		if (! tok.hasMoreTokens()) return; // empty trace?
+		tok.nextToken(); // skip message line
+		startXMLElement("trace", null, null);
+		while (tok.hasMoreTokens()) {
+			String frame = tok.nextToken();
+			printXMLElementData(frame);
 		}
 		endXMLElement();
 	}
 	
 	protected void println(String line) {
-		if (loggingEnabled) {
-			logStream.println(indent + line);
-		}
+		if (logStream != null) logStream.println(indent + line);
 	}
 }

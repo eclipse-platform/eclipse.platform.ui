@@ -9,17 +9,15 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.ui.CVSUITestCase;
-import org.eclipse.team.tests.ccvs.ui.Util;
 import org.eclipse.team.tests.ccvs.ui.SequenceGenerator;
 import org.eclipse.team.tests.ccvs.ui.Util;
 
 public class SyncTests extends CVSUITestCase {
-	private int FILE_SIZE_MEAN = 20000;
-	private int FILE_SIZE_VARIANCE = 0;
-	private int PROB_BINARY = 0;
-	private IProject project;
-	private IProject parallelProject;
+	private static final int FILE_SIZE_MEAN = 16384;
+	private static final int FILE_SIZE_VARIANCE = 0;
+	private static final int PROB_BINARY = 0;
 	
 	public SyncTests(String name) {
 		super(name);
@@ -28,28 +26,18 @@ public class SyncTests extends CVSUITestCase {
 		super("");
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createAndImportProject("testSync", BenchmarkTestSetup.TINY_ZIP_FILE);
-		startGroup("initial project commit");
-		actionShareProject(project);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
-		endGroup();
-		parallelProject = Util.createParallelProject(
-			testRepository.getLocation(), project.getName());
-	}
-
 	public static Test suite() {
     	return new BenchmarkTestSetup(new TestSuite(SyncTests.class));
 	}
 
 	public void testSync0() throws Exception {
 		// test sync on project with no changes
+		IProject project = setupOutProject();
 		startGroup("test sync with no changes");
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
+		syncCommitResources(new IResource[] { project }, null, "");
 		endGroup();
 	}
-	
+
 	public void testSync1() throws Exception {
 		runTestSync(1);
 	}
@@ -62,6 +50,15 @@ public class SyncTests extends CVSUITestCase {
 		runTestSync(100);
 	}
 
+	protected IProject setupOutProject() throws Exception {
+		IProject project = createAndImportProject("testSync", BenchmarkTestSetup.SMALL_ZIP_FILE);
+		disableLog();
+		actionShareProject(project);
+		syncCommitResources(new IResource[] { project }, null, "initial");
+		enableLog();
+		return project;
+	}
+	
 	/**
 	 * Runs a sequence of operations for the synchronizer tests.
 	 * A parallel project is used to generate incoming changes.
@@ -69,49 +66,47 @@ public class SyncTests extends CVSUITestCase {
 	protected void runTestSync(int size) throws Exception {
 		final SequenceGenerator gen = new SequenceGenerator();
 
-		/*** outgoing changes ***/
-		startGroup("checking in " + size + " added file(s)");
-		Util.createRandomDeepFiles(gen, project, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
+		// setup out project then move it out of the way
+		IProject outProject = setupOutProject();
+		String moduleName = outProject.getName();
+		Util.renameResource(outProject, moduleName + "out");
+		outProject = Util.getProject(moduleName + "out");
+
+		// setup in project
+		disableLog();
+		actionCheckoutProjects(new String[] { moduleName }, new CVSTag[] { new CVSTag() });
+		enableLog();
+		IProject inProject = Util.getProject(moduleName);
+		
+		/*** outgoing and incoming changes ***/
+		startGroup("synchronize " + size + " added file(s)");
+		Util.createRandomDeepFiles(gen, outProject, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
+		startGroup("as outgoing changes");
+		syncCommitResources(new IResource[] { outProject }, null, "");
 		endGroup();
-		startGroup("checking in " + size + " modified file(s)");
-		Util.modifyRandomDeepFiles(gen, project, size);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
+		startGroup("as incoming changes");
+		syncUpdateResources(new IResource[] { inProject }, null);
 		endGroup();
-		startGroup("checking in " + size + " renamed file(s)");
-		Util.renameRandomDeepFiles(gen, project, size);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
 		endGroup();
-		startGroup("checking in " + size + " touched file(s)");
-		Util.touchRandomDeepFiles(gen, project, size);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
+		
+		startGroup("synchronize " + size + " modified file(s)");
+		Util.modifyRandomDeepFiles(gen, outProject, size);
+		startGroup("as outgoing changes");
+		syncCommitResources(new IResource[] { outProject }, null, "");
 		endGroup();
-		startGroup("checking in " + size + " removed file(s)");
-		Util.deleteRandomDeepFiles(gen, project, size);
-		syncCommitResources(new IResource[] { project }, null, getGroupName());
+		startGroup("as incoming changes");
+		syncUpdateResources(new IResource[] { inProject }, null);
+		endGroup();
 		endGroup();
 
-		/*** incoming changes ***/
-		Util.checkoutParallelProject(parallelProject);
-		startGroup("checking out " + size + " added file(s)");
-		Util.createRandomDeepFiles(gen, project, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
-		Util.checkinParallelProject(parallelProject, getGroupName());
-		syncUpdateResources(new IResource[] { project }, null);
+		startGroup("synchronize " + size + " removed file(s)");
+		Util.deleteRandomDeepFiles(gen, outProject, size);
+		startGroup("as outgoing changes");
+		syncCommitResources(new IResource[] { outProject }, null, "");
 		endGroup();
-		startGroup("checking out " + size + " modified file(s)");
-		Util.modifyRandomDeepFiles(gen, parallelProject, size);
-		Util.checkinParallelProject(parallelProject, getGroupName());
-		syncUpdateResources(new IResource[] { project }, null);
+		startGroup("as incoming changes");
+		syncUpdateResources(new IResource[] { inProject }, null);
 		endGroup();
-		startGroup("checking out " + size + " renamed file(s)");
-		Util.renameRandomDeepFiles(gen, parallelProject, size);
-		Util.checkinParallelProject(parallelProject, getGroupName());
-		syncUpdateResources(new IResource[] { project }, null);
-		endGroup();
-		startGroup("checking out " + size + " removed file(s)");
-		Util.deleteRandomDeepFiles(gen, parallelProject, size);
-		Util.checkinParallelProject(parallelProject, getGroupName());
-		syncUpdateResources(new IResource[] { project }, null);
 		endGroup();
 	}
 }

@@ -100,6 +100,10 @@ public abstract class LogEntry {
 			} else if ("abort".equals(localName)) {
 				// currently we ignore failure entries
 				// XXX need a good way to represent failures
+			} else if ("trace".equals(localName)) {
+				// currently we ignore stack frames associated with failure entries
+			} else if ("status".equals(localName)) {
+				// currently we ignore status associated with failure entries
 			} else {
 				throw new SAXException("Unrecognized element: " + localName);
 			}
@@ -107,7 +111,8 @@ public abstract class LogEntry {
 		public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 			Assert.assertNotNull(current);
-			if ("result".equals(localName) || "abort".equals(localName)) {
+			if ("result".equals(localName) || "abort".equals(localName) ||
+				"trace".equals(localName) || "status".equals(localName)) {
 				// nothing to do
 			} else {
 				current = current.getParent();

@@ -56,10 +56,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
-public class CVSUITestCase extends TestCase {
+public class CVSUITestCase extends LoggingTestCase {
 	private List testWindows;
 	protected IWorkbenchWindow testWindow;
-	protected LoggingTestResult logResult;
 	protected CVSRepositoryLocation testRepository;
 
 	public CVSUITestCase(String name) {
@@ -88,55 +87,6 @@ public class CVSUITestCase extends TestCase {
 		closeAllTestWindows();
 		super.tearDown();
 	}
-
-	public void run(TestResult result) {
-		logResult = (result instanceof LoggingTestResult) ? (LoggingTestResult) result : null;
-		super.run(result);
-	}
-
-	/**
-	 * Marks the beginning of a new task group.
-	 * @param groupName the name for the group
-	 */
-	protected void startGroup(String groupName) {
-		if (logResult != null) logResult.startGroup(groupName);		
-	}
-	
-	/**
-	 * Marks the ends of the active task group.
-	 */
-	protected void endGroup() {
-		if (logResult != null) logResult.endGroup();		
-	}
-
-	/**
-	 * Marks the beginning of a new task.
-	 * @param taskName the name for the task
-	 */
-	protected void startTask(String taskName) {
-		if (logResult != null) logResult.startTask(taskName);		
-	}
-	
-	/**
-	 * Marks the ends of the active task.
-	 */
-	protected void endTask() {
-		if (logResult != null) logResult.endTask();		
-	}
-
-	/**
-	 * Returns the name of the active group, or null if none.
-	 */
-	protected String getGroupName() {
-		return logResult == null ? "unknown" : logResult.getGroupName();
-	}
-	
-	/**
-	 * Returns the name of the active task, or null if none.
-	 */
-	protected String getTaskName() {
-		return logResult == null ? "unknown" : logResult.getTaskName();
-	}	
 
  	/** 
 	 * Open a test window with the empty perspective.
@@ -205,7 +155,6 @@ public class CVSUITestCase extends TestCase {
 	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {		
 		ICVSRemoteFolder[] projects = lookupRemoteProjects(projectNames, tags);
 		runActionDelegate(new AddToWorkspaceAction(), projects, "Repository View Checkout action");
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 
 	/**
@@ -218,7 +167,6 @@ public class CVSUITestCase extends TestCase {
 			}
 		};
 		runActionDelegate(action, resources, "Replace with Remote action");
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 		
 	/**
@@ -238,41 +186,39 @@ public class CVSUITestCase extends TestCase {
 				return false;
 			}
 		});
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 
 	/**
 	 * Updates the specified resources using the action contribution.
 	 */
 	protected void actionCVSCommit(IResource[] resources, final String comment) {
+		assertNotNull(comment);
 		CommitAction action = new CommitAction() {
 			protected String promptForComment() {
 				return comment;
 			}
 		};
 		runActionDelegate(action, resources, "CVS Commit action");
-		processEventsUntil(100); // let the UI settle before continuing
 	}	
 	
 	/**
 	 * Tags the specified resources using the action contribution.
 	 */
 	protected void actionCVSTag(IResource[] resources, final String name) {
+		assertNotNull(name);
 		TagAction action = new TagAction() {
 			protected String promptForTag() {
 				return name;
 			}
 		};
 		runActionDelegate(action, resources, "CVS Tag action");
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 
 	/**
 	 * Updates the specified resources using the action contribution.
 	 */
-	protected void actionCVSUpdate(IResource[] resources, final String name) {
+	protected void actionCVSUpdate(IResource[] resources) {
 		runActionDelegate(new UpdateAction(), resources, "CVS Update action");
-		processEventsUntil(100); // let the UI settle before continuing
 	}	
 	
 	/**
@@ -314,7 +260,6 @@ public class CVSUITestCase extends TestCase {
 			syncCommitInternal(input, nodes, comment);
 		}
 		endTask();
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 	
 	/**
@@ -334,37 +279,17 @@ public class CVSUITestCase extends TestCase {
 			syncGetInternal(input, nodes);
 		}
 		endTask();
-		processEventsUntil(100); // let the UI settle before continuing
 	}
 	
 	/**
 	 * Creates and imports project contents from a zip file.
 	 */
 	protected IProject createAndImportProject(String prefix, File zipFile) throws Exception {
-//		beginTask("create test project and import initial contents");
 		IProject project = Util.createUniqueProject(prefix);
 		Util.importZipIntoProject(project, zipFile);
-//		endTask();
-		processEventsUntil(100); // let the UI settle before continuing
 		return project;
 	}
 	
-	/**
-	 * Deletes a project safely.
-	 */
-	protected void deleteProject(IProject project) {
-//		beginTask("delete test project");
-		try {
-			processEventsUntil(250); // wait for things to settle before deleting
-			Util.deleteProject(project);
-		} catch (CoreException e) {
-			System.err.println("Error occurred while deleting project, disregarding it");
-			e.printStackTrace();
-		}
-//		endTask();
-		processEventsUntil(100); // let the UI settle before continuing
-	}
-
 	/**
 	 * Looks up handles for remote projects by name.
 	 */
@@ -381,16 +306,16 @@ public class CVSUITestCase extends TestCase {
 	 */
 	protected SyncView getSyncView() {
 		// based on org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard
-		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-		if (view == null) {
-			view = SyncView.findInActivePerspective();
-		}
-		assertNotNull("Could not obtain a Sync View.", view);
 		try {
 			CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
 		} catch (PartInitException e) {
 			CVSUIPlugin.log(e.getStatus());
 		}
+		SyncView view = (SyncView) CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+		if (view == null) {
+			view = SyncView.findInActivePerspective();
+		}
+		assertNotNull("Could not obtain a Sync View.", view);
 		return view;
 	}
 	

@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Test;
-import junit.framework.TestResult;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.EclipseTestHarnessApplication;
 import org.eclipse.swt.widgets.Display;
@@ -24,8 +27,19 @@ import org.eclipse.ui.internal.Workbench;
 
 /**
  * A test harness with UI and logging support.
+ * <pre>
+ * Supported arguments:
+ *   -test <suite>   : id of suite to run (must be plugged into extension point)
+ *   -log <file>     : specify a file for logging
+ *   -nolog          : do not write a log file
+ *   -repeat <n>     : number of iterations to run
+ *   -ignorefirst    : ignore (do not record) results from first iteration
+ *   -purge          : purge all projects from the workspace before each iteration
+ *   <anything else> : passed verbatim to the org.eclipse.ui.workbench application
+ * </pre>
  */
 public class EclipseUITestHarnessApplication extends EclipseTestHarnessApplication {
+	protected boolean purgeWorkspace;
 	protected boolean ignoreFirst;
 	protected int repeatCount;
 	protected LoggingTestResult logResult;
@@ -36,8 +50,9 @@ public class EclipseUITestHarnessApplication extends EclipseTestHarnessApplicati
 	public Object run(Object userArgs) throws Exception {
 		PrintStream logStream = System.err;
 		String logFilename = null;
-		repeatCount = 1;
+		purgeWorkspace = false;
 		ignoreFirst = false;
+		repeatCount = 1;
 		if (userArgs instanceof String[]) {
 			// parse args, no error handling
 			String[] args = (String[]) userArgs;
@@ -51,6 +66,8 @@ public class EclipseUITestHarnessApplication extends EclipseTestHarnessApplicati
 					logStream = null;
 				} else if ("-log".equals(args[i])) {
 					logFilename = args[++i];
+				} else if ("-purge".equals(args[i])) {
+					purgeWorkspace = true;
 				} else {
 					argsList.add(args[i]);
 				}
@@ -116,28 +133,35 @@ public class EclipseUITestHarnessApplication extends EclipseTestHarnessApplicati
 	}
 	
 	/**
-	 * Runs the specified test suite.  Called from the non-ui test launcher.
+	 * Runs the specified test.  Called from the non-ui test launcher.
 	 */
-	protected void run(Test suite) {
-		junit.textui.TestRunner runner = new junit.textui.TestRunner() {
-			public TestResult createTestResult() {
-				return logResult;
-			}
-		};
+	protected void run(Test test) {
 		for (int i = 0; i < repeatCount; ++i) {
-			logResult.setLogging(! (i == 0 && ignoreFirst));
-			TestResult result = runner.doRun(suite, false);
-
-			// quit if an error occurred
-			if (! result.wasSuccessful()) {
-				System.out.println("Aborted due to error after " + (i + 1) + " repetition(s).");
-				break;
+			if (purgeWorkspace) purgeWorkspaceProjects();
+			LoggingTestRunner runner = new LoggingTestRunner();
+			runner.doRun(test, (i == 0 && ignoreFirst) ? null : logResult, false);
+		}
+	}
+	
+	/**
+	 * Purges the projects in the workspace.
+	 */
+	public static void purgeWorkspaceProjects() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		// purge all known projects from the workspace
+		IProject[] projects = workspace.getRoot().getProjects();
+		for (int i = 0; i < projects.length; ++i) {
+			IProject project = projects[i];
+			try {
+				project.delete(true, true, null);
+			} catch (CoreException e) {
+				System.err.println("Could not purge project: " + project.getName());
 			}
 		}
 	}
 	
 	/**
-	 * Gets the SDK build id
+	 * Gets the SDK build id.
 	 */
 	public static String getSDKBuildId() {	
 		try {

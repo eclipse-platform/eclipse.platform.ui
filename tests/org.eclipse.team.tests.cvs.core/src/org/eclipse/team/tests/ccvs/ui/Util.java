@@ -71,17 +71,24 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	/*** RESOURCE MANIPULATION SUPPORT ***/
 	
 	/**
-	 * Creates a new project.
-	 * 
+	 * Gets a handle for a project of a given name.
 	 * @param name the project name
+	 * @return the project handle
+	 */
+	public static IProject getProject(String name) throws CoreException {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+	}
+	
+	/**
+	 * Creates a new project.
+	 * @param name the project name
+	 * @return the project handle
 	 */
 	public static IProject createProject(String name) throws CoreException {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = ws.getRoot();
-		IProject proj = root.getProject(name);
-		if (!proj.exists()) proj.create(null);
-		if (!proj.isOpen()) proj.open(null);
-		return proj;
+		IProject project = getProject(name);
+		if (!project.exists()) project.create(null);
+		if (!project.isOpen()) project.open(null);
+		return project;
 	}
 
 	/**
@@ -156,6 +163,50 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 		IFolder folder = parent.getFolder(new Path(Util.makeUniqueName(gen, "folder", null)));
 		folder.create(true, true, null);
 		return folder;
+	}
+	
+	/**
+	 * Renames a resource.
+	 * The resource handle becomes invalid.
+	 * @param resource the existing resource
+	 * @param newName the new name for the resource
+	 */
+	public static void renameResource(IResource resource, String newName) throws CoreException {
+		resource.move(new Path(newName), true, null);
+	}
+
+	/**
+	 * Modified a resource.
+	 * @param gen the sequence generator
+	 * @param file the file to modify
+	 */
+	public static void modifyFile(SequenceGenerator gen, IFile file)
+		throws IOException, CoreException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try {
+			InputStream is = file.getContents(true);
+			try {
+				byte[] buffer = new byte[8192];
+				int rsize;
+				boolean changed = false;
+				while ((rsize = is.read(buffer)) != -1) {
+					double gaussian;
+					do {
+						gaussian = gen.nextGaussian() * 0.5; // large changes are less likely than small ones
+					} while (gaussian > 1.0 || gaussian < -1.0);
+					int changeSize = (int) (gaussian * rsize);
+					changed = changed || changeSize != 0;
+					os.write(buffer, 0, changeSize < 0 ? - changeSize : rsize); // shrink file
+					writeRandomText(gen, os, changeSize); // enlarge file
+				}
+				if (! changed) os.write('!'); // make sure we actually did change the file
+				file.setContents(new ByteArrayInputStream(os.toByteArray()), true, false, null);
+			} finally {
+				is.close();
+			}
+		} finally {
+			os.close();
+		}
 	}
 	
 	/**
@@ -278,27 +329,10 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 		while (count-- > 0) {
 			IFile file = pickRandomDeepFile(gen, root);
 			if (file == null) break;
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			InputStream is = file.getContents(true);
-			byte[] buffer = new byte[8192];
-			int rsize;
-			boolean changed = false;
-			while ((rsize = is.read(buffer)) != -1) {
-				double gaussian;
-				do {
-					gaussian = gen.nextGaussian() * 0.5; // large changes are less likely than small ones
-				} while (gaussian > 1.0 || gaussian < -1.0);
-				int changeSize = (int) (gaussian * rsize);
-				changed = changed || changeSize != 0;
-				os.write(buffer, 0, changeSize < 0 ? - changeSize : rsize); // shrink file
-				writeRandomText(gen, os, changeSize); // enlarge file
-			}
-			if (! changed) os.write('!'); // make sure we actually did change the file
-			file.setContents(new ByteArrayInputStream(os.toByteArray()), true, false, null);
-			os.close();
+			modifyFile(gen, file);
 		}
 	}
-
+	
 	/**
 	 * Touches several random files deeply below the root folder.
 	 * @param gen the sequence generator
@@ -324,10 +358,10 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 		while (count-- > 0) {
 			IFile file = pickRandomDeepFile(gen, root);
 			if (file == null) break;
-			file.move(new Path(makeUniqueName(gen, "file", file.getFileExtension())), true, null);
+			renameResource(file, makeUniqueName(gen, "file", file.getFileExtension()));
 		}
 	}
-
+	
 	/**
 	 * Picks a random file from the parent folder or project.
 	 * @param gen the sequence generator
@@ -422,6 +456,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 		return file instanceof IFile
 		//	&& file.isAccessible()
 			&& ! file.isPhantom()
+			&& ! file.getName().equals(".classpath")
 			&& ! file.getName().equals(".vcm_meta"); // XXX fixme when core meta-data support is implemented
 	}
 
@@ -634,76 +669,5 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 			buf.append(c);
 		}
 		return buf.toString();
-	}
-
-	/*** PARALLEL WORKFLOW SUPPORT (NON-UI) ***/
-		
-	/**
-	 * Creates a project to simulate parallel development by another developer.
-	 * Not intended to test UI interaction.
-	 */
-	public static IProject createParallelProject(String repoLocation, String moduleName) throws Exception {
-		IProject project = Util.createUniqueProject("testParallel");
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(repoLocation);
-		CVSProviderPlugin.getProvider().createModule(location, project, moduleName,
-			new NullProgressMonitor());
-		return project;
-	}
-	
-	/**
-	 * Commits a project created to simulate parallel development.
-	 * Not intended to test UI interaction.
-	 */
-	public static void checkinParallelProject(IProject project, final String comment) throws Exception {
-		// FIXME: quick hack -- need a better way to do this
-		CVSSyncCompareInput input = new CVSSyncCompareInput(new IResource[] { project }) {
-			protected void updateView() {
-				// don't update the viewer
-			}
-		};
-		input.run(new NullProgressMonitor());
-		IDiffContainer diffRoot = input.getDiffRoot();
-		if (isEmpty(diffRoot)) return;
-		IDiffElement[] diffElements = diffRoot.getChildren();
-		ITeamNode projectNode = (ITeamNode) diffElements[0];
-		FakeSelectionProvider selectionProvider = new FakeSelectionProvider(new ITeamNode[] { projectNode });
-		CommitSyncAction action = new CommitSyncAction(input, selectionProvider, "Commit", null) {
-			protected void run(IRunnableWithProgress op, String problemMessage)
-				throws InterruptedException {
-				try {
-					op.run(new NullProgressMonitor());
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					throw new InterruptedException();
-				}
-			}
-			protected int promptForConflicts(SyncSet syncSet) {
-				return 0; // yes! sync conflicting changes
-			}
-			protected String promptForComment(RepositoryManager manager) {
-				return comment; // use our comment
-			}
-		};
-		action.run();
-	}
-	
-	/**
-	 * Updates a project created to simulate parallel development.
-	 * Not intended to test UI interaction.
-	 */
-	public static void checkoutParallelProject(IProject project) throws Exception {
-		CVSTeamProvider provider = (CVSTeamProvider) TeamPlugin.getManager().getProvider(project);
-		provider.get(new IResource[] { project }, IResource.DEPTH_INFINITE, null,
-			new NullProgressMonitor());
-	}
-
-	/**
-	 * Versions a project created to simulate parallel development.
-	 * Not intended to test UI interaction.
-	 */
-	public static void versionParallelProject(IProject project, String name) throws Exception {
-		CVSTeamProvider provider = (CVSTeamProvider) TeamPlugin.getManager().getProvider(project);
-		provider.tag(new IResource[] { project }, IResource.DEPTH_INFINITE, new CVSTag(name, CVSTag.VERSION),
-			new NullProgressMonitor());
 	}
 }
