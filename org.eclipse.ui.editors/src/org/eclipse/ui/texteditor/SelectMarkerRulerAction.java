@@ -121,6 +121,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public void run() {
 		
 		IMarker marker= chooseMarker(fMarkers);
+		if (marker == null)
+			return;
+		
 		boolean isProblemMarker= MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM);
 		boolean isTaskMarker= MarkerUtilities.isMarkerType(marker, IMarker.TASK);
 		if (isProblemMarker || isTaskMarker) {
@@ -157,7 +160,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * markers at the found layer, the first marker is taken.
 	 * 
 	 * @param markers the list of markers to choose from
-	 * @return the chosen marker
+	 * @return the chosen marker or <code>null</code> if none of the given markers has a marker annotation in the model
 	 */
 	protected IMarker chooseMarker(List markers) {
 		
