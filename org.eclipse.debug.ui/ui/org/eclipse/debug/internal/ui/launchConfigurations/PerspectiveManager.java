@@ -6,24 +6,20 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
 
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 
 /**
@@ -131,7 +127,7 @@ public class PerspectiveManager implements ILaunchListener {
 				async(new Runnable() {
 					public void run() {
 						try {
-							window.openPage(id, ResourcesPlugin.getWorkspace().getRoot());
+							window.getWorkbench().openPage(id, ResourcesPlugin.getWorkspace().getRoot(),0);
 						} catch (WorkbenchException e) {
 							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 							"Error", 
