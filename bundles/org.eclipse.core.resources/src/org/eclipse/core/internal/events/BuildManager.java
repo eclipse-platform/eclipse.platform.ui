@@ -587,7 +587,7 @@ public void setBuildersPersistentInfo(IProject project, Map map) {
 	} catch (CoreException e) {
 		//project is missing -- build state will be lost
 		//can't throw an exception because this happens on startup
-		IStatus error = new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null);
+		IStatus error = new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(error);
 	}
 }
