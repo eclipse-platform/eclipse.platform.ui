@@ -192,7 +192,12 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncChangesMatch(changes, affected);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			assertSyncEquals("Delete", resource, SyncInfo.OUTGOING | SyncInfo.DELETION);
+			// After deletion, folders should be in-sync while files should be outgoing deletions
+			if (resource.getType() == IResource.FILE) {
+				assertSyncEquals("Delete", resource, SyncInfo.OUTGOING | SyncInfo.DELETION);
+			} else {
+				assertSyncEquals("Delete", resource, SyncInfo.IN_SYNC);
+			}
 		}
 	}
 	
@@ -1123,5 +1128,28 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		provider.deconfigure();		
 		assertProjectRemoved(project);
+	}
+	
+	/*
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=40221
+	 */
+	public void testConflictingFolderDeletion() throws TeamException, CoreException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject("testConflictingFolderDeletion", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		// Checkout a copy
+		IProject copy = checkoutCopy(project, "-copy");
+		
+		// Delete a folder in both projects and checkin one of the deletions
+		deleteResources(project, new String[] { "folder1/" }, false /* checkin */);
+		deleteResources(copy, new String[] { "folder1/" }, true /* checkin */);
+		
+		// The files should show up as outgoing deletions
+		assertSyncEquals("testConflictingFolderDeletion sync check", project,
+			 new String[] { "folder1/", "folder1/a.txt", "folder1/b.txt"},
+			 true, new int[] { 
+			 	SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC, /* conflicting deletions are handled automatically */
+				SyncInfo.IN_SYNC});
 	}
 }
