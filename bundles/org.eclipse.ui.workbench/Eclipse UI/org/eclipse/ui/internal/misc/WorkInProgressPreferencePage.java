@@ -142,6 +142,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	public boolean performOk() {
 
 		Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().setValue(Platform.PREF_PLATFORM_PERFORMANCE, slider.getSelection());
+		Platform.getPlugin(Platform.PI_RUNTIME).savePluginPreferences();
 
 		return super.performOk();
 	}
