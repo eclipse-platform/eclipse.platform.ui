@@ -111,6 +111,10 @@ public class HelpDisplay {
 			} catch (UnsupportedEncodingException uee) {
 			}
 
+		} else if (topicURL.startsWith("jar:file:")) {
+			// topic from a jar to display without frames
+			displayHelpURL(
+				getBaseURL() + "nftopic/" + getNoframesURL(topicURL));
 		} else {
 			displayHelpURL(getNoframesURL(topicURL));
 		}
