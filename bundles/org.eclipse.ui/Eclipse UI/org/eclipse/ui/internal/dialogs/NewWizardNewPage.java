@@ -104,14 +104,6 @@ protected Control createControl(Composite parent) {
 	wizardSelectionViewer.addSelectionChangedListener(this);
 	wizardSelectionViewer.addDoubleClickListener(this);
 
-	// Add a table column.
-	table = wizardSelectionViewer.getTable();
-	TableLayout tableLayout = new TableLayout();
-	tableLayout.addColumnData(new ColumnPixelData(200, false));
-	TableColumn tc = new TableColumn(table, SWT.NONE, 0);
-	tc.setResizable(false);
-	table.setLayout(tableLayout);
-
 	restoreWidgetValues();
 	if (!categoryTreeViewer.getSelection().isEmpty())
 		// we only set focus if a selection was restored
