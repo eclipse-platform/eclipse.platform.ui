@@ -37,6 +37,14 @@ FRAMESET {
 
 function onloadHandler(e)
 {
+<%
+if (data.isMozilla()){
+// restore mozilla from minimized
+%>
+	window.focus();
+<%
+}
+%>
 	window.frames["SearchFrame"].document.getElementById("searchWord").focus();
 }
 
