@@ -155,12 +155,12 @@ public class Hyperlink extends AbstractHyperlink {
 		if ((getStyle() & SWT.WRAP) != 0) {
 			FormUtil.paintWrapText(gc, text, bounds, underlined);
 		} else {
-			gc.drawText(getText(), marginWidth, marginHeight, true);
+			gc.drawText(getText(), bounds.x, bounds.y, true);
 			if (underlined) {
 				FontMetrics fm = gc.getFontMetrics();
 				int descent = fm.getDescent();
 				int lineY = bounds.y + bounds.height - descent + 1;
-				gc.drawLine(marginWidth, lineY, bounds.width, lineY);
+				gc.drawLine(bounds.x, lineY, bounds.x+bounds.width, lineY);
 			}
 		}
 	}
