@@ -739,7 +739,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
 		
 		// invalidate color cache
-		disposeColors();
+		fColors= null;
+		// disposeColors();  //  not yet enabled because of #28388
 		
 		refreshBirdsEyeView();
 		invalidateLines();
