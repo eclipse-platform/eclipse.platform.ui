@@ -957,18 +957,18 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		return false;
 	}
 	boolean deletedChildren = true;
-	for (int i=0; i<members.length; i++) {
+	for (int i = 0; i < members.length; i++) {
 		IResource child = members[i];
 		switch (child.getType()) {
-			case IResource.FILE:
+			case IResource.FILE :
 				if (child.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 					// ignore the .project file for now and delete it last
 				} else {
-					deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
+					deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
 				}
 				break;
-			case IResource.FOLDER:
-				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
+			case IResource.FOLDER :
+				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
 				break;
 		}
 	}
@@ -978,8 +978,10 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 	if (deletedChildren) {
 		IResource file = project.findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (file == null) {
-			// For some reason the .project file doesn't exist, so continue with the project
-			// deletion and pretend we deleted it already.
+			//the .project have may have been recreated on disk automatically by snapshot
+			IPath location = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME).getLocation();
+			if (location != null)
+				location.toFile().delete();
 		} else {
 			if (file.getType() != IResource.FILE) {
 				// We should never get here since the only reason we skipped it above was because
@@ -1004,7 +1006,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		// Indicate that the delete was unsuccessful.
 		return false;
 	}
-	
+
 	// If the content area is in the default location then delete the directory and all its
 	// children. If it is specified by the user then leave the directory itself but delete the children.
 	// No need to check the force flag since this is an internal method and by the time we
