@@ -204,6 +204,8 @@ class AnimationManager {
 				getAnimateJob().schedule();
 			}
 		}
+		else //Not showing an error if there is no animation
+			showingError = false;
 	}
 
 	/**
