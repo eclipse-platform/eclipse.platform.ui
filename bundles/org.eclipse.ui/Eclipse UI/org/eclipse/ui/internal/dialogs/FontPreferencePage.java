@@ -113,6 +113,13 @@ public class FontPreferencePage
 		String preferenceKey = localizedName(preferenceName, localeName);
 		FontData[] data = new FontData[1];
 		data[0] = PreferenceConverter.getFontData(getPreferenceStore(), preferenceKey);
+
+		//Only update if there has been a change
+		FontData[] currentSetting =
+			JFaceResources.getFontRegistry().get(preferenceName).getFontData();
+		if (currentSetting[0].equals(data[0]))
+			return;
+
 		JFaceResources.getFontRegistry().put(preferenceName, data);
 	}
 
