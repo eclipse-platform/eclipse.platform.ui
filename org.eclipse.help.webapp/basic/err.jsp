@@ -8,7 +8,7 @@
  Contributors:
      IBM Corporation - initial API and implementation
 --%>
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.eclipse.help.internal.webapp.data.*" contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
@@ -16,7 +16,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title> Error </title>
 </head>
-<body>
+<%
+String  direction = "ltr";
+try{
+	if(UrlUtil.isRTL(request, response)){
+		direction = "rtl";
+	}
+}catch(Exception e){
+}
+%>
+
+<body dir="<%=direction%>">
 
 	<%@ page isErrorPage="true" %>
 	
