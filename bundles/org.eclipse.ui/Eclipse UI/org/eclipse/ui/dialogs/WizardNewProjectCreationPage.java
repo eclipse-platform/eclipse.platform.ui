@@ -4,23 +4,35 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import java.io.File;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import java.lang.reflect.InvocationTargetException;
-import java.io.File;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -43,6 +55,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	// initial value stores
 	private String initialProjectFieldValue;
 	private IPath initialLocationFieldValue;
+	
+	// the value the user has entered
+	private String customLocationFieldValue;
 	
 	// widgets
 	private Text projectNameField;
@@ -74,7 +89,8 @@ public class WizardNewProjectCreationPage extends WizardPage {
 public WizardNewProjectCreationPage(String pageName) {
 	super(pageName);
 	setPageComplete(false);
-	this.initialLocationFieldValue = Platform.getLocation();
+	initialLocationFieldValue = Platform.getLocation();
+	customLocationFieldValue = ""; //$NON-NLS-1$
 }
 /** (non-Javadoc)
  * Method declared on IDialogPage.
@@ -104,14 +120,14 @@ public void createControl(Composite parent) {
 private final void createProjectLocationGroup(Composite parent) {
 
 	// project specification group
-	Composite projectGroup = new Composite(parent,SWT.NONE);
+	Composite projectGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
  
 	// new project label
-	Label projectContentsLabel = new Label(projectGroup,SWT.NONE);
+	Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
 	projectContentsLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
 
 	GridData labelData = new GridData();
@@ -120,13 +136,13 @@ private final void createProjectLocationGroup(Composite parent) {
 
 	final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 	useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
-	useDefaultsButton.setSelection(this.useDefaults);
+	useDefaultsButton.setSelection(useDefaults);
 
 	GridData buttonData = new GridData();
 	buttonData.horizontalSpan = 3;
 	useDefaultsButton.setLayoutData(buttonData);
 
-	createUserSpecifiedProjectLocationGroup(projectGroup,!this.useDefaults);
+	createUserSpecifiedProjectLocationGroup(projectGroup, !useDefaults);
 
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -134,9 +150,12 @@ private final void createProjectLocationGroup(Composite parent) {
 			browseButton.setEnabled(!useDefaults);
 			locationPathField.setEnabled(!useDefaults);
 			locationLabel.setEnabled(!useDefaults);
-			setLocationForSelection();
-			if (!useDefaults)
-				locationPathField.setText(""); //$NON-NLS-1$
+			if (useDefaults) {
+				customLocationFieldValue = locationPathField.getText();
+				setLocationForSelection();
+			} else {
+				locationPathField.setText(customLocationFieldValue);
+			}
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
@@ -148,14 +167,14 @@ private final void createProjectLocationGroup(Composite parent) {
  */
 private final void createProjectNameGroup(Composite parent) {
 	// project specification group
-	Composite projectGroup = new Composite(parent,SWT.NONE);
+	Composite projectGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	// new project label
-	Label projectLabel = new Label(projectGroup,SWT.NONE);
+	Label projectLabel = new Label(projectGroup, SWT.NONE);
 	projectLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
 
 	// new project name entry field
@@ -253,7 +272,7 @@ public String getProjectName() {
  */
 private String getProjectNameFieldValue() {
 	if (projectNameField == null)
-		return "";
+		return ""; //$NON-NLS-1$
 	else
 		return projectNameField.getText().trim();
 }
@@ -265,7 +284,7 @@ private String getProjectNameFieldValue() {
  */
 private String getProjectLocationFieldValue() {
 	if (locationPathField == null)
-		return "";
+		return ""; //$NON-NLS-1$
 	else
 		return locationPathField.getText().trim();
 }
@@ -277,15 +296,17 @@ private void handleLocationBrowseButtonPressed() {
 	dialog.setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
 	
 	String dirName = getProjectLocationFieldValue();
-	if (!dirName.equals("")) {//$NON-NLS-1$
+	if (!dirName.equals("")) { //$NON-NLS-1$
 		File path = new File(dirName);
 		if (path.exists())
 			dialog.setFilterPath(dirName);
 	}
 	
 	String selectedDirectory = dialog.open();
-	if (selectedDirectory != null)
-		locationPathField.setText(selectedDirectory);
+	if (selectedDirectory != null) {
+		customLocationFieldValue = selectedDirectory;
+		locationPathField.setText(customLocationFieldValue);
+	}
 }
 /**
  * Sets the initial project name that this page will use when
@@ -336,17 +357,22 @@ private boolean validatePage() {
 
 	String locationFieldContents = getProjectLocationFieldValue();
 	
-	if (!locationFieldContents.equals("")) {//$NON-NLS-1$
-		IPath path = new Path("");//$NON-NLS-1$
-		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
-			return false;
-		}
-		if (!useDefaults && Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
-			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
-			return false;
-		}
+	if (locationFieldContents.equals("")) { //$NON-NLS-1$
+		setErrorMessage(null);
+		setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+		return false;
 	}
+	
+	IPath path = new Path("");//$NON-NLS-1$
+	if (!path.isValidPath(locationFieldContents)) {
+		setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
+		return false;
+	}
+	if (!useDefaults && Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
+		setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
+		return false;
+	}
+ 
 
 	if (getProjectHandle().exists()) {
 		setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
