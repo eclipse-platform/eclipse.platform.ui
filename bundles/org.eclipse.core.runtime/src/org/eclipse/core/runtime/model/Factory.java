@@ -30,6 +30,25 @@ public Factory(MultiStatus status) {
 	super();
 	this.status = status;
 }
+
+/**
+ * Returns a new component model which is not initialized.
+ *
+ * @return a new component model
+ */
+public ComponentModel createComponentModel() {
+	return new ComponentModel();
+}
+
+/**
+ * Returns a new configuration model which is not initialized.
+ *
+ * @return a new configuration model
+ */
+public ConfigurationModel createConfiguration() {
+	return new ConfigurationModel();
+}
+
 /**
  * Returns a new configuration element model which is not initialized.
  *
@@ -104,6 +123,16 @@ public PluginPrerequisiteModel createPluginPrerequisite() {
 public PluginRegistryModel createPluginRegistry() {
 	return new PluginRegistryModel();
 }
+
+/**
+ * Returns a new URL model which is not initialized.
+ *
+ * @return a new URL model
+ */
+public URLModel createURL() {
+	return new URLModel();
+}
+
 /**
  * Handles an error state specified by the status.  The collection of all logged status
  * objects can be accessed using <code>getStatus()</code>.
