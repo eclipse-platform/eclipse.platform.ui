@@ -93,7 +93,9 @@ public class InstallWizard
 				if (dialog.open() != 0)
 					return false;
 			}
-
+			
+			final IVerificationListener verificationListener =new JarVerificationService(
+					InstallWizard.this.getShell());
 			// ok to continue		
 			IRunnableWithProgress operation = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
@@ -125,8 +127,7 @@ public class InstallWizard
 								job.getFeature(),
 								optionalFeatures,
 								unconfiguredOptionalFeatures,
-								new JarVerificationService(
-									InstallWizard.this.getShell()));
+								verificationListener);
 						operations[i] = op;
 					}
 					IOperation installOperation =

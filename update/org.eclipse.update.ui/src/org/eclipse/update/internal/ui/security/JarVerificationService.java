@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.security;
 
+import java.util.*;
+
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
@@ -29,6 +31,12 @@ public class JarVerificationService implements IVerificationListener {
 	 * the Shell
 	 */
 	private Shell shell;
+	
+	/**
+	 * Processed ContentRefernces.  They will be skipped if prompted
+	 * to verify the same reference again.
+	 */
+	private Map processed=new HashMap();
 
 	/*
 	 * If no shell, create a new shell 
@@ -87,6 +95,8 @@ public class JarVerificationService implements IVerificationListener {
 			return CHOICE_INSTALL_TRUST_ALWAYS;
 
 		if (verificationResult.alreadySeen()) return CHOICE_INSTALL_TRUST_ALWAYS;
+		
+		if(see(verificationResult)) return CHOICE_INSTALL_TRUST_ALWAYS;
 
 		switch (verificationResult.getVerificationCode()) {
 			case IVerificationResult.UNKNOWN_ERROR :
@@ -109,6 +119,25 @@ public class JarVerificationService implements IVerificationListener {
 					});
 					return wizardResult[0];
 				}
+		}
+	}
+
+	/**
+	 * Checks whether feature archive has been seen already.
+	 * Remembers the fact that archive is being seen now.
+	 * @param verificationResult
+	 * @return true if the archive has been seen before, false if first time
+	 */
+	private boolean see(final IVerificationResult verificationResult) {
+		String key = verificationResult.getFeature().getVersionedIdentifier().toString()
+			+"/"+verificationResult.getContentReference().getIdentifier();
+		Long value = new Long(verificationResult.getContentReference().getLastModified());
+		Long cachedValue = (Long)processed.get(key);
+		if(value.equals(cachedValue)){
+			return true;
+		}else{
+			processed.put(key, value);
+			return false;
 		}
 	}
 }
