@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPageListener;
@@ -28,12 +29,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.keybindings.Util;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
 import org.eclipse.ui.internal.keybindings.Scope;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
+import org.eclipse.ui.internal.keybindings.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -97,7 +97,7 @@ public class WWinKeyBindingService {
 		updateAccelerators();
 	}
 	
-	public void pressed(KeyStroke stroke) { 
+	public void pressed(KeyStroke stroke, Event event) { 
 		//System.out.println("pressed(" + stroke.getAccelerator() + ")");
 		KeySequence mode = KeyBindingManager.getInstance().getMode();
 		SortedMap sequenceActionMapForMode = 
@@ -107,7 +107,7 @@ public class WWinKeyBindingService {
 		if (sequenceActionMapForMode.containsKey(sequence)) {
 			clear();			
 			invoke(((org.eclipse.ui.internal.keybindings.Action) 
-				sequenceActionMapForMode.get(sequence)).getValue());	
+				sequenceActionMapForMode.get(sequence)).getValue(), event);	
 		} else {
 			List strokes = new ArrayList(mode.getKeyStrokes());
 			strokes.add(stroke);
@@ -125,13 +125,13 @@ public class WWinKeyBindingService {
 		}
 	}
 
-	public void invoke(String action) {		
+	public void invoke(String action, Event event) {		
 		//System.out.println("invoke(" + action + ")");
 		if (activeService != null) {
 			IAction a = activeService.getAction(action);
 			
 			if (a != null && a.isEnabled())
-				a.run();
+				a.runWithEvent(event);
 		}
 	}
 
@@ -319,8 +319,21 @@ public class WWinKeyBindingService {
 		
 		accMenu.setAccelerators(accelerators);		
 		accMenu.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				pressed(KeyStroke.create(e.detail));
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				Event event = new Event();
+				event.item = selectionEvent.item;
+				event.detail = selectionEvent.detail;
+				event.x = selectionEvent.x;
+				event.y = selectionEvent.y;
+				event.width = selectionEvent.width;
+				event.height = selectionEvent.height;
+				event.stateMask = selectionEvent.stateMask;
+				event.doit = selectionEvent.doit;
+				event.data = selectionEvent.data;
+				event.display = selectionEvent.display;
+				event.time = selectionEvent.time;
+				event.widget = selectionEvent.widget;
+				pressed(KeyStroke.create(selectionEvent.detail), event);
 			}
 		});
 
