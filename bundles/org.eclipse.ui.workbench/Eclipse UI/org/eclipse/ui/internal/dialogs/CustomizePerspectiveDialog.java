@@ -1140,7 +1140,7 @@ private void initializeShortcutMenuInput() {
 	rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
 	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
-	WizardCollectionElement wizardCollection = (WizardCollectionElement)rdr.getWizards();
+	WizardCollectionElement wizardCollection = rdr.getWizardElements();
 	Object [] wizardCategories = wizardCollection.getChildren();
 	ArrayList activeIds = perspective.getNewWizardActionIds();
 	for (int i = 0; i < wizardCategories.length; i ++) {
