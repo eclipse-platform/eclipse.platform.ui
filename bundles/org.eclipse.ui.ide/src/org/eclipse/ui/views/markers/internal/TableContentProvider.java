@@ -344,6 +344,11 @@ class TableContentProvider implements IStructuredContentProvider {
 	}
 
 	private void doUpdate(IProgressMonitor monitor) throws InterruptedException {
+		
+		//Do not update if the workbench is shutdown
+		if(!PlatformUI.isWorkbenchRunning())
+			return;
+		
 		// This counter represents how many work units remain unused in the progress monitor.
 		int remainingWorkUnits = 100000;
 		
@@ -403,14 +408,10 @@ class TableContentProvider implements IStructuredContentProvider {
 				}
 			}
 		} finally {
-			try {
+			//Only send updates if we can send them to the workbench
+			if(PlatformUI.isWorkbenchRunning()){
 				enableUpdatesJob.schedule();
 				enableUpdatesJob.join();
-			} catch (IllegalStateException e) {
-				// Ignore this exception -- it means that the Job manager was shut down, which is expected
-				// at the end of the application. Note that we need to check for this by catching the exception
-				// rather than using something like if (jobManagerIsShutDown())... since the job manager might
-				// be shut down at any time in another thread.
 			}
 			
 			monitor.done();
