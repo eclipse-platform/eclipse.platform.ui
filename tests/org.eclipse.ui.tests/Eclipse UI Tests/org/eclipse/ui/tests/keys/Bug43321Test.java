@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.tests.keys;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,22 +35,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class Bug43321Test extends UITestCase {
 
-	private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
-	
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	/**
 	 * Constructor for Bug43321Test.
 	 * 
@@ -63,9 +46,11 @@ public class Bug43321Test extends UITestCase {
 	}
 
 	/**
-	 * Tests that non-check box items on the menu are not checked when activated
-	 * from the keyboard.
-	 * @throws ParseException If "CTRL+C" isn't a valid key stroke.
+	 * Tests that non-check box items on the menu are not checked when
+	 * activated from the keyboard.
+	 * 
+	 * @throws ParseException
+	 *            If "CTRL+C" isn't a valid key stroke.
 	 */
 	public void testNoCheckOnNonCheckbox() throws CoreException, ParseException {
 		IWorkbenchWindow window = openTestWindow();
@@ -75,14 +60,14 @@ public class Bug43321Test extends UITestCase {
 		testProject.open(null);
 		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(testProject.getFile(".project")); //$NON-NLS-1$
 		editor.selectAndReveal(0, 1);
-		
+
 		// Update the display.
 		Shell shell = window.getShell();
 		Display display = shell.getDisplay();
 		while (display.readAndDispatch());
-		
+
 		// Press "Ctrl+C" to perform a copy.
-		KeyStroke[] keyStrokes = { KeyStroke.getInstance("CTRL+C") }; //$NON-NLS-1$
+		KeyStroke[] keyStrokes = { KeyStroke.getInstance("CTRL+C")}; //$NON-NLS-1$
 		Event event = new Event();
 		((Workbench) window.getWorkbench()).press(keyStrokes, event);
 
@@ -90,14 +75,14 @@ public class Bug43321Test extends UITestCase {
 		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(IWorkbenchActionConstants.COPY);
 		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
 	}
-	
+
 	public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
 		for (int i = 0; i < menuItems.length; i++) {
 			if (menuItems[i].getText().equals(text)) {
 				return menuItems[i];
 			}
 		}
-		
+
 		return null;
 	}
 }

@@ -27,20 +27,6 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug43597Test extends UITestCase {
 
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	/**
 	 * Constructor for Bug43597Test.
 	 * 
@@ -53,7 +39,7 @@ public class Bug43597Test extends UITestCase {
 
 	/**
 	 * Tests that setting the text on a text widget to an empty string does not
-	 * reset the font.  This was a problem only on carbon.
+	 * reset the font. This was a problem only on carbon.
 	 */
 	public void testFontReset() {
 		String metaCharacter = "\u2325X"; //$NON-NLS-1$
@@ -66,22 +52,24 @@ public class Bug43597Test extends UITestCase {
 		Text text = new Text(shell, SWT.LEFT);
 		text.setFont(new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL)); //$NON-NLS-1$
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		shell.pack();
+		shell.open();
+
 		// Set the text once, and get the font.
 		text.setText(metaCharacter); //$NON-NLS-1$
+		while (display.readAndDispatch());
 		Font fontBefore = text.getFont();
-		
+
 		// Set the font again, and get the font afterward.
 		text.setText(""); //$NON-NLS-1$
 		text.setText(metaCharacter);
+		while (display.readAndDispatch());
 		Font fontAfter = text.getFont();
-		
+
 		// Test.
 		assertEquals("Clearing text resets font.", fontBefore.handle, fontAfter.handle); //$NON-NLS-1$
-		
+
 		// Clean up after myself.
-		shell.pack();
-		shell.open();
 		shell.close();
 		shell.dispose();
 	}
