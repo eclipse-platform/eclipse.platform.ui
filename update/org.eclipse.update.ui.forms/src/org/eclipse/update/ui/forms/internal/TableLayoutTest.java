@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.ui.forms.internal;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
@@ -190,7 +192,10 @@ public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatus
      html.setHyperlinkSettings(factory.getHyperlinkHandler());
      HTTPAction action = new HTTPAction();
      action.setStatusLineManager(manager);
+     URL i1URL = TableLayoutTest.class.getResource("image1.gif");
+     ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
      html.registerTextObject("urlHandler", action);
+     html.registerTextObject("image1", id1.createImage());
      //html.setBackground(factory.getBackgroundColor());
      html.setForeground(factory.getForegroundColor());
      InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");

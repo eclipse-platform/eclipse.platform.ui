@@ -4,7 +4,12 @@
 To check for updates for features you have installed, 
 go to the <a href="action1">My Eclipse</a> and select 
 <b>Available Updates</b> folder. <b>Search page</b> will 
-be shown allowing you to initiate and customize the search.
+be shown allowing you to initiate and customize the search. 
+Now we <b>will</b> add an 
+<img href="image1"/> 
+image here. Just
+ to show how wrapping should apply to images when they are 
+ larger than the regular text.
 </p>
 <li style="text" value="1.">To check for updates for features you have installed, 
 go to the <a href="action1">My Eclipse</a> and select 
