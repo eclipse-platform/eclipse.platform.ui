@@ -29,6 +29,8 @@ package org.eclipse.ui;
  * a new location or by updating the current location.
  * 
  * Not intended to be implemented by clients.
+ * 
+ * @since 2.1
  */
 public interface INavigationHistory {
 	/**

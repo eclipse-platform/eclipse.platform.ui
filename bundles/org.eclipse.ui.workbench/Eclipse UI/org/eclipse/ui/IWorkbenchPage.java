@@ -660,6 +660,8 @@ public void setEditorReuseThreshold(int openEditors);
  * Returns the navigation history which manages a list of entries keeping the history
  * of places (positions, selection and editors) the user visited making it easier to the
  * user to move back and forward without losing context.
+ * 
+ * @since 2.1
  */
 public INavigationHistory getNavigationHistory();
 }

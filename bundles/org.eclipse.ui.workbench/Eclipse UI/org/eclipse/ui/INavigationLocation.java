@@ -14,6 +14,8 @@ package org.eclipse.ui;
  * 
  * Not intended to be implemented by clients. Clients should subclass NavigationLocation
  * instead.
+ * 
+ * @since 2.1
  */
 public interface INavigationLocation {
 	

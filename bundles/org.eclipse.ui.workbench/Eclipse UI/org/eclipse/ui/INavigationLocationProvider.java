@@ -14,6 +14,8 @@ package org.eclipse.ui;
  * Should be implemented by editors that wish to contribute to the
  * navigation history. The message <code>createNavigationLocation</code>
  * will be sent when a new location is marked in the history.
+ * 
+ * @since 2.1
  */
 public interface INavigationLocationProvider {
 	/**

@@ -11,7 +11,9 @@ Contributors:
 
 package org.eclipse.ui;
 /**
- * Default implementation of INavigationLocation. */
+ * Default implementation of INavigationLocation.
+ * 
+ * @since 2.1 */
 public abstract class NavigationLocation implements INavigationLocation {
 	
 	private IWorkbenchPage page;
