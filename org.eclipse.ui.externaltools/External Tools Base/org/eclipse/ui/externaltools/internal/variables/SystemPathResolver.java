@@ -31,8 +31,8 @@ public class SystemPathResolver implements IDynamicVariableResolver {
         if (argument == null) {
             throw new CoreException(new Status(IStatus.ERROR,  IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.getString("SystemPathResolver.0"), null)); //$NON-NLS-1$
         }
-        Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
-        String path= (String) map.get("Path"); //$NON-NLS-1$
+        Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+        String path= (String) map.get("PATH"); //$NON-NLS-1$
         if (path == null) {
             return argument;
         }
