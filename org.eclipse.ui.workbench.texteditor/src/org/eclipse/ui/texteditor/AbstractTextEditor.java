@@ -2991,6 +2991,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new LineStartAction(textWidget, true);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_LINE_START);
 		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_START, action);
+		
+		setActionActivationCode(ITextEditorActionDefinitionIds.LINE_END, (char) 0, SWT.END, SWT.NONE);
+		setActionActivationCode(ITextEditorActionDefinitionIds.LINE_START, (char) 0, SWT.HOME, SWT.NONE);
+		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_END, (char) 0, SWT.END, SWT.SHIFT);
+		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_START, (char) 0, SWT.HOME, SWT.SHIFT);
 	}
 
 	/**
