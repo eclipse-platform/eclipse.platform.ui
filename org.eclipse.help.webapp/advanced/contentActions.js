@@ -89,18 +89,14 @@ function bookmarkInfocenterPage(button)
 
 function resynch(button)
 {
-	try
-	{
+	try {
 		var topic = parent.ContentViewFrame.window.location.href;
 		// remove the query, if any
 		var i = topic.indexOf('?');
 		if (i != -1)
 			topic = topic.substring(0, i);
 		parent.parent.NavFrame.displayTocFor(topic);
-	}
-	catch(e)
-	{
-	}
+	} catch(e) {}
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
@@ -108,8 +104,10 @@ function resynch(button)
 
 function printContent(button)
 {
-	parent.ContentViewFrame.focus();
-	parent.ContentViewFrame.print();
+	try {
+		parent.ContentViewFrame.focus();
+		parent.ContentViewFrame.print();
+	} catch(e) {}
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
