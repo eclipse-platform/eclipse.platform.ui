@@ -218,7 +218,7 @@ public class JobManager implements IJobManager {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
 			return ((Worker) current).currentJob();
-		return null;
+		return implicitJobs.jobForThread(current);
 	}
 	/**
 	 * Returns the delay in milliseconds that a job with a given priority can
