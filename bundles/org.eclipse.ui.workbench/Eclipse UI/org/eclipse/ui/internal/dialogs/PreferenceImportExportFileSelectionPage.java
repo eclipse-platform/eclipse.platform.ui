@@ -74,10 +74,6 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 */
 	private static final String NAME = "org.eclipse.ui.preferences.importExportFileSelectionPage"; //$NON-NLS-1$
 	/**
-	 * The radio button signifying that all modified preferences should be 
-	 * imported from or exported to the given file.
-	 */
-	private Button allItemsRadioButton;
 
 	/**
 	 * Updates the state of various widgets in response to changes on the page.
@@ -88,16 +84,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * import or to which to export.
 	 */
 	private Text fileText;
-	/**
-	 * The radio button signifying that all modified preferences from the 
-	 * currently active page should be exported.
-	 */
-	private Button pageItemsRadioButton;
-	/**
-	 * The radio button signifying that the user wishes to review the selected
-	 * preferences, and choose which ones to export.
-	 */
-	private Button selectItemsRadioButton;
+
 
 	/**
 	 * Constructs a new instance of the file selection page.
@@ -114,14 +101,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * <code>false</code> otherwise.
 	 */
 	boolean canFinish() {
-		return validate() && !wantsPreferencesSelected();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-	 */
-	public boolean canFlipToNextPage() {
-		return validate() && wantsPreferencesSelected();
+		return validate();
 	}
 	
 	/**
@@ -220,45 +200,6 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 		layoutData.horizontalSpan = 3;
 		verticalSpacer.setLayoutData(layoutData);
 
-		// Create the radio button for the export/import all option.
-		allItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
-		allItemsRadioButton.setFont(parentFont);
-		layoutData = new GridData();
-		layoutData.horizontalSpan = 3;
-		allItemsRadioButton.setLayoutData(layoutData);
-		allItemsRadioButton.addListener(SWT.Selection, changeListener);
-
-		// Create the radio button for the select preferences to export/import.
-		selectItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
-		selectItemsRadioButton.setFont(parentFont);
-		layoutData = new GridData();
-		layoutData.horizontalSpan = 3;
-		selectItemsRadioButton.setLayoutData(layoutData);
-		selectItemsRadioButton.addListener(SWT.Selection, changeListener);
-		selectItemsRadioButton.setEnabled(false); // TODO allow this option
-
-		if (export) {
-			/* If we are exporting, then we also have the option of exporting
-			 * items from the currently selected page.
-			 */
-			pageItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
-			pageItemsRadioButton.setFont(parentFont);
-			layoutData = new GridData();
-			layoutData.horizontalSpan = 3;
-			pageItemsRadioButton.setLayoutData(layoutData);
-			pageItemsRadioButton.addListener(SWT.Selection, changeListener);
-			pageItemsRadioButton.setEnabled(false); // TODO allow this option
-
-			allItemsRadioButton.setText(WorkbenchMessages.getString("ImportExportPages.exportAllItems")); //$NON-NLS-1$
-			selectItemsRadioButton.setText(WorkbenchMessages.getString("ImportExportPages.exportSelectItems")); //$NON-NLS-1$
-			pageItemsRadioButton.setText(WorkbenchMessages.getString("ImportExportPages.exportPageItems")); //$NON-NLS-1$
-
-		} else {
-			allItemsRadioButton.setText(WorkbenchMessages.getString("ImportExportPages.importAllItems")); //$NON-NLS-1$
-			selectItemsRadioButton.setText(WorkbenchMessages.getString("ImportExportPages.importSelectItems")); //$NON-NLS-1$
-
-		}
-
 		// Remember the composite as the top-level control.
 		setControl(page);
 		
@@ -289,8 +230,6 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
         } else if ((export) || (new File(lastFileName).exists())) {
             fileText.setText(lastFileName);
         }
-
-        allItemsRadioButton.setSelection(true);
     }
 	
 	/**
@@ -327,12 +266,5 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
         return true;
 	}
 
-	/**
-	 * Whether the user has asked to select the preferences by hand.
-	 * @return <code>true</code> If the user wants to select the preference by
-	 * hand; <code>false</code> otherwise.
-	 */
-	boolean wantsPreferencesSelected() {
-		return (selectItemsRadioButton != null) && (selectItemsRadioButton.getSelection());
-	}
+	
 }

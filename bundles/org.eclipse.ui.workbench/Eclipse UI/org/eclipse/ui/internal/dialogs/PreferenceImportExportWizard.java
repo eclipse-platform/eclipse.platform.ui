@@ -53,12 +53,6 @@ public class PreferenceImportExportWizard extends Wizard {
 	 * preferences. This value should never be <code>null</code>.
 	 */
 	private final PreferenceDialog parent;
-	/**
-	 * The page containing the preferences selection controls. This is the
-	 * second page shown to the user. This valud should not be <code>null</code>
-	 * after the pages have been added.
-	 */
-	private PreferenceImportExportSettingsSelectionPage settingsSelectionPage;
 	
 	/**
 	 * A flag representing success/failure of an operation.
@@ -108,8 +102,6 @@ public class PreferenceImportExportWizard extends Wizard {
 		super.addPages();
 		fileSelectionPage = new PreferenceImportExportFileSelectionPage(export);
 		addPage(fileSelectionPage);
-		settingsSelectionPage = new PreferenceImportExportSettingsSelectionPage(export);
-		addPage(settingsSelectionPage);
 	}
 
 	/*
@@ -118,12 +110,6 @@ public class PreferenceImportExportWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.IWizard#canFinish()
 	 */
 	public boolean canFinish() {
-		if (fileSelectionPage.wantsPreferencesSelected()) {
-			if (getContainer().getCurrentPage() == fileSelectionPage) {
-				return false;
-			}
-			return fileSelectionPage.validate() && settingsSelectionPage.canFinish();
-		}
 		return fileSelectionPage.canFinish();
 	}
 
