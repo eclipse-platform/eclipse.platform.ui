@@ -34,9 +34,9 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof ICategory) {
-			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
+			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_ACTIVITY_CATEGORY);
 		} else {
-			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FILE);
+			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_ACTIVITY);
 		}
 	}
 

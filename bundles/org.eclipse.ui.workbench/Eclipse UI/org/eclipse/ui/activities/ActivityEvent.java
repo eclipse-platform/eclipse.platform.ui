@@ -27,6 +27,7 @@ public final class ActivityEvent {
 	private boolean definedChanged;
 	private boolean enabledChanged;
 	private boolean nameChanged;
+    private boolean descriptionChanged;
 
 	/**
 	 * Creates a new instance of this class.
@@ -50,7 +51,8 @@ public final class ActivityEvent {
 		boolean activityPatternBindingsChanged,
 		boolean definedChanged,
 		boolean enabledChanged,
-		boolean nameChanged) {
+		boolean nameChanged, 
+		boolean descriptionChanged) {
 		if (activity == null)
 			throw new NullPointerException();
 
@@ -60,6 +62,7 @@ public final class ActivityEvent {
 		this.definedChanged = definedChanged;
 		this.enabledChanged = enabledChanged;
 		this.nameChanged = nameChanged;
+		this.descriptionChanged = descriptionChanged;
 	}
 
 	/**
@@ -98,7 +101,16 @@ public final class ActivityEvent {
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
-
+	
+	/**
+	 * Returns whether or not the description property changed.
+	 * 
+	 * @return true, iff the description property changed.
+	 */
+	public boolean hasDescriptionChanged() {
+		return descriptionChanged;
+	}
+	
 	/**
 	 * Returns whether or not the activityActivityBindings property changed.
 	 * 

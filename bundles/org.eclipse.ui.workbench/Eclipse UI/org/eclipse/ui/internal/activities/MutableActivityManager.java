@@ -559,19 +559,27 @@ public final class MutableActivityManager
 				activityDefinition != null
 					? activityDefinition.getName()
 					: null);
+		boolean descriptionChanged =
+			activity.setDescription(
+				activityDefinition != null
+					? activityDefinition.getDescription()
+					: null);
+		
 
 		if (activityActivityBindingsChanged
 			|| activityPatternBindingsChanged
 			|| definedChanged
 			|| enabledChanged
-			|| nameChanged)
+			|| nameChanged
+			|| descriptionChanged)
 			return new ActivityEvent(
 				activity,
 				activityActivityBindingsChanged,
 				activityPatternBindingsChanged,
 				definedChanged,
 				enabledChanged,
-				nameChanged);
+				nameChanged,
+				descriptionChanged);
 		else
 			return null;
 	}
@@ -611,13 +619,20 @@ public final class MutableActivityManager
 				categoryDefinition != null
 					? categoryDefinition.getName()
 					: null);
+		boolean descriptionChanged =
+			category.setDescription(
+				categoryDefinition != null
+					? categoryDefinition.getDescription()
+					: null);
+		
 
-		if (categoryActivityBindingsChanged || definedChanged || nameChanged)
+		if (categoryActivityBindingsChanged || definedChanged || nameChanged || descriptionChanged)
 			return new CategoryEvent(
 				category,
 				categoryActivityBindingsChanged,
 				definedChanged,
-				nameChanged);
+				nameChanged,
+				descriptionChanged);
 		else
 			return null;
 	}

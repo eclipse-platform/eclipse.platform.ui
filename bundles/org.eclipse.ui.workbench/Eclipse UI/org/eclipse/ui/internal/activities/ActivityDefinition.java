@@ -81,15 +81,19 @@ public final class ActivityDefinition implements Comparable {
 	private String id;
 	private String name;
 	private String pluginId;
+    private String description;
 	private transient String string;
+
 
 	public ActivityDefinition(
 		String id,
 		String name,
-		String pluginId) {
+		String pluginId,
+		String description) {
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
+		this.description = description;
 	}
 
 	public int compareTo(Object object) {
@@ -157,4 +161,8 @@ public final class ActivityDefinition implements Comparable {
 
 		return string;
 	}
+
+    public String getDescription() {
+        return description;
+    }
 }

@@ -36,6 +36,7 @@ final class Persistence {
 	final static String TAG_PARENT_ACTIVITY_ID = "parentActivityId"; //$NON-NLS-1$
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	static ActivityActivityBindingDefinition readActivityActivityBindingDefinition(
 		IMemento memento,
@@ -95,11 +96,12 @@ final class Persistence {
 
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
+		String description = memento.getString(TAG_DESCRIPTION);
 		String pluginId =
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new ActivityDefinition(id, name, pluginId);
+		return new ActivityDefinition(id, name, pluginId, description);
 	}
 
 	static List readActivityDefinitions(
@@ -212,11 +214,12 @@ final class Persistence {
 
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
+		String description = memento.getString(TAG_DESCRIPTION);
 		String pluginId =
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new CategoryDefinition(id, name, pluginId);
+		return new CategoryDefinition(id, name, pluginId, description);
 	}
 
 	static List readCategoryDefinitions(
@@ -433,5 +436,6 @@ final class Persistence {
 	}
 
 	private Persistence() {
+	    //no-op
 	}
 }

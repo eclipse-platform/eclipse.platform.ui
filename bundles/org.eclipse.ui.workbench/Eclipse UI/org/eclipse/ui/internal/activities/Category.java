@@ -37,6 +37,7 @@ final class Category implements ICategory {
 	private String id;
 	private String name;
 	private transient String string;
+    private String description;
 
 	Category(String id) {
 		if (id == null)
@@ -217,4 +218,26 @@ final class Category implements ICategory {
 
 		return string;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.ICategory#getDescription()
+     */
+    public String getDescription() throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
+		return description;
+    }
+
+    public boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+    }
 }

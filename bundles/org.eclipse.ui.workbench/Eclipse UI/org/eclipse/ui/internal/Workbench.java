@@ -116,7 +116,6 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its

@@ -150,4 +150,11 @@ public class CategorizedActivity implements IActivity {
 	public String toString() {
 		return category.getId() + " -> " + activity.getId(); //$NON-NLS-1$
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getDescription()
+     */
+    public String getDescription() throws NotDefinedException {
+        return activity.getDescription();
+    }
 }

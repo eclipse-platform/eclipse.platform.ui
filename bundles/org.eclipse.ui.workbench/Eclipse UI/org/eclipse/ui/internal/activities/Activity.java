@@ -42,6 +42,7 @@ final class Activity implements IActivity {
 	private String id;
 	private String name;
 	private transient String string;
+    private String description;
 
 	Activity(String id) {
 		if (id == null)
@@ -288,6 +289,18 @@ final class Activity implements IActivity {
 
 		return false;
 	}
+	
+	boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}	
 
 	public String toString() {
 		if (string == null) {
@@ -309,5 +322,15 @@ final class Activity implements IActivity {
 		}
 
 		return string;
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getDescription()
+     */
+    public String getDescription() throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
+		return description;
 	}
 }

@@ -82,11 +82,13 @@ public final class CategoryDefinition implements Comparable {
 	private String name;
 	private String pluginId;
 	private transient String string;
+    private String description;
 
-	public CategoryDefinition(String id, String name, String pluginId) {
+	public CategoryDefinition(String id, String name, String pluginId, String description) {
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
+		this.description = description;
 	}
 
 	public int compareTo(Object object) {
@@ -154,4 +156,8 @@ public final class CategoryDefinition implements Comparable {
 
 		return string;
 	}
+
+    public String getDescription() {
+        return description;
+    }
 }

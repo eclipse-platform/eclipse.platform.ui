@@ -18,22 +18,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.NotDefinedException;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
@@ -49,6 +54,27 @@ public class ActivityEnabler {
 
 	private IWorkbenchActivitySupport activitySupport;
 
+	private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+         */
+        public void selectionChanged(SelectionChangedEvent event) {
+            Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
+            try {
+                if (element instanceof ICategory) {
+                    descriptionText.setText(((ICategory)element).getDescription());
+				}
+                else if (element instanceof IActivity) {
+                    descriptionText.setText(((IActivity)element).getDescription());
+                }
+            }
+            catch (NotDefinedException e) {
+                descriptionText.setText(""); //$NON-NLS-1$
+            }
+        }
+    };
+	
 	/**
 	 * Listener that manages the grey/check state of categories.
 	 */
@@ -106,6 +132,11 @@ public class ActivityEnabler {
 	 * The content provider.
 	 */
 	private ActivityCategoryContentProvider provider = new ActivityCategoryContentProvider();
+    
+	/**
+	 * The descriptive text.
+	 */
+	private Text descriptionText;
 
 	/**
 	 * Create a new instance.
@@ -125,9 +156,17 @@ public class ActivityEnabler {
 	 */
 	public Control createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
-		mainComposite.setLayout(new GridLayout(1, true));
+		mainComposite.setLayout(new GridLayout(2, false));
 
-		dualViewer = new CheckboxTreeViewer(mainComposite);
+		Composite c = new Composite(mainComposite, SWT.NONE);
+		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		c.setLayout(new GridLayout(1, true));
+		
+		Label label = new Label(c, SWT.NONE);
+		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		dualViewer = new CheckboxTreeViewer(c);
 		dualViewer.setSorter(new ViewerSorter());
 		dualViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
@@ -135,10 +174,22 @@ public class ActivityEnabler {
 		dualViewer.setInput(activitySupport.getActivityManager());
 		dualViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		c = new Composite(mainComposite, SWT.NONE);
+		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		c.setLayout(new GridLayout(1, true));
+		
+		label = new Label(c, SWT.NONE);
+		label.setText(ActivityMessages.getString("ActivityEnabler.description")); //$NON-NLS-1$
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		descriptionText = new Text(c, SWT.READ_ONLY);
+		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setInitialStates();
 
 		dualViewer.addCheckStateListener(checkListener);
+		dualViewer.addSelectionChangedListener(selectionListener);
 
+		dualViewer.setSelection(new StructuredSelection());
 		return mainComposite;
 	}
 

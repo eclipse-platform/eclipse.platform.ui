@@ -38,6 +38,20 @@ public interface ISharedImages {
 	public final static String IMG_OBJ_FOLDER = "IMG_OBJ_FOLDER"; //$NON-NLS-1$
 
 	/**
+	 * Identifies an activity category.
+	 * 
+	 * @since 3.0
+	 */
+    public static final String IMG_OBJ_ACTIVITY_CATEGORY = "IMG_OBJ_ACTIVITY_CATEGORY"; //$NON-NLS-1$
+
+	/**
+	 * Identifies an activity.
+	 * 
+	 * @since 3.0
+	 */
+    public static final String IMG_OBJ_ACTIVITY = "IMG_OBJ_ACTIVITY"; //$NON-NLS-1$
+    
+	/**
 	 * Identifies a project image.
 	 * 
 	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found

@@ -25,6 +25,7 @@ public final class CategoryEvent {
 	private boolean categoryActivityBindingsChanged;
 	private boolean definedChanged;
 	private boolean nameChanged;
+    private boolean descriptionChanged;
 
 	/**
 	 * Creates a new instance of this class.
@@ -42,7 +43,8 @@ public final class CategoryEvent {
 		ICategory category,
 		boolean categoryActivityBindingsChanged,
 		boolean definedChanged,
-		boolean nameChanged) {
+		boolean nameChanged, 
+		boolean descriptionChanged) {
 		if (category == null)
 			throw new NullPointerException();
 
@@ -50,6 +52,7 @@ public final class CategoryEvent {
 		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.nameChanged = nameChanged;
+		this.descriptionChanged = definedChanged;
 	}
 
 	/**
@@ -79,6 +82,15 @@ public final class CategoryEvent {
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
+	
+	/**
+	 * Returns whether or not the description property changed.
+	 * 
+	 * @return true, iff the description property changed.
+	 */
+	public boolean hasDescriptionChanged() {
+		return nameChanged;
+	}	
 
 	/**
 	 * Returns whether or not the categoryActivityBindings property changed.
