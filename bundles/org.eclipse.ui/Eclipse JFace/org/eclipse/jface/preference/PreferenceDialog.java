@@ -7,7 +7,7 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT Dialog
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // disambiguate from SWT List
+
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -310,8 +311,16 @@ private Composite createTitleArea(Composite parent) {
 	layout.verticalSpacing = 0;
 	layout.horizontalSpacing = 0;
 	layout.numColumns = 2;
+	
+	// Get the background color for the title area
+	Display display = parent.getDisplay();
+	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	
+	GridData layoutData = new GridData(GridData.FILL_BOTH);
+	layoutData.grabExcessVerticalSpace = true;
 	titleArea.setLayout(layout);
-	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	titleArea.setLayoutData(layoutData);
+	titleArea.setBackground(bg);
 
 	// Add a dispose listener
 	titleArea.addDisposeListener(new DisposeListener() {
@@ -323,9 +332,6 @@ private Composite createTitleArea(Composite parent) {
 		}
 	});
 
-	// Get the background color for the title area
-	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
 
 	// Message label
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
@@ -344,6 +350,8 @@ private Composite createTitleArea(Composite parent) {
 
 	return titleArea;
 }
+
+
 /**
  * Creates a Tree/TreeItem structure that reflects the page hierarchy.
  */
