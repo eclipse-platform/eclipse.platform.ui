@@ -500,7 +500,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fAnnotationList.setFont(font);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		int heightHint= fAnnotationColorListModel.length;
-		heightHint= Math.min(20, heightHint);
+		heightHint= Math.min(15, heightHint);
 		gd.heightHint= convertHeightInCharsToPixels(heightHint);
 		fAnnotationList.setLayoutData(gd);
 						
