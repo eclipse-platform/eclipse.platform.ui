@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ public class PluginActivator implements BundleActivator {
 		StartLevel startLevel = getStartLevel(context);
 		if (startLevel == null)
 			return;
-		int bundleLevel = startLevel.getBundleStartLevel(context.getBundle());
 		if (startLevel.getStartLevel() <= startLevel.getBundleStartLevel(context.getBundle())) {
 			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(status);
