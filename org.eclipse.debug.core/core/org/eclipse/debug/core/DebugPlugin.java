@@ -50,6 +50,14 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES= "launchConfigurationTypes"; //$NON-NLS-1$	
 	
 	/**
+	 * Simple identifier constant (value <code>"launchConfigurationComparators"</code>)
+	 * for the launch configuration comparators extension point.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS= "launchConfigurationComparators"; //$NON-NLS-1$		
+	
+	/**
 	 * Simple identifier constant (value <code>"breakpoints"</code>) for the
 	 * breakpoints extension point.
 	 * 

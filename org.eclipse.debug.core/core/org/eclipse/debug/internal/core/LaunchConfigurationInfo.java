@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -489,13 +490,42 @@ public class LaunchConfigurationInfo {
 		}
 		
 		// Make sure the attributes are the same
-		if (!fAttributes.equals(other.getAttributeTable())) {
-			return false;
-		}
-		
-		// They're equal
-		return true;
+		return compareAttributes(fAttributes, other.getAttributeTable());
 	}
 	
+	/**
+	 * Returns whether the two attribute maps are equal, consulting
+	 * registered comparator extensions.
+	 * 
+	 * @param map1 attribute map
+	 * @param map2 attribute map
+	 * @return whether the two attribute maps are equal
+	 */
+	protected boolean compareAttributes(HashMap map1, HashMap map2) {
+		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
+		if (map1.size() == map2.size()) {
+			Iterator attributes = map1.keySet().iterator();
+			while (attributes.hasNext()) {
+				String key = (String)attributes.next();
+				Object attr1 = map1.get(key);
+				Object attr2 = map2.get(key);
+				if (attr2 == null) {
+					return false;
+				}
+				Comparator comp = manager.getComparator(key);
+				if (comp == null) {
+					if (!attr1.equals(attr2)) {
+						return false;
+					}
+				} else {
+					if (comp.compare(attr1, attr2) != 0) {
+						return false;
+					}
+				}
+			}
+			return true;	
+		}
+		return false;
+	}
 }
 

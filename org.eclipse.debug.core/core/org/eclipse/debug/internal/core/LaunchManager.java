@@ -5,6 +5,15 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,14 +21,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -92,6 +93,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * <code>List</code> of <code>ILaunchConfiguration</code>.
 	 */
 	private List fLaunchConfigurationIndex = null;
+	
+	/**
+	 * Launch configuration comparator extensions,
+	 * keyed by attribute name.
+	 */
+	private HashMap fComparators = null;
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
@@ -971,6 +978,32 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}			
 	}
 	
+	
+	/**
+	 * Load comparator extensions.
+	 * 
+	 * @exception CoreException if an exception occurrs reading
+	 *  the extensions
+	 */
+	private void initializeComparators() {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fComparators = new HashMap(infos.length);
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			String attr = configurationElement.getAttribute("attribute"); //$NON-NLS-1$			
+			if (attr != null) {
+				fComparators.put(attr, new LaunchConfigurationComparator(configurationElement));
+			} else {
+				// invalid status handler
+				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+				MessageFormat.format(DebugCoreMessages.getString("Invalid launch configuration comparator extentsion defined by plug-in {0} - attribute not specified"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null);
+				DebugPlugin.getDefault().log(s);
+			}
+		}			
+	}
+		
 	/**
 	 * @see ILaunchManager#newSourceLocator(String)
 	 */
@@ -988,4 +1021,26 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 	}
 
+	/**
+	 * Returns the comparator registered for the given attribute, or
+	 * <code>null</code> if none.
+	 * 
+	 * @param attributeName attribute for which a comparator is required
+	 * @return comparator, or <code>null</code> if none
+	 */
+	protected Comparator getComparator(String attributeName) {
+		 HashMap map = getComparators();
+		 return (Comparator)map.get(attributeName);
+	}
+	
+	/**
+	 * Returns comparators, loading if required
+	 */
+	protected HashMap getComparators() {
+		if (fComparators == null) {
+			initializeComparators();
+		}
+		return fComparators;
+	}
+	
 }
