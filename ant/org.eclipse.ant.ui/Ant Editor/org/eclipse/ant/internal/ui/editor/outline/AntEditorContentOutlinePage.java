@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -22,6 +22,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -479,8 +480,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	private void addOpenWithMenu(IMenuManager menuManager) {
-		IStructuredSelection selection= (IStructuredSelection)getSelection();
-		AntElementNode element= (AntElementNode)selection.getFirstElement();
+		AntElementNode element= getSelectedNode();
 		String path = element.getFilePath();
 		if (path != null) {
 			IFile file= AntUtil.getFileForLocation(path, null);
@@ -500,39 +500,39 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	private boolean shouldAddRunTargetMenu() {
-		ISelection iselection= getSelection();
-		if (iselection instanceof IStructuredSelection) {
-			IStructuredSelection selection= (IStructuredSelection)iselection;
-			if (selection.size() == 1) {
-				Object selected= selection.getFirstElement();
-				if (selected instanceof AntProjectNode || selected instanceof AntTargetNode) {
-					return true;
-				}
-			}
+		AntElementNode node= getSelectedNode();
+		if (node instanceof AntProjectNode || node instanceof AntTargetNode) {
+			return true;
 		}
 		return false;
 	}
 	
 	private boolean shouldAddOpenWithMenu() {
+		AntElementNode node= getSelectedNode();
+		if (node != null) {
+			if (node.isExternal()) {
+				String path = node.getFilePath();
+				if (path != null && path.length() > 0) {
+					return true;
+				}
+			}	
+		}
+		return false;
+	}
+
+	private AntElementNode getSelectedNode() {
 		ISelection iselection= getSelection();
 		if (iselection instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection)iselection;
 			if (selection.size() == 1) {
 				Object selected= selection.getFirstElement();
 				if (selected instanceof AntElementNode) {
-					AntElementNode element= (AntElementNode)selected;
-					if (element.isExternal()) {
-						String path = element.getFilePath();
-						if (path != null && path.length() > 0) {
-							return true;
-						}
-					}	
+					return (AntElementNode)selected;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
@@ -547,14 +547,22 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
+		IFile file= null;
 		if (fModel != null) {
-			LocationProvider locationProvider= fModel.getLocationProvider();
-			IFile file= locationProvider.getFile();
-			if (file != null) {
-				ISelection selection= new StructuredSelection(file);
-				return new ShowInContext(null, selection);
+			AntElementNode node= getSelectedNode();
+			if (node.isExternal()) {
+				String filePath= node.getFilePath();
+				file= AntUtil.getFileForLocation(filePath, null);
+			} else {
+				LocationProvider locationProvider= fModel.getLocationProvider();
+				file= locationProvider.getFile();
 			}
 		}
-		return null;
+		if (file != null) {
+			ISelection selection= new StructuredSelection(file);
+			return new ShowInContext(null, selection);
+		} else {
+			return null;
+		}
 	}
 }
