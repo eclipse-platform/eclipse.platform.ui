@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -188,10 +187,49 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private List getAllLaunchConfigurations() throws CoreException {
 		if (fLaunchConfigurationIndex == null) {
 			fLaunchConfigurationIndex = new ArrayList(20);
-			fLaunchConfigurationIndex.addAll(findLocalLaunchConfigurations());
-			fLaunchConfigurationIndex.addAll(findLaunchConfigurations(ResourcesPlugin.getWorkspace().getRoot()));
+			List configs = findLocalLaunchConfigurations();
+			verifyConfigurations(configs, fLaunchConfigurationIndex);
+			configs = findLaunchConfigurations(ResourcesPlugin.getWorkspace().getRoot());
+			verifyConfigurations(configs, fLaunchConfigurationIndex);
 		}
 		return fLaunchConfigurationIndex;
+	}
+	
+	/**
+	 * Verify basic integrity of launch configurations in the given list,
+	 * adding valid configs to the collection of all launch configurations.
+	 * Excpetions are logged for invalid configs.
+	 * 
+	 * @param verify the list of configs to verify
+	 * @param valid the list to place valid configrations in
+	 */
+	protected void verifyConfigurations(List verify, List valid) {
+		Iterator configs = verify.iterator();
+		while (configs.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration)configs.next();
+			if (isValid(config)) {
+				valid.add(config);
+			}
+		}		
+	}
+	
+	/**
+	 * Returns whether the given launch configuration passes a basic
+	 * integritiy test by retrieving its type.
+	 * 
+	 * @param config the configuration to verify
+	 * @return whether the config meets basic integrity constraints
+	 */
+	protected boolean isValid(ILaunchConfiguration config) {
+		try {
+			config.getType();
+		} catch (CoreException e) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, 
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Unable_to_restore_invalid_launch_configuration"),new String[] {config.getLocation().toOSString()} ), e); //$NON-NLS-1$
+			DebugPlugin.log(status);
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -860,18 +898,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @param config the launch configuration that was added
 	 */
 	protected void launchConfigurationAdded(ILaunchConfiguration config) throws CoreException {
-		List allConfigs = getAllLaunchConfigurations();
-		if (!allConfigs.contains(config)) {
-			allConfigs.add(config);
-		}
-		if (fLaunchConfigurationListeners.size() > 0) {
-			Object[] listeners = fLaunchConfigurationListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
-				listener.launchConfigurationAdded(config);
+		if (isValid(config)) {
+			List allConfigs = getAllLaunchConfigurations();
+			if (!allConfigs.contains(config)) {
+				allConfigs.add(config);
 			}
+			if (fLaunchConfigurationListeners.size() > 0) {
+				Object[] listeners = fLaunchConfigurationListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
+					listener.launchConfigurationAdded(config);
+				}
+			}
+			clearConfigNameCache();			
+		} else {
+			launchConfigurationDeleted(config);
 		}
-		clearConfigNameCache();			
 	}
 	
 	/**
@@ -885,8 +927,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	protected void launchConfigurationChanged(ILaunchConfiguration config) {
 		removeInfo(config);
-		notifyChanged(config);
-		clearConfigNameCache();								
+		clearConfigNameCache();
+		if (isValid(config)) {
+			notifyChanged(config);
+		} else {
+			try {
+				launchConfigurationDeleted(config);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
+		}								
 	}
 	
 	/**
