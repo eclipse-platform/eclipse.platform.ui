@@ -151,27 +151,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 
 		if (childElements.length > 0) {
+
 			Object[] filtered = filter(childElements);
 			for (int i = 0; i < filtered.length; i++) {
-				createAddedElement(widget,filtered[i]);				
+				Object element = filtered[i];
+				if (doFindItem(element) == null) {
+					int index = indexForElement(widget, element);
+					createTreeItem(widget, filtered[i], index);
+				}
 			}
 		}
-	}
-	
-	/**
-	 * Create the new element in the parent widget. If the
-	 * child already exists do nothing.
-	 * @param widget
-	 * @param element
-	 */
-	private void createAddedElement(Widget widget, Object element){
-		if(!(widget instanceof Item))
-			return;
-		Object child = internalFindChild((Item) widget,element);
-		if(child != null)
-			return;
-		int index = indexForElement(widget, element);
-		createTreeItem(widget, element, index);
 	}
 
 	/**
