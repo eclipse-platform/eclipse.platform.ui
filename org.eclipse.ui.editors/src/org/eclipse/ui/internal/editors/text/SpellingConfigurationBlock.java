@@ -33,8 +33,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -355,16 +357,21 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (sel.isEmpty())
 					return;
-				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
-					if (MessageDialog.openQuestion(viewer.getControl().getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR))
+					if (isPerformRevert())
 						fCurrentBlock.performRevert();
 					else {
 						revertSelection();
 						return;
 					}
-				}
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENGINE, ((SpellingEngineDescriptor) sel.getFirstElement()).getId());
 				updateListDependencies();
+			}
+
+			private boolean isPerformRevert() {
+				Shell shell= viewer.getControl().getShell();
+				MessageDialog dialog= new MessageDialog(shell, TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), null, TextEditorMessages.getString("SpellingConfigurationBlock.error.message"), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1); //$NON-NLS-1$ //$NON-NLS-2$
+				return dialog.open() == 0;
 			}
 
 			private void revertSelection() {
