@@ -15,10 +15,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -26,7 +25,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -36,49 +34,68 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * preference store and propogates the change for any special cases that require
  * updating of other values within the workbench.
  */
-public class PlatformUIPreferenceListener implements IPropertyChangeListener {
+public class PlatformUIPreferenceListener implements
+		IEclipsePreferences.IPreferenceChangeListener {
+	
+	private static PlatformUIPreferenceListener singleton;
+	
+	public static IEclipsePreferences.IPreferenceChangeListener getSingleton(){
+		if(singleton == null)
+			singleton = new PlatformUIPreferenceListener();
+	    return singleton;
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
+	public void preferenceChange(PreferenceChangeEvent event) {
 
-		String propertyName = event.getProperty();
+		String propertyName = event.getKey();
 		if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName)) {
-			DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+			DecoratorManager manager = WorkbenchPlugin.getDefault()
+					.getDecoratorManager();
 			manager.applyDecoratorsPreference();
 			manager.clearCaches();
 			manager.updateForEnablementChange();
 			return;
 		}
 
-		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID.equals(propertyName)) {
+		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID
+				.equals(propertyName)) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
 
-			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
+			workbench.getPerspectiveRegistry().setDefaultPerspective(
+					(String) event.getNewValue());
 			return;
 		}
 
-		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR.equals(propertyName)) {
+		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR
+				.equals(propertyName)) {
 			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			IWorkbenchWindow[] workbenchWindows = workbench
+					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow)
-					((WorkbenchWindow) window).setPerspectiveBarLocation(apiStore
-							.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+					((WorkbenchWindow) window)
+							.setPerspectiveBarLocation(apiStore
+									.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 			}
 			return;
 		}
 
 		// TODO the banner apperance should have its own preference
-		if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyName)) {
+		if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
+				.equals(propertyName)) {
 			boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
 					IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
 
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			IWorkbenchWindow[] workbenchWindows = workbench
+					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow)
@@ -89,13 +106,16 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 
 		// Update the file associations if they have changed due to an import
 		if (IPreferenceConstants.RESOURCES.equals(propertyName)) {
-			IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
+			IEditorRegistry registry = WorkbenchPlugin.getDefault()
+					.getEditorRegistry();
 			if (registry instanceof EditorRegistry) {
 				EditorRegistry editorRegistry = (EditorRegistry) registry;
-				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				IPreferenceStore store = WorkbenchPlugin.getDefault()
+						.getPreferenceStore();
 				Reader reader = null;
 				try {
-					String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+					String xmlString = store
+							.getString(IPreferenceConstants.RESOURCES);
 					if (xmlString != null && xmlString.length() > 0) {
 						reader = new StringReader(xmlString);
 						// Build the editor map.
@@ -131,4 +151,5 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 			}
 		}
 	}
+
 }

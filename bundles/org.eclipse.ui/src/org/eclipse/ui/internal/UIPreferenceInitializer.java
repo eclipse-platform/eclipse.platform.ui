@@ -10,77 +10,117 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 
 /**
- * Implementation of the UI plugin's preference extension's customization element.
- * This is needed in order to force the UI plugin's preferences to be initialized
- * properly when running without org.eclipse.core.runtime.compatibility.
- * For more details, see bug 58975 - New preference mechanism does not properly initialize defaults.
+ * Implementation of the UI plugin's preference extension's customization
+ * element. This is needed in order to force the UI plugin's preferences to be
+ * initialized properly when running without
+ * org.eclipse.core.runtime.compatibility. For more details, see bug 58975 - New
+ * preference mechanism does not properly initialize defaults.
  * 
  * @since 3.0
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-    public void initializeDefaultPreferences() {
-        IPreferenceStore store = UIPlugin.getDefault().getPreferenceStore();
-        store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+	public void initializeDefaultPreferences() {
 
-        //Deprecated but kept for backwards compatibility
-        store.setDefault(
-                IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-        store.setDefault(
-                IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-        store.setDefault(
-                IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		IEclipsePreferences node = new DefaultScope().getNode(UIPlugin
+				.getDefault().getBundle().getSymbolicName());
+		node.put(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
+				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-        // Although there is no longer any item on the preference pages 
-        // for setting the linking preference, since it is now a per-part setting, 
-        // it remains as a preference to allow product overrides of the 
-        // initial state of linking in the Navigator.
-        // By default, linking is off.
-        store.setDefault(
-                IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
+		//Deprecated but kept for backwards compatibility
+		node.put(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
+				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		node.put(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
+				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		node.put(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
+				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-        // Appearance / Presentation preferences
-        store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
-                "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-        store.setDefault(
-                        IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
-                        true);
-        store.setDefault(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
-        store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
-                IWorkbenchPreferenceConstants.TOP_LEFT);
-        store.setDefault(
-                IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
-                true);
-        // the fast view bar should be on the bottom of a fresh workspace
-        store.setDefault(
-                IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
-                IWorkbenchPreferenceConstants.BOTTOM);
+		//Although there is no longer any item on the preference pages
+		//for setting the linking preference, since it is now a per-part
+		// setting, it remains as a preference to allow product overrides of the
+		//initial state of linking in the Navigator. By default, linking is
+		// off.
+		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
+				false);
 
-        // default to showing intro on startup
-        store.setDefault(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
-        
-        // Default to the standard key configuration.
-        store.setDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
-                "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
-        
-        // The default character width is undefined (i.e., -1)
-        store.setDefault(
-                IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS, -1);
+		//Appearance / Presentation preferences
+		node.put(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
+				"org.eclipse.ui.presentations.default"); //$NON-NLS-1$
+		node
+				.putBoolean(
+						IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+						true);
+		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
+		node.put(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
+				IWorkbenchPreferenceConstants.TOP_LEFT);
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
+				true);
 
-        // Set the workspace selection dialog to open by default
-        store.setDefault(
-                IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG, true);
+		//the fast view bar should be on the bottom of a fresh workspace
+		node.put(IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
+				IWorkbenchPreferenceConstants.BOTTOM);
 
-        store.addPropertyChangeListener(new PlatformUIPreferenceListener());
-    }
+		//default to showing intro on startup
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
+
+		//Default to the standard key configuration.
+		node.put(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
+				"org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
+
+		//The default character width is undefined (i.e., -1)
+		node
+				.putInt(
+						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
+						-1);
+
+		//Set the workspace selection dialog to open by default
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
+				true);
+
+		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
+				.getPreferencesService().getRootNode()
+				.node(InstanceScope.SCOPE);
+
+		final String uiName = UIPlugin.getDefault().getBundle()
+				.getSymbolicName();
+
+		rootNode
+				.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void added(NodeChangeEvent event) {
+						if (!event.getChild().name().equals(uiName))
+							return;
+						((IEclipsePreferences) event.getChild())
+								.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+
+					}
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void removed(NodeChangeEvent event) {
+						// Nothing to do here
+
+					}
+
+				});
+	}
 
 }
