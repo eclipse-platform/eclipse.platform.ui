@@ -7,16 +7,20 @@ package org.eclipse.debug.internal.ui.views;
  
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.EnableDisableBreakpointAction;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.RemoveBreakpointAction;
+import org.eclipse.debug.internal.ui.ShowBreakpointsForModelAction;
 import org.eclipse.debug.internal.ui.ShowQualifiedAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -25,23 +29,122 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
 public class BreakpointsView extends AbstractDebugView {
 	
+	class BreakpointsSorter extends ViewerSorter {
+		/**
+		 * @see ViewerSorter#isSorterProperty(Object, String)
+		 */
+		public boolean isSorterProperty(Object element,String propertyId) {
+			return propertyId.equals(IBasicPropertyConstants.P_TEXT);
+		}
+		
+		/**
+		 * Returns a negative, zero, or positive number depending on whether
+		 * the first element is less than, equal to, or greater than
+		 * the second element.
+		 * <p>
+		 * Group breakpoints by debug model
+		 * 	within debug model, group breakpoints by type 
+		 * 		within type groups, sort by line number (if applicable) and then
+		 * 		alphabetically by label
+		 * 
+		 * @param viewer the viewer
+		 * @param e1 the first element
+		 * @param e2 the second element
+		 * @return a negative number if the first element is less than the 
+		 *  second element; the value <code>0</code> if the first element is
+		 *  equal to the second element; and a positive number if the first
+		 *  element is greater than the second element
+		 */
+		public int compare(Viewer viewer, Object e1, Object e2) {
+	
+			IBreakpoint b1= (IBreakpoint)e1;
+			IBreakpoint b2= (IBreakpoint)e2;
+			String modelId1= b1.getModelIdentifier();
+			String modelId2= b2.getModelIdentifier();
+			if (!modelId1.equals(modelId2)) {
+				return modelId1.compareTo(modelId2);
+			}
+			String type1= "";
+			String type2= "";
+			try {
+				type1= b1.getMarker().getType();
+			} catch (CoreException ce) {
+				DebugUIPlugin.logError(ce);
+			}
+			try {
+				type2= b2.getMarker().getType();	
+			} catch (CoreException e) {
+				DebugUIPlugin.logError(e);
+			}
+		
+			if (!type1.equals(type2)) {
+				return type1.compareTo(type2);
+			}
+			// model and type are the same
+		
+			ILabelProvider lprov = (ILabelProvider) ((StructuredViewer)viewer).getLabelProvider();
+			String name1= lprov.getText(e1);
+			String name2= lprov.getText(e2);
+	
+			boolean lineBreakpoint= false;
+			try {
+				lineBreakpoint= b1.getMarker().isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
+			} catch (CoreException ce) {
+				DebugUIPlugin.logError(ce);
+			}
+			if (lineBreakpoint) {
+				return compareLineBreakpoints(b1, b2, name1,name2);
+			} 
+			
+			return name1.compareTo(name2);		
+		}
+		
+		protected int compareLineBreakpoints(IBreakpoint b1, IBreakpoint b2, String name1, String name2) {
+			int colon1= name1.indexOf(':');
+			if (colon1 != -1) {
+				int colon2= name2.indexOf(':');
+				if (colon2 != -1) {
+					String upToColon1= name1.substring(0, colon1);
+					if (name2.startsWith(upToColon1)) {
+						int l1= 0;
+						int l2= 0;
+						try {
+							l1= ((ILineBreakpoint)b1).getLineNumber();	
+						} catch (CoreException e) {
+							DebugUIPlugin.logError(e);
+						}
+						try {
+							l2= ((ILineBreakpoint)b2).getLineNumber();	
+						} catch (CoreException e) {
+							DebugUIPlugin.logError(e);
+						}
+						return l1 - l2;
+					}
+				}
+			}
+			return name1.compareTo(name2);
+		}
+	}
+
 	private BreakpointsViewEventHandler fEventHandler;
 	
 	/**
@@ -51,7 +154,7 @@ public class BreakpointsView extends AbstractDebugView {
 		StructuredViewer viewer = new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new BreakpointsViewContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation());
-		viewer.setSorter(new WorkbenchViewerSorter());
+		viewer.setSorter(new BreakpointsSorter());
 		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());		
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
@@ -67,9 +170,10 @@ public class BreakpointsView extends AbstractDebugView {
 	}
 
 	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		((ShowBreakpointsForModelAction)getAction("ShowBreakpointsForModel")).dispose();
 		super.dispose();
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
@@ -83,7 +187,7 @@ public class BreakpointsView extends AbstractDebugView {
 		IAction action; 
 		
 		setAction(REMOVE_ACTION, new RemoveBreakpointAction(getViewer()));
-		
+			
 		action = new RemoveAllBreakpointsAction();
 		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 		setAction("RemoveAll", action);
@@ -98,6 +202,7 @@ public class BreakpointsView extends AbstractDebugView {
 		
 		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer()));
 		
+		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getViewer()));
 	}
 
 	/**
@@ -151,6 +256,7 @@ public class BreakpointsView extends AbstractDebugView {
 	}
 	
 	protected void configureToolBar(IToolBarManager tbm) {
+		tbm.add(getAction("ShowBreakpointsForModel"));
 		tbm.add(getAction(REMOVE_ACTION));
 		tbm.add(getAction("RemoveAll"));
 		tbm.add(getAction("GotoMarker"));
@@ -170,7 +276,7 @@ public class BreakpointsView extends AbstractDebugView {
 		}
 		
 		/**
-		 * @see IContentProvider
+		 * @see IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
@@ -180,7 +286,6 @@ public class BreakpointsView extends AbstractDebugView {
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
 	}
 	
 	/**
@@ -260,5 +365,4 @@ public class BreakpointsView extends AbstractDebugView {
 	private void setEventHandler(BreakpointsViewEventHandler eventHandler) {
 		fEventHandler = eventHandler;
 	}
-
 }
