@@ -11,7 +11,6 @@
 package org.eclipse.jface.bindings;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.jface.util.Util;
 
@@ -136,11 +135,11 @@ public abstract class TriggerSequence {
 	 * list of prefixes must always be the same as the size of the trigger list.
 	 * </p>
 	 * 
-	 * @return The list of possible prefixes for this sequence. This list must
+	 * @return The array of possible prefixes for this sequence. This array must
 	 *         not be <code>null</code>, but may be empty. It must only
 	 *         contains instances of <code>TriggerSequence</code>.
 	 */
-	public abstract List getPrefixes();
+	public abstract TriggerSequence[] getPrefixes();
 
 	/**
 	 * Returns the list of triggers.

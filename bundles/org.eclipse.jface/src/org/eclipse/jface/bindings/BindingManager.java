@@ -375,17 +375,16 @@ public final class BindingManager implements IContextManagerListener,
 				prefixTable.put(triggerSequence, null);
 			}
 
-			final List prefixes = triggerSequence.getPrefixes();
-			if (prefixes.isEmpty()) {
+			final TriggerSequence[] prefixes = triggerSequence.getPrefixes();
+			final int prefixesLength = prefixes.length;
+			if (prefixesLength == 0) {
 				continue;
 			}
 
 			// Break apart the trigger sequence.
 			final String commandId = (String) entry.getValue();
-			final Iterator prefixItr = prefixes.iterator();
-			while (prefixItr.hasNext()) {
-				final TriggerSequence prefix = (TriggerSequence) prefixItr
-						.next();
+			for (int i = 0; i < prefixesLength; i++) {
+				final TriggerSequence prefix = prefixes[i];
 				final Object value = prefixTable.get(prefix);
 				if ((prefixTable.containsKey(prefix)) && (value instanceof Map)) {
 					((Map) value).put(triggerSequence, commandId);

@@ -1,8 +1,5 @@
 package org.eclipse.ui.tests.keys;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -40,8 +37,8 @@ final class TestBinding extends Binding {
 		 * 
 		 * @see org.eclipse.jface.bindings.TriggerSequence#getPrefixes()
 		 */
-		public List getPrefixes() {
-			return Collections.EMPTY_LIST;
+		public TriggerSequence[] getPrefixes() {
+			return new TriggerSequence[0];
 		}
 	}
 

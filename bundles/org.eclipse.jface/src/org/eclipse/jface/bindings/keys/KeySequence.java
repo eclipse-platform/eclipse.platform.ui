@@ -241,14 +241,14 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * 
 	 * @see org.eclipse.jface.bindings.TriggerSequence#getPrefixes()
 	 */
-	public List getPrefixes() {
-		final List prefixTriggers = new ArrayList();
-		final List prefixes = new ArrayList();
-		final int numberOfPrefixes = triggers.length - 1;
-		prefixes.add(KeySequence.getInstance());
-		for (int i = 0; i < numberOfPrefixes; i++) {
-			prefixTriggers.add(triggers[i]);
-			prefixes.add(KeySequence.getInstance(prefixTriggers));
+	public final TriggerSequence[] getPrefixes() {
+		final int numberOfPrefixes = triggers.length;
+		final TriggerSequence[] prefixes = new TriggerSequence[numberOfPrefixes];
+		prefixes[0] = KeySequence.getInstance();
+		for (int i = 0; i < numberOfPrefixes - 1; i++) {
+			final KeyStroke[] prefixKeyStrokes = new KeyStroke[i + 1];
+			System.arraycopy(triggers, 0, prefixKeyStrokes, 0, i + 1);
+			prefixes[i + 1] = KeySequence.getInstance(prefixKeyStrokes);
 		}
 
 		return prefixes;
