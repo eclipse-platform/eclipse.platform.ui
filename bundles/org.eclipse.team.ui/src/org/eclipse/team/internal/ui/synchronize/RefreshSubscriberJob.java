@@ -132,6 +132,7 @@ public final class RefreshSubscriberJob extends Job {
 		private final RefreshSubscriberJob job;
 		private long blockTime;
 		private static final int THRESHOLD = 250;
+		private boolean wasBlocking = false;
 		protected NonblockingProgressMonitor(IProgressMonitor monitor, RefreshSubscriberJob job) {
 			super(monitor);
 			this.job = job;
@@ -145,12 +146,17 @@ public final class RefreshSubscriberJob extends Job {
 					blockTime = System.currentTimeMillis();
 				} else if (System.currentTimeMillis() - blockTime > THRESHOLD) {
 					// We've been blocking for too long
+					wasBlocking = true;
 					return true;
 				}
 			} else {
 				blockTime = 0;
 			}
+			wasBlocking = false;
 			return false;
+		}
+		public boolean wasBlocking() {
+			return wasBlocking;
 		}
 	}
 	
@@ -256,6 +262,7 @@ public final class RefreshSubscriberJob extends Job {
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
 			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
 			IStatus status = null;
+			NonblockingProgressMonitor wrappedMonitor = null;
 			try {
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
@@ -268,7 +275,7 @@ public final class RefreshSubscriberJob extends Job {
 				notifyListeners(STARTED, event);
 				// Perform the refresh		
 				monitor.setTaskName(getName());
-				NonblockingProgressMonitor wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
+				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
 				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(! isJobModal()));
@@ -277,8 +284,12 @@ public final class RefreshSubscriberJob extends Job {
 					// The refresh was cancelled by the user
 					status = Status.CANCEL_STATUS;
 				} else {
-					// The refresh was cancelled due to a blockage
-					status = POSTPONED;
+					// The refresh was cancelled due to a blockage or a cancelled authentication
+					if (wrappedMonitor != null && wrappedMonitor.wasBlocking()) {
+						status = POSTPONED;
+					} else {
+						status = Status.CANCEL_STATUS;
+					}
 				}
 			} catch(TeamException e) {
 				status = e.getStatus();
