@@ -95,7 +95,7 @@
 </head>
 
 
-<frameset onload="onloadFrameset()" rows="<%=banner!=null?banner_height+",":""%>35,27,*"  frameborder="0" border="0">
+<frameset onload="onloadFrameset()" rows="<%=banner!=null?banner_height+",":""%>45,27,*"  frameborder="0" border="0">
 <%
 	if (banner != null){
 %>
