@@ -90,15 +90,22 @@ public class MarkerAnnotationPreferences {
 	 * general Annotations page  from the given store and prevents
 	 * setting the default values in the future.
 	 * <p>
-	 * Note: In order to work this method must be called before
-	 * any call to {@link #initializeDefaultValues(IPreferenceStore)
+	 * Note: In order to work this method must be called before any
+	 *       call to {@link #initializeDefaultValues(IPreferenceStore)
+	 * </p>
+	 * <p>
+	 * This method is not part of the API and must only be called
+	 * by {@link EditorsUI}
 	 * </p>
 	 * 
 	 * @param store the preference store to be initialized
 	 * @param state the new state
+	 * @throws IllegalStateException if not called by {@link EditorsUI}
 	 * @since 3.0
 	 */
-	public static void ignoreValuesIncludedOnPreferencePage(IPreferenceStore store, boolean state) {
+	public static void ignoreValuesIncludedOnPreferencePage(IPreferenceStore store, boolean state) throws IllegalStateException {
+		checkAccess();
+		
 		store.putValue(IGNORE_GENERAL_VALUES_FOR_GENERAL_PREFERENCE_PAGE, Boolean.toString(state));
 		
 		if (state) {
@@ -132,6 +139,23 @@ public class MarkerAnnotationPreferences {
 	}
 
 	
+	/**
+	 * Checks correct access.
+	 * 
+	 * @throws IllegalStateException if not called by {@link EditorsUI}
+	 * @since 3.0
+	 */
+	private static void checkAccess() throws IllegalStateException {
+		try {
+			throw new Throwable();
+		} catch (Throwable t) {
+			StackTraceElement[] elements= t.getStackTrace();
+			if (!elements[2].getClassName().equals(EditorsUI.class.getName()))
+				throw new IllegalStateException();
+		}
+	}
+
+
 	/** The list of extension fragments */
 	private List fFragments;
 	/** The list of extensions */

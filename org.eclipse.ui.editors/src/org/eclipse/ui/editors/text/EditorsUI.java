@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
@@ -27,7 +28,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 public final class EditorsUI {
 	
 	/**
-	 * TextEditor Plug-in ID (value <code>{@value}</code>).
+	 * TextEditor Plug-in ID (value <code>"org.eclipse.ui.editors"</code>).
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.ui.editors"; //$NON-NLS-1$
 	
@@ -62,6 +63,38 @@ public final class EditorsUI {
 	 */
 	public static IPreferenceStore getPreferenceStore() {
 		return EditorsPlugin.getDefault().getPreferenceStore();
+	}
+	
+	/**
+	 * Removes all preference which are handled by this plug-in's
+	 * general preference pages from the given store and prevents
+	 * setting the default values in the future.
+	 * <p>
+	 * To access the
+	 * general preference from another plug-in use a
+	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
+	 * <pre>
+	 *		List stores= new ArrayList(3);
+	 *		stores.add(YourPlugin.getDefault().getPreferenceStore());
+	 *		stores.add(EditorsUI.getPreferenceStore());
+	 *		combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
+	 *
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * Note: In order to work this method must be called before
+	 * the store's default values are set.
+	 * </p>
+	 * 
+	 * @param store the preference store to mark
+	 */
+	public static void useSharedPreferences(IPreferenceStore store) {
+		
+		// Annotations preference page
+		MarkerAnnotationPreferences.ignoreValuesIncludedOnPreferencePage(store, true);
+		
+		// Quick Diff preference page
+		// TODO
 	}
 	
 	private EditorsUI() {
