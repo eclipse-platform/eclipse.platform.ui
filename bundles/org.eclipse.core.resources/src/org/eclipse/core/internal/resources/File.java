@@ -221,8 +221,7 @@ protected void internalSetContents(InputStream content, IPath location, boolean 
  * @see IFile
  */
 public void setContents(IFileState content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	final boolean force = (updateFlags & IResource.FORCE) != 0;
-	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+	setContents(content.getContents(), updateFlags, monitor);
 }
 
 /*
