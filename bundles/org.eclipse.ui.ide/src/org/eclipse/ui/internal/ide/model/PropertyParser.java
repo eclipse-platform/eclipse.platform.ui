@@ -100,12 +100,27 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 	synchronized public void parseResource(IResource resource) throws Exception {
 		if (resource == null)
 			return;
+		parseResource = resource;
 		// Need to get a File version of this resource
 		IPath location = resource.getLocation();
 		if (location == null)
 			return;
 		File file = location.toFile();
-		parseResource = resource;
+		if (file.length() == 0L) {
+			// Some SAX parsers will throw a SAXParseException for a
+			// zero-length file.  We'll just decide there's nothing to
+			// do and return gracefully.  First, set the last modification
+			// time so we don't have to check this again unless the file
+			// changes.
+			long modTime = parseResource.getModificationStamp();
+			QualifiedName modKey = new QualifiedName(IDEWorkbenchPlugin.IDE_WORKBENCH, WorkbenchResource.XML_LAST_MOD);
+			try {
+				parseResource.setPersistentProperty(modKey, new Long(modTime).toString());
+			} catch (CoreException c) {
+				IDEWorkbenchPlugin.log("Problem parsing element", c.getStatus()); //$NON-NLS-1$
+			}
+			return;
+		}
 		try {
 			parser.parse(file, this);
 		} catch (SAXException s) {
