@@ -491,18 +491,6 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests the "-inputhandler" option with a test input handler
-	 */
-	public void testInputHandler() throws CoreException {
-		
-		run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.support.inputHandlers.AntTestInputHandler"});
-		assertSuccessful();
-		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));
-		
-	}
-	
-	/**
 	 * Tests the "-inputhandler" option with a test input handler and the -noinput option
 	 */
 	public void testInputHandlerWithMinusNoInput() {
@@ -528,6 +516,19 @@ public class OptionTests extends AbstractAntTest {
 		}
 	
 		assertTrue("Build should have failed", false);
+	}
+	
+	/**
+	 * Tests the "-inputhandler" option with a test input handler
+	 * Order after the noinput tests so that we test we are resetting the system property
+	 */
+	public void testInputHandler() throws CoreException {
+		
+		run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.support.inputHandlers.AntTestInputHandler"});
+		assertSuccessful();
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));
+		
 	}
 	
 	/**
