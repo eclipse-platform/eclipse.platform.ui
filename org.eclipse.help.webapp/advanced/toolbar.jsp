@@ -210,7 +210,6 @@ if(buttons.length > 0){
 									alt='<%=buttons[i].getTooltip()%>' 
 									title='<%=buttons[i].getTooltip()%>' 
 									border="0"
-									style="float: left;"
 									id="<%=buttons[i].getName()%>">
 							</a>
 						</td>
