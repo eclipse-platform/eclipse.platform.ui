@@ -600,7 +600,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     }
 
     private void presentationSelectionChanged(IPresentablePart newSelection) {
-        setSelection(getLayoutPart(newSelection));
+    	LayoutPart newPart = getLayoutPart(newSelection); 
+    	
+    	if (newPart == current) {
+    		return;
+    	}
+    	
+        setSelection(newPart);
+        
+        if (newPart != null) {
+        	newPart.setFocus();
+        }
 
         // set the title of the detached window to reflect the active tab
         Window window = getWindow();
