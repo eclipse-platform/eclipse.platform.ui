@@ -129,6 +129,21 @@ public class BundleUtil {
         return getResolvedBundleLocation(resource, bundle);
     }
 
+    /** *** used by Intro parser ***** */
+    /*
+     * Uti method to return an URL to a plugin relative resource.
+     */
+    public static URL getBundleURL(String resource, String pluginId) {
+        Bundle bundle = Platform.getBundle(pluginId);
+        URL localLocation = localLocation = Platform.find(bundle, new Path(
+            resource));
+        return localLocation;
+    }
+
+
+
+    /** ** Used by HTML generator **** */
+
     /**
      * Get the absolute path of the given bundle, in the form
      * file:/path_to_plugin

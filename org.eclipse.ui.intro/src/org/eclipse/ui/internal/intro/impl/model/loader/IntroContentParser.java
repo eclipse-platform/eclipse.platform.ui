@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model.loader;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,6 +50,7 @@ public class IntroContentParser {
     private static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
     private static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
 
+
     /*
      * Load XHTML dtds from intro plugin location.
      */
@@ -57,20 +59,21 @@ public class IntroContentParser {
         String dtdBaseLocation = "dtds/xhtml1-20020801/";
 
         String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
-        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+        URL dtdURL_T = BundleUtil.getBundleURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
-        dtdMap.put(XHTML1_TRANSITIONAL, dtdLocation);
+        dtdMap.put(XHTML1_TRANSITIONAL, dtdURL_T);
 
         dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
-        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+        URL dtdURL_S = BundleUtil.getBundleURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
-        dtdMap.put(XHTML1_STRICT, dtdLocation);
+        dtdMap.put(XHTML1_STRICT, dtdURL_S);
 
         dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
-        dtdLocation = BundleUtil.getResolvedBundleLocation(dtdLocation,
+        URL dtdURL_F = BundleUtil.getBundleURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
-        dtdMap.put(XHTML1_FRAMESET, dtdLocation);
+        dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
     }
+
 
 
     private Document document;
@@ -98,7 +101,6 @@ public class IntroContentParser {
                 } else
                     // not intro XML nor XHTML.
                     document = null;
-
             }
         } catch (Exception e) {
             Log.error("Could not load Intro content file: " + content, e); //$NON-NLS-1$
@@ -127,12 +129,20 @@ public class IntroContentParser {
                         // InputStream in = new StringBufferInputStream(
                         // "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
                         // return new InputSource(in);
-                        return new InputSource((String) dtdMap.get(systemId));
+
+                        // be carefull here to support running as a jarred
+                        // plugin.
+                        URL dtdURL = (URL) dtdMap.get(systemId);
+                        InputSource in = new InputSource(dtdURL.openStream());
+                        in.setSystemId(dtdURL.toExternalForm());
+                        System.out.println("Intro parser used URL: "
+                                + dtdURL.toExternalForm());
+                        return in;
                     } else
                         return null;
-
                 }
             });
+
             document = parser.parse(fileURI);
             DocumentType docType = document.getDoctype();
             return document;

@@ -24,7 +24,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
-import org.eclipse.ui.internal.intro.impl.html.HTMLCache;
 import org.eclipse.ui.internal.intro.impl.html.HTMLElement;
 import org.eclipse.ui.internal.intro.impl.html.IntroHTMLGenerator;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
@@ -41,7 +40,6 @@ import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -176,19 +174,16 @@ public class BrowserIntroPartImplementation extends
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
         String content = null;
-        boolean cachedPageFound = HTMLCache.getInst().hasPage(page.getId());
-        if (cachedPageFound)
-            content = HTMLCache.getInst().getPage(page.getId());
+
+        if (page.isXHTMLPage())
+            content = generateXHTMLPage(page, this);
         else {
-            if (page.isXHTMLPage())
-                content = generateXHTMLPage(page, this);
-            else {
-                HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
-                    this);
-                if (html != null)
-                    content = html.toString();
-            }
+            HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
+                this);
+            if (html != null)
+                content = html.toString();
         }
+
 
         if (content == null) {
             // there was an error generating the html. log an error
@@ -196,8 +191,7 @@ public class BrowserIntroPartImplementation extends
             return false;
         }
 
-        // set the browser's HTML, but cache first.
-        HTMLCache.getInst().addPage(page.getId(), content);
+        // set the browser's HTML.
         boolean success = false;
         if (browser != null) {
             success = browser.setText(content);
@@ -230,24 +224,16 @@ public class BrowserIntroPartImplementation extends
     }
 
     /**
-     * Resolve the dynamic content in the page. The DOM needs to be cloned
-     * because resolving dynamic content will alter the original page DOM. We
-     * want to keep initial page DOM intact in order to allow for regeneration
-     * of content on a reflow for dynamic content. In the cloned DOM, dynamic
-     * content tags are removed to once resolved to have clean xhtml. The cloned
-     * DOM is discarded once done.
+     * Resolve the dynamic content in the page. Resolving dynamic content will
+     * alter the original page DOM. Dynamic content tags are removed once
+     * resolved to have clean xhtml.
      */
     private Document resolveDynamicContent(AbstractIntroPage page,
             IIntroContentProviderSite site) {
         Document dom = page.getResolvedDocument();
-        DocumentType docType = dom.getDoctype();
-
-        // work with cloned DOM and then discard.
-        Document clonedDom = (Document) dom.cloneNode(true);
-       // clonedDom.importNode(docType);
 
         // get all content provider elements in DOM.
-        NodeList contentProviders = clonedDom.getElementsByTagNameNS("*", //$NON-NLS-1$
+        NodeList contentProviders = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
             IntroContentProvider.TAG_CONTENT_PROVIDER);
 
         // get the array version of the nodelist to work around DOM api design.
@@ -279,7 +265,7 @@ public class BrowserIntroPartImplementation extends
                 // alt text. We can load XHTML content here.
             }
         }
-        return clonedDom;
+        return dom;
     }
 
 
@@ -381,9 +367,6 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
-        AbstractIntroPage page = ContentProviderManager.getInst()
-            .getContentProviderParentPage(provider);
-        HTMLCache.getInst().clearPage((page.getId()));
         updateContent();
     }
 

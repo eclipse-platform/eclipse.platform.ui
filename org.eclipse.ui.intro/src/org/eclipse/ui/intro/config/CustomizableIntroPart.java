@@ -24,7 +24,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
-import org.eclipse.ui.internal.intro.impl.html.HTMLCache;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
@@ -318,7 +317,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         // clear all loaded models since we are disposing of the Intro Part.
         IntroPlugin.getDefault().getExtensionPointManager().clear();
         ContentProviderManager.getInst().clear();
-        HTMLCache.getInst().clear();
         // clean platform adapter.
         Platform.getAdapterManager().unregisterAdapters(factory,
             CustomizableIntroPart.class);
@@ -401,7 +399,6 @@ public final class CustomizableIntroPart extends IntroPart implements
                 // clear model, including content providers.
                 ExtensionPointManager.getInst().clear();
                 ContentProviderManager.getInst().clear();
-                HTMLCache.getInst().clear();
                 // refresh to new model.
                 model = ExtensionPointManager.getInst().getCurrentModel();
                 // reuse existing presentation, since we just nulled it.
