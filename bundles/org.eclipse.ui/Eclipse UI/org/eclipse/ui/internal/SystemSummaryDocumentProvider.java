@@ -27,6 +27,10 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.SiteManager;
 
 /**
  * The <code>SystemSummaryDocumentProvider</code> creates diagnostic 
@@ -85,6 +89,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		appendTimestamp(writer);
 		appendProperties(writer);
 		appendRegistry(writer);
+		appendUpdateManagerLog(writer);
 		appendLog(writer);
 		writer.close();
 		return new String(out.toByteArray());
@@ -164,6 +169,41 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	}	
 	
 	/*
+	 * Appends the contents of the Plugin Registry.
+	 */
+	private void appendUpdateManagerLog(PrintWriter writer) {
+		writer.println();
+		writer.println("Update Manager Log:"); //$NON-NLS-1$
+		ILocalSite site;
+		try {
+			site = SiteManager.getLocalSite();
+		} catch (CoreException e) {
+			e.printStackTrace(writer);
+			return;
+		}
+		IInstallConfiguration[] configurations = site.getConfigurationHistory();
+		for (int i = 0; i < configurations.length; i++) {
+			writer.println();
+			writer.print("Configuration=");
+			writer.println(configurations[i].getLabel());
+			writer.print("Current configuration=");
+			writer.println(configurations[i].isCurrent());
+			IActivity[] activities = configurations[i].getActivities();
+			for (int j = 0; j < activities.length; j++) {
+				writer.println();
+				writer.print("Date=");	
+				writer.println(activities[j].getDate());
+				writer.print("Target=");			
+				writer.println(activities[j].getLabel());
+				writer.print("Action=");			
+				writer.println(getActionLabel(activities[j]));
+				writer.print("Status=");			
+				writer.println(getStatusLabel(activities[j]));
+			}
+		}
+	}
+
+	/*
 	 * Appends the contents of the .log file
 	 */
 	private void appendLog(PrintWriter writer) {
@@ -196,5 +236,42 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			}
 		}
 	}		
+	
+	private String getActionLabel(IActivity activity) {
+		int action = activity.getAction();
+		switch (action) {
+			case IActivity.ACTION_CONFIGURE:
+				return "Enabled";
+			case IActivity.ACTION_FEATURE_INSTALL:
+				return "Feature installed";
+			case IActivity.ACTION_FEATURE_REMOVE:
+				return "Feature removed";
+			case IActivity.ACTION_SITE_INSTALL:
+				return "Site installed";
+			case IActivity.ACTION_SITE_REMOVE:
+				return "Site removed";
+			case IActivity.ACTION_UNCONFIGURE:
+				return "Disabled";
+			case IActivity.ACTION_REVERT:
+				return "Revert";
+			case IActivity.ACTION_RECONCILIATION:
+				return "Reconcile";				
+			case IActivity.ACTION_ADD_PRESERVED:
+				return "Preserved";					
+			default:
+				return "Unknown";		
+		}
+	}
+	
+	private String getStatusLabel(IActivity activity) {
+		switch (activity.getStatus()) {
+			case IActivity.STATUS_OK:
+				return "Success";
+			case IActivity.STATUS_NOK:
+				return "Failure";
+		}
+		return "Unknown";
+	}
+	
 }
 
