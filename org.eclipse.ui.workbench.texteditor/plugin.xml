@@ -55,7 +55,7 @@
 			menubarPath="navigate/"
 			label="%goToLastEditPosition.label"
 			tooltip="%goToLastEditPosition.tooltip"
-			icon="icons/full/etool16/last_edit_pos.gif"
+			icon="icons/full/ctool16/last_edit_pos.gif"
 			class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"/>
      </actionSet>
 </extension>
