@@ -247,8 +247,6 @@ public class SearchManager implements IResourceChangeListener {
 					viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
-						if (search.getActionGroupFactory() != null)
-							viewer.setActionGroupFactory(search.getActionGroupFactory());
 						if (previousSearch != null && viewer == visibleViewer)
 							previousSearch.setSelection(viewer.getSelection());
 						viewer.setPageId(search.getPageId());
@@ -256,6 +254,8 @@ public class SearchManager implements IResourceChangeListener {
 						viewer.setSelection(fCurrentSearch.getSelection(), true);
 						if (viewer.getSelectedEntriesCount() == 0 && !getCurrentResults().isEmpty())
 							viewer.setSelection(new StructuredSelection(getCurrentResults().get(0)));
+						if (search.getActionGroupFactory() != null)
+							viewer.setActionGroupFactory(search.getActionGroupFactory());
 					}
 				});
 			}
