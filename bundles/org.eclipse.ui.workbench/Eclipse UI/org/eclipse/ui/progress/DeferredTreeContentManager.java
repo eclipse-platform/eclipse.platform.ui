@@ -166,8 +166,7 @@ public class DeferredTreeContentManager {
                 adapter.fetchDeferredChildren(parent, collector, monitor);
                 if(monitor.isCanceled())
                 	return Status.CANCEL_STATUS;
-				else
-					return Status.OK_STATUS;
+				return Status.OK_STATUS;
             }
 
             /**
@@ -187,9 +186,9 @@ public class DeferredTreeContentManager {
              * Check if the parent of element is equal to the parent used in
              * this job.
              * 
-             * @param family.
+             * @param family
              *            The potential ancestor of the current parent
-             * @param child.
+             * @param child
              *            The object to check against.
              * @return boolean
              */
@@ -208,7 +207,7 @@ public class DeferredTreeContentManager {
             /**
              * Get the workbench adapter for the element.
              * 
-             * @param element.
+             * @param element
              *            The object we are adapting to.
              */
             private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
