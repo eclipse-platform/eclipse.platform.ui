@@ -538,13 +538,13 @@ public final class BindingManagerTest extends UITestCase {
 		bindings.add(partialMatchBinding1);
 		bindings.add(partialMatchBinding2);
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be no perfect matches", bindingManager
+		assertTrue("This should be no perfect matches", !bindingManager
 				.isPerfectMatch(perfectMatch));
 
 		// SCENARIO 3
 		bindings.add(perfectMatchBinding);
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be no perfect matches", bindingManager
+		assertTrue("This should be no perfect matches", !bindingManager
 				.isPerfectMatch(KeySequence.getInstance()));
 	}
 
