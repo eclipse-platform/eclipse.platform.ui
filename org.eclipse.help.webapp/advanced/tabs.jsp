@@ -149,7 +149,6 @@ function showTab(tab)
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
 	              src="<%=views[i].getImageURL()%>"
-	              width="16"
 	              height="16"
 	         >
 	     </a>
