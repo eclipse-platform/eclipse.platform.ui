@@ -32,7 +32,7 @@ public interface IQuickDiffReferenceProvider {
 	 * 
 	 * @param monitor a preference monitor to monitor / cancel the process, or <code>null</code>
 	 * @return the reference document for the quick diff display or <code>null</code> if getting the
-	 * document was canceled.
+	 * document was canceled or there is no reference available.
 	 * @throws CoreException if getting the document fails.
 	 */
 	IDocument getReference(IProgressMonitor monitor) throws CoreException;
