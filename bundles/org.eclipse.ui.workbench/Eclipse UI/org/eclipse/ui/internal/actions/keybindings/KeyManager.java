@@ -232,7 +232,7 @@ public class KeyManager {
 		return scopeMap;		
 	}
 
-	private static SortedSet readBindingSet(IMemento memento)
+	public static SortedSet readBindingSet(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();			
@@ -250,7 +250,7 @@ public class KeyManager {
 		return bindingSet;		
 	}
 
-	private static void writeBindingSet(IMemento memento, SortedSet bindingSet)
+	public static void writeBindingSet(IMemento memento, SortedSet bindingSet)
 		throws IllegalArgumentException {
 		if (memento == null || bindingSet == null)
 			throw new IllegalArgumentException();
@@ -259,6 +259,35 @@ public class KeyManager {
 		
 		while (iterator.hasNext())
 			((Binding) iterator.next()).write(memento.createChild(Binding.ELEMENT)); 
+	}
+
+	public static SortedSet readRegionalBindingSet(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+		
+		IMemento[] mementos = memento.getChildren(RegionalBinding.ELEMENT);
+		
+		if (mementos == null)
+			throw new IllegalArgumentException();
+		
+		SortedSet regionalBindingSet = new TreeSet();
+		
+		for (int i = 0; i < mementos.length; i++)
+			regionalBindingSet.add(RegionalBinding.read(mementos[i]));
+		
+		return regionalBindingSet;		
+	}
+
+	public static void writeRegionalBindingSet(IMemento memento, SortedSet regionalBindingSet)
+		throws IllegalArgumentException {
+		if (memento == null || regionalBindingSet == null)
+			throw new IllegalArgumentException();
+			
+		Iterator iterator = regionalBindingSet.iterator();
+		
+		while (iterator.hasNext())
+			((RegionalBinding) iterator.next()).write(memento.createChild(RegionalBinding.ELEMENT)); 
 	}
 
 	private SortedSet solveRegionalBindingSet(SortedSet regionalBindingSet, State[] states) {
