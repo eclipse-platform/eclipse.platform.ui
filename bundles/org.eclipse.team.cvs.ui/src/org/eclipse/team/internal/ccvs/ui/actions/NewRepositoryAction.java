@@ -15,10 +15,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class NewRepositoryAction implements IWorkbenchWindowActionDelegate {
+public class NewRepositoryAction implements IWorkbenchWindowActionDelegate, IViewActionDelegate {
 	Shell shell;
 	
 	/**
@@ -32,6 +33,10 @@ public class NewRepositoryAction implements IWorkbenchWindowActionDelegate {
 	 */
 	public void init(IWorkbenchWindow window) {
 		this.shell = window.getShell();
+	}
+	
+	public void init(IViewPart view) {
+		shell = view.getSite().getShell();
 	}
 
 	/**
@@ -48,5 +53,4 @@ public class NewRepositoryAction implements IWorkbenchWindowActionDelegate {
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
-
 }

@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
@@ -24,12 +25,14 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
+import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Gathers all information necesary for a checkout from a repository.
  */
-public class CheckoutWizard extends Wizard implements ICVSWizard {
+public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	
 	private RepositorySelectionPage locationPage;
 	private ConfigurationWizardMainPage createLocationPage;
@@ -262,5 +265,11 @@ public class CheckoutWizard extends Wizard implements ICVSWizard {
 			}
 		}
 		return location;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
 }
