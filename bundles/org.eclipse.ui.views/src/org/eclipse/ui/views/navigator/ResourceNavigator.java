@@ -669,14 +669,11 @@ public class ResourceNavigator
 	}
 
 	/**
-	 * Links to editor (if option enabled).
+	 * Activates the editor if the selected resource is open.
 	 * 
 	 * @since 2.0
 	 */
 	protected void linkToEditor(IStructuredSelection selection) {
-		if (!isLinkingEnabled())
-			return;
-
 		Object obj = selection.getFirstElement();
 		if (obj instanceof IFile && selection.size() == 1) {
 			IFile file = (IFile) obj;
