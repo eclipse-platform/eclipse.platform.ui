@@ -14,6 +14,7 @@ import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -625,6 +626,38 @@ public class JobTest extends TestCase {
 		assertEquals("14.2", Job.NONE, jobs[4].getState());
 		assertNull("14.3", jobs[4].getResult());
 		assertNull("14.4", jobs[4].getThread());
+	}
+	/**
+	 * Tests a job change listener that throws an exception.
+	 * This would previously cause join attempts on that job to
+	 * hang indefinitely because they would miss the notification
+	 * required to end the join.
+	 */
+	public void testFailingListener() {
+		shortJob.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				throw new RuntimeException("This exception thrown on purpose as part of a test");
+			}
+		});
+		final int[] status = new int[1];
+		//create a thread that will join the job
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = StatusChecker.STATUS_START;
+				try {
+					shortJob.join();
+				} catch (InterruptedException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = StatusChecker.STATUS_DONE;
+			}
+		});
+		//schedule the job and then fork the thread to join it
+		shortJob.schedule();
+		t.start();
+		//wait until the join succeeds
+		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+
 	}
 
 	/*
