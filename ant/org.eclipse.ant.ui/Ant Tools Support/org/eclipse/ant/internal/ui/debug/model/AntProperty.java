@@ -103,7 +103,7 @@ public class AntProperty extends AntDebugElement implements IVariable {
     public String getText() {
         if (fLabel == null) {
             StringBuffer buffer= new StringBuffer(getName());
-            buffer.append(" = "); //$NON-NLS-1$
+            buffer.append("= "); //$NON-NLS-1$
             buffer.append(fValue.getValueString());          
             fLabel=  buffer.toString();
         } 
