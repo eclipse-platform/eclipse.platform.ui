@@ -162,7 +162,7 @@ protected void basicBuild(final IProject project, final int trigger, final Multi
 protected void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
 	IncrementalProjectBuilder builder = null;
 	try {
-		builder = getBuilder(builderName, project);
+		builder = getBuilder(builderName, project, status);
 		if (!validateNature(builder, builderName)) {
 			//skip this builder and null its last built tree because it is invalid
 			//if the nature gets added or re-enabled a full build will be triggered
@@ -320,12 +320,12 @@ public void deleting(IProject project) {
 	if (project.isAccessible())
 		setBuildersPersistentInfo(project, null);
 }
-protected IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
+protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 	Hashtable builders = getBuilders(project);
 	IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
 	if (result != null)
 		return result;
-	result = initializeBuilder(builderName, project);
+	result = initializeBuilder(builderName, project, status);
 	builders.put(builderName, result);
 	((InternalBuilder) result).setProject(project);
 	((InternalBuilder) result).startupOnInitialize();
@@ -437,31 +437,33 @@ private void hookEndBuild(IncrementalProjectBuilder builder) {
  * prevent trying to instantiate it every time a build is run.
  * This method NEVER returns null.
  */
-protected IncrementalProjectBuilder initializeBuilder(String builderName, IProject project) throws CoreException {
+protected IncrementalProjectBuilder initializeBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
+	IncrementalProjectBuilder builder = null;
 	try {
-		IncrementalProjectBuilder builder = instantiateBuilder(builderName);
-		if (builder == null) {
-			//unable to create the builder, so create a placeholder to fill in for it
-			builder = new MissingBuilder(builderName);
-		}
-		// get the map of builders to get the last built tree
-		Map infos = getBuildersPersistentInfo(project);
-		if (infos != null) {
-			BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
-			if (info != null) {
-				ElementTree tree = info.getLastBuiltTree();
-				if (tree != null) 
-					((InternalBuilder) builder).setLastBuiltTree(tree);
-				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
-			}
-			// delete the build map if it's now empty 
-			if (infos.size() == 0)
-				setBuildersPersistentInfo(project, null);
-		}
-		return builder;
+		builder = instantiateBuilder(builderName);
 	} catch (CoreException e) {
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e); //$NON-NLS-1$
+		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.1", builderName), e)); //$NON-NLS-1$
+		status.add(e.getStatus());
 	}
+	if (builder == null) {
+		//unable to create the builder, so create a placeholder to fill in for it
+		builder = new MissingBuilder(builderName);
+	}
+	// get the map of builders to get the last built tree
+	Map infos = getBuildersPersistentInfo(project);
+	if (infos != null) {
+		BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
+		if (info != null) {
+			ElementTree tree = info.getLastBuiltTree();
+			if (tree != null) 
+				((InternalBuilder) builder).setLastBuiltTree(tree);
+			((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
+		}
+		// delete the build map if it's now empty 
+		if (infos.size() == 0)
+			setBuildersPersistentInfo(project, null);
+	}
+	return builder;
 }
 /**
  * Instantiates and returns the builder with the given name.  If the builder, its plugin, or its nature
