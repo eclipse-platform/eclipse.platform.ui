@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -146,8 +147,11 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	 * for later retrieval by the client and closes this dialog.
 	 */
 	protected void okPressed() {
+
 		List chosenContainerPathList = new ArrayList();
-		chosenContainerPathList.add(group.getContainerFullPath());
+		IPath returnValue = group.getContainerFullPath();
+		if (returnValue != null)
+			chosenContainerPathList.add(returnValue);
 		setResult(chosenContainerPathList);
 		super.okPressed();
 	}
