@@ -15,11 +15,13 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -29,25 +31,27 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
 
 public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
 	private ContentViewer fViewer;
 	
 	/**
-	 * @see IViewActionDelegate#init(IViewPart)
+	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
 	 */
-	public void init(IViewPart view) {
-		super.init(view);
-		IDebugViewAdapter adapter= (IDebugViewAdapter)view.getAdapter(IDebugViewAdapter.class);
-		if (adapter != null) {
-			if (adapter.getViewer() instanceof ContentViewer) {
-				setViewer((ContentViewer) adapter.getViewer());
+	protected boolean initialize(IAction action, ISelection selection) {
+		if (!isInitialized()) {
+			IDebugViewAdapter adapter= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+			if (adapter != null) {
+				if (adapter.getViewer() instanceof ContentViewer) {
+					setViewer((ContentViewer) adapter.getViewer());
+				}
+				adapter.setAction(AbstractDebugView.COPY, action);
 			}
-		}
+			return super.initialize(action, selection);
+		} 
+		return false;
 	}
-	
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
@@ -127,7 +131,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * Do the specific action using the current selection.
 	 */
-	protected void run() {
+	public void run(IAction action) {
 		final Iterator iter= pruneSelection();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
