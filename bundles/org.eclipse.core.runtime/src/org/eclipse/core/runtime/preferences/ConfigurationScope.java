@@ -13,8 +13,8 @@ package org.eclipse.core.runtime.preferences;
 import java.net.URL;
 import org.eclipse.core.internal.preferences.AbstractScope;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.Location;
 
 /**
  * Object representing the configuration scope in the Eclipse preferences
@@ -52,11 +52,14 @@ public class ConfigurationScope extends AbstractScope {
 	 */
 	public IPath getLocation() {
 		IPath result = null;
-		URL url = InternalPlatform.getDefault().getConfigurationLocation().getURL();
-		if (url != null) {
-			result = new Path(url.getFile());
-			if (result.isEmpty())
-				result = null;
+		Location location = InternalPlatform.getDefault().getConfigurationLocation();
+		if (!location.isReadOnly()) {
+			URL url = location.getURL();
+			if (url != null) {
+				result = new Path(url.getFile());
+				if (result.isEmpty())
+					result = null;
+			}
 		}
 		return result;
 	}
