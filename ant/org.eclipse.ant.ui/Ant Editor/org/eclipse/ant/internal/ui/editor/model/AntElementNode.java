@@ -420,7 +420,7 @@ public class AntElementNode {
 		if (isErrorNode()) {
 			flags = flags | AntImageDescriptor.HAS_ERRORS;
 		}
-		if(importNode != null){
+		if(importNode != null || isExternal()){
 			flags = flags | AntImageDescriptor.IMPORTED;
 		}
 		ImageDescriptor base= getBaseImageDescriptor();
