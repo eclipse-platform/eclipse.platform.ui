@@ -27,6 +27,9 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		InputStream featureStream = null;
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
+		monitor.beginTask(null,2);
+		monitor.worked(1);
+			
 					
 		try {	
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);	
