@@ -15,8 +15,6 @@ package org.eclipse.ui.editors.text;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -48,7 +46,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 

@@ -11,7 +11,6 @@ Contributors:
 
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -21,10 +20,12 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.*;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.NavigationLocation;
+
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 

@@ -16,13 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IFindReplaceTargetExtension;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
