@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Ask to re-evaluate one or more watch expressions in the context of the
@@ -29,7 +30,24 @@ public class ReevaluateWatchExpressionAction extends WatchExpressionAction {
 	public void run(IAction action) {
 		IDebugElement context = getContext();
 		for (Iterator iter= getCurrentSelection().iterator(); iter.hasNext();) {
-			((IWatchExpression) iter.next()).setExpressionContext(context);
+			IWatchExpression expression= (IWatchExpression) iter.next();
+			expression.setExpressionContext(context);
+			if (!expression.isEnabled()) {
+				// Force a reevaluation
+				expression.evaluate();
+			}
+		}
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		IDebugElement debugElement = getContext();
+		if (debugElement == null) {
+			action.setEnabled(false);
+		} else {
+			action.setEnabled(true);
 		}
 	}
 

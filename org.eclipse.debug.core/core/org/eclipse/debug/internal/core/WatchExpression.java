@@ -59,6 +59,30 @@ public class WatchExpression implements IWatchExpression {
 		this(expressionText);
 		fEnabled= enabled;
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IWatchExpression#evaluate()
+	 */
+	public void evaluate() {
+		if (fCurrentContext == null) {
+			return;
+		}
+		IDebugElement context= fCurrentContext;
+		fDebugTarget= context.getDebugTarget();
+			
+		IWatchExpressionListener listener= new IWatchExpressionListener() {
+			/**
+			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IValue)
+			 */
+			public void watchEvaluationFinished(IWatchExpressionResult result) {
+				setPending(false);
+				setResult(result);
+			}
+		};
+		setPending(true);
+		IWatchExpressionDelegate delegate= ((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).newWatchExpressionDelegate(context.getModelIdentifier());
+		delegate.evaluateExpression(getExpressionText(), context, listener);
+	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(java.lang.Object)
@@ -77,20 +101,7 @@ public class WatchExpression implements IWatchExpression {
 			return;
 		}
 		
-		fDebugTarget= context.getDebugTarget();
-			
-		IWatchExpressionListener listener= new IWatchExpressionListener() {
-			/**
-			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IValue)
-			 */
-			public void watchEvaluationFinished(IWatchExpressionResult result) {
-				setPending(false);
-				setResult(result);
-			}
-		};
-		setPending(true);
-		IWatchExpressionDelegate delegate= ((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).newWatchExpressionDelegate(context.getModelIdentifier());
-		delegate.evaluateExpression(getExpressionText(), context, listener);
+		evaluate();
 	}
 
 	/**
@@ -168,7 +179,7 @@ public class WatchExpression implements IWatchExpression {
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
 		watchExpressionChanged();
-		setExpressionContext(fCurrentContext);
+		evaluate();
 	}
 
 	/**
@@ -177,7 +188,7 @@ public class WatchExpression implements IWatchExpression {
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
 		watchExpressionChanged();
-		setExpressionContext(fCurrentContext);
+		evaluate();
 	}
 
 	/**
