@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,12 +189,15 @@ public class DefaultLabelProvider implements ILabelProvider {
 			}
 			if (element instanceof ITerminate) {
 				if (((ITerminate) element).isTerminated()) {
-					label.insert(0, DebugUIMessages.getString("DefaultLabelProvider.<terminated>_1")); //$NON-NLS-1$
+					String terminatedMessage= null;
 					if (element instanceof IProcess) {
 						IProcess process = (IProcess)element;
 						int exit = process.getExitValue();
-						label.append(MessageFormat.format(DebugUIMessages.getString("DefaultLabelProvider.16"), new String[]{new Integer(exit).toString()})); //$NON-NLS-1$
-					}					
+						terminatedMessage= MessageFormat.format(DebugUIMessages.getString("DefaultLabelProvider.16"), new String[]{new Integer(exit).toString()}); //$NON-NLS-1$
+					} else {
+						terminatedMessage= DebugUIMessages.getString("DefaultLabelProvider.1"); //$NON-NLS-1$
+					}
+					label.insert(0, terminatedMessage);
 				}
 			} else if (element instanceof IDisconnect) {
 				if (((IDisconnect) element).isDisconnected()) {
