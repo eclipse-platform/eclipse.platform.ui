@@ -415,24 +415,17 @@ public boolean equals(Object obj) {
 	//check leading separators and hashcode
 	if ((separators & HASH_MASK) != (target.separators & HASH_MASK))
 		return false;
+	String[] targetSegments = target.segments;
+	int i = segments.length;
 	//check segment count
-	int segmentCount = segments.length;
-	if (segmentCount != target.segments.length)
+	if (i != targetSegments.length)
 		return false;
-	//check device
-	if (device == null) {
-		if (target.device != null)
-			return false;
-	} else {
-		if (!device.equals(target.device))
-			return false;
-	}
 	//check segments in reverse order - later segments more likely to differ
-	for (int i = segmentCount; --i >= 0;)
-		if (!segments[i].equals(target.segments[i]))
+	while (--i >= 0)
+		if (!segments[i].equals(targetSegments[i]))
 			return false;
-	//they're the same!
-	return true;
+	//check device last (least likely to differ)
+	return device == target.device || (device != null && device.equals(target.device));
 }
 
 /* (Intentionally not included in javadoc)
