@@ -106,15 +106,13 @@ public abstract class RepositoryProvider implements IProjectNature {
 			}
 			
 			RepositoryProvider provider = mapNewProvider(project, id);
-			project.setPersistentProperty(PROVIDER_PROP_KEY, id);
-			
-			try {	
-				provider.configureProject();	//xxx not sure if needed since they control with wiz page and can configure all they want
-			} catch (CoreException e) {
-				project.setPersistentProperty(PROVIDER_PROP_KEY, null);
-				throw e;
-			}
-			//and mark it with the persistent ID for filtering and session persistence
+
+			//mark it with the persistent ID for filtering
+			project.setPersistentProperty(PROVIDER_PROP_KEY, id);		
+			provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
+
+			//adding the nature would've caused project description delta, so trigger one
+			project.setDescription(project.getDescription(), null);	
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
@@ -132,10 +130,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 		if(provider == null)
 			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id));
 			
-		provider.setProject(project);
 		//store provider instance as session property
 		try {
 			project.setSessionProperty(PROVIDER_PROP_KEY, provider);
+			provider.setProject(project);
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
