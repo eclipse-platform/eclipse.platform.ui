@@ -118,8 +118,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 						TableItem item = items[i];
 						Object data= item.getData();
 						if (data == oldConfig) {
+							// Found the movedFrom config in the tree. Replace it with the new config 
 							item.setData(configuration);
 							updateConfigItem(item, configuration);
+							// Also replace the movedFrom config in the list of newly created configs
+							if (newConfigList.remove(oldConfig)) {
+								newConfigList.add(configuration);
+							}
 							return;
 						}
 					}
