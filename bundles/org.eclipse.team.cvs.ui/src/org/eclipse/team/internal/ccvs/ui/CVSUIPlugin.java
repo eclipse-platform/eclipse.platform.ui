@@ -351,6 +351,13 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 			log = ((flags & LOG_OTHER_EXCEPTIONS) > 0);
 			if (title == null) title = Policy.bind("SimpleInternal"); //$NON-NLS-1$
 		}
+		
+		// Check for a build error and report it differently
+		if (status.getCode() == IResourceStatus.BUILD_FAILED) {
+			message = Policy.bind("buildError"); //$NON-NLS-1$
+			log = true;
+		}
+		
 		// Check for multi-status with only one child
 		if (status.isMultiStatus() && status.getChildren().length == 1) {
 			status = status.getChildren()[0];

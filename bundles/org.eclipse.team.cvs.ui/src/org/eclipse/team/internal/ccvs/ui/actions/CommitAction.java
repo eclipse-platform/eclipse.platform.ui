@@ -19,8 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -48,8 +47,8 @@ public class CommitAction extends WorkspaceAction {
 		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 		final String[] comment = new String[] {null};
 		final IResource[][] resourcesToBeAdded = new IResource[][] { null };
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					// search for any non-added, non-ignored resources in the selection
 					IResource[] unadded = getUnaddedResources(resources, monitor);
