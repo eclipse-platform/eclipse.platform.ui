@@ -404,6 +404,24 @@
 			label="%StepIntoAction.label">
 		</action>		
 	</viewerContribution>
+	<viewerContribution
+		id = "org.eclipse.debug.ui.breakpointview.popupMenu"
+		targetID = "org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointEnablement"
+			label="%DisableBreakpointsAction.label"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
+			enablesFor="2+">
+		</action>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointEnablement"
+			label="%EnableBreakpointsAction.label"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
+			enablesFor="2+">
+		</action>
+	</viewerContribution>
 </extension>
 
 <extension

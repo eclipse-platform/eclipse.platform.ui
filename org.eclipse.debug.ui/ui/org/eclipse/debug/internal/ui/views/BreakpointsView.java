@@ -15,7 +15,6 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.actions.EnableDisableBreakpointAction;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction;
@@ -195,9 +194,6 @@ public class BreakpointsView extends AbstractDebugView {
 		action = new OpenBreakpointMarkerAction(getViewer());
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
-		
-		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer())); //$NON-NLS-1$
-		
 		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getStructuredViewer(),this)); //$NON-NLS-1$
 	}
 
@@ -213,7 +209,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction("EnableDisableBreakpoint")); //$NON-NLS-1$
 		menu.add(getAction(REMOVE_ACTION));
 		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
