@@ -66,7 +66,7 @@ public class IActionFilterTest extends UITestCase {
 	private void testLifecycle(String viewId) throws Throwable {
 		// Create a list view.  
 		ListView view = (ListView)fPage.showView(viewId);
-
+		
 		// Create the test objects.
 		ListElement red = new ListElement("red");
 		view.addElement(red);

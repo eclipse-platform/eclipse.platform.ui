@@ -88,7 +88,7 @@
       <view
             name="Action Filter Test View 1"
             icon="icons\view.gif"
-            class="org.eclipse.ui.tests.api.ListView"
+            class="org.eclipse.ui.tests.api.ListView:-staticMenu"
             id="org.eclipse.ui.tests.api.IActionFilterTest1">
       </view>
       <view
@@ -100,7 +100,7 @@
       <view
             name="Action Filter Test View 2"
             icon="icons\view.gif"
-            class="org.eclipse.ui.tests.api.ListView"
+            class="org.eclipse.ui.tests.api.ListView:-dynamicMenu"
             id="org.eclipse.ui.tests.api.IActionFilterTest2">
       </view>
       <view

@@ -42,6 +42,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private String title;
 	private MockSelectionProvider selectionProvider;
 	private IConfigurationElement config;
+	private Object data;
 	private Image titleImage;
 	
 	public MockWorkbenchPart() {		
@@ -60,6 +61,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		this.config = config;
+		this.data = data;
 		title = (String)config.getAttribute("name");
 
 		// Icon.
@@ -76,10 +78,14 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 		}
 	}
 
-	public IConfigurationElement getConfig() {
+	protected IConfigurationElement getConfig() {
 		return config;
 	}
 		
+	protected Object getData() {
+		return data;
+	}
+	
 	public void setSite(IWorkbenchPartSite site) {
 		this.site = site;
 		site.setSelectionProvider(selectionProvider);

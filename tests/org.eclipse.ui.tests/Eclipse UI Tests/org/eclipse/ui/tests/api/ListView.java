@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
@@ -85,9 +83,7 @@ public class ListView extends MockViewPart
 		addAction.setId(ADD_ACTION_ID);
 		
 		// Create popup menu.
-		IConfigurationElement config = getConfig();
-		String str = config.getAttributeAsIs("menuType");
-		if (str != null && str.equals("static"))
+		if (useStaticMenu())
 			createStaticPopupMenu();
 		else	
 			createDynamicPopupMenu();
@@ -155,5 +151,17 @@ public class ListView extends MockViewPart
 		addElement(new ListElement("red", true));
 	}
 
+	/**
+	 * Returns <code>true</code> to indicate that a static menu should be used,
+	 * <code>false</code> to indicate a dynamic menu.
+	 */
+	private boolean useStaticMenu() {
+		Object data = getData();
+		if (data instanceof String) {
+			String arg = (String) data;
+			return arg.indexOf("-staticMenu") >= 0; //$NON-NLS-1$
+		}
+		return false;
+	}
 }
 
