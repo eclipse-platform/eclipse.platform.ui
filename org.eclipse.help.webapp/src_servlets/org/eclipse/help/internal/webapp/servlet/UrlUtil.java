@@ -207,9 +207,9 @@ public class UrlUtil {
 			url = "about:blank";
 		else if (url.startsWith("http:/"));
 		else if (url.startsWith("file:/"))
-			url = "../content/" + url;
+			url = "../topic/" + url;
 		else
-			url = "../content/help:" + url;
+			url = "../topic" + url;
 		return url;
 	}
 

@@ -127,9 +127,9 @@ public class TocServlet extends HttpServlet {
 		if (topic == null || topic.equals(""))
 			return null;
 
-		int index = topic.indexOf("help:/");
+		int index = topic.indexOf("/topic/");
 		if (index != -1)
-			topic = topic.substring(index + 5);
+			topic = topic.substring(index + 6);
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);

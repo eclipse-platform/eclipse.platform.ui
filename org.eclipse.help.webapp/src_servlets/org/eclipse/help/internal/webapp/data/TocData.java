@@ -132,9 +132,9 @@ public class TocData extends RequestData {
 		if (topic == null || topic.equals(""))
 			return -1;
 
-		int index = topic.indexOf("help:/");
+		int index = topic.indexOf("/topic/");
 		if (index != -1)
-			topic = topic.substring(index + 5);
+			topic = topic.substring(index + 6);
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);

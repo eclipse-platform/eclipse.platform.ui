@@ -28,9 +28,9 @@ function bookmarkPage(button)
 	{
 		// use the url from plugin id only
 		var url = parent.ContentViewFrame.location.href;
-		var i = url.indexOf("content/help:/");
+		var i = url.indexOf("/topic/");
 		if (i >=0 )
-			url = url.substring(i+13);
+			url = url.substring(i+6);
 		// remove any query string
 		i = url.indexOf("?");
 		if (i >= 0)

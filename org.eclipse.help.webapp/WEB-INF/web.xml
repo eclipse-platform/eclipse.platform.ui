@@ -50,6 +50,11 @@
     </servlet-mapping>
     
     <servlet-mapping>
+        <servlet-name>content</servlet-name>
+        <url-pattern>/topic/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
         <servlet-name>livehelp</servlet-name>
         <url-pattern>/livehelp/*</url-pattern>
     </servlet-mapping>

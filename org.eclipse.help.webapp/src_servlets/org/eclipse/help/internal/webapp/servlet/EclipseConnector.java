@@ -62,6 +62,8 @@ public class EclipseConnector {
 					return;
 				}
 			}
+			if (!url.startsWith("help:"))
+				url = "help:" + url;
 
 			URLConnection con = openConnection(url, req);
 			resp.setContentType(con.getContentType());

@@ -43,7 +43,7 @@ public class FramesetFilter implements IFilter {
 			script.append("../");
 		}
 		script.append("?topic=");
-		script.append(req.getPathInfo().substring("/help:".length()));
+		script.append(req.getPathInfo().substring("/topic/".length()-1));
 		script.append(scriptPart3);
 		return new FilterHTMLHeadOutputStream(
 			out,
