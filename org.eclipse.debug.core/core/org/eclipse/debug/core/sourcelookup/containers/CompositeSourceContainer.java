@@ -121,7 +121,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
-	public ISourceContainer[] getSourceContainers() throws CoreException {
+	public synchronized ISourceContainer[] getSourceContainers() throws CoreException {
 		if (fContainers == null) {
 			fContainers = createSourceContainers();
 			for (int i = 0; i < fContainers.length; i++) {
