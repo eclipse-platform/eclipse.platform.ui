@@ -283,7 +283,9 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	 * which will result in a call to changeWorkingSet().
 	 */
 	public void setWorkingSet(IWorkingSet workingSet) {
-		PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
+		if (workingSet != null) {
+			PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
+		}
 		workingSetGroup.setWorkingSet(workingSet);
 	}
 }
