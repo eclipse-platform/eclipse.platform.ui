@@ -1012,6 +1012,21 @@ private void setShellSize(int width, int height) {
 	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 }
 /**
+ * Computes the correct dialog size for the current page and resizes 
+ * its shell if nessessary. Also causes the container to refresh its
+ * layout.
+ * 
+ * @since 2.0
+ */
+protected void updateSize() {
+	if (currentPage == null)
+		return;
+	
+	updateSizeForPage(currentPage);
+//	pageContainerLayout.layoutPage(currentPage.getControl());
+	pageContainer.layout(true);
+}
+/**
  * Computes the correct dialog size for the given page and resizes 
  * its shell if nessessary.
  *

@@ -14,9 +14,12 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -81,7 +84,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	 * display its pages.
 	 */
 	private void createEmbeddedPageSite(Composite parent) {
-		pageSite = new Composite(parent, SWT.NULL);
+		pageSite = new Composite(parent, SWT.NONE);
 		pageSite.setLayout(new GridLayout());
 		pageSite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
@@ -269,6 +272,74 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		}
 
 		/**
+		 * Calculates the difference in size between the given
+		 * page and the page site. A larger page results 
+		 * in a positive delta.
+		 *
+		 * @param page the page
+		 * @return the size difference encoded
+		 *   as a <code>new Point(deltaWidth,deltaHeight)</code>
+		 */
+		private Point calculatePageSizeDelta(IWizardPage page) {
+			Control pageControl = page.getControl();
+		
+			if (pageControl == null)
+				// control not created yet
+				return new Point(0,0);
+				
+			Point contentSize = pageControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			Rectangle rect = pageSite.getClientArea();
+			Point containerSize = new Point(rect.width, rect.height);
+		
+			return new Point(
+				Math.max(0, contentSize.x - containerSize.x),
+				Math.max(0, contentSize.y - containerSize.y));
+		}
+
+		/**
+		 * Computes the correct page site size for the given page
+		 * and resizes the dialog if nessessary.
+		 *
+		 * @param page the wizard page
+		 */
+		private void updateSizeForPage(IWizardPage page) {
+			// ensure the page container is large enough
+			Point delta = calculatePageSizeDelta(page);
+			
+			if (delta.x > 0 || delta.y > 0) {
+				Point siteSize = pageSite.getSize();
+				GridData data = (GridData)pageSite.getLayoutData();
+				data.heightHint = siteSize.y + delta.y;
+				data.widthHint = siteSize.x + delta.x;
+			}
+		}
+
+		/**
+		 * Computes the correct page site size for the given wizard
+		 * and resizes the dialog if nessessary.
+		 *
+		 * @param wizard the wizard
+		 */
+		private void updateSizeForWizard(IWizard wizard) {
+			Point delta = new Point(0,0);
+			IWizardPage[] pages = wizard.getPages();
+			for (int i = 0; i < pages.length; i++){
+				// ensure the page site is large enough
+				Point pageDelta = calculatePageSizeDelta(pages[i]);
+		
+				delta.x = Math.max(delta.x, pageDelta.x);
+				delta.y = Math.max(delta.y, pageDelta.y);
+			}
+			
+			if (delta.x > 0 || delta.y > 0) {
+				Point siteSize = pageSite.getSize();
+				GridData data = (GridData)pageSite.getLayoutData();
+				data.heightHint = siteSize.y + delta.y;
+				data.widthHint = siteSize.x + delta.x;
+			}
+		}
+
+		/**
 		 * Process the current step's wizard.
 		 */
 		public void processCurrentStep() {
@@ -306,9 +377,8 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			}
 				
 			// Ensure the dialog is large enough for the wizard
-			//updateSizeForWizard(wizard);
-			//pageContainer.layout(true);
-			pageSite.layout(true);
+			updateSizeForWizard(wizard);
+			wizardDialog.updateLayout();
 				
 			wizard.setContainer(this);
 			showPage(wizard.getStartingPage(), false);
@@ -332,9 +402,8 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			if (page.getControl() == null) {
 				page.createControl(pageSite);
 				// ensure the dialog is large enough for this page
-				pageSite.layout(true);
-				//wizardDialog.updateSizeForPage(page);
-				//wizardDialog.pageContainerLayout.layoutPage(page.getControl());
+				updateSizeForPage(page);
+				wizardDialog.updateLayout();
 			}
 		
 			// make the new page visible

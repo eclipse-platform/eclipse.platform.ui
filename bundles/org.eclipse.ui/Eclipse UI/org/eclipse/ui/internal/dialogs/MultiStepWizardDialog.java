@@ -98,4 +98,11 @@ public class MultiStepWizardDialog extends WizardDialog {
 	/* package */ void updateAll() {
 		super.update();
 	}
+	
+	/**
+	 * Updates the layout of the dialog
+	 */
+	/* package */ void updateLayout() {
+		super.updateSize();
+	}
 }
