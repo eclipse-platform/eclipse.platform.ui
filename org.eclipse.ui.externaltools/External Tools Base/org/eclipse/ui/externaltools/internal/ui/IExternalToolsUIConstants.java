@@ -42,10 +42,16 @@ public interface IExternalToolsUIConstants {
 	public static final String IMG_ANT_PROJECT= IExternalToolConstants.PLUGIN_ID + ".antProject"; //$NON-NLS-1$
 	public static final String IMG_ANT_PROJECT_ERROR = IExternalToolConstants.PLUGIN_ID + ".antProjectError"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
+	public static final String IMG_ANT_TARGET_PRIVATE = IExternalToolConstants.PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
 	public static final String IMG_ANT_DEFAULT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET_ERROR = IExternalToolConstants.PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET_ELEMENTS= IExternalToolConstants.PLUGIN_ID + ".antTargetElements"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET_ELEMENT= IExternalToolConstants.PLUGIN_ID + ".antTargetElement"; //$NON-NLS-1$
+	
+	// Overlays
+	public static final String IMG_OVR_DEFAULT = IExternalToolConstants.PLUGIN_ID + ".ovrDefault";  //$NON-NLS-1$
+	public static final String IMG_OVR_ERROR = IExternalToolConstants.PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	
 
 	public static final String DIALOGSTORE_LASTEXTJAR= IExternalToolConstants.PLUGIN_ID + ".lastextjar"; //$NON-NLS-1$
 	public static final String DIALOGSTORE_LASTEXTFILE= IExternalToolConstants.PLUGIN_ID + ".lastextfile"; //$NON-NLS-1$

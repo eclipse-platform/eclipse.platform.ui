@@ -417,7 +417,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				targetContentProvider.addTarget((TargetNode) targets.next());
 			}
 		}
-		targetViewer.setLabelProvider(new AntTargetsLabelProvider());
+		targetViewer.setLabelProvider(new AntViewLabelProvider());
 		// The content provider doesn't use the input, but it input has to be set to something.
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
 		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {

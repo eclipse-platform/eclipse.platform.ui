@@ -209,6 +209,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		ColorManager.getDefault().dispose();
+		ExternalToolsImages.disposeImageDescriptorRegistry();
 	}
 
 	/**

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -29,6 +30,11 @@ public class ExternalToolsImages {
 	 * The image registry containing <code>Image</code>s.
 	 */
 	private static ImageRegistry imageRegistry;
+	
+	/**
+	 * The registry for composite images
+	 */
+	private static ImageDescriptorRegistry imageDescriptorRegistry;
 	
 	/**
 	 * A table of all the <code>ImageDescriptor</code>s.
@@ -79,9 +85,10 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_GO_TO_FILE, LOCALTOOL + "gotoobj_tsk.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_TOGGLE, LOCALTOOL + "toggle.gif"); //$NON-NLS-1$
 		// Ant View Labels
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "file_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, OBJECT + "ant_project_err.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "ant_target.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "target_pub.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE, OBJECT + "target_priv.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "ant_default_target.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, OBJECT + "elements.gif"); //$NON-NLS-1$
@@ -98,6 +105,10 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolConstants.IMG_PROPERTY, OBJECT + "prop_ps.gif"); //$NON-NLS-1$
 		//ANT object
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_tsk_check.gif"); //$NON-NLS-1$
+		
+		// Overlays
+		declareRegistryImage(IExternalToolsUIConstants.IMG_OVR_DEFAULT, OVR + "run_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_OVR_ERROR, OVR + "error_co.gif"); //$NON-NLS-1$
 	}
 
 	/**
@@ -235,7 +246,23 @@ public class ExternalToolsImages {
 			ExternalToolsPlugin.getDefault().log(e);
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
-	}	
+	}
+	
+	/** 
+	 * Returns the image for the given composite descriptor. 
+	 */
+	public static Image getImage(CompositeImageDescriptor imageDescriptor) {
+		if (imageDescriptorRegistry == null) {
+			imageDescriptorRegistry = new ImageDescriptorRegistry();	
+		}
+		return imageDescriptorRegistry.get(imageDescriptor);
+	}
+	
+	public static void disposeImageDescriptorRegistry() {
+		if (imageDescriptorRegistry != null) {
+			imageDescriptorRegistry.dispose(); 
+		}
+	}
 }
 
 

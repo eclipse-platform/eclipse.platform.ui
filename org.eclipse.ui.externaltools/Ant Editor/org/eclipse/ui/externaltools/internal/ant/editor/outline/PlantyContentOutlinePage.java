@@ -38,6 +38,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -55,6 +56,7 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -175,22 +177,32 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				XmlElement projectNode= tempElement.getParentNode();
 				XmlAttribute attribute= projectNode.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
 				String defaultTarget= ""; //$NON-NLS-1$
+				ImageDescriptor base = null;
+				int flags = 0;
+				
 				if (attribute != null) {
 					defaultTarget= attribute.getValue();
 				}
 				if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue().equals(defaultTarget)) {
-					//TODO:replace with default target icon when available Bug 29815
-					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
-				} else {
-					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
+					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
 				}
+				if (tempElement.isErrorNode()) {
+					flags = flags | AntImageDescriptor.HAS_ERRORS;
+				}	
+				if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
+					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
+				} else {
+					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
+				}
+				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));				
 			}
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
+				int flags = 0;
+				ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_PROJECT);
 				if (tempElement.isErrorNode()) {
-					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR);
-				} else {
-					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+					flags = flags | AntImageDescriptor.HAS_ERRORS;
 				}
+				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 			}
 			
 			if (tempElement.isErrorNode()) {

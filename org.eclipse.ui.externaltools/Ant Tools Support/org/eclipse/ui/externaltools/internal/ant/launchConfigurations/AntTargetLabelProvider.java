@@ -10,11 +10,13 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
  * Ant target label provider
@@ -49,7 +51,18 @@ public class AntTargetLabelProvider extends LabelProvider {
 	 */
 	public Image getImage(Object element) {
 		if (viewer == null || viewer.getControl().isEnabled()) {
-			return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
+			TargetInfo target = (TargetInfo)element;
+			ImageDescriptor base = null;
+			int flags = 0;
+			if (target.isDefault()) {
+				flags = flags | AntImageDescriptor.DEFAULT_TARGET;
+			}
+			if (target.getDescription() == null) {
+				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
+			} else {
+				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
+			}
+			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 		}
 		return null;
 	}

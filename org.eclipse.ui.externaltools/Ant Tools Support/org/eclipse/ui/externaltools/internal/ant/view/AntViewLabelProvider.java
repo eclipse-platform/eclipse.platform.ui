@@ -7,11 +7,14 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
@@ -27,20 +30,28 @@ public class AntViewLabelProvider implements ILabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof ProjectNode) {
 			ProjectNode project= (ProjectNode) element;
+			int flags = 0;
 			if (project.isErrorNode()) {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR);
-			} else {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
+			CompositeImageDescriptor descriptor = new AntImageDescriptor(ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_PROJECT), flags);
+			return ExternalToolsImages.getImage(descriptor);
 		} else if (element instanceof TargetNode) {
 			TargetNode target= (TargetNode) element;
-			if (target.isErrorNode()) {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
-			} else if (target.equals(target.getProject().getDefaultTarget())){
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+			int flags = 0;
+			ImageDescriptor base = null;
+			if (target.getDescription() == null) {
+				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
 			} else {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET);
+				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
+			}			
+			if (target.isErrorNode()) {
+				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
+			if (target.equals(target.getProject().getDefaultTarget())){
+				flags = flags | AntImageDescriptor.DEFAULT_TARGET;
+			}
+			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 		}
 		return null;
 	}
