@@ -604,7 +604,34 @@ protected MenuManager createMenuManager() {
 			} 
 
 			String acceleratorText = KeyManager.getInstance().getTextForAction(defId);			
+			
+			if (acceleratorText != null && "carbon".equals(SWT.getPlatform())) {
+				acceleratorText = replaceSubstring(acceleratorText, "Alt", "\u2325");
+				acceleratorText = replaceSubstring(acceleratorText, "Command", "\u2318");
+				acceleratorText = replaceSubstring(acceleratorText, "Ctrl", "\u2303");
+				acceleratorText = replaceSubstring(acceleratorText, "Shift", "\u21E7");
+				acceleratorText = "   " + replaceSubstring(acceleratorText, "+", "");
+			}
+			
 			return (acceleratorText != null ? acceleratorText : "");			
+		}
+		
+		private /*static*/ String replaceSubstring(String str, String pattern, String replace) {
+			int slen = str.length();
+			int plen = pattern.length();
+			int s = 0, e = 0;
+			StringBuffer result = new StringBuffer(slen * 2);
+			char[] chars = new char[slen];
+
+			while ((e = str.indexOf(pattern, s)) >= 0) {
+				str.getChars(s, e, chars, 0);
+				result.append(chars, 0, e - s).append(replace);
+				s = e + plen;
+			}
+
+			str.getChars(s, slen, chars, 0);
+			result.append(chars, 0, slen - s);
+			return result.toString();
 		}
 		
 		public String getText(IContributionItem item) {
