@@ -78,7 +78,6 @@ public class WorkbenchWindow
 	private boolean showStatusLine = true;
 	private boolean showToolBar = true;
 
-
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
 	static final String GRP_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
@@ -105,7 +104,7 @@ public class WorkbenchWindow
 		addToolBar(SWT.FLAT);
 
 		addStatusLine();
-		addShortcutBar(SWT.FLAT |  SWT.VERTICAL | SWT.WRAP);
+		addShortcutBar(SWT.FLAT | SWT.VERTICAL | SWT.WRAP);
 
 		updateBarVisibility();
 
@@ -486,15 +485,17 @@ public class WorkbenchWindow
 	protected ToolBarManager createToolBarManager(int style) {
 		return null;
 	}
-	
+
 	/**
 	 * Create the progress indicator for the receiver.
 	 * @param shell	the parent shell
 	 */
-	private void createProgressIndicator(Shell shell){
-		progressControl = new ProgressControl();
-		progressControl.createCanvas(shell);
-		
+	private void createProgressIndicator(Shell shell) {
+		if (showProgressIndicator()) {
+			progressControl = new ProgressControl();
+			progressControl.createCanvas(shell);
+		}
+
 	}
 
 	/* (non-Javadoc)
@@ -1863,25 +1864,36 @@ public class WorkbenchWindow
 
 		if (getShowToolBar()) {
 
-			Control progressCanvas = progressControl.getCanvas().getControl();
-			Rectangle progressBounds = progressControl.getCanvas().getImageBounds();
-			FormData progressData = new FormData();
-			progressData.top = new FormAttachment(seperator1, 0);
-			progressData.right = new FormAttachment(100, 0);
-			progressData.left = new FormAttachment(100, progressBounds.width * -1);
-			
 			FormData toolData = new FormData();
 			toolData.top = new FormAttachment(seperator1, 0);
 			toolData.left = new FormAttachment(0, 0);
-			toolData.right = new FormAttachment(progressControl.getCanvas().getControl(), 0);
-			
-			progressData.bottom = new FormAttachment(getToolBarControl(), 0, SWT.BOTTOM);
-						
-			progressCanvas.setLayoutData(progressData);
+
+			Control toolWidget;
+
+			if (showProgressIndicator()) {
+				Control progressCanvas =
+					progressControl.getCanvas().getControl();
+				Rectangle progressBounds =
+					progressControl.getCanvas().getImageBounds();
+				FormData progressData = new FormData();
+				progressData.top = new FormAttachment(seperator1, 0);
+				progressData.right = new FormAttachment(100, 0);
+				progressData.left =
+					new FormAttachment(100, progressBounds.width * -1);
+				toolData.right = new FormAttachment(progressCanvas, 0);
+				progressData.bottom =
+					new FormAttachment(getToolBarControl(), 0, SWT.BOTTOM);
+				progressCanvas.setLayoutData(progressData);
+				toolWidget = progressCanvas;
+			} else {
+				toolData.right = new FormAttachment(100, 0);
+				toolWidget = getToolBarControl();
+			}
+
 			getToolBarControl().setLayoutData(toolData);
 
 			FormData sep2Data = new FormData();
-			sep2Data.top = new FormAttachment(getToolBarControl(), 0);
+			sep2Data.top = new FormAttachment(toolWidget, 1);
 			sep2Data.left = new FormAttachment(0, 0);
 			sep2Data.right = new FormAttachment(100, 0);
 			getSeparator2().setLayoutData(sep2Data);
@@ -1894,8 +1906,8 @@ public class WorkbenchWindow
 		Control sideWidget = null;
 		if (getShowShortcutBar()) {
 			ToolBar shortcutBar = getShortcutBar().getControl();
-			
-			Control [] children = shortcutBar.getChildren();
+
+			Control[] children = shortcutBar.getChildren();
 
 			FormData shortcutData = new FormData();
 			shortcutData.top = new FormAttachment(topWidget, 0);
@@ -1911,10 +1923,9 @@ public class WorkbenchWindow
 			sep3Data.bottom = new FormAttachment(100, 0);
 			sep3.setLayoutData(sep3Data);
 			sideWidget = sep3;
-		}
-		else{
-			getShortcutBar().getControl().setBounds(0,0,0,0);
-			getSeparator3().setBounds(0,0,0,0);
+		} else {
+			getShortcutBar().getControl().setBounds(0, 0, 0, 0);
+			getSeparator3().setBounds(0, 0, 0, 0);
 		}
 
 		Control bottomWidget = null;
@@ -1930,16 +1941,14 @@ public class WorkbenchWindow
 				statusData.left = new FormAttachment(sideWidget, 0);
 
 			statusLine.setLayoutData(statusData);
-			
 
 			bottomWidget = statusLine;
-		}
-		else
-			getStatusLineManager().getControl().setBounds(0,0,0,0);
+		} else
+			getStatusLineManager().getControl().setBounds(0, 0, 0, 0);
 
 		FormData mainAreaData = new FormData();
-		mainAreaData.top = new FormAttachment(topWidget, VGAP);
-		mainAreaData.right = new FormAttachment(100, CLIENT_INSET);
+		mainAreaData.top = new FormAttachment(topWidget, CLIENT_INSET);
+		mainAreaData.right = new FormAttachment(100, -1 * CLIENT_INSET);
 
 		if (sideWidget == null)
 			mainAreaData.left = new FormAttachment(0, CLIENT_INSET);
@@ -1947,13 +1956,12 @@ public class WorkbenchWindow
 			mainAreaData.left = new FormAttachment(sideWidget, CLIENT_INSET);
 
 		if (bottomWidget == null)
-			mainAreaData.bottom = new FormAttachment(100, 0);
+			mainAreaData.bottom = new FormAttachment(100, -1 * CLIENT_INSET);
 		else
-			mainAreaData.bottom = new FormAttachment(bottomWidget, 0);
+			mainAreaData.bottom =
+				new FormAttachment(bottomWidget, -1 * CLIENT_INSET);
 
 		getClientComposite().setLayoutData(mainAreaData);
-		Point bounds =
-			getClientComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
 	/* (non-Javadoc)
@@ -1964,4 +1972,11 @@ public class WorkbenchWindow
 		super.initializeBounds();
 	}
 
+	/**
+	 * Return whether or not to show the progress indicator.
+	 * @return boolan
+	 */
+	private boolean showProgressIndicator() {
+		return true;
+	}
 }
