@@ -148,7 +148,15 @@ public abstract class DialogArea {
 		label.setLayoutData(data);
 		return label;
 	}
-	
+	protected Label createLabel(Composite parent, String text, int horizontalSpan) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = horizontalSpan;
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData(data);
+		return label;
+	}
 	/**
 	 * Creates composite control and sets the default layout data.
 	 *
