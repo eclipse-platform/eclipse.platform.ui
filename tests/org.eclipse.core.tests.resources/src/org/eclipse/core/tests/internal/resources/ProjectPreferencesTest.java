@@ -212,4 +212,39 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertNotNull("4.2", actual);
 		assertEquals("4.3", newValue, actual);
 	}
+
+	public void testProjectDelete() {
+		// create the project
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		// set some settings
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
+		String value = getUniqueString();
+		IScopeContext context = new ProjectScope(project);
+		Preferences node = context.getNode(qualifier);
+		Preferences parent = node.parent().parent();
+		node.put(key, value);
+		assertEquals("1.0", value, node.get(key, null));
+
+		try {
+			// delete the project
+			project.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		try {
+			// project pref should not exist
+			assertTrue("3.0", !parent.nodeExists(project.getName()));
+		} catch (BackingStoreException e) {
+			fail("3.1", e);
+		}
+
+		// create a project with the same name
+		ensureExistsInWorkspace(project, true);
+
+		// ensure that the preference value is not set
+		assertNull("4.0", context.getNode(qualifier).get(key, null));
+	}
 }

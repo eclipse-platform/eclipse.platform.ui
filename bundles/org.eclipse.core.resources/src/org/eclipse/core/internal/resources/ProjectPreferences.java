@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Represents a node in the Eclipse preference hierarchy which stores preference
@@ -112,8 +113,17 @@ public class ProjectPreferences extends EclipsePreferences {
 
 		IResourceChangeListener result = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getType() != IResourceChangeEvent.PRE_BUILD)
-					return;
+				switch (event.getType()) {
+					case IResourceChangeEvent.PRE_BUILD :
+						handleDelta(event);
+						break;
+					case IResourceChangeEvent.PRE_DELETE :
+						handleProjectDelete(event);
+						break;
+				}
+			}
+
+			private void handleDelta(IResourceChangeEvent event) {
 				IResourceDelta delta = event.getDelta();
 				if (delta == null)
 					return;
@@ -125,12 +135,29 @@ public class ProjectPreferences extends EclipsePreferences {
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
 			}
+
+			private void handleProjectDelete(IResourceChangeEvent event) {
+				IResource resource = event.getResource();
+				if (resource == null)
+					return;
+				Preferences scopeRoot = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+				try {
+					if (!scopeRoot.nodeExists(resource.getName()))
+						return;
+					// delete the prefs
+					scopeRoot.node(resource.getName()).removeNode();
+				} catch (BackingStoreException e) {
+					String message = Policy.bind("preferences.projectDeleteException", resource.getName()); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+					ResourcesPlugin.getPlugin().getLog().log(status);
+				}
+			}
 		};
 		return result;
 	}
 
 	private static void addListener() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_BUILD);
 	}
 
 	/*
