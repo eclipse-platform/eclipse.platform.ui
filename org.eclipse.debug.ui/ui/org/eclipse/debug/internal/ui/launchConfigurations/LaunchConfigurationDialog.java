@@ -195,6 +195,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private TabFolder fTabFolder;
 	
 	/**
+	 * Flag that indicates when the tabs are being disposed.
+	 */
+	private boolean fDisposingTabs = false;
+	
+	/**
 	 * The current (working copy) launch configuration
 	 * being displayed/edited or <code>null</code> if
 	 * none
@@ -1608,6 +1613,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
  	protected void disposeExistingTabs() {
+		setDisposingTabs(true);
 		TabItem[] oldTabs = getTabFolder().getItems();
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
@@ -1617,6 +1623,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		setTabGroup(null);
 		setTabType(null);
+		setDisposingTabs(false);
  	}
  	
  	/**
@@ -1735,6 +1742,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		return fRevertButton;
  	}	
  	
+ 	private void setDisposingTabs(boolean disposing) {
+ 		fDisposingTabs = disposing;
+ 	}
+ 	
+ 	private boolean isDisposingTabs() {
+ 		return fDisposingTabs;
+ 	}
+ 
  	/**
  	 * Sets the tab folder
  	 * 
@@ -2155,6 +2170,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * the tab being entered.
 	 */
 	protected void handleTabSelected() {
+		if (isDisposingTabs()) {
+			return;
+		}
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (fCurrentTabIndex == getTabFolder().getSelectionIndex() || tabs == null || tabs.length == 0 || fCurrentTabIndex > (tabs.length - 1)) {
 			return;
