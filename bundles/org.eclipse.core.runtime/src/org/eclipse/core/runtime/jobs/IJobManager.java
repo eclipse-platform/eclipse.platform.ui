@@ -348,6 +348,7 @@ public interface IJobManager {
 	 * 
 	 * @param rule The scheduling rule to transfer
 	 * @param destinationThread The new owner for the transferred rule.
+	 * @since 3.1
 	 */
 	public void transferRule(ISchedulingRule rule, Thread destinationThread);
 	
