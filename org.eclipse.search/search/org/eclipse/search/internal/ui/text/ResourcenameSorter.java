@@ -9,11 +9,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.internal.ui.util.FileLabelProvider;
+import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 
 /**
- * Sorts the search result viewer by the resource path.
+ * Sorts the search result viewer by the resource name.
  */
 public class ResourcenameSorter extends ViewerSorter {
 
@@ -47,10 +48,12 @@ public class ResourcenameSorter extends ViewerSorter {
 	 */
 	public void sort(Viewer viewer, Object[] elements) {
 		// Set label provider to show "resource - path"
-		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
-		if (labelProvider instanceof FileLabelProvider)
-			((FileLabelProvider)labelProvider).setOrder(FileLabelProvider.SHOW_LABEL_PATH);
-		
+		ISearchResultView view= SearchUI.getSearchResultView();
+		if (view != null) {
+			ILabelProvider labelProvider= view.getLabelProvider();
+			if (labelProvider instanceof FileLabelProvider)
+				((FileLabelProvider)labelProvider).setOrder(FileLabelProvider.SHOW_LABEL_PATH);
+		}
 		super.sort(viewer, elements);
 	}
 }
