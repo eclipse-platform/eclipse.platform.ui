@@ -13,8 +13,8 @@ package org.eclipse.ui.examples.javaeditor;
 
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
-import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
@@ -64,12 +64,13 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new JavaAnnotationHover();
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+		
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
-	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
-		return (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? new JavaAutoIndentStrategy() : new DefaultAutoIndentStrategy());
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		IAutoEditStrategy strategy= (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? new JavaAutoIndentStrategy() : new DefaultIndentLineAutoEditStrategy());
+		return new IAutoEditStrategy[] { strategy };
 	}
 	
 	/*

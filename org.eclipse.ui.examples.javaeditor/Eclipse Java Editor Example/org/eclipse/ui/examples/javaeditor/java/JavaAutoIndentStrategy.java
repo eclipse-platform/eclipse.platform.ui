@@ -11,12 +11,16 @@
 package org.eclipse.ui.examples.javaeditor.java;
 
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
+import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 
 /**
- * Auto indent strategy sensitive to brackets.
+ * Auto indent line strategy sensitive to brackets.
  */
-public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
+public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	public JavaAutoIndentStrategy() {
 	}
@@ -33,7 +37,11 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	}
 	
 	/**
-	 * Returns whether or not the text ends with one of the given search strings.
+	 * Returns whether or not the given text ends with one of the documents legal line delimiters.
+	 * 
+	 * @param d the document
+	 * @param txt the text
+	 * @return <code>true</code> if <code>txt</code> ends with one of the document's line delimiters, <code>false</code> otherwise
 	 */
 	private boolean endsWithDelimiter(IDocument d, String txt) {
 		String[] delimiters= d.getLegalLineDelimiters();
@@ -44,11 +52,13 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	
 	/**
 	 * Returns the line number of the next bracket after end.
-	 * @returns the line number of the next matching bracket after end
+	 * 
 	 * @param document - the document being parsed
 	 * @param line - the line to start searching back from
 	 * @param end - the end position to search back from
 	 * @param closingBracketIncrease - the number of brackets to skip
+	 * @return the line number of the next matching bracket after end
+	 * @throws BadLocationException in case the line numbers are invalid in the document
 	 */
 	 protected int findMatchingOpenBracket(IDocument document, int line, int end, int closingBracketIncrease) throws BadLocationException {
 
@@ -72,11 +82,13 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	/**
 	 * Returns the bracket value of a section of text. Closing brackets have a value of -1 and 
 	 * open brackets have a value of 1.
-	 * @returns the line number of the next matching bracket after end
+	 * 
 	 * @param document - the document being parsed
 	 * @param start - the start position for the search
 	 * @param end - the end position for the search
 	 * @param ignoreCloseBrackets - whether or not to ignore closing brackets in the count
+	 * @return the bracket value of a section of text
+	 * @throws BadLocationException in case the positions are invalid in the document
 	 */
 	 private int getBracketCount(IDocument document, int start, int end, boolean ignoreCloseBrackets) throws BadLocationException {
 
@@ -128,11 +140,13 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	}
 	
 	/**
-	 * Returns the end position a comment starting at pos.
-	 * @returns the end position a comment starting at pos
+	 * Returns the end position of a comment starting at the given <code>position</code>.
+	 * 
 	 * @param document - the document being parsed
 	 * @param position - the start position for the search
 	 * @param end - the end position for the search
+	 * @return the end position of a comment starting at the given <code>position</code>
+	 * @throws BadLocationException in case <code>position</code> and <code>end</code> are invalid in the document
 	 */
 	 private int getCommentEnd(IDocument document, int position, int end) throws BadLocationException {
 		int currentPosition = position;
@@ -149,10 +163,12 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	}
 	
 	/**
-	 * Returns the String at line with the leading whitespace removed.
-	 * @returns the String at line with the leading whitespace removed.
+	 * Returns the content of the given line without the leading whitespace.
+	 * 
 	 * @param document - the document being parsed
 	 * @param line - the line being searched
+	 * @return the content of the given line without the leading whitespace
+	 * @throws BadLocationException in case <code>line</code> is invalid in the document
 	 */
 	 protected String getIndentOfLine(IDocument document, int line) throws BadLocationException {
 		if (line > -1) {
@@ -160,18 +176,19 @@ public class JavaAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			int end= start + document.getLineLength(line) - 1;
 			int whiteend= findEndOfWhiteSpace(document, start, end);
 			return document.get(start, whiteend - start);
-		} else {
-			return ""; //$NON-NLS-1$
 		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**
-	 * Returns the position of the character in the document after position.
-	 * @returns the next location of character.
+	 * Returns the position of the <code>character</code> in the <code>document</code> after <code>position</code>.
+	 * 
 	 * @param document - the document being parsed
 	 * @param position - the position to start searching from
 	 * @param end - the end of the document
 	 * @param character - the character you are trying to match
+	 * @return the next location of <code>character</code>
+	 * @throws BadLocationException in case <code>position</code> is invalid in the document
 	 */
 	 private int getStringEnd(IDocument document, int position, int end, char character) throws BadLocationException {
 		int currentPosition = position;

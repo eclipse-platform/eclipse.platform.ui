@@ -45,7 +45,11 @@ public class JavaColorProvider {
 	}
 	
 	/**
-	 * Return the Color that is stored in the Color table as rgb.
+	 * Return the color that is stored in the color table under the given RGB
+	 * value.
+	 * 
+	 * @param rgb the RGB value
+	 * @return the color stored in the color table for the given RGB value
 	 */
 	public Color getColor(RGB rgb) {
 		Color color= (Color) fColorTable.get(rgb);

@@ -70,7 +70,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Template Editor"
+            name="%xml.editor.preferencePage.label"
             class="org.eclipse.ui.examples.templateeditor.preferences.TemplatesPreferencePage"
             id="org.eclipse.ui.examples.templateeditor.preferencepage">
       </page>

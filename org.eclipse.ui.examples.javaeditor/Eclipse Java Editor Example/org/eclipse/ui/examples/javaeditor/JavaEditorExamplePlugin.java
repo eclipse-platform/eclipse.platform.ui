@@ -62,7 +62,9 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Return a scanner for creating java partitions.
+	 * Return a scanner for creating Java partitions.
+	 * 
+	 * @return a scanner for creating Java partitions
 	 */
 	 public JavaPartitionScanner getJavaPartitionScanner() {
 		if (fPartitionScanner == null)
@@ -71,7 +73,9 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the singleton scanner.
+	 * Returns the singleton Java code scanner.
+	 * 
+	 * @return the singleton Java code scanner
 	 */
 	 public RuleBasedScanner getJavaCodeScanner() {
 	 	if (fCodeScanner == null)
@@ -80,7 +84,9 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the singleton color provider.
+	 * Returns the singleton Java color provider.
+	 * 
+	 * @return the singleton Java color provider
 	 */
 	 public JavaColorProvider getJavaColorProvider() {
 	 	if (fColorProvider == null)
@@ -89,7 +95,9 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the singleton document scanner.
+	 * Returns the singleton Javadoc scanner.
+	 * 
+	 * @return the singleton Javadoc scanner
 	 */
 	 public RuleBasedScanner getJavaDocScanner() {
 	 	if (fDocScanner == null)

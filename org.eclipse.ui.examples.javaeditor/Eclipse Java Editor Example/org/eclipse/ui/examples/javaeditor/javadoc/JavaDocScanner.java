@@ -47,7 +47,9 @@ public class JavaDocScanner extends RuleBasedScanner {
 	private static String[] fgKeywords= { "@author", "@deprecated", "@exception", "@param", "@return", "@see", "@serial", "@serialData", "@serialField", "@since", "@throws", "@version" }; //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-7$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
 	/**
-	 * Create a new java doc scanner.
+	 * Create a new javadoc scanner for the given color provider.
+	 * 
+	 * @param provider the color provider
 	 */
 	 public JavaDocScanner(JavaColorProvider provider) {
 		super();

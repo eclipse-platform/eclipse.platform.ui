@@ -27,6 +27,7 @@ import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin;
 import org.eclipse.ui.examples.templateeditor.template.XMLContextType;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -94,7 +95,7 @@ public class TemplateEditorUI  {
 	}
 
 	public static ImageDescriptor imageDescriptorFromPlugin(String string, String default_image) {
-		return JavaEditorExamplePlugin.imageDescriptorFromPlugin(string, default_image);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(string, default_image);
 	}
 
 	public IPreferenceStore getPreferenceStore() {

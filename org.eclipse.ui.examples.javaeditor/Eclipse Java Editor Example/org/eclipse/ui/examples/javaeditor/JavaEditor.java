@@ -145,6 +145,8 @@ public class JavaEditor extends TextEditor {
 	/** The <code>JavaEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method performs any extra 
 	 * save behavior required by the java editor.
+	 * 
+	 * @param monitor the progress monitor
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
@@ -165,6 +167,9 @@ public class JavaEditor extends TextEditor {
 	/** The <code>JavaEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method performs sets the 
 	 * input of the outline page after AbstractTextEditor has set input.
+	 * 
+	 * @param input the editor input
+	 * @throws CoreException in case the input can not be set
 	 */ 
 	public void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
@@ -186,6 +191,9 @@ public class JavaEditor extends TextEditor {
 	 * <code>AbstractTextEditor</code> method performs gets
 	 * the java content outline page if request is for a an 
 	 * outline page.
+	 * 
+	 * @param required the required type
+	 * @return an adapter for the required type or <code>null</code>
 	 */ 
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {

@@ -165,6 +165,9 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 
 	/**
 	 * Creates a content outline page using the given provider and the given editor.
+	 * 
+	 * @param provider the document provider
+	 * @param editor the editor
 	 */
 	public JavaContentOutlinePage(IDocumentProvider provider, ITextEditor editor) {
 		super();
@@ -212,6 +215,8 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 	
 	/**
 	 * Sets the input of the outline page
+	 * 
+	 * @param input the input of this outline page
 	 */
 	public void setInput(Object input) {
 		fInput= input;

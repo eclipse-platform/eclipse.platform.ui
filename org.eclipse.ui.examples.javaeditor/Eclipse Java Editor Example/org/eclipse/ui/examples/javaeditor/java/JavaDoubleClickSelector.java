@@ -52,8 +52,10 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 	}
 	
 	/**
-	 * Match the brackets at the current selection. Return true if successful,
-	 * false otherwise.
+	 * Match the brackets at the current selection. Return <code>true</code> if successful,
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if brackets match, <code>false</code> otherwise
 	 */
 	 protected boolean matchBracketsAt() {
 
@@ -92,14 +94,12 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 				fEndPos= searchForClosingBracket(fStartPos, prevChar, fgBrackets[bracketIndex1 + 1], doc);
 				if (fEndPos > -1)
 					return true;
-				else
-					fStartPos= -1;
+				fStartPos= -1;
 			} else if (fEndPos > -1) {
 				fStartPos= searchForOpenBracket(fEndPos, fgBrackets[bracketIndex2 - 1], nextChar, doc);
 				if (fStartPos > -1)
 					return true;
-				else
-					fEndPos= -1;
+				fEndPos= -1;
 			}
 
 		} catch (BadLocationException x) {
@@ -109,8 +109,10 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 	}
 	
 	/**
-	 * Select the word at the current selection. Return true if successful,
-	 * false otherwise.
+	 * Select the word at the current selection location. Return <code>true</code> if successful,
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if a word can be found at the current selection location, <code>false</code> otherwise
 	 */
 	 protected boolean matchWord() {
 
@@ -151,12 +153,14 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 	}
 	
 	/**
-	 * Returns the position of the closing bracket after startPosition.
-	 * @returns the location of the closing bracket.
+	 * Returns the position of the closing bracket after <code>startPosition</code>.
+	 * 
 	 * @param startPosition - the beginning position
 	 * @param openBracket - the character that represents the open bracket
 	 * @param closeBracket - the character that represents the close bracket
 	 * @param document - the document being searched
+	 * @return the location of the closing bracket.
+	 * @throws BadLocationException in case <code>startPosition</code> is invalid in the document
 	 */
 	 protected int searchForClosingBracket(int startPosition, char openBracket, char closeBracket, IDocument document) throws BadLocationException {
 		int stack= 1;
@@ -175,18 +179,19 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 
 		if (stack == 0)
 			return closePosition - 1;
-		else
-			return -1;
+		return -1;
 
 	}
 	
 	/**
-	 * Returns the position of the open bracket before startPosition.
-	 * @returns the location of the starting bracket.
+	 * Returns the position of the open bracket before <code>startPosition</code>.
+	 * 
 	 * @param startPosition - the beginning position
 	 * @param openBracket - the character that represents the open bracket
 	 * @param closeBracket - the character that represents the close bracket
 	 * @param document - the document being searched
+	 * @return the location of the starting bracket.
+	 * @throws BadLocationException in case <code>startPosition</code> is invalid in the document
 	 */
 	 protected int searchForOpenBracket(int startPosition, char openBracket, char closeBracket, IDocument document) throws BadLocationException {
 		int stack= 1;
@@ -204,13 +209,13 @@ public class JavaDoubleClickSelector implements ITextDoubleClickStrategy {
 
 		if (stack == 0)
 			return openPos + 1;
-		else
-			return -1;
+		return -1;
 	}
 	
 	/**
-	 * Select the area between the selected bracket and the closing bracket. Return
-	 * true if successful.
+	 * Select the area between the selected bracket and the closing bracket.
+	 * 
+	 * @return <code>true</code> if selection was successful, <code>false</code> otherwise
 	 */
 	 protected boolean selectBracketBlock() {
 		if (matchBracketsAt()) {

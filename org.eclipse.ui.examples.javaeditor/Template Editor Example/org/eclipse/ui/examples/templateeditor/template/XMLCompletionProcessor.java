@@ -35,6 +35,10 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * We watch for angular brackets since those are often part of XML
 	 * templates.
+	 * 
+	 * @param viewer the viewer
+	 * @param offset the offset left of which the prefix is detected
+	 * @return the detected prefix
 	 */
 	protected String extractPrefix(ITextViewer viewer, int offset) {
 		IDocument document= viewer.getDocument();
@@ -49,7 +53,6 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 					break;
 				i--;
 			}
-	
 			return document.get(i, offset - i);
 		} catch (BadLocationException e) {
 			return ""; //$NON-NLS-1$
@@ -59,24 +62,35 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Cut out angular brackets for relevance sorting, since the template name
 	 * does not contain the brackets.
+	 * 
+	 * @param template the template
+	 * @param prefix the prefix
+	 * @return the relevance of the <code>template</code> for the given <code>prefix</code>
 	 */
 	protected int getRelevance(Template template, String prefix) {
 		if (prefix.startsWith("<")) //$NON-NLS-1$
 			prefix= prefix.substring(1);
 		if (template.getName().startsWith(prefix))
-			return 90; 
+			return 90;
 		return 0;
 	}
 
 	/**
 	 * Simply return all templates.
+	 * 
+	 * @param contextTypeId the context type, ignored in this implementation
+	 * @return all templates
 	 */
 	protected Template[] getTemplates(String contextTypeId) {
 		return TemplateEditorUI.getDefault().getTemplateStore().getTemplates();
 	}
 
 	/**
-	 * Return the XML context type that is supported by this plugin. 
+	 * Return the XML context type that is supported by this plug-in.
+	 * 
+	 * @param viewer the viewer, ignored in this implementation
+	 * @param region the region, ignored in this implementation
+	 * @return the supported XML context type
 	 */
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
 		return TemplateEditorUI.getDefault().getContextTypeRegistry().getContextType(XMLContextType.XML_CONTEXT_TYPE);
@@ -84,6 +98,9 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 
 	/**
 	 * Always return the default image.
+	 * 
+	 * @param template the template, ignored in this implementation
+	 * @return the defaul template image
 	 */
 	protected Image getImage(Template template) {
 		ImageRegistry registry= TemplateEditorUI.getDefault().getImageRegistry();

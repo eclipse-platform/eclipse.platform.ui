@@ -30,7 +30,9 @@ public class JavaCodeScanner extends RuleBasedScanner {
 	private static String[] fgConstants= { "false", "null", "true" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
 	/**
-	 * Creates a Java code scanner
+	 * Creates a Java code scanner with the given color provider.
+	 * 
+	 * @param provider the color provider
 	 */
 	public JavaCodeScanner(JavaColorProvider provider) {
 
