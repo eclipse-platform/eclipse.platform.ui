@@ -26,24 +26,32 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 public interface IWorkingSetManager {
 	/**
 	 * Change event id when a working set is added
+	 * newValue of the PropertyChangeEvent will be the added working set.
+	 * oldValue will be null.
 	 *
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd";		//$NON-NLS-1$
 	/**
 	 * Change event id when a working set is removed
+	 * newValue of the PropertyChangeEvent will be null.
+	 * oldValue will be the removed working set.
 	 *
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove";	//$NON-NLS-1$
 	/**
 	 * Change event id when the working set contents changed
+	 * newValue of the PropertyChangeEvent will be the changed working set.
+	 * oldValue will be null.
 	 *
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
 	/**
-	 * Change event id when the working set name changed
+	 * Change event id when the working set name changed.
+	 * newValue of the PropertyChangeEvent will be the changed working set.
+	 * oldValue will be null.
 	 *
 	 * @see IPropertyChangeListener
 	 */
