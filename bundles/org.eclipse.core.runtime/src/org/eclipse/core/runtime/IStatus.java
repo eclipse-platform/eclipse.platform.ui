@@ -1,11 +1,10 @@
 package org.eclipse.core.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
- 
+
 /**
  * A status object represents the outcome of an operation.
  * All <code>CoreException</code>s carry a status object to indicate 

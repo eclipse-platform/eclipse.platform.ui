@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.*;
@@ -203,7 +203,8 @@ public void shutdown(IProgressMonitor progress) {
 	try {
 		saveRegistry();
 	} catch (IOException e) {
-		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "Unable to write plug-in registry", e);
+		String message = Policy.bind("meta.unableToWriteRegistry");
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
 		logError(status);
 	}
 	if (progress != null)

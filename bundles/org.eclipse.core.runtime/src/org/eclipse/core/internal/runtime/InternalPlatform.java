@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.boot.BootLoader;
@@ -139,7 +138,7 @@ public static URL asLocalURL(URL url) throws IOException {
 	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
 private static void assertInitialized() {
-	Assert.isTrue(initialized, Policy.bind("appNotInit", new String[] {}));
+	Assert.isTrue(initialized, Policy.bind("meta.appNotInit"));
 }
 private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String name, String version) {
 	LaunchInfo.VersionedIdentifier result = null;
@@ -353,9 +352,18 @@ public static Plugin getRuntimePlugin() {
 }
 private static void handleException(ISafeRunnable code, Throwable e) {
 	if (!(e instanceof OperationCanceledException)) {
-		String message = Policy.bind("pluginProblems", new String[0]);
-		IStatus status = new Status(Status.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
-		getRuntimePlugin().getLog().log(status);
+		// try to figure out which plugin caused the problem.  Derive this from the class
+		// of the code arg.  Attribute to the Runtime plugin if we can't figure it out.
+		Plugin plugin = getRuntimePlugin();
+		try {
+			plugin = ((PluginClassLoader)code.getClass().getClassLoader()).getPluginDescriptor().getPlugin();
+		} catch (ClassCastException e1) {
+		} catch (CoreException e1) {
+		}
+		String pluginId =  plugin.getDescriptor().getUniqueIdentifier();
+		String message = Policy.bind("meta.pluginProblems", pluginId);
+		IStatus status = new Status(Status.WARNING, pluginId, Platform.PLUGIN_ERROR, message, e);
+		plugin.getLog().log(status);
 	}
 	code.handleException(e);
 }
@@ -545,7 +553,7 @@ static void loadOptions(Properties bootOptions) {
  * details any problems/issues encountered during this process.
  */
 private static MultiStatus loadRegistry(URL[] pluginPath) {
-	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryProblems", new String[0]), null);
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null);
 	InternalFactory factory = new InternalFactory(problems);
 	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
 	registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
@@ -680,7 +688,7 @@ private static void setupMetaArea(String locationString) throws CoreException {
 	// must create the meta area first as it defines all the other locations.
 	if (location.toFile().exists()) {
 		if (!location.toFile().isDirectory()) {
-			String message = Policy.bind("notDir", new String[] { location.toString()});
+			String message = Policy.bind("meta.notDir", location.toString());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, null));
 		}
 	}

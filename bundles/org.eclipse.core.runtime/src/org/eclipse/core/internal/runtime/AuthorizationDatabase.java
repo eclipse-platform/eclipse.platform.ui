@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import java.net.*;
@@ -244,11 +244,9 @@ private void load() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage(), null);
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
 	} catch (ClassNotFoundException e) {
-		String message = Policy.bind(e.getMessage(), null);
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
 	}
 }
 private void load(InputStream is) throws IOException, ClassNotFoundException {
@@ -269,8 +267,7 @@ public void save() throws CoreException {
 		file.createNewFile();
 		save(new FileOutputStream(file));
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage(), null);
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, e.getMessage(), e));
 	}
 	needsSaving = false;
 }

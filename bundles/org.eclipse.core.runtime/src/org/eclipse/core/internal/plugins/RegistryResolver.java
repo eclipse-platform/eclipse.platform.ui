@@ -1,5 +1,10 @@
 package org.eclipse.core.internal.plugins;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
@@ -509,7 +514,7 @@ private void resolve() {
 		// no roots ... quit
 		idmap = null;
 		reg = null;
-		error("Unable to resolve plugin registry");
+		error(Policy.bind("plugin.unableToResolve"));
 		return;
 	}
 
@@ -565,19 +570,19 @@ private void resolveExtension(ExtensionModel ext) {
 
 	PluginDescriptorModel plugin = (PluginDescriptorModel) reg.getPlugin(pluginId);
 	if (plugin == null) {
-		message = Policy.bind("extPointUnknown", new String[] { target, ext.getParentPluginDescriptor().getId()});
+		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId());
 		error(message);
 		return;
 	}
 	if (!plugin.getEnabled()) {
-		message = Policy.bind("extPointDisabled", new String[] { target, ext.getParentPluginDescriptor().getId()});
+		message = Policy.bind("parse.extPointDisabled", target, ext.getParentPluginDescriptor().getId());
 		error(message);
 		return;
 	}
 
 	ExtensionPointModel extPt = (ExtensionPointModel) getExtensionPoint(plugin, extPtId);
 	if (extPt == null) {
-		message = Policy.bind("extPointUnknown", new String[] { target, ext.getParentPluginDescriptor().getId()});
+		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId());
 		error(message);
 		return;
 	}
@@ -624,7 +629,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	IndexEntry ix = (IndexEntry) idmap.get(child);
 	if (ix == null) {
 		if (parent != null)
-			error(Policy.bind("pluginPrereqDisabled", new String[] { parent.getId(), child }));
+			error(Policy.bind("parse.prereqDisabled", parent.getId(), child));
 		if (DEBUG_RESOLVE)
 			debug("<POP  " + child + " not found");
 		cookie.isOk(false);
@@ -637,14 +642,16 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	if (parent != null) {
 		childPd = ix.addConstraint(currentConstraint);
 		if (childPd == null) {
-			error("Unable to satisfy prerequisite constraint from " + parent.getId() + " to " + child);
+			String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child);
+			error(message);
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " unable to satisfy constraint");
 			cookie.isOk(false);
 			return cookie;
 		} else
 			if (!cookie.addChange(currentConstraint)) {
-				error("Detected prerequisite loop from " + parent.getId() + " to " + child);
+				String message = Policy.bind("parse.prereqLoop", parent.getId(), child);
+				error(message);
 				if (DEBUG_RESOLVE)
 					debug("<POP  " + child + " prerequisite loop");
 				cookie.isOk(false);
@@ -689,7 +696,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 			}
 		}
 		if (parent != null)
-			error(Policy.bind("pluginPrereqDisabled", new String[] { parent.getId(), child }));
+			error(Policy.bind("parse.prereqDisabled", parent.getId(), child));
 		childPd.setEnabled(false);
 		if (DEBUG_RESOLVE)
 			debug("<POP  " + child + " failed to resolve subtree");

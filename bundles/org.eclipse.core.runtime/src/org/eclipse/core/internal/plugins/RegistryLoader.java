@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -76,9 +76,9 @@ private PluginModel processManifestFile(URL manifest) {
 		}
 	} catch (SAXParseException se) {
 		/* exception details logged by parser */
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("errorProcessing", new String[] { manifest.toString()}), null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null));
 	} catch (Exception e) {
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("errorProcessing", new String[] { manifest.toString()}), null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null));
 	}
 	return result;
 }

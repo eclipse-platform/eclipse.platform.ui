@@ -1,10 +1,10 @@
 package org.eclipse.core.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * An extension declared in a plug-in.
  * All information is obtained from the declaring plug-in's 

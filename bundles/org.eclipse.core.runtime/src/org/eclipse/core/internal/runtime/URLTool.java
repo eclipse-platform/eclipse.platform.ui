@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
@@ -58,21 +58,13 @@ public static URL appendTrailingSlash(String url) throws MalformedURLException {
  */
 public static URL appendTrailingSlash(URL url){
 	String file = url.getFile();
-
-	if(file.endsWith("/")){
+	if (file.endsWith("/"))
 		return url;
-	} else {
-		try {
-			return new URL(
-				url.getProtocol(),
-				url.getHost(),
-				url.getPort(),
-				file + "/");
-		} catch(MalformedURLException e){
-			Assert.isTrue(false, "internal error");
-		}
+	try {
+		return new URL(url.getProtocol(), url.getHost(), url.getPort(), file + "/");
+	} catch(MalformedURLException e){
+		Assert.isTrue(false, "internal error");
 	}
-
 	return null;
 }
 /**
@@ -93,20 +85,13 @@ public static URL getChild(String parent, String member) throws MalformedURLExce
  */
 public static URL getChild(URL parent, String member){
 	String file = parent.getFile();
-	if(!file.endsWith("/")){
+	if (!file.endsWith("/"))
 		file = file + "/";
-	}
-
 	try {
-		return new URL(
-			parent.getProtocol(),
-			parent.getHost(),
-			parent.getPort(),
-			file + member);
+		return new URL(parent.getProtocol(), parent.getHost(), parent.getPort(), file + member);
 	} catch(MalformedURLException e){
 		Assert.isTrue(false, "internal error");
 	}
-
 	return null;
 }
 /**
@@ -155,13 +140,11 @@ public static Vector getElements(String url) throws MalformedURLException {
  */
 public static Vector getElements(URL url){
 	Vector result = new Vector(5);
-
 	String lastElement = null;
 	while((lastElement = getLastElement(url)) != null){
 		result.insertElementAt(lastElement, 0);
 		url = getParent(url);
 	}
-
 	return result;
 }
 /**
@@ -215,27 +198,23 @@ public static String getLastElement(String url) throws MalformedURLException {
 public static String getLastElement(URL url){
 	String file = url.getFile();
 	int len = file.length();
-
-	if(len == 0 || len == 1 && file.charAt(0) == '/'){
+	if (len == 0 || len == 1 && file.charAt(0) == '/')
 		return null;
-	}
 
 	int lastSlashIndex = -1;
-	for(int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
-		if(file.charAt(i) == '/'){
+	for(int i = len - 2; lastSlashIndex == -1 && i >= 0; --i) {
+		if (file.charAt(i) == '/')
 			lastSlashIndex = i;
-		}
 	}
-
 	boolean isDirectory = file.charAt(len - 1) == '/';
-	if(lastSlashIndex == -1){
-		if(isDirectory){
+	if (lastSlashIndex == -1) {
+		if (isDirectory){
 			return file.substring(0, len - 1);
 		} else {
 			return file;
 		}
 	} else {
-		if(isDirectory){
+		if (isDirectory) {
 			return file.substring(lastSlashIndex + 1, len - 1);
 		} else {
 			return file.substring(lastSlashIndex + 1, len);
@@ -287,34 +266,23 @@ public static URL getParent(String url) throws MalformedURLException {
 public static URL getParent(URL url) {
 	String file = url.getFile();
 	int len = file.length();
-
-	if(len == 0 || len == 1 && file.charAt(0) == '/'){
+	if (len == 0 || len == 1 && file.charAt(0) == '/')
 		return null;
-	}
-
 	int lastSlashIndex = -1;
-	for(int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
-		if(file.charAt(i) == '/'){
+	for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
+		if (file.charAt(i) == '/')
 			lastSlashIndex = i;
-		}
 	}
-
-	if(lastSlashIndex == -1){
+	if (lastSlashIndex == -1)
 		file = "";
-	} else {
+	else
 		file = file.substring(0, lastSlashIndex + 1);
-	}
 
 	try {
-		url = new URL(
-			url.getProtocol(),
-			url.getHost(),
-			url.getPort(),
-			file);
+		url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
 	} catch(MalformedURLException e){
 		Assert.isTrue(false, e.getMessage());
 	}
-
 	return url;
 }
 /**
@@ -359,11 +327,7 @@ public static URL getRoot(String urlString) throws MalformedURLException {
  */
 public static URL getRoot(URL url) {
 	try {
-		return new URL(
-			url.getProtocol(),
-			url.getHost(),
-			url.getPort(),
-			"/");
+		return new URL(url.getProtocol(), url.getHost(), url.getPort(), "/");
 	} catch(MalformedURLException e){
 		Assert.isTrue(false, "internal error");
 	}

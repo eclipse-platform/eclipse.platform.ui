@@ -1,10 +1,10 @@
 package org.eclipse.core.runtime.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * An object which can create plug-in related model objects (typically when
  * parsing plug-in manifest files).

@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.boot.*;
 import java.io.File;
@@ -186,8 +186,10 @@ protected boolean shouldLookForClass(String name) {
 		return false;
 
 	// check if plugin is permanently deactivated
-	if (descriptor.isPluginDeactivated())
-		throw new DelegatingLoaderException("Attempt to load class " + name + " from deactivated plug-in " + descriptor.getUniqueIdentifier());
+	if (descriptor.isPluginDeactivated()) {
+		String message = Policy.bind("plugin.deactivatedLoad", name, descriptor.getUniqueIdentifier());
+		throw new DelegatingLoaderException(message);
+	}
 	return true;
 }
 }

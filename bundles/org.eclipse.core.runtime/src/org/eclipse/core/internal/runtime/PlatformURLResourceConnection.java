@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -37,7 +36,7 @@ protected URL resolve() throws IOException {
 	if (spec.startsWith("/"))
 		spec = spec.substring(1);
 	if (!spec.startsWith(RESOURCE + "/")) 
-		throw new IOException("Unsupported protocol variation " + url.toString());
+		throw new IOException(Policy.bind("url.badVariant", url.toString()));
 	return spec.length() == RESOURCE.length() + 1 ? rootURL : new URL(rootURL, spec.substring(RESOURCE.length() + 1));
 }
 

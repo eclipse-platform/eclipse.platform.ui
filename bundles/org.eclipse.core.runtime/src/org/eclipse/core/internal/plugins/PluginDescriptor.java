@@ -1,16 +1,15 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.internal.runtime.*;
-import java.io.*;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;import org.eclipse.core.internal.boot.PlatformClassLoader;import org.eclipse.core.internal.boot.PlatformURLBaseConnection;import org.eclipse.core.internal.boot.PlatformURLHandler;import org.eclipse.core.internal.boot.URLContentFilter;import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
@@ -73,20 +72,15 @@ public Object createExecutableExtension(String className, Object initData, IConf
 	try {
 		classInstance = getPluginClassLoader(true).loadClass(className);
 	} catch (ClassNotFoundException e1) {
-		throwException("Unable to load class " + className, e1);
+		throwException(Policy.bind("plugin.loadClassError", getId(), className), e1);
 	}
 
 	// create a new instance
 	Object result = null;
 	try {
 		result = classInstance.newInstance();
-	} catch (InstantiationException e2) {
-		throwException(Policy.bind("noInstanceCreate", new String[] { className }), e2);
-	} catch (IllegalAccessException e3) {
-		throwException(Policy.bind("noInstanceCreate", new String[] { className }), e3);
-	} catch (Exception e4) {
-		// default constructor caused exception
-		throwException(Policy.bind("constructorError", new String[] { className }), e4);
+	} catch (Exception e) {
+		throwException(Policy.bind("plugin.instantiateClassError", getId(), className), e);
 	}
 
 	// check if we have extension adapter and initialize
@@ -100,7 +94,7 @@ public Object createExecutableExtension(String className, Object initData, IConf
 			throw new CoreException(ce.getStatus());
 		} catch (Exception te) {
 			// user code caused exception
-			throwException(Policy.bind("setError", new String[] { className }), te);
+			throwException(Policy.bind("policy.initObjectError", getId(), className), te);
 		}
 	}
 	return result;
@@ -493,7 +487,7 @@ public ResourceBundle getResourceBundle(Locale locale) throws MissingResourceExc
 
 	// check if we already tried and failed
 	if (bundleNotFound)
-		throw new MissingResourceException(Policy.bind("resourceNotFound", new String[] { DEFAULT_BUNDLE_NAME + "_" + locale }), DEFAULT_BUNDLE_NAME + "_" + locale, "");
+		throw new MissingResourceException(Policy.bind("plugin.bundleNotFound", getId(), DEFAULT_BUNDLE_NAME + "_" + locale), DEFAULT_BUNDLE_NAME + "_" + locale, "");
 
 	// try to load bundle from this plugin install directory
 	ClassLoader resourceLoader = new URLClassLoader(new URL[] { getInstallURL()}, null);
@@ -599,7 +593,7 @@ private void internalDoPluginActivation() throws CoreException {
 		else
 			runtimeClass = getPluginClassLoader(true).loadClass(pluginClassName);
 	} catch (ClassNotFoundException e) {
-		errorMsg = Policy.bind("noLoadClass", new String[] { pluginClassName });
+		errorMsg = Policy.bind("plugin.loadClassError", getId(), pluginClassName);
 		throwException(errorMsg, e);
 	}
 
@@ -608,7 +602,7 @@ private void internalDoPluginActivation() throws CoreException {
 	try {
 		construct = runtimeClass.getConstructor(new Class[] { IPluginDescriptor.class });
 	} catch (NoSuchMethodException eNoConstructor) {
-		errorMsg = Policy.bind("constructorError", new String[] { pluginClassName });
+		errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName );
 		throwException(errorMsg, eNoConstructor);
 	}
 
@@ -617,27 +611,15 @@ private void internalDoPluginActivation() throws CoreException {
 	try {
 		pluginObject = (Plugin) construct.newInstance(new Object[] { this });
 	} catch (ClassCastException e) {
-		errorMsg = Policy.bind("notPluginChild", new String[] { pluginClassName });
-		throwException(errorMsg, null);
-	} catch (InstantiationException e) {
-		errorMsg = Policy.bind("noInstanceCreate", new String[] { pluginClassName });
-		throwException(errorMsg, e);
-	} catch (IllegalAccessException e) {
-		errorMsg = Policy.bind("noInstanceCreate", new String[] { pluginClassName });
-		throwException(errorMsg, e);
-	} catch (InvocationTargetException e) {
-		// user code caused exception
-		errorMsg = Policy.bind("constructorError", new String[] { pluginClassName });
+		errorMsg = Policy.bind("plugin.notPluginClass", pluginClassName);
 		throwException(errorMsg, e);
 	} catch (Exception e) {
-		// user code caused exception
-		errorMsg = Policy.bind("constructorError", new String[] { pluginClassName });
+		errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName);
 		throwException(errorMsg, e);
-	}
+	} 
 
 	// run startup()
-	final String message = Policy.bind("startupProblems", new String[] {
-	});
+	final String message = Policy.bind("plugin.startupProblems", getId());
 	final MultiStatus multiStatus = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 	ISafeRunnable code = new ISafeRunnable() {
 		public void run() throws Exception {
@@ -700,7 +682,7 @@ private void logError(IStatus status) {
 private boolean pluginActivationEnter() throws CoreException {
 	if (deactivated) {
 		// had permanent error on startup
-		String errorMsg = Policy.bind("pluginDisabled", new String[] { getUniqueIdentifier()});
+		String errorMsg = Policy.bind("plugin.pluginDisabled", getId());
 		throwException(errorMsg, null);
 	}
 	if (active || activePending) {

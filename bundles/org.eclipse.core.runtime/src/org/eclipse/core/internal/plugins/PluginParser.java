@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.runtime.model.*;
@@ -511,9 +510,9 @@ private void logStatus(SAXParseException ex) {
 
 	String msg;
 	if (name.equals(""))
-		msg = Policy.bind("parseError", new String[] { ex.getMessage()});
+		msg = Policy.bind("parse.error", ex.getMessage());
 	else
-		msg = Policy.bind("parseErrorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+		msg = Policy.bind("parse.errorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
 public InstallModel parseInstall(InputSource in) throws Exception {
@@ -834,22 +833,6 @@ public void parsePluginRequiresImport(Attributes attributes) {
 	scratchVectors[REQUIRES_INDEX].addElement(current);
 }
 public void parseRequiresAttributes(Attributes attributes) {
-	// This attribute no longer supported
-
-	// Only one attributes - PLUGIN_REQUIRES_PLATFORM
-
-	// process attributes
-	/*	int len = (attributes != null) ? attributes.getLength() : 0;
-		for (int i = 0; i < len; i++) {
-			PluginDescriptor currentPluginDescriptor = (PluginDescriptor) objectStack.peek();
-			String attrName = attributes.getQName(i);
-			String attrValue = attributes.getValue(i).trim();
-	
-			// common (manifest and cached registry)
-			if (attrName.equals(PLUGIN_REQUIRES_PLATFORM))
-				currentPluginDescriptor._setPrerequisitePlatformVersion(attrValue);
-	}
-	*/
 }
 
 public URLModel parseURLAttributes(Attributes attributes) {

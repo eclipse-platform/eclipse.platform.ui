@@ -1,10 +1,10 @@
 package org.eclipse.core.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * A progress monitor that uses the a given amount of work ticks
  * form a parent monitor. It can be used as follows:

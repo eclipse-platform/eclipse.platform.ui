@@ -1,10 +1,10 @@
 package org.eclipse.core.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.internal.plugins.DefaultPlugin;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;
@@ -166,7 +166,7 @@ public abstract class Plugin  {
  * <p>
  * Instances of plug-in runtime classes are automatically created 
  * by the platform in the course of plug-in activation.
- * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
+ * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
  * </p>
  *
  * @param descriptor the plug-in descriptor
@@ -174,13 +174,12 @@ public abstract class Plugin  {
  */
 public Plugin(IPluginDescriptor descriptor) {
 	Assert.isNotNull(descriptor);
-	Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("pluginConstructInvalid", new String[] {}));
+	Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated"));
 	String className = ((PluginDescriptor) descriptor).getPluginClass();
-	if (this.getClass() == DefaultPlugin.class) {
-		Assert.isTrue(className == null || className.equals(""), Policy.bind("pluginConstructInvalid", new String[] {}));
-	} else {
-		Assert.isTrue(this.getClass().getName().equals(className), Policy.bind("pluginConstructInvalid", new String[] {}));
-	}
+	if (this.getClass() == DefaultPlugin.class) 
+		Assert.isTrue(className == null || className.equals(""), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier()));
+	else 
+		Assert.isTrue(this.getClass().getName().equals(className), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier()));
 	this.descriptor = descriptor;
 	String key = descriptor.getUniqueIdentifier() + "/debug";
 	String value = Platform.getDebugOption(key);

@@ -1,10 +1,10 @@
 package org.eclipse.core.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * The <code>IProgressMonitor</code> interface is implemented
  * by objects that monitor the progress of an activity; the methods

@@ -1,5 +1,10 @@
 package org.eclipse.core.runtime.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 /**
  * An object which represents the a named URL in a component or configuration
  * manifest.

@@ -1,4 +1,4 @@
-package org.eclipse.core.internal.plugins;import org.eclipse.core.runtime.model.PluginFragmentModel;
+package org.eclipse.core.internal.plugins;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
 

@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -37,7 +36,7 @@ protected URL resolve() throws IOException {
 	if (spec.startsWith("/")) 
 		spec = spec.substring(1);
 	if (!spec.startsWith(FRAGMENT)) 
-		throw new IOException("Unsupported protocol variation "+url.toString());
+		throw new IOException(Policy.bind("url.badVariant", url.toString()));
 	int ix = spec.indexOf("/",FRAGMENT.length()+1);
 	String ref = ix==-1 ? spec.substring(FRAGMENT.length()+1) : spec.substring(FRAGMENT.length()+1,ix);
 	String id = getId(ref);
@@ -45,7 +44,7 @@ protected URL resolve() throws IOException {
 	PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
 	fd = vid==null ? registry.getFragment(id) : registry.getFragment(id,vid);
 	if (fd == null)
-		throw new IOException("Unable to resolve fragment "+url.toString());
+		throw new IOException(Policy.bind("url.resolveFragment", url.toString()));
 	URL result = new URL (fd.getLocation());
 	if (ix == -1 || (ix + 1) >= spec.length()) 
 		return result;

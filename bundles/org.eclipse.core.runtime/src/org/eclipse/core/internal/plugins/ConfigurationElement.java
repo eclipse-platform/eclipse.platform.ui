@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -65,7 +65,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 
 		// specified name is not a simple attribute nor child element
 		else {
-			String message = Policy.bind("extDefNotFound", new String[] { attributeName });
+			String message = Policy.bind("plugin.extDefNotFound", attributeName);
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 			throw new CoreException(status);
 		}
@@ -87,7 +87,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 	}
 
 	if (className == null || className.equals("")) {
-		String message = Policy.bind("extDefNoClass", new String[] { attributeName });
+		String message = Policy.bind("plugin.extDefNoClass", attributeName );
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 		logError(status);
 		throw new CoreException(status);

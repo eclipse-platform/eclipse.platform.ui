@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import java.util.*;
 import java.io.*;
@@ -126,7 +126,7 @@ public Hashtable readPluginPath(IPath location) throws CoreException {
 				stream.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("readPlatformMeta", new String[] {location.toString()});
+		String message = Policy.bind("meta.readPlatformMeta", location.toString());
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, message, e);
 		throw new CoreException (status);
 }
@@ -149,7 +149,7 @@ public void writePluginPath(Hashtable paths, IPath location) throws CoreExceptio
 				stream.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("writePlatformMeta", new String[] {location.toString()});
+		String message = Policy.bind("meta.writePlatformMeta", location.toString());
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e);
 		throw new CoreException (status);
 	}
