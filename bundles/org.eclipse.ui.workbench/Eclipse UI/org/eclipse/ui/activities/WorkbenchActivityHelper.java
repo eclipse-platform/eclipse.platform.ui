@@ -126,7 +126,6 @@ public final class WorkbenchActivityHelper {
     	return JFaceResources.getColorRegistry().getRGB(IWorkbenchConstants.COLOR_HIGHLIGHT);
     }
 	
-
     /**
      * @return the <code>Color</code> that should be used to highlight filtered 
      * contributions.
@@ -171,13 +170,6 @@ public final class WorkbenchActivityHelper {
 	 */
 	public static final boolean isFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedCategoryIds().isEmpty();
-	}
-	
-	/** 
-	 * @return whether the UI will provide a "show all" option when applicable.
-	 */
-	public static final boolean showAll() {
-		return isFiltering() && PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL);
 	}
 
 	/**

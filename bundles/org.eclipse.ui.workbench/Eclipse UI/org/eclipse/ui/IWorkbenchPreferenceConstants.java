@@ -133,18 +133,6 @@ public interface IWorkbenchPreferenceConstants {
 	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
 	
 	/**
-	 * Workbench preference id for determining whether the 'show all' option 
-	 * should be shown where applicable (for activity-based filtering).
-	 * <p>
-	 * The default value for this preference is: <code>true</code> (allow show 
-	 * all)
-	 * </p>
-	 * @since 3.0
-	 * @issue does this need to be API?
-	 */
-	public static final String SHOULD_ALLOW_SHOW_ALL = "SHOULD_ALLOW_SHOW_ALL"; //$NON-NLS-1$
-
-	/**
 	 * Workbench preference id for determining whether the user will be prompted 
 	 * for activity enablement.  If this is false then activities are enabled
 	 * automatically.

@@ -447,9 +447,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// workbench preferences that are API (but non-RCP)
 		// @issue these should probably be on org.eclipse.ui's preference store, 
 		//    not org.eclipse.ui.workbench
-		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
-		// Allow 'show all' option by default
-		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL, true);		
+		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);		
 		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 		
 		// @issue some of these may be IDE-specific
