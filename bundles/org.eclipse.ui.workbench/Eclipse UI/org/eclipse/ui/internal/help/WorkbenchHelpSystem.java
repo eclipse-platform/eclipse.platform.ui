@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelp;
@@ -36,10 +38,7 @@ import org.eclipse.ui.help.AbstractHelpUI;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * This class represents a refactoring of the functionality previously contained
@@ -152,27 +151,33 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 * 
 	 * @since 3.1
 	 */
-	private IConfigurationElementRemovalHandler handler = new IConfigurationElementRemovalHandler() {
+    /**
+     * Handles dynamic removal of the help system.
+     * 
+     * @since 3.1
+     */
+    private IExtensionRemovalHandler handler = new IExtensionRemovalHandler() {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
-		 *      java.lang.Object)
-		 */
-		public void removeInstance(IConfigurationElement source, Object object) {
-			if (object == pluggableHelpUI) {
-				isInitialized = false;
-				pluggableHelpUI = null;
-				helpCompatibilityWrapper = null;
-				// remove ourselves - we'll be added again in initalize if
-				// needed
-				Workbench.getInstance().getConfigurationElementTracker()
-						.unregisterRemovalHandler(handler);
-			}
-		}
-	};
-
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
+         *           java.lang.Object)
+         */
+        public void removeInstance(IExtension source, Object[] objects) {
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] == pluggableHelpUI) {
+                    isInitialized = false;
+                    pluggableHelpUI = null;
+                    helpCompatibilityWrapper = null;
+                    // remove ourselves - we'll be added again in initalize if
+                    // needed
+                    PlatformUI.getWorkbench().getExtensionTracker()
+							.unregisterRemovalHandler(handler);
+                }
+            }
+        }
+    };
 	/**
 	 * Compatibility implementation of old IHelp interface.
 	 * WorkbenchHelp.getHelpSupport and IHelp were deprecated in 3.0.
@@ -331,7 +336,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		helpCompatibilityWrapper = null;
 		isInitialized = false;
 		handler = null;
-		Workbench.getInstance().getConfigurationElementTracker()
+		PlatformUI.getWorkbench().getExtensionTracker()
 				.unregisterRemovalHandler(handler);
 	}
 
@@ -430,11 +435,14 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 							.createExtension(element,
 									HELP_SYSTEM_CLASS_ATTRIBUTE);
 					// start listening for removals
-					Workbench.getInstance().getConfigurationElementTracker()
+					PlatformUI.getWorkbench().getExtensionTracker()
 							.registerRemovalHandler(handler);
 					// register the new help UI for removal notification
-					Workbench.getInstance().getConfigurationElementTracker()
-							.registerObject(element, pluggableHelpUI, IConfigurationElementTracker.REF_WEAK);
+					PlatformUI
+							.getWorkbench()
+							.getExtensionTracker()
+							.registerObject(element.getDeclaringExtension(),
+									pluggableHelpUI, IExtensionTracker.REF_WEAK);
 					return true;
 				} catch (CoreException e) {
 					WorkbenchPlugin.log(

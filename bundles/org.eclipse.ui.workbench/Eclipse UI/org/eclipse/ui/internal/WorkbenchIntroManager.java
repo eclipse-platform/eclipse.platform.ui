@@ -11,9 +11,11 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -23,8 +25,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -44,12 +44,15 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
-        workbench.getConfigurationElementTracker().registerRemovalHandler(new IConfigurationElementRemovalHandler(){
+        workbench.getExtensionTracker().registerRemovalHandler(new IExtensionRemovalHandler(){
 
-			public void removeInstance(IConfigurationElement source, Object object) {
-				if (object instanceof IIntroPart) {
-					closeIntro((IIntroPart) object);
-				}
+			public void removeInstance(IExtension source, Object[] objects) {
+                for (int i = 0; i < objects.length; i++) {
+                    if (objects[i] instanceof IIntroPart) {
+                        closeIntro((IIntroPart) objects[i]);
+                    }
+                }
+				
 			}});
     }
 
@@ -234,7 +237,10 @@ public class WorkbenchIntroManager implements IIntroManager {
 		introPart = introDescriptor == null ? null
                 : introDescriptor.createIntro();
         if (introPart != null) {
-        	workbench.getConfigurationElementTracker().registerObject(introDescriptor.getConfigurationElement(), introPart, IConfigurationElementTracker.REF_WEAK);
+        	workbench.getExtensionTracker().registerObject(
+					introDescriptor.getConfigurationElement()
+							.getDeclaringExtension(), introPart,
+					IExtensionTracker.REF_WEAK);
         }
     	return introPart;
     }

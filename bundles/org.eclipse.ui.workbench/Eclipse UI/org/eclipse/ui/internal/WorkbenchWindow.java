@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -95,8 +96,7 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -330,7 +330,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     private int largeUpdates = 0;
 
-	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private IExtensionTracker tracker;
 
     void registerActionSets(IActionSet[] actionSets) {
         
@@ -541,8 +541,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
             }
         }
 
-        if (windowClosed)
-        	tracker.dispose();
+        if (windowClosed && tracker != null)
+        	tracker.close();
         
         return windowClosed;
     }
@@ -2835,10 +2835,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
         defaultLayout.addTrim(control, side, reference);
     }
 
-	/**
-     * EXPERIMENTAL
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
-	public IConfigurationElementTracker getConfigurationElementTracker() {
+	public IExtensionTracker getExtensionTracker() {
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getWorkbench().getDisplay());
+		}
 		return tracker ;
 	}
 }

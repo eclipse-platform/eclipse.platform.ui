@@ -25,9 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -51,15 +56,12 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Perspective registry.
  */
-public class PerspectiveRegistry implements IPerspectiveRegistry, IConfigurationElementRemovalHandler, IConfigurationElementAdditionHandler {
+public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
     private String defaultPerspID;
 
     private static final String EXT = "_persp.xml"; //$NON-NLS-1$
@@ -79,8 +81,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
      * Construct a new registry.
      */
     public PerspectiveRegistry() {
-    	Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
-    	Workbench.getInstance().getConfigurationElementTracker().registerAdditionHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
 
     	IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
@@ -185,7 +187,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
 		perspectives.add(desc);
 		IConfigurationElement element = desc.getConfigElement();
 		if (element != null) {
-			Workbench.getInstance().getConfigurationElementTracker().registerObject(element, desc, IConfigurationElementTracker.REF_WEAK);
+			PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+					element.getDeclaringExtension(), desc,
+					IExtensionTracker.REF_WEAK);
 		}
 	}
 
@@ -604,40 +608,50 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
      * 
      */
     public void dispose() {
-    	Workbench.getInstance().getConfigurationElementTracker().unregisterRemovalHandler(this);
-    	Workbench.getInstance().getConfigurationElementTracker().unregisterAdditionHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
 	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof PerspectiveDescriptor) {
-	        // close the perspective in all windows
-	        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-	                .getWorkbenchWindows();
-	        PerspectiveDescriptor desc = (PerspectiveDescriptor) object;
-			for (int w = 0; w < windows.length; ++w) {
-	            IWorkbenchWindow window = windows[w];
-	            IWorkbenchPage[] pages = window.getPages();
-	            for (int p = 0; p < pages.length; ++p) {
-	                WorkbenchPage page = (WorkbenchPage) pages[p];
-	                ClosePerspectiveAction.closePerspective(page, page
-	                        .findPerspective(desc));
-	            }
-	        }
-			
-			//((Workbench)PlatformUI.getWorkbench()).getPerspectiveHistory().removeItem(desc);
-			
-			internalDeletePerspective(desc);
-		}
+	public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof PerspectiveDescriptor) {
+                // close the perspective in all windows
+                IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+                PerspectiveDescriptor desc = (PerspectiveDescriptor) objects[i];
+                for (int w = 0; w < windows.length; ++w) {
+                    IWorkbenchWindow window = windows[w];
+                    IWorkbenchPage[] pages = window.getPages();
+                    for (int p = 0; p < pages.length; ++p) {
+                        WorkbenchPage page = (WorkbenchPage) pages[p];
+                        ClosePerspectiveAction.closePerspective(page, page.findPerspective(desc));
+                    }
+                }
+
+                // ((Workbench)PlatformUI.getWorkbench()).getPerspectiveHistory().removeItem(desc);
+
+                internalDeletePerspective(desc);
+            }
+
+        }
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
 	 */
-	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
-		PerspectiveRegistryReader reader = new PerspectiveRegistryReader(this);
-		reader.readElement(element);		
-	}
+	public void addInstance(IExtensionTracker tracker, IExtension addedExtension) {
+        IConfigurationElement[] addedElements = addedExtension.getConfigurationElements();
+        for (int i = 0; i < addedElements.length; i++) {
+            PerspectiveRegistryReader reader = new PerspectiveRegistryReader(this);
+            reader.readElement(addedElements[i]);
+        }
+    }
+    
+    //PASCAL Which extension point
+    public IExtensionPoint getExtensionPointFilter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

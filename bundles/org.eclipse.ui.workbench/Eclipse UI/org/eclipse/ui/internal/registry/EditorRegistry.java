@@ -30,9 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -54,20 +56,17 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * Provides access to the collection of defined editors for resource types.
  */
-public class EditorRegistry implements IEditorRegistry, IConfigurationElementRemovalHandler {
+public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler {
 
     /*
      * Cached images - these include images from registered editors (via
@@ -112,7 +111,8 @@ public class EditorRegistry implements IEditorRegistry, IConfigurationElementRem
     public EditorRegistry() {
         super();
         initializeFromStorage();
-        Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
+				this);
     }
 
     /**
@@ -136,7 +136,9 @@ public class EditorRegistry implements IEditorRegistry, IConfigurationElementRem
     public void addEditorFromPlugin(EditorDescriptor editor, List extensions,
             List filenames, boolean bDefault) {
 
-    	Workbench.getInstance().getConfigurationElementTracker().registerObject(editor.getConfigurationElement(), editor, IConfigurationElementTracker.REF_WEAK);
+    	PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+				editor.getConfigurationElement().getDeclaringExtension(),
+				editor, IExtensionTracker.REF_WEAK);
         // record it in our quick reference list
         sortedEditorsFromPlugins.add(editor);
 
@@ -1101,19 +1103,24 @@ public class EditorRegistry implements IEditorRegistry, IConfigurationElementRem
         }
     }
 
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
-	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof EditorDescriptor) {
-			EditorDescriptor desc = (EditorDescriptor) object;
-			
-	        sortedEditorsFromPlugins.remove(desc);	        
-	        mapIDtoEditor.values().remove(desc);
-	        removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
-	        removeEditorFromMapping(typeEditorMappings.map, desc);    	
+	
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement,
+     *           java.lang.Object)
+     */
+    public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof EditorDescriptor) {
+                EditorDescriptor desc = (EditorDescriptor) objects[i];
 
-		}
-	}
+                sortedEditorsFromPlugins.remove(desc);
+                mapIDtoEditor.values().remove(desc);
+                removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
+                removeEditorFromMapping(typeEditorMappings.map, desc);
+            }
+
+        }
+    }
 }

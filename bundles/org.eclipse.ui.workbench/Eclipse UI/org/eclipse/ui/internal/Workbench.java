@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -101,8 +102,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
-import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -1883,7 +1883,8 @@ public final class Workbench implements IWorkbench {
         WorkbenchThemeManager.getInstance().dispose();
         PropertyPageContributorManager.getManager().dispose();
         ObjectActionContributorManager.getManager().dispose();
-        tracker.dispose();
+        if (tracker != null)
+        	tracker.close();
     }
 
     /*
@@ -2129,7 +2130,7 @@ public final class Workbench implements IWorkbench {
      * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
      */
     private IntroDescriptor introDescriptor;
-	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private IExtensionTracker tracker;
 	private IRegistryChangeListener startupRegistryListener = new IRegistryChangeListener() {
 
 		/* (non-Javadoc)
@@ -2247,11 +2248,13 @@ public final class Workbench implements IWorkbench {
         }
     }
 
-	/**
-     * EXPERIMENTAL
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getExtensionTracker()
 	 */
-	public IConfigurationElementTracker getConfigurationElementTracker() {		
+	public IExtensionTracker getExtensionTracker() {		
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getDisplay());
+		}
 		return tracker ;
 	}
 	

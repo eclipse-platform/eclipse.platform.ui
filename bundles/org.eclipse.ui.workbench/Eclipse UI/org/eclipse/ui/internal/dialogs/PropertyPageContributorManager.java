@@ -20,12 +20,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * Extends generic object contributor manager by loading property page
@@ -197,17 +199,20 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 				this);
 		reader.registerPropertyPages(Platform.getExtensionRegistry());
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker,
-	 *      org.eclipse.core.runtime.IConfigurationElement)
-	 */
-	public void addInstance(IConfigurationElementTracker tracker,
-			IConfigurationElement element) {
-		PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(
-				this);
-		reader.readElement(element);
-	}
+	
+    //PASCAL: Which Extension Point is this?
+    public IExtensionPoint getExtensionPointFilter() {
+        return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addInstance(IExtensionTracker tracker, IExtension extension) {
+        IConfigurationElement[] addedElements = extension.getConfigurationElements();
+        for (int i = 0; i < addedElements.length; i++) {
+            PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
+            reader.readElement(addedElements[i]);
+        }
+    }
 }

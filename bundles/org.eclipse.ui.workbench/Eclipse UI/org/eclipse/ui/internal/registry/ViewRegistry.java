@@ -19,18 +19,20 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * The central manager for view descriptors.
  */
-public class ViewRegistry implements IViewRegistry, IConfigurationElementRemovalHandler, IConfigurationElementAdditionHandler {
+public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
 	
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_VIEWS; //$NON-NLS-1$
 	
@@ -64,8 +66,8 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
         super();    
         categories = new ArrayList();       
         sticky = new ArrayList();        
-        Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
-        Workbench.getInstance().getConfigurationElementTracker().registerAdditionHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
         reader.readViews(Platform.getExtensionRegistry(), this);
     }
 
@@ -78,12 +80,14 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 			dirtyViewCategoryMappings = true;
 			// Mark categories list as dirty
 			categories.add(desc);
-			Workbench.getInstance().getConfigurationElementTracker()
+			IConfigurationElement element = (IConfigurationElement) desc.getAdapter(IConfigurationElement.class);
+			if (element == null)
+				return;
+			PlatformUI.getWorkbench().getExtensionTracker()
 					.registerObject(
-							(IConfigurationElement) desc
-									.getAdapter(IConfigurationElement.class),
+							element.getDeclaringExtension(),
 							desc,
-							IConfigurationElementTracker.REF_WEAK);
+							IExtensionTracker.REF_WEAK);
 		}
     }
 
@@ -93,11 +97,11 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
     public void add(IViewDescriptor desc) {
     	if (views.add(desc)) {
     		dirtyViewCategoryMappings = true;
-			Workbench.getInstance().getConfigurationElementTracker()
+    		PlatformUI.getWorkbench().getExtensionTracker()
 					.registerObject(
-							(IConfigurationElement) desc.getConfigurationElement(),
+							desc.getConfigurationElement().getDeclaringExtension(),
 							desc,
-							IConfigurationElementTracker.REF_WEAK);
+							IExtensionTracker.REF_WEAK);
     	}
     }
 
@@ -107,11 +111,11 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
     public void add(StickyViewDescriptor desc) {
     	if (!sticky.contains(desc)) {
 	        sticky.add(desc);
-	        Workbench.getInstance().getConfigurationElementTracker()
+	        PlatformUI.getWorkbench().getExtensionTracker()
 			.registerObject(
-					(IConfigurationElement) desc.getConfigurationElement(),
+					desc.getConfigurationElement().getDeclaringExtension(),
 					desc, 
-					IConfigurationElementTracker.REF_WEAK);
+					IExtensionTracker.REF_WEAK);
     	}
     }
 
@@ -268,42 +272,50 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
     }
 
     public void dispose() {
-    	Workbench.getInstance().getConfigurationElementTracker().unregisterRemovalHandler(this);
-    	Workbench.getInstance().getConfigurationElementTracker().unregisterAdditionHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
 	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof StickyViewDescriptor) {			
-			sticky.remove(object);
-		}
-		else if (object instanceof ViewDescriptor) {
-			views.remove(object);
-			dirtyViewCategoryMappings = true;
-		}
-		else if (object instanceof Category) {
-			categories.remove(object);
-			dirtyViewCategoryMappings = true;
-		}
+	public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof StickyViewDescriptor) {           
+                sticky.remove(objects[i]);
+            }
+            else if (objects[i] instanceof ViewDescriptor) {
+                views.remove(objects[i]);
+                dirtyViewCategoryMappings = true;
+            }
+            else if (objects[i] instanceof Category) {
+                categories.remove(objects[i]);
+                dirtyViewCategoryMappings = true;
+            }
+        }
+
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
+     */
+    public IExtensionPoint getExtensionPointFilter() {
+      return Platform.getExtensionRegistry().getExtensionPoint(EXTENSIONPOINT_UNIQUE_ID);
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
 	 */
-	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
-		if (!element.getDeclaringExtension()
-				.getExtensionPointUniqueIdentifier().equals(
-						EXTENSIONPOINT_UNIQUE_ID))
-			return;
-
-		if (element.getName().equals(ViewRegistryReader.TAG_VIEW)) {
-			reader.readView(element);
-		} else if (element.getName().equals(ViewRegistryReader.TAG_CATEGORY)) {
-			reader.readCategory(element);
-		} else if (element.getName().equals(ViewRegistryReader.TAG_STICKYVIEW)) {
-			reader.readSticky(element);
-		}			
+	public void addInstance(IExtensionTracker tracker, IExtension addedeExtension) {
+        IConfigurationElement[] addedElements = addedeExtension.getConfigurationElements();
+        for (int i = 0; i < addedElements.length; i++) {
+            IConfigurationElement element = addedElements[i];
+    		if (element.getName().equals(ViewRegistryReader.TAG_VIEW)) {
+    			reader.readView(element);
+    		} else if (element.getName().equals(ViewRegistryReader.TAG_CATEGORY)) {
+    			reader.readCategory(element);
+    		} else if (element.getName().equals(ViewRegistryReader.TAG_STICKYVIEW)) {
+    			reader.readSticky(element);
+    		}			
+        }
 	}
 }

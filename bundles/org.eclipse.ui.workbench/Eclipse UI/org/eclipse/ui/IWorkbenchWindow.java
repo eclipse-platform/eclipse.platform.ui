@@ -11,6 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Shell;
 
@@ -166,5 +167,27 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
      *            the new active page
      */
     public void setActivePage(IWorkbenchPage page);
-
+    
+    /**
+	 * <p>
+	 * Return the extension tracker for the workbench. This tracker may be used
+	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
+	 * </p>
+	 * <p>
+	 * The tracker at this level of the workbench is typically used to track
+	 * elements that persist for the life of the workbench. For example, the
+	 * action objects corresponding to new wizards contributed by plug-ins fall
+	 * into this category.
+	 * </p>
+	 * <p>
+	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
+	 * 3.1 release.
+	 * </p>
+	 * 
+	 * @return the extension tracker
+	 * @see IWorkbench#getExtensionTracker()
+	 * @see IWorkbenchPage#getExtensionTracker()
+	 * @since 3.1
+	 */
+    public IExtensionTracker getExtensionTracker();
 }

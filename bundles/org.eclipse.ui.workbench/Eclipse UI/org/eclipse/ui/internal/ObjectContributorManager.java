@@ -24,11 +24,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -50,7 +52,7 @@ import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracke
  * @see IObjectContributor
  * @see IObjectContributorManager
  */
-public abstract class ObjectContributorManager implements IConfigurationElementRemovalHandler, IConfigurationElementAdditionHandler {
+public abstract class ObjectContributorManager implements IExtensionRemovalHandler, IExtensionAdditionHandler {
 	
 	/** 
 	 * @since 3.1
@@ -92,8 +94,8 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
         objectLookup = null;
         resourceAdapterLookup = null;
         adaptableLookup = null;
-        Workbench.getInstance().getConfigurationElementTracker().registerAdditionHandler(this);
-        Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -278,10 +280,12 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
 					.getAdapter(IConfigurationElement.class);
 			if (element == null)
 				return;
-			ContributorRecord contributorRecord = new ContributorRecord(contributor, targetType);
+			ContributorRecord contributorRecord = new ContributorRecord(
+					contributor, targetType);
 			contributorRecordSet.add(contributorRecord);
-			Workbench.getInstance().getConfigurationElementTracker()
-					.registerObject(element, contributorRecord, IConfigurationElementTracker.REF_WEAK);
+			PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+					element.getDeclaringExtension(), contributorRecord,
+					IExtensionTracker.REF_WEAK);
         }
     }
 
@@ -482,27 +486,26 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
 		return adaptableContributors == null ? Collections.EMPTY_LIST : adaptableContributors;
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     */
+    public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof ContributorRecord) {
+                ContributorRecord contributorRecord = (ContributorRecord) objects[i];
+                unregisterContributor((contributorRecord).contributor, (contributorRecord).objectClassName);
+                contributorRecordSet.remove(contributorRecord);
+            }
+        }
+    }
 
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
-	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof ContributorRecord) {
-			ContributorRecord contributorRecord = (ContributorRecord) object;
-			unregisterContributor((contributorRecord).contributor,
-					(contributorRecord).objectClassName);
-			contributorRecordSet.remove(contributorRecord);
-		}
-	}
-	
-	/**
-	 * Remove listeners and dispose of this manager.
-	 * 
-	 * @since 3.1
-	 */
-	public void dispose() {
-        Workbench.getInstance().getConfigurationElementTracker().unregisterAdditionHandler(this);
-        Workbench.getInstance().getConfigurationElementTracker().unregisterRemovalHandler(this);
-	}	
+    /**
+     * Remove listeners and dispose of this manager.
+     * 
+     * @since 3.1
+     */
+    public void dispose() {
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+    }	
 }

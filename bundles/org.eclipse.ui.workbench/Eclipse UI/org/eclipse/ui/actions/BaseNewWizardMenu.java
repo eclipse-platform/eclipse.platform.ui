@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -33,8 +35,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * A <code>BaseNewWizardMenu</code> is used to populate a menu manager with
@@ -54,11 +54,16 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
     private final Map actions = new HashMap(21);
 
-    private final IConfigurationElementRemovalHandler configListener = new IConfigurationElementRemovalHandler() {
+    private final IExtensionRemovalHandler configListener = new IExtensionRemovalHandler() {
 
-        public void removeInstance(IConfigurationElement source, Object object) {
-            if (object instanceof NewWizardShortcutAction) {
-                actions.values().remove(object);
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+         */
+        public void removeInstance(IExtension source, Object[] objects) {
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] instanceof NewWizardShortcutAction) {
+                    actions.values().remove(objects[i]);
+                }
             }
         }
     };
@@ -168,10 +173,11 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
             if (element != null) {
                 action = new NewWizardShortcutAction(workbenchWindow, element);
                 actions.put(id, action);
-                ((WorkbenchWindow) workbenchWindow).getConfigurationElementTracker()
-                        .registerObject(element.getConfigurationElement(),
-                                action, IConfigurationElementTracker.REF_WEAK);
-                // XXX: When does the action get unregistered?
+				workbenchWindow.getExtensionTracker().registerObject(
+						element.getConfigurationElement()
+								.getDeclaringExtension(), action,
+						IExtensionTracker.REF_WEAK);
+				// XXX: When does the action get unregistered?
             }
         }
         return action;
@@ -225,8 +231,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     private void registerListeners() {
         Platform.getExtensionRegistry().addRegistryChangeListener(
                 registryListener);
-        ((WorkbenchWindow) workbenchWindow).getConfigurationElementTracker()
-                .registerRemovalHandler(configListener);
+        workbenchWindow.getExtensionTracker().registerRemovalHandler(
+				configListener);
     }
 
     /**
@@ -251,7 +257,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     private void unregisterListeners() {
         Platform.getExtensionRegistry().removeRegistryChangeListener(
                 registryListener);
-        ((WorkbenchWindow) workbenchWindow).getConfigurationElementTracker()
-                .unregisterRemovalHandler(configListener);
+        workbenchWindow.getExtensionTracker().unregisterRemovalHandler(
+				configListener);
     }
 }

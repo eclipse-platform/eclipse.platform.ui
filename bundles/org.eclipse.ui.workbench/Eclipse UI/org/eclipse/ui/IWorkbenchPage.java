@@ -11,6 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
 
@@ -837,4 +838,25 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      */
     public void closeAllPerspectives(boolean saveEditors, boolean closePage);
     
+    /**
+	 * <p>
+	 * Return the extension tracker for the workbench. This tracker may be used
+	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
+	 * </p>
+	 * <p>
+	 * The tracker at this level of the workbench is typically used to track
+	 * elements that only exist over the lifespan of a page. For example,
+	 * <code>ViewPart</code> objects fall into this category.
+	 * </p>
+	 * <p>
+	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
+	 * 3.1 release.
+	 * </p>
+	 * 
+	 * @return the extension tracker
+	 * @see IWorkbench#getExtensionTracker()
+	 * @see IWorkbenchWindow#getExtensionTracker()
+	 * @since 3.1
+	 */    
+    public IExtensionTracker getExtensionTracker();
 }

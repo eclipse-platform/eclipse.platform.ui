@@ -21,10 +21,15 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -47,9 +52,6 @@ import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -60,7 +62,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @since 2.0
  */
 public class DecoratorManager implements IDelayedLabelDecorator,
-        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IConfigurationElementAdditionHandler, IConfigurationElementRemovalHandler {
+        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IExtensionAdditionHandler, IExtensionRemovalHandler {
 
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_DECORATORS; //$NON-NLS-1$
 	
@@ -103,8 +105,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     public DecoratorManager() {
         
         scheduler = new DecorationScheduler(this);
-        IConfigurationElementTracker tracker = ((Workbench) PlatformUI
-				.getWorkbench()).getConfigurationElementTracker();
+        IExtensionTracker tracker = PlatformUI.getWorkbench()
+				.getExtensionTracker();
         tracker.registerAdditionHandler(this);
         tracker.registerRemovalHandler(this);
     }
@@ -120,8 +122,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         ArrayList full = new ArrayList();
         ArrayList lightweight = new ArrayList();
         Iterator allDefinitions = values.iterator();
-        IConfigurationElementTracker configurationElementTracker = ((Workbench) PlatformUI
-				.getWorkbench()).getConfigurationElementTracker();
+        IExtensionTracker configurationElementTracker = PlatformUI
+				.getWorkbench().getExtensionTracker();
         while (allDefinitions.hasNext()) {
             DecoratorDefinition nextDefinition = (DecoratorDefinition) allDefinitions
                     .next();
@@ -130,7 +132,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             else
                 lightweight.add(nextDefinition);
                         
-			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement(), nextDefinition, IConfigurationElementTracker.REF_WEAK);
+			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement().getDeclaringExtension(), nextDefinition, IExtensionTracker.REF_WEAK);
         }
 
         fullDefinitions = new FullDecoratorDefinition[full.size()];
@@ -172,8 +174,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             }
         }
         ((Workbench) PlatformUI.getWorkbench())
-				.getConfigurationElementTracker().registerObject(
-						definition.getConfigurationElement(), definition, IConfigurationElementTracker.REF_WEAK);
+				.getExtensionTracker().registerObject(
+						definition.getConfigurationElement().getDeclaringExtension(), definition, IExtensionTracker.REF_WEAK);
     }
 
     /**
@@ -879,47 +881,50 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 		return fullDefinitions;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
-	 */
-	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
-		if (!element.getDeclaringExtension()
-				.getExtensionPointUniqueIdentifier().equals(
-						EXTENSIONPOINT_UNIQUE_ID))
-			return;
+    //PASCAL Need to see with Kim. 
+    public IExtensionPoint getExtensionPointFilter() {
+        return Platform.getExtensionRegistry().getExtensionPoint(EXTENSIONPOINT_UNIQUE_ID);
+    }
 
-		DecoratorRegistryReader reader = new DecoratorRegistryReader();
-		reader.readElement(element);
-		for (Iterator i = reader.getValues().iterator(); i.hasNext(); ) {
-			addDecorator((DecoratorDefinition) i.next());
-		}
-	}
+    public void addInstance(IExtensionTracker tracker, IExtension addedExtension) {
+        IConfigurationElement addedElements[] = addedExtension.getConfigurationElements();
+        for (int i = 0; i < addedElements.length; i++) {
+            DecoratorRegistryReader reader = new DecoratorRegistryReader();
+            reader.readElement(addedElements[i]);
+            for (Iterator j = reader.getValues().iterator(); j.hasNext();) {
+                addDecorator((DecoratorDefinition) j.next());
+            }
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
 	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof DecoratorDefinition) {
-			DecoratorDefinition definition = (DecoratorDefinition) object;
-	        if (definition.isFull()) {
-	        	int idx = getFullDecoratorDefinitionIdx(definition.getId());
-	            if (idx != -1) {	            	
-	                FullDecoratorDefinition[] oldDefs = getFullDefinitions();
-					Util
-							.arrayCopyWithRemoval(
-									oldDefs,
-									fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length - 1],
-									idx);	                
-	                clearCaches();
-	                updateForEnablementChange();
-	            }
-	        } else {
-	            if (getLightweightManager().removeDecorator(
-	                    (LightweightDecoratorDefinition) definition)) {
-	                clearCaches();
-	                updateForEnablementChange();
-	            }
-	        }			
-		}		
+	public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof DecoratorDefinition) {
+                DecoratorDefinition definition = (DecoratorDefinition) objects[i];
+                if (definition.isFull()) {
+                    int idx = getFullDecoratorDefinitionIdx(definition.getId());
+                    if (idx != -1) {                    
+                        FullDecoratorDefinition[] oldDefs = getFullDefinitions();
+                        Util
+                                .arrayCopyWithRemoval(
+                                        oldDefs,
+                                        fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length - 1],
+                                        idx);                   
+                        clearCaches();
+                        updateForEnablementChange();
+                    }
+                } else {
+                    if (getLightweightManager().removeDecorator(
+                            (LightweightDecoratorDefinition) definition)) {
+                        clearCaches();
+                        updateForEnablementChange();
+                    }
+                }           
+            }    
+        }
+		
 	}
 }

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -32,6 +33,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -87,8 +90,6 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
@@ -112,7 +113,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * <li>The editor should persist its own state plus editor input.</li>
  * </ol>
  */
-public class EditorManager implements IConfigurationElementRemovalHandler {
+public class EditorManager implements IExtensionRemovalHandler {
     private EditorAreaHelper editorPresentation;
 
     private WorkbenchWindow window;
@@ -155,7 +156,7 @@ public class EditorManager implements IConfigurationElementRemovalHandler {
         this.page = workbenchPage;
         this.editorPresentation = pres;
         
-        page.getConfigurationElementTracker().registerRemovalHandler(this);
+        page.getExtensionTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -924,7 +925,9 @@ public class EditorManager implements IConfigurationElementRemovalHandler {
         
         IConfigurationElement element = desc.getConfigurationElement();
         if (element != null) {
-        	page.getConfigurationElementTracker().registerObject(element, editor[0], IConfigurationElementTracker.REF_WEAK);
+        	page.getExtensionTracker().registerObject(
+					element.getDeclaringExtension(), editor[0],
+					IExtensionTracker.REF_WEAK);
         }
         return editor[0];
     }
@@ -1833,18 +1836,20 @@ public class EditorManager implements IConfigurationElementRemovalHandler {
             return ((Editor) e).getMemento();
         return null;
     }
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     */
+    public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof IEditorPart) {
+                // close the editor and clean up the editor history
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
-	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof IEditorPart) {		
-			//close the editor and clean up the editor history
-			
-			IEditorPart editor = (IEditorPart) object;
-			IEditorInput input = editor.getEditorInput();
-			page.closeEditor(editor, true);			
-			((Workbench)window.getWorkbench()).getEditorHistory().remove(input);
-		}
-	}
+                IEditorPart editor = (IEditorPart) objects[i];
+                IEditorInput input = editor.getEditorInput();
+                page.closeEditor(editor, true);
+                ((Workbench) window.getWorkbench()).getEditorHistory().remove(input);
+            }
+        }
+    }
 }

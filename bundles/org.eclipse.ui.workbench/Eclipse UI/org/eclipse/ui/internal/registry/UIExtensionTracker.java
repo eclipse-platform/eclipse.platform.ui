@@ -1,0 +1,56 @@
+package org.eclipse.ui.internal.registry;
+
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.dynamicHelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
+/**
+ * @since 3.1
+ */
+public class UIExtensionTracker extends ExtensionTracker {
+    private Display display;
+
+    // SOMETHING HAS NOT BEEN DONE IN THE REGISTTRY CHANGED CODE
+    // if (!PlatformUI.isWorkbenchRunning())
+    // return;
+    // int numDeltas = 0;
+    // Display display = PlatformUI.getWorkbench().getDisplay();
+    // if (display == null || display.isDisposed())
+    // return;
+    // It seems that the tracker should be closed.
+
+    /**
+	 * @param display
+	 */
+	public UIExtensionTracker(Display display) {
+		this.display = display;
+	}
+
+	protected void applyRemove(final IExtensionRemovalHandler handler, final IExtension removedExtension, final Object[] objects) {
+        display.syncExec(new Runnable() {
+
+            public void run() {
+                try {
+                    handler.removeInstance(removedExtension, objects);
+                } catch (Exception e) {
+                    WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
+                }
+            }
+        });
+    }
+
+    protected void applyAdd(final IExtensionAdditionHandler handler, final IExtension addedExtension) {
+        display.syncExec(new Runnable() {
+            public void run() {
+                try {
+                    handler.addInstance(UIExtensionTracker.this, addedExtension);
+                } catch (Exception e) {
+                    WorkbenchPlugin.log(getClass(), "doAdd", e); //$NON-NLS-1$
+                }
+            }
+        });
+    }
+}

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -81,8 +82,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
-import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -181,7 +181,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
-	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private IExtensionTracker tracker;
 
     /**
      * Manages editor contributions and action set part associations.
@@ -847,8 +847,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
                 ret[0] = window.closePage(WorkbenchPage.this, true);
-                if (ret[0])
-                	tracker.dispose();
+                if (ret[0] && tracker != null) 
+                	tracker.close();
+                
             }
         });
         return ret[0];
@@ -3948,10 +3949,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
     }
 
-	/**
-     * EXPERIMENTAL
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#getExtensionTracker()
 	 */
-	public IConfigurationElementTracker getConfigurationElementTracker() {
+	public IExtensionTracker getExtensionTracker() {
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getWorkbenchWindow().getWorkbench().getDisplay());
+		}
 		return tracker ;		
 	}
 

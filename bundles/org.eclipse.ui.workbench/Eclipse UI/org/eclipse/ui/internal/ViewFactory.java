@@ -14,11 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
@@ -36,8 +38,6 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.util.Util;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-/*package*/class ViewFactory implements IConfigurationElementRemovalHandler {
+/*package*/class ViewFactory implements IExtensionRemovalHandler {
 
     private class ViewReference extends WorkbenchPartReference implements
             IViewReference {
@@ -267,7 +267,7 @@ import org.eclipse.ui.internal.util.Util;
         this.page = page;
         this.viewReg = reg;
         counter = new ReferenceCounter();
-        page.getConfigurationElementTracker().registerRemovalHandler(this);
+        page.getExtensionTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -327,7 +327,10 @@ import org.eclipse.ui.internal.util.Util;
                     try {
                         UIStats.start(UIStats.CREATE_PART, label);
                         view = desc.createView();
-                        page.getConfigurationElementTracker().registerObject(desc.getConfigurationElement(), view, IConfigurationElementTracker.REF_WEAK);
+                        page.getExtensionTracker().registerObject(
+								desc.getConfigurationElement()
+										.getDeclaringExtension(), view,
+								IExtensionTracker.REF_WEAK);
                     } finally {
                         UIStats.end(UIStats.CREATE_PART, label);
                     }
@@ -665,28 +668,33 @@ import org.eclipse.ui.internal.util.Util;
         return memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
-	 */
-	public void removeInstance(IConfigurationElement source, Object object) {
-		if (object instanceof IViewPart) {
-			IViewPart part = (IViewPart) object;
-//			String primaryViewId = part.getViewSite().getId();
-//			String secondaryViewId = part.getViewSite().getSecondaryId();
-//			IViewReference viewRef = page.findViewReference(
-//					primaryViewId, secondaryViewId);
-//			IPerspectiveDescriptor[] descs = page.getOpenedPerspectives();
-//			Perspective active = page.getActivePerspective();
-//			for (int i = 0; i < descs.length; i++) {
-//				Perspective nextPerspective = page.findPerspective(descs[i]);
-//
-//				if (nextPerspective == null || active == nextPerspective)
-//					continue;
-//
-//				page.hideView(nextPerspective, viewRef);
-//			}
-			page.hideView(part);
-		}		
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     */
+    public void removeInstance(IExtension source, Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof IViewPart) {
+                IViewPart part = (IViewPart) objects[i];
+                // String primaryViewId = part.getViewSite().getId();
+                // String secondaryViewId = part.getViewSite().getSecondaryId();
+                // IViewReference viewRef = page.findViewReference(
+                // primaryViewId, secondaryViewId);
+                // IPerspectiveDescriptor[] descs =
+                // page.getOpenedPerspectives();
+                // Perspective active = page.getActivePerspective();
+                // for (int i = 0; i < descs.length; i++) {
+                // Perspective nextPerspective = page.findPerspective(descs[i]);
+                //
+                // if (nextPerspective == null || active == nextPerspective)
+                // continue;
+                //
+                // page.hideView(nextPerspective, viewRef);
+                // }
+                page.hideView(part);
+            }
+
+        }
+    }
+
 }
 
