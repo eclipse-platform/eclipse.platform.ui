@@ -27,9 +27,17 @@ FRAMESET {
 }
 </style>
 
+<script language="JavaScript">
+
+function onloadHandler(e)
+{
+	window.frames[0].document.getElementById("searchWord").focus();
+}
+
+</script>
 </head>
 
-<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset onload="onloadHandler()" rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>
