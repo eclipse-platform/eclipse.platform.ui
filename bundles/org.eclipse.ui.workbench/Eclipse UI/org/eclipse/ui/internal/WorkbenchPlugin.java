@@ -127,9 +127,24 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private IntroRegistry introRegistry;
 	
 	/**
-	 * Create an instance of the WorkbenchPlugin.
-	 * The workbench plugin is effectively the "application" for the workbench UI.
-	 * The entire UI operates as a good plugin citizen.
+	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
+	 * effectively the "application" for the workbench UI. The entire UI
+	 * operates as a good plugin citizen.
+	 */
+	public WorkbenchPlugin() {
+		super();
+		inst = this;
+	}
+
+	/**
+	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
+	 * effectively the "application" for the workbench UI. The entire UI
+	 * operates as a good plugin citizen.
+	 * <p>
+	 * <b>Note:</b> This constructor requires compatibility mode
+	 * (<code>org.eclipse.core.runtime.compatibility</code>). It should <b>NOT
+	 * </b> be used by 3.0 plugins that intend to run without the compatibility
+	 * layer.
 	 */
 	public WorkbenchPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);

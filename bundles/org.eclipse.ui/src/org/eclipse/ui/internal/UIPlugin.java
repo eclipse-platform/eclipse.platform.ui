@@ -18,32 +18,26 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * This class represents the TOP of the workbench UI world
- * A plugin class is effectively an application wrapper
- * for a plugin & its classes. This class should be thought
- * of as the workbench UI's application class.
- *
- * This class is responsible for tracking various registries
- * font, preference, graphics, dialog store.
- *
- * This class is explicitly referenced by the 
- * workbench plugin's  "plugin.xml" and places it
- * into the UI start extension point of the main
- * overall application harness
- *
- * When is this class started?
- *      When the Application
- *      calls createExecutableExtension to create an executable
- *      instance of our workbench class.
+ * The plug-in class for the org.eclipse.ui plug-in.
+ * This class is internal to the workbench and should not be
+ * referenced by clients.
  */
-public class UIPlugin extends AbstractUIPlugin {
+public final class UIPlugin extends AbstractUIPlugin {
 	
 	private static UIPlugin inst;
 	
 	/**
-	 * Create an instance of the WorkbenchPlugin.
-	 * The workbench plugin is effectively the "application" for the workbench UI.
-	 * The entire UI operates as a good plugin citizen.
+	 * Creates an instance of the UIPlugin.
+	 * 
+	 * @since 3.0
+	 */
+	public UIPlugin() {
+		super();
+		inst = this;
+	}
+	
+	/**
+	 * Create an instance of the UIPlugin.
 	 */
 	public UIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -66,7 +60,7 @@ public class UIPlugin extends AbstractUIPlugin {
 		 * plug-ins image registry.
 		 */
 		Assert.isLegal(false);
-		return WorkbenchImages.getImageRegistry();
+		return null;
 	}
 	
 	public ImageRegistry getImageRegistry() {
@@ -77,7 +71,8 @@ public class UIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 
-	/* Return the default instance of the receiver. This represents the runtime plugin.
+	/**
+	 * Returns the default instance of the receiver. This represents the runtime plugin.
 	 *
 	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
 	 */
@@ -109,4 +104,4 @@ public class UIPlugin extends AbstractUIPlugin {
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
-	}
+}

@@ -15,12 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -40,6 +38,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.util.BundleUtility;
+import org.osgi.framework.Bundle;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -486,13 +486,19 @@ public abstract class AbstractUIPlugin extends Plugin {
 	}
 
 	/**
-	 * Creates an abstract UI plug-in runtime object for the given plug-in descriptor.
+	 * Creates an abstract UI plug-in runtime object for the given plug-in
+	 * descriptor.
 	 * <p>
-	 * Note that instances of plug-in runtime classes are automatically created 
+	 * Note that instances of plug-in runtime classes are automatically created
 	 * by the platform in the course of plug-in activation.
-	 * </p>
-	 *
-	 * @param descriptor the plug-in descriptor
+	 * <p>
+	 * <b>Note:</b> This constructor requires compatibility mode
+	 * (<code>org.eclipse.core.runtime.compatibility</code>). It should <b>NOT
+	 * </b> be used by 3.0 plugins that intend to run without the compatibility
+	 * layer.
+	 * 
+	 * @param descriptor
+	 *            the plug-in descriptor
 	 */
 	public AbstractUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -711,15 +717,10 @@ public abstract class AbstractUIPlugin extends Plugin {
 				dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 			}
 		} else {
-			// not found - use installed  defaults if available
-			URL baseURL = getDescriptor().getInstallURL();
-
-			URL dsURL = null;
-			try {
-				dsURL = new URL(baseURL, FN_DIALOG_SETTINGS);
-			} catch (MalformedURLException e) {
+			URL dsURL = BundleUtility.find(getBundle(), FN_DIALOG_SETTINGS);
+			if(dsURL == null)
 				return;
-			}
+
 			InputStream is = null;
 			try {
 				is = dsURL.openStream();
@@ -733,6 +734,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 					if (is != null)
 						is.close();
 				} catch (IOException e) {
+					// do nothing
 				}
 			}
 		}
@@ -858,29 +860,22 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * could be found
 	 * @since 3.0
 	 */
-	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
-		if (pluginId == null || imageFilePath == null) {
-			throw new IllegalArgumentException();
-		}
-		// go for the plug-in descriptor - avoid activating the plug-in
-		IPluginDescriptor plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		if (plugin == null) {
-			// no plug-in -> no image
-			return null;
-		}
-		URL fullPathString = plugin.find(new Path(imageFilePath));
-		if (fullPathString != null) {
-			return ImageDescriptor.createFromURL(fullPathString);
-		}
-		// @issue add explanation of why following code is not redundant
-		URL path = plugin.getInstallURL();
-		try {
-			fullPathString = new URL(path, imageFilePath);
-			return ImageDescriptor.createFromURL(fullPathString);
-		} catch (MalformedURLException e) {
-			// never mind
-			return null;
-		}
-	}
-	
+	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId,
+            String imageFilePath) {
+        if (pluginId == null || imageFilePath == null) {
+            throw new IllegalArgumentException();
+        }
+
+        // if the bundle is not ready then there is no image
+        Bundle bundle = Platform.getBundle(pluginId);
+        if (!BundleUtility.isReady(bundle))
+            return null;
+
+        // look for the image (this will check both the plugin and fragment folders
+        URL fullPathString = BundleUtility.find(bundle, imageFilePath);
+        if (fullPathString == null)
+            return null;
+
+        return ImageDescriptor.createFromURL(fullPathString);
+    }
 }

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -58,6 +57,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -340,8 +340,8 @@ public class ProgressManager extends ProgressProvider implements
         Platform.getJobManager().setProgressProvider(this);
         createChangeListener();
         Platform.getJobManager().addJobChangeListener(this.changeListener);
-        URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-                new Path(ProgressManager.PROGRESS_FOLDER));
+        URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
+                ProgressManager.PROGRESS_FOLDER);
 
         try {
             setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);

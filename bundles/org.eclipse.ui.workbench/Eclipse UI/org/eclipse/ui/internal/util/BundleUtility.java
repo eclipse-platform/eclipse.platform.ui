@@ -52,8 +52,13 @@ public class BundleUtility {
 		return isReady(Platform.getBundle(bundleId));
 	}
 
-	public static URL find(String bundleId, String path) {
-		Bundle bundle = Platform.getBundle(bundleId);
+	public static URL find(Bundle bundle, String path) {
+	    if(bundle == null)
+	        return null;
 		return Platform.find(bundle, new Path(path));
+	}
+
+	public static URL find(String bundleId, String path) {
+	    return find(Platform.getBundle(bundleId), path);
 	}
 }
