@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -972,12 +973,14 @@ public IStatus restoreState() {
 		}
 	}
 		
+	HashSet knownActionSetIds = new HashSet();
 	// Load the action sets.
 	IMemento [] actions = memento.getChildren(IWorkbenchConstants.TAG_ACTION_SET);
 	ArrayList actionsArray = new ArrayList(actions.length);
 	for (int x = 0; x < actions.length; x ++) {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		actionsArray.add(actionSetID);
+		knownActionSetIds.add(actionSetID);
 	}
 	
 	createInitialActionSets(actionsArray);
@@ -988,8 +991,10 @@ public IStatus restoreState() {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		IActionSetDescriptor d = 
 			WorkbenchPlugin.getDefault().getActionSetRegistry().findActionSet(actionSetID);
-		if (d != null) 
-			alwaysOnActionSets.add(d);	
+		if (d != null) {
+			alwaysOnActionSets.add(d);
+			knownActionSetIds.add(actionSetID);
+		}
 	}
 
 	// Load the always off action sets.
@@ -998,8 +1003,10 @@ public IStatus restoreState() {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		IActionSetDescriptor d = 
 			WorkbenchPlugin.getDefault().getActionSetRegistry().findActionSet(actionSetID);
-		if (d != null) 
+		if (d != null) {
 			alwaysOffActionSets.add(d);	
+			knownActionSetIds.add(actionSetID);
+		}
 	}
 
 	// Load "show view actions".
@@ -1043,6 +1050,26 @@ public IStatus restoreState() {
 	for (int x = 0; x < actions.length; x ++) {
 		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		perspectiveActionIds.add(id);
+	}
+	
+	// Add the visible set of action sets to our knownActionSetIds
+	for (int i = 0; i < visibleActionSets.size(); i++) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)visibleActionSets.get(i);
+		if (desc != null)
+			knownActionSetIds.add(desc.getId());
+	}
+	// Now go through the registry to ensure we pick up any new action sets
+	// that have been added but not yet considered by this perspective.
+	ActionSetRegistry reg =
+		WorkbenchPlugin.getDefault().getActionSetRegistry();
+	IActionSetDescriptor[] array = reg.getActionSets();
+	int count = array.length;
+	for (int i = 0; i < count; i++) {
+		IActionSetDescriptor desc = array[i];
+		if ( (!knownActionSetIds.contains(desc.getId())) &&
+		     (desc.isInitiallyVisible()) ) {
+			addActionSet(desc);
+		}
 	}
 	
 	// Save presentation.	
