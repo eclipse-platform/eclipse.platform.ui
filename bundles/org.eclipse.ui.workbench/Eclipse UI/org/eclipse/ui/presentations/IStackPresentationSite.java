@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
 
 
@@ -39,6 +40,14 @@ public interface IStackPresentationSite {
 	 * @return the current state of the site (one of the STATE_* constants)
 	 */
 	public int getState();
+
+	/**
+	 * Returns true iff the site supports the given state
+	 * 
+	 * @param state one of the STATE_* constants, above
+	 * @return true iff the site supports the given state
+	 */
+	public boolean supportsState(int state);
 	
 	/**
 	 * Begins dragging the given part
@@ -88,4 +97,27 @@ public interface IStackPresentationSite {
 	 * @param toSelect
 	 */
 	public void selectPart(IPresentablePart toSelect);
+	
+	/**
+	 * Returns the currently selected part or null if the stack is empty 
+	 * 
+	 * @return the currently selected part or null if the stack is empty
+	 */
+	public IPresentablePart getSelectedPart();
+	
+	/**
+	 * Adds system actions to the given menu manager. The site may
+	 * make use of the following group ids:
+	 * <ul>
+	 * <li><code>close</code>, for close actions</li>
+	 * <li><code>size</code>, for resize actions</li>
+	 * <li><code>misc</code>, for miscellaneous actions</li>
+	 * </ul>
+	 * The presentation can control the insertion position by creating
+	 * these group IDs where appropriate. 
+	 * 
+	 * @param menuManager the menu manager to populate
+	 */
+	public void addSystemActions(IMenuManager menuManager);
+	
 }
