@@ -928,23 +928,29 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
         }
 
-        // Close all editors.
-        for (int i = 0; i < editorRefs.length; i++) {
-            IEditorReference ref = editorRefs[i];
-            // Notify interested listeners before the close
-            window.firePerspectiveChanged(this, getPerspective(), ref,
-                    CHANGE_EDITOR_CLOSE);
-            // Close the editor.
-            getEditorManager().closeEditor(ref);
-            activationList.remove(ref);
-            firePartClosed(ref);
-            disposePart(ref);
+        editorPresentation.getLayoutPart().deferUpdates(true);
+        try {        
+	        // Close all editors.
+	        for (int i = 0; i < editorRefs.length; i++) {
+	            IEditorReference ref = editorRefs[i];
+	            // Notify interested listeners before the close
+	            window.firePerspectiveChanged(this, getPerspective(), ref,
+	                    CHANGE_EDITOR_CLOSE);
+	            // Close the editor.
+	            getEditorManager().closeEditor(ref);
+	            activationList.remove(ref);
+	            firePartClosed(ref);
+	            disposePart(ref);
+	        }
+
+		    if (!window.isClosing() && deactivated) {
+		        activate(activationList.getActive());
+		    }
+        } finally {
+        	editorPresentation.getLayoutPart().deferUpdates(false);
         }
 
-        if (!window.isClosing() && deactivated) {
-            activate(activationList.getActive());
-        }
-
+        
         // Notify interested listeners after the close
         window.firePerspectiveChanged(this, getPerspective(),
                 CHANGE_EDITOR_CLOSE);

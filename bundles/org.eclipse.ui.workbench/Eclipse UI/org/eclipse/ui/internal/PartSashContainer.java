@@ -57,7 +57,7 @@ public abstract class PartSashContainer extends LayoutPart implements
 
     /* Array of LayoutPart */
     protected ArrayList children = new ArrayList();
-
+    
     private SashContainerDropTarget dropTarget;
 
     protected static class RelationshipInfo {
@@ -430,7 +430,11 @@ public abstract class PartSashContainer extends LayoutPart implements
      * this method to perform any container specific
      * work.
      */
-    protected abstract void childAdded(LayoutPart child);
+    protected void childAdded(LayoutPart child) {
+    	if (isDeferred()) {
+    		child.deferUpdates(true);
+    	}
+    }
 
     /**
      * Notification that a child layout part has been
@@ -438,7 +442,11 @@ public abstract class PartSashContainer extends LayoutPart implements
      * this method to perform any container specific
      * work.
      */
-    protected abstract void childRemoved(LayoutPart child);
+    protected void childRemoved(LayoutPart child) {
+    	if (isDeferred()) {
+    		child.deferUpdates(false);
+    	}
+    }
 
     /**
      * Returns an array with all the relation ship between the
@@ -1265,6 +1273,33 @@ public abstract class PartSashContainer extends LayoutPart implements
         return true;
     }
     
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#startDeferringEvents()
+	 */
+	protected void startDeferringEvents() {
+		super.startDeferringEvents();
+		
+		LayoutPart[] deferredChildren = (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
+		for (int i = 0; i < deferredChildren.length; i++) {
+			LayoutPart child = deferredChildren[i];
+			
+			child.deferUpdates(true);
+		}
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#handleDeferredEvents()
+	 */
+	protected void handleDeferredEvents() {
+		super.handleDeferredEvents();
+		
+		LayoutPart[] deferredChildren = (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
+		for (int i = 0; i < deferredChildren.length; i++) {
+			LayoutPart child = deferredChildren[i];
+		
+			child.deferUpdates(false);
+		}			
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.LayoutPart#testInvariants()

@@ -70,6 +70,8 @@ public class EditorSashContainer extends PartSashContainer {
      * work.
      */
     protected void childAdded(LayoutPart child) {
+    	super.childAdded(child);
+    	
         if (child instanceof EditorStack)
             editorWorkbooks.add(child);
     }
@@ -81,6 +83,8 @@ public class EditorSashContainer extends PartSashContainer {
      * work.
      */
     protected void childRemoved(LayoutPart child) {
+    	super.childRemoved(child);
+    	
         if (child instanceof EditorStack) {
             editorWorkbooks.remove(child);
             if (activeEditorWorkbook == child)

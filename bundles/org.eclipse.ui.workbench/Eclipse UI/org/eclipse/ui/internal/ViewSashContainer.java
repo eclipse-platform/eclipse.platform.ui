@@ -29,30 +29,10 @@ public class ViewSashContainer extends PartSashContainer {
     }
 
     /**
-     * Notification that a child layout part has been
-     * added to the container. Subclasses may override
-     * this method to perform any container specific
-     * work.
-     */
-    protected void childAdded(LayoutPart child) {
-        // do nothing
-    }
-
-    /**
      * Gets root container for this part.
      */
     public ViewSashContainer getRootContainer() {
         return this;
-    }
-
-    /**
-     * Notification that a child layout part has been
-     * removed from the container. Subclasses may override
-     * this method to perform any container specific
-     * work.
-     */
-    protected void childRemoved(LayoutPart child) {
-        // do nothing
     }
 
     /**

@@ -62,6 +62,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private LayoutPart current;
 
     private boolean ignoreSelectionChanges = false;
+    private boolean selectionChangeDeferred = false;
 
     protected IMemento savedPresentationState = null;
 
@@ -1016,7 +1017,23 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#handleDeferredEvents()
+	 */
+	protected void handleDeferredEvents() {
+		super.handleDeferredEvents();
+		
+		if (selectionChangeDeferred) {
+			refreshPresentationSelection();
+		}
+	}
+    
     private void refreshPresentationSelection() {
+    	if (isDeferred()) {
+    		selectionChangeDeferred = true;
+    		return;
+    	}
+    	
         if (current != null) {
             IPresentablePart presentablePart = current.getPresentablePart();
             StackPresentation presentation = getPresentation();

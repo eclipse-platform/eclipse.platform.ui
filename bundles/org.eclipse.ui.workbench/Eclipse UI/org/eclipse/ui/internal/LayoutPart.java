@@ -42,6 +42,12 @@ abstract public class LayoutPart implements ISizeProvider {
     public static final String PROP_VISIBILITY = "PROP_VISIBILITY"; //$NON-NLS-1$
 
     /**
+     * Number of times deferUpdates(true) has been called without a corresponding
+     * deferUpdates(false)
+     */
+	private int deferCount = 0;
+
+    /**
      * PresentationPart constructor comment.
      */
     public LayoutPart(String id) {
@@ -397,6 +403,64 @@ abstract public class LayoutPart implements ISizeProvider {
     
     public void setZoomed(boolean isZoomed) {
 
+    }
+    
+    /**
+     * deferUpdates(true) disables widget updates until a corresponding call to
+     * deferUpdates(false). Exactly what gets deferred is the decision
+     * of each LayoutPart, however the part may only defer operations in a manner
+     * that does not affect the final result. 
+     * That is, the state of the receiver after the final call to deferUpdates(false)
+     * must be exactly the same as it would have been if nothing had been deferred. 
+     * 
+     * @param shouldDefer true iff events should be deferred 
+     */
+    public final void deferUpdates(boolean shouldDefer) {
+    	if (shouldDefer) {
+    		if (deferCount == 0) {
+    			startDeferringEvents();
+    		}
+    		deferCount++;
+    	} else {
+    		if (deferCount > 0) {
+    			deferCount--;
+    			if (deferCount == 0) {
+    				handleDeferredEvents();
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * This is called when deferUpdates(true) causes UI events for this
+     * part to be deferred. Subclasses can overload to initialize any data
+     * structures that they will use to collect deferred events.
+     */
+    protected void startDeferringEvents() {
+    	
+    }
+    
+    /**
+     * Immediately processes all UI events which were deferred due to a call to
+     * deferUpdates(true). This is called when the last call is made to 
+     * deferUpdates(false). Subclasses should overload this method if they
+     * defer some or all UI processing during deferUpdates.
+     */
+    protected void handleDeferredEvents() {
+    	
+    }
+    
+    /**
+     * Subclasses can call this method to determine whether UI updates should
+     * be deferred. Returns true iff there have been any calls to deferUpdates(true)
+     * without a corresponding call to deferUpdates(false). Any operation which is
+     * deferred based on the result of this method should be performed later within
+     * handleDeferredEvents(). 
+     * 
+     * @return true iff updates should be deferred.
+     */
+    protected final boolean isDeferred() {
+    	return deferCount > 0;
     }
 
     /**
