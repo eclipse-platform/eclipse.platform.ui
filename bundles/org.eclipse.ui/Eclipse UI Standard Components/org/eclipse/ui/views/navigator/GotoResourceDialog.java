@@ -22,11 +22,10 @@ import org.eclipse.ui.help.*;
  * for a string pattern used to filter the list of resources.
  *
  */
-/*package*/ class GotoResourceDialog extends SelectionDialog {
+/*package*/    class GotoResourceDialog extends SelectionDialog {
 	Text pattern;
 	Table resourceNames;
 	Table folderNames;
-
 	String patternString;
 	IResource selection;
 	private static Collator collator = Collator.getInstance();
@@ -36,9 +35,8 @@ import org.eclipse.ui.help.*;
 	UpdateThread updateThread;
 	ResourceDescriptor descriptors[];
 	int descriptorsSize;
-
+	
 	WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
-
 	static class ResourceDescriptor implements Comparable {
 		String label;
 		ArrayList resources = new ArrayList(1);
@@ -49,25 +47,52 @@ import org.eclipse.ui.help.*;
 	
 	class UpdateThread extends Thread {
 		boolean stop = false;
+		int firstMatch = 0;
+		int lastMatch = descriptorsSize - 1;
+		
 		public void run() {
 			Display display = resourceNames.getDisplay();
-			final boolean first[] = {true};
-			for (int i = 0; i < descriptorsSize;i++) {
+			final int itemIndex[] = {0};
+			final int itemCount[] = {0};
+			display.syncExec(new Runnable(){
+				public void run() {
+			 		itemCount[0] = resourceNames.getItemCount();
+				}
+			});
+			int last = lastMatch;
+			boolean setFirstMatch = true;
+			for (int i = firstMatch; i <= lastMatch;i++) {
 				if(i % 50 == 0) {
 					try { Thread.sleep(10); } catch(InterruptedException e){}
 				}
 				if(stop || resourceNames.isDisposed()) return;
 				final int index = i;
 				if(match(descriptors[index].label)) {
-					display.syncExec(new Runnable(){
+					if(setFirstMatch) {
+						setFirstMatch = false;
+						firstMatch = index;
+					}
+					last = index;
+					display.syncExec(new Runnable() {
 						public void run() {
 							if(stop || resourceNames.isDisposed()) return;
-							createItem(index,first[0]);
-							first[0]=false;
+							updateItem(index,itemIndex[0],itemCount[0]);
+							itemIndex[0]++;
 						}
 					});
 				}
 			}
+			lastMatch = last;
+			display.syncExec(new Runnable() {
+				public void run() {
+			 		itemCount[0] = resourceNames.getItemCount();
+			 		if(itemIndex[0] < itemCount[0]) {
+			 			resourceNames.setRedraw(false);
+				 		resourceNames.remove(itemIndex[0],itemCount[0] -1);
+			 			resourceNames.setRedraw(true);
+			 		}
+				}
+			});
 		}
 	};
 /**
@@ -77,7 +102,6 @@ protected GotoResourceDialog(Shell parentShell,IResource resources[]) {
 	super(parentShell);
 	setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
-
 	initDescriptors(resources);
 }
 public boolean close() {
@@ -103,7 +127,6 @@ public void create() {
 protected Control createDialogArea(Composite parent) {
 	
 	Composite dialogArea = (Composite)super.createDialogArea(parent);
-
 	Label l = new Label(dialogArea,SWT.NONE);
 	l.setText(ResourceNavigatorMessages.getString("Goto.label")); //$NON-NLS-1$
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -113,15 +136,12 @@ protected Control createDialogArea(Composite parent) {
 	l.setText(ResourceNavigatorMessages.getString("Goto.pattern")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
-
 	pattern = new Text(dialogArea,SWT.SINGLE|SWT.BORDER);
 	pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 	l = new Label(dialogArea,SWT.NONE);
 	l.setText(ResourceNavigatorMessages.getString("Goto.matching")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
-
 	resourceNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL);
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = 6 * resourceNames.getItemHeight();
@@ -137,8 +157,9 @@ protected Control createDialogArea(Composite parent) {
 	data.widthHint = 250;
 	data.heightHint = 3 * folderNames.getItemHeight();
 	folderNames.setLayoutData(data);
-
-	startNewThread();
+	
+	updateThread = new UpdateThread();
+	updateThread.start();
 	
 	pattern.addKeyListener(new KeyAdapter(){
 		public void keyPressed(KeyEvent e) {
@@ -164,17 +185,32 @@ protected Control createDialogArea(Composite parent) {
 	return dialogArea;
 }
 /**
- * Create a new table item.
+ * Create a new table item if there is no item otherwise update one
+ * exitent item with the new info.
  */
-private void createItem(int index, boolean setSelection) {
-	TableItem item = new TableItem(resourceNames, SWT.NONE);
+private void updateItem(int index, int itemPos,int itemCount) {
 	ResourceDescriptor desc = descriptors[index];
-	item.setText(desc.label);
-	item.setData(desc);
-	item.setImage(getImage(desc));
-	if (setSelection) {
-		resourceNames.setSelection(0);
-		updateFolders(desc);
+	TableItem item;
+	if(itemPos < itemCount) {
+		item = resourceNames.getItem(itemPos);
+		if(item.getData() != desc) {
+			item.setText(desc.label);
+			item.setData(desc);
+			item.setImage(getImage(desc));
+			if (itemPos == 0) {
+				resourceNames.setSelection(0);
+				updateFolders(desc);
+			}
+		}
+	} else {
+		item = new TableItem(resourceNames, SWT.NONE);
+		item.setText(desc.label);
+		item.setData(desc);
+		item.setImage(getImage(desc));
+		if (itemPos == 0) {
+			resourceNames.setSelection(0);
+			updateFolders(desc);
+		}
 	}
 }
 /**
@@ -247,13 +283,7 @@ protected void okPressed() {
 		selection = (IResource)items[0].getData();
 	super.okPressed();
 }
-/**
- * Start a new update thread.
- */
-private void startNewThread() {
-	updateThread = new UpdateThread();
-	updateThread.start();
-}
+
 /**
  * The text in the pattern text entry has changed.
  * Create a new string matcher and start a new
@@ -266,10 +296,21 @@ private void textChanged() {
 		patternString = patternString + "*";//$NON-NLS-1$
 	if(patternString.equals(oldPattern))
 		return;
+	
 	updateThread.stop = true;
 	stringMatcher = new StringMatcher(patternString,true,false);
-	resourceNames.removeAll();
-	startNewThread();
+	UpdateThread oldThread = updateThread;
+	updateThread = new UpdateThread();
+	if(oldPattern == null || 
+	  (oldPattern.length() == 0) || 
+	  (!patternString.regionMatches(0,oldPattern,0,oldPattern.length() - 1))) {
+		updateThread.firstMatch = 0;
+		updateThread.lastMatch = descriptorsSize - 1;
+	} else {
+		updateThread.firstMatch = oldThread.firstMatch;
+		updateThread.lastMatch = oldThread.lastMatch;
+	}
+	updateThread.start();
 }
 /**
  * A new resource has been selected. Change the contents
