@@ -105,7 +105,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 					lineCounter++;
 				}
 			} finally {
-				reader.close();
+				if (reader != null)
+					reader.close();
 			}
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, SearchPlugin.getResourceString("TextSearchVisitor.error") + " " + file.getFullPath(), e));
