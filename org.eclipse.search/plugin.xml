@@ -26,7 +26,6 @@
 	<runtime>
 		<library name="search.jar" >
 			<export name = "*"/>
-			<packages prefixes="org.eclipse.search.ui,org.eclipse.search.internal,org.eclipse.search2.internal"/>
 		</library>
 	</runtime>
 	

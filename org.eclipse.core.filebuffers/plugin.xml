@@ -10,7 +10,6 @@
    <runtime>
       <library name="filebuffers.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.core.filebuffers,org.eclipse.core.internal.filebuffers"/>
       </library>
    </runtime>
    <requires>
