@@ -35,6 +35,7 @@ public class ConfigurationActivator implements BundleActivator {
 
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
+	private ServiceTracker converterTracker;
 	private ServiceRegistration configurationFactorySR;
 	private String[] allArgs;
 
@@ -66,7 +67,7 @@ public class ConfigurationActivator implements BundleActivator {
 		if (DEBUG)
 			System.out.println("Starting update configurator...");
 		computeIgnoredBundles();
-		loadConverter();
+		converter = acquireConverter();
 		installBundles();
 	}
 
@@ -98,27 +99,7 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 		return false;
 	}
-	private void loadConverter() {
-		// TODO look at making this an extension
-		String converterClassName = System.getProperty("eclipse.manifestconverter", DEFAULT_CONVERTER);
-		if (converterClassName == null)
-			return;
-		Class converterClass;
-		try {
-			converterClass = Class.forName(converterClassName);
-		} catch (ClassNotFoundException e) {
-			return;
-		}
-		try {
-			converter = (IPluginConverter) converterClass.newInstance();
-		} catch (InstantiationException e1) {
-			return;
-		} catch (IllegalAccessException e1) {
-			return;
-		} catch (ClassCastException cce) {
-			return;
-		}
-	}
+
 	private void obtainArgs() {
 		// all this is only to get the application args		
 		EnvironmentInfo envInfo = null;
@@ -133,7 +114,10 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	public void stop(BundleContext ctx) throws Exception {
+		platform = null;
 		releasePlatform();
+		converter = null;
+		releaseConverter();
 		configurationFactorySR.unregister();
 	}
 
@@ -143,6 +127,14 @@ public class ConfigurationActivator implements BundleActivator {
 		platformTracker.close();
 		platformTracker = null;
 	}
+	
+	private void releaseConverter() {
+		if (converterTracker == null)
+			return;
+		converterTracker.close();
+		converterTracker = null;
+	}
+	
 	private IPlatform acquirePlatform() {
 		if (platformTracker == null) {
 			platformTracker = new ServiceTracker(context, IPlatform.class.getName(), null);
@@ -159,6 +151,21 @@ public class ConfigurationActivator implements BundleActivator {
 		return result;
 	}
 
+	private IPluginConverter acquireConverter() {
+		if (converterTracker == null) {
+			converterTracker = new ServiceTracker(context, IPluginConverter.class.getName(), null);
+			converterTracker.open();
+		}
+		IPluginConverter result = (IPluginConverter) converterTracker.getService();
+		while (result == null) {
+			try {
+				platformTracker.waitForService(1000);
+				result = (IPluginConverter) converterTracker.getService();
+			} catch (InterruptedException ie) {
+			}
+		}
+		return result;
+	}
 	private void installBundles() {
 		URL installURL = platform.getInstallURL();
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
