@@ -138,7 +138,15 @@ public class Util {
 			if (stringPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
 				return resource.getName();
 			}
-			return toTruncatedPath(stringPath, split);
+			String truncatedPath = toTruncatedPath(stringPath, split);
+			// Special handling when the root is a project.
+			// Append project name to the beginning of the path
+			IProject project = null;
+			IResource iResource = root.getIResource();
+			if (iResource != null && iResource.getType() == IResource.PROJECT) {
+				truncatedPath = iResource.getName() + Session.SERVER_SEPARATOR + truncatedPath;
+			}
+			return truncatedPath;
 		} catch(CVSException e) {
 			return resource.getName();
 		}
