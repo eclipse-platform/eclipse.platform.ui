@@ -75,6 +75,12 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			return null;
 		}
 		
+		// parent consumer, log we are about to rename
+		// log files have been downloaded
+		if (getParent()==null){
+			ErrorRecoveryLog.getLog().append(ErrorRecoveryLog.ALL_INSTALLED);
+		}
+		
 		// close nested feature
 		IFeatureContentConsumer[] children = getChildren();
 		for (int i = 0; i < children.length; i++) {

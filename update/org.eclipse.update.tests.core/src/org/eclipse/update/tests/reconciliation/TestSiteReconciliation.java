@@ -40,15 +40,16 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISitePolicy p1 = cfig.createSitePolicy(policy, listOfPlugins);	
 		ISiteEntry s1 = cfig.createSiteEntry(url,p1);
-		cfig.configureSite(s1);
-		
+		cfig.configureSite(s1);	
 	}
 	
 	private void removeConfigSite(URL url) throws Exception {
 		// get new config object
 		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
+		assertNotNull("Unable to find site entry:"+url,s1);
 		cfig.unconfigureSite(s1);
+		cfig.save();
 	}	
 	/**
 	 * Site 1 contains a feature which needs a plugin taht is not on the path when we start

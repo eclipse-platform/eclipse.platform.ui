@@ -4,15 +4,15 @@ package org.eclipse.update.tests.sitevalidation;
  * All Rights Reserved.
  */
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
+import org.eclipse.core.internal.boot.PlatformConfiguration;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteValidation extends UpdateManagerTestCase {
@@ -23,6 +23,14 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 	 */
 	public TestSiteValidation(String arg0) {
 		super(arg0);
+	}
+
+	private void removeConfigSite(URL url) throws Exception {
+		// get new config object
+		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		ISiteEntry s1 = cfig.findConfiguredSite(url);
+		assertNotNull("Unable to find site entry:"+url,s1);
+		cfig.unconfigureSite(s1);
 	}
 
 	public void testSite1() throws Exception {
@@ -38,6 +46,8 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		if (!status.isOK()){
 			fail(msg+status.getMessage());
 		}
+		currentConfig.removeConfiguredSite(configuredSite);
+		removeConfigSite(configuredSite.getSite().getURL());
 	}
 	
 	public void testSite2() throws Exception {
@@ -98,7 +108,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		}
 	}	
 
-/*	public void testSite5() throws Exception {
+	public void testSite5() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site5/");
 		File file = new File(remoteUrl.getFile());
@@ -111,8 +121,16 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		if (!status.isOK()){
 			fail(msg+status.getMessage());
 		}
+		
+			// get new config object
+		URL url = configuredSite.getSite().getURL();
+		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		ISiteEntry s1 = cfig.findConfiguredSite(url);
+		assertNotNull("Site entry not found:"+url,s1);
+		cfig.unconfigureSite(s1);
+		cfig.save();
 	}
-*/	
+	
 	public void testSite6() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site6/children/children");

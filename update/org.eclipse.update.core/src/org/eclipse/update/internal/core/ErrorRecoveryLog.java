@@ -32,15 +32,15 @@ public class ErrorRecoveryLog {
 	private static final String END_OF_FILE = "eof=eof";
 
 	//
-	public static final String START_INSTALL_LOG = 	"INSTALL_LOG";
+	public static final String START_INSTALL_LOG = 	"START_INSTALL_LOG";
 	public static final String PLUGIN_ENTRY = 		"PLUGIN";
 	public static final String FRAGMENT_ENTRY = 		"FRAGMENT";	
 	public static final String FEATURE_ENTRY = 		"FEATURE";
-	public static final String END_INSTALL = 		"END_INSTALL";
+	public static final String ALL_INSTALLED = 		"ALL_FEATURES_INSTALLED";
 	public static final String RENAME_ENTRY = 		"RENAME";
 	public static final String END_INSTALL_LOG = 	"END_INSTALL_LOG";
 	public static final String START_REMOVE_LOG = 	"REMOVE_LOG";
-	public static final String END_REMOVE = 			"END_REMOVE";
+	public static final String END_ABOUT_REMOVE =	"END_ABOUT_TO_REMOVE";
 	public static final String DELETE_ENTRY = 		"DELETE";
 	public static final String END_REMOVE_LOG = 		"END_REMOVE_LOG";
 
@@ -50,6 +50,10 @@ public class ErrorRecoveryLog {
 	private FileWriter out;
 	private int index;
 	private List paths;
+	
+	private boolean open = false;
+	private int nbOfOpen = 0;
+	
 
 	/**
 	 * Constructor for ErrorRecoveryLog.
@@ -62,8 +66,9 @@ public class ErrorRecoveryLog {
 	 * Singleton
 	 */
 	public static ErrorRecoveryLog getLog() {
-		if (inst == null)
+		if (inst == null){
 			inst = new ErrorRecoveryLog();
+		}
 		return inst;
 	}
 
@@ -103,17 +108,51 @@ public class ErrorRecoveryLog {
 		return new File(platformConfiguration, ERROR_RECOVERY_LOG);
 	}
 
+
+	/**
+	 * Open the log
+	 */
+	public void open(String logEntry) throws CoreException {
+		if (open) {
+			nbOfOpen++;			
+			UpdateManagerPlugin.warn("Open nested Error/Recovery log #"+nbOfOpen+":"+logEntry);				
+			return;
+		}
+		
+		File logFile = null;		
+		try {
+			logFile = getRecoveryLogFile();
+			out = new FileWriter(logFile);
+			index = 0;
+			paths=null;
+			open=true;
+			nbOfOpen=0;
+			UpdateManagerPlugin.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }),
+				e);
+		}
+		
+		append(logEntry);
+	}
+
+	/**
+	 * Open the log
+	 */
+	private void internalOpen(String logEntry) throws CoreException {
+
+	}
+
 	/**
 	 * Append the string to the log and flush
 	 */
 	public void append(String logEntry) throws CoreException {
 		File logFile = null;
 		try {
-			if (out == null) {
-				logFile = getRecoveryLogFile();
-				out = new FileWriter(logFile);
-				index = 0;
-				paths=null;
+			if (!open) {
+				UpdateManagerPlugin.warn("Internal Error: The Error/Recovery log is not open:"+logEntry,new Exception());				
+				return;
 			}
 
 			StringBuffer buffer = new StringBuffer(LOG_ENTRY_KEY);
@@ -149,7 +188,16 @@ public class ErrorRecoveryLog {
 	/**
 	 * Close any open recovery log
 	 */
-	public void close() {
+	public void close(String logEntry) throws CoreException {
+		
+		if (nbOfOpen>0){
+			UpdateManagerPlugin.warn("Close nested Error/Recovery log #"+nbOfOpen+":"+logEntry);			
+			nbOfOpen--;			
+			return;
+		}			
+		
+		UpdateManagerPlugin.warn("Close Error/Recovery log #"+nbOfOpen+":"+logEntry);
+		append(logEntry);
 		if (out != null) {
 			try {
 				out.write(END_OF_FILE);
@@ -158,6 +206,7 @@ public class ErrorRecoveryLog {
 			} catch (Exception e) { //eat the exception
 			} finally {
 				out = null;
+				open=false;
 			}
 		}
 	}
@@ -279,13 +328,13 @@ public class ErrorRecoveryLog {
 			return multi;
 	 	}
 	 	
-	 	if (values.contains(END_INSTALL) && !forceRemove){
+	 	if (values.contains(ALL_INSTALLED) && !forceRemove){
 	 		// finish install by renaming
 	 		int index = 0;
 	 		boolean found = false;
 	 		String val = prop.getProperty(LOG_ENTRY_KEY+index);
 	 		while(val!=null && !found){
-	 			if(val.equalsIgnoreCase(END_INSTALL)) found = true;
+	 			if(val.equalsIgnoreCase(ALL_INSTALLED)) found = true;
 	 			IStatus renameStatus = processRename(val);
 	 			UpdateManagerPlugin.log(renameStatus);
 	 			if(renameStatus.getSeverity()!=IStatus.OK){
@@ -463,7 +512,7 @@ public class ErrorRecoveryLog {
 			return multi;
 	 	}
 	 	
-	 	if (!values.contains(END_REMOVE)){
+	 	if (!values.contains(END_ABOUT_REMOVE)){
 	 		// finish install by renaming
  			multi.add(createStatus(IStatus.ERROR,"The remove process didn't start. Please remove the disable feature from the program.",null));
 				return multi;
@@ -473,7 +522,7 @@ public class ErrorRecoveryLog {
 	 		boolean found = false;
 	 		String val = prop.getProperty(LOG_ENTRY_KEY+index);
 	 		while(val!=null && !found){
-	 			if(val.equalsIgnoreCase(END_REMOVE)) found = true;
+	 			if(val.equalsIgnoreCase(END_ABOUT_REMOVE)) found = true;
 	 			IStatus renameStatus = processRemove(val);
 	 			UpdateManagerPlugin.log(renameStatus);
 	 			if(renameStatus.getSeverity()!=IStatus.OK){

@@ -159,7 +159,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
 	
-/*	public void testRetriveConfig() throws Exception {
+	public void testRetriveConfig() throws Exception {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
@@ -302,7 +302,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		}
 
 		//String configuredFeature = feature2.getLabel();
-		assertTrue("cannot find feature org.test1.ident1_1.0.0 in configured SIte",found);
+		assertTrue("cannot find feature org.test1.ident1_1.0.0 in configured Site",found);
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		
 		// test only 2 install config in local site
@@ -330,6 +330,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
-*/
+
 }
 

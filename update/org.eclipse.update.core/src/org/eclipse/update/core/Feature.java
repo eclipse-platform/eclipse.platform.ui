@@ -208,10 +208,9 @@ public class Feature extends FeatureModel implements IFeature {
 		IProgressMonitor progress)
 		throws CoreException {
 
-		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
-
 		//DEBUG
 		debug("Installing...:" + getURL().toExternalForm());
+		ErrorRecoveryLog recoveryLog=ErrorRecoveryLog.getLog();
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -275,7 +274,7 @@ public class Feature extends FeatureModel implements IFeature {
 			SubProgressMonitor subMonitor=null;				
 
 			// start log
-			recoveryLog.append(recoveryLog.START_INSTALL_LOG);
+			recoveryLog.open(recoveryLog.START_INSTALL_LOG);
 
 			// Start the installation tasks			
 			handler.installInitiated();
@@ -386,9 +385,6 @@ public class Feature extends FeatureModel implements IFeature {
 			handler.completeInstall(consumer);
 			monitorWork(monitor,1);
 					
-			// log files have been downloaded
-			recoveryLog.append(recoveryLog.END_INSTALL);					
-						
 			// indicate install success
 			success = true;
 
@@ -404,7 +400,8 @@ public class Feature extends FeatureModel implements IFeature {
 					if (success) {
 						result = consumer.close();
 						// close the log
-						recoveryLog.append(recoveryLog.END_INSTALL_LOG);
+						recoveryLog.close(recoveryLog.END_INSTALL_LOG);
+						recoveryLog.delete();
 					} else {
 						consumer.abort();
 					}
@@ -412,9 +409,6 @@ public class Feature extends FeatureModel implements IFeature {
 				handler.installCompleted(success);
 			} catch (Exception e) {
 				newException = e;
-			} finally{
-				recoveryLog.close();
-				recoveryLog.delete();								
 			}
 			if (originalException != null) // original exception wins
 				throw Utilities.newCoreException(

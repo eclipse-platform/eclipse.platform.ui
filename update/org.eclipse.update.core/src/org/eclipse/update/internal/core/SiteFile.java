@@ -143,12 +143,12 @@ public class SiteFile extends Site {
 		try {
 
 			// start log
-			recoveryLog.append(recoveryLog.START_REMOVE_LOG);
+			recoveryLog.open(recoveryLog.START_REMOVE_LOG);
 
-			aboutToRemove(feature);
+			aboutToRemove(feature); 
 
 			// log files have been downloaded
-			recoveryLog.append(recoveryLog.END_REMOVE);
+			recoveryLog.append(recoveryLog.END_ABOUT_REMOVE);
 
 			handler.uninstallInitiated();
 
@@ -239,11 +239,10 @@ public class SiteFile extends Site {
 			try {
 				if (success) {
 					// close the log
-					recoveryLog.append(recoveryLog.END_REMOVE_LOG);
-					recoveryLog.close();
+					recoveryLog.close(recoveryLog.END_REMOVE_LOG);
 					recoveryLog.delete();
 				} else {
-					recoveryLog.close();
+					recoveryLog.close(recoveryLog.END_REMOVE_LOG);
 				}
 				handler.uninstallCompleted(success);
 			} catch (Throwable t) {
@@ -417,8 +416,8 @@ public class SiteFile extends Site {
 	 * 
 	 */
 	private void aboutToRemove(IFeature feature) throws CoreException {
-		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
+		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 		// if teh recovery is not turned on
 		if (!ErrorRecoveryLog.RECOVERY_ON) return;
 

@@ -285,7 +285,5 @@ public class TestInstall extends UpdateManagerTestCase {
 				((InstallConfiguration) localSite.getCurrentConfiguration())
 					.getURL()
 					.getFile()));
-
 	}
-
 }

@@ -158,16 +158,19 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
 	}
 
-/*	public void testInstall() throws Exception {
+	public void testInstall() throws Exception {
 
 		// cleanup local files...
-		File localFile =
-			new File(
-				new URL(
-					((SiteLocal) SiteManager.getLocalSite()).getLocationURL(),
-					SiteLocal.SITE_LOCAL_FILE)
-					.getFile());
+		SiteLocal siteLocal = ((SiteLocal) SiteManager.getLocalSite());
+		File localFile = new File(siteLocal.getLocationURL().getFile());
+		//if (!localFile.exists()) fail("LocalSite file doesn't exist ->"+localFile.getAbsolutePath()+"<-");
+		UpdateManagerUtils.removeFromFileSystem(localFile.getParentFile());		
+		/*
+		localFile = new File(localFile,SiteLocal.SITE_LOCAL_FILE);
+		if (!localFile.exists()) fail("LocalSite.xml doesn't exist:"+localFile);
 		UpdateManagerUtils.removeFromFileSystem(localFile);
+		*/
+		
 		InternalSiteManager.localSite = null;
 
 		URL INSTALL_SITE = null;
@@ -195,8 +198,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
 		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfiguredSite site =
-			localSite.getCurrentConfiguration().getConfiguredSites()[0];
+		IConfiguredSite site = localSite.getCurrentConfiguration().getConfiguredSites()[0];
 		Listener listener = new Listener();
 		site.addConfiguredSiteChangedListener(listener);
 
@@ -237,7 +239,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		site.removeConfiguredSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification", listener.isNotified());
 	}
-*/
+
 	public void testFileSiteWithoutSiteXML() throws Exception {
 
 		ISite remoteSite =
