@@ -104,9 +104,6 @@ public class InfosetBuilder {
 
 				// keep track of this insertion for handling standalone actions
 				trackTopic(from);
-
-				// now recursively insert all the children
-				insertChildrenTopics(child);
 			} else	if (isValidTopicSet(from)) {
 				// insert all the child topics nodes
 				Contribution topicSet = (Contribution) topicSetNodeMap.get(from);
@@ -143,7 +140,7 @@ public class InfosetBuilder {
 					return false; //parent must exist for proper insertion
 				Contribution newSib = getSourceTopic(from);
 				if (newSib == null)
-					return false;//topic already inserted	
+					return false;//topic already inserted
 					
 				if(label != null && (newSib instanceof HelpTopicRef))
 					((HelpTopicRef) newSib).setRawLabel(label);
@@ -153,8 +150,6 @@ public class InfosetBuilder {
 				// keep track of this insertion for handling stanalone actions
 				trackTopic(from);
 
-				// now recursively insert all the children
-				insertChildrenTopics(newSib);
 			} else if (isValidTopicSet(from)) {
 				Contribution refSib = getTargetTopic(to, false);
 				if (refSib == null)
@@ -180,23 +175,6 @@ public class InfosetBuilder {
 				}
 			}
 			return true; //success
-		}
-		
-		/**
-		 * parent is a ref/clone node
-		 */
-		private void insertChildrenTopics(Contribution parent)
-		{
-			// now recursively insert all the children
-			Contribution topicNode = parent;
-			if (parent instanceof TopicRef)
-				topicNode = ((TopicRef) parent).getTopic();
-
-			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
-				Contribution childNode = (Contribution) childTopics.next();
-				Inserter newInserter = new Inserter(childNode.getID(), parent.getID(), null, Contribution.NORMAL);					
-				newInserter.insert();
-			}
 		}
 	}
 	
@@ -502,6 +480,8 @@ public class InfosetBuilder {
 		{
 			topic = new HelpTopicRef((Topic)topicNodeMap.get(id));
 			sources.put(id, topic);
+			// recursively "clone" the topic subtree
+			insertChildrenTopics((HelpTopicRef)topic);
 		}
 		return (Contribution)topic;
 	}
@@ -520,7 +500,26 @@ public class InfosetBuilder {
 		{
 			topic = new HelpTopicRef((Topic)topicNodeMap.get(id));
 			targets.put(id, topic);
+			// recursively "clone" the topic subtree
+			insertChildrenTopics((HelpTopicRef)topic);
 		}
 		return (Contribution)topic;
+	}
+	
+	/**
+	 * Recursively inserts all the original hardcoded children
+	 * (Later we may want to do some sort of "clone" operation
+	 * as opposed to using topic ref and such.
+	 * It is assumed that the parent is a TopicRef.
+	 */
+	private void insertChildrenTopics(TopicRef parent)
+	{
+		// now recursively insert all the original hardcoded children
+		Topic topic = parent.getTopic();
+		for (Iterator childTopics = topic.getChildren(); childTopics.hasNext();) {
+			Contribution childTopic = (Contribution) childTopics.next();
+			Inserter newInserter = new Inserter(childTopic.getID(), parent.getID(), null, Contribution.NORMAL);					
+			newInserter.insert();
+		}
 	}
 }
