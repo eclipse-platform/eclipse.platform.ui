@@ -460,7 +460,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.clearSessionProperties();
 		info.set(M_PHANTOM);
 		getLocalManager().updateLocalSync(info, I_NULL_SYNC_INFO);
-		info.setModificationStamp(IResource.NULL_STAMP);
+		info.clearModificationStamp();
 		// should already be done by the #deleteResource call but left in 
 		// just to be safe and for code clarity.
 		info.setMarkers(null);
@@ -833,7 +833,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.clear(M_LOCAL_EXISTS);
 		info.setLocalSyncInfo(I_NULL_SYNC_INFO);
 		info.set(M_PHANTOM);
-		info.setModificationStamp(IResource.NULL_STAMP);
+		info.clearModificationStamp();
 		info.setMarkers(null);
 	}
 
@@ -1046,7 +1046,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.updateModificationStamp(info);
 			} else {
 				info.clear(M_LOCAL_EXISTS);
-				info.setModificationStamp(IResource.NULL_STAMP);
+				info.clearModificationStamp();
 			}
 		}
 		if (getType() == IResource.FILE || depth == IResource.DEPTH_ZERO)

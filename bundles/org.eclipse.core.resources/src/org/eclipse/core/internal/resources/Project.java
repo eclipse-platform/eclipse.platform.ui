@@ -284,7 +284,7 @@ public class Project extends Container implements IProject {
 				// inaccessible projects have a null modification stamp.
 				// set this after setting the description as #setDescription
 				// updates the stamp
-				info.setModificationStamp(IResource.NULL_STAMP);
+				info.clearModificationStamp();
 				//if a project already had content on disk, mark the project as having unknown children
 				if (hasContent)
 					info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
@@ -487,7 +487,7 @@ public class Project extends Container implements IProject {
 		ResourceInfo info = getResourceInfo(false, true);
 		info.clear(M_OPEN);
 		info.clearSessionProperties();
-		info.setModificationStamp(IResource.NULL_STAMP);
+		info.clearModificationStamp();
 		info.setSyncInfo(null);
 	}
 

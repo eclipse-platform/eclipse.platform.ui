@@ -241,8 +241,8 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		try {
 			// read the node id 
 			workspace.nextNodeId = input.readLong();
-			// read the modification stamp
-			workspace.nextModificationStamp = input.readLong();
+			// read the modification stamp (no longer used)
+			input.readLong();
 			// read the next marker id
 			workspace.nextMarkerId = input.readLong();
 			// read the synchronizer's registered sync partners

@@ -54,7 +54,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected RefreshManager refreshManager;
 
 	protected long nextNodeId = 1;
-	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
 	protected IProject[] buildOrder = null;
@@ -700,7 +699,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		ResourceInfo original = getResourceInfo(resource.getFullPath(), true, false);
 		if (phantom) {
 			info.set(M_PHANTOM);
-			info.setModificationStamp(IResource.NULL_STAMP);
+			info.clearModificationStamp();
 		}
 		// if nothing existed at the destination then just create the resource in the tree
 		if (original == null) {
@@ -1490,7 +1489,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				break;
 		}
 		result.setNodeId(nextNodeId());
-		result.setModificationStamp(nextModificationStamp());
+		updateModificationStamp(result);
 		result.setType(type);
 		return result;
 	}
@@ -1543,10 +1542,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected long nextMarkerId() {
 		return nextMarkerId++;
-	}
-
-	public long nextModificationStamp() {
-		return nextModificationStamp++;
 	}
 
 	public long nextNodeId() {
@@ -1855,7 +1850,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	public void updateModificationStamp(ResourceInfo info) {
-		info.setModificationStamp(nextModificationStamp());
+		info.incrementModificationStamp();
 	}
 
 	/* (non-javadoc)

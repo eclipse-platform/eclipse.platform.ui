@@ -19,19 +19,26 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class ResourceInfo implements IElementTreeData, ICoreConstants {
+	protected static final int LOWER = 0xFFFF;
+	protected static final int UPPER = 0xFFFF0000;
 
 	/** Set of flags which reflect various states of the info (used, derived, ...). */
 	protected int flags = 0;
 
-	/** The generation count for encoding changes. */
-	private int charsetGenerationCount = 0;
-
 	/** Unique content identifier */
 	protected int contentId = 0;
 
-	/** Unique modification stamp */
-	// thread safety: (Concurrency004)
-	protected volatile long modificationStamp = IResource.NULL_STAMP;
+	/** 
+	 * This field stores the resource modification stamp in the lower two bytes,
+	 * and the character set generation count in the higher two bytes.
+	 */
+	protected volatile int charsetAndModStamp = 0;
+
+	/**
+	 * This field stores the sync info generation in the lower two bytes, and
+	 * the marker generation count in the upper two bytes.
+	 */
+	protected volatile int markerAndSyncStamp;
 
 	/** Unique node identifier */
 	// thread safety: (Concurrency004)
@@ -40,9 +47,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	/** Local sync info */
 	// thread safety: (Concurrency004)
 	protected volatile long localInfo = I_NULL_SYNC_INFO;
-
-	/** The generation count for sync info changes. */
-	protected int syncInfoGenerationCount = 0;
 
 	/** 
 	 * The table of sync infos. 
@@ -62,9 +66,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	protected ObjectMap sessionProperties = null;
 
-	/** The generation count for marker changes. */
-	protected int markerGenerationCount = 0;
-
 	/** The collection of markers for this resource. */
 	protected MarkerSet markers = null;
 
@@ -73,6 +74,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public void clear(int mask) {
 		flags &= ~mask;
+	}
+
+	public void clearModificationStamp() {
+		charsetAndModStamp &= UPPER;
 	}
 
 	public synchronized void clearSessionProperties() {
@@ -95,7 +100,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	}
 
 	public int getCharsetGenerationCount() {
-		return charsetGenerationCount;
+		return charsetAndModStamp >> 16;
 	}
 
 	public int getContentId() {
@@ -121,7 +126,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 * The count is incremented whenever markers on the resource change.
 	 */
 	public int getMarkerGenerationCount() {
-		return markerGenerationCount;
+		return markerAndSyncStamp >> 16;
 	}
 
 	/** 
@@ -143,7 +148,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	}
 
 	public long getModificationStamp() {
-		return modificationStamp;
+		int stamp = charsetAndModStamp & LOWER;
+		return stamp == 0 ? IResource.NULL_STAMP : stamp + localInfo;
 	}
 
 	public long getNodeId() {
@@ -193,7 +199,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 * The count is incremented whenever sync info on the resource changes.
 	 */
 	public int getSyncInfoGenerationCount() {
-		return syncInfoGenerationCount;
+		return markerAndSyncStamp & LOWER;
 	}
 
 	/** 
@@ -217,7 +223,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 * The count is incremented whenever the encoding on the resource changes.
 	 */
 	public void incrementCharsetGenerationCount() {
-		++charsetGenerationCount;
+		//increment high order bits
+		charsetAndModStamp = ((charsetAndModStamp + LOWER + 1) & UPPER) + (charsetAndModStamp & LOWER);
 	}
 
 	/** 
@@ -232,7 +239,18 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 * The count is incremented whenever markers on the resource change.
 	 */
 	public void incrementMarkerGenerationCount() {
-		++markerGenerationCount;
+		//increment high order bits
+		markerAndSyncStamp = ((markerAndSyncStamp + LOWER + 1) & UPPER) + (markerAndSyncStamp & LOWER);
+	}
+
+	/** 
+	 * Change the modification stamp to indicate that this resource has changed.
+	 * The exact value of the stamp doesn't matter, as long as it can be used to
+	 * distinguish two arbitrary resource generations.
+	 */
+	public void incrementModificationStamp() {
+		//increment low order bits
+		charsetAndModStamp = (charsetAndModStamp & UPPER) + ((charsetAndModStamp + 1) & LOWER);
 	}
 
 	/** 
@@ -240,7 +258,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 * The count is incremented whenever sync info on the resource changes.
 	 */
 	public void incrementSyncInfoGenerationCount() {
-		++syncInfoGenerationCount;
+		//increment low order bits
+		markerAndSyncStamp = (markerAndSyncStamp & UPPER) + ((markerAndSyncStamp + 1) & LOWER);
 	}
 
 	/** 
@@ -257,15 +276,15 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 		return (flags & mask) != 0;
 	}
 
-	public void readFrom(int flags, DataInput input) throws IOException {
+	public void readFrom(int newFlags, DataInput input) throws IOException {
 		// The flags for this info are read by the visitor (flattener). 
 		// See Workspace.readElement().  This allows the reader to look ahead 
 		// and see what type of info is being loaded.
-		this.flags = flags;
+		this.flags = newFlags;
 		localInfo = input.readLong();
 		nodeId = input.readLong();
 		contentId = input.readInt();
-		modificationStamp = input.readLong();
+		charsetAndModStamp = ((int) input.readLong()) & LOWER;
 	}
 
 	/** 
@@ -308,13 +327,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public void setMarkers(MarkerSet value) {
 		markers = value;
-	}
-
-	/** 
-	 *
-	 */
-	public void setModificationStamp(long stamp) {
-		modificationStamp = stamp;
 	}
 
 	/** 
@@ -397,6 +409,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 		output.writeLong(localInfo);
 		output.writeLong(nodeId);
 		output.writeInt(contentId);
-		output.writeLong(modificationStamp);
+		output.writeLong(charsetAndModStamp & LOWER);
 	}
 }

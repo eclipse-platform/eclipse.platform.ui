@@ -161,7 +161,7 @@ public class File extends Resource implements IFile {
 				}
 				internalSetLocal(local, DEPTH_ZERO);
 				if (!local)
-					getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
+					getResourceInfo(true, true).clearModificationStamp();
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;

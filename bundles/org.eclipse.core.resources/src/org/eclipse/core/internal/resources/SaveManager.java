@@ -1205,8 +1205,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		try {
 			// save the next node id 
 			output.writeLong(workspace.nextNodeId);
-			// save the modification stamp
-			output.writeLong(workspace.nextModificationStamp);
+			// save the modification stamp (no longer used)
+			output.writeLong(0L);
 			// save the marker id counter
 			output.writeLong(workspace.nextMarkerId);
 			// save the registered sync partners in the synchronizer

@@ -176,7 +176,7 @@ public class Folder extends Container implements IFolder {
 			}
 			setLocal(local, DEPTH_ZERO, Policy.subMonitorFor(monitor, Policy.totalWork * 25 / 100));
 			if (!local)
-				getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
+				getResourceInfo(true, true).clearModificationStamp();
 		} finally {
 			monitor.done();
 		}
