@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
  * Commands and their parameters are separated using spaced
  * and should be provided one command per line.
  */
-public class IEHost implements Runnable, ICommandStateChangedListener {
+public class IEHost implements Runnable {
 	public static final String SYS_PROPERTY_INSTALLURL = "installURL";
 	public static final String SYS_PROPERTY_PRODUCTIMAGEURL = "windowImage";
 	public static final String SYS_PROPERTY_PRODUCTNAME = "name";
@@ -44,7 +44,6 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private WebBrowser webBrowser;
 	private IEResources ieResources;
 	private IEStore store;
-	ToolItem backItem, forwardItem;
 	int x, y, w, h;
 	private boolean closing = false;
 	Thread inputReader;
@@ -228,55 +227,14 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
-		// Add a toolbar
-		ToolBar bar = new ToolBar(composite, SWT.FLAT | SWT.HORIZONTAL);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		//gridData.horizontalSpan = 3;
-		bar.setLayoutData(gridData);
-		// Add a button to navigate back
-		backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
-		//backItem.setText(ieResources.getString("back"));
-		backItem.setToolTipText(ieResources.getString("back_tip"));
-		backItem.setImage(backImg);
-		backItem.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				webBrowser.back();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
-		// Add a button to navigate forward
-		forwardItem = new ToolItem(bar, SWT.NONE, 1);
-		//forwardItem.setText(ieResources.getString("forward"));
-		forwardItem.setToolTipText(ieResources.getString("forward_tip"));
-		forwardItem.setImage(forwardImg);
-		forwardItem.setHotImage(null);
-		forwardItem.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				webBrowser.forward();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
 		try {
 			webBrowser = new WebBrowser(composite);
-			webBrowser.addCommandStateChangedListener(this);
 			webBrowser.navigate("about:blank");
 		} catch (HelpWorkbenchException hwe) {
 			System.err.println(
 				ieResources.getString("WE027", hwe.getMessage()));
 		}
 		return composite;
-	}
-	public void commandStateChanged(boolean back, boolean forward) {
-		if (backItem.getEnabled() != back)
-			backItem.setEnabled(back);
-		if (forwardItem.getEnabled() != forward)
-			forwardItem.setEnabled(forward);
 	}
 	/**
 	 * Reads commands from standard input.
