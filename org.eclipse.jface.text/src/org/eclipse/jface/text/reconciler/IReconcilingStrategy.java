@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
-
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 

@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -18,11 +16,11 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * Extension interface to <code>ICompletionProposal</code>.
- * Add the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
+ * the following functions:
  * <ul>
- * <li> handling of trigger characters with modifiers
- * <li> visual indication for selection of a proposal
+ *	<li> handling of trigger characters with modifiers</li>
+ *	<li> visual indication for selection of a proposal</li>
  * </ul>
  * 
  * @since 2.1
@@ -62,7 +60,7 @@ public interface ICompletionProposalExtension2 {
 	 * If the proposal cannot be validated, the methods returns <code>false</code>.
 	 * If the document event was <code>null</code>, only the caret offset was changed, but not the document.
 	 *
-	 * This method deprecates ICompletionProposalExtension.isValidFor(IDocument, int)
+	 * This method replaces {@link ICompletionProposalExtension#isValidFor(IDocument, int)}
 	 * 
 	 * @param document the document
 	 * @param offset the caret offset

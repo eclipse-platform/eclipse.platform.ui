@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
 
 import java.util.HashMap;
@@ -26,6 +25,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
+
 
 /**
  * Standard implementation of <code>IReconciler</code>. The reconciler
@@ -51,7 +51,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	
 	/**
 	 * Creates a new reconciler with the following configuration: it is
-	 * an incremental reconciler with a standard delay of 500 ms. There
+	 * an incremental reconciler with a standard delay of 500 milli-seconds. There
 	 * are no predefined reconciling strategies. The partitioning it uses
 	 * is the default partitioning <code>IDocumentExtension3.DEFAULT_PARTITIONING</code>.
 	 */ 

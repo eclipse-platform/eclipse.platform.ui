@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
 
+
 /**
- * Tagging interface for a reconcilable model.
+ * Tagging interface for a model that can be reconciled.
  * 
  * @since 3.0
  */

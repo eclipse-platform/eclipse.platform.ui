@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-
 import org.eclipse.jface.text.ITextViewer;
  
  
@@ -20,7 +19,7 @@ import org.eclipse.jface.text.ITextViewer;
  * purpose is to propose, display, and insert completions of the content
  * of the text viewer's document at the viewer's cursor position. In addition
  * to handle completions, a content assistant can also be requested to provide
- * context information. Context information is shown in a tooltip like popup.
+ * context information. Context information is shown in a tool tip like popup.
  * As it is not always possible to determine the exact context at a given
  * document offset, a content assistant displays the possible contexts and requests
  * the user to choose the one whose information should be displayed.<p>
@@ -34,7 +33,6 @@ import org.eclipse.jface.text.ITextViewer;
  * @see ITextViewer
  * @see IContentAssistProcessor 
  */
- 
  public interface IContentAssistant {
 	
 	//------ proposal popup orientation styles ------------

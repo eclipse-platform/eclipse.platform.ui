@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import java.util.ArrayList;
 import java.util.List;

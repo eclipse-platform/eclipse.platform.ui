@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-
-
 import org.eclipse.swt.widgets.Widget;
 
 

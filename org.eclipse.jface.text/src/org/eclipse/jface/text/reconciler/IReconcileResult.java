@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
+
 
 /**
  * Tagging interface for the result reported by a reconcile step

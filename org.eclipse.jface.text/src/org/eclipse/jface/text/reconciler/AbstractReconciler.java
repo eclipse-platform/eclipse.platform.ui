@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
 
 
@@ -20,8 +19,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextViewer;
-
-
 
 
 /**
@@ -40,7 +37,6 @@ import org.eclipse.jface.text.ITextViewer;
  * method. Unstopped reconcilers do not free their resources.<p>
  * It is subclass responsibility to specify how dirty regions are processed.
  *
- * @see IReconciler
  * @see IDocumentListener
  * @see ITextInputListener
  * @see DirtyRegion
@@ -88,6 +84,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * Returns whether some changes need to be processed.
 		 * 
 		 * @return <code>true</code> if changes wait to be processed
+		 * @since 3.0
 		 */
 		public synchronized boolean isDirty() {
 			return fIsDirty;

@@ -8,20 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 
 
 /**
- * Extension interface to <code>ICompletionProposal</code>.
- * Add the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
+ * the following functions:
  * <ul>
- * <li>provision of a custom information control creator</li>
- * <li>provide a custom completion text and offset for prefix completion</li> 
+ *	<li>provision of a custom information control creator</li>
+ *	<li>provide a custom completion text and offset for prefix completion</li> 
  * </ul>
  * 
  * @since 3.0
@@ -30,7 +28,7 @@ public interface ICompletionProposalExtension3 {
 	/**
 	 * Returns the information control creator of this completion proposal.
 	 * 
-	 * @return the information control creator, or <code>null</code> if no custom control creater is available
+	 * @return the information control creator, or <code>null</code> if no custom control creator is available
 	 */
 	IInformationControlCreator getInformationControlCreator();
 	

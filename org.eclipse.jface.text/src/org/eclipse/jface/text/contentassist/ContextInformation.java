@@ -8,14 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.text.Assert;
-
 
 
 /**

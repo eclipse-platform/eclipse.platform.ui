@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -25,7 +23,6 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension3;
-
 
 
 /**
@@ -68,7 +65,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	 * since 3.0
 	 */
 	private final Object fThreadAccess= new Object();
-	/** Object to synchronize initial display of additonal info */
+	/** Object to synchronize initial display of additional info */
 	private Object fStartSignal;
 	/** The table selection listener */
 	private SelectionListener fSelectionListener= new TableSelectionListener();

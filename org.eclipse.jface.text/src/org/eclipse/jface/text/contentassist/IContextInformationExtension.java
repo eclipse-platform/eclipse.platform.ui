@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
 
 
 /**
  * Extension interface for <code>IContextInformation</code>.
- * Adds the functionality of freely positionable context information.
+ * Adds the functionality of context information that can be freely positioned.
  * 
  * @since 2.0
  */

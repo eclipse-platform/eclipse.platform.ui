@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
 
 import java.util.ArrayList;
@@ -21,10 +20,10 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 
+
 /**
  * Abstract implementation of a reconcile step.
  * 
- * @see org.eclipse.jface.text.reconciler.IReconcileStep
  * @since 3.0
  */
 public abstract class AbstractReconcileStep implements IReconcileStep {

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
-
 import org.eclipse.jface.text.ITypedRegion;
+
 
 /**
  * A dirty region describes a document range which has been changed.
@@ -38,7 +38,6 @@ public class DirtyRegion implements ITypedRegion {
 
 	/**
 	 * Creates a new dirty region.
-	 *
 	 * 
 	 * @param offset the offset within the document where the change occurred
 	 * @param length the length of the text within the document that changed

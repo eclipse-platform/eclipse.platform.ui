@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
 
 import org.eclipse.swt.custom.StyledText;
@@ -26,6 +25,7 @@ import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.contentassist.ContextInformationPopup.ContextFrame;
+
 
 /**
  * This content assist adapter delegates the calls either to

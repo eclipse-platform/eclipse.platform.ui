@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
-
-
 import org.eclipse.jface.text.ITextViewer;
-
 
 
 /**

@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
-
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -21,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <ul>
  * <li> usage of a progress monitor
  * <li> initial reconciling step: If a reconciler runs as periodic activity in the background, this
- * 		methods offers the reconciler a chance for initializing its startegies and achieving a 
+ * 		methods offers the reconciler a chance for initializing its strategies and achieving a 
  * 		reconciled state before the periodic activity starts.
  * </ul>
  * 

@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
-
 import java.util.List;
 import java.util.ArrayList;
 
 
 /**
- * Queue used by <code>Reconciler</code> to manage dirty regions. When a dirty region
+ * Queue used by {@link org.eclipse.jface.text.reconciler.Reconciler} to manage dirty regions. When a dirty region
  * is inserted into the queue, the queue tries to fold it into the neighboring dirty region.
  *
- * @see Reconciler
- * @see DirtyRegion
+ * @see org.eclipse.jface.text.reconciler.Reconciler
+ * @see org.eclipse.jface.text.reconciler.DirtyRegion
  */
 class DirtyRegionQueue {
 	
-	/** The list of dirty regions */
+	/** The list of dirty regions. */
 	private List fDirtyRegions= new ArrayList();
 
 	/**

@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,8 +15,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 
+
 /**
- * A reconcile step is one of n steps of a reconcile
+ * A reconcile step is one of several steps of a reconcile
  * strategy that consists of several steps.
  * 
  * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy 
@@ -46,7 +46,7 @@ public interface IReconcileStep {
 	 * </p>
 	 * 
 	 * @param step the previous step
-	 * @exception org.eclipse.jface.text.Assert#AssertionFailedException if called more than once
+	 * @throws org.eclipse.jface.text.Assert#AssertionFailedException if called more than once
 	 */
 	void setPreviousStep(IReconcileStep step);
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,9 +31,9 @@ class PopupCloser implements FocusListener, SelectionListener {
 	private ContentAssistant fContentAssistant;
 	/** The table of a selector popup opened by the content assistant */
 	private Table fTable;
-	/** The scrollbar of the table for the selector popup */
+	/** The scroll bar of the table for the selector popup */
 	private ScrollBar fScrollbar;
-	/** Indicates whether the scrollbar thumb has been grabed */
+	/** Indicates whether the scroll bar thumb has been grabbed */
 	private boolean fScrollbarClicked= false;
 	
 	/**

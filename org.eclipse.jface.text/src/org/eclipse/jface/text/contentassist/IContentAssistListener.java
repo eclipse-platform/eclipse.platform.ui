@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-
-
 import org.eclipse.swt.events.VerifyEvent;
 
 import org.eclipse.jface.text.IEventConsumer;
-
 
 
 /**

@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +54,6 @@ import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.TextUtilities;
-
 
 
 /**
@@ -487,7 +484,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 						break;
 	
 					case PROPOSAL_OVERLAY:
-						// The proposal selector has been overlayed by the tip selector.
+						// The proposal selector has been overlaid by the tip selector.
 						break;
 	
 					case PROPOSAL_STACKED: {
@@ -661,7 +658,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	final static int CONTEXT_INFO_POPUP= 2;
 	
 	/** 
-	 * The popup priority: &gt; linked position proposals and hover popups.
+	 * The popup priority: &gt; linked position proposals and hover pop-ups.
 	 * Default value: <code>20</code>;
 	 *  
 	 * @since 3.0
@@ -677,6 +674,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;	
 	private Map fProcessors;
+	
+	/**
+	 * The partitioning.
+	 * @since 3.0
+	 */
 	private String fPartitioning;
 	
 	private Color fContextInfoPopupBackground;
@@ -696,6 +698,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private CompletionProposalPopup fProposalPopup;
 	private ContextInformationPopup fContextInfoPopup;
 	
+	/**
+	 * Flag which tells whether a verify key listener is hooked.
+	 * @since 3.0
+	 */
 	private boolean fVerifyKeyListenerHooked= false;
 	private IContentAssistListener[] fListeners= new IContentAssistListener[4];
 	/**
@@ -728,7 +734,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * overlays the completion proposals with context information list if necessary, and
 	 * shows the context information above the location at which it was activated. If auto
 	 * activation will be enabled, without further configuration steps, this content assistant
-	 * is activated after a 500 ms delay. It uses the default partitioning.
+	 * is activated after a 500 milli-seconds delay. It uses the default partitioning.
 	 */	
 	public ContentAssistant() {
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
@@ -738,6 +744,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Sets the document partitioning this content assistant is using.
 	 * 
 	 * @param partitioning the document partitioning for this content assistant
+	 * @since 3.0
 	 */
 	public void setDocumentPartitioning(String partitioning) {
 		Assert.isNotNull(partitioning);
@@ -818,7 +825,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * Installs and uninstall the listeners needed for autoactivation.
+	 * Installs and uninstall the listeners needed for auto-activation.
 	 * @param start <code>true</code> if listeners must be installed,
 	 * 	<code>false</code> if they must be removed
 	 * @since 2.0
@@ -856,7 +863,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * Sets the proposal popups' orientation.
+	 * Sets the proposal pop-ups' orientation.
 	 * The following values may be used:
 	 * <ul>
 	 *   <li>PROPOSAL_OVERLAY<p>
@@ -1028,6 +1035,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/*
 	 * @see IControlContentAssistant#install(IContentAssistSubjectControl)
+	 * @since 3.0
 	 */
 	protected void install(IContentAssistSubjectControl contentAssistSubjectControl) {
 		fContentAssistSubjectControl= contentAssistSubjectControl;
@@ -1037,6 +1045,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	
 	/*
 	 * @see IContentAssist#install
+	 * @since 3.0
 	 */
 	public void install(ITextViewer textViewer) {
 		fViewer= textViewer;
@@ -1197,7 +1206,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * Repromotes the keylistener to the first position, using
+	 * Re-promotes the key listener to the first position, using
 	 * prependVerifyKeyListener. This ensures no other instance is
 	 * filtering away the keystrokes underneath, if we've been up for a
 	 * while (e.g. when the context info is showing.
@@ -1273,6 +1282,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	
 	/**
 	 * Uninstall the key listener from the text viewer's widget.
+	 * @since 3.0
 	 */
 	private void uninstallVerifyKeyListener() {
 		if (fVerifyKeyListenerHooked) {
@@ -1310,6 +1320,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#completePrefix()
+	 * @since 3.0
 	 */
 	public String completePrefix() {
 		promoteKeyListener();
@@ -1370,6 +1381,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param viewer the text viewer
 	 * @param offset a offset within the document
 	 * @return a content-assist processor or <code>null</code> if none exists
+	 * @since 3.0
 	 */
 	private IContentAssistProcessor getProcessor(ITextViewer viewer, int offset) {
 		try {
@@ -1392,6 +1404,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset a offset within the document
 	 * @return a content-assist processor or <code>null</code> if none exists
+	 * @since 3.0
 	 */
 	private IContentAssistProcessor getProcessor(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		try {
@@ -1419,8 +1432,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param position a document position
 	 * @return an array of completion proposals
-	 *
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
+	 * @since 3.0
 	 */
 	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int position) {
 		fLastErrorMessage= null;
@@ -1494,8 +1507,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param position a document position
 	 * @return an array of context information objects
-	 *
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
+	 * @since 3.0
 	 */
 	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int position) {
 		fLastErrorMessage= null;
@@ -1520,8 +1533,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param viewer the text viewer
 	 * @param offset a document offset
 	 * @return an validator
-	 *
 	 * @see IContentAssistProcessor#getContextInformationValidator()
+	 * @since 3.0
 	 */
 	IContextInformationValidator getContextInformationValidator(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
@@ -1619,8 +1632,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param viewer the text viewer
 	 * @param offset a document offset
 	 * @return the auto activation characters
-	 *
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
+	 * @since 3.0
 	 */
 	char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
@@ -1635,8 +1648,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset a document offset
 	 * @return the auto activation characters
-	 *
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
+	 * @since 3.0
 	 */
 	char[] getContextInformationAutoActivationCharacters(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
@@ -1677,7 +1690,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * Hides any open popups.
+	 * Hides any open pop-ups.
+	 *
+	 * @since 3.0
 	 */
 	protected void hide() {
 		if (fProposalPopup != null)

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
+
 /**
  * Extension interface for <code>IReconciler</code>.
  * Updates the reconciler to be aware of documents with multiple partitions.

@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.reconciler;
-
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -22,7 +20,7 @@ import org.eclipse.jface.text.Region;
 /**
  * Standard implementation of <code>IReconciler</code>. The reconciler
  * is configured with a single <code>IReconcilingStrategy</code> that is
- * used independly from where a dirty region is located in the reconciler's
+ * used independently from where a dirty region is located in the reconciler's
  * document. <p>
  * Usually, clients instantiate this class and configure it before using it.
  *

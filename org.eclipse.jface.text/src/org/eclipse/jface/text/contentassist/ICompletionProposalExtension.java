@@ -8,20 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.contentassist;
-
 
 import org.eclipse.jface.text.IDocument;
 
 
 /**
- * Extension interface to <code>ICompletionProposal</code>.
- * Add the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
+ * the following functions:
  * <ul>
- * <li> handling of trigger characters other then ENTER
- * <li> completion proposal validation for a given offset
- * <li> freely positionable context information
+ * 	<li> handling of trigger characters other then ENTER</li>
+ * 	<li> completion proposal validation for a given offset</li>
+ * 	<li> context information can be freely positioned</li>
  * </ul>
  * 
  * @since 2.0
