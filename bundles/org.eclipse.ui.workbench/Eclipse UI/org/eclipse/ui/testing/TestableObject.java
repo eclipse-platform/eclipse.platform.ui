@@ -68,6 +68,7 @@ public class TestableObject {
 	 * Subclasses may override.
 	 */
 	public void testingStarting() {
+		// do nothing
 	}
 
 	/**
@@ -77,5 +78,6 @@ public class TestableObject {
 	 * Subclasses may override.
 	 */
 	public void testingFinished() {
+		// do nothing
 	}
 }
