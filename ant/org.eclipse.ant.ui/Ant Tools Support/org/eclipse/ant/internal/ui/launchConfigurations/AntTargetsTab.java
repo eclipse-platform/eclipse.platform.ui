@@ -23,7 +23,9 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -473,6 +475,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private AntTargetNode[] getTargets() {
 		if (fAllTargets == null || isDirty()) {
 			fAllTargets= null;
+			fDefaultTarget= null;
 			setDirty(false);
 			setErrorMessage(null);
 			setMessage(null);
@@ -538,25 +541,35 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			    return fAllTargets;
 			}
 			
+			AntTargetNode target= fAllTargets[0];
+			AntProjectNode projectNode= target.getProjectNode();
+			setErrorMessageFromNode(projectNode);
 			for (int i=0; i < fAllTargets.length; i++) {
-			    AntTargetNode target= fAllTargets[i];
+			    target= fAllTargets[i];
 				if (target.isDefaultTarget()) {
 					fDefaultTarget= target;
 				}
-				if (target.isErrorNode() || target.isWarningNode()) {
-				    String message= target.getProblemMessage();
-				    if (message != null) {
-				        setErrorMessage(message);
-				    } else {
-				        setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.0")); //$NON-NLS-1$
-				    }
-				}
+				setErrorMessageFromNode(target);
 			}
 		}
 		
 		return fAllTargets;
 	}
 	
+	private void setErrorMessageFromNode(AntElementNode node) {
+		if (getErrorMessage() != null) {
+			return;
+		}
+		if (node.isErrorNode() || node.isWarningNode()) {
+			String message= node.getProblemMessage();
+		    if (message != null) {
+		        setErrorMessage(message);
+		    } else {
+		        setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.0")); //$NON-NLS-1$
+		    }
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -613,10 +626,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
-			fOrderedTargets.add(fDefaultTarget);
 			fTableViewer.setAllChecked(false);
 			setExecuteInput(allTargetNodes);
 			if (fDefaultTarget != null) {
+				fOrderedTargets.add(fDefaultTarget);
 				fTableViewer.setChecked(fDefaultTarget, true);
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
@@ -727,6 +740,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 		
+		if (fDefaultTarget == null) {//error message already set
+			return false;
+		}
 		if (fAllTargets != null && fTableViewer.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;
@@ -804,13 +820,4 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 	}
-//    /* (non-Javadoc)
-//     * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-//     */
-//    public void dispose() {
-//        super.dispose();
-//        if (fAllTargets != null) {
-//            fAllTargets[0].get
-//        }
-//    }
 }
