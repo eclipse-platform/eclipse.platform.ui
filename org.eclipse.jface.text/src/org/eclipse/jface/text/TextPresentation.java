@@ -275,16 +275,14 @@ public class TextPresentation {
 			}
 			
 			int last= getFirstIndexAfterWindow(rangeRegion);
-			ArrayList rangesCopy= new ArrayList(fRanges);
-			int insertOffset= 0;
 			for (int i= first; i < last && length > 0; i++) {
 			
-				StyleRange current= (StyleRange)rangesCopy.get(i);
+				StyleRange current= (StyleRange)fRanges.get(i);
 				int currentStart= current.start;
 				int currentEnd= currentStart + current.length;
 
 				if (end <= currentStart) {
-					fRanges.add(i + insertOffset, range);
+					fRanges.add(i, range);
 					return;
 				}
 				
@@ -304,8 +302,8 @@ public class TextPresentation {
 					defaultRange.start= start;
 					defaultRange.length= currentStart - start;
 					applyStyle(range, defaultRange);
-					fRanges.add(i + insertOffset, defaultRange);
-					insertOffset++;
+					fRanges.add(i, defaultRange);
+					i++; last++;
 					
 					
 					// Apply background to first part of current range
@@ -320,8 +318,8 @@ public class TextPresentation {
 					// Apply the background to the rest of the current range and add it
 					if (current.length > 0) {
 						current= (StyleRange)current.clone();
-						insertOffset++;
-						fRanges.add(i + insertOffset, current);
+						i++; last++;
+						fRanges.add(i, current);
 					}
 					applyStyle(range, current);
 					current.start= start;
@@ -332,8 +330,8 @@ public class TextPresentation {
 					// Add rest of current range
 					currentCopy.start= end;
 					currentCopy.length= currentEnd - end;
-					insertOffset++;
-					fRanges.add(i + insertOffset,  currentCopy);
+					i++; last++;
+					fRanges.add(i,  currentCopy);
 				}
 
 				// Update range
@@ -350,7 +348,7 @@ public class TextPresentation {
 				defaultRange.start= start;
 				defaultRange.length= end - start;
 				defaultRange.background= range.background;
-				fRanges.add(last + insertOffset, defaultRange);
+				fRanges.add(last, defaultRange);
 			}
 		}
 	}
@@ -403,18 +401,20 @@ public class TextPresentation {
 	 * @return the index of the first range overlapping with the window
 	 */
 	private int getFirstIndexInWindow(IRegion window) {
-		int i= 0;
 		if (window != null) {
 			int start= window.getOffset();	
-			while (i < fRanges.size()) {
-				StyleRange r= (StyleRange) fRanges.get(i++);
-				if (r.start + r.length > start) {
-					-- i;
-					break;
-				}
+			int i= -1, j= fRanges.size();
+			while (j - i > 1) {
+				int k= (i + j) >> 1;
+				StyleRange r= (StyleRange) fRanges.get(k);
+				if (r.start + r.length > start)
+					j= k;
+				else
+					i= k;
 			}
+			return j;
 		}
-		return i;
+		return 0;
 	}
 	
 	/**
@@ -425,18 +425,20 @@ public class TextPresentation {
 	 * @return the index of the first range behind the window and not overlapping with the window
 	 */
 	private int getFirstIndexAfterWindow(IRegion window) {
-		int i= fRanges.size();
 		if (window != null) {
 			int end= window.getOffset() + window.getLength();	
-			while (i > 0) {
-				StyleRange r= (StyleRange) fRanges.get(--i);
-				if (r.start < end) {
-					++ i;
-					break;
-				}
+			int i= -1, j= fRanges.size();
+			while (j - i > 1) {
+				int k= (i + j) >> 1;
+				StyleRange r= (StyleRange) fRanges.get(k);
+				if (r.start < end)
+					i= k;
+				else
+					j= k;
 			}
+			return j;
 		}
-		return i;
+		return fRanges.size();
 	}
 	
 	/**
