@@ -7,8 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class AntTestChecker {

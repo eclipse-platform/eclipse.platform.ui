@@ -10,9 +10,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.ant.core.*;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
