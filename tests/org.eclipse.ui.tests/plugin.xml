@@ -26,11 +26,11 @@
 		id="ui.api.TestSuite"
 		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
 	<uiTest 
-		id="ui.api.SessionTest1"
-		class="org.eclipse.ui.tests.api.SessionTest1"/>
+		id="ui.api.SessionCreateTest"
+		class="org.eclipse.ui.tests.api.SessionCreateTest"/>
 	<uiTest 
-		id="ui.api.SessionTest2"
-		class="org.eclipse.ui.tests.api.SessionTest2"/>
+		id="ui.api.SessionRestoreTest"
+		class="org.eclipse.ui.tests.api.SessionRestoreTest"/>
 </extension>
 
 <extension 
@@ -43,7 +43,7 @@
 	<perspective
 		id="org.eclipse.ui.tests.api.SessionPerspective"
 		name="Session Perspective"
-		class="org.eclipse.ui.tests.api.EmptyPerspective">
+		class="org.eclipse.ui.tests.api.SessionPerspective">
 	</perspective>
 </extension>
 
