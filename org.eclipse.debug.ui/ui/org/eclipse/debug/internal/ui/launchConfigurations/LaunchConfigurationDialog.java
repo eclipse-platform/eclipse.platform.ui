@@ -87,6 +87,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private Button fProjectButton;		
 	
 	/**
+	 * The (radio) button used to select the workspace
+	 */
+	private Button fWorkspaceButton;	
+	
+	/**
 	 * The (initial) selection for the launch configuration
 	 * tree.
 	 */
@@ -286,6 +291,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		projectButton.addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
+					getProjectTextWidget().setEnabled(true);
+					getProjectBrowseButton().setEnabled(true);
 					if (((Button)(event.getSource())).getSelection()) {
 						setContext(getProjectFromText());
 					}
@@ -346,6 +353,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		workspaceButton.setLayoutData(gd);	
+		setWorkspaceButton(workspaceButton);
 		
 		workspaceButton.addSelectionListener(
 			new SelectionAdapter() { 
@@ -393,6 +401,14 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		newButton.setLayoutData(gd);
 		setNewButton(newButton);
 		
+		newButton.addSelectionListener(
+			new SelectionAdapter() { 
+				public void widgetSelected(SelectionEvent event) {
+					newPressed();
+				}
+			}
+		);				
+		
 		Button removeButton = new Button(c, SWT.PUSH | SWT.CENTER);
 		removeButton.setText("&Delete");
 		gd = new GridData(GridData.CENTER);
@@ -400,12 +416,28 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		removeButton.setLayoutData(gd);
 		setDeleteButton(removeButton);
 		
+		removeButton.addSelectionListener(
+			new SelectionAdapter() { 
+				public void widgetSelected(SelectionEvent event) {
+					removePressed();
+				}
+			}
+		);			
+		
 		Button copyButton = new Button(c, SWT.PUSH | SWT.CENTER);
 		copyButton.setText("&Copy");
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
 		copyButton.setLayoutData(gd);
 		setCopyButton(copyButton);
+		
+		copyButton.addSelectionListener(
+			new SelectionAdapter() { 
+				public void widgetSelected(SelectionEvent event) {
+					copyPressed();
+				}
+			}
+		);			
 		
 		return c;
 	}	
@@ -494,7 +526,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 					getProjectTextWidget().setText(context.getName());
 				}
 			} else if (context instanceof IWorkspaceRoot) {
-				getProjectButton().setSelection(false);
+				getWorkspaceButton().setSelection(true);
 				getProjectBrowseButton().setSelection(false);
 				getProjectTextWidget().setEnabled(false);
 				getProjectBrowseButton().setEnabled(false);
@@ -598,6 +630,25 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	protected Button getProjectButton() {
 		return fProjectButton;
 	}	
+	
+	/**
+	 * Sets the (radio) button used to select the workspace
+	 * 
+	 * @param widget the button used to select the workspace
+	 */
+	private void setWorkspaceButton(Button widget) {
+		fWorkspaceButton = widget;
+	}
+	
+	/**
+	 * Retruns the (raido) button used to select the workspace
+	 * 
+	 * @return the button used to select the workspace
+	 */
+	protected Button getWorkspaceButton() {
+		return fWorkspaceButton;
+	}	
+		
 	/**
 	 * Content prodiver for launch configuration tree
 	 */
@@ -768,9 +819,15 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		getSaveButton().setEnabled(false);
  		
  		if (singleSelection && selection.getFirstElement() instanceof ILaunchConfiguration) {
+ 			// single configuratino selected
  			ILaunchConfiguration newConfig = (ILaunchConfiguration)selection.getFirstElement();
  			setLaunchConfiguration(newConfig);
- 		} 
+ 		} else if (singleSelection && selection.getFirstElement() instanceof ILaunchConfigurationType) {
+ 			// single configuration type
+ 			
+ 		} else {
+ 			// multi-selection
+ 		}
 
  	}
  
@@ -1045,6 +1102,35 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		getSaveButton().setEnabled(wc.isDirty());
 		getSaveAndLaunchButton().setEnabled(wc.isDirty());
 	}
+
+	/**
+	 * Notification the 'new' button has been pressed
+	 */
+	protected void newPressed() {
+		// prompt for save of current working copy
+		
+		// if a type is selected, create a new empty config
+		// if a config is selected, copy it
+		IStructuredSelection sel = (IStructuredSelection)getSelection();
+		Object obj = sel.getFirstElement();
+		if (obj instanceof ILaunchConfiguration) {
+			
+		} else {
+
+		}
+	}	
 	
+	/**
+	 * Notification the 'remove' button has been pressed
+	 */
+	protected void removePressed() {
+	}	
+	
+	/**
+	 * Notification the 'copy' button has been pressed
+	 */
+	protected void copyPressed() {
+	}	
 }
+
 
