@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -1295,6 +1296,30 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public boolean canHandleLinkedResources() {
 		return true;
+	}
+
+	/**
+	 * @see org.eclipse.team.core.RepositoryProvider#validateCreateLink(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IPath)
+	 */
+	public IStatus validateCreateLink(IResource resource, int updateFlags, IPath location) {
+		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(resource.getParent().getFolder(new Path(resource.getName())));
+		try {
+			if (cvsFolder.isCVSFolder()) {
+				// There is a remote folder that overlaps with the link so disallow
+				return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingRemoteFolder", resource.getFullPath().toString()));
+			} else {
+				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(resource.getParent().getFile(new Path(resource.getName())));
+				if (cvsFile.isManaged()) {
+					// there is an outgoing file deletion that overlaps the link so disallow
+					return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingFileDeletion", resource.getFullPath().toString()));
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return e.getStatus();
+		}
+
+		return super.validateCreateLink(resource, updateFlags, location);
 	}
 
 }
