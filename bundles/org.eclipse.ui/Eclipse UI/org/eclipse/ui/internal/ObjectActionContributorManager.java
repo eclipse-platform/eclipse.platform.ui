@@ -76,13 +76,16 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMe
 	//IResource.
 	
 	Class resourceClass = getCommonResourceClass(elements);
-	List contributors = new ArrayList();
+	List contributors = null;
 	
 	//If there is a resource class add it in
 	if(resourceClass == null)
 		contributors = getContributors(commonClass);
 	else
 		contributors = getContributors(commonClass,resourceClass);
+		
+	if(contributors == null)
+		return false;
 		
 
 	// Do the contributions.  Add menus first, then actions
