@@ -161,6 +161,7 @@ public void createPartControl(Composite parent) {
 	initFrameList();
 	initDragAndDrop();
 	initRefreshKey();
+	initRenameKey();
 	updateTitle();
 	
 	MenuManager menuMgr = new MenuManager("#PopupMenu");//$NON-NLS-1$
@@ -558,6 +559,21 @@ private void initRefreshKey() {
 				localRefreshAction.run();
 				localRefreshAction.selectionChanged(
 					(IStructuredSelection) getResourceViewer().getSelection());
+			}
+		}
+	});
+}
+/**
+ * Create the KeyListener for doing the resource rename on the viewer.
+ */
+private void initRenameKey() {
+
+	getResourceViewer().getControl().addKeyListener(new KeyAdapter() {
+		// Listen on key released instead of pressed just in case some
+		// menu bar item sets up an accelerator on F2.
+		public void keyReleased(KeyEvent event) {
+			if (event.keyCode == SWT.F2 && renameResourceAction.isEnabled()) {
+				renameResourceAction.run();
 			}
 		}
 	});
