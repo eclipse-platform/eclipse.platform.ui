@@ -17,10 +17,11 @@
 		<mkdir dir="${dest}" />
 		<delete dir="${dest}/lib"/>
 		<mkdir dir="${dest}/lib"/>
-		<jar 
-			jarfile="${dest}/antsupport.jar"
-			basedir="bin"
-		/>
+		<jar jarfile="${dest}/antsupport.jar">
+			<fileset dir="bin">
+				<exclude name="org/eclipse/ant/internal/core/ant/*"/>
+			</fileset>
+		</jar>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/antsupportsrc.zip">
 			<fileset dir="src"/>
