@@ -73,11 +73,11 @@ public class LoaderUtils {
     static {
         try {
             getContextClassLoader
-                 = Thread.class.getMethod("getContextClassLoader",
+                 = Thread.class.getMethod("getContextClassLoader", //$NON-NLS-1$
                 new Class[0]);
             Class[] setContextArgs = new Class[]{ClassLoader.class};
             setContextClassLoader
-                 = Thread.class.getMethod("setContextClassLoader",
+                 = Thread.class.getMethod("setContextClassLoader", //$NON-NLS-1$
                 setContextArgs);
         } catch (Exception e) {
             // ignore any problems accessing the methods - probably JDK 1.1

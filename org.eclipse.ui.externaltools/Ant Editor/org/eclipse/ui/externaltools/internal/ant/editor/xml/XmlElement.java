@@ -9,6 +9,7 @@
 //
 package org.eclipse.ui.externaltools.internal.ant.editor.xml;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -166,7 +167,7 @@ public class XmlElement {
      */
     public void addChildNode(XmlElement aChildElement) {
         if(aChildElement.getParentNode() != null) {
-            throw new PlantyException("Cannot add XmlElement '" +aChildElement+ "' as child since it allready is a child of '" +aChildElement.getParentNode()+ "'");
+            throw new PlantyException(MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{aChildElement.toString(), aChildElement.getParentNode().toString()})); //$NON-NLS-1$
         }
         aChildElement.parent = this;
         childNodes.add(aChildElement);
@@ -336,7 +337,7 @@ public class XmlElement {
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return "XmlElement[name="+name+"; starting="+startingRow+","+startingColumn+"; ending="+endingRow+","+endingColumn+"]";		
+		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(startingRow), Integer.toString(startingColumn), Integer.toString(endingRow), Integer.toString(endingColumn)});		 //$NON-NLS-1$
 	}
 	
 	/**

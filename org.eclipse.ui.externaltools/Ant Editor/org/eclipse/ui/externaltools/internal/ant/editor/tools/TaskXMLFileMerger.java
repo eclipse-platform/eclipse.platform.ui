@@ -42,25 +42,25 @@ import org.xml.sax.SAXException;
 public class TaskXMLFileMerger {
 
 	//Definitions for the HTML Generated XML File
-    public static String HTML_TASKS_DESCRIPTION_XML_FILE_NAME = "/tasks.xml";
-    public static String HTML_XML_TAG_TASKS = "TASKS";
-    public static String HTML_XML_TAG_TASK = "TASK";
-    public static String HTML_XML_TAG_ATTRIBUTE = "ATTRIBUTE";
+    public static String HTML_TASKS_DESCRIPTION_XML_FILE_NAME = "/tasks.xml"; //$NON-NLS-1$
+    public static String HTML_XML_TAG_TASKS = "TASKS"; //$NON-NLS-1$
+    public static String HTML_XML_TAG_TASK = "TASK"; //$NON-NLS-1$
+    public static String HTML_XML_TAG_ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
     //public static String HTML_XML_TAG_DESCRIPTION = "DESCRIPTION";
-    public static String HTML_XML_ATTRIBUTE_NAME = "NAME";
-    public static String HTML_XML_ATTRIBUTE_REQUIRED = "REQUIRED";
+    public static String HTML_XML_ATTRIBUTE_NAME = "NAME"; //$NON-NLS-1$
+    public static String HTML_XML_ATTRIBUTE_REQUIRED = "REQUIRED"; //$NON-NLS-1$
 
 	//Definitions for the XDoclet Genereated XML File
-	public static String XDOC_TASKS_DESCRIPTION_XML_FILE_NAME = "/XDOCtasks.xml";
-	public static String XDOC_XML_TAG_TASKS = "tasks";
-	public static String XDOC_XML_TAG_TASK = "task";
-	public static String XDOC_XML_TAG_NAME = "name";
-	public static String XDOC_XML_TAG_STRUCTURE = "structure";
-	public static String XDOC_XML_TAG_ATTRIBUTES = "attributes";
-	public static String XDOC_XML_TAG_ATTRIBUTE = "attribute";
-	public static String XDOC_XML_TAG_ELEMENTS = "elements";
-	public static String XDOC_XML_TAG_ELEMENT = "element";
-	public static String XDOC_XML_TAG_REQUIRED = "required";
+	public static String XDOC_TASKS_DESCRIPTION_XML_FILE_NAME = "/XDOCtasks.xml"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_TASK = "task"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_NAME = "name"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_ELEMENTS = "elements"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
+	public static String XDOC_XML_TAG_REQUIRED = "required"; //$NON-NLS-1$
 	
 
     protected NodeList taskNodes_HTML = null;
@@ -332,7 +332,7 @@ public class TaskXMLFileMerger {
 		
 		TaskXMLFileMerger tmpTaskXMLFileMerger = new TaskXMLFileMerger();
 		tmpTaskXMLFileMerger.runReplaceAttributeRequiredProcess();
-		tmpTaskXMLFileMerger.writeXMLDocumentToFile("src\\anttasks_1.5b.xml");
+		tmpTaskXMLFileMerger.writeXMLDocumentToFile("src\\anttasks_1.5b.xml"); //$NON-NLS-1$
 	}	
 
 
