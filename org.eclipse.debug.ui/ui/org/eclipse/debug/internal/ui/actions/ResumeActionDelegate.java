@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.util.Iterator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,7 +23,10 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	 */
 	protected void doAction(Object object) throws DebugException {
 		if (object instanceof ISuspendResume) {
-			((ISuspendResume)object).resume();
+			ISuspendResume resume = (ISuspendResume)object;
+			if(resume.canResume()) {
+				resume.resume();
+			}
 		}
 	}
 
@@ -36,12 +40,18 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#getEnableStateForSelection(IStructuredSelection)
 	 */
-	protected boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
-		if (selection.size() == 1) {
-			return isEnabledFor(selection.getFirstElement());
-		} else {
-			return false;
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
+		boolean enabled = false;
+		for (Iterator i = selection.iterator(); i.hasNext(); ) {
+			Object element = i.next();
+			if (!(element instanceof ISuspendResume)) {
+				return false; //all elements should be IStructuredSelection
+			}
+			if (!enabled && isEnabledFor(element)) {
+				enabled = true;
+			}
 		}
+		return enabled;
 	}
 
 	/**
