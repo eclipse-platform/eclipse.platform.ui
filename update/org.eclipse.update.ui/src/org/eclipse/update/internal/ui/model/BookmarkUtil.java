@@ -149,7 +149,8 @@ public class BookmarkUtil {
 	public static void store(String fileName, Vector bookmarks) {
 		try {
 			FileOutputStream fos = new FileOutputStream(fileName);
-			PrintWriter writer = new PrintWriter(fos);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8");
+			PrintWriter writer = new PrintWriter(osw);
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.println("<bookmarks>");
 			for (int i = 0; i < bookmarks.size(); i++) {
@@ -159,6 +160,7 @@ public class BookmarkUtil {
 			writer.println("</bookmarks>");
 			writer.flush();
 			writer.close();
+			osw.close();
 			fos.close();
 		} catch (IOException e) {
 		}
