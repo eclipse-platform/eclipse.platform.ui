@@ -5,7 +5,8 @@ package org.eclipse.ui.texteditor;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;import java.util.HashMap;import java.util.List;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IFile;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IResource;import org.eclipse.core.resources.IWorkspaceRunnable;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
+import java.util.ArrayList;import java.util.HashMap;import java.util.List;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IFile;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IResource;import org.eclipse.core.resources.IWorkspaceRunnable;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
 
 
 
@@ -288,8 +289,16 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			label= ""; //$NON-NLS-1$
 
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
-		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		InputDialog dialog= new InputDialog(fTextEditor.getSite().getShell(), title, message, label, null);
+		final String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
+		IInputValidator inputValidator = new IInputValidator() {
+			public String isValid(String newText) {
+				if (newText == null || newText.length() == 0) {
+					return " ";
+				}
+				return null;
+			}
+		};
+		InputDialog dialog= new InputDialog(fTextEditor.getSite().getShell(), title, message, label, inputValidator);
 		if (dialog.open() != Window.CANCEL)
 			label= dialog.getValue();
 
