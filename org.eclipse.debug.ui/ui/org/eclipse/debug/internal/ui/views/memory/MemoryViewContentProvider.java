@@ -396,7 +396,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			}
 			
 			// calculate delta info for the memory view line
-			if (manageDelta)
+			if (manageDelta && !fViewTab.isDisplayingError())
 			{
 				if (updateDelta)
 				{
@@ -421,6 +421,11 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 						}
 					}
 				}
+			}
+			else if (manageDelta && fViewTab.isDisplayingError())
+			{
+				// show as unmonitored if the view tab is previoulsy displaying error
+				newLine.isMonitored = false;
 			}
 			lineCache.add(newLine);
 			
@@ -680,7 +685,13 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				BigInteger address = ((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress();
 				
 				if (address == null)
-					address = new BigInteger("0"); //$NON-NLS-1$
+				{
+					// do not change selected address if base address cannot be updated
+					if (fViewTab.getSelectedAddress() != null)
+						address = fViewTab.getSelectedAddress();
+					else
+						address = new BigInteger("0"); //$NON-NLS-1$
+				}
 				
 				fViewTab.setSelectedAddress(address, true);
 			}

@@ -37,6 +37,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -62,6 +63,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -1625,7 +1627,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				
 				if (baseAddress == null)
 				{
-					baseAddress = new BigInteger("0"); //$NON-NLS-1$
+					if (fSelectedAddress != null)
+						baseAddress = fSelectedAddress;
+					else
+						baseAddress = new BigInteger("0"); //$NON-NLS-1$
 				}
 				
 				ArrayList references = (ArrayList)getSynchronizedProperty(IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES);				
@@ -1867,7 +1872,11 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				
 				if (address == null)
 				{
-					address = new BigInteger("0"); //$NON-NLS-1$
+					// unable to get the base address
+					// pop up error message an do nothing
+					Shell shell = DebugUIPlugin.getShell();
+					MessageDialog.openError(shell, DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS)); //$NON-NLS-1$
+					return;
 				}
 				
 				setSelectedAddress(address, true);
