@@ -367,11 +367,14 @@ public class CyclePartAction extends PageEventAction {
 
 		tc.pack();
 		table.pack();
+		dialog.pack();
+
 		Rectangle tableBounds = table.getBounds();
 		tableBounds.height = Math.min(tableBounds.height, table.getItemHeight() * MAX_ITEMS);
 		table.setBounds(tableBounds);
-		dialog.pack();
-
+		
+		dialog.setBounds(dialog.computeTrim(tableBounds.x, tableBounds.y, tableBounds.width, tableBounds.height));
+		
 		tc.setWidth(table.getClientArea().width);
 		table.setFocus();
 		table.addFocusListener(new FocusListener() {
@@ -400,9 +403,8 @@ public class CyclePartAction extends PageEventAction {
 			dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
 			dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
 		}
-		dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
 
-		dialog.setBounds(dialogBounds);
+		dialog.setLocation(dialogBounds.x, dialogBounds.y);
 
 		table.removeHelpListener(getHelpListener());
 		table.addHelpListener(new HelpListener() {
