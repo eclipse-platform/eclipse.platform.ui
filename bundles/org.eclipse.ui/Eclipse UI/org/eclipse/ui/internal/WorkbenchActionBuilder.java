@@ -133,12 +133,25 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	protected void addManualIncrementalBuildAction() {
 		MenuManager menubar = window.getMenuBarManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
-		if (manager != null) {
-			try {
-				manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
-			} catch (IllegalArgumentException e) {
-				// action not found!
+		if (usingMenuReorg) {
+			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+			if (manager != null) {
+				try {
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+				} catch (IllegalArgumentException e) {
+					// action not found!
+				}
+			}
+		}
+		else {
+			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
+			if (manager != null) {
+				try {
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+				} catch (IllegalArgumentException e) {
+					// action not found!
+				}
 			}
 		}
 		IContributionManager toolManager = window.getToolsManager();
@@ -951,12 +964,25 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	protected void removeManualIncrementalBuildAction() {
 		MenuManager menubar = window.getMenuBarManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
-		if (manager != null) {
-			try {
-				manager.remove(IWorkbenchActionConstants.BUILD);
-			} catch (IllegalArgumentException e) {
-				// action was not in menu
+		if (usingMenuReorg) {
+			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+			if (manager != null) {
+				try {
+					manager.remove(IWorkbenchActionConstants.BUILD);
+					manager.remove(IWorkbenchActionConstants.BUILD_PROJECT);
+				} catch (IllegalArgumentException e) {
+					// action was not in menu
+				}
+			}
+		}
+		else {
+			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
+			if (manager != null) {
+				try {
+					manager.remove(IWorkbenchActionConstants.BUILD);
+				} catch (IllegalArgumentException e) {
+					// action was not in menu
+				}
 			}
 		}
 		IContributionManager toolManager = window.getToolsManager();
