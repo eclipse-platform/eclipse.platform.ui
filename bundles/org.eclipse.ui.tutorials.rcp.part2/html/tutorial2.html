@@ -74,7 +74,8 @@ for the application.
 <p>
 In the next section we'll take a look at the other advisor methods
 to get a quick overview of what is possible with them.
-If you want to cut to the chase and look at the code for this part you can view the
+If you want to cut to the chase and look at or download
+the code for this part you can view the
 <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.tutorials.rcp.part2">Eclipse project here</a>.
 </p>
 <p>
@@ -134,13 +135,13 @@ as shown in listing 1.
 <p><b>Listing 1. preWindowOpen example.
 </b></p>
 <pre>
-	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
-		super.preWindowOpen(configurer);
+    public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
+        super.preWindowOpen(configurer);
         configurer.setInitialSize(new Point(400, 300));
         configurer.setShowCoolBar(false);
         configurer.setShowStatusLine(false);
-		configurer.setTitle("Hello, RCP");
-	}
+        configurer.setTitle("Hello, RCP");
+    }
 </pre>
 
 <p>
@@ -280,15 +281,20 @@ Workbench window lifecycle hooks provided by <code>org.eclipse.ui.application.Wo
 		<code>IActionBarConfigurer</code>, flags
 
 	<tr><td>postWindowRestore
-		<td>Optionally called after a window has been restored
-		from saved state (if any) but before it is opened.
-		Can't really think of a use for this one.
-		It's called but not used in 3.0M8.
+		<td>Optionally called for cases when a window has been restored
+		from saved state but before it is opened.
 		<td><code>IWorkbenchWindowConfigurer</code>
 		
 	<tr><td>postWindowCreate
-		<td>Optionally called after a window has been restored
-		from saved state (if any) but before it is opened.
+		<td>Called after a window has been restored
+		from saved state or created from scratch
+		but before it is opened.
+		<td><code>IWorkbenchWindowConfigurer</code>
+		
+	<tr><td>openIntro
+		<td>Called immediately before a window is opened
+		in order to create the Intro component (if any).
+		Could be used for other things like a login screen.
 		<td><code>IWorkbenchWindowConfigurer</code>
 		
 	<tr><td>postWindowOpen
@@ -426,7 +432,7 @@ check them for consistent grammar and word usage.
 </p>
 <p>
 There's nothing magic about messages in Eclipse - you just
-use the good ole Java resource bundle mechanism that you may
+use the plain old Java resource bundle mechanism that you may
 already be familiar with.
 The Eclipse IDE provides a nice Externalization wizard to make
 this less of a chore.
@@ -452,7 +458,6 @@ Follow the directions there to have the wizard convert your code to
 use a resource bundle reference.
 Alternatively you could right click on a single source file and select
 <b>Source > Externalize Strings...</b>.
-highlighted.
 When you're done your source code will look something like this:
 </p>
 <pre>
@@ -465,10 +470,12 @@ is a tag or keyword of some sort and should not be localized.
 </p>
 <p>
 Also you will have a standard format .properties file containing
-the keys and values for all your messages. For example,
+the keys and values for all your messages.
+In the example code you will find a file called RcpTutorial.properties
+that contains:
+
 </p>
 <pre>
-RcpTest.properties:
 Hello_RCP=Hello, RCP
 </pre>
 <p>

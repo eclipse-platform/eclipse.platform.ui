@@ -90,8 +90,11 @@ Also, you need to tell Eclipse that the plug-in will depend on two other Eclipse
 <code>org.eclipse.core.runtime.compatibility</code> and
 <code>org.eclipse.ui</code>, so those need to be added to the
 Dependencies tab or in the XML.
+While you're editing it you can change the version number,
+provider name, and other options to your liking.
 When you're done your plugin.xml should look something like listing 1.
-The classes refered to here will be defined in the next section.
+The classes refered to here will be defined in the next section
+and the tags starting with percents (%) will be defined later in plugin.properties.
 </p>
 
 <p><b>Listing 1. plugin.xml
@@ -143,12 +146,14 @@ I recommend keeping your id's and your class names the same.
 For example, <code>org.eclipse.ui.tutorials.rcp.part1.RcpApplication</code>
 is both the fully qualified id for the application and the class name of the
 main program.
-For historical reasons, Eclipse prepends the plug-in's id to your
+For historical reasons, Eclipse prepends the plug-in's id to the id of your
 top level plug-in elements (like <code>extension</code>) so even though
 plugin.xml says <code>id="RcpApplication"</code> the fully qualified id
 for that extension is <code>org.eclipse.ui.tutorials.rcp.part1.RcpApplication</code>.
-Ditto for the perspective,
-<code>org.eclipse.ui.tutorials.rcp.part1.RcpPerspective</code>.
+Since the perspective's id is written on a sub-element
+(<code>perspective</code>) it has to be spelled out completely
+in the manifest
+(<code>org.eclipse.ui.tutorials.rcp.part1.RcpPerspective</code>).
 </p>
 
 <h2>The main program</h2>
@@ -283,7 +288,7 @@ perspectiveName = RcpTutorial1
 
 <h2>Taking it for a spin</h2>
 <p>To test and debug this plug-in, select Run &gt;
-Debug &gt; Debug..., select Run-time Workbench,
+Debug..., select Run-time Workbench,
 then click New to create a new configuration.
 In the Arguments tab, select
 <code>org.eclipse.ui.tutorials.rcp.part1.RcpApplication</code>
@@ -302,7 +307,10 @@ scroll down and place a checkmark next to your plug-in
 (<code>org.eclipse.ui.tutorials.rcp.part1</code>),
 and click Add Required Plug-ins.
 Then click on Debug and
-you should see a bare-bones Workbench start up (see figure 1).</p>
+you should see a bare-bones Workbench start up (see figure 1).
+Your window will probably be bigger than this; we'll see in
+part 2 of the tutorial how to control that.
+</p>
 
 <p><b>Figure 1. World's simplest RCP application.
 </b></p>
@@ -351,8 +359,6 @@ Here are the steps to get started:</p>
 <p>To complete the RcpTutorial1 directory, copy the startup.jar file from the Eclipse
 install directory into the top level, and copy all the org.eclipse plug-ins
 that are required into the plugins directory.
-Unfortunately, as of this writing there is no automatic way to do this
-so you need to do the copies by hand.
 </p>
 <p>
 Which plug-ins are required, you ask?
@@ -363,25 +369,34 @@ Simply open the launch configuration again to see the list.
 Copy all the plug-ins that are checked off there.
 </p>
 <p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+Unfortunately, as of this writing there is no automatic way to do this
+so you need to do the copies by hand.
+This process is error prone and a never-ending source of
+frustration to RCP developers.
+See the troubleshooting section for some helpful advice.
+Hopefully a future version of Eclipse will provide
+better support for this.
+</p>
+<p>
 When you're
 done you should have a structure that looks like this:</p>
 <pre>
     RcpTutorial1
     |    startup.jar
     +--- plugins
+         +--- org.eclipse.core.expressions_3.0.0
          +--- org.eclipse.core.runtime.compatibility_3.0.0
          +--- org.eclipse.core.runtime_3.0.0
          +--- org.eclipse.help_3.0.0
          +--- org.eclipse.jface_3.0.0
-         +--- org.eclipse.osgi.services_3.0.0
-         +--- org.eclipse.osgi.util_3.0.0
          +--- org.eclipse.osgi_3.0.0
          +--- org.eclipse.swt.win32_3.0.0
          +--- org.eclipse.swt_3.0.0
+         +--- org.eclipse.ui.tutorials.rcp.part1_0.0.0
          +--- org.eclipse.ui.workbench_3.0.0
          +--- org.eclipse.ui_3.0.0
          +--- org.eclipse.update.configurator_3.0.0
-         +--- org.eclipse.ui.tutorials.rcp.part1
 </pre>
 <p>That's all you need to run an RCP application, but it would be difficult for
 anyone to use it without some kind of launching program. Eclipse uses
@@ -399,7 +414,7 @@ script version would be similar.
 </pre>
 <p>The start command should be all on one line. As before, the -application
 option refers back to the id specified on the
-org.eclipse.core.runtime.applications extension point.</p>
+<code>org.eclipse.core.runtime.applications extension point.</code></p>
 <p>You can get as fancy as you want in this script file. Here's a variant that I
 like to use when debugging because it will display any error messages from the
 Eclipse loader in a separate window:</p>
@@ -420,12 +435,16 @@ and enter this as the location of the item (on one line):</p>
     %windir%\system32\javaw.exe -cp startup.jar org.eclipse.core.launcher.Main
         -application org.eclipse.ui.tutorials.rcp.part1.RcpApplication
 </pre>
-<p>Enter a descriptive name on the next page and then press Finish. Then try
+<p>
+Enter a descriptive name on the next page and then press Finish. Then try
 double-clicking on your new shortcut to try it out. You may want to edit the
 shortcut (right click on it and select Properties) to change the default working
-directory.</p>
+directory.
+All these files can be found in the
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.tutorials.rcp.part1">example project</a>.
+</p>
 <p>
-<img src="images/tip.gif" alt="Tip: " width="62" height="13">
+<img src="images/note.gif" alt="Note: " width="62" height="13">
 For fully branding a program with a splash screen, custom icons, and so forth
 you'll need to set up some configuration files and use
 the eclipse.exe launcher.
@@ -517,8 +536,9 @@ Adjust the compliance levels as follows:<br>
 Astute readers will notice that this example uses the compatibility layer
 (<code>org.eclipse.core.runtime.compatibility</code>)
 and may wonder exactly what that means.
-Eclipse 3.0 introduced a new OSGi based run-time system,
-a new plug-in manifest file named MANIFEST.MF,
+Eclipse 3.0 introduced a new OSGi based run-time system that
+uses bundles to implement plug-ins,
+a new bundle manifest file named MANIFEST.MF,
 and many API changes that broke compatibility with 2.1 plug-ins.
 The compatibility layer preserves the API and converts plugin.xml on the fly
 so it's possible to have a plug-in that works without modification in both
@@ -533,10 +553,16 @@ Also most plug-in documentation and articles were written before
 the new run-time was in place.
 The compatibility layer is completely adequate for this simple example, but
 after you are comfortable with writing plug-ins and
-RCP applications, you can look in the Eclipse 3.0 Runtime Adoption Guide
-(in the references section)
+RCP applications, you might want to look in the
+Eclipse 3.0 Runtime Adoption Guide (in the references section)
 to learn more about the new run-time
 and how to run without the compatibility layer.
+</p>
+<p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+The new OSGi/bundle API
+is considered experimental in the first version of 3.0
+and might change in future versions.
 </p>
 
 <h2>Conclusion</h2>
