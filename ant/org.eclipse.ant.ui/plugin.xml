@@ -153,9 +153,21 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.openExternalDoc">
       </command>
       <keyBinding
-            keySequence="SHIFT+F2"
+            keySequence="M2+F2"
             contextId="org.eclipse.ant.ui.AntEditorScope"
             commandId="org.eclipse.ant.ui.openExternalDoc"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.renameInFile.name"
+            description="%ActionDefinition.renameInFile.description"
+            categoryId="org.eclipse.jdt.ui.category.source"
+            id="org.eclipse.ant.ui.renameInFile">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+R"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.renameInFile"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
