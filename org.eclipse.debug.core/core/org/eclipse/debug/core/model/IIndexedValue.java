@@ -35,6 +35,18 @@ public interface IIndexedValue extends IValue {
 	 * given offset
 	 */
 	public IVariable getVariable(int offset) throws DebugException;
+	
+	/**
+	 * Returns a subset of the elements in this collection of variables as
+	 * specified by the given offset and length.
+	 * 
+	 * @param offset beginning offset of the subset of elements to return 
+	 * @param length the number of elements to return
+	 * @return a subset of the elements in this collection of variables as
+	 *  specified by the given offset and length
+	 * @throws DebugException if unable to retrieve the variables
+	 */
+	public IVariable[] getVariables(int offset, int length) throws DebugException;
 
 	/**
 	 * Returns the number of entries in this indexed collection.

@@ -124,4 +124,11 @@ public class IndexedValuePartition implements IIndexedValue {
 		return fValue.getAdapter(adapter);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
+	 */
+	public IVariable[] getVariables(int offset, int length) throws DebugException {
+		return fValue.getVariables(fOffset + offset, length);
+	}
+
 }
