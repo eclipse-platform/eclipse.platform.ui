@@ -137,6 +137,8 @@ public interface IHelpContextIds {
 	public static final String FILE_STATES_PREFERENCE_PAGE = PREFIX + "file_states_preference_page_context"; //$NON-NLS-1$
 	public static final String PERSPECTIVES_PREFERENCE_PAGE = PREFIX + "perspectives_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEWS_PREFERENCE_PAGE = PREFIX + "views_preference_page_context"; //$NON-NLS-1$
+	public static final String COMPARE_VIEWERS_PREFERENCE_PAGE = PREFIX + "compare_viewers_preference_page_context"; //$NON-NLS-1$
+	public static final String WORKBENCH_EDITOR_PREFERENCE_PAGE = PREFIX + "workbench_editor_preference_page_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX + "workbench_preference_page_context"; //$NON-NLS-1$
 	public static final String FONT_PREFERENCE_PAGE = PREFIX + "font_preference_page_context"; //$NON-NLS-1$
 	public static final String DECORATORS_PREFERENCE_PAGE = PREFIX + "decorators_preference_page_context"; //$NON-NLS-1$
