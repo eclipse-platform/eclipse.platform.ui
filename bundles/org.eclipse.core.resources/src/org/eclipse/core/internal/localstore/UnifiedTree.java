@@ -11,10 +11,10 @@
 package org.eclipse.core.internal.localstore;
 
 import java.util.*;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
-// import "queue" explicitly here to prevent ambiguity when running against 1.5.
-import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +33,12 @@ public class UnifiedTree {
 	/** tree's actual level */
 	protected int level;
 
+	/**
+	 * True if the level of the children of the current node are valid according
+	 * to the requested refresh depth, false otherwise
+	 */
+	protected boolean childLevelValid = false;
+	
 	/** our queue */
 	protected Queue queue;
 
@@ -44,6 +50,7 @@ public class UnifiedTree {
 
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
+	
 
 	public UnifiedTree() {
 		super();
@@ -63,13 +70,14 @@ public class UnifiedTree {
 	public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException {
 		Assert.isNotNull(root);
 		initializeQueue();
-		level = 0;
-		while (isValidLevel(level, depth) && !queue.isEmpty()) {
+		setLevel(0, depth);
+		while (!queue.isEmpty()) {
 			UnifiedTreeNode node = (UnifiedTreeNode) queue.remove();
 			if (isChildrenMarker(node))
 				continue;
 			if (isLevelMarker(node)) {
-				level++;
+				if (!setLevel(getLevel()+1, depth))
+					break;
 				continue;
 			}
 			if (visitor.visit(node))
@@ -82,7 +90,7 @@ public class UnifiedTree {
 	}
 
 	protected void addChildren(UnifiedTreeNode node) throws CoreException {
-		IResource parent = node.getResource();
+		Resource parent = (Resource)node.getResource();
 
 		/* is there a possibility to have children? */
 		int parentType = parent.getType();
@@ -93,9 +101,14 @@ public class UnifiedTree {
 		String parentLocalLocation = node.getLocalLocation();
 		Object[] list = getLocalList(node, parentLocalLocation);
 		int localIndex = 0;
+		
+		/* See if the children of this resource have been computed before */
+		ResourceInfo resourceInfo = parent.getResourceInfo(false, false);
+		int flags = parent.getFlags(resourceInfo);
+		boolean unknown = ResourceInfo.isSet(flags, ICoreConstants.M_CHILDREN_UNKNOWN);
 
 		/* get the list of resources in the workspace */
-		if (parent.exists() && (parentType == IResource.FOLDER || parentType == IResource.PROJECT)) {
+		if (!unknown && (parentType == IResource.FOLDER || parentType == IResource.PROJECT) && parent.exists(flags, true)) {
 			IResource target = null;
 			UnifiedTreeNode child = null;
 			IResource[] members = ((IContainer) parent).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -137,6 +150,13 @@ public class UnifiedTree {
 
 		/* process any remaining resource from the file system */
 		addChildrenFromFileSystem(node, parentLocalLocation, list, localIndex);
+		
+		/* Mark the children as now known */
+		if (unknown) {
+			resourceInfo = parent.getResourceInfo(false, true);
+			if (resourceInfo != null)
+				resourceInfo.clear(ICoreConstants.M_CHILDREN_UNKNOWN);
+		}
 
 		/* if we added children, add the childMarker separator */
 		if (node.getFirstChild() != null)
@@ -199,7 +219,8 @@ public class UnifiedTree {
 
 	protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException {
 		/* if the first child is not null we already added the children */
-		if (node.getFirstChild() != null)
+		/* If the children won't be at a valid level for the refresh depth, don't bother adding them */
+		if (!childLevelValid || node.getFirstChild() != null)
 			return;
 		addChildren(node);
 		if (queue.isEmpty())
@@ -207,6 +228,9 @@ public class UnifiedTree {
 		//if we're about to change levels, then the children just added
 		//are the last nodes for their level, so add a level marker to the queue
 		UnifiedTreeNode nextNode = (UnifiedTreeNode) queue.peek();
+		if (isChildrenMarker(nextNode))
+			queue.remove();
+		nextNode = (UnifiedTreeNode) queue.peek();
 		if (isLevelMarker(nextNode))
 			addElementToQueue(levelMarker);
 	}
@@ -323,6 +347,15 @@ public class UnifiedTree {
 		return (Workspace) root.getWorkspace();
 	}
 
+	/**
+	 * Increases the current tree level by one. Returns true if the new
+	 * level is still valid for the given depth
+	 */
+	protected boolean setLevel(int newLevel, int depth) {
+		level = newLevel;
+		childLevelValid = isValidLevel(level+1, depth);
+		return isValidLevel(level, depth);
+	}
 	protected void initializeQueue() throws CoreException {
 		//init the queue
 		if (queue == null)
@@ -346,16 +379,16 @@ public class UnifiedTree {
 		return node == levelMarker;
 	}
 
-	protected boolean isValidLevel(int level, int depth) {
+	protected boolean isValidLevel(int currentLevel, int depth) {
 		switch (depth) {
 			case IResource.DEPTH_INFINITE :
 				return true;
 			case IResource.DEPTH_ONE :
-				return level <= 1;
+				return currentLevel <= 1;
 			case IResource.DEPTH_ZERO :
-				return level == 0;
+				return currentLevel == 0;
 			default :
-				return false;
+				return currentLevel + 1000 <= depth;
 		}
 	}
 

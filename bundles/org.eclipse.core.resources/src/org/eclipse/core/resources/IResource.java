@@ -126,7 +126,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public static final int DEPTH_INFINITE = 2;
 
 	/*====================================================================
-	 * Constants for update flags for delete, move, copy, etc.:
+	 * Constants for update flags for delete, move, copy, open, etc.:
 	 *====================================================================*/
 
 	/**
@@ -214,6 +214,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.0
 	 */
 	public static final int AVOID_NATURE_CONFIG= 0x40;
+
+	/**
+	 * Update flag constant (bit mask value 128) indicating that opening a
+	 * project for the first time should refresh in the background.
+	 *
+	 * @see IProject#open(int, IProgressMonitor)
+	 * @since 3.1
+	 */
+	public static final int BACKGROUND_REFRESH = 0x80;
 
 	/*====================================================================
 	 * Other constants:

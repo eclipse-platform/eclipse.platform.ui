@@ -76,6 +76,8 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		}
 		/* Use the basic file creation protocol since we don't want to create any content on disk. */
 		info = workspace.createResource(target, false);
+		/* Mark this resource as having unknown children */
+		info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
 		target.getLocalManager().updateLocalSync(info, node.getLastModified());
 	}
 
@@ -148,7 +150,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		target.getLocalManager().updateLocalSync(info, node.getLastModified());
 		info.incrementContentId();
 		// forget content-related caching flags		
-		info.clear(ResourceInfo.M_CONTENT_CACHE);	
+		info.clear(ICoreConstants.M_CONTENT_CACHE);	
 		workspace.updateModificationStamp(info);
 	}
 
@@ -184,8 +186,8 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					deleteResource(node, target);
 					resourceChanged = true;
 					return RL_NOT_IN_SYNC;
-				} else
-					return RL_IN_SYNC;
+				}
+				return RL_IN_SYNC;
 			}
 		} else {
 			if (node.existsInFileSystem()) {

@@ -58,7 +58,13 @@ public interface ICoreConstants {
 	 * @since 3.0
 	 */
 	static final int M_DEFAULT_CONTENT_DESCRIPTION = 0x40000;
-	
+
+	/** 
+	 * Marks this resource as having undiscovered children
+	 * @since 3.1
+	 */
+	static final int M_CHILDREN_UNKNOWN = 0x100000;
+
 	/**
 	 * Set of flags that should be cleared when the contents for a file change.
 	 * @since 3.0 

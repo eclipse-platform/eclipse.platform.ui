@@ -266,8 +266,9 @@ public class Project extends Container implements IProject {
 				desc.setName(getName());
 				info.setDescription(desc);
 				//look for a description on disk
+				boolean hasSavedProject = getLocalManager().hasSavedProject(this);
 				try {
-					if (getLocalManager().hasSavedProject(this)) {
+					if (hasSavedProject) {
 						updateDescription();
 						//make sure the .location file is written
 						workspace.getMetaArea().writePrivateDescription(this);
@@ -283,6 +284,9 @@ public class Project extends Container implements IProject {
 				// set this after setting the description as #setDescription
 				// updates the stamp
 				info.setModificationStamp(IResource.NULL_STAMP);
+				//if a project already existed on disk, mark the project as having unknown children
+				if (hasSavedProject)
+					info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
 				workspace.getSaveManager().requestSnapshot();
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
@@ -752,7 +756,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#open(IProgressMonitor)
 	 */
-	public void open(IProgressMonitor monitor) throws CoreException {
+	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String msg = Policy.bind("resources.opening.1", getFullPath().toString()); //$NON-NLS-1$
@@ -766,7 +770,6 @@ public class Project extends Container implements IProject {
 				checkExists(flags, true);
 				if (isOpen(flags))
 					return;
-
 				workspace.beginOperation(true);
 				// flush the build order early in case there is a problem
 				workspace.flushBuildOrder();
@@ -774,17 +777,28 @@ public class Project extends Container implements IProject {
 				info.set(M_OPEN);
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
-				if (info.isSet(M_USED)) {
-					workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
+				final boolean used = info.isSet(M_USED);
+				if (used) {
+					workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 				} else {
 					info.set(M_USED);
 					//reconcile any links in the project description
 					reconcileLinks(info.getDescription());
 					workspace.updateModificationStamp(info);
+					monitor.worked(Policy.opWork * 20 / 100);
 				}
 				startup();
-				monitor.worked(Policy.opWork * 20 / 100);
-				refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100));
+				//request a refresh if the project has unknown members on disk
+				if (!used && info.isSet(M_CHILDREN_UNKNOWN)) {
+					info.clear(M_CHILDREN_UNKNOWN);
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 80 / 100);
+					} else {
+						refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 80 / 100));
+					}
+				}
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -794,6 +808,13 @@ public class Project extends Container implements IProject {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see IProject#open(IProgressMonitor)
+	 */
+	public void open(IProgressMonitor monitor) throws CoreException {
+		open(IResource.NONE, monitor);
 	}
 
 	/**

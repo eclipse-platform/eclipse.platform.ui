@@ -252,12 +252,11 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		assertTrue("3.4", subfile.exists());
 
 		/* closed project */
-		/* #open synchronizes project */
 		file = projects[0].getFile("closed");
 		projects[0].close(null);
 		ensureExistsInFileSystem(file);
 		projects[0].open(null);
-		assertTrue("4.1", file.exists());
+		assertTrue("4.1", !file.exists());
 		projects[0].refreshLocal(IResource.DEPTH_INFINITE, null);
 		assertTrue("4.2", file.exists());
 

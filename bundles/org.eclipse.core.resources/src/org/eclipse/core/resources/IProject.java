@@ -541,6 +541,48 @@ public interface IProject extends IContainer, IAdaptable {
 	 * of its resources from information stored on disk.
 	 * </p>
 	 * <p>
+	 * The <code>BACKGROUND_REFRESH</code> update flag controls how
+	 * this method behaves when a project is opened for the first time on a location
+	 * that has existing resources on disk.  If this flag is specified, resources on disk
+	 * will be added to the project in the background after this method returns.
+	 * Child resources of the project may not be available until this background
+	 * refresh completes. If this flag is not specified, resources on disk are added 
+	 * to the project in the foreground before this method returns.
+	 * </p>
+	 * This method changes resources; these changes will be reported
+	 * in a subsequent resource change event that includes
+	 * an indication that the project has been opened and its resources
+	 * have been added to the tree.  If the <code>BACKGROUND_REFRESH</code>
+	 * update flag is specified, multiple resource change events may occur as
+	 * resources on disk are discovered and added to the tree.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided
+	 * by the given progress monitor.
+	 * </p>
+	 *
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 * @see #close(IProgressMonitor)
+	 * @see IResource#BACKGROUND_REFRESH
+	 * @see IResourceRuleFactory#modifyRule(IResource)
+	 */
+	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Opens this project.  No action is taken if the project is already open.
+	 * <p>
+	 * This is a convenience method, fully equivalent to 
+	 * <code>open(IResource.NONE, monitor)</code>.
+	 * </p>
+	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event that includes
 	 * an indication that the project has been opened and its resources
@@ -561,7 +603,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #close(IProgressMonitor)
-	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
+	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 */
 	public void open(IProgressMonitor monitor) throws CoreException;
 

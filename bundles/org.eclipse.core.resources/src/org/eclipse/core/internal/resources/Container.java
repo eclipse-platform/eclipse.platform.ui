@@ -174,6 +174,9 @@ public abstract class Container extends Resource implements IContainer {
 		final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(phantom, false);
 		checkExists(getFlags(info), true);
+		//if children are currently unknown, ask for refresh asap
+		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
+			workspace.refreshManager.refresh(this);
 		IResource[] allMembers = getChildren(this, phantom);
 		// if team-private members are wanted, return the whole list
 		if ((memberFlags & INCLUDE_TEAM_PRIVATE_MEMBERS) != 0)

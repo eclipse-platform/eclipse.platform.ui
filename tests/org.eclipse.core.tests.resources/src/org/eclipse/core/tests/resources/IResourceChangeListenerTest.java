@@ -219,6 +219,9 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
+		//ensure all background jobs are done before we reset the delta verifier
+		waitForBuild();
+		waitForRefresh();
 		verifier.reset();
 	}
 

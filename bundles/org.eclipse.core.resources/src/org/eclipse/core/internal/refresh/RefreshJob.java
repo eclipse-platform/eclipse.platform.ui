@@ -13,7 +13,6 @@ import java.util.*;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The <code>RefreshJob</code> class maintains a list of resources that
@@ -25,19 +24,15 @@ import org.eclipse.core.runtime.jobs.Job;
 public class RefreshJob extends WorkspaceJob {
 	private static final long UPDATE_DELAY = 200;
 	/**
-	 * Flag indicating if this refresh job should be running
-	 */
-	private boolean active = false;
-	/**
-	 * List of refresh requests
+	 * List of refresh requests. Requests are processed in order from
+	 * the end of the list. Requests can be added to either the beginning
+	 * or the end of the list depending on whether they are explicit user
+	 * requests or background refresh requests.
 	 */
 	private final List fRequests;
 
 	public RefreshJob() {
 		super(Policy.bind("refresh.jobName")); //$NON-NLS-1$
-		setPriority(Job.LONG);
-		setSystem(true);
-		setRule(ResourcesPlugin.getWorkspace().getRoot());
 		fRequests = new ArrayList(1);
 	}
 
@@ -47,25 +42,60 @@ public class RefreshJob extends WorkspaceJob {
 	 * @param resource
 	 */
 	private synchronized void addRequest(IResource resource) {
-		//discard if the resource to be added is a sibling or child of an existing request
 		IPath toAdd = resource.getFullPath();
-		int size = fRequests.size();
-		for (int i = 0; i < size; i++)
-			if (((IResource) fRequests.get(i)).getFullPath().isPrefixOf(toAdd))
-				return;
-		//discard any existing requests below the resource to be added
-		for (Iterator it = fRequests.iterator(); it.hasNext();)
-			if (toAdd.isPrefixOf(((IResource) it.next()).getFullPath()))
+		for (Iterator it = fRequests.iterator(); it.hasNext();) {
+			IPath request = ((IResource) it.next()).getFullPath();
+			//discard any existing requests the same or below the resource to be added
+			if (toAdd.isPrefixOf(request))
 				it.remove();
-		//finally add the new request
+			//nothing to do if the resource to be added is a child of an existing request
+			else if (request.isPrefixOf(toAdd))
+				return;
+		}
+		//finally add the new request to the front of the queue
 		fRequests.add(resource);
 	}
 
-	private synchronized IResource[] getRequests() {
+	private synchronized void addRequests(List list) {
+		//add requests to the end of the queue
+		fRequests.addAll(0, list);
+	}
+
+	/* (non-Javadoc)
+	 *  @see org.eclipse.core.runtime.jobs.Job#belongsTo(Object)
+	 */
+	public boolean belongsTo(Object family) {
+		return family == ResourcesPlugin.FAMILY_AUTO_REFRESH;
+	}
+
+	/**
+	 * This method adds all members at the specified depth from the resource
+	 * to the provided list.
+	 */
+	private List collectChildrenToDepth(IResource resource, ArrayList children, int depth) throws CoreException {
+		if (resource.getType() == IResource.FILE)
+			return children;
+		IResource[] members = ((IContainer) resource).members();
+		for (int i = 0; i < members.length; i++) {
+			if (members[i].getType() == IResource.FILE)
+				continue;
+			if (depth <= 1)
+				children.add(members[i]);
+			else
+				collectChildrenToDepth(members[i], children, depth - 1);
+		}
+		return children;
+	}
+
+	/**
+	 * Returns the next item to refresh, or <code>null</code> if there are no requests
+	 */
+	private synchronized IResource nextRequest() {
 		// synchronized: in order to atomically obtain and clear requests
-		IResource[] toRefresh = (IResource[]) fRequests.toArray(new IResource[fRequests.size()]);
-		fRequests.clear();
-		return toRefresh;
+		int len = fRequests.size();
+		if (len == 0)
+			return null;
+		return (IResource) fRequests.remove(len - 1);
 	}
 
 	/* (non-Javadoc)
@@ -75,8 +105,7 @@ public class RefreshJob extends WorkspaceJob {
 		if (resource == null)
 			return;
 		addRequest(resource);
-		if (active)
-			schedule(UPDATE_DELAY);
+		schedule(UPDATE_DELAY);
 	}
 
 	/* (non-Javadoc)
@@ -86,16 +115,40 @@ public class RefreshJob extends WorkspaceJob {
 		long start = System.currentTimeMillis();
 		String msg = Policy.bind("refresh.refreshErr"); //$NON-NLS-1$
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
+		long longestRefresh = 0;
 		try {
 			if (RefreshManager.DEBUG)
-				System.out.println(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
-			IResource[] toRefresh = getRequests();
-			monitor.beginTask(Policy.bind("refresh.task"), toRefresh.length); //$NON-NLS-1$					
-			for (int i = 0; i < toRefresh.length; i++) {
+				Policy.debug(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
+			int refreshCount = 0;
+			int depth = 2;
+			monitor.beginTask(Policy.bind("refresh.task"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			IResource toRefresh;
+			while ((toRefresh = nextRequest()) != null) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 				try {
-					toRefresh[i].refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 1));
+					refreshCount++;
+					long refreshTime = -System.currentTimeMillis();
+					toRefresh.refreshLocal(1000 + depth, null);
+					refreshTime += System.currentTimeMillis();
+					if (refreshTime > longestRefresh)
+						longestRefresh = refreshTime;
+					if (refreshCount % 1000 == 0) {
+						//be polite to other threads (no effect on some platforms)
+						Thread.yield();
+//						System.out.println("Refresh count: " + refreshCount + " longest refresh: " + longestRefresh + " depth: " + depth);
+						//throttle depth if it takes too long
+						if (longestRefresh > 2000 && depth > 1) {
+							depth = 1;
+//							System.out.println("Decreasing depth to " + depth);
+						}
+						if (longestRefresh < 1000) {
+							depth *= 2;
+//							System.out.println("Increasing depth to " + depth);
+						}
+						longestRefresh = 0;
+					}
+					addRequests(collectChildrenToDepth(toRefresh, new ArrayList(), depth));
 				} catch (CoreException e) {
 					errors.merge(e.getStatus());
 				}
@@ -110,22 +163,27 @@ public class RefreshJob extends WorkspaceJob {
 		return Status.OK_STATUS;
 	}
 
+	/* (non-Javadoc)
+	 *  @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+	 */
+	public synchronized boolean shouldRun() {
+		return !fRequests.isEmpty();
+	}
+
 	/**
 	 * Starts the refresh job
 	 */
 	public void start() {
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " enabling auto-refresh"); //$NON-NLS-1$
-		active = true;
 	}
 
 	/**
 	 * Stops the refresh job
 	 */
 	public void stop() {
-		if (active && RefreshManager.DEBUG)
+		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " disabling auto-refresh"); //$NON-NLS-1$
-		active = false;
 		cancel();
 	}
 }
