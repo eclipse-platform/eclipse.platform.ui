@@ -1243,7 +1243,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.inactiveTabBGStart"
-            value="COLOR_WHITE"
+            value="COLOR_WIDGET_BACKGROUND"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_START">
          <description>
@@ -1252,7 +1252,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.inactiveTabBGEnd"
-            value="COLOR_WIDGET_BACKGROUND"
+            value="COLOR_WHITE"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_END">
          <description>
