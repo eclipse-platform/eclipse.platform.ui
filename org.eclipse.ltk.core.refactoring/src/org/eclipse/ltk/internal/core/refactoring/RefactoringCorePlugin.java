@@ -70,6 +70,10 @@ public class RefactoringCorePlugin extends Plugin {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringCoreStatusCodes.INTERNAL_ERROR, message, null));
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

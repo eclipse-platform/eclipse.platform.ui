@@ -30,7 +30,8 @@ public class ParticipantManager {
 	//---- Rename participants ----------------------------------------------------------------
 	
 	private static final String RENAME_PARTICIPANT_EXT_POINT= "renameParticipants"; //$NON-NLS-1$
-	private static ParticipantExtensionPoint fgRenameInstance= new ParticipantExtensionPoint("Rename", RENAME_PARTICIPANT_EXT_POINT); //$NON-NLS-1$
+	private static ParticipantExtensionPoint fgRenameInstance= 
+		new ParticipantExtensionPoint("Rename", RENAME_PARTICIPANT_EXT_POINT, RenameParticipant.class); //$NON-NLS-1$
 	
 	/**
 	 * Loads the rename participants for the given element.
@@ -55,7 +56,8 @@ public class ParticipantManager {
 	//---- Move participants ----------------------------------------------------------------
 	
 	private static final String MOVE_PARTICIPANT_EXT_POINT= "moveParticipants"; //$NON-NLS-1$
-	private static ParticipantExtensionPoint fgMoveExtensions= new ParticipantExtensionPoint("Move", MOVE_PARTICIPANT_EXT_POINT); //$NON-NLS-1$
+	private static ParticipantExtensionPoint fgMoveExtensions= 
+		new ParticipantExtensionPoint("Move", MOVE_PARTICIPANT_EXT_POINT, MoveParticipant.class); //$NON-NLS-1$
 
 	/**
 	 * Loads the move participants for the given element.
@@ -80,7 +82,8 @@ public class ParticipantManager {
 	//---- Delete participants ----------------------------------------------------------------
 	
 	private static final String DELETE_PARTICIPANT_EXT_POINT= "deleteParticipants"; //$NON-NLS-1$
-	private static ParticipantExtensionPoint fgDeleteInstance= new ParticipantExtensionPoint("Delete", DELETE_PARTICIPANT_EXT_POINT); //$NON-NLS-1$
+	private static ParticipantExtensionPoint fgDeleteInstance= 
+		new ParticipantExtensionPoint("Delete", DELETE_PARTICIPANT_EXT_POINT, DeleteParticipant.class); //$NON-NLS-1$
 	
 	/**
 	 * Loads the delete participants for the given element.
@@ -104,7 +107,8 @@ public class ParticipantManager {
 	//---- Create participants ----------------------------------------------------------------
 	
 	private static final String CREATE_PARTICIPANT_EXT_POINT= "createParticipants"; //$NON-NLS-1$
-	private static ParticipantExtensionPoint fgCreateInstance= new ParticipantExtensionPoint("Create", CREATE_PARTICIPANT_EXT_POINT); //$NON-NLS-1$
+	private static ParticipantExtensionPoint fgCreateInstance= 
+		new ParticipantExtensionPoint("Create", CREATE_PARTICIPANT_EXT_POINT, CreateParticipant.class); //$NON-NLS-1$
 	
 	/**
 	 * Loads the create participants for the given element.

@@ -41,6 +41,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
 	private RefactoringParticipant[] fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
+	
+	private static final RefactoringParticipant[] EMPTY_PARTICIPANTS= new RefactoringParticipant[0];
 
 	private static class ProcessorChange extends CompositeChange {
 		private Map fParticipantMap;
@@ -131,6 +133,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		}
 		
 		fParticipants= getProcessor().loadParticipants(result, fSharedParticipants);
+		if (fParticipants == null) 
+			fParticipants= EMPTY_PARTICIPANTS;
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;

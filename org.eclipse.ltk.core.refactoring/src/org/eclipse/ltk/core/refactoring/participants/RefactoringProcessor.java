@@ -207,7 +207,8 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *  this method can simply pass this instance to the corresponding participant
 	 *  loading methods defined in {@link ParticipantManager}.  
 	 * 
-	 * @return an array of participants
+	 * @return an array of participants or <code>null</code> or an empty array
+	 *  if no participants are loaded
 	 * 
 	 * @throws CoreException if creating or loading of the participants failed
 	 * 

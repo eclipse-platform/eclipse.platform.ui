@@ -35,6 +35,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		
 	private String fParticipantID;
 	private List fParticipants;
+	private Class fParticipantClass;
 	
 	//---- debuging----------------------------------------
 	/*
@@ -51,11 +52,13 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 	}
 	*/
 	
-	public ParticipantExtensionPoint(String name, String participantId) {
+	public ParticipantExtensionPoint(String name, String participantId, Class clazz) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(participantId);
+		Assert.isNotNull(clazz);
 		fName= name;
 		fParticipantID= participantId;
+		fParticipantClass= clazz;
 	}
 	
 	public String getName() {
@@ -80,11 +83,21 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 							((ISharableParticipant)participant).addElement(element, arguments);
 						} else {
 							participant= descriptor.createParticipant();
-							if (participant.initialize(processor, element, arguments)) {
-								participant.setDescriptor(descriptor);
-								result.add(participant);
-								if (participant instanceof ISharableParticipant)
-									shared.put(descriptor, participant);
+							if (fParticipantClass.isInstance(participant)) {
+								if (participant.initialize(processor, element, arguments)) {
+									participant.setDescriptor(descriptor);
+									result.add(participant);
+									if (participant instanceof ISharableParticipant)
+										shared.put(descriptor, participant);
+								}
+							} else {
+								status.addError(RefactoringCoreMessages.getFormattedString(
+									"ParticipantExtensionPoint.participant_removed",  //$NON-NLS-1$
+									descriptor.getName()));
+								RefactoringCorePlugin.logErrorMessage(
+									RefactoringCoreMessages.getFormattedString(
+										"ParticipantExtensionPoint.wrong_type", //$NON-NLS-1$
+										new String[] {descriptor.getName(), fParticipantClass.getName()}));
 							}
 						}
 					}
