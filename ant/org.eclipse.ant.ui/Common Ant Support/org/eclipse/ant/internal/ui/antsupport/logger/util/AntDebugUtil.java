@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.antsupport.logger.util;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -185,5 +186,58 @@ public final class AntDebugUtil {
         }
         //the target to execute
         return (Target) allTargets.get(targets.remove(0));
+    }
+
+    public static void taskStarted(BuildEvent event, IDebugBuildLogger logger) {
+        if (logger.getInitialProperties() == null) {//implicit or top level target does not fire targetStarted()
+            logger.setInitialProperties(event.getProject().getProperties());
+        }
+        
+        logger.setCurrentTask(event.getTask());
+        logger.setConsiderTargetBreakpoints(false);
+        logger.getTasks().push(logger.getCurrentTask());
+        logger.waitIfSuspended();
+    }
+
+    public static void taskFinished(IDebugBuildLogger logger) {
+        logger.setLastTaskFinished((Task)logger.getTasks().pop());
+        logger.setCurrentTask(null);
+        String taskName= logger.getLastTaskFinished().getTaskName();
+        if (logger.getStepOverTask() != null && ("antcall".equals(taskName) || "ant".equals(taskName))) { //$NON-NLS-1$ //$NON-NLS-2$
+            logger.setShouldSuspend(true);
+        }
+        logger.waitIfSuspended();
+    }
+
+    public static void stepOver(IDebugBuildLogger logger) {
+        logger.setStepOverTask(logger.getCurrentTask());
+        if (logger.getCurrentTask() == null) {
+            //stepping over target breakpoint
+            logger.setShouldSuspend(true);
+        }
+        logger.notifyAll();
+    }
+
+    public static void targetStarted(BuildEvent event, IDebugBuildLogger logger) {
+        if (logger.getInitialProperties() == null) {
+            logger.setInitialProperties(event.getProject().getProperties());
+        }
+        if (logger.getTargetToBuildSequence() == null) {
+            logger.setTargetToBuildSequence(new HashMap());
+            logger.setTargetToExecute(AntDebugUtil.initializeBuildSequenceInformation(event, logger.getTargetToBuildSequence()));
+        }
+        
+        logger.setTargetExecuting(event.getTarget());
+        if (event.getTarget().equals(logger.getTargetToExecute())) {
+            //the dependancies of the target to execute have been met
+            //prepare for the next target
+            Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+            if (!targets.isEmpty()) {
+                logger.setTargetToExecute((Target) event.getProject().getTargets().get(targets.remove(0)));
+            } else {
+                logger.setTargetToExecute(null);
+            }
+        }
+        logger.setConsiderTargetBreakpoints(true);
     }
 }

@@ -17,12 +17,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
@@ -31,13 +29,14 @@ import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.DebugMessageIds;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
  * A build logger that reports via a socket connection.
  * See DebugMessageIds and MessageIds for more information about the protocol.
  */
-public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
+public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements IDebugBuildLogger {
 	
 	private ServerSocket fServerSocket;
 	private Socket fRequestSocket;
@@ -46,6 +45,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	private BufferedReader fRequestReader;
 	
+    private boolean fBuildStartedSuspend= true;
 	private boolean fStepIntoSuspend= false;
 	private boolean fClientSuspend= false;
 	private boolean fShouldSuspend= false;
@@ -97,12 +97,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 							}
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								fStepOverTask= fCurrentTask;
-								if (fCurrentTask == null) {
-									//stepping over target breakpoint
-									fShouldSuspend= true;
-								}
-								RemoteAntDebugBuildLogger.this.notifyAll();
+								AntDebugUtil.stepOver(RemoteAntDebugBuildLogger.this);
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
@@ -204,46 +199,33 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		} else {
 			shutDown();
 		}
-		fShouldSuspend= true;
+		setShouldSuspend(true);
 		waitIfSuspended();
 	}
-    
-     private void initializeBuildSequenceInformation(BuildEvent event) {
-         fTargetToBuildSequence= new HashMap();
-         fTargetToExecute= AntDebugUtil.initializeBuildSequenceInformation(event, fTargetToBuildSequence);
-     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
-		if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
-			fInitialProperties= event.getProject().getProperties();
-		}
-		super.taskStarted(event);
-		fCurrentTask= event.getTask();
-		fConsiderTargetBreakpoints= false;
-		fTasks.push(fCurrentTask);
-		waitIfSuspended();
+        super.taskStarted(event);
+		AntDebugUtil.taskStarted(event, this);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void taskFinished(BuildEvent event) {
+	public synchronized void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
-		fLastTaskFinished= (Task)fTasks.pop();
-		fCurrentTask= null;
-		waitIfSuspended();
+		AntDebugUtil.taskFinished(this);
 	}
 	
-	private synchronized void waitIfSuspended() {
+	public synchronized void waitIfSuspended() {
 		String detail= null;
 		boolean shouldSuspend= true;
 		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
 		if (breakpoint != null) {
 			detail= breakpoint.toMarshallString();
-			fShouldSuspend= false;
+			setShouldSuspend(false);
 			if (fStepOverTask != null) {
 				fStepOverTaskInterrupted= fStepOverTask;
 				fStepOverTask= null;
@@ -252,11 +234,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        if (fStepIntoSuspend) {
 	            detail= DebugMessageIds.STEP;
 	            fStepIntoSuspend= false;
-	        } else if ((fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) || fShouldSuspend) {
+	        } else if ((fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) || shouldSuspend()) {
 	        	//suspend as a step over has finished
 	        	detail= DebugMessageIds.STEP;
 	        	fStepOverTask= null;
-				fShouldSuspend= false;
+				setShouldSuspend(false);
 	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepIntoTask) {
 	        	//suspend as a task that was stepped into has finally completed
 	        	 detail= DebugMessageIds.STEP;
@@ -271,8 +253,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        } else {
 	            shouldSuspend= false;
 	        }
-	    } else if (fShouldSuspend) {
-			fShouldSuspend= false;
+	    } else if (shouldSuspend() && fBuildStartedSuspend) {
+            fBuildStartedSuspend= false;
+			setShouldSuspend(false);
 	    } else {
 			shouldSuspend= false;
 	    }
@@ -285,6 +268,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 			}
 			 try {
 				 wait();
+                 shouldSuspend= false;
 			 } catch (InterruptedException e) {
 			 }
 		}
@@ -315,15 +299,15 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	protected void marshallStack() {
 	    StringBuffer stackRepresentation= new StringBuffer();
-	    AntDebugUtil.marshalStack(stackRepresentation, fTasks, fTargetToExecute, fTargetExecuting, fTargetToBuildSequence);
+	    AntDebugUtil.marshalStack(stackRepresentation, getTasks(), getTargetToExecute(), getTargetExecuting(), getTargetToBuildSequence());
 	    sendRequestResponse(stackRepresentation.toString());
 	}
 	
 	protected void marshallProperties() {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-        if (!fTasks.isEmpty()) {
-            AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties, false);
-            fProperties= ((Task)fTasks.peek()).getProject().getProperties();
+        if (!getTasks().isEmpty()) {
+            AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)getTasks().peek()).getProject(), fInitialProperties, fProperties, false);
+            fProperties= ((Task)getTasks().peek()).getProject().getProperties();
         }
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
@@ -356,31 +340,21 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-		if (fInitialProperties == null) {
-			fInitialProperties= event.getProject().getProperties();
-		}
-		if (fTargetToBuildSequence == null) {
-			initializeBuildSequenceInformation(event);
-		}
-		
-		fTargetExecuting= event.getTarget();
-		if (event.getTarget().equals(fTargetToExecute)) {
-		    //the dependancies of the target to execute have been met
-		    //prepare for the next target
-		    Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
-		    if (!targets.isEmpty()) {
-		        fTargetToExecute= (Target) event.getProject().getTargets().get(targets.remove(0));
-		    } else {
-		        fTargetToExecute= null;
-            }
-		}
-		fConsiderTargetBreakpoints= true;
+		AntDebugUtil.targetStarted(event, this);
 		if (!fSentProcessId) {
 			establishConnection();
 		}
 		waitIfSuspended();
 		super.targetStarted(event);
 	}
+    
+    /* (non-Javadoc)
+     * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
+     */
+    public void targetFinished(BuildEvent event) {
+        super.targetFinished(event);
+        setTargetExecuting(null);
+    }   
     
     public void configure(Map userProperties) {
        super.configure(userProperties);
@@ -394,9 +368,89 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		if (fCurrentTask != null) {
 			return fCurrentTask.getLocation();
 		}
-		if (fConsiderTargetBreakpoints && fTargetExecuting != null) {
-			return AntDebugUtil.getLocation(fTargetExecuting);
+		if (fConsiderTargetBreakpoints && getTargetExecuting() != null) {
+			return AntDebugUtil.getLocation(getTargetExecuting());
 		}
 		return null;
 	}
+
+    public Task getLastTaskFinished() {
+        return fLastTaskFinished;
+    }
+
+    public void setLastTaskFinished(Task lastTaskFinished) {
+        fLastTaskFinished = lastTaskFinished;
+    }
+
+    public Task getCurrentTask() {
+        return fCurrentTask;
+    }
+
+    public void setCurrentTask(Task currentTask) {
+        fCurrentTask = currentTask;
+    }
+
+    public Map getInitialProperties() {
+        return fInitialProperties;
+    }
+
+    public void setInitialProperties(Map initialProperties) {
+        fInitialProperties = initialProperties;
+    }
+
+    public Task getStepOverTask() {
+        return fStepOverTask;
+    }
+
+    public void setStepOverTask(Task stepOverTask) {
+        fStepOverTask = stepOverTask;
+    }
+
+    public boolean considerTargetBreakpoints() {
+        return fConsiderTargetBreakpoints;
+    }
+
+    public void setConsiderTargetBreakpoints(boolean considerTargetBreakpoints) {
+        fConsiderTargetBreakpoints = considerTargetBreakpoints;
+    }
+
+    public void setTasks(Stack tasks) {
+        fTasks = tasks;
+    }
+
+    public Stack getTasks() {
+        return fTasks;
+    }
+
+    public void setShouldSuspend(boolean shouldSuspend) {
+        fShouldSuspend = shouldSuspend;
+    }
+
+    public boolean shouldSuspend() {
+        return fShouldSuspend;
+    }
+
+    public void setTargetToBuildSequence(Map targetToBuildSequence) {
+        fTargetToBuildSequence = targetToBuildSequence;
+    }
+
+    public Map getTargetToBuildSequence() {
+        return fTargetToBuildSequence;
+    }
+
+    public void setTargetToExecute(Target targetToExecute) {
+        fTargetToExecute = targetToExecute;
+    }
+
+    public Target getTargetToExecute() {
+        return fTargetToExecute;
+    }
+
+    public void setTargetExecuting(Target targetExecuting) {
+        fTargetExecuting = targetExecuting;
+    }
+
+    public Target getTargetExecuting() {
+        return fTargetExecuting;
+    }
 }

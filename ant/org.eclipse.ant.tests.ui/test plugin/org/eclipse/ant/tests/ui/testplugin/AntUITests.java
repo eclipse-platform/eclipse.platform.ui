@@ -22,6 +22,7 @@ import org.eclipse.ant.tests.ui.BuildTests;
 import org.eclipse.ant.tests.ui.debug.BreakpointTests;
 import org.eclipse.ant.tests.ui.debug.PropertyTests;
 import org.eclipse.ant.tests.ui.debug.RunToLineTests;
+import org.eclipse.ant.tests.ui.debug.SteppingTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
@@ -57,6 +58,7 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(AntUtilTests.class));
 		suite.addTest(new TestSuite(BreakpointTests.class));
 		suite.addTest(new TestSuite(RunToLineTests.class));
+        suite.addTest(new TestSuite(SteppingTests.class));
 		suite.addTest(new TestSuite(PropertyTests.class));
         return suite;
     }
