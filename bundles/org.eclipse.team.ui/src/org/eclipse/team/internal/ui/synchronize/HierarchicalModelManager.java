@@ -48,9 +48,9 @@ public class HierarchicalModelManager extends SynchronizeModelManager {
 			}
 		}
 		if(id.endsWith(CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID)) {
-			return new CompressedFoldersModelProvider(getSyncInfoSet());
+			return new CompressedFoldersModelProvider(getConfiguration(), getSyncInfoSet());
 		} else {
-			return new HierarchicalModelProvider(getSyncInfoSet());
+			return new HierarchicalModelProvider(getConfiguration(), getSyncInfoSet());
 		}
 	}
 

@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * An input that can be used with both {@link } and 
@@ -60,8 +61,8 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * 
 	 * @param set the sync set used as the basis for the model created by this input.
 	 */
-	public HierarchicalModelProvider(SyncInfoTree set) {
-		super(set);
+	public HierarchicalModelProvider(ISynchronizePageConfiguration configuration, SyncInfoTree set) {
+		super(configuration, set);
 	}
 
 	

@@ -62,11 +62,11 @@ public class ChangeLogModelManager extends SynchronizeModelManager implements IP
 			}
 		}
 		if(id.endsWith(CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID)) {
-			return new CompressedFoldersModelProvider(getSyncInfoSet());
+			return new CompressedFoldersModelProvider(getConfiguration(), getSyncInfoSet());
 		} else if(id.endsWith(HierarchicalModelProvider.HierarchicalModelProviderDescriptor.ID)) {
-			return new HierarchicalModelProvider(getSyncInfoSet());
+			return new HierarchicalModelProvider(getConfiguration(), getSyncInfoSet());
 		} else {
-				return new ChangeLogModelProvider(getSyncInfoSet());
+				return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet());
 		}
 	}
 

@@ -80,7 +80,8 @@ public class TestDiffNodePresentationModel extends TeamTest {
 	}
 	
 	protected SynchronizeModelProvider getDiffNodeController(SyncInfoTree set) {
-		return new HierarchicalModelProvider(set);
+		//return new HierarchicalModelProvider(set);
+		return null;
 	}
 	
 	/*

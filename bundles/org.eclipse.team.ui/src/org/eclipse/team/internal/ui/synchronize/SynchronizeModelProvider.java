@@ -29,6 +29,7 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -62,6 +63,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	private Set pendingLabelUpdates = new HashSet();
 	
 	private LabelUpdateJob labelUpdater = new LabelUpdateJob();
+	
+	private ISynchronizePageConfiguration configuration;
 	
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 			public void propertyChange(final PropertyChangeEvent event) {
@@ -117,7 +120,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 *            the sync set used as the basis for the model created by this
 	 *            input.
 	 */
-	public SynchronizeModelProvider(SyncInfoSet set) {
+	public SynchronizeModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		this(new UnchangedResourceModelElement(null, ResourcesPlugin.getWorkspace().getRoot()) {
 			/* 
 			 * Override to ensure that the diff viewer will appear in CompareEditorInputs
@@ -125,18 +128,35 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			public boolean hasChildren() {
 				return true;
 			}
-		}, set);
+		}, configuration, set);
 	}
 
-	public SynchronizeModelProvider(SynchronizeModelElement parent, SyncInfoSet set) {
+	public SynchronizeModelProvider(SynchronizeModelElement parent, ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		Assert.isNotNull(set);
 		Assert.isNotNull(parent);
 		this.root = parent;
 		this.set = set;
+		this.configuration = configuration;
 	}
 	
+	/**
+	 * Return the set that contains the elements this provider is using as
+	 * a basis for creating a presentation model. This cannot be null.
+	 * 
+	 * @return the set that contains the elements this provider is
+	 * using as a basis for creating a presentation model.
+	 */
 	public SyncInfoSet getSyncInfoSet() {
 		return set;
+	}
+	
+	/**
+	 * Return the page configuration for this provider.
+	 * 
+	 * @return the page configuration for this provider.
+	 */
+	public ISynchronizePageConfiguration getConfiguration() {
+		return configuration;
 	}
 	
 	/**
@@ -160,7 +180,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		// Connect to the sync set which will register us as a listener and give us a reset event
 		// in a background thread
 		getSyncInfoSet().connect(this, monitor);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		return getModelRoot();
 	}
 	
@@ -182,20 +202,29 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * Dispose of the builder
 	 */
 	public void dispose() {
+		if(! resourceMap.isEmpty()) {
+			saveViewerState();
+		}
 		resourceMap.clear();
 		getSyncInfoSet().removeSyncSetChangedListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/**
-	 * Returns the input created by this controller or <code>null</code> if 
+	 * Returns the input created by this provider or <code>null</code> if 
 	 * {@link #prepareInput(IProgressMonitor)} hasn't been called on this object yet.
-	 * @return
+	 * 
+	 * @return the input created by this provider.
 	 */
 	public ISynchronizeModelElement getModelRoot() {
 		return root;
 	}
 
+	/**
+	 * Returns the sorter for this model provider.
+	 * 
+	 * @return the sorter for this model provider. 
+	 */
 	public abstract ViewerSorter getViewerSorter();
 
 	/**
@@ -309,6 +338,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected void reset() {
 		try {
 			setAllowRefreshViewer(false);
+			// save expansion state
+			if(! resourceMap.isEmpty()) {
+				saveViewerState();
+			}
 			
 			// Clear existing model, but keep the root node
 			resourceMap.clear();
@@ -336,6 +369,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				StructuredViewer viewer = getViewer();
 				if (viewer != null && !viewer.getControl().isDisposed()) {
 					viewer.refresh();
+					//	restore expansion state
+					restoreViewerState();
 				}
 			}
 		});
@@ -408,6 +443,85 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		// another listener to display them.
 	}
 
+	protected void saveViewerState() {
+		//	save visible expanded elements and selection
+		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
+			final Object[][] expandedElements = new Object[1][1];
+			final Object[][] selectedElements = new Object[1][1];
+			viewer.getControl().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					expandedElements[0] = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
+					selectedElements[0] = ((IStructuredSelection) viewer.getSelection()).toArray();
+				}
+			});
+			//
+			// Save expansion
+			//
+			if (expandedElements[0].length > 0) {
+				ISynchronizePageConfiguration config = getConfiguration();
+				ArrayList savedExpansionState = new ArrayList();
+				for (int i = 0; i < expandedElements[0].length; i++) {
+					if (expandedElements[0][i] instanceof ISynchronizeModelElement) {
+						IResource resource = ((ISynchronizeModelElement) expandedElements[0][i]).getResource();
+						savedExpansionState.add(resource.getFullPath().toString());
+					}
+				}
+				config.setProperty(P_VIEWER_EXPANSION_STATE, savedExpansionState);
+			}
+			//
+			// Save selection
+			//
+			if (selectedElements[0].length > 0) {
+				ISynchronizePageConfiguration config = getConfiguration();
+				ArrayList savedSelectedState = new ArrayList();
+				for (int i = 0; i < selectedElements[0].length; i++) {
+					if (selectedElements[0][i] instanceof ISynchronizeModelElement) {
+						IResource resource = ((ISynchronizeModelElement) selectedElements[0][i]).getResource();
+						savedSelectedState.add(resource.getFullPath().toString());
+					}
+				}
+				config.setProperty(P_VIEWER_SELECTION_STATE, savedSelectedState);
+			}
+		}
+	}
+	
+	protected void restoreViewerState() {
+		// restore expansion state and selection state
+		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
+			List savedExpansionState = (List)configuration.getProperty(P_VIEWER_EXPANSION_STATE);
+			List savedSelectionState = (List)configuration.getProperty(P_VIEWER_SELECTION_STATE);
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot();
+			final ArrayList expandedElements = new ArrayList();
+			if (savedExpansionState != null) {
+				for (Iterator it = savedExpansionState.iterator(); it.hasNext();) {
+					String path = (String) it.next();
+					IResource resource = container.findMember(path, true /* include phantoms */);
+					ISynchronizeModelElement element = getModelObject(resource);
+					if (element != null) {
+						expandedElements.add(element);
+					}
+				}
+			}
+			final ArrayList selectedElements = new ArrayList();
+			if (savedSelectionState != null) {
+				for (Iterator it = savedSelectionState.iterator(); it.hasNext();) {
+					String path = (String) it.next();
+					IResource resource = container.findMember(path, true /* include phantoms */);
+					ISynchronizeModelElement element = getModelObject(resource);
+					if (element != null) {
+						selectedElements.add(element);
+					}
+				}
+			}
+			asyncExec(new Runnable() {
+				public void run() {
+					((AbstractTreeViewer) viewer).setExpandedElements(expandedElements.toArray());
+					viewer.setSelection(new StructuredSelection(selectedElements));
+				}
+			});
+		}
+	}
+	
 	/**
 	 * Update the label of the given diff node. Diff nodes
 	 * are accumulated and updated in a single call.

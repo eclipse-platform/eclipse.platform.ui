@@ -21,6 +21,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 
@@ -84,8 +85,8 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	};
 	private static final CompressedFolderModelProviderDescriptor compressedDescriptor = new CompressedFolderModelProviderDescriptor();
 	
-	public CompressedFoldersModelProvider(SyncInfoTree set) {
-		super(set);
+	public CompressedFoldersModelProvider(ISynchronizePageConfiguration configuration, SyncInfoTree set) {
+		super(configuration, set);
 	}
 	
 	/* (non-Javadoc)

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
@@ -23,6 +24,18 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
  * times without warning.
  */
 public interface ISynchronizeModelProvider {
+	/**
+	 * Property constant for the expansion state for the elements displayed by the page. The
+	 * expansion state is a List of resource paths.
+	 */
+	public static final String P_VIEWER_EXPANSION_STATE = TeamUIPlugin.ID  + ".P_VIEWER_EXPANSION_STATE"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant for the selection state for the elements displayed by the page. The
+	 * selection state is a List of resource paths.
+	 */
+	public static final String P_VIEWER_SELECTION_STATE = TeamUIPlugin.ID  + ".P_VIEWER_SELECTION_STATE"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the sync set this model provider is showing.
 	 * @return the sync set this model provider is showing.

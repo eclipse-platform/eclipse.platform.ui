@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.progress.UIJob;
@@ -143,8 +144,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	};
 	private static final ChangeLogModelProviderDescriptor descriptor = new ChangeLogModelProviderDescriptor();
 	
-	public ChangeLogModelProvider(SyncInfoSet set) {
-		super(set);
+	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
+		super(configuration, set);
 	}
 	
 	/* (non-Javadoc)

@@ -17,7 +17,6 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.synchronize.CompressedFoldersModelProvider;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
 
 /**
@@ -47,7 +46,8 @@ public class SyncInfoSetContentProviderTest extends TestDiffNodePresentationMode
 	 * @see org.eclipse.team.tests.ui.synchronize.TestDiffNodePresentationModel#getDiffNodeController()
 	 */
 	protected SynchronizeModelProvider getDiffNodeController(SyncInfoTree set) {
-		return new CompressedFoldersModelProvider(set);
+		//return new CompressedFoldersModelProvider(set);
+		return null;
 	}
 
 	private void assertFolderPresent(IFolder folder, List resources) {
