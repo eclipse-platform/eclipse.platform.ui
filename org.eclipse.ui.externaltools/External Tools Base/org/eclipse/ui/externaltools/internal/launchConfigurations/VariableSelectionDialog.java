@@ -19,9 +19,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Dialog that prompts the user to select an external tools variable
@@ -32,13 +30,6 @@ class VariableSelectionDialog extends SelectionDialog {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_variable_10")); //$NON-NLS-1$
-	}
-	/* (non-Javadoc)
-	 * Method declared in Window.
-	 */
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.VARIABLE_SELECTION_DIALOG);
 	}
 	protected Control createDialogArea(Composite parent) {
 		// Create the dialog area
