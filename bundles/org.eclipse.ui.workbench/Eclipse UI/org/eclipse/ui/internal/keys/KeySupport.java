@@ -131,8 +131,8 @@ public final class KeySupport {
 	 */
 	public static int convertEventToModifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		int modifiedCharacter = topKey(event);
-		return modifiers + modifiedCharacter;
+		char character = topKey(event);
+		return modifiers + toUpperCase(character);
 	}
 
 	/**
@@ -147,9 +147,8 @@ public final class KeySupport {
 	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		int unmodifiedCharacter = upperCase(event.keyCode);
-
-		return modifiers + unmodifiedCharacter;
+		char character = (char) event.keyCode;
+		return modifiers + toUpperCase(character);
 	}
 
 	/**
@@ -164,8 +163,8 @@ public final class KeySupport {
 	 */
 	public static int convertEventToUnshiftedModifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT);
-		int modifiedCharacter = topKey(event);
-		return modifiers + modifiedCharacter;
+		char character = topKey(event);
+		return modifiers + toUpperCase(character);
 	}
 
 	public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
@@ -253,16 +252,14 @@ public final class KeySupport {
 	 *           pulled.
 	 * @return The modified character, uppercase and without control-escaping.
 	 */
-	private static int topKey(Event event) {
+	private static char topKey(Event event) {
+		char character = event.character;
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
-		char modifiedCharacter;
-		if ((ctrlDown) && (event.character != event.keyCode) && (event.character < 0x20)) {
-			modifiedCharacter = (char) (event.character + 0x40);
-		} else {
-			modifiedCharacter = event.character;
-		}
+		
+		if (ctrlDown && event.character != event.keyCode && event.character < 0x20)
+			character += 0x40;
 
-		return upperCase(modifiedCharacter);
+		return character;
 	}
 
 	/**
@@ -273,12 +270,8 @@ public final class KeySupport {
 	 * @return The uppercase equivalent, if any; otherwise, the character
 	 *         itself.
 	 */
-	private static int upperCase(int character) {
-		if (Character.isLetter((char) character)) {
-			return Character.toUpperCase((char) character);
-		}
-
-		return character;
+	private static char toUpperCase(char character) {
+		return Character.isLetter(character) ? Character.toUpperCase(character) : character;
 	}
 
 	private KeySupport() {
