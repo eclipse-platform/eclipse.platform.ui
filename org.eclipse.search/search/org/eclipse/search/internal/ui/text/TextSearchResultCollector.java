@@ -1,41 +1,24 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.actions.OpenWithMenu;
 
 import org.eclipse.search.ui.IActionGroupFactory;
-import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.ui.SearchManager;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
@@ -51,77 +34,13 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	private int fMatchCount= 0;
 	private Integer[] fMessageFormatArgs= new Integer[1];
 	private long fLastUpdateTime;
-	
 
-	private class TextSearchActionGroupFactory implements IActionGroupFactory {
+
+	private static class TextSearchActionGroupFactory implements IActionGroupFactory {
 		public ActionGroup createActionGroup(ISearchResultView part) {
 			return new TextSearchActionGroup(part);
 		}
 	}
-	
-	private class TextSearchActionGroup extends ActionGroup {
-	
-		private ISelectionProvider fSelectionProvider;		
-		private IWorkbenchPage fPage;
-	
-		public TextSearchActionGroup(IViewPart part) {
-			Assert.isNotNull(part);
-			IWorkbenchPartSite site= part.getSite();
-			fSelectionProvider= site.getSelectionProvider();
-			fPage= site.getPage();
-		}
-		
-		public void fillContextMenu(IMenuManager menu) {
-			if (!isTextSearch())
-				return;
-
-			// view must exist if we create a context menu for it.
-			ISearchResultView view= SearchUI.getSearchResultView();
-			IStructuredSelection selection= null;
-			if (getContext().getSelection() instanceof IStructuredSelection)
-				selection= (IStructuredSelection)getContext().getSelection();
-			else
-				selection= StructuredSelection.EMPTY;
-			
-			addOpenWithMenu(menu, selection);
-				
-			ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)getContext().getInput());
-			if (replaceAll.isEnabled())
-				menu.add(replaceAll);
-			ReplaceAction replaceSelected= new ReplaceAction(view.getSite(), selection);
-			if (replaceSelected.isEnabled())
-				menu.add(replaceSelected);
-		}
-		
-		private boolean isTextSearch() {
-			IRunnableWithProgress operation= SearchManager.getDefault().getCurrentSearch().getOperation();
-			if (operation instanceof TextSearchOperation) {
-				String pattern= ((TextSearchOperation)operation).getPattern();
-				return pattern != null && pattern.length() > 0;
-			}
-			return false;
-		}
-
-		private void addOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
-			if (selection == null || selection.size() != 1)
-				return;
-	
-			Object o= selection.getFirstElement();
-			if (!(o instanceof ISearchResultViewEntry))
-				return;
-	
-			Object resource= ((ISearchResultViewEntry)o).getResource();
-			if (!(resource instanceof IFile))
-				return; 
-	
-			// Create a menu flyout.
-			IMenuManager submenu= new MenuManager(SearchMessages.getString("OpenWithMenu.label")); //$NON-NLS-1$
-			submenu.add(new OpenWithMenu(fPage, (IFile)resource));
-	
-			// Add the submenu.
-			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, submenu);
-		}
-	}	
 			
 	/**
 	 * Returns the progress monitor used to setup and report progress.
