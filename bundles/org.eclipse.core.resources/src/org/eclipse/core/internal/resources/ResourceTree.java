@@ -823,16 +823,20 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 
 		// Move the resources in the file system. Only the FORCE flag is valid here so don't
 		// have to worry about clearing the KEEP_HISTORY flag.
+		java.io.File sourceFile = source.getLocation().toFile();
+		java.io.File destinationFile = destination.getLocation().toFile();
 		try {
-			moveInFileSystem(source.getLocation().toFile(), destination.getLocation().toFile(), updateFlags);
+			moveInFileSystem(sourceFile, destinationFile, updateFlags);
 		} catch (CoreException e) {
 			message = Policy.bind("resources.errorMove"); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, e);
 			failed(status);
 			return;
 		}
-		boolean success = destination.getLocation().toFile().exists();
-		success &= !source.getLocation().toFile().exists();
+		boolean success = destinationFile.exists();
+		//if not a case rename on a case insensitive file system
+		if (!sourceFile.equals(destinationFile))
+			success &= !sourceFile.exists();
 		if (success) {
 			movedFolderSubtree(source, destination);
 			updateTimestamps(destination);
