@@ -52,7 +52,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		if (initialize) {
 				
 			ISelection s= part.getSelectionProvider().getSelection();		
-			if(s == null)
+			if(s == null || s.isEmpty())
 				return;
 			
 			ITextSelection selection= (ITextSelection) s;
