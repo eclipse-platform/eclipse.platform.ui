@@ -91,7 +91,7 @@ public class FeatureGeneralPropertyPage
 				label.setFont(new Font(null, data));
 				label.setLayoutData(gd);
 
-				gd = new GridData();
+				gd = new GridData(GridData.FILL_BOTH);
 				gd.horizontalSpan = 2;
 
 				if (annotation.length() < 80) {
@@ -107,7 +107,7 @@ public class FeatureGeneralPropertyPage
 								| SWT.H_SCROLL
 								| SWT.BORDER
 								| SWT.WRAP);
-					gd.heightHint = 300;
+					//gd.heightHint = 300;
 					gd.widthHint = 350;
 					text.setEditable(false);
 					text.setText(annotation);

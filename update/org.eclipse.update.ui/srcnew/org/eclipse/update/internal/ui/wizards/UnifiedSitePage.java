@@ -63,9 +63,9 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		}
 	}
 
-	class TableContentProvider
+	class TreeContentProvider
 		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+		implements ITreeContentProvider {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
@@ -79,8 +79,8 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 			Object[] sitesToVisit =
 				discoveryFolder.getChildren(discoveryFolder);
 			ArrayList candidates = new ArrayList();
-			createCandidates(sitesToVisit, candidates, false);
-			createCandidates(bookmarks, candidates, true);
+			createCandidates(sitesToVisit, candidates, true);
+			createCandidates(bookmarks, candidates, false);
 			return candidates.toArray();
 		}
 
@@ -93,15 +93,34 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 				list.add(new SiteCandidate(bookmark, readOnly));
 			}
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			return new Object [0];
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			return false;
+		}
 	}
 
-	class TableLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
+	class TreeLabelProvider
+		extends LabelProvider {
 		/**
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
-		public Image getColumnImage(Object obj, int col) {
+		public Image getImage(Object obj) {
 			if (obj instanceof SiteCandidate)
 				return UpdateUI.getDefault().getLabelProvider().get(
 					UpdateUIImages.DESC_SITE_OBJ);
@@ -111,12 +130,12 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
-		public String getColumnText(Object obj, int col) {
-			if (obj instanceof SiteCandidate && col == 0) {
+		public String getText(Object obj) {
+			if (obj instanceof SiteCandidate) {
 				SiteCandidate csite = (SiteCandidate) obj;
 				return csite.getLabel();
 			}
-			return null;
+			return "";
 		}
 	}
 
@@ -132,7 +151,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		 */
 		public void objectsAdded(Object parent, Object[] children) {
 			if (parent==null && children[0] instanceof SiteBookmark) {
-				tableViewer.refresh();
+				treeViewer.refresh();
 				checkItems();
 			}
 		}
@@ -142,14 +161,14 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		 */
 		public void objectsRemoved(Object parent, Object[] children) {
 			if (parent==null && children[0] instanceof SiteBookmark) {
-				tableViewer.refresh();
+				treeViewer.refresh();
 				checkItems();
 			}
 		}
 	}
 
 	private DiscoveryFolder discoveryFolder;
-	private CheckboxTableViewer tableViewer;
+	private CheckboxTreeViewer treeViewer;
 	private Button addSiteButton;
 	private Button addLocalButton;
 	private Button removeButton;
@@ -199,7 +218,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		createTableViewer(client);
+		createTreeViewer(client);
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
@@ -254,27 +273,26 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		return client;
 	}
 
-	private void createTableViewer(Composite parent) {
-		tableViewer =
-			CheckboxTableViewer.newCheckList(
+	private void createTreeViewer(Composite parent) {
+		treeViewer = new CheckboxTreeViewer(
 				parent,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		Table table = tableViewer.getTable();
-		table.setLayoutData(gd);
-		tableViewer.setContentProvider(new TableContentProvider());
-		tableViewer.setLabelProvider(new TableLabelProvider());
-		tableViewer.setSorter(new ViewerSorter() {});
-		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
+		Tree tree = treeViewer.getTree();
+		tree.setLayoutData(gd);
+		treeViewer.setContentProvider(new TreeContentProvider());
+		treeViewer.setLabelProvider(new TreeLabelProvider());
+		treeViewer.setSorter(new ViewerSorter() {});
+		treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		initializeItems();
-		tableViewer.addCheckStateListener(new ICheckStateListener() {
+		treeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				handleSiteChecked(
 					(SiteCandidate) e.getElement(),
 					e.getChecked());
 			}
 		});
-		tableViewer
+		treeViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged((IStructuredSelection) e.getSelection());
@@ -288,7 +306,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	}
 	
 	private void checkItems() {
-		TableItem [] items = tableViewer.getTable().getItems();
+		TreeItem [] items = treeViewer.getTree().getItems();
 		ArrayList checked = new ArrayList();
 		for (int i=0; i<items.length; i++) {
 			SiteCandidate cand = (SiteCandidate)items[i].getData();
@@ -296,7 +314,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 			if (bookmark.isSelected())
 				checked.add(cand);
 		}
-		tableViewer.setCheckedElements(checked.toArray());
+		treeViewer.setCheckedElements(checked.toArray());
 	}
 
 	private void handleAddSite() {
@@ -314,12 +332,12 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 
 	private void handleRemove() {
 		BusyIndicator
-			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				UpdateModel updateModel =
 					UpdateUI.getDefault().getUpdateModel();
 				IStructuredSelection ssel =
-					(IStructuredSelection) tableViewer.getSelection();
+					(IStructuredSelection) treeViewer.getSelection();
 				for (Iterator iter = ssel.iterator(); iter.hasNext();) {
 					SiteCandidate item = (SiteCandidate) iter.next();
 					if (item.isReadOnly())
@@ -350,7 +368,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void updateSearchObject() {
-		Object[] checked = tableViewer.getCheckedElements();
+		Object[] checked = treeViewer.getCheckedElements();
 		SiteBookmark[] bookmarks = new SiteBookmark[checked.length];
 		for (int i = 0; i < checked.length; i++) {
 			SiteCandidate cand = (SiteCandidate) checked[i];
