@@ -426,7 +426,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			return this;
 		ICVSRemoteResource[] children = getChildren();
 		if (children == null) 
-			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {getName()}));
+			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
 		if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
@@ -434,9 +434,14 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 		} else {
 			IPath p = new Path(path);
-			return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
+			try {
+				return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
+			} catch (CVSException e) {
+				// regenerate the exception to give as much info as possible
+				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
+			}
 		}
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {getName()}));
+		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
 	}
 
 	/**
