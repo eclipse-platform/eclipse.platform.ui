@@ -221,7 +221,6 @@ public class ViewsPreferencePage extends PreferencePage implements
         label.setLayoutData(data);
 
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         data.horizontalSpan = 2;
 
         themeCombo = new Combo(composite, SWT.READ_ONLY);

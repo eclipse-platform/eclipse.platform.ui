@@ -194,7 +194,6 @@ class PreferenceImportExportFileSelectionPage extends
         layoutData = new GridData();
         browseButton.setText(WorkbenchMessages
                 .getString("ImportExportPages.browseButton")); //$NON-NLS-1$
-        layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         layoutData.widthHint = computePushButtonWidthHint(browseButton);
         browseButton.setLayoutData(layoutData);
         browseButton.addSelectionListener(new SelectionAdapter() {

@@ -653,9 +653,6 @@ public abstract class FieldEditor {
         FontMetrics fontMetrics = gc.getFontMetrics();
         gc.dispose();
 
-        data.heightHint = org.eclipse.jface.dialogs.Dialog
-                .convertHorizontalDLUsToPixels(fontMetrics,
-                        IDialogConstants.BUTTON_HEIGHT);
         int widthHint = org.eclipse.jface.dialogs.Dialog
                 .convertVerticalDLUsToPixels(fontMetrics,
                         IDialogConstants.BUTTON_WIDTH);

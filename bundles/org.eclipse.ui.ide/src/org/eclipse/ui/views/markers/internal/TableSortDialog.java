@@ -308,7 +308,6 @@ public class TableSortDialog extends Dialog {
      * @param button
      */
     private void setButtonSize(Button button, GridData buttonData) {
-        buttonData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         buttonData.widthHint = Math.max(widthHint, button.computeSize(
                 SWT.DEFAULT, SWT.DEFAULT, true).x);

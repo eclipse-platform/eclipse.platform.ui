@@ -1092,7 +1092,6 @@ public class KeysPreferencePage extends
         compositeButton.setLayoutData(gridData);
         buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
         gridData = new GridData();
-        gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         buttonAdd.setText(Util.translateString(RESOURCE_BUNDLE, "buttonAdd")); //$NON-NLS-1$
         gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(
@@ -1108,7 +1107,6 @@ public class KeysPreferencePage extends
 
         buttonRemove = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
         gridData = new GridData();
-        gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         buttonRemove.setText(Util.translateString(RESOURCE_BUNDLE,
                 "buttonRemove")); //$NON-NLS-1$
@@ -1125,7 +1123,6 @@ public class KeysPreferencePage extends
 
         buttonRestore = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
         gridData = new GridData();
-        gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         buttonRestore.setText(Util.translateString(RESOURCE_BUNDLE,
                 "buttonRestore")); //$NON-NLS-1$
@@ -1205,7 +1202,6 @@ public class KeysPreferencePage extends
         final Button button = new Button(composite, SWT.PUSH);
         gridData = new GridData();
         gridData.horizontalAlignment = GridData.END;
-        gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         final int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         gridData.widthHint = Math.max(widthHint, button.computeSize(
                 SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;

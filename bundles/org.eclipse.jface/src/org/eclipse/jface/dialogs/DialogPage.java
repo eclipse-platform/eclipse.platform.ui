@@ -344,11 +344,9 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected GridData setButtonLayoutData(Button button) {
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         data.widthHint = Math.max(widthHint, minSize.x);
-        data.heightHint = Math.max(heightHint, minSize.y);
         button.setLayoutData(data);
         return data;
     }

@@ -846,11 +846,9 @@ public abstract class Dialog extends Window {
      */
     protected void setButtonLayoutData(Button button) {
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         data.widthHint = Math.max(widthHint, minSize.x);
-        data.heightHint = Math.max(heightHint, minSize.y);
         button.setLayoutData(data);
     }
 
@@ -862,11 +860,9 @@ public abstract class Dialog extends Window {
      */
     protected void setButtonLayoutFormData(Button button) {
         FormData data = new FormData();
-		int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		data.width = Math.max(widthHint, minSize.x);
-		data.height = Math.max(heightHint, minSize.y);
 		button.setLayoutData(data);
     }
 

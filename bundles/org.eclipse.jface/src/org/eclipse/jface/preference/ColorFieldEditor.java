@@ -97,8 +97,6 @@ public class ColorFieldEditor extends FieldEditor {
 
 		Button colorButton = getChangeControl(parent);
 		gd = new GridData();
-		gd.heightHint = convertVerticalDLUsToPixels(colorButton,
-				IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(colorButton,
 				IDialogConstants.BUTTON_WIDTH);
 		gd.widthHint = Math.max(widthHint, colorButton.computeSize(SWT.DEFAULT,

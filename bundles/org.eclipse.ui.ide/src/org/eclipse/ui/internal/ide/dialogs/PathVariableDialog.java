@@ -381,7 +381,6 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     private FormData setButtonFormLayoutData(Button button) {
         FormData data = new FormData();
-        data.height = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         data.width = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
                 SWT.DEFAULT, true).x);

@@ -186,16 +186,15 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         data.heightHint = editorTable.getItemHeight() * 12;
 
         browseExternalEditorsButton = new Button(contents, SWT.PUSH);
-        browseExternalEditorsButton.setText(WorkbenchMessages
-                .getString("EditorSelection.browse")); //$NON-NLS-1$
-        browseExternalEditorsButton.addListener(SWT.Selection, this);
-        data = new GridData();
-        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        data.widthHint = Math.max(widthHint, browseExternalEditorsButton
-                .computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-        browseExternalEditorsButton.setLayoutData(data);
-        browseExternalEditorsButton.setFont(font);
+		browseExternalEditorsButton.setText(WorkbenchMessages
+				.getString("EditorSelection.browse")); //$NON-NLS-1$
+		browseExternalEditorsButton.addListener(SWT.Selection, this);
+		data = new GridData();
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, browseExternalEditorsButton
+				.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		browseExternalEditorsButton.setLayoutData(data);
+		browseExternalEditorsButton.setFont(font);
 
         restoreWidgetValues(); // Place buttons to the appropriate state
 

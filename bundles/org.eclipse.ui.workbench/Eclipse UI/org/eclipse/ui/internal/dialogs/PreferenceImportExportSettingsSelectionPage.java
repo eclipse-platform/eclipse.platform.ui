@@ -142,7 +142,6 @@ class PreferenceImportExportSettingsSelectionPage extends
         layoutData = new GridData();
         selectAllButton.setText(WorkbenchMessages
                 .getString("ImportExportPages.selectAll")); //$NON-NLS-1$
-        layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         layoutData.widthHint = computePushButtonWidthHint(selectAllButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         selectAllButton.setLayoutData(layoutData);
@@ -158,7 +157,6 @@ class PreferenceImportExportSettingsSelectionPage extends
         layoutData = new GridData();
         deselectAllButton.setText(WorkbenchMessages
                 .getString("ImportExportPages.deselectAll")); //$NON-NLS-1$
-        layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         layoutData.widthHint = computePushButtonWidthHint(deselectAllButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         deselectAllButton.setLayoutData(layoutData);
@@ -174,7 +172,6 @@ class PreferenceImportExportSettingsSelectionPage extends
         layoutData = new GridData();
         invertSelectionButton.setText(WorkbenchMessages
                 .getString("ImportExportPages.invertSelection")); //$NON-NLS-1$
-        layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         layoutData.widthHint = computePushButtonWidthHint(invertSelectionButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         invertSelectionButton.setLayoutData(layoutData);

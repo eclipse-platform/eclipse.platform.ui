@@ -173,7 +173,6 @@ public class ProjectCapabilityEditingPropertyPage extends
         });
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
-        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT,
                 SWT.DEFAULT, true).x);
@@ -194,7 +193,6 @@ public class ProjectCapabilityEditingPropertyPage extends
         });
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
-        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         data.widthHint = Math.max(widthHint, removeButton.computeSize(
                 SWT.DEFAULT, SWT.DEFAULT, true).x);

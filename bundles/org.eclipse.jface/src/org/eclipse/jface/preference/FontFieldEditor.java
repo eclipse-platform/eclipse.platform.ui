@@ -199,8 +199,6 @@ public class FontFieldEditor extends FieldEditor {
 
         changeFontButton = getChangeControl(parent);
         gd = new GridData();
-        gd.heightHint = convertVerticalDLUsToPixels(changeFontButton,
-                IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(changeFontButton,
                 IDialogConstants.BUTTON_WIDTH);
         gd.widthHint = Math.max(widthHint, changeFontButton.computeSize(

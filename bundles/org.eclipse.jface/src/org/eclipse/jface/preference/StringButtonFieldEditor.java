@@ -91,8 +91,6 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
         changeButton = getChangeControl(parent);
         GridData gd = new GridData();
         gd.horizontalAlignment = GridData.FILL;
-        gd.heightHint = convertVerticalDLUsToPixels(changeButton,
-                IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(changeButton,
                 IDialogConstants.BUTTON_WIDTH);
         gd.widthHint = Math.max(widthHint, changeButton.computeSize(

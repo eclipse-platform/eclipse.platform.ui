@@ -365,8 +365,6 @@ public class CreateLinkedResourceGroup {
      */
     private GridData setButtonLayoutData(Button button) {
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.heightHint = Dialog.convertVerticalDLUsToPixels(fontMetrics,
-                IDialogConstants.BUTTON_HEIGHT);
         int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
                 IDialogConstants.BUTTON_WIDTH);
         data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
