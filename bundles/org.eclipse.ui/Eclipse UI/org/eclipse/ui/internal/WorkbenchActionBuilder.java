@@ -919,14 +919,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent event) {
 		// Allow manual incremental build only if the
 		// auto build setting is off.
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty() == IPreferenceConstants.AUTO_BUILD) {
+			//Auto build is store in core. It is not in the preference store.
 			boolean autoBuildOn = ((Boolean) event.getNewValue()).booleanValue();
 			if (autoBuildOn)
 				removeManualIncrementalBuildAction();
 			else
 				addManualIncrementalBuildAction();
 		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS_BOOLEAN) {
-			if(((Boolean)event.getNewValue()).booleanValue())
+			if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction();
 			else
 				removePinEditorAction();
@@ -934,9 +936,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			pinEditorAction.updateState();
 		} else if (event.getProperty() == IPreferenceConstants.RECENT_FILES) {
 			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
-			// work around the fact that the property change event values come as 
-			// both Strings and Integers
-			int newValue = (new Integer(event.getNewValue().toString())).intValue();
+			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);
 			if (newValue == 0) {
 				// the open recent menu item can go from enabled to disabled
