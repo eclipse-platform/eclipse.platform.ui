@@ -68,6 +68,8 @@ public abstract class LocalResource implements ICVSResource {
 	 */
 	public void delete() {
 		FileUtil.deepDelete(ioResource);
+		// XXX Should we clear the cache in all cases?
+		// XXX If not, should we provide a boolean parameter as a choice
 	}
 
 	/**

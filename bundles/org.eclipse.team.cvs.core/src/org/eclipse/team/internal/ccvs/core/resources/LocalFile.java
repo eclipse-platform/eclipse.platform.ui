@@ -244,6 +244,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 	}
 	
 	public boolean isDirty() throws CVSException {
+		// XXX Is the below correct for isDirty?
 		if (!exists() || !isManaged()) {
 			return true;
 		} else {
@@ -267,6 +268,9 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		visitor.visitFile(this);
 	}
 
+	/*
+	 * This is to be used by the Copy handler. The filename of the form .#filename
+	 */
 	public void moveTo(String filename) throws CVSException {
 		
 		// Move the file to newFile (we know we do not need the
@@ -278,14 +282,13 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		} catch(ClassCastException e) {
 			throw CVSException.wrapException(e);
 		}
+		
+		// We are deleting the old .#filename if it exists
 		if (file.exists()) {
 			file.delete();
 		}
-		if (file.exists()) {
-			file.delete();
-		}		boolean success;
 		
-		success = ioResource.renameTo(file.getFile());
+		boolean success = ioResource.renameTo(file.getFile());
 		
 		if (!success) {
 			throw new CVSException("Move from " + ioResource + " to " + file + " was not possible");
