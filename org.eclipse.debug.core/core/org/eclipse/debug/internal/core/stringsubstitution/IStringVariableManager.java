@@ -34,11 +34,31 @@ public interface IStringVariableManager {
 	public IValueVariable[] getValueVariables();
 	
 	/**
+	 * Returns the value variable with the given name, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param name variable name
+	 * @return the value variable with the given name, or <code>null</code>
+	 * if none
+	 */
+	public IValueVariable getValueVariable(String name);
+	
+	/**
 	 * Returns all registered context variables.
 	 * 
 	 * @return a collection of all registered context variables
 	 */
 	public IContextVariable[] getContextVariables();	
+	
+	/**
+	 * Returns the context variable with the given name or <code>null</code>
+	 * if none.
+	 * 
+	 * @param name variable name
+	 * @return the context variable with the given name or <code>null</code>
+	 * if none
+	 */
+	public IContextVariable getContextVariable(String name);
 	
 	/**
 	 * Recursively resolves and replaces all variable references in the given
@@ -58,7 +78,7 @@ public interface IStringVariableManager {
 	 * @return a new variable
 	 * @exception CoreException if a variable already exists with the given name
 	 */
-	public IValueVariable newVariable(String name, String description) throws CoreException;
+	public IValueVariable newValueVariable(String name, String description) throws CoreException;
 	
 	/**
 	 * Adds the given variables to the variable registry.
@@ -78,20 +98,19 @@ public interface IStringVariableManager {
 	public void removeVariables(IValueVariable[] variables);
 	
 	/**
-	 * Returns the context with the given identifier or <code>null</code> if none.
-	 * 
-	 * @param id context identifier
-	 * @return the context with the given identifier of <code>null</code> if none
+	 * Registers the given listener for value variable notifications. Has no effect
+	 * if an identical listener is already registered.
+	 *   
+	 * @param listener value variable listener to add
 	 */
-	public IStringVariableContext getContext(String id);
+	public void addValueVariableListener(IValueVariableListener listener);
 	
 	/**
-	 * Sets the variable context for the given identifier. A variable
-	 * context of <code>null</code> indicates that the context is no longer
-	 * defined. 
+	 * Removes the given listener from the list of registered value variable
+	 * listeners. Has no effect if an identical listener is not already registered.
 	 * 
-	 * @param id context identifier
-	 * @param context variable context
+	 * @param listener value variable listener to remove
 	 */
-	public void setContext(String id, IStringVariableContext context);
+	public void removeValueVariableListener(IValueVariableListener listener);
+	
 }

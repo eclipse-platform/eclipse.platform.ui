@@ -33,4 +33,11 @@ public interface IValueVariable extends IStringVariable {
 	 * @return the value of this variable, or <code>null</code> if none
 	 */
 	public String getValue();
+	
+	/**
+	 * Returns whether this variable was contributed by an extension.
+	 * 
+	 * @return whether this variable was contributed by an extension
+	 */
+	public boolean isContributed();
 }

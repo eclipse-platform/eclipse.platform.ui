@@ -11,22 +11,20 @@
 package org.eclipse.debug.internal.core.stringsubstitution;
 
 /**
- * A context to assist in variable resolution. If a contributed variable requires
- * context to assist in its resolution, the context may be registered and retrieved
- * from the variable manager.
+ * Value variable initializers compute an initial value for a value
+ * variable contributed by an extension, which is not defined with an initial
+ * value. This provides a mechnism for programatically computing the initial
+ * value of a value variable.
  * <p>
- * A context may be contributed programmatically or via an extension.
+ * Clients may implement this interface.
  * </p>
- * 
  * @since 3.0
  */
-public interface IStringVariableContext {
-
+public interface IValueVariableInitializer {
 	/**
-	 * Returns an application defined context.
-	 *   
-	 * @return context
+	 * Initializes the specified variable. 
+	 * 
+	 * @param variable variable to initialize
 	 */
-	public Object getContext();
-	
+	public void initialize(IValueVariable variable);
 }

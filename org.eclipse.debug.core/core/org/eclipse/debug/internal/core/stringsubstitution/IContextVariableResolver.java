@@ -13,13 +13,13 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Resolves the value for a string variable. A variable extension contributes
- * a resolver for context sensitive variables, which must implement this
+ * Resolves the value for a context variable. A context variable extension
+ * contributes a resolver for context sensitive variables, which must implement this
  * interface.
  * 
  * @since 3.0
  */
-public interface IStringVariableResolver {
+public interface IContextVariableResolver {
 
 	/**
 	 * Resolves and returns a value for the specified variable when referenced
@@ -30,5 +30,5 @@ public interface IStringVariableResolver {
 	 * @return variable value, possibly <code>null</code>
 	 * @throws CoreException if unable to resolve a value for the given variable
 	 */
-	public String resolveValue(IStringVariable variable, String argument) throws CoreException;
+	public String resolveValue(IContextVariable variable, String argument) throws CoreException;
 }

@@ -13,9 +13,9 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A context variable is a variable whose value is determined by the context
- * that it is referenced in, and optionally accepts an argument. A context
- * variable is contributed by an extension.
+ * A context variable is a variable whose value is computed dynamically
+ * by a context variable resolver. A context variable and and resolver is
+ * contributed by an extension.
  * 
  * @since 3.0
  */
