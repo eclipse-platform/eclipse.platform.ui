@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import java.lang.reflect.Method;
 import org.eclipse.core.internal.runtime.CompatibilityHelper;
 import org.eclipse.core.runtime.*;
-import org.osgi.framework.Bundle;
 
 /**
  * An object which represents the user-defined extension in a 

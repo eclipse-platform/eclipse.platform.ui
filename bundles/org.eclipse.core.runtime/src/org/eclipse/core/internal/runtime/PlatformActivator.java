@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
@@ -33,7 +34,6 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
 	private ServiceRegistration converterRegistration;
-	
 	private static File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile();
 
 	public static BundleContext getContext() {
@@ -45,6 +45,7 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 		context.addServiceListener(this);
 		tryToAcquireInfoService();
 		installPlatformURLSupport();
+		registerApplicationService();
 	}
 
 	private void installBackwardCompatibleURLSupport() {
@@ -137,7 +138,6 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 		InternalPlatform.getDefault().stop(context);
 	}
 
-
 	private void stopRegistry(BundleContext context) {
 		context.removeBundleListener(this.pluginBundleListener);
 		if (registry != null && registry.isDirty()) {
@@ -169,15 +169,14 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		registerPluginConverter();
+//		registerPluginConverter();
 		startRegistry(context);
-		
 	}
-
-	private void registerPluginConverter() {
-		converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
-	}
-	
+//
+//	private void registerPluginConverter() {
+//		converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
+//	}	
+   
 	private void unregisterPluginConverter() {
 		converterRegistration.unregister();
 	}
@@ -211,6 +210,79 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 						environmentInfoServiceReleased(reference);
 				}
 				break;
+		}
+	}
+	private void registerApplicationService() {
+		Runnable work = new Runnable() {
+			public void run() {
+				IPlatformRunnable application = null;
+				String[] appArgs;
+				String applicationId = null;
+				try {
+					EnvironmentInfo envInfo = (EnvironmentInfo) context.getService(environmentServiceReference);
+					if (envInfo == null)
+						throw new RuntimeException("Unable to locate EnvironmentInfo service"); 
+					appArgs = envInfo.getApplicationArgs();
+					
+					applicationId = System.getProperty("eclipse.application");
+					IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
+					if (applicationExtension == null)
+						throw new RuntimeException("Unable to locate application extension: " + applicationId); 
+					
+					IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
+					if (configs.length == 0)
+						throw new RuntimeException("Invalid (empty) application extension: " + applicationId); 
+					IConfigurationElement config = configs[0];
+					application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
+
+					if (application == null)
+						throw new IllegalArgumentException(Policy.bind("application.notFound", applicationId)); //$NON-NLS-1$
+
+				} catch (Exception e) {
+					IStatus status = null;
+					if (e instanceof CoreException)
+						status = ((CoreException)e).getStatus();
+					else
+						status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 13, e.getMessage(), e);
+					InternalPlatform.getDefault().getLog(context.getBundle()).log(status);
+					return;
+				}
+				try {
+					Object result = application.run(appArgs);
+					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
+					System.setProperty("eclipse.exitcode", Integer.toString(exitCode)); //$NON-NLS-1$
+					if (InternalPlatform.DEBUG)
+						System.out.println(Policy.bind("application.returned", new String[] { applicationId, Integer.toString(exitCode)})); //$NON-NLS-1$
+				} catch (Exception e) {
+					if (e instanceof RuntimeException)
+						throw (RuntimeException) e;
+					else
+						throw new RuntimeException("Error running application", e); //$NON-NLS-1$
+				} finally {
+					stopLegacyBundles(context);
+				}
+			}
+		};
+		Hashtable properties = new Hashtable(1);
+		properties.put("eclipse.application", "default"); //$NON-NLS-1$ //$NON-NLS-2$
+		context.registerService("java.lang.Runnable", work, properties);
+	}
+
+	protected void stopLegacyBundles(BundleContext context) {
+		IExtensionPoint shutdownHooksExtPt = registry.getExtensionPoint(IPlatform.PI_RUNTIME, IPlatform.PT_SHUTDOWN_HOOK);
+		IExtension[] shutdownHooksExts = shutdownHooksExtPt.getExtensions();
+		for (int i = 0; i < shutdownHooksExts.length; i++) {
+			if (!shutdownHooksExts[i].getParentIdentifier().equals(IPlatform.PI_RUNTIME_COMPATIBILITY))
+				continue;
+			IConfigurationElement[] configEls = shutdownHooksExts[i].getConfigurationElements();
+			try {
+				IShutdownHook shutdownHook = (IShutdownHook) configEls[0].createExecutableExtension("run"); //$NON-NLS-1$
+				shutdownHook.run();
+			} catch (CoreException e) {
+				InternalPlatform.getDefault().getLog(context.getBundle()).log(e.getStatus());
+			}
+			// we expect only one shut down hook contributor (if any)
+			break;
 		}
 	}
 }
