@@ -137,9 +137,10 @@ public void testVerifyPreviousSession() {
 	assertTrue("3.1", project.isOpen());
 
 	try {
-		assertTrue("4.0", project.members().length == 3);
+		assertEquals("4.0", 4, project.members().length);
+		assertNotNull("4.1", project.findMember(".project"));
 	} catch (CoreException e) {
-		fail("4.1", e);
+		fail("4.2", e);
 	}
 
 	// verify existence of children
