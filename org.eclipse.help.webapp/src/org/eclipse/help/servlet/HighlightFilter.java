@@ -17,7 +17,7 @@ public class HighlightFilter implements IFilter {
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
 		");\n-->\n</script>\n<script language=\"JavaScript\" src=\"";
-	private static final String scriptPart5 = "highlight.js\"></script>\n";
+	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n";
 
 	/**
 	 * Constructor.
