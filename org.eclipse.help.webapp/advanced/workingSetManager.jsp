@@ -264,7 +264,7 @@ for (int i=0; i<wsets.length; i++)
 <div style="height:50px;">
 	<table valign="bottom" align="right" style="background:<%=prefs.getToolbarBackground()%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
-  			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
+  			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
 						<input type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
