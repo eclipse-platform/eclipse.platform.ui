@@ -25,10 +25,11 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  */
 public class PresentationUtil {
 	private static Point anchor;
-	private final static int HYSTERESIS = 20;
+	private final static int HYSTERESIS = 16;
 	private final static String LISTENER_ID = PresentationUtil.class.getName() + ".dragListener"; //$NON-NLS-1$
 	private static Event dragEvent;
 	private static Listener currentListener = null;
+	private static Control dragSource;
 	
 	private static Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -40,7 +41,7 @@ public class PresentationUtil {
 	 * Returns whether the mouse has moved enough to warrant
 	 * opening a tracker.
 	 */
-	private static boolean hasMovedEnough(Event event) {		
+	private static boolean hasMovedEnough(Event event) {
 		return Geometry.distanceSquared(DragUtil.getEventLoc(event), anchor) 
 			>= HYSTERESIS * HYSTERESIS; 		
 	}
@@ -60,8 +61,8 @@ public class PresentationUtil {
 	private static Listener mouseDownListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.widget instanceof Control) {
-				Control dragControl = (Control)event.widget;
-				currentListener = (Listener)dragControl.getData(LISTENER_ID);
+				Control dragSource = (Control)event.widget;
+				currentListener = (Listener)dragSource.getData(LISTENER_ID);
 				anchor = DragUtil.getEventLoc(event);	
 			}
 		}

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.dnd;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -39,12 +38,7 @@ public class DragUtil {
 	 * to determine where objects should be dropped.
 	 */
 	private static TestDropLocation forcedDropTarget = null;
-	
-	/**
-	 * Singleton drag listener
-	 */
-	private static DragListener listener = new DragListener();
-	
+		
 	/**
 	 * List of IDragOverListener
 	 */
@@ -115,6 +109,7 @@ public class DragUtil {
 		
 		return Geometry.toDisplay(parent, boundsControl.getBounds());
 	}
+	
 	public static boolean performDrag(final Object draggedItem, Rectangle sourceBounds) {
 		return performDrag(draggedItem, sourceBounds, 
 				Display.getDefault().getCursorLocation(), false);
@@ -283,19 +278,6 @@ public class DragUtil {
 		
 		return dropTarget;
 	}
-	
-	/**
-	 * Flags the given control as draggable
-	 * 
-	 * @param control
-	 */
-	public static void addDragSource(Control control, IDragSource source) {
-		listener.attach(control, source);
-	}
-	
-	public static void removeDragSource(Control control) {
-		listener.detach(control);
-	} 
 	
 	/**
 	 * Given a list of IDragOverListeners and a description of what is being dragged, it returns

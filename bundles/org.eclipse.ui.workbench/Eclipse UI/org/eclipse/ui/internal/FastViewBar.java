@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -38,12 +37,11 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
-import org.eclipse.ui.internal.dnd.IDragSource;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.presentations.PresentationUtil;
 
 /**
  * Represents the fast view bar.
@@ -127,12 +125,23 @@ public class FastViewBar implements IWindowTrim {
 		}
 	}
 	
-	private Perspective getPerspective() {
+	/**
+	 * Returns the active workbench page or null if none
+	 */
+	private WorkbenchPage getPage() {
 		if (window == null) {
 			return null;
 		}
 		
-		WorkbenchPage page = window.getActiveWorkbenchPage();
+		return window.getActiveWorkbenchPage();
+	}
+
+	/**
+	 * Returns the current perspective or null if none
+	 */
+	private Perspective getPerspective() {
+
+		WorkbenchPage page = getPage();
 		
 		if (page == null) {
 			return null;
@@ -217,64 +226,20 @@ public class FastViewBar implements IWindowTrim {
 		getToolBar().addListener(SWT.MenuDetect, menuListener);
 		getToolBar().addListener(SWT.MouseDown, menuListener);
 		
-		IDragSource fastViewDragSource = new AbstractDragSource() {
-			
-			IViewReference oldFastView = null;
-			
-			public Object getDraggedItem(Point position) {
+		Listener dragListener = new Listener() {
+			public void handleEvent(Event event) {
+				Point position = DragUtil.getEventLoc(event);
+				
 				IViewReference ref = getViewAt(position);
-
-				// If no fastview icons here, drag the fastview bar itself
+				
 				if (ref == null) {
-					return FastViewBar.this;
-				}
-				
-				ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
-				
-				return pane;
-			}
-
-			public Rectangle getDragRectangle(Object draggedItem) {
-				// If we're dragging the fastview bar itself..
-				if (draggedItem instanceof FastViewBar) {
-					return DragUtil.getDisplayBounds(control);
-				}
-				
-				ViewPane pane = (ViewPane)draggedItem;
-				
-				ToolItem item = itemFor(pane.getViewReference());
-				
-				return Geometry.toDisplay(getToolBar(), item.getBounds()); 
-			}
-
-			public void dragFinished(Object draggedItem, boolean success) {
-
-				if (oldFastView != null) {
-					
-					Perspective persp = getPerspective();
-					if (persp != null) {
-						if (persp.isFastView(oldFastView)) {
-							persp.setActiveFastView(oldFastView);
-						}
-					}
-				}
-				
-				oldFastView = null;
-			}
-
-			public void dragStarted(Object draggedItem) {				
-				Perspective persp = getPerspective();
-				
-				if (persp != null) {
-				
-					oldFastView = persp.getActiveFastView();
-					
-					persp.setActiveFastView(null, 0);
-				
+					startDraggingFastViewBar(position, false);
+				} else {
+					startDraggingFastView(ref, position, false);
 				}
 			}
 		};
-		
+				
 		IDragOverListener fastViewDragTarget = new IDragOverListener() {
 
 			class ViewDropTarget extends AbstractDropTarget {
@@ -345,17 +310,63 @@ public class FastViewBar implements IWindowTrim {
 		visible = false;
 		
 		getToolBar().setLayoutData(toolBarData);
-		
-		DragUtil.addDragSource(getToolBar(), fastViewDragSource);
+		PresentationUtil.addDragListener(getToolBar(), dragListener);
 		DragUtil.addDragTarget(getControl(), fastViewDragTarget);
 		if (fastViewLabel != null) {
-			DragUtil.addDragSource(fastViewLabel, fastViewDragSource);
+			PresentationUtil.addDragListener(fastViewLabel, dragListener);
 		}
 		if (fastViewLabel2 != null) {
-			DragUtil.addDragSource(fastViewLabel2, fastViewDragSource);
+			PresentationUtil.addDragListener(fastViewLabel2, dragListener);
 		}
 		
 		update(true);
+	}
+
+	/**
+	 * Begins dragging a particular fast view
+	 * 
+	 * @param ref
+	 * @param position
+	 * @param b
+	 */
+	protected void startDraggingFastView(IViewReference ref, Point position, boolean usingKeyboard) {
+		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
+		
+		ToolItem item = itemFor(pane.getViewReference());
+		
+		Rectangle dragRect = Geometry.toDisplay(getToolBar(), item.getBounds()); 
+
+		Perspective persp = getPerspective();
+		
+		WorkbenchPage page = getPage();
+		
+		IViewReference oldFastView = null;
+		if (persp != null) {
+			oldFastView = persp.getActiveFastView();
+			
+			if (page != null) {
+				page.hideFastView();
+			}
+		}
+		
+		boolean success = DragUtil.performDrag(pane, dragRect, position, !usingKeyboard);
+		
+		// If the drag was cancelled, reopen the old fast view
+		if (!success && oldFastView != null && page != null) {
+			page.toggleFastView(oldFastView);
+		}
+	}
+
+	/**
+	 * Begins dragging the fast view bar
+	 * 
+	 * @param position initial mouse position
+	 * @param usingKeyboard true iff the bar is being dragged using the keyboard
+	 */
+	protected void startDraggingFastViewBar(Point position, boolean usingKeyboard) {
+		Rectangle dragRect = DragUtil.getDisplayBounds(control);
+		
+		DragUtil.performDrag(this, dragRect, position, !usingKeyboard);		
 	}
 
 	/**
