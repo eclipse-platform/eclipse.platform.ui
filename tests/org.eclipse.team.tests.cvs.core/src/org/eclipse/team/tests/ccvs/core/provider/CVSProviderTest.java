@@ -16,6 +16,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 /*
  * This class tests both the CVSProvider and the CVSTeamProvider
@@ -52,6 +53,7 @@ public class CVSProviderTest extends EclipseTest {
 		// Perform some operations on the project
 		IResource[] newResources = buildResources(project, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		IFile file = project.getFile("changed.txt");
+		JUnitTestCase.waitMsec(1500);
 		file.setContents(getRandomContents(), false, false, null);
 		getProvider(project).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		getProvider(project).delete(new IResource[] {project.getFile("deleted.txt")}, DEFAULT_MONITOR);
