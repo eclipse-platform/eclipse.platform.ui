@@ -313,9 +313,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		Shell shell = getControl().getShell();
 		
 		Rectangle initialBounds = getParentBounds();
-				
+		
 		getPage().removeFastView(getViewReference());
-
+		
+		IWorkbenchPart toActivate = getViewReference().getPart(true); 
+		if (toActivate != null) {
+			getPage().activate(toActivate);
+		}
+		
 		Rectangle finalBounds = getParentBounds();
 		
 		RectangleAnimation animation = new RectangleAnimation(shell,  

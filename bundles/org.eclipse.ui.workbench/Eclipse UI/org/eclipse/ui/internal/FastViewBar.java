@@ -42,6 +42,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -551,6 +552,11 @@ public class FastViewBar implements IWindowTrim {
 							Rectangle startBounds = Geometry.toDisplay(item.getParent(), bounds);
 							
 							page.removeFastView(selectedView);
+							
+							IWorkbenchPart toActivate = selectedView.getPart(true); 
+							if (toActivate != null) {
+								page.activate(toActivate);
+							}
 							
 							LayoutPart pane = ((WorkbenchPartReference)selectedView).getPane();
 							
