@@ -79,7 +79,6 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			// because the class was actually loaded.
 			if (result == null)
 				return null;
-			enableHotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;

@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.boot;
 
-import com.ibm.oti.vm.VM;
 import java.io.*;
 import java.net.*;
 import java.security.CodeSource;
@@ -72,8 +71,6 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 
-	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode() & ((VM.class.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) == 0);
-	
 	private static String[] JAR_VARIANTS = buildJarVariants();
 	private static String[] LIBRARY_VARIANTS = buildLibraryVariants();
 
@@ -275,7 +272,6 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 	if (codePath != null) {
 		if (codeFilters == null || codeFilters.length != codePath.length)
 			throw new DelegatingLoaderException();
-		setHotSwapPath(this, codePath);
 		for (int i = 0; i < codePath.length; i++) {
 			if (codeFilters[i] != null)
 				filterTable.put(codePath[i], codeFilters[i]);
@@ -307,7 +303,6 @@ public void addURLs(URL[] codePath, URLContentFilter[] codeFilters, URL[] resour
 	if (codePath != null) {
 		if (codeFilters == null || codeFilters.length != codePath.length)
 			throw new DelegatingLoaderException();
-		setHotSwapPath(this, codePath);
 		for (int i=0; i<codePath.length; i++) {
 			URL path = codePath[i];
 			if (!keys.contains(path)) {
@@ -448,10 +443,6 @@ protected boolean debugResource(String name) {
 		return debugMatchesFilter(name,DEBUG_FILTER_RESOURCE);
 	}
 	return false;
-}
-protected void enableHotSwap(ClassLoader cl, Class clazz) {
-	if (isHotSwapEnabled)
-		VM.enableClassHotSwap(clazz);
 }
 /**
  * Looks for the requested class in the parent of this loader using
@@ -902,25 +893,6 @@ private Class loadClass(String name, boolean resolve, DelegatingURLClassLoader r
 		resolveClass(result);
 
 	return result;
-}
-private void setHotSwapPath(ClassLoader cl, URL[] urls) {
-	if (!isHotSwapEnabled)
-		return;
-	StringBuffer path = new StringBuffer();
-	for(int i = 0; i < urls.length; i++) {
-		String file = getFileFromURL (urls[i]);
-		if (file != null) {
-			if (file.charAt(0) == '/')
-				file = file.substring(1, file.length());
-			if (file.charAt(file.length() - 1) == '/')
-				file = file.substring(0, file.length() - 1);
-			if (path.length() > 0)
-				path.append(";"); //$NON-NLS-1$
-			path.append(file);
-		}
-	}
-	if (path.length() > 0)
-		VM.setClassPathImpl(cl, path.toString());
 }
 protected void setImportedLoaders(DelegateLoader[] loaders) {
 	

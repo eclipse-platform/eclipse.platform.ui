@@ -169,11 +169,6 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			} catch (ClassNotFoundException e) {
 				return null;
 			}
-			// If the class is loaded in this classloader register it with
-			// the hot swap support.  Need to do this regardless of visibility
-			// because the class was actually loaded.
-			enableHotSwap(this, result);
-
 			return checkClassVisibility(result, requestor, false);
 		}
 		// Check to see if we would find the class if we looked.  If so,
@@ -206,7 +201,6 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			// because the class was actually loaded.
 			if (result == null)
 				return null;
-			enableHotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;
