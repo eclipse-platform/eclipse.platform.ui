@@ -30,9 +30,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -247,19 +244,7 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 								
 		actionBars.updateActionBars();
-		
-		getViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C) {
-					IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
-					if (gotoLine.isEnabled()) {
-						gotoLine.run();
-						event.doit= false;
-					}
-				}
-			}
-		});
-		
+				
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.FIND.getId());
 	}

@@ -43,9 +43,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -297,19 +294,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		getConsoleViewer().setAutoScroll(!fIsLocked);
 						
 		actionBars.updateActionBars();
-		
-		getConsoleViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C) {
-					IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
-					if (gotoLine.isEnabled()) {
-						gotoLine.run();
-						event.doit= false;
-					}
-				}
-			}
-		});
-		
+				
 		fTerminate = new ConsoleTerminateAction(getConsole());
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		
