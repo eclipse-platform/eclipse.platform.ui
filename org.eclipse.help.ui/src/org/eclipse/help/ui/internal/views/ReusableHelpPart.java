@@ -72,7 +72,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private ReusableHelpPartHistory history;
 	private HelpPartPage currentPage;
 	private int style;
-	private boolean showDocumentsInPlace=false;
+	private boolean showDocumentsInPlace=true;
 	private int numberOfInPlaceHits =8;
 
 	private IRunnableContext runnableContext;

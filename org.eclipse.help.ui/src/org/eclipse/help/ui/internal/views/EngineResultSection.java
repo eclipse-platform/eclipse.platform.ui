@@ -67,10 +67,6 @@ public class EngineResultSection {
 
 	private int HITS_PER_PAGE = 10;
 
-	private static final String HREF_PREV = "__prev__";
-
-	private static final String HREF_NEXT = "__next__";
-
 	private static final String HREF_PROGRESS = "__progress__";
 
 	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView";
@@ -144,12 +140,8 @@ public class EngineResultSection {
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (HREF_NEXT.equals(href)) {
-					resultOffset += HITS_PER_PAGE;
-					asyncUpdateResults(false, true);
-				} else if (HREF_PREV.equals(href)) {
-					resultOffset -= HITS_PER_PAGE;
-					asyncUpdateResults(false, true);
+				if ("nw:".equals(href)) {
+					part.doOpenLink(e.getHref());
 				} else if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
 				} else
@@ -283,25 +275,26 @@ public class EngineResultSection {
 			buff.append(">"); //$NON-NLS-1$
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
+		    buff.append(" <a href=\""); //$NON-NLS-1$ 
+		    buff.append("nw:");//$NON-NLS-1$ 
+		    buff.append(escapeSpecialChars(hit.getHref())); 
+		    buff.append("\"><img href=\""); //$NON-NLS-1$ 
+		    buff.append(IHelpUIConstants.IMAGE_NW);
+			buff.append("\" alt=\""); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip"));//$NON-NLS-1$ 
+			buff.append("\""); //$NON-NLS-1$ 
+			buff.append("/>"); //$NON-NLS-1$ 
+			buff.append("</a>"); //$NON-NLS-1$
 			if (part.getShowDescription()) {
 				String summary = getSummary(hit);
 				if (summary != null) {
 					buff.append("<br/>");
-					buff.append("<span color=\"summary\">");
+					//buff.append("<span color=\"summary\">");
 					buff.append(summary);
-					buff.append("</span>");
+					//buff.append("</span>");
 					buff.append("...");
 				}
 			}
-			/*
-			 * buff.append(" <a href=\""); //$NON-NLS-1$ buff.append("nw:");
-			 * //$NON-NLS-1$ buff.append(hit.getHref()); buff.append("\"> <img
-			 * href=\""); //$NON-NLS-1$ buff.append(IHelpUIConstants.IMAGE_NW);
-			 * buff.append("\" alt=\""); //$NON-NLS-1$
-			 * buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip"));
-			 * //$NON-NLS-1$ buff.append("\""); //$NON-NLS-1$ buff.append("/>");
-			 * //$NON-NLS-1$ buff.append(" </a>"); //$NON-NLS-1$
-			 */
 			buff.append("</li>"); //$NON-NLS-1$
 		}
 		updateNavigation();
