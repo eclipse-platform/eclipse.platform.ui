@@ -196,17 +196,12 @@ public class DebugPlugin extends Plugin {
 	private HashMap fStatusHandlers = null;
 	
 	/**
-	 * A safe runnable to catch/log any exceptions that occurr while dispatching
-	 * debug events.
+	 * Mode constants for the event notifier
 	 */
-	private EventDispatcher fEventDispatcher = null;
+	private static final int NOTIFY_FILTERS = 0;
+	private static final int NOTIFY_EVENTS = 1;
 	
-	/**
-	 * A safe runnable to catch/log any exceptions that occurr while filtering
-	 * debug events.
-	 */
-	private EventFilter fEventFunnel = null;
-	
+			
 	/**
 	 * Returns the singleton instance of the debug plug-in.
 	 */
@@ -283,12 +278,7 @@ public class DebugPlugin extends Plugin {
 	public void fireDebugEventSet(DebugEvent[] events) {
 		if (isShuttingDown() || events == null || fEventListeners == null)
 			return;
-		events = getEventFilter().filter(events);
-		if (events == null) {
-			return;
-		} else {
-			getEventDispatcher().dispatch(events);
-		}
+		getEventNotifier().dispatch(events);
 	}
 	
 	/**
@@ -857,43 +847,58 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Returns the debug event dispatcher.
+	 * Returns an event notifier.
 	 * 
-	 * @return the debug event dispatcher
+	 * @return an event notifier
 	 */
-	private EventDispatcher getEventDispatcher() {
-		if (fEventDispatcher == null) {
-			fEventDispatcher = new EventDispatcher();
-		}
-		return fEventDispatcher;
+	private EventNotifier getEventNotifier() {
+		return new EventNotifier();
 	}
 	
 	/**
-	 * Dispatches events in a safe runnable to handle any exceptions.
+	 * Filters and dispatches events in a safe runnable to handle any
+	 * exceptions.
 	 */
-	class EventDispatcher implements ISafeRunnable {
+	class EventNotifier implements ISafeRunnable {
 		
 		private DebugEvent[] fEvents;
 		private IDebugEventSetListener fListener;
+		private IDebugEventFilter fFilter;
+		private int fMode;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_dispatching_debug_events._2"), exception); //$NON-NLS-1$
-			log(status);
+			switch (fMode) {
+				case NOTIFY_FILTERS:
+					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_filtering_debug_events._3"), exception); //$NON-NLS-1$
+					log(status);
+					break;
+				case NOTIFY_EVENTS:				
+					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_dispatching_debug_events._2"), exception); //$NON-NLS-1$
+					log(status);
+					break;
+			}
 		}
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fListener.handleDebugEvents(fEvents);
+			switch (fMode) {
+				case NOTIFY_FILTERS:
+					fEvents = fFilter.filterDebugEvents(fEvents);
+					break;
+				case NOTIFY_EVENTS:
+					fListener.handleDebugEvents(fEvents);
+					break;
+			}
 		}
 		
 		/**
-		 * Dispatch the given events. If an exception occurrs in one listener,
-		 * events are still fired to subsequent listeners.
+		 * Filter and dispatch the given events. If an exception occurrs in one
+		 * listener, events are still fired to subsequent listeners.
 		 * 
 		 * @param events debug events
 		 */
@@ -901,77 +906,36 @@ public class DebugPlugin extends Plugin {
 			fEvents = events;
 			try {
 				setDispatching(true);
+				
+				if (hasEventFilters()) {
+					fMode = NOTIFY_FILTERS;
+					Object[] filters = fEventFilters.getListeners();
+					for (int i = 0; i < filters.length; i++) {
+						fFilter = (IDebugEventFilter)filters[i];
+						Platform.run(this);
+						if (fEvents == null || fEvents.length == 0) {
+							return;
+						}
+					}	
+				}				
+				
+				fMode = NOTIFY_EVENTS;
 				Object[] listeners= getEventListeners();
 				for (int i= 0; i < listeners.length; i++) {
 					fListener = (IDebugEventSetListener)listeners[i]; 
 					Platform.run(this);
 				}
+				
 			} finally {
 				setDispatching(false);
-			}				
+			}
+			fEvents = null;
+			fFilter = null;
+			fListener = null;			
 		}
 
 	}
 	
-	/**
-	 * Returns the debug event dispatcher.
-	 * 
-	 * @return the debug event dispatcher
-	 */
-	private EventFilter getEventFilter() {
-		if (fEventFunnel == null) {
-			fEventFunnel = new EventFilter();
-		}
-		return fEventFunnel;
-	}
-		
-	/**
-	 * Filters events in a safe runnable to handle any exceptions.
-	 */
-	class EventFilter implements ISafeRunnable {
-		
-		private DebugEvent[] fEvents;
-		private IDebugEventFilter fFilter;
-		
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_filtering_debug_events._3"), exception); //$NON-NLS-1$
-			log(status);
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			fEvents = fFilter.filterDebugEvents(fEvents);
-		}
-		
-		/**
-		 * Returns the remaining debug events after applying all filters. If an
-		 * exception occurrs in one filter, subsequent filters are still
-		 * applied.
-		 * 
-		 * @param events raw debug events
-		 * @return filtered debug events
-		 */
-		public DebugEvent[] filter(DebugEvent[] events) {
-			fEvents = events;
-			if (hasEventFilters()) {
-				Object[] filters = fEventFilters.getListeners();
-				for (int i = 0; i < filters.length; i++) {
-					fFilter = (IDebugEventFilter)filters[i];
-					Platform.run(this);
-					if (fEvents == null || fEvents.length == 0) {
-						break;
-					}
-				}	
-			}
-			return fEvents;
-		}
-
-	}	
 }
 
 
