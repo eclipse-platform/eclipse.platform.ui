@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -65,7 +68,6 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 	private TableViewer table;
 	private Button addButton;
 	private Button removeButton;
-	private ArrayList rootInput = new ArrayList(0);
 	private ArrayList disabledCaps = new ArrayList();
 	private Capability selectedCap;
 	private CapabilityRegistry reg;
@@ -97,9 +99,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		Label label = new Label(topComposite, SWT.LEFT);
 		label.setText(instructions);
 
-		Capability[] caps = reg.getProjectCapabilities(getProject());
-		rootInput.addAll(Arrays.asList(caps));
-		caps = reg.getProjectDisabledCapabilities(getProject());
+		Capability[] caps = reg.getProjectDisabledCapabilities(getProject());
 		disabledCaps.addAll(Arrays.asList(caps));
 
 		Composite mainComposite = new Composite(topComposite, SWT.NONE);
@@ -121,7 +121,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLabelProvider(new CapabilityLabelProvider());
 		table.setContentProvider(getContentProvider());
-		table.setInput(rootInput);
+		table.setInput(getProject());
 		
 		Composite buttonComposite = new Composite(mainComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
@@ -132,9 +132,10 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		
 		addButton = new Button(buttonComposite, SWT.PUSH);
 		addButton.setText(WorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
-		addButton.setEnabled(false);
+		addButton.setEnabled(true);
 		addButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
+				addCapability();
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -182,8 +183,8 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 	private IContentProvider getContentProvider() {
 		return new WorkbenchContentProvider() {
 			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof ArrayList)
-					return ((ArrayList)parentElement).toArray();
+				if (parentElement instanceof IProject)
+					return reg.getProjectCapabilities((IProject)parentElement);
 				else
 					return null;
 			}
@@ -197,12 +198,36 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		return disabledCaps.contains(cap);
 	}
 	
+	private void addCapability() {
+		ProjectCapabilitySimpleAddWizard wizard;
+		wizard = new ProjectCapabilitySimpleAddWizard(PlatformUI.getWorkbench(), StructuredSelection.EMPTY, getProject());
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+		dialog.open();
+		
+		table.refresh();
+	}
+	
 	private void removeCapability(Capability cap) {
 		ArrayList results = new ArrayList();
-		results.addAll(rootInput);
+		results.addAll(Arrays.asList(reg.getProjectCapabilities(getProject())));
 		results.remove(cap);
 		Capability[] caps = new Capability[results.size()];
 		results.toArray(caps);
+		
+		for (int i = 0; i < caps.length; i++) {
+			List prereqs = Arrays.asList(reg.getPrerequisiteIds(caps[i]));
+			if (prereqs.contains(cap.getId())) {
+				MessageDialog.openWarning(
+					getShell(),
+					WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("ProjectCapabilityPropertyPage.capabilityRequired", new Object[] {caps[i].getName()})); //$NON-NLS-1$
+				return;
+			}
+		}
+		
 		IStatus status = reg.validateCapabilities(caps);
 		if (!status.isOK()) {
 			ErrorDialog.openError(
@@ -241,7 +266,6 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 			dialog.open();
 		}
 		
-		rootInput.remove(cap);
 		table.refresh();
 	}
 	

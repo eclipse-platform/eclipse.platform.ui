@@ -11,7 +11,11 @@ Contributors:
 **********************************************************************/
 import org.eclipse.ui.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import java.util.*;
+
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -89,6 +93,20 @@ public class Category extends WorkbenchAdapter implements ICategory {
 			return null;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
+	public Object[] getChildren(Object o) {
+		return getElements().toArray();
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+	}
+
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchAdapter.
 	 */
