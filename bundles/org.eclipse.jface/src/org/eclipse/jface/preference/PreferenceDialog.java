@@ -504,14 +504,23 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		
 		titleImage.setLayoutData(imageData);
 		
+		messageArea.setTitleLayoutData(createMessageAreaData());
+		messageArea.setMessageLayoutData(createMessageAreaData());
+
+		return titleArea;
+	}
+
+	/**
+	 * Create the layout data for the message area.
+	 * @return FormData for the message area.
+	 */
+	private FormData createMessageAreaData() {
 		FormData messageData = new FormData();
 		messageData.top = new FormAttachment(0);
 	    messageData.bottom = new FormAttachment(titleImage,0,SWT.BOTTOM);
 		messageData.right = new FormAttachment(titleImage,0);
 		messageData.left = new FormAttachment(0);
-		messageArea.setLayoutData(messageData);
-
-		return titleArea;
+		return messageData;
 	}
 
 	/**

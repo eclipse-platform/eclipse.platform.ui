@@ -81,14 +81,30 @@ public class DialogMessageArea extends Object {
 		setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
 	}
 	/**
-	 * Set the layoutData.
-	 * @param layoutData the layoutData for the title and the
-	 * 	message area composite.
+	 * Set the layoutData for the title area. In most cases
+	 * this will be a copy of the layoutData used in 
+	 * setMessageLayoutData.
+	 * @param layoutData the layoutData for the title 
+	 * @see setMessageLayoutData(Object)
 	 */
-	public void setLayoutData(Object layoutData) {
+	public void setTitleLayoutData(Object layoutData) {
 		titleLabel.setLayoutData(layoutData);
 		messageComposite.setLayoutData(layoutData);
 	}
+	
+	/**
+	 * Set the layoutData for the messageArea. In most cases
+	 * this will be a copy of the layoutData used in 
+	 * setTitleLayoutData.
+	 * @param layoutData the layoutData for the message area 
+	 * composite.
+	 * @see setTitleLayoutData(Object)
+	 */
+	public void setMessageLayoutData(Object layoutData) {
+		titleLabel.setLayoutData(layoutData);
+		messageComposite.setLayoutData(layoutData);
+	}
+	
 	/**
 	 * Show the title.
 	 * @param titleMessage String for the titke
