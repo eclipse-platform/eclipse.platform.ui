@@ -56,11 +56,6 @@ import org.eclipse.core.internal.commands.util.Util;
 public final class Command extends NamedHandleObject implements Comparable {
 
 	/**
-	 * The name of the attribute indicating whether the handler is handled.
-	 */
-	public static final String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
-
-	/**
 	 * This flag can be set to <code>true</code> if commands should print
 	 * information to <code>System.out</code> when executing.
 	 */
@@ -335,9 +330,10 @@ public final class Command extends NamedHandleObject implements Comparable {
 			return false;
 
 		final Map attributeValuesByName = handler.getAttributeValuesByName();
-		if (attributeValuesByName.containsKey(ATTRIBUTE_HANDLED) //$NON-NLS-1$
+		if (attributeValuesByName
+				.containsKey(IHandlerAttributes.ATTRIBUTE_HANDLED) //$NON-NLS-1$
 				&& !Boolean.TRUE.equals(attributeValuesByName
-						.get(ATTRIBUTE_HANDLED))) //$NON-NLS-1$
+						.get(IHandlerAttributes.ATTRIBUTE_HANDLED))) //$NON-NLS-1$
 			return false;
 
 		return true;
