@@ -12,6 +12,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * 
@@ -271,13 +272,13 @@ public class ConfiguredSite
 					String featureLabel =
 						(featureToRemove == null) ? null : featureToRemove.getLabel();
 					throw Utilities.newCoreException(
-						"Unable to remove a configured feature: {0} You must unconfigure the feature first"
-							+ featureLabel,
+						Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature" //$NON-NLS-1$
+							,featureLabel),
 						null);
 				}
 			} else {
 				throw Utilities.newCoreException(
-					"Unable to Find the feature {0} on this site." + feature.getURL(),
+					Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()), //$NON-NLS-1$
 					null);
 
 			}

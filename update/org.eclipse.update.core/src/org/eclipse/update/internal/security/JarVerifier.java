@@ -35,7 +35,7 @@ public class JarVerifier implements IVerifier {
 	trustedCertificates = null;	
 	private boolean acceptUnsignedFiles = false;	
 	
-	private static final String MANIFEST = "META-INF";
+	private static final String MANIFEST = "META-INF"; //$NON-NLS-1$
 
 	/**
 	 * List of initialized keystores
@@ -223,7 +223,7 @@ public class JarVerifier implements IVerifier {
 				initializeVariables(jarFile, feature, reference);
 				return verify(jarFile.getAbsolutePath());
 			} catch (IOException e){
-				throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
+				throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToAccessJar",jarReference.toString()),e); //$NON-NLS-1$
 			}
 		} else
 			initializeResult(feature, reference);
@@ -355,7 +355,7 @@ public class JarVerifier implements IVerifier {
 				else
 					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
-				Exception e = new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + file);
+				Exception e = new Exception(Policy.bind("JarVerifier.InvalidFile", file)); //$NON-NLS-1$
 				result.setResultException(e);
 				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);				
 				

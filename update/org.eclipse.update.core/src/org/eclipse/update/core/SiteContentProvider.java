@@ -43,7 +43,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 			return new URL(getURL(),archiveID);
 		} catch (MalformedURLException e){
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,Policy.bind("SiteContentprovider.ErrorCreatingURLForArchiveID",archiveID,getURL().toExternalForm()),e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,Policy.bind("SiteContentProvider.ErrorCreatingURLForArchiveID",archiveID,getURL().toExternalForm()),e); //$NON-NLS-1$
 			throw new CoreException(status);	
 		}		
 	}

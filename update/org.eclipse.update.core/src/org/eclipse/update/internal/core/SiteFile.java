@@ -12,6 +12,7 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Site on the File System
@@ -116,7 +117,7 @@ public class SiteFile extends Site {
 			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
 
 			if (monitor!=null){
-				monitor.beginTask("Removing Feature: "+feature.getLabel(),pluginsToRemove.length+1);
+				monitor.beginTask(Policy.bind("SiteFile.Removing")+feature.getLabel(),pluginsToRemove.length+1); //$NON-NLS-1$
 			}
 
 			//finds the contentReferences for this IPluginEntry
@@ -162,9 +163,9 @@ public class SiteFile extends Site {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException); //$NON-NLS-1$
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException); //$NON-NLS-1$
 		}
 	}
 

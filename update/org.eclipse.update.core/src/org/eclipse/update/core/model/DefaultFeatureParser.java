@@ -429,7 +429,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			
 			// primary
 			String primary = attributes.getValue("primary"); //$NON-NLS-1$
-			feature.isPrimary(primary != null && primary.trim().equalsIgnoreCase("true"));
+			feature.isPrimary(primary != null && primary.trim().equalsIgnoreCase("true")); //$NON-NLS-1$
 			
 			// application
 			String application = attributes.getValue("application"); //$NON-NLS-1$
