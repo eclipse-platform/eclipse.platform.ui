@@ -102,6 +102,9 @@ public class ForceCommitSyncAction extends MergeAction {
 			 			case 1: // no
 			 				cvsSyncSet.removeNonAddedChanges();
 			 				changed = syncSet.getChangedNodes();
+							if (changed.length == 0) {
+								return syncSet;
+							}
 			 				break;
 			 			case 2: // cancel
 			 				return null;
