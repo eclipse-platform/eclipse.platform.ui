@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -273,7 +274,8 @@ public void run() {
 		return;
 	} catch (InvocationTargetException e) {
 		// we catch CoreException in execute(), but unexpected runtime exceptions or errors may still occur
-		WorkbenchPlugin.log(WorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()})); //$NON-NLS-1$
+		String msg = WorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()}); //$NON-NLS-1$
+		WorkbenchPlugin.log(msg,StatusUtil.newStatus(IStatus.ERROR, null, msg, e.getTargetException())); 
 		displayError(e.getTargetException().getMessage());
 	}
 
