@@ -1039,6 +1039,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
+	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
+	 * @since 3.0
+	 */
+	protected void handleDispose() {
+		fWasProjectionEnabled= false;
+		super.handleDispose();
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#handleVisibleDocumentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
