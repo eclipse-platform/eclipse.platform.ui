@@ -2357,6 +2357,8 @@ private void setPerspective(Perspective newPersp) {
 	window.updateTitle();
 	window.getShortcutBar().update(true);
 	
+	updateVisibility(oldPersp, newPersp);
+	
 	// Reactivate active part.
 	if (oldActivePart != null) {
 		String id = oldActivePart.getSite().getId();
@@ -2388,8 +2390,11 @@ private void setPerspective(Perspective newPersp) {
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
 	setToolBarLayout();
-	
-	//Update visibility state of all views.
+}
+/*
+ * Update visibility state of all views.
+ */
+private void updateVisibility(Perspective oldPersp, Perspective newPersp) {
 	HashSet set = new HashSet();
 	IWorkbenchPartReference[] refs;
 	if (oldPersp != null) {

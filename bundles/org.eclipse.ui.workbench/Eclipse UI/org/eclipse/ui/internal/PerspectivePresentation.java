@@ -228,8 +228,31 @@ public boolean bringPartToTop(LayoutPart part) {
 }
 /**
  * Returns true is not in a tab folder or if it is the top one in
- * a tab folder. */
+ * a tab folder.
+ */
 public boolean isPartVisible(String partId) {
+	LayoutPart part = findPart(partId);
+	if(part == null)
+		return false;
+	if(part instanceof PartPlaceholder)
+		return false;
+		
+	ILayoutContainer container = part.getContainer();
+	if (container != null && container instanceof ContainerPlaceholder)
+		return false;
+			
+	if (container != null && container instanceof PartTabFolder) {
+		PartTabFolder folder = (PartTabFolder)container;
+		if(folder.getVisiblePart() == null)
+			return false;
+		return part.getID().equals(folder.getVisiblePart().getID());
+	}
+	return true;
+}
+/**
+ * Returns true is not in a tab folder or if it is the top one in
+ * a tab folder. */
+public boolean willPartBeVisible(String partId) {
 	LayoutPart part = findPart(partId);
 	if(part == null)
 		return false;

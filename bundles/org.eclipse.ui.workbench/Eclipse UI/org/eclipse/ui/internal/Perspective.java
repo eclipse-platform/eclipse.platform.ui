@@ -305,9 +305,8 @@ public IPerspectiveDescriptor getDesc() {
 /*package*/ Rectangle getFastViewBounds(IViewReference ref) {
 	// Copy the bounds of the page composite
 	Rectangle bounds = page.getClientComposite().getBounds();
-	ViewPane pane = getPane(ref);
 	// get the width ratio of the fast view
-	float ratio = getFastViewWidthRatio(pane.getID());
+	float ratio = getFastViewWidthRatio(ref.getId());
 	// Compute the actual width of the fast view.
 	bounds.width = (int)(ratio*(float)getClientComposite().getSize().x);
 	return bounds;
@@ -839,7 +838,7 @@ public IStatus restoreState() {
 			ref.setPane(new ViewPane((IViewReference)ref,page));
 		}
 		page.addPart(ref);
-		if(pres.isPartVisible(ref.getId())) {
+		if(pres.willPartBeVisible(ref.getId())) {
 			IStatus restoreStatus = viewFactory.restoreView((IViewReference)ref);
 			result.add(restoreStatus);
 			if(restoreStatus.getSeverity() == IStatus.OK) {
