@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -35,6 +36,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.*;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessorExtension2;
 
 /**
  * Convenience and utility methods.
@@ -184,46 +187,6 @@ public class Utilities {
 		}
 		
 		return bos.toByteArray();
-	}
-
-	/**
-	 * Returns null if an error occurred.
-	 */
-	public static String readString(InputStream is) {
-		if (is == null)
-			return null;
-		BufferedReader reader= null;
-		try {
-			StringBuffer buffer= new StringBuffer();
-			char[] part= new char[2048];
-			int read= 0;
-			reader= new BufferedReader(new InputStreamReader(is, ResourcesPlugin.getEncoding()));
-
-			while ((read= reader.read(part)) != -1)
-				buffer.append(part, 0, read);
-			
-			return buffer.toString();
-			
-		} catch (IOException ex) {
-			// NeedWork
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ex) {
-					// silently ignored
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static byte[] getBytes(String s) {
-		try {
-			return s.getBytes(ResourcesPlugin.getEncoding());
-		} catch (UnsupportedEncodingException e) {
-			return s.getBytes();
-		}
 	}
 
 	public static String getIconPath(Display display) {
@@ -547,5 +510,84 @@ public class Utilities {
 		result.add(status);
 		result.add(entry);
 		return result;
-	}	
+	}
+	
+	// encoding
+	
+	/**
+	 * Returns null if an error occurred.
+	 */
+	public static String readString(InputStream is, String encoding) {
+		if (is == null)
+			return null;
+		BufferedReader reader= null;
+		try {
+			StringBuffer buffer= new StringBuffer();
+			char[] part= new char[2048];
+			int read= 0;
+			reader= new BufferedReader(new InputStreamReader(is, encoding));
+
+			while ((read= reader.read(part)) != -1)
+				buffer.append(part, 0, read);
+			
+			return buffer.toString();
+			
+		} catch (IOException ex) {
+			// NeedWork
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException ex) {
+					// silently ignored
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static String getCharset(IResource resource) {
+		if (resource != null) {
+			/*
+			try {
+				return resource.getCharset();
+			} catch (CoreException ex) {
+			}
+			*/
+		}
+		return ResourcesPlugin.getEncoding();
+	}
+	
+	public static byte[] getBytes(String s, String encoding) {
+		byte[] bytes= null;
+		if (s != null) {
+			try {
+				bytes= s.getBytes(encoding); //$NON-NLS-1$
+			} catch (UnsupportedEncodingException e) {
+				bytes= s.getBytes();
+			}
+		}
+		return bytes;
+	}
+
+	public static String guessCharset(String path) {
+		//System.err.println("Utilities.guessCharset: " + path);
+		int dot= path.lastIndexOf('.');
+		if (dot >= 0) {
+			String extension= path.substring(dot);
+			if (extension.equalsIgnoreCase(".xml")) //$NON-NLS-1$
+				return "UTF-8"; //$NON-NLS-1$
+		}
+		return ResourcesPlugin.getEncoding();
+	}
+	
+	public static String readString(IStreamContentAccessor sa) throws CoreException {
+		InputStream is= sa.getContents();
+		String encoding= null;
+		if (sa instanceof IStreamContentAccessorExtension2)
+			encoding= ((IStreamContentAccessorExtension2)sa).getCharset();
+		if (encoding == null)
+			encoding= ResourcesPlugin.getEncoding();
+		return Utilities.readString(is, encoding);
+	}
 }
