@@ -705,8 +705,17 @@ protected void setReturnCode(int code) {
 protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
 	Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, 
 			preferredSize.width, preferredSize.height);
-	
-	Monitor mon = shell.getMonitor();
+
+	Monitor mon;
+	if (parentShell != null) {
+		// If we have a parent shell, force the shell to be on the same monitor
+		// as its parent.
+		mon = parentShell.getMonitor();
+	} else {
+		// Otherwise, ensure that the shell isn't partway over the edge of
+		// a monitor.
+		mon = shell.getMonitor();
+	}
 	
 	Rectangle bounds = mon.getClientArea();
 	
