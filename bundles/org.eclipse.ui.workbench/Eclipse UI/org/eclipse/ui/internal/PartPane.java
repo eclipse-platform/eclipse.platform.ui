@@ -364,9 +364,9 @@ public static void moveSash(final Sash sash, final LayoutPart toGetFocusWhenDone
 /**
  * Add a menu item to the Size Menu
  */
-protected void addSizeItem(Menu sizeMenu, String labelKey,final Sash sash) {
+protected void addSizeItem(Menu sizeMenu, String labelMessage, final Sash sash) {
 	MenuItem item = new MenuItem(sizeMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString(labelKey)); //$NON-NLS-1$
+	item.setText(labelMessage); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			moveSash(sash);
@@ -384,11 +384,15 @@ public WorkbenchPage getPage() {
  * Add the Left,Right,Up,Botton menu items to the Size menu.
  */
 protected void addSizeItems(Menu sizeMenu) {
-	Sashes sashes = findSashes();
-	addSizeItem(sizeMenu,"PartPane.sizeLeft",sashes.left); //$NON-NLS-1$
-	addSizeItem(sizeMenu,"PartPane.sizeRight",sashes.right); //$NON-NLS-1$
-	addSizeItem(sizeMenu,"PartPane.sizeTop",sashes.top); //$NON-NLS-1$
-	addSizeItem(sizeMenu,"PartPane.sizeBottom",sashes.bottom); //$NON-NLS-1$
+    Sashes sashes = findSashes();
+    addSizeItem(sizeMenu,
+            WorkbenchMessages.getString("PartPane.sizeLeft"), sashes.left); //$NON-NLS-1$
+    addSizeItem(sizeMenu,
+            WorkbenchMessages.getString("PartPane.sizeRight"), sashes.right); //$NON-NLS-1$
+    addSizeItem(sizeMenu,
+            WorkbenchMessages.getString("PartPane.sizeTop"), sashes.top); //$NON-NLS-1$
+    addSizeItem(sizeMenu,
+            WorkbenchMessages.getString("PartPane.sizeBottom"), sashes.bottom); //$NON-NLS-1$
 }
 
 
