@@ -497,7 +497,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								ILogEntry logEntry = remoteFile.getLogEntry(monitor);
-								author[0] = logEntry.getAuthor();
+								if (logEntry != null)
+									author[0] = logEntry.getAuthor();
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
 							}
