@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -112,23 +111,10 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		
-		Object[] entries = classpathPage.getAntHomeEntries();
-		if (entries != null) {
-			URL[] urls= new URL[entries.length];
-			for (int i = 0; i < entries.length; i++) {
-				urls[i]= (URL)entries[i];
-			}
-			prefs.setAntHomeClasspathEntries(urls);
-		}
+		prefs.setAntHomeClasspathEntries(classpathPage.getAntHomeEntries());
 		
-		entries = classpathPage.getUserURLs();
-		if (entries != null) {
-			URL[] urls= new URL[entries.length];
-			for (int i = 0; i < entries.length; i++) {
-				urls[i]= (URL)entries[i];
-			}
-			prefs.setAdditionalClasspathEntries(urls);
-		}
+		
+		prefs.setAdditionalClasspathEntries(classpathPage.getAdditionalEntries());
 		
 		String antHome= classpathPage.getAntHome();
 		prefs.setAntHome(antHome);
@@ -169,7 +155,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	protected List getLibraryURLs() {
 		List urls= new ArrayList();
 		urls.addAll(Arrays.asList(classpathPage.getAntHomeEntries()));
-		urls.addAll(Arrays.asList(classpathPage.getUserURLs()));
+		urls.addAll(Arrays.asList(classpathPage.getAdditionalEntries()));
 		return urls;
 	}
 }

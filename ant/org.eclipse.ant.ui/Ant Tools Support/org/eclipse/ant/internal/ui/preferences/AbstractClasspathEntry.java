@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.ant.core.IAntClasspathEntry;
 
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
@@ -36,8 +39,8 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
 	 */
-	public IClasspathEntry[] getEntries() {
-		return (IClasspathEntry[])childEntries.toArray(new IClasspathEntry[childEntries.size()]);
+	public IAntClasspathEntry[] getEntries() {
+		return (IAntClasspathEntry[])childEntries.toArray(new IAntClasspathEntry[childEntries.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -60,4 +63,18 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	public void setParent(IClasspathEntry parent) {
 		this.parent = parent;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
+	 */
+	public URL getEntryURL() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
+	 */
+	public String getLabel() {
+		return toString();
+	}
+
 }

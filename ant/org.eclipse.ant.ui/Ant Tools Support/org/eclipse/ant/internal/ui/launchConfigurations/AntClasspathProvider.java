@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -28,7 +29,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 
 public class AntClasspathProvider implements IRuntimeClasspathProvider {
 

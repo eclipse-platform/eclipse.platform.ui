@@ -22,16 +22,21 @@ public interface IAntCoreConstants {
 	// preferences
 	public static final String PREFERENCE_TASKS = "tasks"; //$NON-NLS-1$
 	public static final String PREFERENCE_TYPES = "types"; //$NON-NLS-1$
-	public static final String PREFERENCE_URLS = "urls"; //$NON-NLS-1$
 	
 	public static final String PREFIX_TASK = "task."; //$NON-NLS-1$
 	public static final String PREFIX_TYPE = "type."; //$NON-NLS-1$
 	
 	/**
 	 * Preferences
+	 * @since 3.0
+	 */
+	public static final String PREFERENCE_ANT_HOME_ENTRIES = "ant_home_entries"; //$NON-NLS-1$
+	public static final String PREFERENCE_ADDITIONAL_ENTRIES = "additional_entries"; //$NON-NLS-1$
+	
+	/**
+	 * Preferences
 	 * @since 2.1
 	 */
-	public static final String PREFERENCE_ANT_URLS = "ant_urls"; //$NON-NLS-1$
 	public static final String PREFERENCE_ANT_HOME = "ant_home"; //$NON-NLS-1$
 	public static final String PREFERENCE_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String PREFERENCE_PROPERTY_FILES = "propertyfiles"; //$NON-NLS-1$

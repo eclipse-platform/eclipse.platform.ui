@@ -11,10 +11,9 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.net.URL;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -48,14 +47,14 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * 
 	 * @return set of user classpath entries
 	 */
-	protected Object[] getUserURLs() {
+	protected IAntClasspathEntry[] getAdditionalEntries() {
 		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
 	}
 	
 	/**
 	 * Returns the specified ant home classpath entries
 	 */
-	protected Object[] getAntHomeEntries() {
+	protected IAntClasspathEntry[] getAntHomeEntries() {
 		return model.getURLEntries(ClasspathModel.GLOBAL);
 	}
 	
@@ -87,8 +86,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 	protected void performDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		model= new ClasspathModel();
-		model.setAntHomeEntries(new URL[]{});
-		model.setGlobalEntries(new URL[] {prefs.getToolsJarURL()});
+		model.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
+		model.setGlobalEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
 		antClasspathBlock.setInput(model);
 		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		update();

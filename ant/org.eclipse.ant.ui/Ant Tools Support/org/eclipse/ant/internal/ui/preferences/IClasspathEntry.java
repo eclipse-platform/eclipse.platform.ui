@@ -11,14 +11,16 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
-public interface IClasspathEntry {
+import org.eclipse.ant.core.IAntClasspathEntry;
+
+public interface IClasspathEntry extends IAntClasspathEntry {
 	
 	/**
 	 * Returns the classpath entries that are the children of this classpath entry
 	 * 
 	 * @return the child classpath entries of this entry
 	 */
-	public IClasspathEntry[] getEntries();
+	public IAntClasspathEntry[] getEntries();
 	
 	/**
 	 * Returns whether this classpath entries has child entries.

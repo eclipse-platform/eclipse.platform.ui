@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -60,6 +61,9 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
+		if (element instanceof IAntClasspathEntry) {
+			return ((IAntClasspathEntry)element).getLabel();
+		}
 		return element.toString();
 	}
 

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -184,7 +185,7 @@ public class AntJRETab extends JavaJRETab {
 		}
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		URL oldToolsURL= prefs.getToolsJarURL(oldJavaPath);
+		IAntClasspathEntry oldToolsEntry= prefs.getToolsJarEntry(oldJavaPath);
 			
 		Path newJavaPath= null;
 		if (vm == null) {
@@ -193,12 +194,12 @@ public class AntJRETab extends JavaJRETab {
 			newJavaPath= new Path(vm.getInstallLocation().getAbsolutePath());
 		}
 		
-		URL newToolsURL= prefs.getToolsJarURL(newJavaPath);
+		IAntClasspathEntry newToolsEntry= prefs.getToolsJarEntry(newJavaPath);
 		
 		List antURLs= new ArrayList();
 		List userURLs= new ArrayList();
 		
-		getURLs(prefs, configuration, antURLs, userURLs);
+		getEntries(prefs, configuration, antURLs, userURLs);
 
 		StringBuffer urlString= new StringBuffer();
 		boolean found= false;
@@ -208,15 +209,15 @@ public class AntJRETab extends JavaJRETab {
 			boolean xercesAPIFound= false;
 			xercesFlags= new boolean[]{xercesImplFound, xercesAPIFound};
 		}
-		found= lookForToolsAndXerces(urlString, antURLs, oldToolsURL, newToolsURL, xercesFlags);
+		found= lookForToolsAndXerces(urlString, antURLs, oldToolsEntry, newToolsEntry, xercesFlags);
 		
 		//mark as additional classpath entries
 		urlString.append(AntUtil.ANT_CLASSPATH_DELIMITER);
 		
 		//look for the tools.jar and xerces in the additional classpath entries
-		boolean foundInAdditional= lookForToolsAndXerces(urlString, userURLs, oldToolsURL, newToolsURL, xercesFlags);
-		if (newToolsURL != null && !found && !foundInAdditional) {
-			urlString.append(newToolsURL.getFile());
+		boolean foundInAdditional= lookForToolsAndXerces(urlString, userURLs, oldToolsEntry, newToolsEntry, xercesFlags);
+		if (newToolsEntry != null && !found && !foundInAdditional) {
+			urlString.append(newToolsEntry.getLabel());
 			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
 		
@@ -242,23 +243,21 @@ public class AntJRETab extends JavaJRETab {
 		}
 	}
 	
-	private void getURLs(AntCorePreferences prefs, ILaunchConfigurationWorkingCopy configuration, List antURLs, List userURLs) {
-		String urlStrings= null;
+	private void getEntries(AntCorePreferences prefs, ILaunchConfigurationWorkingCopy configuration, List antHomeEntries, List additionalEntries) {
+		String entryStrings= null;
 		try {
-			urlStrings = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			entryStrings = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
-		if (urlStrings == null) {
+		if (entryStrings == null) {
 			//the global settings
-			antURLs.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
-			userURLs.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
+			antHomeEntries.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
+			additionalEntries.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
 		} else {
-			try {
-				AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
-			} catch (CoreException e) {
-				AntUIPlugin.log(e);
-			}
+			
+				AntUtil.getCustomClasspaths(configuration, antHomeEntries, additionalEntries);
+			
 		}
 	}
 
@@ -267,35 +266,35 @@ public class AntJRETab extends JavaJRETab {
 	 * with the specified JRE.
 	 * The xerces flags are set based on the Xerces JARs that are found.
 	 */
-	private boolean lookForToolsAndXerces(StringBuffer urlString, List URLs, URL oldToolsURL, URL newToolsURL, boolean[] xercesFlags){
+	private boolean lookForToolsAndXerces(StringBuffer urlString, List entries, IAntClasspathEntry oldToolsEntry, IAntClasspathEntry newToolsEntry, boolean[] xercesFlags){
 		boolean include= true;
 		boolean found= false;
-		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
-			URL url = (URL) iter.next();
-			if (sameURL(oldToolsURL, url)) {
-				url= newToolsURL;
-				found= newToolsURL != null;
+		for (Iterator iter = entries.iterator(); iter.hasNext();) {
+			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
+			if (sameURL(oldToolsEntry, entry)) {
+				entry= newToolsEntry;
+				found= newToolsEntry != null;
 				include= found;
-			} else if (sameURL(newToolsURL, url)) {
+			} else if (sameURL(newToolsEntry, entry)) {
 				found= true;
-			} else if (url.getFile().endsWith(XERCES_API)) {
+			} else if (entry.getLabel().endsWith(XERCES_API)) {
 				xercesFlags[1]= true;
 				if (fJREBlock.isDefaultJRE()) {
 					include= false;
 				}
-			} else if (url.getFile().endsWith(XERCES_IMPL)) {
+			} else if (entry.getLabel().endsWith(XERCES_IMPL)) {
 				xercesFlags[0]= true;
 				if (fJREBlock.isDefaultJRE()) {
 					include= false;
 				}
-			} else if (url.getFile().endsWith(XERCES_PARSER_API)) {
+			} else if (entry.getLabel().endsWith(XERCES_PARSER_API)) {
 				xercesFlags[1]= true;
 				if (fJREBlock.isDefaultJRE()) {
 					include= false;
 				}
 			}
 			if (include) {
-				urlString.append(url.getFile());
+				urlString.append(entry.getEntryURL().getFile());
 				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
 			}
 			include= true;
@@ -328,17 +327,18 @@ public class AntJRETab extends JavaJRETab {
 		}
 	}
 	
-	private boolean sameURL(URL first, URL second) {
+	private boolean sameURL(IAntClasspathEntry first, IAntClasspathEntry second) {
 		if (first == null || second == null) {
 			return false;
 		}
-		File newFile= new File(first.getFile());
-		File existingFile= new File(second.getFile());
+		File newFile= new File(first.getEntryURL().getFile());
+		File existingFile= new File(second.getEntryURL().getFile());
 		if (existingFile.equals(newFile)) {
 			return true;
 		}
 		return false;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

@@ -12,11 +12,11 @@ package org.eclipse.ant.internal.ui.model;
 
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -25,6 +25,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.views.AntView;
@@ -214,45 +215,39 @@ public final class AntUtil {
 			return null;
 		}
 		
-		List antURLs= new ArrayList();
-		List userURLs= new ArrayList();
+		List antEntries= new ArrayList();
+		List additionalEntries= new ArrayList();
 		if (classpathString.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + ANT_GLOBAL_CLASSPATH_PLACEHOLDER )) {
 			//really the default classpath ..just ordered differently
-			antURLs.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries()));
-			antURLs.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries()));
+			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries()));
+			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries()));
 		} else {
-			getCustomClasspaths(config, antURLs, userURLs, true);
-			antURLs.addAll(userURLs);
+			getCustomClasspaths(config, antEntries, additionalEntries);
+			antEntries.addAll(additionalEntries);
 		}
-		URL[] custom= new URL[antURLs.size()];
-		return (URL[])antURLs.toArray(custom);
+		
+		Iterator iter= antEntries.iterator();
+		URL[] urls= new URL[antEntries.size()];
+		int i= 0;
+		while (iter.hasNext()) {
+			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
+				urls[i]= entry.getEntryURL();
+				i++;
+			}
+		return urls;
+		
 	}
 	
 	/**
-	 * Adds the Ant URLs and user URLS to the provided lists.
-	 * If no custom classpath is set, no URLs are added to the lists.
+	 * Adds the Ant home entries and additional entries to the provided lists.
+	 * If no custom classpath is set, no entries are added to the lists.
 	 *
 	 * @param configuration launch configuration
-	 * @param list to add the Ant URLs to
-     * @param list to add the user URLs to
+	 * @param list to add the Ant home entries to
+	 * @param list to add the additional entries to
 	 *
 	 */
-	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) throws CoreException {
-		getCustomClasspaths(config, antURLs, userURLs, false);
-	}
-	
-	/**
-	 * Adds the Ant URLs and user URLS to the provided lists.
-	 * If no custom classpath is set, no URLs are added to the lists.
-	 * Launch variables are expanded based on the value of the expandVariables parameter
-	 *
-	 * @param configuration launch configuration
-	 * @param list to add the Ant URLs to
-	 * @param list to add the user URLs to
-	 * @param expandVariables indicates whether to expand launch variables contained in the classpath entries
-	 *
-	 */
-	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs, boolean expandVariables) throws CoreException {
+	public static void getCustomClasspaths(ILaunchConfiguration config, List antHomeEntries, List additionalEntries) {
 		String classpathString= null;
 		try {
 			classpathString = config.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
@@ -272,27 +267,18 @@ public final class AntUtil {
 			userString= classpathString.substring(delim+1);
 		}
 
-		getURLs(antURLs, antString, expandVariables);
+		getEntries(antHomeEntries, antString);
 		
 		if (userString != null) {
-			getURLs(userURLs, userString, expandVariables);
+			getEntries(additionalEntries, userString);
 		}
 	}
 	
-	private static void getURLs(List URLs, String urlString, boolean expandVariables) throws CoreException {
-		String[] URLStrings= AntUtil.parseString(urlString, AntUtil.ATTRIBUTE_SEPARATOR);
-		for (int i = 0; i < URLStrings.length; i++) {
-			String string = URLStrings[i];
-			if (expandVariables) {
-				string= expandVariableString(string, AntUIModelMessages.getString("AntUtil.8")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			try {
-				URLs.add(new URL("file:" + string)); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				if (!expandVariables) {
-					URLs.add(string);
-				}
-			}
+	private static void getEntries(List entry, String urlString) {
+		String[] entryStrings= AntUtil.parseString(urlString, AntUtil.ATTRIBUTE_SEPARATOR);
+		for (int i = 0; i < entryStrings.length; i++) {
+			String string = entryStrings[i];
+			entry.add(string);
 		}
 	}
 

@@ -12,12 +12,19 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.core.internal.variables.StringVariableManager;
+import org.eclipse.core.runtime.CoreException;
 
 public class ClasspathEntry extends AbstractClasspathEntry {
 
 	private URL url= null;
 	private String variableString= null;
+	private IAntClasspathEntry entry= null;
 	
 	public ClasspathEntry(Object o, IClasspathEntry parent) {
 		this.parent= parent;
@@ -25,6 +32,8 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 			url= (URL)o;
 		} else if (o instanceof String) {
 			variableString= (String)o;
+		} else if (o instanceof IAntClasspathEntry) {
+			entry= (IAntClasspathEntry)o;
 		}
 	}
 	
@@ -34,6 +43,9 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	public boolean equals(Object obj) {
 		if (obj instanceof ClasspathEntry) {
 			ClasspathEntry other= (ClasspathEntry)obj;
+			if (entry != null) {
+				return entry.equals(other.entry);
+			}
 			if (getURL() != null && other.getURL() != null) {
 				File file= new File(getURL().getFile());
 				File otherFile= new File(other.getURL().getFile());
@@ -50,22 +62,27 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
+		if (entry != null) {
+			return entry.getLabel().hashCode();
+		}
 		if (getURL() != null) {
 			return getURL().hashCode();
-		} else {
-			return getVariableString().hashCode();
-		}
+		} 
+		return getVariableString().hashCode();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
+		if (entry != null) {
+			return entry.getLabel();
+		}
 		if (getURL() != null) {
 			return getURL().getFile();
-		} else {
-			return getVariableString();
-		}
+		} 
+
+		return getVariableString();
 	}
 	
 	protected URL getURL() {
@@ -74,5 +91,38 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	
 	protected String getVariableString() {
 		return variableString;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
+	 */
+	public String getLabel() {
+		if (entry == null) {
+			return toString();
+		} else {
+			return entry.getLabel();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
+	 */
+	public URL getEntryURL() {
+		if (entry != null) {
+			return entry.getEntryURL();
+		}
+		if (url != null) {
+			return url;
+		} 
+			
+		try {
+			String expanded = StringVariableManager.getDefault().performStringSubstitution(variableString);
+			return new URL("file:" + expanded); //$NON-NLS-1$
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
+		} catch (MalformedURLException e) {
+			AntUIPlugin.log(e);
+		}
+		return null;
 	}
 }
