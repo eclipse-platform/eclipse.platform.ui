@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -46,8 +49,8 @@ public class AddPropertyDialog extends Dialog {
 		fInitialValues= initialValues;
 	}
 
-	/**
-	 * @see Dialog#createDialogArea(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite comp= (Composite) super.createDialogArea(parent);
@@ -85,9 +88,36 @@ public class AddPropertyDialog extends Dialog {
 			}
 		});		
 		
+		Button variablesButton = new Button(comp, SWT.PUSH);
+		variablesButton.setText(AntPreferencesMessages.getString("AddPropertyDialog.2")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd.horizontalSpan = 2;
+		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint, variablesButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		variablesButton.setLayoutData(gd);
+		variablesButton.setFont(comp.getFont());
+		
+		variablesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent se) {
+				getVariable();
+			}
+		});
+		
 		return comp;
 	}
 	
+	protected void getVariable() {
+		StringVariableSelectionDialog variablesDialog = new StringVariableSelectionDialog(getShell());
+		int returnCode = variablesDialog.open();
+		if (returnCode == IDialogConstants.OK_ID) {
+			String variable = variablesDialog.getVariableExpression();
+			if (variable != null) {
+				fValueText.append(variable.trim());
+			}
+		}
+	}
+
 	/**
 	 * Return the name/value pair entered in this dialog.  If the cancel button was hit,
 	 * both will be <code>null</code>.
@@ -96,8 +126,8 @@ public class AddPropertyDialog extends Dialog {
 		return new String[] {fName, fValue};
 	}
 	
-	/**
-	 * @see Dialog#buttonPressed(int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
@@ -110,8 +140,8 @@ public class AddPropertyDialog extends Dialog {
 		super.buttonPressed(buttonId);
 	}
 	
-	/**
-	 * @see Window#configureShell(Shell)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -123,7 +153,6 @@ public class AddPropertyDialog extends Dialog {
 		} else {
 			WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.EDIT_PROPERTY_DIALOG);
 		}
-		
 	}
 	
 	/**
@@ -137,6 +166,7 @@ public class AddPropertyDialog extends Dialog {
 	
 	/**
 	 * Enable the buttons on creation.
+	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
 		super.create();

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.core;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
+
 /**
  * Represents a Ant property.
  * @since 2.1
@@ -64,12 +67,25 @@ public class Property {
 	 */
 	public int hashCode() {
 		return name.hashCode();
-	}	
+	}
+	
 	/**
 	 * Returns the value.
+	 * Equivalent to calling #getValue(true);
 	 * @return String
 	 */
 	public String getValue() {
+		return getValue(true);
+	}
+	
+	/**
+	 * Returns the value.
+	 * 
+	 * @param whether the value has any variables resolved.
+	 * @return String
+	 * @since 3.0
+	 */
+	public String getValue(boolean substituteVariables) {
 		if (className != null) {
 			Class cls = null;
 			try {
@@ -94,7 +110,17 @@ public class Property {
 		if (valueProvider != null) {
 			return valueProvider.getAntPropertyValue(name);
 		} else {
-			return value;
+			if (substituteVariables) {
+				try {
+					String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+					return expanded;
+				} catch (CoreException e) {
+					AntCorePlugin.log(e);
+				}
+			} else {
+				return value;
+			}
+			return null;
 		}
 	}
 
@@ -161,7 +187,7 @@ public class Property {
 		StringBuffer buff= new StringBuffer("\""); //$NON-NLS-1$
 		buff.append(getName());
 		buff.append("\"= \""); //$NON-NLS-1$
-		buff.append(getValue());
+		buff.append(getValue(false));
 		buff.append("\""); //$NON-NLS-1$
 		return buff.toString();
 	}

@@ -1306,7 +1306,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < customProperties.length; i++) {
 			properties.append(customProperties[i].getName());
 			properties.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue(false)); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, properties.toString());
 	}

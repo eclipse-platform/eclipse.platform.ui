@@ -308,7 +308,7 @@ public class AntPropertiesBlock {
 		
 		String originalName= prop.getName();
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Edit_User_Property_5"); //$NON-NLS-1$
-		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{prop.getName(), prop.getValue()});
+		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{prop.getName(), prop.getValue(false)});
 	
 		if (dialog.open() == Window.CANCEL) {
 			return;

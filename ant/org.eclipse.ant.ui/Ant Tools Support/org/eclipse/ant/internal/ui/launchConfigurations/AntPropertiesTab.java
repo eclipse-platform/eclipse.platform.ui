@@ -152,7 +152,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			properties= new HashMap(items.length);
 			for (int i = 0; i < items.length; i++) {
 				Property property = (Property)items[i];
-				properties.put(property.getName(), property.getValue());
+				properties.put(property.getName(), property.getValue(false));
 			}
 		}
 		
