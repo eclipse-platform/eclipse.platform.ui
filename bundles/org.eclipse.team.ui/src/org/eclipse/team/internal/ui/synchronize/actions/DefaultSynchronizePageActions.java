@@ -89,16 +89,16 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#dispose()
 	 */
 	public void dispose() {
+		super.dispose();
 		if (refactorActions != null) refactorActions.dispose();
 		if (openWithActions != null) openWithActions.dispose();
-		super.dispose();
 	}
 	
 	/* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
      */
     public void setContext(ActionContext context) {
-        openWithActions.setContext(context);
-        refactorActions.setContext(context);
+        if (openWithActions != null)  openWithActions.setContext(context);
+        if (refactorActions != null)  refactorActions.setContext(context);
     }
 }
