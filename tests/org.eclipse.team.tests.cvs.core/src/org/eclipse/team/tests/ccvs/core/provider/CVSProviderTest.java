@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.IFileTypeInfo;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
@@ -378,6 +379,16 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// verify that local contents are up to date
 		assertEquals(project, copy2);
+		
+		IFileTypeInfo[] infos = Team.getDefaultTypes();
+		String[] extensions = new String[infos.length];
+		int[] types = new int[infos.length];
+		for (int i = 0; i < infos.length; i++) {
+			IFileTypeInfo info = infos[i];
+			extensions[i] = info.getExtension();
+			types[i] = info.getType();
+		}
+		Team.setAllTypes(extensions, types);
 	}
 	
 	public static void setFileContents(IFile file, String string) throws CoreException {
