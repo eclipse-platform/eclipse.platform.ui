@@ -107,8 +107,7 @@ public class CVSProviderPlugin extends Plugin {
 	private static CVSProviderPlugin instance;
 	
 	// CVS specific resource delta listeners
-	private IResourceChangeListener projectDescriptionListener;
-	private IResourceChangeListener metaFileSyncListener;
+	private IResourceChangeListener preAutoBuildListener;
 	private AddDeleteMoveListener addDeleteMoveListener;
 	private FileModificationManager fileModificationManager;
 
@@ -271,17 +270,18 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// Initialize CVS change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		projectDescriptionListener = new ProjectDescriptionManager();
-		metaFileSyncListener = new SyncFileChangeListener();
 		addDeleteMoveListener = new AddDeleteMoveListener();
 		fileModificationManager = new FileModificationManager();
 		// Group the two PRE_AUTO_BUILD listeners together for efficiency
-		workspace.addResourceChangeListener(new IResourceChangeListener() {
+		final IResourceChangeListener projectDescriptionListener = new ProjectDescriptionManager();
+		final IResourceChangeListener metaFileSyncListener = new SyncFileChangeListener();
+		preAutoBuildListener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
 				projectDescriptionListener.resourceChanged(event);
 				metaFileSyncListener.resourceChanged(event);
 			}
-		}, IResourceChangeEvent.PRE_AUTO_BUILD);
+		};
+		workspace.addResourceChangeListener(preAutoBuildListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
@@ -302,8 +302,8 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(projectDescriptionListener);
-		workspace.removeResourceChangeListener(metaFileSyncListener);
+		workspace.removeResourceChangeListener(preAutoBuildListener);
+		workspace.removeResourceChangeListener(fileModificationManager);
 		workspace.removeResourceChangeListener(addDeleteMoveListener);
 		
 		deleteCacheDirectory();
