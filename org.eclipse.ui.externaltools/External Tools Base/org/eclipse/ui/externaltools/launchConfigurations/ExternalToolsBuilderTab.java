@@ -37,9 +37,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	private void createBuildScheduleComponent(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
 		label.setText("Run this builder for:");
-		fullBuildButton= createButton(parent, "Full builds", "Runs whenever a full build is invoked. The \"Rebuild All\" action causes a full build.");
-		incrementalBuildButton= createButton(parent, "Incremental builds", "Runs whenever an incremental build is invoked. The \"Build All\" action causes an incremental build.");
-		autoBuildButton= createButton(parent, "Auto builds (Not recommended)", "Runs whenever a resource in the workspace is modified. Enabling this option will cause the builder to run very often and is not recommended.");
+		fullBuildButton= createButton(parent, "&Full builds", "Runs whenever a full build is invoked. The \"Rebuild All\" action causes a full build.");
+		incrementalBuildButton= createButton(parent, "&Incremental builds", "Runs whenever an incremental build is invoked. The \"Build All\" action causes an incremental build.");
+		autoBuildButton= createButton(parent, "&Auto builds (Not recommended)", "Runs whenever a resource in the workspace is modified. Enabling this option will cause the builder to run very often and is not recommended.");
 	}
 	
 	/**
@@ -52,6 +52,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		return button;
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fullBuildButton.setSelection(true);
 		incrementalBuildButton.setSelection(true);
@@ -110,6 +113,10 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return "Build Options";
 	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
 	}
