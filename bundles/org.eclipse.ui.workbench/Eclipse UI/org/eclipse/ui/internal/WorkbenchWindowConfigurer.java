@@ -134,7 +134,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/**
 	 * The initial size to use for the shell.
 	 */
-	private Point initialSize = new Point(800, 600);
+	private Point initialSize = new Point(1024, 768);
 
 	/**
 	 * The presentation factory.
