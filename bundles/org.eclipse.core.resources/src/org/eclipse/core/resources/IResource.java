@@ -7,7 +7,6 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.*;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * The workspace analog of file system files
