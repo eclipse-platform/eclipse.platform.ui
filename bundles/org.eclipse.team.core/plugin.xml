@@ -17,8 +17,8 @@
    </library>
 </runtime>
 
-<extension-point id="fileTypes" name="File Types Registry"/>
-<extension-point id="ignore" name="Global Ignore Registry"/>
+<extension-point id="fileTypes" name="%FileTypesRegistry"/>
+<extension-point id="ignore" name="%GlobalIgnoreRegistry"/>
 
 <!-- Define some example text extensions. This will be done
      by other plugins later. -->
