@@ -106,9 +106,9 @@
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ant.ui.views.AntView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.views.AntView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension
@@ -480,5 +480,4 @@
    <extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.ant.internal.ui.AntUIPreferenceInitializer"/>
 	</extension>
-    
 </plugin>
