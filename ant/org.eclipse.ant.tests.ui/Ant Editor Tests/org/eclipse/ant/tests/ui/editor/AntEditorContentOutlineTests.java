@@ -63,45 +63,45 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertEquals(3, getStartingRow(element));
 		assertEquals(3, getStartingColumn(element)); // with tab in file
 		assertEquals(3, getEndingRow(element));
-	//	assertEquals(41, getEndingColumn(element));  // with tab in file
+		assertEquals(40, getEndingColumn(element));  // with tab in file
 
         offset = wholeDocumentString.indexOf("property");
         assertEquals(offset, element.getOffset());
-       // int length = "<property name=\"propD\" value=\"valD\" />".length();
-       // assertEquals(length, element.getLength());
+        int length = "<property name=\"propD\" value=\"valD\" />".length();
+        assertEquals(length - 1, element.getLength());
 		
 		// <property file="buildtest1.properties">
 		element = (AntElementNode)children.get(1);
 		assertEquals(4, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element)); // no tab
 		assertEquals(4, getEndingRow(element));
-	//	assertEquals(47, getEndingColumn(element));
+		assertEquals(46, getEndingColumn(element));
 
 		// <property name="propV">
 		element = (AntElementNode)children.get(2);
 		assertEquals(5, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element));
 		assertEquals(5, getEndingRow(element));
-	//	assertEquals(44, getEndingColumn(element));
+		assertEquals(43, getEndingColumn(element));
 		
 		// <target name="main">
 		element = (AntElementNode)children.get(3);
 		assertEquals(6, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element));
-	//	assertEquals(8, getEndingRow(element));
-	//	assertEquals(15, getEndingColumn(element));
+		assertEquals(8, getEndingRow(element));
+		assertEquals(14, getEndingColumn(element));
 		
 		// <property name="property_in_target">
 		element = (AntElementNode)element.getChildNodes().get(0);
 		assertEquals(7, getStartingRow(element));
 		assertEquals(10, getStartingColumn(element));
 		assertEquals(7, getEndingRow(element));
-	//	assertEquals(59, getEndingColumn(element));
+		assertEquals(58, getEndingColumn(element));
         offset = wholeDocumentString.indexOf("property name=\"property_in_target\"");
         assertEquals(offset, element.getOffset());
 		
-       // assertEquals(9, getEndingRow(rootProject));
-      //  assertEquals(11, getEndingColumn(rootProject));
+        assertEquals(9, getEndingRow(rootProject));
+        assertEquals(11, getEndingColumn(rootProject));
     }
     
     private int getColumn(int offset, int line) throws BadLocationException {

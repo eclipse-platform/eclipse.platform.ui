@@ -374,7 +374,7 @@ public class AntModel {
 		//	}
  			
 			element.setOffset(offset + 1);
-			element.setLength(element.getName().length());
+			element.setSelectionLength(element.getName().length());
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
 		}
@@ -395,8 +395,7 @@ public class AntModel {
 	}
 
 	public void setCurrentElementLength(int lineNumber, int column) {
-		fStillOpenElements.pop();
-		//computeLength((AntElementNode)fStillOpenElements.pop(), lineNumber, column);
+		computeLength((AntElementNode)fStillOpenElements.pop(), lineNumber, column);
 	}
 	
 	public void acceptProblem(IProblem problem) {

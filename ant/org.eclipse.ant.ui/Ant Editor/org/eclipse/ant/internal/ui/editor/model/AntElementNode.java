@@ -44,6 +44,10 @@ public class AntElementNode {
 	 */
 	protected int length;
 	
+	/**
+	 * The length of the source to select for this node
+	 */
+	protected int selectionLength;
 	
     /**
      * The parent node.
@@ -383,5 +387,21 @@ public class AntElementNode {
 		AntElementNode e1= (AntElementNode) o1;
 		
 		return e1.getElementPath().hashCode();
+	}
+
+	/**
+	 * Returns the length of source to select for this node.
+	 * @return the length of source to select
+	 */
+	public int getSelectionLength() {
+		return selectionLength;
+	}
+	
+	public void setSelectionLength(int selectionLength) {
+		this.selectionLength= selectionLength;
+	}
+	
+	public boolean contains(int childOffset) {
+		return childOffset < (offset + length); 
 	}
 }
