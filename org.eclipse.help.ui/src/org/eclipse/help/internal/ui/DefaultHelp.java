@@ -48,8 +48,8 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(String contextId, int x, int y) {
-		String[] contextIds = new String[] { contextId };
-		displayHelp(contextIds, x, y);
+		IContext context = HelpSystem.getContextManager().getContext(contextId);
+		displayHelp(context, x, y);
 	}
 	/**
 	 * Displays context-sensitive help for specified contexts
@@ -58,8 +58,7 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(String[] contextIds, int x, int y) {
-		IContext context = HelpSystem.getContextManager().getContext(contextIds[0]);
-		displayHelp(context, x, y);
+		displayHelp(contextIds[0], x, y);
 	}
 	/**
 	 * Displays context-sensitive help for specified context
@@ -70,6 +69,8 @@ public class DefaultHelp implements IHelp {
 	public void displayHelp(IContext context, int x, int y) {
 		if (f1Dialog != null)
 			f1Dialog.close();
+		if(context==null)
+			return;
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
 	}
