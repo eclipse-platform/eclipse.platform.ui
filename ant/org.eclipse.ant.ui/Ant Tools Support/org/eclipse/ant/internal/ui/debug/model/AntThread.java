@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * A Ant build thread.
+ * An Ant build thread.
  */
 public class AntThread extends AntDebugElement implements IThread {
 	
@@ -34,7 +34,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/**
 	 * The stackframes associated with this thread
 	 */
-	private List fFrames;
+	private List fFrames= new ArrayList(1);
 	
 	/**
 	 * Whether this thread is stepping
@@ -62,9 +62,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
-			if (fFrames == null || fFrames.size() == 0) {
+			if (fFrames.size() == 0) {
 				getStackFrames0();
-				fireChangeEvent(DebugEvent.CONTENT);
 			}
 		} 
 		
@@ -80,7 +79,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private void getStackFrames0() {
 		fTarget.getStackFrames();
-        if (fFrames != null && fFrames.size() > 0) {
+        if (fFrames.size() > 0) {
             //frames set..no need to wait
             return;
         }
@@ -255,7 +254,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		fFrames= null;
+		fFrames.clear();
 		getDebugTarget().terminate();
 	}
 	
@@ -276,7 +275,7 @@ public class AntThread extends AntDebugElement implements IThread {
 		//3 filePath
 		//4 lineNumber
 		//5 ...
-		fFrames= new ArrayList();
+		fFrames.clear();
 		String name;
 		String filePath;
 		int lineNumber;
