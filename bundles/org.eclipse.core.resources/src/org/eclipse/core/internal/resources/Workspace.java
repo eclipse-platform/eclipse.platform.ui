@@ -302,6 +302,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
 				beginOperation(true);
+				//shutdown save manager now so a last snapshot can be taken before we close
+				saveManager.shutdown(null);
 				IProject[] projects = getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					//notify managers of closing so they can cleanup
@@ -1753,7 +1755,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
+			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);

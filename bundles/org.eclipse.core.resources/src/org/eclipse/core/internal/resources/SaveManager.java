@@ -926,7 +926,15 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		this.savedStates = savedStates;
 	}
 
-	public void shutdown(IProgressMonitor monitor) {
+	public void shutdown(final IProgressMonitor monitor) {
+		// do a last snapshot if it was scheduled
+		// we force it in the same thread because it would not  
+		// help if the job runs after we close the workspace
+		int state = snapshotJob.getState();
+		if (state == Job.WAITING || state == Job.SLEEPING)
+			// we cannot pass null to Job#run
+			snapshotJob.run(Policy.monitorFor(monitor));
+		// cancel the snapshot job
 		snapshotJob.cancel();
 	}
 
