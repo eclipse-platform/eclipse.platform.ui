@@ -1126,9 +1126,38 @@ public class ActivityConstraints {
 			candidate.getIncludedFeatureReferences();
 		for (int i = 0; i < refs.length; i++) {
 			IIncludedFeatureReference child = refs[i];
+			VersionedIdentifier fvid = feature.getVersionedIdentifier();
 			VersionedIdentifier cvid = child.getVersionedIdentifier();
-			if (feature.getVersionedIdentifier().equals(cvid)) {
-				// included; return true if optionality is not 
+			
+			if (fvid.getIdentifier().equals(cvid.getIdentifier())==false)
+				continue;
+			// same ID
+			PluginVersionIdentifier fversion = fvid.getVersion();
+			PluginVersionIdentifier cversion = cvid.getVersion();
+			
+			int match = child.getMatch();
+			boolean matched=false;
+			
+			switch (match) {
+				case IUpdateConstants.RULE_EQUIVALENT:
+					if (fversion.isEquivalentTo(cversion))
+						matched = true;
+					break;
+				case IUpdateConstants.RULE_COMPATIBLE:
+					if (fversion.isCompatibleWith(cversion))
+						matched = true;
+					break;
+				case IUpdateConstants.RULE_GREATER_OR_EQUAL:
+					if (fversion.isGreaterOrEqualTo(cversion))
+						matched=true;
+					break;
+				default:
+					if (fversion.equals(cversion))
+						matched=true;
+					
+			}
+			if (matched) {
+				// included and matched; return true if optionality is not 
 				// important or it is and the inclusion is optional
 				return optionalOnly == false || child.isOptional();
 			}
