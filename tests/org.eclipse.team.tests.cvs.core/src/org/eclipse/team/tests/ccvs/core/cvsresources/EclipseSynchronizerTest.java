@@ -30,8 +30,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -518,5 +520,40 @@ public class EclipseSynchronizerTest extends EclipseTest {
 			assertTrue("Should contain the same elements", listA.contains(obj));
 			listA.remove(obj);
 		}
+	}
+	
+	/*
+	 * See bug 44446
+	 */
+	public void testRecreation() throws CoreException {
+		
+		// Set up a project with dummy sync info
+		IProject project = getUniqueTestProject(getName());
+		sync.setFolderSync(project, dummyFolderSync(project));
+		
+		IFolder folder = project.getFolder("folder1");
+		folder.create(false, true, null);
+		sync.setFolderSync(folder, dummyFolderSync(folder));
+		sync.setResourceSync(folder, dummyResourceSync(folder));
+		
+		IFile file = folder.getFile("file1");
+		file.create(getRandomContents(), false /*force*/, null);
+		sync.setResourceSync(file, dummyResourceSync(file));
+		
+		// Map the project to CVS so the Move/Delete hook works
+		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+		
+		// Remove the file and assert that it still has sync info
+		file.delete(false, false, null);
+		assertNotNull("Sync bytes should not be null for " + file.getFullPath(), sync.getSyncBytes(file));
+		
+		// Recreate the file and assert that it still has sync info
+		file.create(getRandomContents(), false /*force*/, null);
+		assertNotNull("Sync bytes should not be null for " + file.getFullPath(), sync.getSyncBytes(file));
+		
+		// unmanage the file and assert that sync info is gone
+		sync.deleteResourceSync(file);
+		assertNull("Sync bytes should be null for " + file.getFullPath(), sync.getSyncBytes(file));
+
 	}
 }
