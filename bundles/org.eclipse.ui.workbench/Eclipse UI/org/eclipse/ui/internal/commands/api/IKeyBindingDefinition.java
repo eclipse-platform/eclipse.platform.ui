@@ -33,14 +33,14 @@ public interface IKeyBindingDefinition extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getCommandId();
+	String getActivityId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getContextId();
+	String getCommandId();
 
 	/**
 	 * JAVADOC

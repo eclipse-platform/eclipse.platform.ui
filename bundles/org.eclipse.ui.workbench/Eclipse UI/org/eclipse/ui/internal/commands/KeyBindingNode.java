@@ -230,7 +230,7 @@ final class KeyBindingNode {
 								
 								while (iterator6.hasNext()) {
 									String commandId = (String) iterator6.next();
-									keyBindingDefinitions.add(new KeyBindingDefinition(commandId, contextId, keyConfigurationId, keySequence, locale, platform, null));	
+									keyBindingDefinitions.add(new KeyBindingDefinition(contextId, commandId, keyConfigurationId, keySequence, locale, platform, null));	
 								}								
 							}
 						}

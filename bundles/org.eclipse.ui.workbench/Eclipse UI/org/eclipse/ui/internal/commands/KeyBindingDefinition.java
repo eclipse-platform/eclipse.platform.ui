@@ -21,8 +21,8 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyBindingDefinition.class.getName().hashCode();
 
+	private String activityId;
 	private String commandId;
-	private String contextId;
 	private String keyConfigurationId;
 	private KeySequence keySequence;	
 	private String locale;
@@ -34,9 +34,9 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 	private transient String string;
 
 	// TODO private
-	public KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
+	public KeyBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
+		this.activityId = activityId;
 		this.commandId = commandId;
-		this.contextId = contextId;
 		this.keyConfigurationId = keyConfigurationId;
 		this.keySequence = keySequence;
 		this.locale = locale;
@@ -46,10 +46,10 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 	
 	public int compareTo(Object object) {
 		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;
-		int compareTo = Util.compare(commandId, keyBindingDefinition.commandId);
+		int compareTo = Util.compare(activityId, keyBindingDefinition.activityId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(contextId, keyBindingDefinition.contextId);			
+			compareTo = Util.compare(commandId, keyBindingDefinition.commandId);			
 
 			if (compareTo == 0) {		
 				compareTo = Util.compare(keyConfigurationId, keyBindingDefinition.keyConfigurationId);			
@@ -80,8 +80,8 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 
 		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;	
 		boolean equals = true;
+		equals &= Util.equals(activityId, keyBindingDefinition.activityId);
 		equals &= Util.equals(commandId, keyBindingDefinition.commandId);
-		equals &= Util.equals(contextId, keyBindingDefinition.contextId);
 		equals &= Util.equals(keyConfigurationId, keyBindingDefinition.keyConfigurationId);
 		equals &= Util.equals(keySequence, keyBindingDefinition.keySequence);
 		equals &= Util.equals(locale, keyBindingDefinition.locale);
@@ -90,12 +90,12 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 		return equals;
 	}
 
-	public String getCommandId() {
-		return commandId;
+	public String getActivityId() {
+		return activityId;
 	}
 
-	public String getContextId() {
-		return contextId;
+	public String getCommandId() {
+		return commandId;
 	}
 
 	public String getKeyConfigurationId() {
@@ -121,8 +121,8 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
@@ -138,9 +138,9 @@ public final class KeyBindingDefinition implements IKeyBindingDefinition {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(commandId);
+			stringBuffer.append(activityId);
 			stringBuffer.append(',');
-			stringBuffer.append(contextId);
+			stringBuffer.append(commandId);
 			stringBuffer.append(',');
 			stringBuffer.append(keyConfigurationId);
 			stringBuffer.append(',');

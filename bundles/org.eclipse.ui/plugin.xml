@@ -32,7 +32,6 @@
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
-   <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.exsd"/>
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
@@ -72,6 +71,17 @@
    </extension>   
    <extension
          point="org.eclipse.ui.activities">
+      <activity
+            description="%activity.editingText.description"
+            id="org.eclipse.ui.textEditorScope"
+            name="%activity.editingText.name">
+      </activity>
+      <activity
+            description="%activity.editingJavaSource.description"            
+            id="org.eclipse.jdt.ui.javaEditorScope"
+            name="%activity.editingJavaSource.name"
+            parentId="org.eclipse.ui.textEditorScope">
+      </activity>
       <activity
             description=""
             id="org.eclipse.debugging"
@@ -1930,20 +1940,6 @@
             description="%keyConfiguration.emacs.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
-   </extension>
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            name="%context.editingText.name"
-            description="%context.editingText.description"
-            id="org.eclipse.ui.textEditorScope">
-      </context>
-      <context
-            name="%context.editingJavaSource.name"
-            description="%context.editingJavaSource.description"
-            parentId="org.eclipse.ui.textEditorScope"
-            id="org.eclipse.jdt.ui.javaEditorScope">
-      </context>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

@@ -143,7 +143,7 @@ public final class RoleManager implements IRoleManager {
 							Set activityBindings = (Set) activityBindingsByRoleId.get(roleId);
 							
 							if (activityBindings == null) {
-								activityBindings = new TreeSet();
+								activityBindings = new HashSet();
 								activityBindingsByRoleId.put(roleId, activityBindings);
 							}
 							
@@ -156,7 +156,7 @@ public final class RoleManager implements IRoleManager {
 		this.activityBindingsByRoleId = activityBindingsByRoleId;			
 		this.roleDefinitionsById = roleDefinitionsById;
 		boolean roleManagerChanged = false;			
-		Set definedRoleIds = new TreeSet(roleDefinitionsById.keySet());		
+		Set definedRoleIds = new HashSet(roleDefinitionsById.keySet());		
 
 		if (!definedRoleIds.equals(this.definedRoleIds)) {
 			this.definedRoleIds = definedRoleIds;

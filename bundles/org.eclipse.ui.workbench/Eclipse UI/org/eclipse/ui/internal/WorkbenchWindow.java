@@ -447,7 +447,7 @@ public class WorkbenchWindow
 			}
 		}
 
-		workbench.updateActiveCommandIdsAndActiveContextIds();
+		workbench.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -458,7 +458,7 @@ public class WorkbenchWindow
 				command,
 				new ActionHandler(globalAction));
 
-		workbench.updateActiveCommandIdsAndActiveContextIds();
+		workbench.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	/*

@@ -228,7 +228,7 @@ final class KeyBindingMachine {
 			
 				while (iterator.hasNext()) {
 					IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
-					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 				}
 			}
 		}

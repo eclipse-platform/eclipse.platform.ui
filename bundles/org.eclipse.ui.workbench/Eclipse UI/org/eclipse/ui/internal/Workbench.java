@@ -123,8 +123,9 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.activities.ActivityManagerFactory;
-import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
@@ -137,14 +138,10 @@ import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
-import org.eclipse.ui.contexts.IContextManager;
-import org.eclipse.ui.contexts.IContextManagerEvent;
-import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
-import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -161,7 +158,6 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.progress.IProgressManager;
-import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.RoleManagerFactory;
 import org.eclipse.update.core.SiteManager;
@@ -210,7 +206,7 @@ public class Workbench
 			IResourceChangeEvent.POST_CHANGE);
 	}
 
-	/* begin command and context support */
+	/* begin command, activity, and role support */
 		
 	/** The properties key for the key strokes that should be processed out of
 	 * order.
@@ -302,21 +298,21 @@ public class Workbench
 
 	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
 		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
-			updateActiveContextIds();
+			updateActiveActivityIds();
 		}
 	};
 
-	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+	private final IActivityManagerListener activityManagerListener = new IActivityManagerListener() {
 		
-		List activeContextIds;
+		Set activeActivityIds;
 		
-		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
-			updateActiveContextIds();
+		public final void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
+			updateActiveActivityIds();
 			
-			List activeContextIds = contextManagerEvent.getContextManager().getActiveContextIds();
+			Set activeActivityIds = activityManagerEvent.getActivityManager().getActiveActivityIds();
 
-			if (!Util.equals(this.activeContextIds, activeContextIds)) {
-				this.activeContextIds = activeContextIds;
+			if (!Util.equals(this.activeActivityIds, activeActivityIds)) {
+				this.activeActivityIds = activeActivityIds;
 				IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
 				if (workbenchWindow instanceof WorkbenchWindow) {
@@ -330,14 +326,14 @@ public class Workbench
 	private IActionServiceListener actionServiceListener =
 		new IActionServiceListener() {
 		public void actionServiceChanged(IActionServiceEvent actionServiceEvent) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 	};
 
 	private IContextActivationServiceListener contextActivationServiceListener =
 		new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 	};
 
@@ -346,46 +342,46 @@ public class Workbench
 		public void perspectiveActivated(
 			IWorkbenchPage workbenchPage,
 			IPerspectiveDescriptor perspectiveDescriptor) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void perspectiveChanged(
 			IWorkbenchPage workbenchPage,
 			IPerspectiveDescriptor perspectiveDescriptor,
 			String changeId) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void perspectiveClosed(
 			IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void perspectiveOpened(
 			IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 	};
 
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void pageClosed(IWorkbenchPage workbenchPage) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void pageOpened(IWorkbenchPage workbenchPage) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 	};
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 
@@ -393,36 +389,36 @@ public class Workbench
 		}
 
 		public void partClosed(IWorkbenchPart workbenchPart) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void partDeactivated(IWorkbenchPart workbenchPart) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 
 		public void partOpened(IWorkbenchPart workbenchPart) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 		}
 	};
 
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 
 		public void windowClosed(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 
 		public void windowDeactivated(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 
 		public void windowOpened(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveCommandIdsAndActiveActivityIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 	};
@@ -431,7 +427,7 @@ public class Workbench
 	private IRoleManager roleManager;	
 	
 	private CommandManager commandManager;
-	private ContextManager contextManager;
+
 	private volatile boolean keyFilterDisabled;
 	private final Object keyFilterMutex = new Object();
 	
@@ -459,6 +455,11 @@ public class Workbench
 		return actionService;
 	}
 
+	// TODO change this method name!
+	public IActivityManager getNewActivityManager() {
+		return activityManager;
+	}
+	
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
@@ -471,10 +472,6 @@ public class Workbench
 		}
 
 		return contextActivationService;
-	}
-
-	public IContextManager getContextManager() {
-		return contextManager;
 	}
 
 	public final void disableKeyFilter() {
@@ -748,7 +745,7 @@ public class Workbench
 			}
 	
 			// TODO is this necessary?		
-			updateActiveContextIds();
+			updateActiveActivityIds();
 			
 			if (consumeKeyStroke) {
 				// We found a match, so stop now.
@@ -789,8 +786,9 @@ public class Workbench
  		}
  	}
 
-	public void updateActiveContextIds() {
-		commandManager.setActiveContextIds(contextManager.getActiveContextIds());
+	public void updateActiveActivityIds() {
+		// TODO eliminate set to list
+		commandManager.setActiveContextIds(new ArrayList(activityManager.getActiveActivityIds()));
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
@@ -802,68 +800,37 @@ public class Workbench
 		}
 	}
 
-	void updateActiveCommandIdsAndActiveContextIds() {
+	void updateActiveCommandIdsAndActiveActivityIds() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
 
-		if (activeWorkbenchWindow != null
-			&& !(activeWorkbenchWindow instanceof WorkbenchWindow))
+		if (activeWorkbenchWindow != null && !(activeWorkbenchWindow instanceof WorkbenchWindow))
 			activeWorkbenchWindow = null;
 
 		//IActionService activeWorkbenchWindowActionService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getActionService() : null;
 		//IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
 
-		IWorkbenchPage activeWorkbenchPage =
-			activeWorkbenchWindow != null
-				? activeWorkbenchWindow.getActivePage()
-				: null;
-		IActionService activeWorkbenchPageActionService =
-			activeWorkbenchPage != null
-				? ((WorkbenchPage) activeWorkbenchPage).getActionService()
-				: null;
-		IContextActivationService activeWorkbenchPageContextActivationService =
-			activeWorkbenchPage != null
-				? ((WorkbenchPage) activeWorkbenchPage)
-					.getContextActivationService()
-				: null;
-		IPartService activePartService =
-			activeWorkbenchWindow != null
-				? activeWorkbenchWindow.getPartService()
-				: null;
-		IWorkbenchPart activeWorkbenchPart =
-			activePartService != null
-				? activePartService.getActivePart()
-				: null;
-		IWorkbenchPartSite activeWorkbenchPartSite =
-			activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
-		IActionService activeWorkbenchPartActionService =
-			activeWorkbenchPartSite != null
-				? ((PartSite) activeWorkbenchPartSite).getActionService()
-				: null;
-		IContextActivationService activeWorkbenchPartContextActivationService =
-			activeWorkbenchPartSite != null
-				? ((PartSite) activeWorkbenchPartSite)
-					.getContextActivationService()
-				: null;
+		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
+		IActionService activeWorkbenchPageActionService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getActionService() : null;
+		IContextActivationService activeWorkbenchPageContextActivationService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage) .getContextActivationService() : null;
+		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
+		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
+		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		IActionService activeWorkbenchPartActionService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getActionService() : null;
+		IContextActivationService activeWorkbenchPartContextActivationService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getContextActivationService() : null;
 
 		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
 			if (this.activeWorkbenchWindow != null) {
 				this.activeWorkbenchWindow.removePageListener(pageListener);
-				this.activeWorkbenchWindow.getPartService().removePartListener(
-					partListener);
-				((WorkbenchWindow) this.activeWorkbenchWindow)
-					.getPerspectiveService()
-					.removePerspectiveListener(internalPerspectiveListener);
+				this.activeWorkbenchWindow.getPartService().removePartListener(partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().removePerspectiveListener(internalPerspectiveListener);
 			}
 
 			this.activeWorkbenchWindow = activeWorkbenchWindow;
 
 			if (this.activeWorkbenchWindow != null) {
 				this.activeWorkbenchWindow.addPageListener(pageListener);
-				this.activeWorkbenchWindow.getPartService().addPartListener(
-					partListener);
-				((WorkbenchWindow) this.activeWorkbenchWindow)
-					.getPerspectiveService()
-					.addPerspectiveListener(internalPerspectiveListener);
+				this.activeWorkbenchWindow.getPartService().addPartListener(partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);
 			}
 		}
 
@@ -880,38 +847,26 @@ public class Workbench
 		}
 		*/
 
-		if (activeWorkbenchPageActionService
-			!= this.activeWorkbenchPageActionService) {
+		if (activeWorkbenchPageActionService != this.activeWorkbenchPageActionService) {
 			if (this.activeWorkbenchPageActionService != null)
-				this
-					.activeWorkbenchPageActionService
-					.removeActionServiceListener(
-					actionServiceListener);
+				this.activeWorkbenchPageActionService.removeActionServiceListener(actionServiceListener);
 
 			this.activeWorkbenchPage = activeWorkbenchPage;
-			this.activeWorkbenchPageActionService =
-				activeWorkbenchPageActionService;
+			this.activeWorkbenchPageActionService = activeWorkbenchPageActionService;
 
 			if (this.activeWorkbenchPageActionService != null)
-				this.activeWorkbenchPageActionService.addActionServiceListener(
-					actionServiceListener);
+				this.activeWorkbenchPageActionService.addActionServiceListener(actionServiceListener);
 		}
 
-		if (activeWorkbenchPartActionService
-			!= this.activeWorkbenchPartActionService) {
+		if (activeWorkbenchPartActionService != this.activeWorkbenchPartActionService) {
 			if (this.activeWorkbenchPartActionService != null)
-				this
-					.activeWorkbenchPartActionService
-					.removeActionServiceListener(
-					actionServiceListener);
+				this.activeWorkbenchPartActionService.removeActionServiceListener(actionServiceListener);
 
 			this.activeWorkbenchPart = activeWorkbenchPart;
-			this.activeWorkbenchPartActionService =
-				activeWorkbenchPartActionService;
+			this.activeWorkbenchPartActionService = activeWorkbenchPartActionService;
 
 			if (this.activeWorkbenchPartActionService != null)
-				this.activeWorkbenchPartActionService.addActionServiceListener(
-					actionServiceListener);
+				this.activeWorkbenchPartActionService.addActionServiceListener(actionServiceListener);
 		}
 
 		SortedMap actionsById = new TreeMap();
@@ -921,21 +876,15 @@ public class Workbench
 		//	actionsById.putAll(this.activeWorkbenchWindowActionService.getActionsById());
 
 		if (this.activeWorkbenchWindow != null) {
-			actionsById.putAll(
-				((WorkbenchWindow) this.activeWorkbenchWindow)
-					.getActionsForGlobalActions());
-			actionsById.putAll(
-				((WorkbenchWindow) this.activeWorkbenchWindow)
-					.getActionsForActionSets());
+			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForGlobalActions());
+			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForActionSets());
 		}
 
 		if (this.activeWorkbenchPageActionService != null)
-			actionsById.putAll(
-				this.activeWorkbenchPageActionService.getActionsById());
+			actionsById.putAll(this.activeWorkbenchPageActionService.getActionsById());
 
 		if (this.activeWorkbenchPartActionService != null)
-			actionsById.putAll(
-				this.activeWorkbenchPartActionService.getActionsById());
+			actionsById.putAll(this.activeWorkbenchPartActionService.getActionsById());
 
 		commandManager.setActionsById(actionsById);
 
@@ -952,86 +901,44 @@ public class Workbench
 		}
 		*/
 
-		if (activeWorkbenchPageContextActivationService
-			!= this.activeWorkbenchPageContextActivationService) {
+		if (activeWorkbenchPageContextActivationService != this.activeWorkbenchPageContextActivationService) {
 			if (this.activeWorkbenchPageContextActivationService != null)
-				this
-					.activeWorkbenchPageContextActivationService
-					.removeContextActivationServiceListener(contextActivationServiceListener);
+				this.activeWorkbenchPageContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
 
 			this.activeWorkbenchPage = activeWorkbenchPage;
-			this.activeWorkbenchPageContextActivationService =
-				activeWorkbenchPageContextActivationService;
+			this.activeWorkbenchPageContextActivationService = activeWorkbenchPageContextActivationService;
 
 			if (this.activeWorkbenchPageContextActivationService != null)
-				this
-					.activeWorkbenchPageContextActivationService
-					.addContextActivationServiceListener(contextActivationServiceListener);
+				this.activeWorkbenchPageContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
-		if (activeWorkbenchPartContextActivationService
-			!= this.activeWorkbenchPartContextActivationService) {
+		if (activeWorkbenchPartContextActivationService != this.activeWorkbenchPartContextActivationService) {
 			if (this.activeWorkbenchPartContextActivationService != null)
-				this
-					.activeWorkbenchPartContextActivationService
-					.removeContextActivationServiceListener(contextActivationServiceListener);
+				this.activeWorkbenchPartContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
 
 			this.activeWorkbenchPart = activeWorkbenchPart;
-			this.activeWorkbenchPartContextActivationService =
-				activeWorkbenchPartContextActivationService;
+			this.activeWorkbenchPartContextActivationService = activeWorkbenchPartContextActivationService;
 
 			if (this.activeWorkbenchPartContextActivationService != null)
-				this
-					.activeWorkbenchPartContextActivationService
-					.addContextActivationServiceListener(contextActivationServiceListener);
+				this.activeWorkbenchPartContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
 		SortedSet activeContextIds = new TreeSet();
-		activeContextIds.addAll(
-			getContextActivationService().getActiveContextIds());
+		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
 
 		//if (this.activeWorkbenchWindowContextActivationService != null)
 		//	activeContextIds.addAll(this.activeWorkbenchWindowContextActivationService.getActiveContextIds());
 
 		if (this.activeWorkbenchPageContextActivationService != null)
-			activeContextIds.addAll(
-				this
-					.activeWorkbenchPageContextActivationService
-					.getActiveContextIds());
+			activeContextIds.addAll(this.activeWorkbenchPageContextActivationService.getActiveContextIds());
 
 		if (this.activeWorkbenchPartContextActivationService != null)
-			activeContextIds.addAll(
-				this
-					.activeWorkbenchPartContextActivationService
-					.getActiveContextIds());
+			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
 
-		contextManager.setActiveContextIds(new ArrayList(activeContextIds));
+		activityManager.setActiveActivityIds(new HashSet(activeContextIds));
 	}
 
-	private void initializeCommandsAndContexts(final Display display) {
-		activityManager = ActivityManagerFactory.getActivityManager();
-		roleManager = RoleManagerFactory.getRoleManager();		
-		
-		/* TODO remove
-		Set definedActivityIds = activityManager.getDefinedActivityIds();
-		System.out.println(definedActivityIds);
-		
-		for (Iterator iterator = definedActivityIds.iterator(); iterator.hasNext();) {
-			String activityId = (String) iterator.next();
-			IActivity activity = activityManager.getActivity(activityId);
-			System.out.println(activity.getId() + ": " + activity.getPatternBindings());
-		}
-
-		Set definedRoleIds = roleManager.getDefinedRoleIds();
-		System.out.println(definedRoleIds);
-
-		for (Iterator iterator = definedRoleIds.iterator(); iterator.hasNext();) {
-			String roleId = (String) iterator.next();
-			IRole role = roleManager.getRole(roleId);
-			System.out.println(role.getId() + ": " + role.getActivityBindings());
-		}
-		*/		
-		
+	private void initializeCommandsAndContexts(final Display display) {			
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 			public String guessCommandIdFromActionId(String actionId) {
 				// TODO bad cast
@@ -1063,17 +970,42 @@ public class Workbench
 				return Workbench.this.isKeyFilterEnabled();
 			}
 		});
+
+		activityManager = ActivityManagerFactory.getActivityManager();
+		activityManager.addActivityManagerListener(activityManagerListener);
 		
+		/* TODO remove
+		Set definedActivityIds = activityManager.getDefinedActivityIds();
+		System.out.println(definedActivityIds);
+		
+		for (Iterator iterator = definedActivityIds.iterator(); iterator.hasNext();) {
+			String activityId = (String) iterator.next();
+			IActivity activity = activityManager.getActivity(activityId);
+			System.out.println(activity.getId() + ": " + activity.getPatternBindings());
+		}
+		*/		
+		
+		roleManager = RoleManagerFactory.getRoleManager();		
+		
+		/* TODO remove
+		Set definedRoleIds = roleManager.getDefinedRoleIds();
+		System.out.println(definedRoleIds);
+
+		for (Iterator iterator = definedRoleIds.iterator(); iterator.hasNext();) {
+			String roleId = (String) iterator.next();
+			IRole role = roleManager.getRole(roleId);
+			System.out.println(role.getId() + ": " + role.getActivityBindings());
+		}
+		*/
+
 		commandManager = CommandManager.getInstance();
-		contextManager = ContextManager.getInstance();
 		commandManager.addCommandManagerListener(commandManagerListener);
-		contextManager.addContextManagerListener(contextManagerListener);
-		updateActiveContextIds();
+		updateActiveActivityIds();
 		display.addFilter(SWT.Traverse, keyBindingFilter);
 		display.addFilter(SWT.KeyDown, keyBindingFilter);
 		display.addFilter(SWT.FocusOut, modeCleaner);
 		addWindowListener(windowListener);
-		updateActiveCommandIdsAndActiveContextIds();
+		updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	/* end command and context support */

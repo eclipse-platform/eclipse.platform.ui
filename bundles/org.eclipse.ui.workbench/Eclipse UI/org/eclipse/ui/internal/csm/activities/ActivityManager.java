@@ -234,7 +234,7 @@ public final class ActivityManager implements IActivityManager {
 		this.activityDefinitionsById = activityDefinitionsById;
 		this.patternBindingsByActivityId = patternBindingsByActivityId;			
 		boolean activityManagerChanged = false;			
-		Set definedActivityIds = new TreeSet(activityDefinitionsById.keySet());		
+		Set definedActivityIds = new HashSet(activityDefinitionsById.keySet());		
 
 		if (!definedActivityIds.equals(this.definedActivityIds)) {
 			this.definedActivityIds = definedActivityIds;

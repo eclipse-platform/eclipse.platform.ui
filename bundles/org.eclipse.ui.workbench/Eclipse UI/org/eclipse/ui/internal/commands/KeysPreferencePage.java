@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
@@ -63,10 +67,6 @@ import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.contexts.ContextDefinition;
-import org.eclipse.ui.internal.contexts.ContextManager;
-import org.eclipse.ui.internal.contexts.api.IContextDefinition;
-import org.eclipse.ui.internal.contexts.api.IContextRegistry;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -77,12 +77,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static class CommandAssignment implements Comparable {
 
 		private KeyBindingNode.Assignment assignment;		
-		private String contextId;
+		private String activityId;
 		private KeySequence keySequence;		
 		
 		public int compareTo(Object object) {
 			CommandAssignment commandAssignment = (CommandAssignment) object;
-			int compareTo = Util.compare(contextId, commandAssignment.contextId);
+			int compareTo = Util.compare(activityId, commandAssignment.activityId);
 	
 			if (compareTo == 0) {
 				compareTo = Util.compare(keySequence, commandAssignment.keySequence);	
@@ -101,7 +101,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			CommandAssignment commandAssignment = (CommandAssignment) object;	
 			boolean equals = true;
 			equals &= Util.equals(assignment, commandAssignment.assignment);
-			equals &= Util.equals(contextId, commandAssignment.contextId);
+			equals &= Util.equals(activityId, commandAssignment.activityId);
 			equals &= Util.equals(keySequence, commandAssignment.keySequence);
 			return equals;
 		}
@@ -110,11 +110,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static class KeySequenceAssignment implements Comparable {
 		
 		private KeyBindingNode.Assignment assignment;		
-		private String contextId;
+		private String activityId;
 	
 		public int compareTo(Object object) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;
-			int compareTo = Util.compare(contextId, keySequenceAssignment.contextId);
+			int compareTo = Util.compare(activityId, keySequenceAssignment.activityId);
 	
 			if (compareTo == 0)
 				compareTo = Util.compare(assignment, keySequenceAssignment.assignment);
@@ -129,7 +129,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;	
 			boolean equals = true;
 			equals &= Util.equals(assignment, keySequenceAssignment.assignment);
-			equals &= Util.equals(contextId, keySequenceAssignment.contextId);
+			equals &= Util.equals(activityId, keySequenceAssignment.activityId);
 			return equals;
 		}	
 	}
@@ -154,7 +154,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static RGB RGB_MINUS =	new RGB(160, 160, 160);
 	private final static char SPACE = ' ';
 
-	private Map assignmentsByContextIdByKeySequence;
+	private IActivityManager activityManager;
+	private Map assignmentsByActivityIdByKeySequence;
 	private Button buttonAdd;
 	private Button buttonRemove;
 	private Button buttonRestore;
@@ -163,7 +164,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map categoryUniqueNamesById;
 	private Combo comboCategory;
 	private Combo comboCommand;	
-	private Combo comboContext;
+	private Combo comboActivity;
 	private Combo comboKeyConfiguration;
 	private Set commandAssignments;	
 	private Map commandDefinitionsById;
@@ -171,11 +172,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map commandIdsByUniqueName;
 	private Map commandUniqueNamesById;
 	private CommandManager commandManager;
-	private Map contextDefinitionsById;
-	private Map contextIdsByCommandId;
-	private Map contextIdsByUniqueName;
-	private Map contextUniqueNamesById;
-	private ContextManager contextManager;
+	private Map activityIdsByCommandId;
+	private Map activityIdsByUniqueName;
+	private Map activityUniqueNamesById;
 	private Group groupCommand; 
 	private Group groupKeySequence; 
 	private Map keyConfigurationDefinitionsById;
@@ -186,8 +185,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Label labelAssignmentsForKeySequence;
 	private Label labelCategory; 	
 	private Label labelCommand;
-	private Label labelContext; 
-	private Label labelContextExtends;
+	private Label labelActivity; 
+	private Label labelActivityExtends;
 	private Label labelKeyConfiguration;
 	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;	
@@ -199,8 +198,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
+		activityManager = ((Workbench) workbench).getNewActivityManager();
 		commandManager = CommandManager.getInstance();
-		contextManager = ContextManager.getInstance();
+		// TODO remove blind cast and change method name
 		commandAssignments = new TreeSet();
 		keySequenceAssignments = new TreeSet();
 	}
@@ -221,7 +221,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		// TODO remove the dependancy on Workbench. have Workbench rely on events from CommandManager.
 		if (workbench instanceof Workbench) {
-			((Workbench) workbench).updateActiveContextIds();
+			((Workbench) workbench).updateActiveActivityIds();
 			((Workbench) workbench).updateActiveWorkbenchWindowMenuManager();
 		}
 
@@ -303,49 +303,30 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				if (!keyConfigurationDefinitionsById.containsKey(activeKeyConfigurationId))
 					activeKeyConfigurationId = null;
 			}
-
-			IContextRegistry pluginContextRegistry = contextManager.getPluginContextRegistry();			
-			IContextRegistry preferenceContextRegistry = contextManager.getPreferenceContextRegistry();	
-			List contextDefinitions = new ArrayList();
-			contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
-			contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
-			contextDefinitionsById = ContextDefinition.contextDefinitionsById(contextDefinitions, false);
-
-			for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator.hasNext();) {
-				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-				String name = contextDefinition.getName();
-				
-				if (name == null || name.length() == 0)
-					iterator.remove();
-			}
-
-			for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator.hasNext();)
-				if (!ContextManager.isContextDefinitionChildOf(null, (String) iterator.next(), contextDefinitionsById))
-					iterator.remove();
-
+			
 			List contextBindingDefinitions = new ArrayList();
 			contextBindingDefinitions.addAll(pluginCommandRegistry.getContextBindingDefinitions());
 			contextBindingDefinitions.addAll(preferenceCommandRegistry.getContextBindingDefinitions());
-			contextIdsByCommandId = new HashMap();
+			activityIdsByCommandId = new HashMap();
 			
 			for (Iterator iterator = contextBindingDefinitions.iterator(); iterator.hasNext();) {
 				IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();
+				String activityId = contextBindingDefinition.getContextId();
 				String commandId = contextBindingDefinition.getCommandId();
-				String contextId = contextBindingDefinition.getContextId();
+				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandDefinitionsById.containsKey(commandId);
-				boolean validContextId = contextDefinitionsById.containsKey(contextId);
 				
-				if (!validCommandId || !validContextId)
+				if (!validActivityId || !validCommandId)
 					iterator.remove();
 				else {					
-					Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+					Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				
-					if (contextIds == null) {
-						contextIds = new HashSet();
-						contextIdsByCommandId.put(commandId, contextIds);
+					if (activityIds == null) {
+						activityIds = new HashSet();
+						activityIdsByCommandId.put(commandId, activityIds);
 					}
 
-					contextIds.add(contextId);					
+					activityIds.add(activityId);					
 				}			
 			}
 
@@ -368,16 +349,16 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
 				KeySequence keySequence = keyBindingDefinition.getKeySequence();
 				String commandId = keyBindingDefinition.getCommandId();
-				String contextId = keyBindingDefinition.getContextId();
+				String activityId = keyBindingDefinition.getActivityId();
 				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
-				Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
+				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
-				boolean validContextId = contextId == null || contextDefinitionsById.containsKey(contextId);
 				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
-				boolean validContextIdForCommandId = contextIds == null || contextIds.contains(contextId);
+				boolean validActivityIdForCommandId = activityIds == null || activityIds.contains(activityId);
 			
-				if (!validKeySequence || !validCommandId || !validContextId || !validKeyConfigurationId || !validContextIdForCommandId)
+				if (!validKeySequence || !validCommandId || !validActivityId || !validKeyConfigurationId || !validActivityIdForCommandId)
 					iterator.remove();
 			}
 
@@ -387,16 +368,16 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
 				KeySequence keySequence = keyBindingDefinition.getKeySequence();
 				String commandId = keyBindingDefinition.getCommandId();
-				String contextId = keyBindingDefinition.getContextId();
+				String activityId = keyBindingDefinition.getActivityId();
 				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
-				Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
+				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
-				boolean validContextId = contextId == null || contextDefinitionsById.containsKey(contextId);
 				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
-				boolean validContextIdForCommandId = contextIds == null || contextIds.contains(contextId);
+				boolean validActivityIdForCommandId = activityIds == null || activityIds.contains(activityId);
 			
-				if (!validKeySequence || !validCommandId || !validContextId || !validKeyConfigurationId || !validContextIdForCommandId)
+				if (!validKeySequence || !validCommandId || !validActivityId || !validKeyConfigurationId || !validActivityIdForCommandId)
 					iterator.remove();
 			}
 
@@ -404,12 +385,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			
 			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 			}
 
 			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 			}			
 		
 			Map categoryDefinitionsByName = CategoryDefinition.categoryDefinitionsByName(categoryDefinitionsById.values(), false);
@@ -478,25 +459,46 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				}
 			}	
 
-			Map contextDefinitionsByName = ContextDefinition.contextDefinitionsByName(contextDefinitionsById.values(), false);
-			contextIdsByUniqueName = new HashMap();
-			contextUniqueNamesById = new HashMap();
+			Map activitiesByName = new HashMap();	
+			
+			for (Iterator iterator = activityManager.getDefinedActivityIds().iterator(); iterator.hasNext();) {
+				IActivity activity = activityManager.getActivity((String) iterator.next()); 				
+				
+				try {
+					String name = activity.getName();
+					
+					if (name != null) {
+						Collection activities = (Collection) activitiesByName.get(name);
+					
+						if (activities == null) {
+							activities = new HashSet();
+							activitiesByName.put(name, activities);					
+						}
+	
+						activities.add(activity);								
+					}
+				} catch (ActivityNotDefinedException eActivityNotDefined) {					
+				}
+			}
+			
+			activityIdsByUniqueName = new HashMap();
+			activityUniqueNamesById = new HashMap();
 
-			for (Iterator iterator = contextDefinitionsByName.entrySet().iterator(); iterator.hasNext();) {
+			for (Iterator iterator = activitiesByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
-				Set contextDefinitions2 = (Set) entry.getValue();
-				Iterator iterator2 = contextDefinitions2.iterator();				
+				Set activities = (Set) entry.getValue();
+				Iterator iterator2 = activities.iterator();				
 				
-				if (contextDefinitions2.size() == 1) {					
-					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
-					contextIdsByUniqueName.put(name, contextDefinition.getId());
-					contextUniqueNamesById.put(contextDefinition.getId(), name);
+				if (activities.size() == 1) {					
+					IActivity activity = (IActivity) iterator2.next(); 
+					activityIdsByUniqueName.put(name, activity.getId());
+					activityUniqueNamesById.put(activity.getId(), name);
 				} else while (iterator2.hasNext()) {
-					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
-					contextIdsByUniqueName.put(uniqueName, contextDefinition.getId());							
-					contextUniqueNamesById.put(contextDefinition.getId(), uniqueName);
+					IActivity activity = (IActivity) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, activity.getId() }); //$NON-NLS-1$
+					activityIdsByUniqueName.put(uniqueName, activity.getId());							
+					activityUniqueNamesById.put(activity.getId(), uniqueName);
 				}
 			}	
 
@@ -504,10 +506,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			boolean showCategory = !categoryIdsByUniqueName.isEmpty();
 			labelCategory.setVisible(showCategory);
 			comboCategory.setVisible(showCategory);					
-			boolean showContext = !contextIdsByUniqueName.isEmpty();
-			labelContext.setVisible(showContext);
-			comboContext.setVisible(showContext);					
-			labelContextExtends.setVisible(showContext);
+			boolean showActivity = !activityIdsByUniqueName.isEmpty();
+			labelActivity.setVisible(showActivity);
+			comboActivity.setVisible(showActivity);					
+			labelActivityExtends.setVisible(showActivity);
 			boolean showKeyConfiguration = !keyConfigurationIdsByUniqueName.isEmpty();		
 			labelKeyConfiguration.setVisible(showKeyConfiguration);
 			comboKeyConfiguration.setVisible(showKeyConfiguration);
@@ -627,11 +629,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnDelta.setResizable(false);
 		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
 		tableColumnDelta.setWidth(20);				
-		TableColumn tableColumnContext = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);		
-		tableColumnContext.setResizable(true);
-		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumnContext.pack();
-		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
+		TableColumn tableColumnActivity = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);		
+		tableColumnActivity.setResizable(true);
+		tableColumnActivity.setText(Util.translateString(resourceBundle, "tableColumnActivity")); //$NON-NLS-1$
+		tableColumnActivity.pack();
+		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
 		TableColumn tableColumnKeySequence = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
 		tableColumnKeySequence.setResizable(true);
 		tableColumnKeySequence.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
@@ -689,11 +691,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnDelta.setResizable(false);
 		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
 		tableColumnDelta.setWidth(20);		
-		tableColumnContext = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);		
-		tableColumnContext.setResizable(true);
-		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumnContext.pack();
-		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
+		tableColumnActivity = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);		
+		tableColumnActivity.setResizable(true);
+		tableColumnActivity.setText(Util.translateString(resourceBundle, "tableColumnActivity")); //$NON-NLS-1$
+		tableColumnActivity.pack();
+		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
 		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
 		tableColumnCommand.setResizable(true);
 		tableColumnCommand.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
@@ -712,28 +714,28 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
-		Composite compositeContext = new Composite(composite, SWT.NULL);
+		Composite compositeActivity = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
-		compositeContext.setLayout(gridLayout);
+		compositeActivity.setLayout(gridLayout);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		compositeContext.setLayoutData(gridData);
-		labelContext = new Label(compositeContext, SWT.LEFT);
-		labelContext.setText(Util.translateString(resourceBundle, "labelContext")); //$NON-NLS-1$
-		comboContext = new Combo(compositeContext, SWT.READ_ONLY);
+		compositeActivity.setLayoutData(gridData);
+		labelActivity = new Label(compositeActivity, SWT.LEFT);
+		labelActivity.setText(Util.translateString(resourceBundle, "labelActivity")); //$NON-NLS-1$
+		comboActivity = new Combo(compositeActivity, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.widthHint = 200;
-		comboContext.setLayoutData(gridData);
+		comboActivity.setLayoutData(gridData);
 
-		comboContext.addSelectionListener(new SelectionAdapter() {
+		comboActivity.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboContext();
+				selectedComboActivity();
 			}	
 		});
 
-		labelContextExtends = new Label(compositeContext, SWT.LEFT);
+		labelActivityExtends = new Label(compositeActivity, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		labelContextExtends.setLayoutData(gridData);
+		labelActivityExtends.setLayoutData(gridData);
 		Composite compositeButton = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
 		gridLayout.marginHeight = 20;
@@ -809,7 +811,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				
 				while (iterator.hasNext()) {
 					IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
-					KeyBindingNode.remove(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+					KeyBindingNode.remove(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 				}
 			}
 		}
@@ -901,12 +903,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					break;				
 			}
 	
-			String contextId = commandAssignment.contextId;
+			String activityId = commandAssignment.activityId;
 	
-			if (contextId == null)
+			if (activityId == null)
 				tableItem.setText(1, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
 			else 
-				tableItem.setText(1, (String) contextUniqueNamesById.get(contextId)); //$NON-NLS-1$	
+				tableItem.setText(1, (String) activityUniqueNamesById.get(activityId)); //$NON-NLS-1$	
 			
 			tableItem.setText(2, commandString);
 				
@@ -998,12 +1000,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					break;				
 			}
 	
-			String contextId = keySequenceAssignment.contextId;
+			String activityId = keySequenceAssignment.activityId;
 	
-			if (contextId == null)
+			if (activityId == null)
 				tableItem.setText(1, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
 			else 
-				tableItem.setText(1, (String) contextUniqueNamesById.get(contextId)); //$NON-NLS-1$	
+				tableItem.setText(1, (String) activityUniqueNamesById.get(activityId)); //$NON-NLS-1$	
 			
 			tableItem.setText(2, commandString);
 				
@@ -1028,8 +1030,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		return (String) commandIdsByUniqueName.get(comboCommand.getText());
 	}
 	
-	private String getContextId() {
-		return comboContext.getSelectionIndex() > 0 ? (String) contextIdsByUniqueName.get(comboContext.getText()) : null;
+	private String getActivityId() {
+		return comboActivity.getSelectionIndex() > 0 ? (String) activityIdsByUniqueName.get(comboActivity.getText()) : null;
 	}
 
 	private String getKeyConfigurationId() {
@@ -1044,7 +1046,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();
 	}
 
-	private void selectAssignmentForCommand(String contextId) {	
+	private void selectAssignmentForCommand(String activityId) {	
 		if (tableAssignmentsForCommand.getSelectionCount() > 1)
 			tableAssignmentsForCommand.deselectAll();
 	
@@ -1055,7 +1057,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		for (Iterator iterator = commandAssignments.iterator(); iterator.hasNext(); i++) {
 			CommandAssignment commandAssignment = (CommandAssignment) iterator.next();
 
-			if (Util.equals(contextId, commandAssignment.contextId) && Util.equals(keySequence, commandAssignment.keySequence)) {
+			if (Util.equals(activityId, commandAssignment.activityId) && Util.equals(keySequence, commandAssignment.keySequence)) {
 				selection = i;
 				break;
 			}
@@ -1069,7 +1071,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		}
 	}
 
-	private void selectAssignmentForKeySequence(String contextId) {	
+	private void selectAssignmentForKeySequence(String activityId) {	
 		if (tableAssignmentsForKeySequence.getSelectionCount() > 1)
 			tableAssignmentsForKeySequence.deselectAll();
 	
@@ -1079,7 +1081,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		for (Iterator iterator = keySequenceAssignments.iterator(); iterator.hasNext(); i++) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) iterator.next();
 
-			if (Util.equals(contextId, keySequenceAssignment.contextId)) {
+			if (Util.equals(activityId, keySequenceAssignment.activityId)) {
 				selection = i;
 				break;
 			}
@@ -1095,32 +1097,32 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private void selectedButtonAdd() {
 		String commandId = getCommandId();
-		String contextId = getContextId();
+		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
-		KeyBindingNode.add(tree, keySequence, contextId, keyConfigurationId, 0, null, null, commandId);			
+		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
+		KeyBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, commandId);			
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		update();
 	}
 
 	private void selectedButtonRemove() {
-		String contextId = getContextId();
+		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();		
-		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
-		KeyBindingNode.add(tree, keySequence, contextId, keyConfigurationId, 0, null, null, null);
+		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
+		KeyBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, null);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		update();		
 	}
 	
 	private void selectedButtonRestore() {
-		String contextId = getContextId();
+		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
+		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		update();		
@@ -1134,7 +1136,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();		
 	}
 
-	private void selectedComboContext() {		
+	private void selectedComboActivity() {		
 		update();		
 	}	
 
@@ -1149,9 +1151,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		if (selection >= 0 && selection < commandAssignmentsAsList.size() && tableAssignmentsForCommand.getSelectionCount() == 1) {
 			CommandAssignment commandAssignment = (CommandAssignment) commandAssignmentsAsList.get(selection);
 			KeyBindingNode.Assignment assignment = commandAssignment.assignment;
-			String contextId = commandAssignment.contextId;
+			String activityId = commandAssignment.activityId;
 			KeySequence keySequence = commandAssignment.keySequence;
-			setContextId(contextId);			
+			setActivityId(activityId);			
 			setKeySequence(keySequence);
 		}		
 		
@@ -1165,8 +1167,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection);
 			KeyBindingNode.Assignment assignment = keySequenceAssignment.assignment;
-			String contextId = keySequenceAssignment.contextId;				
-			setContextId(contextId);			
+			String activityId = keySequenceAssignment.activityId;				
+			setActivityId(activityId);			
 		}
 
 		update();		
@@ -1176,17 +1178,17 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		commandAssignments.clear();
 		String commandId = getCommandId();
 		
-		for (Iterator iterator = assignmentsByContextIdByKeySequence.entrySet()	.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = assignmentsByActivityIdByKeySequence.entrySet()	.iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			KeySequence keySequence = (KeySequence) entry.getKey();
-			Map assignmentsByContextId = (Map) entry.getValue();
+			Map assignmentsByActivityId = (Map) entry.getValue();
 
-			if (assignmentsByContextId != null)
-				for (Iterator iterator2 = assignmentsByContextId.entrySet().iterator(); iterator2.hasNext();) {
+			if (assignmentsByActivityId != null)
+				for (Iterator iterator2 = assignmentsByActivityId.entrySet().iterator(); iterator2.hasNext();) {
 					Map.Entry entry2 = (Map.Entry) iterator2.next();		
 					CommandAssignment commandAssignment = new CommandAssignment();
 					commandAssignment.assignment = (KeyBindingNode.Assignment) entry2.getValue();
-					commandAssignment.contextId	= (String) entry2.getKey();
+					commandAssignment.activityId	= (String) entry2.getKey();
 					commandAssignment.keySequence = keySequence;
 
 					if (commandAssignment.assignment.contains(commandId))
@@ -1200,14 +1202,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private void setAssignmentsForKeySequence() {		
 		keySequenceAssignments.clear();
 		KeySequence keySequence = getKeySequence();			
-		Map assignmentsByContextId = (Map) assignmentsByContextIdByKeySequence.get(keySequence);
+		Map assignmentsByActivityId = (Map) assignmentsByActivityIdByKeySequence.get(keySequence);
 
-		if (assignmentsByContextId != null)
-			for (Iterator iterator = assignmentsByContextId.entrySet().iterator(); iterator.hasNext();) {
+		if (assignmentsByActivityId != null)
+			for (Iterator iterator = assignmentsByActivityId.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();		
 				KeySequenceAssignment keySequenceAssignment = new KeySequenceAssignment();
 				keySequenceAssignment.assignment = (KeyBindingNode.Assignment) entry.getValue();
-				keySequenceAssignment.contextId	= (String) entry.getKey();
+				keySequenceAssignment.activityId	= (String) entry.getKey();
 				keySequenceAssignments.add(keySequenceAssignment);
 			}
 
@@ -1262,44 +1264,44 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			comboCommand.select(0);		
 	}	
 
-	private void setContextId(String contextId) {				
-		comboContext.clearSelection();
-		comboContext.deselectAll();
-		String contextUniqueName = (String) contextUniqueNamesById.get(contextId);
+	private void setActivityId(String activityId) {				
+		comboActivity.clearSelection();
+		comboActivity.deselectAll();
+		String activityUniqueName = (String) activityUniqueNamesById.get(activityId);
 		
-		if (contextUniqueName != null) {
-			String items[] = comboContext.getItems();
+		if (activityUniqueName != null) {
+			String items[] = comboActivity.getItems();
 			
 			for (int i = 1; i < items.length; i++)
-				if (contextUniqueName.equals(items[i])) {
-					comboContext.select(i);
+				if (activityUniqueName.equals(items[i])) {
+					comboActivity.select(i);
 					break;		
 				}
 		} else 
-			comboContext.select(0);
+			comboActivity.select(0);
 	}
 
-	private void setContextsForCommand() {
+	private void setActivitiesForCommand() {
 		String commandId = getCommandId();
-		String contextId = getContextId();
-		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
-		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);			
+		String activityId = getActivityId();
+		Set activityIds = (Set) activityIdsByCommandId.get(commandId);
+		Map activityIdsByUniqueName = new HashMap(this.activityIdsByUniqueName);			
 		
-		// TODO for context bound commands, this code retains only those context explictly bound. what about assigning key bindings to implicit descendant contexts? 
-		if (contextIds != null)
-			contextIdsByUniqueName.values().retainAll(contextIds);
+		// TODO for activity bound commands, this code retains only those activity explictly bound. what about assigning key bindings to implicit descendant activities? 
+		if (activityIds != null)
+			activityIdsByUniqueName.values().retainAll(activityIds);
 
-		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
-		Collections.sort(contextNames, Collator.getInstance());						
+		List activityNames = new ArrayList(activityIdsByUniqueName.keySet());
+		Collections.sort(activityNames, Collator.getInstance());						
 		
-		if (contextIds == null)
-			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
+		if (activityIds == null)
+			activityNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
 		
-		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));				
-		setContextId(contextId);
+		comboActivity.setItems((String[]) activityNames.toArray(new String[activityNames.size()]));				
+		setActivityId(activityId);
 
-		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
-			comboContext.select(0);
+		if (comboActivity.getSelectionIndex() == -1 && !activityNames.isEmpty())
+			comboActivity.select(0);
 	}
 
 	private void setKeyConfigurationId(String keyConfigurationId) {				
@@ -1325,23 +1327,23 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private void update() {
 		setCommandsForCategory();
-		setContextsForCommand();
+		setActivitiesForCommand();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
 		String[] activeKeyConfigurationIds = CommandManager.extend(CommandManager.getKeyConfigurationIds(keyConfigurationId, keyConfigurationDefinitionsById));
 		String[] activeLocales = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActiveLocale(), CommandManager.SEPARATOR));
 		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActivePlatform(), CommandManager.SEPARATOR));
 		KeyBindingNode.solve(tree, activeKeyConfigurationIds, activePlatforms, activeLocales);		
-		assignmentsByContextIdByKeySequence = KeyBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
+		assignmentsByActivityIdByKeySequence = KeyBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
 		setAssignmentsForKeySequence();
 		setAssignmentsForCommand();		
 		String categoryId = getCategoryId();
 		String commandId = getCommandId();
-		String contextId = getContextId();
-		selectAssignmentForKeySequence(contextId);
-		selectAssignmentForCommand(contextId);
+		String activityId = getActivityId();
+		selectAssignmentForKeySequence(activityId);
+		selectAssignmentForCommand(activityId);
 		updateLabelKeyConfigurationExtends();		
-		updateLabelContextExtends();
+		updateLabelActivityExtends();
 		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		tableAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		labelAssignmentsForCommand.setEnabled(commandId != null);
@@ -1356,18 +1358,28 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		buttonRestore.setEnabled(buttonRestoreEnabled);		
 	}
 
-	private void updateLabelContextExtends() {
-		IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionsById.get(getContextId());
+	private void updateLabelActivityExtends() {
+		String activityId = getActivityId();
 		
-		if (contextDefinition != null) {
-			String name = (String) contextUniqueNamesById.get(contextDefinition.getParentId());
+		if (activityId != null) {		
+			IActivity activity = (IActivity) activityManager.getActivity(getActivityId());
 			
-			if (name != null)
-				labelContextExtends.setText(MessageFormat.format(Util.translateString(resourceBundle, "extends"), new Object[] { name })); //$NON-NLS-1$
-			else
-				labelContextExtends.setText(Util.translateString(resourceBundle, "extendsGeneral")); //$NON-NLS-1$
-		} else
-			labelContextExtends.setText(Util.ZERO_LENGTH_STRING);
+			if (activity.isDefined()) {
+				try {
+					String name = (String) activityUniqueNamesById.get(activity.getParentId());
+					
+					if (name != null)
+						labelActivityExtends.setText(MessageFormat.format(Util.translateString(resourceBundle, "extends"), new Object[] { name })); //$NON-NLS-1$
+					else
+						labelActivityExtends.setText(Util.translateString(resourceBundle, "extendsGeneral")); //$NON-NLS-1$
+			
+					return;
+				} catch (ActivityNotDefinedException eActivityNotDefined) {				
+				}
+			}
+		}
+		
+		labelActivityExtends.setText(Util.ZERO_LENGTH_STRING);
 	}
 
 	private void updateLabelKeyConfigurationExtends() {
@@ -1389,7 +1401,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		KeySequence keySequence = getKeySequence();
 		boolean validKeySequence = keySequence != null && validateSequence(keySequence);
 		String scopeId = getScopeId();
-		boolean validScopeId = scopeId != null && contextsDefinitionsById.get(scopeId) != null;	
+		boolean validScopeId = scopeId != null && activitiesDefinitionsById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
 		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
 	
@@ -1491,7 +1503,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					break;				
 			}
 	
-			IContextDefinition scope = (IContextDefinition) contextsById.get(commandRecord.scope);
+			IActivityDefinition scope = (IActivityDefinition) activitiesById.get(commandRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
@@ -1588,7 +1600,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					break;				
 			}
 	
-			IContextDefinition scope = (IContextDefinition) contextsById.get(keySequenceRecord.scope);
+			IActivityDefinition scope = (IActivityDefinition) activitiesById.get(keySequenceRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));

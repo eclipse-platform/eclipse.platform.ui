@@ -38,12 +38,12 @@ final class Persistence {
 	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
+	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
 	final static String TAG_COMMAND_ID = "commandId"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
-	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_HELP_ID = "helpId"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
@@ -182,7 +182,8 @@ final class Persistence {
 			throw new NullPointerException();			
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
-		String contextId = memento.getString(TAG_CONTEXT_ID);
+		// TODO change to activityId
+		String contextId = memento.getString("contextId"); //$NON-NLS-1$
 		
 		// TODO deprecated start
 		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
@@ -244,21 +245,24 @@ final class Persistence {
 		if (memento == null)
 			throw new NullPointerException();			
 
+		String activityId = memento.getString(TAG_ACTIVITY_ID);
+
+		// TODO deprecated start
+		if (activityId == null)
+			activityId = memento.getString("context"); //$NON-NLS-1$
+		
+		if (activityId == null)
+			activityId = memento.getString("scope"); //$NON-NLS-1$
+			
+		if ("org.eclipse.ui.globalScope".equals(activityId)) //$NON-NLS-1$
+			activityId = null;			
+		// TODO deprecated end		
+		
 		String commandId = memento.getString(TAG_COMMAND_ID);
 
 		// TODO deprecated start
 		if (commandId == null)
 			commandId = memento.getString("command"); //$NON-NLS-1$ 
-		// TODO deprecated end		
-
-		String contextId = memento.getString(TAG_CONTEXT_ID);
-
-		// TODO deprecated start
-		if (contextId == null)
-			contextId = memento.getString("scope"); //$NON-NLS-1$
-			
-		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
-			contextId = null;			
 		// TODO deprecated end		
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
@@ -303,7 +307,7 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end			
 		
-		return new KeyBindingDefinition(commandId, contextId, keyConfigurationId, keySequence, locale, platform, pluginId);
+		return new KeyBindingDefinition(activityId, commandId, keyConfigurationId, keySequence, locale, platform, pluginId);
 	}
 
 	static List readKeyBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
@@ -455,8 +459,9 @@ final class Persistence {
 		if (memento == null || contextBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_COMMAND_ID, contextBindingDefinition.getCommandId());
-		memento.putString(TAG_CONTEXT_ID, contextBindingDefinition.getContextId());
+		memento.putString(TAG_COMMAND_ID, contextBindingDefinition.getCommandId());		
+		// TODO change to activityId
+		memento.putString("contextId", contextBindingDefinition.getContextId()); //$NON-NLS-1$
 		memento.putString(TAG_PLUGIN_ID, contextBindingDefinition.getPluginId());
 	}
 
@@ -508,8 +513,8 @@ final class Persistence {
 		if (memento == null || keyBindingDefinition == null)
 			throw new NullPointerException();
 
+		memento.putString(TAG_ACTIVITY_ID, keyBindingDefinition.getActivityId());
 		memento.putString(TAG_COMMAND_ID, keyBindingDefinition.getCommandId());
-		memento.putString(TAG_CONTEXT_ID, keyBindingDefinition.getContextId());
 		memento.putString(TAG_KEY_CONFIGURATION_ID, keyBindingDefinition.getKeyConfigurationId());
 		memento.putString(TAG_KEY_SEQUENCE,	keyBindingDefinition.getKeySequence() != null ? keyBindingDefinition.getKeySequence().toString() : null);
 		memento.putString(TAG_LOCALE, keyBindingDefinition.getLocale());

@@ -14,12 +14,10 @@ package org.eclipse.ui.internal;
 import java.util.Collection;
 
 import org.eclipse.jface.action.ActionContributionItem;
-
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * Contribution item for actions provided by plugins via workbench
