@@ -72,6 +72,7 @@ class FastViewBar implements IWindowTrim {
 	private IViewReference selectedView;
 	private int lastSide;
 	private Label fastViewLabel;
+	private Label fastViewLabel2;
 	private int oldLength = 0;
 	private IChangeListener orientationChangeListener = new IChangeListener() {
 		public void update(boolean changed) {
@@ -90,7 +91,7 @@ class FastViewBar implements IWindowTrim {
 	
 	// Map of string view IDs onto Booleans (true iff horizontally aligned)
 	private Map viewOrientation = new HashMap();
-	private static final int MINIMUM_BOTTOM_WIDTH = 20;
+	private Listener menuListener;
 	
 	/**
 	 * Constructs a new fast view bar for the given workbench window.
@@ -139,7 +140,7 @@ class FastViewBar implements IWindowTrim {
 		fastViewBar = new ToolBarManager(SWT.FLAT /*| SWT.WRAP*/ | flags);
 		fastViewBar.add(new ShowFastViewContribution(window));
 		
-		Listener listener = new Listener() {
+		menuListener = new Listener() {
 			public void handleEvent(Event event) {
 				Point loc = new Point(event.x, event.y);
 				if (event.type == SWT.MenuDetect) {
@@ -162,22 +163,18 @@ class FastViewBar implements IWindowTrim {
 		// When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view
 		// bar if there's nothing in it.
 		if (newSide == SWT.BOTTOM) {
-			controlLayout.numColumns = 2;
-			fastViewLabel = new Label(control, SWT.SEPARATOR | SWT.VERTICAL);
-			//fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
-			fastViewLabel.addListener(SWT.MenuDetect, listener);
-			moveCursor = new Cursor(control.getDisplay(), SWT.CURSOR_SIZEALL);
-			fastViewLabel.setCursor(moveCursor);
-			GridData data = new GridData(GridData.FILL_VERTICAL);
-			data.heightHint = 10;
-			data.widthHint = 10;
-			data.verticalAlignment = GridData.CENTER;
-			data.horizontalAlignment = GridData.CENTER;
-			fastViewLabel.setLayoutData(data);
+			controlLayout.numColumns = 3;
+						
+			fastViewLabel = createFastViewSeparator(control);
 		}
 		fastViewBar.createControl(control);
-		getToolBar().addListener(SWT.MenuDetect, listener);
-		getToolBar().addListener(SWT.MouseDown, listener);
+		if (newSide == SWT.BOTTOM) {
+						
+			fastViewLabel2 = createFastViewSeparator(control);
+		}		
+
+		getToolBar().addListener(SWT.MenuDetect, menuListener);
+		getToolBar().addListener(SWT.MouseDown, menuListener);
 		
 		IDragSource fastViewDragSource = new AbstractDragSource() {
 			
@@ -307,8 +304,33 @@ class FastViewBar implements IWindowTrim {
 		if (fastViewLabel != null) {
 			DragUtil.addDragSource(fastViewLabel, fastViewDragSource);
 		}
+		if (fastViewLabel2 != null) {
+			DragUtil.addDragSource(fastViewLabel2, fastViewDragSource);
+		}
 		
 		update(true);
+	}
+
+	/**
+	 * @param control2
+	 * @return
+	 */
+	private Label createFastViewSeparator(Composite control2) {
+		Label result = new Label(control2, SWT.SEPARATOR | SWT.VERTICAL);
+		//fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
+		result.addListener(SWT.MenuDetect, menuListener);
+		if (moveCursor == null) {
+			moveCursor = new Cursor(control.getDisplay(), SWT.CURSOR_SIZEALL);
+		}
+		result.setCursor(moveCursor);
+		GridData data = new GridData(GridData.FILL_VERTICAL);
+		data.heightHint = 10;
+		data.widthHint = 10;
+		data.verticalAlignment = GridData.CENTER;
+		data.horizontalAlignment = GridData.CENTER;
+		result.setLayoutData(data);
+
+		return result;
 	}
 
 	/**
@@ -461,6 +483,11 @@ class FastViewBar implements IWindowTrim {
 			fastViewLabel.dispose();
 			fastViewLabel = null;
 		}
+
+		if (fastViewLabel2 != null) {
+			fastViewLabel2.dispose();
+			fastViewLabel2 = null;
+		}
 		
 		if (moveCursor != null) {
 			moveCursor.dispose();
@@ -480,26 +507,17 @@ class FastViewBar implements IWindowTrim {
 		fastViewBar.update(force);
 		ToolItem[] items = fastViewBar.getControl().getItems();
 		
-		if (getSide() == SWT.BOTTOM) {
-			toolBarData.widthHint = SWT.DEFAULT;
-			int sz = fastViewBar.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		boolean shouldExpand = items.length > 0;
+		if (shouldExpand != visible) {
 			
-			if (sz < MINIMUM_BOTTOM_WIDTH) {
-				toolBarData.widthHint = MINIMUM_BOTTOM_WIDTH;
+			getToolBar().setVisible(true);
+			if (!shouldExpand) {
+				toolBarData.widthHint = HIDDEN_WIDTH;
+			} else {
+				toolBarData.widthHint = SWT.DEFAULT;
 			}
-		} else {
-			boolean shouldExpand = items.length > 0;
-			if (shouldExpand != visible) {
-				
-				getToolBar().setVisible(true);
-				if (!shouldExpand) {
-					toolBarData.widthHint = HIDDEN_WIDTH;
-				} else {
-					toolBarData.widthHint = SWT.DEFAULT;
-				}
-				
-				visible = shouldExpand;
-			}
+			
+			visible = shouldExpand;
 		}
 		
 		if (items.length != oldLength) {
