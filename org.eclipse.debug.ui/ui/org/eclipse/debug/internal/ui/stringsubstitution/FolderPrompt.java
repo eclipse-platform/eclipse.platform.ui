@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.DirectoryDialog;
 
 /**
@@ -24,7 +23,7 @@ public class FolderPrompt extends PromptingResolver {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		DirectoryDialog dialog = new DirectoryDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setText(dialogMessage);
 		dialog.setFilterPath(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();

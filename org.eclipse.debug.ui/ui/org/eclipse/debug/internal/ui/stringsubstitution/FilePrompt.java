@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.FileDialog;
 
 /**
@@ -24,7 +23,7 @@ public class FilePrompt extends PromptingResolver {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		FileDialog dialog = new FileDialog(DebugUIPlugin.getStandardDisplay().getActiveShell());
+		FileDialog dialog = new FileDialog(getShell());
 		dialog.setText(dialogMessage);
 		dialog.setFileName(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();

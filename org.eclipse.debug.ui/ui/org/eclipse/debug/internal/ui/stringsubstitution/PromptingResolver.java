@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Base implementation for variable resolvers that prompt the user
@@ -98,6 +99,14 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 			lastValue = dialogResultString;
 		}
 		return value;
+	}
+	
+	protected Shell getShell() {
+		Shell shell = DebugUIPlugin.getStandardDisplay().getActiveShell();
+		if (shell == null) {
+			shell = DebugUIPlugin.getShell();
+		}
+		return shell;
 	}
 
 }
