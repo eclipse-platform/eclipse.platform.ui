@@ -202,7 +202,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		
 		for (Iterator iter = allBundes.iterator(); iter.hasNext();) {
 			Bundle element = (Bundle) iter.next();
-			String classpath = (String) element.getHeaders().get("Bundle-Classpath");
+			String classpath = (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH);
 			if (classpath != null)
 				allLibraries.addAll(splitClasspath(classpath));	
 		}
@@ -210,7 +210,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 	
 	private ArrayList splitClasspath(String classpath) {
-		StringTokenizer tokens = new StringTokenizer(classpath, ",");
+		StringTokenizer tokens = new StringTokenizer(classpath, ",");	//$NON-NLS-1$
 		ArrayList libraries = new ArrayList(tokens.countTokens());
 		while (tokens.hasMoreElements()) {
 			String element = (String) tokens.nextElement();
@@ -236,7 +236,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public PluginVersionIdentifier getVersionIdentifier() {
-		String version = (String) bundleOsgi.getHeaders().get("Bundle-Version");
+		String version = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VERSION);
 		if (version == null)
 			return new PluginVersionIdentifier("1.0.0"); //$NON-NLS-1$
 		try {
@@ -378,7 +378,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			try {
 				bundleOsgi.start();
 			} catch (BundleException e) {
-				throwException(Policy.bind("plugin.startupProblems", e.toString()), e);
+				throwException(Policy.bind("plugin.startupProblems", e.toString()), e); //$NON-NLS-1$
 			}
 		if (pluginObject != null) 
 			return;
@@ -403,7 +403,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 }
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders().get("Plugin-class");
+		return (String) bundleOsgi.getHeaders().get("Plugin-class"); //$NON-NLS-1$
 	}
 
 	private String getId() {
@@ -452,7 +452,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			active = true;
 	}
 	public boolean isLegacy() {
-		return new Boolean((String) bundleOsgi.getHeaders().get("Legacy")).booleanValue();
+		return new Boolean((String) bundleOsgi.getHeaders().get("Legacy")).booleanValue(); //$NON-NLS-1$
 	}
 
 	public Bundle getBundle() {
