@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.protocols;
 import java.io.*;
+
 import org.eclipse.help.internal.context.LinksResult;
 /**
  * URL to the links server.

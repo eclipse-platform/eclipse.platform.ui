@@ -1,12 +1,10 @@
 package org.eclipse.help.servlet.data;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.servlet.UrlUtil;
-import org.eclipse.help.servlet.WebappPreferences;
-import org.w3c.dom.*;
+import org.eclipse.help.servlet.*;
 
 /*
  * (c) Copyright IBM Corp. 2002.

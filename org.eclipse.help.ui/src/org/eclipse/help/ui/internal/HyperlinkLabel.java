@@ -5,13 +5,12 @@
 
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import sun.security.krb5.internal.crypto.*;
 
 /**
  *
@@ -85,8 +84,8 @@ public class HyperlinkLabel extends Canvas{
 		});
 		
 		GridData data = new GridData();
-		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
-		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		label.setLayoutData(data);
 
 		initAccessible(this);

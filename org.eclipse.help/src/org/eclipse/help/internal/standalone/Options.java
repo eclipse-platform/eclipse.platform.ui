@@ -4,11 +4,8 @@
  */
 package org.eclipse.help.internal.standalone;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
 import java.util.*;
-
-import org.eclipse.help.internal.standalone.*;
 
 /**
  * Options for starting stand alone help and infocenter.

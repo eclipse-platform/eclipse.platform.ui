@@ -4,7 +4,6 @@
  */
 package org.eclipse.help;
 
-import org.eclipse.help.IHelpResource;
 
 /**
  * ITopic is one topic in a hierarchy of topics.

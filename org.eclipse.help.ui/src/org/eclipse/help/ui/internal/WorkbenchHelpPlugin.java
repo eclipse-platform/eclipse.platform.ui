@@ -4,11 +4,10 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.ui.browser.*;
-import org.eclipse.help.ui.internal.browser.*;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.help.AppServer;
 import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
   * This class is a UI plugin. This may need to change to regular 

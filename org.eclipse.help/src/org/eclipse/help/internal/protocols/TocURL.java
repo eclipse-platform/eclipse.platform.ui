@@ -6,10 +6,9 @@ package org.eclipse.help.internal.protocols;
 
 import java.io.*;
 
-import org.eclipse.help.*;
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
-import org.eclipse.help.internal.util.XMLGenerator;
 
 
 /**

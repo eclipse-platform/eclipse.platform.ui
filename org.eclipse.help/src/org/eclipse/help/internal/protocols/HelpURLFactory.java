@@ -3,7 +3,6 @@ package org.eclipse.help.internal.protocols;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.net.*;
 /**
  * Creates the URL objects according to the their type
  */

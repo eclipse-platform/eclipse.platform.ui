@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.util;
 import java.net.*;
 import java.text.MessageFormat;
 import java.util.*;
+
 import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 /**
  * Uses a resource bundle to load images and strings from

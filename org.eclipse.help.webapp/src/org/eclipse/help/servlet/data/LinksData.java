@@ -3,15 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.servlet.data;
-import java.text.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.servlet.*;
-import org.w3c.dom.*;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.servlet.UrlUtil;
 
 /**
  * Helper class for linksView.jsp initialization

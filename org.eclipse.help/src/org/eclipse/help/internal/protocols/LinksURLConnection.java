@@ -5,6 +5,7 @@
 package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
+
 import org.eclipse.help.internal.util.Logger;
 public class LinksURLConnection extends URLConnection {
 	private LinksURL linksURL = null;

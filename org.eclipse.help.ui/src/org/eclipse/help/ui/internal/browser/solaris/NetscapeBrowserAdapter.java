@@ -4,8 +4,9 @@
  */
 package org.eclipse.help.ui.internal.browser.solaris;
 import java.io.IOException;
-import org.eclipse.help.ui.internal.util.StreamConsumer;
+
 import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding
 	// to remote command after browser command has been called
@@ -71,7 +72,7 @@ public class NetscapeBrowserAdapter implements IBrowser {
 				// If browser is opening, wait until it fully opens,
 				while (System.currentTimeMillis() < browserFullyOpenedAt)
 					try {
-						Thread.currentThread().sleep(100);
+						Thread.sleep(100);
 					} catch (InterruptedException ie) {
 					}
 				Process pr = Runtime.getRuntime().exec(browserCmd);

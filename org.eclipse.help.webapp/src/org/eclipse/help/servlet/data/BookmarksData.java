@@ -5,13 +5,13 @@ package org.eclipse.help.servlet.data;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.servlet.UrlUtil;
 
 /**
  * This class calls eclipse API's directly, so it should only be

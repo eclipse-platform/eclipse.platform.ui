@@ -4,10 +4,11 @@
  */
 package org.eclipse.help.ui.internal.browser.linux;
 import java.io.*;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 import org.eclipse.help.ui.internal.util.StreamConsumer;
-import org.eclipse.help.ui.browser.IBrowser;
 public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
 	// to remote command after mozilla has been called
@@ -151,7 +152,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 				try {
 					if (exitRequested)
 						return;
-					Thread.currentThread().sleep(100);
+					Thread.sleep(100);
 				} catch (InterruptedException ie) {
 				}
 		}

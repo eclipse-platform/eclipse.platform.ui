@@ -92,7 +92,7 @@ public class ControlServlet extends HttpServlet {
 		if (!"/helpControl".equals(req.getContextPath())
 			|| !"/control.html".equals(req.getServletPath())) {
 			// do not allow arbitrary URLs to execute this servlet
-			resp.sendError(resp.SC_FORBIDDEN, "");
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "");
 			return;
 		}
 

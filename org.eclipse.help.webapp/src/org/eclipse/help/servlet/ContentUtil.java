@@ -3,14 +3,11 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.servlet;
-import java.io.*;
-import java.util.*;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.xerces.parsers.DOMParser;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 /**
  * Helper class for jsp initialization

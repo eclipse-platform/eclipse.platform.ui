@@ -8,7 +8,6 @@ import java.io.*;
 import java.text.*;
 import java.util.Date;
 
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 
 /**

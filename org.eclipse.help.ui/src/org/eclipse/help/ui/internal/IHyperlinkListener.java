@@ -5,8 +5,7 @@ package org.eclipse.help.ui.internal;
  */
 
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * 

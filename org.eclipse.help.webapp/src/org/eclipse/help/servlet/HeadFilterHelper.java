@@ -5,7 +5,6 @@
  
 package org.eclipse.help.servlet;
 
-import java.util.*;
 
 /**
  * A basic filter helper that inserts data into the header section

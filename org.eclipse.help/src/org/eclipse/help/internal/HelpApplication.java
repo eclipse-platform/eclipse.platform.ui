@@ -50,16 +50,16 @@ public class HelpApplication
 		// main program loop
 		while (status == STATUS_RUNNING) {
 			try {
-				Thread.currentThread().sleep(250);
+				Thread.sleep(250);
 			} catch (InterruptedException ie) {
 				break;
 			}
 		}
 
 		if (status == STATUS_RESTARTING) {
-			return this.EXIT_RESTART;
+			return EXIT_RESTART;
 		} else {
-			return this.EXIT_OK;
+			return EXIT_OK;
 		}
 	}
 	/**

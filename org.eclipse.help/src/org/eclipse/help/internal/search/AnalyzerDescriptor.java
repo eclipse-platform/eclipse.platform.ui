@@ -4,13 +4,12 @@
  */
 package org.eclipse.help.internal.search;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.*;
 
 /**
  * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer

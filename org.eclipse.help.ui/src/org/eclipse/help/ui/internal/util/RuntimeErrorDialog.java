@@ -3,10 +3,10 @@ package org.eclipse.help.ui.internal.util;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 /**
  * This is the Dialog box that displays all the errors the occur during the
  * initial load of the Help System. It's data (model) is taken from the

@@ -3,15 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.search;
-import java.io.*;
 import java.io.Reader;
 import java.text.BreakIterator;
-import java.util.*;
-import java.util.List;
+import java.util.Locale;
 
 import org.apache.lucene.analysis.*;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.util.Logger;
 /**
  * Lucene Analyzer.
  * LowerCaseTokenizer->WordTokenStream (uses word breaking in java.text)

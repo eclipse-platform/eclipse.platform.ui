@@ -4,10 +4,11 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import java.util.*;
-import org.eclipse.swt.widgets.*;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 
 public class HyperlinkHandler
 	implements MouseListener, MouseTrackListener, PaintListener, Listener {

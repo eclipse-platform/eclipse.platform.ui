@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.context;
 import java.util.List;
+
 import org.eclipse.help.*;
 import org.xml.sax.Attributes;
 /**

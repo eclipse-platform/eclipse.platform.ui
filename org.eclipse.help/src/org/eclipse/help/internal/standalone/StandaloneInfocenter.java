@@ -4,11 +4,7 @@
  */
 package org.eclipse.help.internal.standalone;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import org.eclipse.help.internal.standalone.*;
+import java.util.List;
 
 /**
  * This program is used to start or stop Eclipse

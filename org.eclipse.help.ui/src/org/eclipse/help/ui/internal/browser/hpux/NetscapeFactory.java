@@ -5,9 +5,8 @@
 package org.eclipse.help.ui.internal.browser.hpux;
 import java.io.IOException;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.help.ui.internal.util.StreamConsumer;
 import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class NetscapeFactory implements IBrowserFactory {
 	/**
 	 * Constructor.

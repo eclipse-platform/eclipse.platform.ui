@@ -4,7 +4,7 @@
  */
 package org.eclipse.help.internal.standalone;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * This is a standalone help system. It takes care of 

@@ -4,7 +4,6 @@ package org.eclipse.help.servlet;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
 import java.util.*;
 
 import javax.servlet.ServletContext;

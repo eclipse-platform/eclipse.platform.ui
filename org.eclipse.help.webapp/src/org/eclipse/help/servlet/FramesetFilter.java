@@ -5,7 +5,7 @@
 
 package org.eclipse.help.servlet;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class inserts a script for showing the page inside the appropriate frameset

@@ -3,7 +3,6 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.browser;
-import org.eclipse.help.ui.internal.browser.*;
 /**
  * Implementators of org.eclipse.help.ui.browsers
  * extension points must provide implementation of this

@@ -3,7 +3,6 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.search;
-import java.util.*;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 /**

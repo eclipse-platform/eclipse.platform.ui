@@ -4,6 +4,7 @@ package org.eclipse.help.internal.protocols;
  * All Rights Reserved.
  */
 import java.io.InputStream;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 /**

@@ -6,9 +6,7 @@ package org.eclipse.help.internal.standalone;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
-
-import org.eclipse.help.internal.standalone.*;
+import java.util.Properties;
 
 /**
  * This program is used to start or stop Eclipse
@@ -94,7 +92,7 @@ public class EclipseConnection {
 				}
 			}
 			try {
-				Thread.currentThread().sleep(connectionRetryInterval);
+				Thread.sleep(connectionRetryInterval);
 			} catch (InterruptedException ie) {
 				return false;
 			}
@@ -125,7 +123,7 @@ public class EclipseConnection {
 			}
 			// wait more
 			try {
-				Thread.currentThread().sleep(2000);
+				Thread.sleep(2000);
 			} catch (InterruptedException ie) {
 				return;
 			}

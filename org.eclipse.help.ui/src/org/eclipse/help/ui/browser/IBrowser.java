@@ -3,7 +3,6 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.browser;
-import org.eclipse.help.ui.internal.browser.*;
 /**
  * Represents a web browser that can be used
  * by clients to display documents for the given URLs.

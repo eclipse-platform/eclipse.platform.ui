@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.context;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IContext;
 /**

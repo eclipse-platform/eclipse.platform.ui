@@ -5,9 +5,10 @@ package org.eclipse.help.internal.util;
  */
 
 
-import java.util.*;
-import org.xml.sax.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.Status;
+import org.xml.sax.SAXParseException;
 
 /**
  * This class is intended to capture all runtime exception happening during

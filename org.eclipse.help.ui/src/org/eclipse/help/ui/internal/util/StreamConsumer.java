@@ -5,7 +5,6 @@ package org.eclipse.help.ui.internal.util;
  */
 import java.io.*;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.util.Logger;
 /**
  * Used to receive output from processes

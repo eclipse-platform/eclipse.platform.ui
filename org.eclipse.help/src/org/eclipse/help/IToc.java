@@ -4,7 +4,6 @@
  */
 package org.eclipse.help;
 
-import org.eclipse.help.IHelpResource;
 
 /**
  * IToc is the table of contents.  It contains help topics.

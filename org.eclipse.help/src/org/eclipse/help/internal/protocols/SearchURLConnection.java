@@ -5,6 +5,7 @@
 package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
+
 import org.eclipse.help.internal.util.Logger;
 public class SearchURLConnection extends URLConnection {
 	private SearchURL searchURL = null;

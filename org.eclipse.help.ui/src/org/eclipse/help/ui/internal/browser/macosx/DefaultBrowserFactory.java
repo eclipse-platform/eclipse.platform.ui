@@ -6,8 +6,7 @@
  */
 package org.eclipse.help.ui.internal.browser.macosx;
 
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.browser.IBrowserFactory;
+import org.eclipse.help.ui.browser.*;
 
 
 public class DefaultBrowserFactory implements IBrowserFactory {

@@ -5,6 +5,7 @@ package org.eclipse.help.internal.util;
  */
 import java.io.*;
 import java.util.Date;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpPlugin;
 /**

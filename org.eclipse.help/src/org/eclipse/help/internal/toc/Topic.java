@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.toc;
 import java.util.List;
+
 import org.eclipse.help.ITopic;
 import org.xml.sax.*;
 /**

@@ -9,7 +9,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.*;
 

@@ -5,12 +5,6 @@ package org.eclipse.help.servlet.data;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
 
 /**
  * This class calls eclipse API's directly, so it should only be

@@ -4,9 +4,9 @@ package org.eclipse.help.servlet;
  * All Rights Reserved.
  */
 
-import javax.servlet.*;
+import javax.servlet.ServletContext;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
 
 /**

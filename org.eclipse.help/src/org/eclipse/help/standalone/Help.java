@@ -5,7 +5,7 @@
 package org.eclipse.help.standalone;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.help.internal.standalone.StandaloneHelp;
 

@@ -3,7 +3,7 @@ package org.eclipse.help.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
 public class HyperlinkAdapter implements IHyperlinkListener {
 	/**
 	 * HyperlinkAdapter constructor comment.

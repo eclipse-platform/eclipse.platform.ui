@@ -6,10 +6,10 @@ package org.eclipse.help.ui.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
-import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
+import org.eclipse.help.ui.internal.util.*;
 
 /**
  * Creates browser by delegating

@@ -5,7 +5,7 @@ package org.eclipse.help.internal.protocols;
  */
 
 
-import java.io.*;
+import java.io.InputStream;
 import java.util.*;
 
 import org.eclipse.help.internal.util.URLCoder;

@@ -157,7 +157,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		// this will avoid seing progress if there is no work to do
 		while (!pm.isStarted()) {
 			try {
-				Thread.currentThread().sleep(50);
+				Thread.sleep(50);
 			} catch (InterruptedException ie) {
 			}
 			if (progressMonitors.get(locale) == null)

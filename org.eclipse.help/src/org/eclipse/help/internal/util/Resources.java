@@ -6,10 +6,6 @@ package org.eclipse.help.internal.util;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.io.File;
-import java.net.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
 
 /**
  * Uses a resource bundle to load images and strings from

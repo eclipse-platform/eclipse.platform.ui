@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.search;
 import java.io.Reader;
+
 import org.apache.lucene.analysis.*;
 /**
  * Lucene Analyzer for English.

@@ -6,6 +6,7 @@ package org.eclipse.help.internal.context;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.Stack;
+
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;

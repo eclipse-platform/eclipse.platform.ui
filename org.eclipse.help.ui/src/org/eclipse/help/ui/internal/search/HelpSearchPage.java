@@ -9,10 +9,10 @@ import java.util.Iterator;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.window.Window;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -52,7 +52,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		control.setLayoutData(gd);
 		// Search Expression
-		Label expressionLabel= new Label(control, SWT.LEFT);
+		Label expressionLabel = new Label(control, SWT.LEFT);
 		expressionLabel.setText(WorkbenchResources.getString("expression"));
 		// Pattern combo
 		searchWordCombo = new Combo(control, SWT.SINGLE | SWT.BORDER);
@@ -66,8 +66,11 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				if (searchWordCombo.getSelectionIndex() < 0)
 					return;
 				int index =
-					previousSearchQueryData.size() - 1 - searchWordCombo.getSelectionIndex();
-				searchQueryData = (SearchQueryData) previousSearchQueryData.get(index);
+					previousSearchQueryData.size()
+						- 1
+						- searchWordCombo.getSelectionIndex();
+				searchQueryData =
+					(SearchQueryData) previousSearchQueryData.get(index);
 				searchWordCombo.setText(searchQueryData.getSearchWord());
 				all.setSelection(!searchQueryData.isBookFiltering());
 				selected.setSelection(searchQueryData.isBookFiltering());
@@ -77,7 +80,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		});
 		searchWordCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				scontainer.setPerformActionEnabled(searchWordCombo.getText().length() > 0);
+				scontainer.setPerformActionEnabled(
+					searchWordCombo.getText().length() > 0);
 			}
 		});
 		// Space
@@ -123,7 +127,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//
 		selected = new Button(filteringGroup, SWT.RADIO);
 		selected.setSelection(searchQueryData.isBookFiltering());
-		selected.setText(WorkbenchResources.getString("HelpSearchPage.selectedBooks"));
+		selected.setText(
+			WorkbenchResources.getString("HelpSearchPage.selectedBooks"));
 		selected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				searchQueryData.setBookFiltering(true);
@@ -136,17 +141,21 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//
 		Button chooseWorkingSet = new Button(filteringGroup, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
-		chooseWorkingSet.setText(WorkbenchResources.getString("HelpSearchPage.choose"));
+		chooseWorkingSet.setText(
+			WorkbenchResources.getString("HelpSearchPage.choose"));
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 8;
-		gd.widthHint = SWTUtil.convertWidthInCharsToPixels(30, selectedBooksText);
+		gd.widthHint =
+			SWTUtil.convertWidthInCharsToPixels(30, selectedBooksText);
 		selectedBooksText.setLayoutData(gd);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SearchFilteringOptions dialog =
-					new SearchFilteringOptions(selected.getShell(), searchQueryData);
-				if (dialog.open() == dialog.OK) {
+					new SearchFilteringOptions(
+						selected.getShell(),
+						searchQueryData);
+				if (dialog.open() == Window.OK) {
 					all.setSelection(false);
 					selected.setSelection(true);
 					searchQueryData.setBookFiltering(true);
@@ -167,8 +176,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
-		boolean dontCancel=false;
-		do{
+		boolean dontCancel = false;
+		do {
 			try {
 				SearchUI.activateSearchResultView();
 				scontainer.getRunnableContext().run(
@@ -178,9 +187,11 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			} catch (InvocationTargetException ex) {
 				return false;
 			} catch (InterruptedException e) {
-				dontCancel=ErrorUtil.displayQuestionDialog(WorkbenchResources.getString("WW004"));
+				dontCancel =
+					ErrorUtil.displayQuestionDialog(
+						WorkbenchResources.getString("WW004"));
 			}
-		}while (dontCancel);
+		} while (dontCancel);
 		return true;
 	}
 	public void setContainer(ISearchPageContainer container) {
@@ -197,12 +208,14 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				String[] patterns = new String[previousSearchQueryData.size()];
 				for (int i = 0; i < previousSearchQueryData.size(); i++) {
 					patterns[previousSearchQueryData.size() - 1 - i] =
-						((SearchQueryData) previousSearchQueryData.get(i)).getSearchWord();
+						((SearchQueryData) previousSearchQueryData.get(i))
+							.getSearchWord();
 				}
 				searchWordCombo.setItems(patterns);
 			}
 			searchWordCombo.setFocus();
-			scontainer.setPerformActionEnabled(searchWordCombo.getText().length() > 0);
+			scontainer.setPerformActionEnabled(
+				searchWordCombo.getText().length() > 0);
 		}
 		super.setVisible(visible);
 	}

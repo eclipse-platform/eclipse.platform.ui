@@ -5,6 +5,7 @@
 package org.eclipse.help.internal.toc;
 
 import java.util.*;
+
 import org.eclipse.help.internal.util.*;
 
 public class TocBuilder {

@@ -7,6 +7,7 @@
 package org.eclipse.help.ui.internal.browser.macosx;
 
 import java.io.IOException;
+
 import org.eclipse.help.ui.browser.IBrowser;
 
 public class DefaultBrowserAdapter implements IBrowser {

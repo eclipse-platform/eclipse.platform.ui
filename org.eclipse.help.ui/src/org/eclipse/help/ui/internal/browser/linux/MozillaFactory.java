@@ -5,8 +5,8 @@
 package org.eclipse.help.ui.internal.browser.linux;
 import java.io.IOException;
 
-import org.eclipse.help.ui.internal.util.StreamConsumer;
 import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class MozillaFactory implements IBrowserFactory {
 	/**
 	 * Constructor.

@@ -4,17 +4,17 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.help.*;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.ui.internal.util.WorkbenchResources;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * ContextHelpDialog
@@ -163,8 +163,8 @@ public class ContextHelpDialog {
 		image.setImage(getImage());
 		image.setBackground(backgroundColour);
 		GridData data = new GridData();
-		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
-		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		//data.horizontalIndent = 4;
 		image.setLayoutData(data);
 		HyperlinkLabel link = new HyperlinkLabel(parent, SWT.NONE);

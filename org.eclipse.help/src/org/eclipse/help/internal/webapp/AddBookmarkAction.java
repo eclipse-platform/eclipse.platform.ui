@@ -4,7 +4,7 @@
  */
 package org.eclipse.help.internal.webapp;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.internal.*;
 
