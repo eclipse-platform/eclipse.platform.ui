@@ -40,10 +40,21 @@ public class HelpRoleManager implements IHelpRoleManager {
 		int i = href.indexOf("/");
 		if (i > 0)
 			href = href.substring(0, i);
-		Set enabledOrActiveIds =
-			new HashSet(activityManager.getEnabledActivityIds());
-		enabledOrActiveIds.addAll(activityManager.getActiveActivityIds());
-		return activityManager.match(href, enabledOrActiveIds);
+		
+		//Set enabledOrActiveIds =
+		//	new HashSet(activityManager.getEnabledActivityIds());
+		//enabledOrActiveIds.addAll(activityManager.getActiveActivityIds());
+		//return activityManager.match(href, enabledOrActiveIds);
+
+		Set activityIds = activityManager.getDefinedActivityIds();
+        
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {         
+			IActivity activity = activityManager.getActivity((String) iterator.next());
+                        
+			if (activity.match(href))
+				return activity.isEnabled() || activity.isActive();
+		}
+		return true;
 	}
 
 	/*
