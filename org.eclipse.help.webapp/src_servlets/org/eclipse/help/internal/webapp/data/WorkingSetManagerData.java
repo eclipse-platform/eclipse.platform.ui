@@ -11,10 +11,10 @@
 package org.eclipse.help.internal.webapp.data;
 
 
-import java.util.ArrayList;
+import java.util.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
@@ -40,7 +40,7 @@ public class WorkingSetManagerData extends RequestData {
 		HttpServletRequest request) {
 		super(context, request);
 
-		name = getDBCSParameter("workingSet");
+		name = request.getParameter("workingSet");
 
 		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
 			// upon startup in workbench mode, make sure working sets are in synch with those from UI
@@ -106,7 +106,7 @@ public class WorkingSetManagerData extends RequestData {
 
 		if (name != null && name.length() > 0) {
 
-			String oldName = getDBCSParameter("oldName");
+			String oldName = request.getParameter("oldName");
 			if (oldName == null || oldName.length() == 0)
 				oldName = name;
 			WorkingSet ws = wsmgr.getWorkingSet(oldName);

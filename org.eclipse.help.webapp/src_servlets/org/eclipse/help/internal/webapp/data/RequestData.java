@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 
 /**
  * Helper class for contents.jsp initialization
@@ -55,6 +55,10 @@ public class RequestData {
 		return UrlUtil.isIE(request);
 	}
 
+	public String getIEVersion() {
+		return UrlUtil.getIEVersion(request);
+	}
+
 	public boolean isKonqueror() {
 		return UrlUtil.isKonqueror(request);
 	}
@@ -79,32 +83,4 @@ public class RequestData {
 		return HelpSystem.getMode();
 	}
 
-	public String getDBCSParameter(String name) {
-		if (UrlUtil.isIE(request)
-			&& request.getParameter("encoding") != null) {
-			// parameter is escaped using JavaScript
-			return UrlUtil.unescape(
-				UrlUtil.getRawRequestParameter(request, name));
-		} else {
-			return request.getParameter(name);
-		}
-	}
-
-	public String[] getDBCSParameters(String name) {
-		if (UrlUtil.isIE(request)
-			&& request.getParameter("encoding") != null) {
-			// parameter is escaped using JavaScript
-			String[] rawValues = UrlUtil.getRawRequestParameters(request, name);
-			if (rawValues == null || rawValues.length == 0) {
-				return null;
-			} else {
-				String[] values = new String[rawValues.length];
-				for (int i = 0; i < rawValues.length; i++)
-					values[i] = UrlUtil.unescape(rawValues[i]);
-				return values;
-			}
-		} else {
-			return request.getParameterValues(name);
-		}
-	}
 }

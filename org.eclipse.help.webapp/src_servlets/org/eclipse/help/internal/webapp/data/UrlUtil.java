@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 import java.io.*;
-import java.net.InetAddress;
+import java.net.*;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.util.TString;
+import org.eclipse.core.boot.*;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 
 public class UrlUtil {
 	// XML escaped characters mapping
@@ -25,121 +25,6 @@ public class UrlUtil {
 	private static final String escapedXML[] =
 		{ "&amp;", "&gt;", "&lt;", "&quot;" };
 
-	/**
-	 * Decodes strings encoded with Javascript 1.3 escape
-	 * Handles DBCS charactes that escape encoded as %uHHLL.
-	 */
-	public static String unescape(String encodedURL) {
-		if (encodedURL == null)
-			return null;
-		int len = encodedURL.length();
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < len;) {
-			ByteArrayOutputStream tempOs;
-			switch (encodedURL.charAt(i)) {
-				case '%' :
-					if ((len > i + 1) && encodedURL.charAt(i + 1) != 'u') {
-						// byte encoded as %XX
-						if (len >= i + 3) {
-							tempOs = new ByteArrayOutputStream(1);
-							tempOs.write(
-								Integer.parseInt(
-									encodedURL.substring(i + 1, i + 3),
-									16));
-							try {
-								buf.append(
-									new String(
-										tempOs.toByteArray(),
-										"ISO8859_1"));
-							} catch (UnsupportedEncodingException uee) {
-								return null;
-							}
-						}
-						i += 3;
-
-					} else {
-						// char escaped to the form %uHHLL
-						if (len >= i + 6) {
-							tempOs = new ByteArrayOutputStream(2);
-							tempOs.write(
-								Integer.parseInt(
-									encodedURL.substring(i + 2, i + 4),
-									16));
-							tempOs.write(
-								Integer.parseInt(
-									encodedURL.substring(i + 4, i + 6),
-									16));
-							try {
-								buf.append(
-									new String(
-										tempOs.toByteArray(),
-										"UnicodeBigUnmarked"));
-							} catch (UnsupportedEncodingException uee) {
-								return null;
-							}
-						}
-						i += 6;
-
-					}
-
-					break;
-				case '+' : //exception from standard
-					buf.append(' ');
-					i++;
-					break;
-				default :
-					tempOs = new ByteArrayOutputStream(1);
-					tempOs.write(encodedURL.charAt(i++));
-					try {
-						buf.append(new String(tempOs.toByteArray(), "UTF8"));
-					} catch (UnsupportedEncodingException uee) {
-						return null;
-					}
-
-					break;
-			}
-
-		}
-		return buf.toString();
-	}
-	/**
-	 * Obtains parameter from request without decoding it
-	 */
-	public static String getRawRequestParameter(
-		HttpServletRequest request,
-		String parameterName) {
-		String[] values = getRawRequestParameters(request, parameterName);
-		if (values.length > 0) {
-			return values[0];
-		}
-		return null;
-	}
-	/**
-	 * Obtains values of a parameter from request query string
-	 * withoud decoding them
-	 * @return String[]
-	 */
-	public static String[] getRawRequestParameters(
-		HttpServletRequest request,
-		String parameterName) {
-		String query = request.getQueryString();
-		if (query == null || "".equals(query)) {
-			return new String[0];
-		}
-		List values = new ArrayList();
-		StringTokenizer stok = new StringTokenizer(query, "&");
-		while (stok.hasMoreTokens()) {
-			String nameEqValue = stok.nextToken();
-			int equalsPosition = nameEqValue.indexOf("=");
-			if (equalsPosition >= 0
-				&& parameterName.equals(
-					nameEqValue.substring(0, equalsPosition))) {
-				String val = nameEqValue.substring(equalsPosition + 1);
-				values.add(val);
-			}
-		}
-		return (String[]) values.toArray(new String[values.size()]);
-	}
 	/**
 	 * Encodes string for embedding in JavaScript source
 	 */
@@ -229,6 +114,17 @@ public class UrlUtil {
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
 		return (agent.indexOf("msie") >= 0);
+	}
+
+	public static String getIEVersion(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		int start = agent.indexOf("msie ") + "msie ".length();
+		if (start < "msie ".length() || start >= agent.length())
+			return "0";
+		int end = agent.indexOf(";", start);
+		if (end <= start)
+			return "0";
+		return agent.substring(start, end);
 	}
 
 	public static boolean isKonqueror(HttpServletRequest request) {

@@ -88,17 +88,7 @@ public class SearchServlet extends HttpServlet {
 	}
 
 	private ISearchQuery createSearchQuery(HttpServletRequest request) {
-		String searchWord = "";
-		if (UrlUtil.isIE(request)
-			&& request.getParameter("encoding") != null) {
-			// parameter is escaped using JavaScript
-			searchWord =
-				UrlUtil.unescape(
-					UrlUtil.getRawRequestParameter(request, "searchWord"));
-		} else {
-			searchWord = request.getParameter("searchWord");
-		}
-
+		String searchWord = request.getParameter("searchWord");
 		String fieldSearchStr = request.getParameter("fieldSearch");
 		boolean fieldSearch =
 			fieldSearchStr != null

@@ -18,7 +18,7 @@
 	}
 
 	RequestData data = new RequestData(application,request);
-	if(data.isIE() || (data.isMozilla() && data.isGecko()) ){
+	if((data.isIE() && "5.5".compareTo(data.getIEVersion()) <=0) || (data.isMozilla() && data.isGecko()) ){
 		request.getRequestDispatcher("/advanced/index.jsp").forward(request, response);
 	}else{
 		request.getRequestDispatcher("/basic/index.jsp").forward(request, response);

@@ -48,7 +48,7 @@ public class SearchData extends RequestData {
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 
-		searchWord = getDBCSParameter("searchWord");
+		searchWord = request.getParameter("searchWord");
 
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
@@ -187,12 +187,12 @@ public class SearchData extends RequestData {
 			return workingSetName;
 
 		if (isScopeRequest()) {
-			workingSetName = getDBCSParameter("workingSet");
+			workingSetName = request.getParameter("workingSet");
 		} else if (isSearchRequest()) {
-			workingSetName = getDBCSParameter("scope");
+			workingSetName = request.getParameter("scope");
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
-				workingSetName = getDBCSParameter("workingSet");
+				workingSetName = request.getParameter("workingSet");
 		} else {
 			workingSetName =
 				HelpPlugin.getDefault().getPluginPreferences().getString(
@@ -216,7 +216,7 @@ public class SearchData extends RequestData {
 		if (getMode() == MODE_INFOCENTER)
 			return;
 		// if a working set is defined, set it in the preferences
-		String workingSet = getDBCSParameter("scope");
+		String workingSet = request.getParameter("scope");
 		String lastWS =
 			HelpPlugin.getDefault().getPluginPreferences().getString(
 				HelpSystem.WORKING_SET);
@@ -225,7 +225,8 @@ public class SearchData extends RequestData {
 				HelpSystem.WORKING_SET,
 				workingSet);
 			HelpPlugin.getDefault().savePluginPreferences();
-		} else if (workingSet == null && lastWS != null && lastWS.length() > 0) {
+		} else if (
+			workingSet == null && lastWS != null && lastWS.length() > 0) {
 			HelpPlugin.getDefault().getPluginPreferences().setValue(
 				HelpSystem.WORKING_SET,
 				"");
@@ -277,7 +278,7 @@ public class SearchData extends RequestData {
 			getLocale());
 	}
 	private SearchResults createHitCollector() {
-		String[] scopes = getDBCSParameters("scope");
+		String[] scopes = request.getParameterValues("scope");
 		Collection scopeCol = null;
 		if (scopes != null) {
 			if (scopes.length

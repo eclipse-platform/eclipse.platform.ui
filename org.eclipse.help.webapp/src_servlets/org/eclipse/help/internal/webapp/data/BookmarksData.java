@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
+import java.util.*;
 
-import java.util.StringTokenizer;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
@@ -48,7 +47,7 @@ public class BookmarksData extends RequestData {
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
-			String title = getDBCSParameter("title");
+			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 
@@ -69,7 +68,7 @@ public class BookmarksData extends RequestData {
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
-			String title = getDBCSParameter("title");
+			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 			String removeString =

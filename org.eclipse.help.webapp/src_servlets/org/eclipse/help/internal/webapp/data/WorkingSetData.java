@@ -11,10 +11,10 @@
 package org.eclipse.help.internal.webapp.data;
 
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -44,7 +44,7 @@ public class WorkingSetData extends RequestData {
 	}
 
 	public String getWorkingSetName() {
-		String name = getDBCSParameter("workingSet");
+		String name = request.getParameter("workingSet");
 		if (name == null)
 			name = "";
 		return name;
