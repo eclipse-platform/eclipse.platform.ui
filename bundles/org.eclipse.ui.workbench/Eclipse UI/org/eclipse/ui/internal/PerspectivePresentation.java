@@ -1781,8 +1781,7 @@ public class PerspectivePresentation {
 		if (pane instanceof ViewPane) {
 			parentWidget.setRedraw(false);
 
-			ILayoutContainer parentContainer =
-				(PartTabFolder) ((ViewPane) pane).getContainer();
+			ILayoutContainer parentContainer = ((ViewPane) pane).getContainer();
 			if (parentContainer instanceof PartTabFolder) {
 				PartTabFolder parent = (PartTabFolder) parentContainer;
 				Perspective persp = page.getActivePerspective();
