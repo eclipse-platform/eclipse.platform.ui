@@ -977,14 +977,14 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		
 		if (fCompareConfiguration.isLeftEditable() && fLeftSaveAction.isEnabled()) {
 			byte[] bytes= getContents(true);
-			content.saveLeftContent(oldInput, bytes);
 			setLeftDirty(false);
+			content.saveLeftContent(oldInput, bytes);
 		}
 		
 		if (fCompareConfiguration.isRightEditable() && fRightSaveAction.isEnabled()) {
 			byte[] bytes= getContents(false);
-			content.saveRightContent(oldInput, bytes);
 			setRightDirty(false);
+			content.saveRightContent(oldInput, bytes);
 		}
 	}
 }
