@@ -33,13 +33,12 @@ import org.osgi.util.tracker.ServiceTracker;
 public final class InternalPlatform implements IPlatform {
 	private BundleContext context;
 	private IExtensionRegistry registry;
+	private static IAdapterManager adapterManager;
 	private Plugin runtimeInstance; //Keep track of the plugin object for runtime in case the backward compatibility is run.
 	
-	// registry caching mode flags
-	public static boolean cacheRegistry = true;
-	public static boolean lazyRegistryCacheLoading = true;
+	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static IAdapterManager adapterManager;
+	private IPath configMetadataLocation;
 
 	static ServiceRegistration platformRegistration;
 	static EnvironmentInfo infoService;
@@ -135,24 +134,37 @@ public final class InternalPlatform implements IPlatform {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
-	
+	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
 	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final int METADATA_VERSION_VALUE = 1;
 
-	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-
-	// System Properties
-	public static final String INSTALL_LOCATION = "osgi.installLocation";
-	public static final String PROP_PRODUCT = "eclipse.product";
-	public static final String PROP_APPLICATION = "eclipse.application";
-	public static final String PROP_DATA = "eclipse.instanceData";
-
+	// Eclipse System Properties
+	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
+	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
+	public static final String PROP_NO_VERSION_CHECK = "eclipse.noVersionCheck"; //$NON-NLS-1$
 	public static final String PROP_NO_DATA = "eclipse.noData"; //$NON-NLS-1$
 	public static final String PROP_NO_DEFAULT_DATA = "eclipse.noDefaultData"; //$NON-NLS-1$
-	
-	private static final InternalPlatform singleton = new InternalPlatform();
+	public static final String PROP_NO_REGISTRY_CACHE = 	"eclipse.noRegistryCache"; //$NON-NLS-1$
+	public static final String PROP_NO_LAZY_CACHE_LOADING = 	"eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
+	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
-	private IPath configMetadataLocation;
+	// OSGI system properties.  Copied from EclipseStarter
+	public static final String PROP_INSTALL_LOCATION = "osgi.installLocation"; //$NON-NLS-1$
+	public static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
+	public static final String PROP_INSTANCE_AREA = "osgi.instance.area"; //$NON-NLS-1$
+	public static final String PROP_USER_AREA = "osgi.user.area"; //$NON-NLS-1$
+	public static final String PROP_MANIFEST_CACHE = "osgi.manifest.cache"; //$NON-NLS-1$
+	public static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$
+	public static final String PROP_DEV = "osgi.dev"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE = "osgi.console"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE_CLASS= "osgi.consoleClass"; //$NON-NLS-1$
+	public static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
+	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
+	public static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
+	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
+	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
+	public static final String PROP_SYSPATH= "osgi.syspath"; //$NON-NLS-1$
 
 	/**
 	 * Private constructor to block instance creation.
@@ -644,20 +656,20 @@ public final class InternalPlatform implements IPlatform {
 
 			// look for the log flag
 			if (args[i].equalsIgnoreCase(LOG)) {
-				System.setProperty("eclipse.consoleLog", "true"); //$NON-NLS-1$
+				System.setProperty(PROP_CONSOLE_LOG, "true"); //$NON-NLS-1$
 				found = true;
 			}
 
 			// look for the no registry cache flag
 			if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
-				System.setProperty("eclipse.noRegistryCache", "true"); //$NON-NLS-1$
+				System.setProperty(PROP_NO_REGISTRY_CACHE, "true"); //$NON-NLS-1$
 				found = true;
 			}
 
 			// check to see if we should NOT be lazily loading plug-in definitions from the registry cache file.
 			// This will be processed below.
 			if (args[i].equalsIgnoreCase(NO_LAZY_REGISTRY_CACHE_LOADING)) {
-				System.setProperty("eclipse.noLazyRegistryCacheLoading", "true"); //$NON-NLS-1$
+				System.setProperty(PROP_NO_LAZY_CACHE_LOADING, "true"); //$NON-NLS-1$
 				found = true;
 			}
 
@@ -682,7 +694,7 @@ public final class InternalPlatform implements IPlatform {
 			
 			// look for the flag to turn off the workspace metadata version check
 			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
-				System.setProperty("eclipse.noVersionCheck", "true"); //$NON-NLS-1$
+				System.setProperty(PROP_NO_VERSION_CHECK, "true"); //$NON-NLS-1$
 				found = true;
 			}
 
@@ -724,13 +736,13 @@ public final class InternalPlatform implements IPlatform {
 
 			// look for the product to run
 			if (args[i - 1].equalsIgnoreCase(PRODUCT)) {
-				System.setProperty("eclipse.product", arg); //$NON-NLS-1$
+				System.setProperty(PROP_PRODUCT, arg); //$NON-NLS-1$
 				found = true;
 			}
 
 			// look for the application to run.  
 			if (args[i - 1].equalsIgnoreCase(APPLICATION)) {
-				System.setProperty("eclipse.application", arg); //$NON-NLS-1$
+				System.setProperty(PROP_APPLICATION, arg); //$NON-NLS-1$
 				found = true;
 			}
 
@@ -1056,7 +1068,7 @@ public final class InternalPlatform implements IPlatform {
 	public URL getInstallURL() {
 		if (installLocation == null)
 			try {
-				installLocation = new URL(System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
+				installLocation = new URL(System.getProperty(PROP_INSTALL_LOCATION)); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				//This can't fail because the location was set coming in
 			}

@@ -11,8 +11,6 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Hashtable;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
@@ -51,32 +49,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		super.start(context);
 	}
 
-	private void installBackwardCompatibleURLSupport() {
-		try {
-			Class handler = Class.forName("org.eclipse.core.internal.runtime.PlatformURLPluginHandlerFactory");
-			Method startupMethod = handler.getDeclaredMethod("startup", null);
-			startupMethod.invoke(handler, null);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return; //TODO log a warning
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Register the platform URL support as a service to the URLHandler service
 	 */
@@ -93,7 +65,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void startRegistry(BundleContext context) {
 		boolean fromCache = true;
-		if (!"true".equals(System.getProperty("eclipse.noRegistryCache"))) {
+		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) {
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
@@ -101,7 +73,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			long start = 0;
 			if (InternalPlatform.DEBUG)
 				start = System.currentTimeMillis();
-			boolean lazyLoading = !"true".equals(System.getProperty("eclipse.noLazyRegistryCacheLoading")); //$NON-NLS-1$
+			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
 			registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
 
 			if (InternalPlatform.DEBUG && registry != null)
@@ -111,7 +83,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				if (registry == null)
 					System.out.println("Reloading registry from manifest files...");
 				else
-					System.out.println("Using registry cache " + (InternalPlatform.lazyRegistryCacheLoading ? "with" : "without") + " lazy element loading...");
+					System.out.println("Using registry cache " + (lazyLoading ? "with" : "without") + " lazy element loading...");
 			}
 			// TODO log any problems that occurred in loading the cache.
 			if (!problems.isOK())
