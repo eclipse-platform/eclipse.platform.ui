@@ -967,24 +967,6 @@ public class PerspectivePresentation {
 	public boolean isZoomed() {
 		return (zoomPart != null);
 	}
-	/**
-	 * Place the part on the shortcut bar as a fast view
-	 */
-	private void makeFast(LayoutPart source) {
-
-		LayoutPart part = source.getPart();
-
-		if (part instanceof PartTabFolder) {
-			LayoutPart[] children = ((PartTabFolder) part).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof ViewPane)
-					page.addFastView(
-						((ViewPane) children[i]).getViewReference());
-			}
-		} else {
-			page.addFastView(((ViewPane) part).getViewReference());
-		}
-	}	
 
 	/**
 	 * Returns the ratio that should be used when docking the given source
@@ -1020,7 +1002,7 @@ public class PerspectivePresentation {
 			return false;
 
 		PartPane zoomPane =
-			(PartPane) ((WorkbenchPartReference) zoomPart).getPane();
+			((WorkbenchPartReference) zoomPart).getPane();
 		if (pane instanceof EditorPane && zoomPane instanceof EditorPane) {
 			if (((EditorPane) pane)
 				.getWorkbook()

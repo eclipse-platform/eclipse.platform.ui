@@ -45,7 +45,7 @@ public abstract class ActionGroup {
 	 */
 	public ActionContext getContext() {
 		return context;
-	};
+	}
 	
 	/** 
 	 * Sets the context used to determine which actions are added,
@@ -55,7 +55,7 @@ public abstract class ActionGroup {
 	 */
 	public void setContext(ActionContext context) {
 		this.context = context;
-	};
+	}
 
 	/** 
 	 * Adds the applicable actions to a context menu,
@@ -68,7 +68,8 @@ public abstract class ActionGroup {
 	 * @param menu the context menu manager
 	 */
 	public void fillContextMenu(IMenuManager menu) {
-	};
+	    // do nothing
+	}
 
 	/** 
 	 * Adds the applicable actions to a part's action bars,
@@ -81,7 +82,8 @@ public abstract class ActionGroup {
 	 * @param actionBars the part's action bars
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-	};
+	    // do nothing
+	}
 
 	/**
 	 * Updates the state of the actions added to the action bars,
@@ -93,6 +95,7 @@ public abstract class ActionGroup {
 	 * </p>
 	 */
 	public void updateActionBars() {
+	    // do nothing
 	}
 	
 	/** 
@@ -106,5 +109,5 @@ public abstract class ActionGroup {
 	 */
 	public void dispose() {
 		setContext(null);
-	};
+	}
 }
