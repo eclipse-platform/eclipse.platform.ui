@@ -59,6 +59,7 @@ class OutOfOrderVerifyListener implements VerifyKeyListener {
 		// If the event is still up for grabs, then re-route through
 		// the global key filter.
 		if (event.doit) {
+		    widget.addListener(SWT.Modify, new CancelOnModifyListener(chainedListener));
 			widget.addListener(SWT.KeyDown, chainedListener);
 		}
 	}
