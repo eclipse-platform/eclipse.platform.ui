@@ -617,8 +617,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			LaunchGroupExtension[] groups = getLaunchGroups();
 			for (int i = 0; i < groups.length; i++) {
 				LaunchGroupExtension extension = groups[i];
-				if (category == null && extension.getCategory() == null) {
-					if (extension.getMode().equals(mode)) {
+				if (category == null) {
+					if (extension.getCategory() == null && extension.getMode().equals(mode)) {
 						return extension;
 					}
 				} else if (category.equals(extension.getCategory())) {

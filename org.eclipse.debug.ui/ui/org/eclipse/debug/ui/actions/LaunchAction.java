@@ -8,9 +8,14 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -55,4 +60,21 @@ public class LaunchAction extends Action {
 	public void run() {
 		DebugUITools.launch(fConfiguration, fMode);
 	}
+	
+	/**
+	 * If the user has control-clicked the launch history item, open the launch
+	 * configuration dialog on the launch configuration, rather than running it.
+	 * 
+	 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(Event event) {
+		if ((event.stateMask & SWT.CONTROL) > 0) {
+			IStructuredSelection selection = new StructuredSelection(fConfiguration);
+			String id = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fConfiguration, fMode).getIdentifier();
+			DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), selection, id); 
+		} else {
+			run();
+		}
+	}
+
 }

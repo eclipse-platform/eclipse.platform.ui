@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -304,18 +305,28 @@ public class DebugUITools {
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.1
 	 */
-	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
-		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-		if (dialog != null) {
-			dialog.setInitialSelection(selection);
-			dialog.doInitialTreeSelection();
-			return Window.OK;
-		} else {
-			dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
-			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-			dialog.setInitialSelection(selection);
-			return dialog.open();			
-		}
+	public static int openLaunchConfigurationDialogOnGroup(final Shell shell, final IStructuredSelection selection, final String groupIdentifier) {
+		final int[] result = new int[1];
+		Runnable r = new Runnable() {
+			/**
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+				if (dialog != null) {
+					dialog.setInitialSelection(selection);
+					dialog.doInitialTreeSelection();
+					result[0] = Window.OK;
+				} else {
+					dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
+					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+					dialog.setInitialSelection(selection);
+					result[0] = dialog.open();			
+				}
+			}
+		};
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
+		return result[0];
 	}
 	
 	/**
