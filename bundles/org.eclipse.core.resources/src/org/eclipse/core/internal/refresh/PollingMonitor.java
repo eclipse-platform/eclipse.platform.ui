@@ -10,11 +10,8 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;

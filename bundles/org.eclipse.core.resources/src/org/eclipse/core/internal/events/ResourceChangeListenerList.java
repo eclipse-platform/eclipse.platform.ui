@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.resources.IResourceChangeListener;
 
 /**
  * This class is used to maintain a list of listeners.

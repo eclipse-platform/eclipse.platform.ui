@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.utils.Policy;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * This class is used to read sync info from disk. Subclasses implement

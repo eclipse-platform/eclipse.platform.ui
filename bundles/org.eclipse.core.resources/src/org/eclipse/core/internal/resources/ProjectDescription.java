@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
-
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.*;

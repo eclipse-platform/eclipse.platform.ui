@@ -17,6 +17,7 @@ import org.eclipse.core.internal.indexing.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.utils.Assert;
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.internal.dtree.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /** <code>ElementTreeWriter</code> flattens an ElementTree
  * onto a data output stream.

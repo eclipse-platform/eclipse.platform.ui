@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * <code>DataTreeNode</code>s are the nodes of a <code>DataTree</code>.  Their

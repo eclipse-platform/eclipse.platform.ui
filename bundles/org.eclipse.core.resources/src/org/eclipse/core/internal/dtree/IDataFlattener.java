@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
+import java.io.*;
 import org.eclipse.core.runtime.IPath;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 
 /** 
  * The <code>IElementInfoFlattener</code> interface supports

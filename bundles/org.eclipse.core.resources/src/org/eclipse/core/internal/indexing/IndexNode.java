@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.util.*;
+import java.util.HashSet;
 
 class IndexNode extends IndexedStoreObject {
 

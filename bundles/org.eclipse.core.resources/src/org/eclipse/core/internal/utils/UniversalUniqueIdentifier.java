@@ -15,8 +15,8 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
-import java.util.Random;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 public class UniversalUniqueIdentifier implements java.io.Serializable {
 

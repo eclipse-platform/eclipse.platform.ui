@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 
 /**

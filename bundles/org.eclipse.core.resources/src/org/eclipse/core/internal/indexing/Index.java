@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.util.*;
+import java.util.Vector;
 
 /**
  * This class provides the public interface to an index.

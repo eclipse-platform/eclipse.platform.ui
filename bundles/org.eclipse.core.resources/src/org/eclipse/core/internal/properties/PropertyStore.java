@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.properties;
 
 import java.util.*;
-
 import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.indexing.ObjectID;
 import org.eclipse.core.internal.resources.ResourceException;

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.internal.watson.IDeltaFilter;
+import org.eclipse.core.resources.IResourceDelta;
 
 public class DeltaFilter implements IDeltaFilter {
 	protected int mask;

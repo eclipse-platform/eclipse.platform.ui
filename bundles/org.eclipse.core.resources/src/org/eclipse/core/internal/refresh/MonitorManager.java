@@ -10,7 +10,6 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.*;
-
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;

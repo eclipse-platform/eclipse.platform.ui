@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.*;
+import java.util.Properties;
+import java.util.Set;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.utils.Policy;
-import java.io.*;
-import java.util.*;
 
 /**
  * Represents a table of keys and paths used by a plugin to maintain its

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.*;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
-import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.*;
 
 public class WorkspaceTreeReader_2 extends WorkspaceTreeReader {
 

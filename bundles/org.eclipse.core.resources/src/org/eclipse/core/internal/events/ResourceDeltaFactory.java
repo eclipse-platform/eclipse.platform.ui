@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.events.ResourceComparator;
-import org.eclipse.core.internal.events.ResourceDelta;
-import org.eclipse.core.internal.events.ResourceDeltaInfo;
-import org.eclipse.core.internal.resources.ICoreConstants;
-import org.eclipse.core.internal.resources.Project;
-import org.eclipse.core.internal.resources.ResourceInfo;
-import org.eclipse.core.internal.resources.Workspace;
+import java.util.Map;
+import org.eclipse.core.internal.dtree.DeltaDataTree;
+import org.eclipse.core.internal.dtree.NodeComparison;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.ElementTree;
-import java.util.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This class is used for calculating and building resource delta trees for notification 

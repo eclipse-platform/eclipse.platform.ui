@@ -13,7 +13,8 @@ package org.eclipse.core.resources.ant;
 import java.util.Hashtable;
 import org.apache.tools.ant.*;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 
 /**

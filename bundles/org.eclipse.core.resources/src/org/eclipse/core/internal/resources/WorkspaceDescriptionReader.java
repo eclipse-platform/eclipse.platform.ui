@@ -11,13 +11,14 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 

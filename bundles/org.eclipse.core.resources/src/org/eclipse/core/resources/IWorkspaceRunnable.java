@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A runnable which executes as a batch operation within the workspace.

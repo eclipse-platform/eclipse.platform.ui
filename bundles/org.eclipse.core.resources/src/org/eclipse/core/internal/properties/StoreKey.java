@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.properties;
 
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
+import java.io.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
-import java.io.*;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 
 /**
  *

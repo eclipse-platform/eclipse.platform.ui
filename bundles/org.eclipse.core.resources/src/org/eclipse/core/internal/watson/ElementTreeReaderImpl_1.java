@@ -12,7 +12,6 @@ package org.eclipse.core.internal.watson;
 
 import java.io.DataInput;
 import java.io.IOException;
-
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 
 /** <code>ElementTreeReader_1</code> is an implementation

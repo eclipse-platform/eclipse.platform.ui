@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.*;
+import java.util.*;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.File;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.util.*;
 
 /**
  * Manages the synchronization between the workspace's view and the file system.  

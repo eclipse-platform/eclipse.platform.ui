@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Reservation {
 

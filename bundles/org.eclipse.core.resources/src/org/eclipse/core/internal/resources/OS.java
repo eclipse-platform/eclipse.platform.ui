@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Arrays;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.osgi.service.environment.Constants;
 

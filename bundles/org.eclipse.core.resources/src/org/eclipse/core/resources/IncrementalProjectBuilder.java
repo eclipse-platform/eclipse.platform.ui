@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.InternalBuilder;
 import java.util.Map;
+import org.eclipse.core.internal.events.InternalBuilder;
+import org.eclipse.core.runtime.*;
 
 /**
  * The abstract base class for all incremental project builders. This class

@@ -12,7 +12,6 @@ package org.eclipse.core.internal.events;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.internal.resources.ModelObject;
 import org.eclipse.core.resources.ICommand;
 

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.IResourceStatus;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 
 /**
  * A checked exception representing a failure.

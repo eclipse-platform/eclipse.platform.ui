@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IFileState;
-import org.eclipse.core.runtime.*;
+import java.io.InputStream;
 import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
-import java.io.InputStream;
+import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.runtime.*;
 
 public class FileState extends PlatformObject implements IFileState {
 	protected long lastModified;

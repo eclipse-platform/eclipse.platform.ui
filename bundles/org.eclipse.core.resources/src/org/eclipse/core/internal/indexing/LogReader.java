@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 class LogReader {
 

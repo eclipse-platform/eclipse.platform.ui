@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 
 class LogWriter {
 

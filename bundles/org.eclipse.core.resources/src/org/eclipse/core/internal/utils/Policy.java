@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
 import java.text.MessageFormat;
 import java.util.*;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	public static final long MAX_BUILD_DELAY = 1000;

@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.events.BuilderPersistentInfo;
-import org.eclipse.core.internal.watson.*;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.utils.Policy;
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.internal.events.BuilderPersistentInfo;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.watson.ElementTree;
+import org.eclipse.core.internal.watson.ElementTreeReader;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 
 public class WorkspaceTreeReader {
 	protected Workspace workspace;

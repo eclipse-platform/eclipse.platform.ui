@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * An implementation of the visitor pattern, for visiting the elements

@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.FileSystemStore;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.*;
-import java.io.*;
-import java.util.*;
 
 //
 public class BlobStore {

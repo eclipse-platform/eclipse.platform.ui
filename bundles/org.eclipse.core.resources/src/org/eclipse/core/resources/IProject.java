@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
 import java.util.Map;
+import org.eclipse.core.runtime.*;
 
 /**
  * A project is a type of resource which groups resources

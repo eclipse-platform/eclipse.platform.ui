@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.CoreException;
 

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.File;
-
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;

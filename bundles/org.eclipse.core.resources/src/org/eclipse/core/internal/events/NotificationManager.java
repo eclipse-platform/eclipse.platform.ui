@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.events;
 
 import java.util.*;
-
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;

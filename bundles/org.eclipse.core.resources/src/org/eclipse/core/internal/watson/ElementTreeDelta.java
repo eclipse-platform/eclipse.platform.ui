@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.IPath;
+import java.util.Vector;
 import org.eclipse.core.internal.dtree.*;
-import java.util.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Describes the differences between two element trees.  

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A <code>DeletedNode</code> represents a node that has been deleted in a 

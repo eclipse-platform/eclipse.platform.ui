@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import java.util.NoSuchElementException;
 import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 /**
  * An object which enumerates the elements of an array

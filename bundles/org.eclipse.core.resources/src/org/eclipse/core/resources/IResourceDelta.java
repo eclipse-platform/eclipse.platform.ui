@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.watson.IElementComparator;
+import org.eclipse.core.runtime.*;
 
 /**
  * A resource delta represents changes in the state of a resource tree

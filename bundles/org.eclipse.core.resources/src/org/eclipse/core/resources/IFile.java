@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
 import java.io.InputStream;
+import org.eclipse.core.runtime.*;
 
 /**
  * Files are leaf resources which contain data.

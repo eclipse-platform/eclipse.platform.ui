@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.*;
+import java.io.File;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.*;
-import java.io.*;
 
 public class FileSystemStore implements ILocalStoreConstants {
 	/**

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import java.io.InputStream;
+import org.eclipse.core.runtime.*;
 
 /**
  * A storage object represents a set of bytes which can be accessed.

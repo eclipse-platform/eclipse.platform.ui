@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
 
 //
 /**

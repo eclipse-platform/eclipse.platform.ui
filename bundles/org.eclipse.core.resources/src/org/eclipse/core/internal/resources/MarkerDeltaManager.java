@@ -10,8 +10,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The notification mechanism can request marker deltas for several overlapping intervals
