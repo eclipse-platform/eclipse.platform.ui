@@ -142,7 +142,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * This method can be used to override the default source path computer
 	 * for a launch configuration type. When <code>null</code> is specified
 	 * the default source path computer will be used (i.e. the one assocaited
-	 * with this director's launch configuration's type.
+	 * with this director's launch configuration's type).
 	 *  
 	 * @param computer source path computer or <code>null</code>
 	 */
