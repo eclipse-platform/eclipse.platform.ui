@@ -101,11 +101,12 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
     }
 
     /**
-     * Utility method to convert all the content of a vector of IntroElements
-     * into an array of IntroElements cast to the correct class type. It is
-     * assumed that all elements in this vector are IntroElement instances. If
-     * elementMask is a predefined model type (ie: homogenous), then return
-     * array of corresponding type. Else, returns an array of IntroElements.
+     * Utility method to convert all the content of a vector of
+     * AbstractIntroElements into an array of IntroElements cast to the correct
+     * class type. It is assumed that all elements in this vector are
+     * IntroElement instances. If elementMask is a predefined model type (ie:
+     * homogenous), then return array of corresponding type. Else, returns an
+     * array of IntroElements.
      * 
      * @param vector
      */
@@ -141,9 +142,12 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
         case AbstractIntroElement.HEAD:
             src = new IntroHead[size];
             break;
+        case AbstractIntroElement.PAGE_TITLE:
+            src = new IntroPageTitle[size];
+            break;
 
         default:
-            // now handle abstract types. Vector is not homogenous.
+            // now handle left over abstract types. Vector is not homogenous.
             src = src = new AbstractIntroElement[size];
             break;
         }

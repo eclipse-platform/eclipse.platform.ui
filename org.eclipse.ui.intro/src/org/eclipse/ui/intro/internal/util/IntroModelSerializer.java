@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.intro.internal.model.*;
 
 /**
- * Print the model to a string buffer for debugging.
+ * Print the model to a string buffer (only) for debugging.
  */
 public class IntroModelSerializer {
 
@@ -142,6 +142,9 @@ public class IntroModelSerializer {
             case AbstractIntroElement.HEAD:
                 printHead(text, (IntroHead) children[i], indent);
                 break;
+            case AbstractIntroElement.PAGE_TITLE:
+                printPageTitle(text, (IntroPageTitle) children[i], indent);
+                break;
 
             }
 
@@ -208,6 +211,14 @@ public class IntroModelSerializer {
         text.append(indent + "src = " + head.getSrc());
     }
 
+    private void printPageTitle(StringBuffer text, IntroPageTitle title,
+            String indent) {
+        text.append(indent + "TITLE: id = " + title.getId());
+        indent = indent + "\t\t";
+        text.append(indent + "title = " + title.getTitle());
+        text.append(indent + "class-id = " + title.getClassId());
+    }
+
     /**
      * Appends a given page's categories to the Text buffer.
      * 
@@ -258,6 +269,14 @@ public class IntroModelSerializer {
                 .append("\n\t\t\tIncludes: "
                         + firstPage
                                 .getChildrenOfType(AbstractIntroElement.INCLUDE).length);
+        text
+                .append("\n\t\t\tPage Titles: "
+                        + firstPage
+                                .getChildrenOfType(AbstractIntroElement.PAGE_TITLE).length);
+        text
+                .append("\n\t\t\tPage Heads: "
+                        + firstPage
+                                .getChildrenOfType(AbstractIntroElement.HEAD).length);
         text
                 .append("\n\t\t\tModel Elements: "
                         + firstPage

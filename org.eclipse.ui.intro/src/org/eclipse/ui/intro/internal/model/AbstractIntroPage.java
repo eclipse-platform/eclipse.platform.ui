@@ -185,8 +185,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
     /**
-     * Override parent behavior to add support for HEAD element in pages only,
-     * and not in divs.
+     * Override parent behavior to add support for HEAD & Title element in pages
+     * only, and not in divs.
      * 
      * @see org.eclipse.ui.intro.internal.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
      */
@@ -195,8 +195,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         AbstractIntroElement child = null;
         if (childElement.getName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
             child = new IntroHead(childElement);
-            return child;
+        } else if (childElement.getName().equalsIgnoreCase(
+                IntroPageTitle.TAG_TITLE)) {
+            child = new IntroPageTitle(childElement);
         }
+        if (child != null)
+            return child;
+
         return super.getModelChild(childElement);
     }
 

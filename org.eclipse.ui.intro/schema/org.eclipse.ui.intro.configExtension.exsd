@@ -107,6 +107,7 @@
             <element ref="html"/>
             <element ref="img"/>
             <element ref="include"/>
+            <element ref="title"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -174,6 +175,30 @@
       </complexType>
    </element>
 
+   <element name="title">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this title.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="link">
       <complexType>
          <sequence>
@@ -197,6 +222,30 @@
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="title">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this title.
                </documentation>
             </annotation>
          </attribute>

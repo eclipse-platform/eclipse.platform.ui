@@ -146,8 +146,8 @@ Note: do we really wanna expose this implementation detail?
             <element ref="head"/>
             <element ref="img"/>
             <element ref="include"/>
-            <element ref="head"/>
             <element ref="html"/>
+            <element ref="title"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -377,6 +377,30 @@ Note: do we really wanna expose this implementation detail?
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="title">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this title.
                </documentation>
             </annotation>
          </attribute>

@@ -100,12 +100,18 @@ public abstract class AbstractIntroElement {
      */
     public static final int HEAD = 1 << 11;
 
+    /**
+     * Type constant which identifies the IntroHead element.
+     */
+    public static final int PAGE_TITLE = 1 << 12;
+
 
     /**
      * Type constant which identifies the AbstractCommonIntroElement element.
      */
     public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
-            | CONTAINER_EXTENSION | HEAD | IMAGE | PRESENTATION | TEXT;
+            | CONTAINER_EXTENSION | HEAD | PAGE_TITLE | IMAGE | PRESENTATION
+            | TEXT;
 
     /**
      * Type constant which identifies any element in the Intro Model.
