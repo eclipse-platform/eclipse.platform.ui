@@ -39,4 +39,7 @@ public class ForceUpdateSyncAction extends UpdateSyncAction {
 			set.removeOutgoingNodes();
 		}
 	}
+	protected boolean promptForConflicts() {
+		return true;
+	}
 }
