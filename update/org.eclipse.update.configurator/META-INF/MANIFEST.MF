@@ -6,7 +6,7 @@ Bundle-Version: 3.0.0
 Bundle-DocUrl: http://www.eclipse.org
 Build-Information: ${build-information}
 Bundle-Activator: 
- org.eclipse.update.internal.configurator.ConfigurationActivator
+ org.eclipse.update.configurator.ConfigurationActivator
 Bundle-ClassPath: 
  configurator.jar
 Import-Package: 
