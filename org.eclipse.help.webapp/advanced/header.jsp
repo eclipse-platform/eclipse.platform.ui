@@ -3,7 +3,7 @@
  All Rights Reserved.
 --%>
 
-<%@ page import="java.util.*,org.eclipse.help.*,org.eclipse.help.internal.webapp.servlet.*,org.eclipse.help.internal.webapp.data.*"  contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.eclipse.help.internal.webapp.servlet.*,org.eclipse.help.internal.webapp.data.*"  contentType="text/html; charset=UTF-8"%>
 
 <% 
 	request.setCharacterEncoding("UTF-8");
