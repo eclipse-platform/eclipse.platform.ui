@@ -27,6 +27,9 @@ public class RegistryObjectManager implements IObjectManager {
 	static final byte EXTENSION_POINT = 3;
 	static final byte THIRDLEVEL_CONFIGURATION_ELEMENT = 4;
 
+    static final int CACHE_INITIAL_SIZE = 512; //This value has been picked because it is the minimal size required to startup an RCP app. (FYI, eclipse requires 3 growths).
+    static final float DEFAULT_LOADFACTOR = 0.75f; //This is the default factor used in reference map.
+    
 	static final int[] EMPTY_INT_ARRAY = new int[0];
 	static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -60,9 +63,9 @@ public class RegistryObjectManager implements IObjectManager {
 	public RegistryObjectManager() {
 		extensionPoints = new HashtableOfStringAndInt();
 		if ("true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_FLUSHING))) { //$NON-NLS-1$
-			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.HARD);
+			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.HARD, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
 		} else {
-			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT);
+			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
 		}
 		newContributions = new KeyedHashSet();
 		fileOffsets = new HashtableOfInt();
