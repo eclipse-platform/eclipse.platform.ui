@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -121,6 +122,7 @@ public class InternalSiteManager {
 		if (TEMP_SITE == null) {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
+				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
 				TEMP_SITE =	new FileSite(new URL("file",null,tempDir));
 			} catch (MalformedURLException e) {
 				//FIXME: should never occur... hardcoded ?

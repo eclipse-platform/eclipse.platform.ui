@@ -522,9 +522,11 @@ public abstract class AbstractFeature implements IFeature {
 			// install the Feature info
 			InputStream inStream = null;			
 			String[] names = getStorageUnitNames();
-			for (int j = 0; j < names.length; j++) {
-				if ((inStream = getInputStreamFor(names[j])) != null)
-					targetFeature.getSite().storeFeatureInfo(getIdentifier(), names[j], inStream);
+			if (names!=null){
+				for (int j = 0; j < names.length; j++) {
+					if ((inStream = getInputStreamFor(names[j])) != null)
+						targetFeature.getSite().storeFeatureInfo(getIdentifier(), names[j], inStream);
+				}
 			}
 
 		} catch (IOException e) {
