@@ -137,6 +137,10 @@ public IEditorPart getVisibleEditor() {
 	else
 		return null;
 }
+public void moveEditor(IEditorPart part,int position) {
+	editorArea.getActiveWorkbook().reorderTab(
+		(EditorPane)((EditorSite)part.getSite()).getPane(),position);
+}
 /**
  * Move a part from one position to another.
  * This implementation assumes the target is

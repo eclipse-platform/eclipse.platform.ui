@@ -518,6 +518,15 @@ public void reorderTab(EditorPane pane, int x, int y) {
 	reorderTab(pane, sourceTab, targetIndex);
 }
 /**
+ * Move the specified editor to the a new position. 
+ * Move to the end if <code>newIndex</code> is less then
+ * zero.
+ */
+public void reorderTab(EditorPane pane,int newIndex) {
+	reorderTab(pane,getTab(pane),newIndex);
+}
+
+/**
  * Reorder the tab representing the specified pane.
  */
 private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {

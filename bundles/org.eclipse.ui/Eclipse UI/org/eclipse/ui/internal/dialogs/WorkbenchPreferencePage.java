@@ -22,7 +22,7 @@ public class WorkbenchPreferencePage
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
-	private Button reuseEditorsButton; 
+	private IntegerFieldEditor reuseEditors; 
 
 	//Widgets for menu based perspective operation
 	private Button openInNewWindowButton;
@@ -115,9 +115,8 @@ protected Control createContents(Composite parent) {
 	linkButton = new Button(composite, SWT.CHECK);
 	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 	
-	reuseEditorsButton = new Button(composite, SWT.CHECK);
-	reuseEditorsButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsButton")); //$NON-NLS-1$
-
+	createReuseEditorsField(composite);
+	
 	createSpace(composite);
 
 	createPerspectiveGroup(composite);
@@ -133,10 +132,27 @@ protected Control createContents(Composite parent) {
 		store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 	linkButton.setSelection(
 		store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-	reuseEditorsButton.setSelection(
-		store.getBoolean(IPreferenceConstants.REUSE_EDITORS));
 
 	return composite;
+}
+private void createReuseEditorsField(Composite composite) {
+	Composite c = new Composite(composite,SWT.NONE);
+	reuseEditors = new IntegerFieldEditor(
+		IPreferenceConstants.REUSE_EDITORS,
+		WorkbenchMessages.getString("WorkbenchPreference.reuseEditors"),
+		c);
+	GridData gd = new GridData();
+	gd.horizontalAlignment = gd.FILL;
+	gd.grabExcessHorizontalSpace = true;
+	c.setLayoutData(gd);
+	
+	reuseEditors.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+	reuseEditors.setPreferencePage(this);
+	reuseEditors.setTextLimit(2);
+	reuseEditors.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsError"));
+	reuseEditors.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+	reuseEditors.setValidRange(1,99);
+	reuseEditors.load();
 }
 /**
  * Create a composite that contains buttons for selecting the preference opening selections. 
@@ -375,9 +391,7 @@ protected void performDefaults() {
 	linkButton.setSelection(
 		store.getDefaultBoolean(
 			IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-	reuseEditorsButton.setSelection(
-		store.getDefaultBoolean(
-			IPreferenceConstants.REUSE_EDITORS));
+	reuseEditors.loadDefault();
  
 	//Perspective preferences
 	String defaultPreference =
@@ -460,9 +474,7 @@ public boolean performOk() {
 		linkButton.getSelection());
 
 	// store the reuse editors setting
-	store.setValue(
-		IPreferenceConstants.REUSE_EDITORS,
-		reuseEditorsButton.getSelection());
+	reuseEditors.store();
 		
 	// store reuse perspctives setting
 	store.setValue(
