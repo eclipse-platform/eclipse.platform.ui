@@ -2135,5 +2135,9 @@ M4 = Platform-specific fourth key
             <instanceof value="org.eclipse.debug.internal.ui.views.console.ProcessConsole"/>
          </enablement>
       </consolePageParticipant>
-   </extension>   
+   </extension>
+   
+    <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.debug.internal.ui.DebugUIPreferenceInitializer"/>
+	</extension>
 </plugin>

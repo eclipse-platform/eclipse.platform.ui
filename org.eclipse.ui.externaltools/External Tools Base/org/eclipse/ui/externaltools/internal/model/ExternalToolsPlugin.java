@@ -17,7 +17,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
@@ -104,14 +103,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		} catch (MalformedURLException e) {
 			return null;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * Method declared in AbstractUIPlugin.
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
-		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION, true);
-		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, true);
 	}
 
 	/**
