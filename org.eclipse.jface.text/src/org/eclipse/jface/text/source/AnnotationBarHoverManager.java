@@ -374,7 +374,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	private ILineRange convertToLineRange(IRegion region) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		int startLine= document.getLineOfOffset(region.getOffset());
-		int endLine= document.getLineOfOffset(region.getOffset() + Math.max(0, region.getLength() - 1));
+		int endLine= document.getLineOfOffset(region.getOffset() + region.getLength());
 		return new LineRange(startLine, endLine - startLine + 1);
 	}
 	

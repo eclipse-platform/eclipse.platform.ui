@@ -62,7 +62,6 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * displayed source.
 	 */
 	protected String getTabReplacement() {
-		// TODO implement
 		return "    "; //$NON-NLS-1$
 	}
 
