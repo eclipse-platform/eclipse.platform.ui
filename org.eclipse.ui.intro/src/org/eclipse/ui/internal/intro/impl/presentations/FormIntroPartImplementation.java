@@ -226,7 +226,7 @@ public class FormIntroPartImplementation extends
      * is executed.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-     *           int)
+     *      int)
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
@@ -363,7 +363,7 @@ public class FormIntroPartImplementation extends
      * providers the next time this page needs to be displayed.
      * 
      * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
-     *           boolean)
+     *      boolean)
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
         AbstractIntroPage page = ContentProviderManager.getInst()

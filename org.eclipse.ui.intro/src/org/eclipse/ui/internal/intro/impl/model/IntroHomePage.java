@@ -124,4 +124,3 @@ public class IntroHomePage extends AbstractIntroPage {
 
 
 }
-

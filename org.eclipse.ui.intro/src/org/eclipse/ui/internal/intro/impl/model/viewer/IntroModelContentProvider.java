@@ -28,7 +28,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
 
         if (introElement != null
                 && introElement
-                        .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
+                    .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
             return ((AbstractIntroContainer) introElement).getChildren();
 
         return new Object[0];
@@ -51,7 +51,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
             introElement = (AbstractIntroElement) element;
         if (introElement != null
                 && introElement
-                        .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
+                    .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
             return true;
         return false;
     }
@@ -71,7 +71,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
      * (non-Javadoc)
      * 
      * @see org.eclipse.jface.viewers.IIntroContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-     *           java.lang.Object, java.lang.Object)
+     *      java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 

@@ -56,7 +56,7 @@ public class IntroHTML extends AbstractTextElement {
         introImage = getIntroImage(element);
 
         // Resolve.
-        src = BundleUtil.getResolvedBundleLocation(src, bundle);
+        src = BundleUtil.getResolvedResourceLocation(src, bundle);
     }
 
     /**
@@ -67,12 +67,12 @@ public class IntroHTML extends AbstractTextElement {
             // There should only be one text element. Since elements where
             // obtained by name, no point validating name.
             NodeList imageElements = element
-                    .getElementsByTagName(IntroImage.TAG_IMAGE);
+                .getElementsByTagName(IntroImage.TAG_IMAGE);
             if (imageElements.getLength() == 0)
                 // no contributions. done.
                 return null;
             IntroImage image = new IntroImage((Element) imageElements.item(0),
-                    getBundle());
+                getBundle());
             image.setParent(this);
             return image;
         } catch (Exception e) {

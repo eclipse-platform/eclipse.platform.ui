@@ -74,9 +74,9 @@ public class IntroModelSerializer {
         text.append("\nNumber of shared groups = " //$NON-NLS-1$
                 + model.getChildrenOfType(AbstractIntroElement.GROUP).length);
         text
-                .append("\nNumber of unresolved extensions = " //$NON-NLS-1$
-                        + model
-                                .getChildrenOfType(AbstractIntroElement.CONTAINER_EXTENSION).length);
+            .append("\nNumber of unresolved extensions = " //$NON-NLS-1$
+                    + model
+                        .getChildrenOfType(AbstractIntroElement.CONTAINER_EXTENSION).length);
     }
 
     /**
@@ -87,7 +87,7 @@ public class IntroModelSerializer {
         text.append("\n\nHOME PAGE: "); //$NON-NLS-1$
         text.append("\n--------------"); //$NON-NLS-1$
         text
-                .append("\n\tis dynamic= " + ((IntroModelRoot) rootPage.getParent()).isDynamic()); //$NON-NLS-1$
+            .append("\n\tis dynamic= " + ((IntroModelRoot) rootPage.getParent()).isDynamic()); //$NON-NLS-1$
 
         text.append("\n\tid = " + rootPage.getId()); //$NON-NLS-1$
         text.append("\n\ttitle = " + rootPage.getTitle()); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class IntroModelSerializer {
                 break;
             case AbstractIntroElement.CONTENT_PROVIDER:
                 printContentProvidor(text, (IntroContentProvider) children[i],
-                        indent);
+                    indent);
                 break;
 
             }
@@ -279,65 +279,56 @@ public class IntroModelSerializer {
         IntroPage firstPage = model.getPages()[0];
         text.append("\n\t\tFirst page children are: "); //$NON-NLS-1$
         text
-                .append("\n\t\t\tGroups: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.GROUP).length);
+            .append("\n\t\t\tGroups: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.GROUP).length);
         text
-                .append("\n\t\t\tLinks: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.LINK).length);
+            .append("\n\t\t\tLinks: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.LINK).length);
         text
-                .append("\n\t\t\tTexts: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.TEXT).length);
+            .append("\n\t\t\tTexts: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.TEXT).length);
         text
-                .append("\n\t\t\tHTMLs: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.HTML).length);
+            .append("\n\t\t\tHTMLs: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.HTML).length);
         text
-                .append("\n\t\t\tImages: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.IMAGE).length);
+            .append("\n\t\t\tImages: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.IMAGE).length);
         text
-                .append("\n\t\t\tIncludes: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.INCLUDE).length);
+            .append("\n\t\t\tIncludes: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.INCLUDE).length);
         text
-                .append("\n\t\t\tPage Titles: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.PAGE_TITLE).length);
+            .append("\n\t\t\tPage Titles: " //$NON-NLS-1$
+                    + firstPage
+                        .getChildrenOfType(AbstractIntroElement.PAGE_TITLE).length);
         text
-                .append("\n\t\t\tPage Heads: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.HEAD).length);
+            .append("\n\t\t\tPage Heads: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.HEAD).length);
         text
-                .append("\n\t\t\tModel Elements: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.ELEMENT).length);
+            .append("\n\t\t\tModel Elements: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.ELEMENT).length);
         text
-                .append("\n\t\t\tContainers: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.ABSTRACT_CONTAINER).length);
+            .append("\n\t\t\tContainers: " //$NON-NLS-1$
+                    + firstPage
+                        .getChildrenOfType(AbstractIntroElement.ABSTRACT_CONTAINER).length);
         text
-                .append("\n\t\t\tAll Pages: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE).length);
+            .append("\n\t\t\tAll Pages: " //$NON-NLS-1$
+                    + firstPage
+                        .getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE).length);
         text
-                .append("\n\t\t\tAnchors: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.ANCHOR).length);
+            .append("\n\t\t\tAnchors: " //$NON-NLS-1$
+                    + firstPage.getChildrenOfType(AbstractIntroElement.ANCHOR).length);
         text
-                .append("\n\t\t\tContent providers: " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.CONTENT_PROVIDER).length);
+            .append("\n\t\t\tContent providers: " //$NON-NLS-1$
+                    + firstPage
+                        .getChildrenOfType(AbstractIntroElement.CONTENT_PROVIDER).length);
         text
-                .append("\n\t\t\tElements with Text child(AbstractTextElemets): " //$NON-NLS-1$
-                        + firstPage
-                                .getChildrenOfType(AbstractIntroElement.ABSTRACT_TEXT).length);
+            .append("\n\t\t\tElements with Text child(AbstractTextElemets): " //$NON-NLS-1$
+                    + firstPage
+                        .getChildrenOfType(AbstractIntroElement.ABSTRACT_TEXT).length);
 
         AbstractIntroElement[] linksAndGroups = (AbstractIntroElement[]) firstPage
-                .getChildrenOfType(AbstractIntroElement.GROUP
-                        | AbstractIntroElement.LINK);
+            .getChildrenOfType(AbstractIntroElement.GROUP
+                    | AbstractIntroElement.LINK);
         text.append("\n\t\t\tGroups and Links: " + linksAndGroups.length); //$NON-NLS-1$
     }
 

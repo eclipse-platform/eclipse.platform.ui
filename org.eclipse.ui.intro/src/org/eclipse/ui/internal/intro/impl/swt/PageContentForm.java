@@ -70,7 +70,7 @@ public class PageContentForm implements IIntroConstants {
         // categoriesComposite has Table Layout with one col. Holds page
         // description and composite with all other children.
         contentComposite = contentPageBook.createPage(page.getId());
-        //Util.highlight(contentComposite, SWT.COLOR_GREEN);
+        // Util.highlight(contentComposite, SWT.COLOR_GREEN);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 15;
         layout.leftMargin = 15;
@@ -134,7 +134,7 @@ public class PageContentForm implements IIntroConstants {
         // parent has TableWrapLayout, and so update layout of this child.
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
             TableWrapData.FILL);
-        //td.align = TableWrapData.FILL;
+        // td.align = TableWrapData.FILL;
         td.grabHorizontal = true;
         client.setLayoutData(td);
         return client;

@@ -51,10 +51,10 @@ public class IntroExtensionContent extends AbstractIntroElement {
         this.element = element;
 
         // Resolve.
-        style = BundleUtil.getResolvedBundleLocation(style, bundle);
-        altStyle = BundleUtil.getResolvedBundleLocation(altStyle, bundle);
+        style = BundleUtil.getResolvedResourceLocation(style, bundle);
+        altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
         // if content is not null we have XHTML extension.
-        content = BundleUtil.getResolvedBundleLocation(content, bundle);
+        content = BundleUtil.getResolvedResourceLocation(content, bundle);
     }
 
     /**

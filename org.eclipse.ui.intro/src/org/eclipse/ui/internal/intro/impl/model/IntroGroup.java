@@ -49,4 +49,3 @@ public class IntroGroup extends AbstractIntroContainer {
     }
 
 }
-

@@ -35,7 +35,7 @@ public class IntroImage extends AbstractBaseIntroElement {
         alt = getAttribute(element, ATT_ALT);
 
         // Resolve src.
-        src = BundleUtil.getResolvedBundleLocation(src, bundle);
+        src = BundleUtil.getResolvedResourceLocation(src, bundle);
     }
 
     /**

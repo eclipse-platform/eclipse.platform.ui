@@ -105,7 +105,7 @@ public class LaunchBarElement extends AbstractIntroElement {
 
     /**
      * Creates an array of shortcut elements
-     *  
+     * 
      */
     private void createShortcuts() {
         shortcuts = new ArrayList();

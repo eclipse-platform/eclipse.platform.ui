@@ -63,7 +63,7 @@ public class RootPageForm implements IIntroConstants {
         // can reject the hint and compute larger width.
         public Point computeSize(int wHint, int hHint, boolean changed) {
             return ((RootPageLayout) getLayout()).computeSize(this, wHint,
-                    hHint, changed);
+                hHint, changed);
         }
     }
 
@@ -128,7 +128,7 @@ public class RootPageForm implements IIntroConstants {
                 return;
             }
             DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                    .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
                     + introLink.getUrl());
         }
 
@@ -152,7 +152,7 @@ public class RootPageForm implements IIntroConstants {
     };
 
     /**
-     *  
+     * 
      */
     public RootPageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
             Form parentForm) {
@@ -171,7 +171,7 @@ public class RootPageForm implements IIntroConstants {
             SharedStyleManager shardStyleManager) {
         // first, create the root page style manager from shared style manager.
         rootPageStyleManager = new PageStyleManager(rootPage, shardStyleManager
-                .getProperties());
+            .getProperties());
 
         // Set title of Main form from root page title.
         parentForm.setText(rootPage.getTitle());
@@ -179,7 +179,7 @@ public class RootPageForm implements IIntroConstants {
         // Composite for full root page. It has custom layout, and two
         // children: the content composite and the description label.
         Composite rootPageComposite = new PageComposite(mainPageBook
-                .getContainer(), SWT.NULL);
+            .getContainer(), SWT.NULL);
         toolkit.adapt(rootPageComposite);
 
         mainPageBook.registerPage(rootPage.getId(), rootPageComposite);
@@ -205,20 +205,20 @@ public class RootPageForm implements IIntroConstants {
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         contentComposite.setLayoutData(gd);
         AbstractIntroElement[] children = (AbstractIntroElement[]) rootPage
-                .getChildrenOfType(AbstractIntroElement.GROUP
-                        | AbstractIntroElement.LINK);
+            .getChildrenOfType(AbstractIntroElement.GROUP
+                    | AbstractIntroElement.LINK);
         int numChildren = children.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
         layout.horizontalSpacing = rootPageStyleManager
-                .getPageHorizantalSpacing();
+            .getPageHorizantalSpacing();
         layout.verticalSpacing = rootPageStyleManager.getPageVerticalSpacing();
         // set number of columns.
         int numColumns = rootPageStyleManager.getPageNumberOfColumns();
         numColumns = numColumns == 0 ? numChildren : numColumns;
         layout.numColumns = numColumns;
         layout.horizontalSpacing = rootPageStyleManager
-                .getPageHorizantalSpacing();
+            .getPageHorizantalSpacing();
         layout.verticalSpacing = rootPageStyleManager.getPageVerticalSpacing();
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
@@ -236,8 +236,8 @@ public class RootPageForm implements IIntroConstants {
      */
     private void createGroupContent(Composite parent, IntroGroup group) {
         AbstractIntroElement[] children = (AbstractIntroElement[]) group
-                .getChildrenOfType(AbstractIntroElement.GROUP
-                        | AbstractIntroElement.LINK);
+            .getChildrenOfType(AbstractIntroElement.GROUP
+                    | AbstractIntroElement.LINK);
         int numChildren = children.length;
         // setup page composite/layout
         Composite contentComposite = toolkit.createComposite(parent);
@@ -254,7 +254,7 @@ public class RootPageForm implements IIntroConstants {
         layout.numColumns = numColumns;
         layout.verticalSpacing = rootPageStyleManager.getVerticalSpacing(group);
         layout.horizontalSpacing = rootPageStyleManager
-                .getHorizantalSpacing(group);
+            .getHorizantalSpacing(group);
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
             if (((AbstractBaseIntroElement) children[i]).isFiltered())
@@ -288,11 +288,11 @@ public class RootPageForm implements IIntroConstants {
         layout.marginHeight = 0;
         container.setLayout(layout);
         ImageHyperlink imageLink = toolkit.createImageHyperlink(container,
-                SWT.NULL);
+            SWT.NULL);
         imageLink.setImage(rootPageStyleManager.getImage(link, "link-icon", //$NON-NLS-1$
-                ImageUtil.DEFAULT_ROOT_LINK));
+            ImageUtil.DEFAULT_ROOT_LINK));
         imageLink.setHoverImage(rootPageStyleManager.getImage(link,
-                "hover-icon", null)); //$NON-NLS-1$
+            "hover-icon", null)); //$NON-NLS-1$
         // each link is centered in cell.
         gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         imageLink.setLayoutData(gd);
@@ -316,7 +316,7 @@ public class RootPageForm implements IIntroConstants {
     private Label createHoverLabel(Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
         String key = StringUtil.concat(rootPage.getId(), ".", "hover-text.fg") //$NON-NLS-1$ //$NON-NLS-2$
-                .toString();
+            .toString();
         Color fg = rootPageStyleManager.getColor(toolkit, key);
         if (fg == null)
             fg = toolkit.getColors().getColor(FormColors.TITLE);

@@ -170,7 +170,7 @@ public class BrowserIntroPartImplementation extends
      * content life cycle. This method also updates the navigation history.
      * 
      * @param page
-     *                   the page to generate HTML for
+     *            the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
         String content = null;
@@ -330,7 +330,7 @@ public class BrowserIntroPartImplementation extends
      * dynamic case.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-     *           int)
+     *      int)
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {

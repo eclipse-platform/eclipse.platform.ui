@@ -78,6 +78,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private Hashtable altStyles;
 
     /**
+     * Parent class for all pages. Make sure to set the bundle to where the
+     * pages are loaded from. This means that the bundle for root may be
+     * different from the bundle for all the other pages. Only pages do this
+     * logic and so other model objects might have the wrong bundle cached if
+     * the resource was loaded from an nl directory.
+     * 
      * @param element
      */
     AbstractIntroPage(Element element, Bundle bundle) {
@@ -93,18 +99,42 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // presentation, page attributes are simply not loaded. In the case
             // where we have XHTML in a UI forms presentation, we need to load
             // initial page attributes.
-            content = BundleUtil.getResolvedBundleLocation(content, bundle);
+            content = BundleUtil.getResolvedResourceLocation(content, bundle);
+
     }
 
+    /**
+     * Initialize styles. Take first style in style attribute and make it the
+     * page style. Then put other styles in styles vectors. Make sure to resolve
+     * each style.
+     * 
+     * @param element
+     * @param bundle
+     */
     private void init(Element element, Bundle bundle) {
-        style = getAttribute(element, ATT_STYLE);
-        altStyle = getAttribute(element, ATT_ALT_STYLE);
+        String[] styleValues = getAttributeList(element, ATT_STYLE);
+        if (styleValues != null) {
+            style = styleValues[0];
+            style = BundleUtil.getResolvedResourceLocation(style, bundle);
+            for (int i = 1; i < styleValues.length; i++) {
+                String style = styleValues[i];
+                style = BundleUtil.getResolvedResourceLocation(style, bundle);
+                addStyle(style);
+            }
+        }
 
-        // Resolve.
-        style = BundleUtil.getResolvedBundleLocation(style, bundle);
-        altStyle = BundleUtil.getResolvedBundleLocation(altStyle, bundle);
-
+        if (styleValues != null) {
+            altStyle = styleValues[0];
+            altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
+            for (int i = 1; i < styleValues.length; i++) {
+                String style = styleValues[i];
+                style = BundleUtil.getResolvedResourceLocation(style, bundle);
+                addStyle(style);
+            }
+        }
     }
+
+
 
 
     /**
@@ -332,7 +362,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // bad xml. This could be bad XHTML or bad intro XML. Parser would
             // have logged fact. Load dom for invalid page.
             String invalidContentFilePath = BundleUtil
-                .getResolvedBundleLocation(INVALID_CONTENT, IntroPlugin
+                .getResolvedResourceLocation(INVALID_CONTENT, IntroPlugin
                     .getDefault().getBundle());
             parser = new IntroContentParser(invalidContentFilePath);
             dom = parser.getDocument();

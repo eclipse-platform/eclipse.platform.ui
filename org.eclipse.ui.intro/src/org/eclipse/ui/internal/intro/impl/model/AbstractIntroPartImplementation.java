@@ -35,7 +35,7 @@ import org.eclipse.ui.intro.config.CustomizableIntroPart;
  * instantiated from plugin markup and so we need a default constructor,
  * including in subclasses. It has some base methods, including maintaining a
  * history of navigation locations. Also, dynamic awarness is honored here.
- *  
+ * 
  */
 public abstract class AbstractIntroPartImplementation {
 
@@ -47,16 +47,16 @@ public abstract class AbstractIntroPartImplementation {
     private Vector history = new Vector();
     private int navigationLocation = 0;
 
-    //  Global actions
+    // Global actions
     protected Action backAction = new Action() {
 
         {
             setToolTipText(IntroPlugin
-                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
+                .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -68,11 +68,11 @@ public abstract class AbstractIntroPartImplementation {
 
         {
             setToolTipText(IntroPlugin
-                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
+                .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -85,9 +85,9 @@ public abstract class AbstractIntroPartImplementation {
         {
             setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -99,16 +99,15 @@ public abstract class AbstractIntroPartImplementation {
 
         {
             setToolTipText(IntroPlugin
-                    .getString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
+                .getString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
+                .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
         }
 
         public void run() {
             ElementTreeSelectionDialog treeViewer = new ElementTreeSelectionDialog(
-                    getIntroPart().getIntroSite().getShell(),
-                    new IntroModelLabelProvider(),
-                    new IntroModelContentProvider());
+                getIntroPart().getIntroSite().getShell(),
+                new IntroModelLabelProvider(), new IntroModelContentProvider());
             treeViewer.setInput(getModel());
             treeViewer.open();
         }
@@ -238,7 +237,7 @@ public abstract class AbstractIntroPartImplementation {
     /**
      * Subclasses must implement to set the state of the navigation actions in
      * the toolbar.
-     *  
+     * 
      */
     public abstract void setFocus();
 
@@ -246,7 +245,7 @@ public abstract class AbstractIntroPartImplementation {
     /**
      * Subclasses must implement to update the intro view actions when history
      * is updated.
-     *  
+     * 
      */
     protected abstract void updateNavigationActionsState();
 
@@ -340,7 +339,7 @@ public abstract class AbstractIntroPartImplementation {
         String currentPage = model.getCurrentPageId();
         if (currentPage != null && currentPage.length() > 0) {
             memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
-                    currentPage);
+                currentPage);
         }
     }
 

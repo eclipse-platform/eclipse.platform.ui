@@ -433,7 +433,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * the work, as different implementations may have different requirements.
      * 
      * @param memento
-     *                   the memento in which to store state information
+     *            the memento in which to store state information
      */
     public void saveState(IMemento memento) {
         if (implementation != null)
@@ -523,7 +523,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     /**
      * @return Returns the HTML head conttent to be added to each dynamic html
-     *               page in this presentation..
+     *         page in this presentation..
      */
     public IntroHead getHead() {
         return head;

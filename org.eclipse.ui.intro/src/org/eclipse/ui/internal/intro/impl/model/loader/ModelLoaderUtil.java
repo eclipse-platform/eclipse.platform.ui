@@ -66,8 +66,8 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
         String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
-                configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
-                        logAttribute)).toString();
+            configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
+                logAttribute)).toString();
         Log.info(msg);
 
         if (arraySize != 1) {
@@ -90,7 +90,7 @@ public class ModelLoaderUtil {
         buffer.append(element.getNamespace());
         buffer.append("  Extension:"); //$NON-NLS-1$
         buffer.append(element.getDeclaringExtension()
-                .getExtensionPointUniqueIdentifier());
+            .getExtensionPointUniqueIdentifier());
         buffer.append("  element:"); //$NON-NLS-1$
         buffer.append(element.getName());
         if (logAttribute != null) {
@@ -123,7 +123,7 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         Element element = elements[0];
         String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
-                " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
+            " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
         Log.info(msg);
 
         if (arraySize != 1) {
@@ -201,7 +201,7 @@ public class ModelLoaderUtil {
             return null;
         StringBuffer buffer = new StringBuffer(element.getId());
         AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
-                .getParent();
+            .getParent();
         while (parent != null
                 && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
             if (parent.getId() == null)

@@ -114,7 +114,7 @@ public class PageStyleManager extends SharedStyleManager {
         Enumeration inheritedPageProperties = altStyleProperties.keys();
         while (inheritedPageProperties.hasMoreElements()) {
             Properties aProperties = (Properties) inheritedPageProperties
-                    .nextElement();
+                .nextElement();
             if (aProperties.containsKey(key))
                 return aProperties;
         }
@@ -311,7 +311,7 @@ public class PageStyleManager extends SharedStyleManager {
     private String findTextFromStyleId(AbstractIntroContainer parent,
             String styleId) {
         IntroText[] allText = (IntroText[]) parent
-                .getChildrenOfType(AbstractIntroElement.TEXT);
+            .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
             if (allText[i].getStyleId() == null)
                 // not all elements have style id.
@@ -441,7 +441,7 @@ public class PageStyleManager extends SharedStyleManager {
     public Image getImage(IntroImage introImage) {
         String imageLocation = introImage.getSrcAsIs();
         String key = ModelLoaderUtil.createPathToElementKey(introImage)
-                .toString();
+            .toString();
         if (ImageUtil.hasImage(key))
             return ImageUtil.getImage(key);
         // key not already registered.
@@ -452,4 +452,3 @@ public class PageStyleManager extends SharedStyleManager {
 
 
 }
-

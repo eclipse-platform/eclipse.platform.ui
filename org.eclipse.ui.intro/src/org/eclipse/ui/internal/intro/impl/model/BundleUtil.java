@@ -27,10 +27,8 @@ import org.osgi.framework.Constants;
  */
 public class BundleUtil {
 
-    public static Bundle getBundleFromConfigurationElement(
-            IConfigurationElement cfg) {
-        return Platform.getBundle(cfg.getNamespace());
-    }
+    private static String NL_TAG = "$nl$/";
+
 
     /**
      * Utility method to validate the state of a bundle. Log invalid bundles to
@@ -67,6 +65,28 @@ public class BundleUtil {
         return (String) bundle.getHeaders().get(key);
     }
 
+
+    public static Bundle getBundleFromConfigurationElement(
+            IConfigurationElement cfg) {
+        return Platform.getBundle(cfg.getNamespace());
+    }
+
+
+    /**
+     * Get the resourcelocation, but do not force an $nl$ on it.
+     * 
+     * @param resource
+     * @param element
+     * @return
+     */
+    public static String getResourceLocation(String resource,
+            IConfigurationElement element) {
+        Bundle bundle = getBundleFromConfigurationElement(element);
+        return getResolvedResourceLocation(resource, bundle, false);
+    }
+
+
+
     /**
      * Returns the fully qualified location of the passed resource string from
      * the declaring plugin. If the plugin is not defined, or file could not be
@@ -75,14 +95,41 @@ public class BundleUtil {
      * @param resource
      * @return
      */
-    public static String getPluginLocation(String resource,
+    public static String getResolvedResourceLocation(String resource,
             IConfigurationElement element) {
         Bundle bundle = getBundleFromConfigurationElement(element);
-        return getResolvedBundleLocation(resource, bundle);
+        return getResolvedResourceLocation(resource, bundle, true);
     }
 
-    public static String getResolvedBundleLocation(String resource,
+
+    /**
+     * Returns the fully qualified location of the passed resource string from
+     * the passed plugin id. If the file could not be loaded from the plugin,
+     * the resource is returned as is.
+     * 
+     * @param resource
+     * @return
+     */
+    public static String getResolvedResourceLocation(String resource,
+            String pluginId) {
+        Bundle bundle = Platform.getBundle(pluginId);
+        return getResolvedResourceLocation(resource, bundle, true);
+    }
+
+    /**
+     * Shorthjand util meythod.
+     * 
+     * @param resource
+     * @return
+     */
+    public static String getResolvedResourceLocation(String resource,
             Bundle bundle) {
+        return getResolvedResourceLocation(resource, bundle, true);
+
+    }
+
+    public static String getResolvedResourceLocation(String resource,
+            Bundle bundle, boolean force$nl$lResolve) {
         // quick exits.
         if (resource == null)
             return null;
@@ -92,8 +139,15 @@ public class BundleUtil {
 
         URL localLocation = null;
         try {
-            // we need to perform a 'resolve' on this URL.
-            localLocation = Platform.find(bundle, new Path(resource));
+            // we need to resolve this URL.
+            String copyResource = resource;
+            if (force$nl$lResolve && !copyResource.startsWith(NL_TAG)) {
+                if (copyResource.startsWith("/"))
+                    copyResource = resource.substring(1);
+                copyResource = NL_TAG + copyResource;
+            }
+
+            localLocation = Platform.find(bundle, new Path(copyResource));
             if (localLocation == null) {
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. log fact, return resource,
@@ -115,25 +169,14 @@ public class BundleUtil {
         }
     }
 
-    /**
-     * Returns the fully qualified location of the passed resource string from
-     * the passed plugin id. If the file could not be loaded from the plugin,
-     * the resource is returned as is.
-     * 
-     * @param resource
-     * @return
-     */
-    public static String getResolvedBundleLocation(String resource,
-            String pluginId) {
-        Bundle bundle = Platform.getBundle(pluginId);
-        return getResolvedBundleLocation(resource, bundle);
-    }
+
+
 
     /** *** used by Intro parser ***** */
     /*
      * Uti method to return an URL to a plugin relative resource.
      */
-    public static URL getBundleURL(String resource, String pluginId) {
+    public static URL getResourceAsURL(String resource, String pluginId) {
         Bundle bundle = Platform.getBundle(pluginId);
         URL localLocation = localLocation = Platform.find(bundle, new Path(
             resource));
@@ -142,7 +185,7 @@ public class BundleUtil {
 
 
 
-    /** ** Used by HTML generator **** */
+    /** ********************* Used by HTML generator ****************** */
 
     /**
      * Get the absolute path of the given bundle, in the form

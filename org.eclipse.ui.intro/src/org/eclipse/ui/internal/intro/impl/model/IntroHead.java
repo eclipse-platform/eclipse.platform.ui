@@ -38,7 +38,7 @@ public class IntroHead extends AbstractIntroElement {
             encoding = "UTF-8"; //$NON-NLS-1$
 
         // Resolve.
-        src = BundleUtil.getPluginLocation(src, element);
+        src = BundleUtil.getResolvedResourceLocation(src, element);
     }
 
     IntroHead(Element element, Bundle bundle) {
@@ -49,7 +49,7 @@ public class IntroHead extends AbstractIntroElement {
             encoding = "UTF-8"; //$NON-NLS-1$
 
         // Resolve.
-        src = BundleUtil.getResolvedBundleLocation(src, bundle);
+        src = BundleUtil.getResolvedResourceLocation(src, bundle);
     }
 
     /**

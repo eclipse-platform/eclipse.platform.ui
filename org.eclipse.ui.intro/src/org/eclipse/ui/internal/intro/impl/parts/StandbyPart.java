@@ -79,7 +79,7 @@ public class StandbyPart implements IIntroConstants {
          * (non-Javadoc)
          * 
          * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
-         *           int, int, boolean)
+         *      int, int, boolean)
          */
         protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
@@ -96,7 +96,7 @@ public class StandbyPart implements IIntroConstants {
          * (non-Javadoc)
          * 
          * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-         *           boolean)
+         *      boolean)
          */
         protected void layout(Composite composite, boolean flushCache) {
             Rectangle carea = composite.getClientArea();
@@ -344,7 +344,7 @@ public class StandbyPart implements IIntroConstants {
      * conflict.
      * 
      * @param memento
-     *                   the memento in which to store state information
+     *            the memento in which to store state information
      */
     public void saveState(IMemento memento) {
         // save cached content part id.

@@ -49,13 +49,13 @@ public class SharedConfigExtensionsManager {
         // simply create model classes for all standbyPart elements under a
         // configExtension.
         IConfigurationElement[] configExtensionElements = registry
-                .getConfigurationElementsFor(BaseExtensionPointManager.CONFIG_EXTENSION);
+            .getConfigurationElementsFor(BaseExtensionPointManager.CONFIG_EXTENSION);
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];
             if (!ModelLoaderUtil.isValidElementName(element,
-                    IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)
+                IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)
                     && !ModelLoaderUtil.isValidElementName(element,
-                            IntroURLAction.TAG_ACTION))
+                        IntroURLAction.TAG_ACTION))
                 // if extension is not a standbypart or command, ignore.
                 continue;
             createModelClass(element);
@@ -70,9 +70,9 @@ public class SharedConfigExtensionsManager {
      */
     private void createModelClass(IConfigurationElement element) {
         if (element.getName().equals(
-                IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)) {
+            IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)) {
             IntroStandbyContentPart standbyPartContent = new IntroStandbyContentPart(
-                    element);
+                element);
             if (standbyPartContent.getId() == null)
                 // no id, ignore.
                 return;
@@ -108,5 +108,3 @@ public class SharedConfigExtensionsManager {
     }
 
 }
-
-

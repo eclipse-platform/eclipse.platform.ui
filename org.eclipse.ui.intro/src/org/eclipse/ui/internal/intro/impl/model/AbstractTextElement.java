@@ -39,12 +39,12 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
             // There should only be one text element.
             // Since elements where obtained by name, no point validating name.
             NodeList textElements = element
-                    .getElementsByTagName(IntroText.TAG_TEXT);
+                .getElementsByTagName(IntroText.TAG_TEXT);
             if (textElements.getLength() == 0)
                 // no contributions. done.
                 return null;
             IntroText text = new IntroText((Element) textElements.item(0),
-                    getBundle());
+                getBundle());
             text.setParent(this);
             return text;
         } catch (Exception e) {

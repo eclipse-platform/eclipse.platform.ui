@@ -104,8 +104,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * </code>
      * 
      * @return An array of elements of the right type. If the container has no
-     *               children, or no children of the specified types, returns an empty
-     *               array.
+     *         children, or no children of the specified types, returns an empty
+     *         array.
      */
     public Object[] getChildrenOfType(int elementMask) {
 

@@ -60,7 +60,7 @@ public class BaseExtensionPointManager {
         // than one config contribution, but there should only be one that maps
         // to the cached intro part id.
         IConfigurationElement introConfig = getIntroConfig(attributeName,
-                attributeValue);
+            attributeValue);
 
         // load model with the config elements of the correct contribution. If
         // there are no valid contribution, model stays null.
@@ -75,10 +75,10 @@ public class BaseExtensionPointManager {
                 introConfigExtensions = new IConfigurationElement[0];
             else
                 introConfigExtensions = getIntroConfigExtensions(
-                        ATT_CONFIG_EXTENSION_CONFIG_ID, configId);
+                    ATT_CONFIG_EXTENSION_CONFIG_ID, configId);
 
             IntroModelRoot model = new IntroModelRoot(introConfig,
-                    introConfigExtensions);
+                introConfigExtensions);
             model.loadModel();
             // add the current model to the hash table of models, only if it is
             // not null. They key is the model id, which is the id of the
@@ -106,10 +106,10 @@ public class BaseExtensionPointManager {
             String attributeValue) {
 
         IConfigurationElement[] configElements = registry
-                .getConfigurationElementsFor(CONFIG);
+            .getConfigurationElementsFor(CONFIG);
 
         IConfigurationElement config = getConfigurationFromAttribute(
-                configElements, attrributeName, attributeValue);
+            configElements, attrributeName, attributeValue);
 
         if (config == null)
             // if there is no valid config, log the fact.
@@ -128,10 +128,10 @@ public class BaseExtensionPointManager {
             String attrributeName, String attributeValue) {
 
         IConfigurationElement[] configExtensionElements = registry
-                .getConfigurationElementsFor(CONFIG_EXTENSION);
+            .getConfigurationElementsFor(CONFIG_EXTENSION);
 
         IConfigurationElement[] configExtensions = getConfigurationsFromAttribute(
-                configExtensionElements, attrributeName, attributeValue);
+            configExtensionElements, attrributeName, attributeValue);
 
         return configExtensions;
     }
@@ -171,11 +171,10 @@ public class BaseExtensionPointManager {
 
         // find all configs with given attribute and attibute value.
         IConfigurationElement[] filteredConfigElements = getConfigurationsFromAttribute(
-                configElements, attributeName, attributeValue);
+            configElements, attributeName, attributeValue);
         // now validate that we got only one.
         IConfigurationElement config = ModelLoaderUtil
-                .validateSingleContribution(filteredConfigElements,
-                        attributeName);
+            .validateSingleContribution(filteredConfigElements, attributeName);
         return config;
     }
 
@@ -192,7 +191,7 @@ public class BaseExtensionPointManager {
         Vector elements = new Vector();
         for (int i = 0; i < configElements.length; i++) {
             String currentAttributeValue = configElements[i]
-                    .getAttribute(attributeName);
+                .getAttribute(attributeName);
             if (currentAttributeValue != null
                     && currentAttributeValue.equals(attributeValue))
                 elements.add(configElements[i]);
@@ -200,7 +199,7 @@ public class BaseExtensionPointManager {
 
         // now return array.
         IConfigurationElement[] filteredConfigElements = new IConfigurationElement[elements
-                .size()];
+            .size()];
         elements.copyInto(filteredConfigElements);
 
         return filteredConfigElements;
@@ -211,7 +210,7 @@ public class BaseExtensionPointManager {
      */
     protected void loadSharedConfigExtensions() {
         sharedConfigExtensionsManager = new SharedConfigExtensionsManager(
-                registry);
+            registry);
         sharedConfigExtensionsManager.loadSharedConfigExtensions();
     }
 

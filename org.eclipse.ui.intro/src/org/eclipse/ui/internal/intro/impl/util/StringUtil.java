@@ -39,7 +39,7 @@ public class StringUtil {
     public static StringBuffer concat(String string1, String string2,
             String string3, String string4, String string5, String string6) {
         StringBuffer buffer = concat(string1, string2, string3, string4,
-                string5);
+            string5);
         buffer.append(string6);
         return buffer;
     }

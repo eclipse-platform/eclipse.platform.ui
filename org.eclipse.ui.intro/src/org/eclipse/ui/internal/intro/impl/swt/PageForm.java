@@ -77,7 +77,7 @@ public class PageForm implements IIntroConstants {
     };
 
     /**
-     *  
+     * 
      */
     public PageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
             Form parentForm) {
@@ -105,7 +105,7 @@ public class PageForm implements IIntroConstants {
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         pageForm.getBody().setLayout(layout);
-        //Util.highlight(pageForm.getBody(), SWT.COLOR_RED);
+        // Util.highlight(pageForm.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
@@ -113,7 +113,7 @@ public class PageForm implements IIntroConstants {
             SWT.H_SCROLL | SWT.V_SCROLL);
         categoryPageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        //pageForm.setText(rootPageStyleManager.getPageSubTitle());
+        // pageForm.setText(rootPageStyleManager.getPageSubTitle());
     }
 
 
@@ -152,7 +152,7 @@ public class PageForm implements IIntroConstants {
         // update this page form's title, ie: Page subtitle, if it exists.
         pageForm.setText((String) pageComposite.getData(PAGE_SUBTITLE));
 
-        //TODO need to transfer focus to the first link in
+        // TODO need to transfer focus to the first link in
         // the page somehow; we may need IIntroPage interface with
         // a few methods like 'setFocus()' etc.
         // DG

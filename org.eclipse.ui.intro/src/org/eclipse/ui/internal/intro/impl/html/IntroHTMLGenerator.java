@@ -340,7 +340,7 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroLink(IntroLink element, int indentLevel) {
         HTMLElement anchor = generateAnchorElement(element, indentLevel);
         // add <IMG src="blank.gif">
-        String blankImageURL = BundleUtil.getResolvedBundleLocation(
+        String blankImageURL = BundleUtil.getResolvedResourceLocation(
                 IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
         if (blankImageURL != null) {
             anchor.addContent(generateImageElement(blankImageURL, null,

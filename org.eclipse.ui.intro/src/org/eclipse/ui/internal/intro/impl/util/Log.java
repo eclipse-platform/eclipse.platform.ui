@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
  * always logged. Warning messages are only logged when the plugin is in debug
  * mode. Info messages are only logged when the /trace/logInfo debug option is
  * set to true.
- *  
+ * 
  */
 public class Log implements IIntroConstants {
 
@@ -52,7 +52,7 @@ public class Log implements IIntroConstants {
 
     private static boolean getDebugOption(String option) {
         return "true".equalsIgnoreCase(//$NON-NLS-1$
-                Platform.getDebugOption(PLUGIN_ID + option));
+            Platform.getDebugOption(PLUGIN_ID + option));
     }
 
     /**
@@ -63,7 +63,7 @@ public class Log implements IIntroConstants {
         if (message == null)
             message = ""; //$NON-NLS-1$
         Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-                message, ex);
+            message, ex);
         pluginLog.log(errorStatus);
     }
 
@@ -80,7 +80,7 @@ public class Log implements IIntroConstants {
         if (message == null)
             message = ""; //$NON-NLS-1$
         Status infoStatus = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
-                message, null);
+            message, null);
         pluginLog.log(infoStatus);
     }
 
@@ -98,7 +98,7 @@ public class Log implements IIntroConstants {
         if (message == null)
             message = ""; //$NON-NLS-1$
         Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
-                IStatus.OK, message, null);
+            IStatus.OK, message, null);
         pluginLog.log(warningStatus);
     }
 
@@ -109,9 +109,9 @@ public class Log implements IIntroConstants {
             String message) {
         if (DEBUG) {
             MultiStatus debugStatus = new MultiStatus(PLUGIN_ID, IStatus.OK,
-                    className, null);
+                className, null);
             Status infoStatus = new Status(IStatus.OK, PLUGIN_ID, IStatus.OK,
-                    message, null);
+                message, null);
             debugStatus.add(infoStatus);
             pluginLog.log(debugStatus);
         }

@@ -38,7 +38,7 @@ public final class ImageUtil {
     // Standby images
     public static final String BACK = "back"; //$NON-NLS-1$
     public static final String HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
-    
+
     // Launch bar image
     public static final String RESTORE_WELCOME = "restoreWelcome"; //$NON-NLS-1$
 
@@ -47,7 +47,7 @@ public final class ImageUtil {
     public static final String INTRO_MODEL_CONTAINER = "container"; //$NON-NLS-1$
     public static final String OPEN_ITNRO_VIEW = "introView"; //$NON-NLS-1$
 
-    //	Image location
+    // Image location
     public static final String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
     /**
@@ -58,12 +58,12 @@ public final class ImageUtil {
      */
     public static ImageDescriptor createImageDescriptor(String imageName) {
         return createImageDescriptor(Platform
-                .getBundle(IIntroConstants.PLUGIN_ID), ICONS_PATH + imageName);
+            .getBundle(IIntroConstants.PLUGIN_ID), ICONS_PATH + imageName);
     }
 
     /**
      * Convenience method to create an image descriptor.
-     *  
+     * 
      */
     public static ImageDescriptor createImageDescriptor(Bundle bundle,
             String imageName) {

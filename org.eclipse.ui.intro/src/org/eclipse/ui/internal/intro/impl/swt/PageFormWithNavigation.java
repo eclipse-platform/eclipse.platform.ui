@@ -40,7 +40,7 @@ public class PageFormWithNavigation extends PageForm {
 
 
     /**
-     *  
+     * 
      */
     public PageFormWithNavigation(FormToolkit toolkit,
             IntroModelRoot modelRoot, Form parentForm) {
@@ -60,19 +60,19 @@ public class PageFormWithNavigation extends PageForm {
         // Create a style manager from shared style manager. We only need it
         // for the UI navigation composite.
         rootPageStyleManager = new PageStyleManager(model.getHomePage(),
-                sharedStyleManager.getProperties());
+            sharedStyleManager.getProperties());
 
         // Now create Navigation bar.
         Composite navigationComposite = toolkit.createComposite(pageForm
-                .getBody());
+            .getBody());
         navigationComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_CENTER));
+            GridData.HORIZONTAL_ALIGN_CENTER));
         int numberOfLinks = model.getHomePage().getLinks().length;
         GridLayout layout = new GridLayout();
         layout.numColumns = numberOfLinks;
         navigationComposite.setLayout(layout);
         createSmallNavigator(navigationComposite, model.getHomePage()
-                .getLinks());
+            .getLinks());
 
         pageForm.setText(rootPageStyleManager.getPageSubTitle());
     }
@@ -107,7 +107,7 @@ public class PageFormWithNavigation extends PageForm {
 
         // set link image.
         Image image = rootPageStyleManager.getImage(link, "small-link-icon", //$NON-NLS-1$
-                ImageUtil.DEFAULT_SMALL_ROOT_LINK);
+            ImageUtil.DEFAULT_SMALL_ROOT_LINK);
         imageLink.setImage(image);
 
         // set link hover image.
@@ -124,4 +124,3 @@ public class PageFormWithNavigation extends PageForm {
 
 
 }
-

@@ -38,7 +38,7 @@ public class IntroInclude extends AbstractIntroElement {
         path = getAttribute(element, ATT_PATH);
         String mergeStyleString = getAttribute(element, ATT_MERGE_STYLE);
         mergeStyle = (mergeStyleString != null && mergeStyleString
-                .equalsIgnoreCase("true")) ? true : false; //$NON-NLS-1$
+            .equalsIgnoreCase("true")) ? true : false; //$NON-NLS-1$
     }
 
     /**

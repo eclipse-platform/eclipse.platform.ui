@@ -59,17 +59,17 @@ public class IntroContentParser {
         String dtdBaseLocation = "dtds/xhtml1-20020801/";
 
         String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
-        URL dtdURL_T = BundleUtil.getBundleURL(dtdLocation,
+        URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_TRANSITIONAL, dtdURL_T);
 
         dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
-        URL dtdURL_S = BundleUtil.getBundleURL(dtdLocation,
+        URL dtdURL_S = BundleUtil.getResourceAsURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_STRICT, dtdURL_S);
 
         dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
-        URL dtdURL_F = BundleUtil.getBundleURL(dtdLocation,
+        URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation,
             IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
     }

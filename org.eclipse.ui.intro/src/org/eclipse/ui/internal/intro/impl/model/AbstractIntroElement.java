@@ -211,6 +211,20 @@ public abstract class AbstractIntroElement implements Cloneable {
             return null;
     }
 
+    /**
+     * Util method to parse a comma separated list of values
+     * 
+     * @param element
+     * @param att
+     * @return
+     */
+    protected String[] getAttributeList(Element element, String att) {
+        if (element.hasAttribute(att))
+            return element.getAttribute(att).split(",");
+        else
+            return null;
+    }
+
 
     /**
      * Returns the plugin descriptor of the plugin from which this intro element

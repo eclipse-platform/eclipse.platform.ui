@@ -42,7 +42,7 @@ public class SharedStyleManager {
         bundle = modelRoot.getBundle();
         properties = new Properties();
         String sharedStyle = modelRoot.getPresentation()
-                .getImplementationStyle();
+            .getImplementationStyle();
         if (sharedStyle != null)
             load(properties, sharedStyle);
     }
@@ -89,15 +89,16 @@ public class SharedStyleManager {
             return null;
         return parseRGB(value);
     }
-    
+
     /**
-     * A utility method that creates RGB object from a value
-     * encoded in the following format: #rrggbb, where r, g and b
-     * are hex color values in the range from 00 to ff.
+     * A utility method that creates RGB object from a value encoded in the
+     * following format: #rrggbb, where r, g and b are hex color values in the
+     * range from 00 to ff.
+     * 
      * @param value
      * @return
      */
-    
+
     public static RGB parseRGB(String value) {
         if (value.charAt(0) == '#') {
             // HEX
@@ -200,4 +201,3 @@ public class SharedStyleManager {
     }
 
 }
-

@@ -32,7 +32,7 @@ public class IntroModelLabelProvider extends LabelProvider {
 
     static {
         ImageUtil.registerImage(ImageUtil.INTRO_MODEL_CONTAINER,
-                "container_obj.gif"); //$NON-NLS-1$
+            "container_obj.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.INTRO_MODEL_LEAF, "topic.gif"); //$NON-NLS-1$
     }
 
@@ -104,7 +104,7 @@ public class IntroModelLabelProvider extends LabelProvider {
         case AbstractIntroElement.PRESENTATION:
             label = "PRESENTATION: " //$NON-NLS-1$
                     + ((IntroPartPresentation) introElement)
-                            .getImplementationKind();
+                        .getImplementationKind();
             break;
         case AbstractIntroElement.CONTENT_PROVIDER:
             label = "CONTENT PROVIDER: " //$NON-NLS-1$

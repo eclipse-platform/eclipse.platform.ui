@@ -35,6 +35,8 @@ import org.w3c.dom.Node;
  * <ol>
  * <li>if an attribute is not included in the markup, its value will be null in
  * the model.</li>
+ * <li>Resources in plugin.xml are not implicitly resolved against $nl$.
+ * Resources in pages are implicitly resolved against $nl$
  * <li>the current page id is set silently when loading the model. You do not
  * need the event notification on model load.</li>
  * <li>Children of a given parent (ie: model root, page, or group) *must* have
@@ -138,7 +140,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * extension pages and groups. The presentation is loaded from the
      * IConfiguration element representing the config. All else is loaded from
      * xml content file.
-     *  
+     * 
      */
     protected void loadChildren() {
         children = new Vector();
@@ -565,7 +567,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return Returns the standby Page. May return null if standby page is not
-     *               defined.
+     *         defined.
      */
     public IntroHomePage getStandbyPage() {
         return standbyPage;
@@ -573,7 +575,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return all pages *excluding* the Home Page. If all pages are needed,
-     *               call <code>(AbstractIntroPage[])
+     *         call <code>(AbstractIntroPage[])
      *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);</code>
      */
     public IntroPage[] getPages() {
@@ -600,12 +602,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * id, the message is logged, and the model retains its old current page.
      * 
      * @param currentPageId
-     *                   The currentPageId to set. *
+     *            The currentPageId to set. *
      * @param fireEvent
-     *                   flag to indicate if event notification is needed.
+     *            flag to indicate if event notification is needed.
      * @return true if the model has a page with the passed id, false otherwise.
-     *               If the method fails, the current page remains the same as the
-     *               last state.
+     *         If the method fails, the current page remains the same as the
+     *         last state.
      */
     public boolean setCurrentPageId(String pageId, boolean fireEvent) {
         if (pageId == currentPageId)
@@ -643,7 +645,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * trigger a UI refresh.
      * 
      * @param propertyId
-     *                   the id of the property that changed
+     *            the id of the property that changed
      */
     public void firePropertyChange(final int propertyId) {
         Object[] array = propChangeListeners.getListeners();
@@ -657,8 +659,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
                 public void handleException(Throwable e) {
                     super.handleException(e);
-                    //If an unexpected exception happens, remove it
-                    //to make sure the workbench keeps running.
+                    // If an unexpected exception happens, remove it
+                    // to make sure the workbench keeps running.
                     propChangeListeners.remove(l);
                 }
             });
@@ -671,7 +673,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return Returns the currentPage. return null if page is not found, or if
-     *               we are not in a dynamic intro mode.
+     *         we are not in a dynamic intro mode.
      */
     public AbstractIntroPage getCurrentPage() {
         if (!isdynamicIntro)
@@ -700,14 +702,16 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * Assumes that the passed config element has a "content" attribute. Reads
-     * it and loads a DOM based on that attribute value.
+     * it and loads a DOM based on that attribute value. It does not explicitly
+     * resolve the resource because this method only laods the introContent and
+     * the configExt content files. ie: in plugin.xml.
      * 
      * @return
      */
     protected Document loadDOM(IConfigurationElement cfgElement) {
         String content = cfgElement.getAttribute(ATT_CONTENT);
         // Resolve.
-        content = BundleUtil.getPluginLocation(content, cfgElement);
+        content = BundleUtil.getResourceLocation(content, cfgElement);
         Document document = new IntroContentParser(content).getDocument();
         return document;
     }
