@@ -32,7 +32,7 @@ public class WorkspaceExpander extends ResourceExpander {
 	/* (non-Javadoc)
 	 * Method declared on ResourceExpander.
 	 */
-	/*package*/ IResource expandUsingContext(ExpandVariableContext context) {
+	protected IResource expandUsingContext(ExpandVariableContext context) {
 		return getWorkspaceRoot();
 	}
 }

@@ -32,14 +32,18 @@ public class ProjectExpander extends ResourceExpander {
 	/* (non-Javadoc)
 	 * Method declared on ResourceExpander.
 	 */
-	/*package*/ IResource expandUsingContext(ExpandVariableContext context) {
-		return context.getProject();
+	protected IResource expandUsingContext(ExpandVariableContext context) {
+		IResource resource = context.getSelectedResource();
+		if (resource != null) {
+			return resource.getProject();
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on ResourceExpander.
 	 */
-	/*package*/ IResource expandToMember(String varValue) {
+	protected IResource expandToMember(String varValue) {
 		IResource member = super.expandToMember(varValue);
 		if (member != null) {
 			return member.getProject();

@@ -27,10 +27,10 @@ public class ContainerExpander extends ResourceExpander {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ResourceExpander.
+	/**
+	 * @see ResourceExpander#expand(String, ExpandVariableContext)
 	 */
-	/*package*/ IResource expand(String varValue, ExpandVariableContext context) {
+	protected IResource expand(String varValue, ExpandVariableContext context) {
 		IResource resource = super.expand(varValue, context);
 		if (resource != null) {
 			return resource.getParent();

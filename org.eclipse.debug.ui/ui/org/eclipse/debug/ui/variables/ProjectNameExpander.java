@@ -12,7 +12,9 @@ package org.eclipse.debug.ui.variables;
 
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
  * Extracts the project name from a variable context
@@ -24,11 +26,14 @@ public class ProjectNameExpander extends DefaultVariableExpander {
 	 * <code>null</code> if there is no project in the context.
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		IProject project= context.getProject();
-		if (project != null) {
-			return project.getName();
+		IResource resource= context.getSelectedResource();
+		if (resource != null) {
+			IProject project= resource.getProject();
+			if (project != null) {
+				return project.getName();
+			}
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ProjectNameExpander.No_resource_selected._1")); //$NON-NLS-1$
 		return null;
 	}
 }

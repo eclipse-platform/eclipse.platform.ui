@@ -10,36 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.variables;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
- * Represents the context the external tool is running in
- * that a variable uses to expand itself.
+ * Represents the context in which a variable will be expanded.
+ * @since 3.0
  */
-public final class ExpandVariableContext {
+public class ExpandVariableContext {
 	public static final ExpandVariableContext EMPTY_CONTEXT = new ExpandVariableContext(null);
 	
 	private IProject project = null;
 	private IResource selectedResource = null;
 	
 	/**
-	 * Create a context for an external tool running
-	 * as a builder on the given project.
-	 * 
-	 * @param project the <code>IProject</code> being built.
-	 * @param buildKind the kind of build being performed
-	 * 		(see <code>IncrementalProjectBuilder</code>).
-	 */
-	public ExpandVariableContext(IProject project, int buildKind) {
-		super();
-		this.project = project;
-
-	}
-	
-	/**
-	 * Create a context for an external tool running
+	 * Create a context for a launch configuration running
 	 * with the given resource selected.
 	 * 
 	 * @param selectedResource the <code>IResource</code> selected

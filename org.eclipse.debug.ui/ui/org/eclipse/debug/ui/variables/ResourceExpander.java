@@ -30,7 +30,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 	/**
 	 * Expands the variable to a resource.
 	 */
-	/*package*/ IResource expand(String varValue, ExpandVariableContext context) {
+	protected IResource expand(String varValue, ExpandVariableContext context) {
 		if (varValue != null && varValue.length() > 0) {
 			return expandToMember(varValue);
 		} else {
@@ -43,7 +43,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 	 * By default, return the selected resource of the
 	 * context.
 	 */
-	/*package*/ IResource expandUsingContext(ExpandVariableContext context) {
+	protected IResource expandUsingContext(ExpandVariableContext context) {
 		return context.getSelectedResource();
 	}
 	
@@ -52,7 +52,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 	 * will not be <code>null</code> nor empty. By default,
 	 * lookup the member from the workspace root.
 	 */
-	/*package*/ IResource expandToMember(String varValue) {
+	protected IResource expandToMember(String varValue) {
 		return getWorkspaceRoot().findMember(varValue);
 	}
 	
