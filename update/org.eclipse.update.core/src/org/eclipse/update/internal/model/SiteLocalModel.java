@@ -9,10 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * This class manages the configurations.
@@ -20,14 +23,11 @@ import org.eclipse.update.core.model.*;
 
 public class SiteLocalModel extends ModelObject {
 	public static final String CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
-	public static int DEFAULT_HISTORY = Integer.MAX_VALUE;	
-
-
 	private long stamp;
 	private String label;
 	private URL location;
 	private String locationURLString;
-	private int history = DEFAULT_HISTORY;
+	private int history = UpdateCore.DEFAULT_HISTORY;
 	private List /* of InstallConfigurationModel */configurations;
 	private List /* of InstallConfigurationModel */preservedConfigurations;
 	private InstallConfigurationModel currentConfiguration;
@@ -50,8 +50,14 @@ public class SiteLocalModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public InstallConfigurationModel[] getConfigurationHistoryModel() {
-		if (configurations==null) return new InstallConfigurationModel[0];
-		return (InstallConfigurationModel[])configurations.toArray(arrayTypeFor(configurations));
+		if (configurations==null)
+			// initialize history
+			processHistory();
+		
+		if (configurations == null)
+			return new InstallConfigurationModel[0];
+		else
+			return (InstallConfigurationModel[])configurations.toArray(arrayTypeFor(configurations));
 	}
 
 	/**
@@ -220,6 +226,54 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	protected String getPropertyName() {
 		return SiteLocalModel.CONFIG_FILE;
+	}
+
+	/*
+	 * reads the configuration/history directory
+	 */
+	private void processHistory() {
+		try {
+			URL historyURL = new URL(getLocationURL(), "history");
+			historyURL = Platform.asLocalURL(historyURL);
+			File historyDir = new File(historyURL.getFile());
+			if (historyDir.exists()) {
+				File[] backedConfigs = historyDir.listFiles();
+				BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+				for (int i=0; i<backedConfigs.length; i++) {
+					String name = backedConfigs[i].getName();
+					if (name.endsWith(".xml"))
+						name = name.substring(0, name.length()-4);
+					else 
+						continue;
+					Date date = new Date(Long.parseLong(name));
+					InstallConfigurationModel config = factory.createInstallConfigurationModel();
+					config.setLocationURLString(backedConfigs[i].getAbsolutePath().replace('\\', '/'));
+					config.setLabel(date.toString());
+					config.setCreationDate(date);
+					config.resolve(backedConfigs[i].toURL(), getResourceBundleURL());
+	
+					// add the config
+					addConfigurationModel(config);
+				}
+			}
+		} catch (Exception e) {
+			UpdateCore.warn("Error processing history: ", e);
+		}
+	}
+
+	/**
+	 * return the appropriate resource bundle for this sitelocal
+	 */
+	URL getResourceBundleURL() throws CoreException {
+		URL url = null;
+		try {
+			url = UpdateManagerUtils.asDirectoryURL(getLocationURL());
+		} catch (MissingResourceException e) {
+			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+		}
+		return url;
 	}
 
 }

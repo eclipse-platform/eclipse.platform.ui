@@ -275,11 +275,19 @@ public class InstallConfigurationModel extends ModelObject {
 		resolved = true;
 		// resolve local elements
 		try {
-			locationURL = resolveURL(base, bundleURL, locationURLString);			
+			//locationURL = resolveURL(base, bundleURL, locationURLString);		
+			locationURL = new URL(locationURLString);
 		} catch (MalformedURLException e){
-			locationURL = base;
+			File f = new File(locationURLString);
+			try {
+				if (f.exists())
+					locationURL = f.toURL();
+				else
+					locationURL = base;
+			} catch (MalformedURLException e1) {
+				locationURL = base;
+			}
 		}
-		
 	}
 	
 	public void resetActivities() {

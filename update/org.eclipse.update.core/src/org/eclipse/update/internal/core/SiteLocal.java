@@ -125,8 +125,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	private void trimHistoryToCapacity() {
 		// check if we have to remove a configuration
 		// the first added is #0
-		while (getConfigurationHistory().length > getMaximumHistoryCount()) {
-			InstallConfigurationModel removedConfig = getConfigurationHistoryModel()[0];
+		while (getConfigurationHistory().length > getMaximumHistoryCount() &&
+				getConfigurationHistory().length > 1) {
+			// do not remove the first element in history, this is the original config
+			InstallConfigurationModel removedConfig = getConfigurationHistoryModel()[1];
 			if (removeConfigurationModel(removedConfig)) {
 
 				// DEBUG:

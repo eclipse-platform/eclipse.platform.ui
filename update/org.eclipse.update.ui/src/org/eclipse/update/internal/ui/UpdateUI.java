@@ -154,7 +154,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		int historyPref =
 			getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
 		if (historyPref > 0) {
-			SiteLocalModel.DEFAULT_HISTORY = historyPref;
+			UpdateCore.DEFAULT_HISTORY = historyPref;
 		}
 	}
 	

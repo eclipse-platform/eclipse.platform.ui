@@ -46,6 +46,8 @@ public class UpdateCore extends Plugin {
 	public static final String EQUIVALENT_VALUE = "equivalent";
 	public static final String COMPATIBLE_VALUE = "compatible";
 	
+	public static int DEFAULT_HISTORY = 100;//Integer.MAX_VALUE;
+	
 	//The shared instance.
 	private static UpdateCore plugin;
 
@@ -282,7 +284,7 @@ public class UpdateCore extends Plugin {
 	 */
 	protected void initializeDefaultPluginPreferences() {
 		getPluginPreferences().setDefault(P_CHECK_SIGNATURE, true);		
-		getPluginPreferences().setDefault(P_HISTORY_SIZE, 50);
+		getPluginPreferences().setDefault(P_HISTORY_SIZE, DEFAULT_HISTORY);
 		getPluginPreferences().setDefault(P_UPDATE_VERSIONS, EQUIVALENT_VALUE);
 		
 		// If proxy host and port are set as system properties, use them as defaults

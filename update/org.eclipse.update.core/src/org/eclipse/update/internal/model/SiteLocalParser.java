@@ -67,22 +67,7 @@ public class SiteLocalParser {
 		bundle = getResourceBundle();
 		
 		processConfig();
-		processHistory();
-	}
-
-	/**
-	 * return the appropriate resource bundle for this sitelocal
-	 */
-	private URL getResourceBundleURL() throws CoreException {
-		URL url = null;
-		try {
-			url = UpdateManagerUtils.asDirectoryURL(site.getLocationURL());
-		} catch (MissingResourceException e) {
-			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
-		}
-		return url;
+		//processHistory();
 	}
 
 	
@@ -130,7 +115,7 @@ public class SiteLocalParser {
 		InstallConfigurationModel config = factory.createInstallConfigurationModel();
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
-		config.resolve(url, getResourceBundleURL());
+		config.resolve(url, site.getResourceBundleURL());
 
 		// add the config
 		((SiteLocal)site).addConfiguration((InstallConfiguration)config);
@@ -138,38 +123,6 @@ public class SiteLocalParser {
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			UpdateCore.debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
-		}
-	}
-
-	/*
-	 * reads the configuration/history directory
-	 */
-	private void processHistory() {
-		try {
-			URL historyURL = new URL(site.getLocationURL(), "history");
-			historyURL = Platform.asLocalURL(historyURL);
-			File historyDir = new File(historyURL.getFile());
-			if (historyDir.exists()) {
-				File[] backedConfigs = historyDir.listFiles();
-				for (int i=0; i<backedConfigs.length; i++) {
-					String name = backedConfigs[i].getName();
-					if (name.endsWith(".xml"))
-						name = name.substring(0, name.length()-4);
-					else 
-						continue;
-					Date date = new Date(Long.parseLong(name));
-					InstallConfigurationModel config = factory.createInstallConfigurationModel();
-					config.setLocationURLString(backedConfigs[i].getAbsolutePath().replace('\\', '/'));
-					config.setLabel(date.toString());
-					config.setCreationDate(date);
-					config.resolve(backedConfigs[i].toURL(), getResourceBundleURL());
-
-					// add the config
-					site.addConfigurationModel(config);
-				}
-			}
-		} catch (Exception e) {
-			UpdateCore.warn("Error processing history: ", e);
 		}
 	}
 }
