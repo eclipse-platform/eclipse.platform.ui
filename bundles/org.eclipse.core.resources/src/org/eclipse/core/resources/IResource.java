@@ -1695,7 +1695,7 @@ public boolean isTeamPrivateMember();
  * </p>
  * 
  * @param isTeamPrivate <code>true</code> if this resource is to be marked
- *   as derived, and <code>false</code> otherwise
+ *   as team private, and <code>false</code> otherwise
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
