@@ -19,6 +19,14 @@ public class EclipseConnector {
 	private static IFilter[] noFilters = new IFilter[0];
 	private static CSSFilter cssFilter = new CSSFilter();
 	private static IFilter[] basicFilters = new IFilter[] { cssFilter };
+	private static final String errorPageBegin = 
+		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"+
+	    "<html><head>\n" +
+	  	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
+	  	"</head>\n"+
+		"<body><p>\n";
+	private static final String errorPageEnd = "</p></body></html>";
+	
 
 	/**
 	 * Constructor.
@@ -49,8 +57,10 @@ public class EclipseConnector {
 				"Cache-Control",
 				"max-age=" + (con.getExpiration() - System.currentTimeMillis()));
 			InputStream is = con.getInputStream();
-			if (is == null)
-				return;
+			if (is == null) {
+				String error = errorPageBegin + WebappResources.getString("noTopic", req) + errorPageEnd;
+				is = new ByteArrayInputStream(error.getBytes("UTF8"));
+			}
 			OutputStream os = resp.getOutputStream();
 
 			IFilter[] filters = getFilters(req);
