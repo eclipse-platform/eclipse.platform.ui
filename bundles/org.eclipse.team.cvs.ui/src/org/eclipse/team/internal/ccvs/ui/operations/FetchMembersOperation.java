@@ -35,8 +35,8 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class FetchMembersOperation extends RemoteOperation {
 
-	private IElementCollector collector;
-	private RemoteFolderFilter filter = new RemoteFolderFilter();
+	/* internal uzse only */ IElementCollector collector;
+	/* internal uzse only */ RemoteFolderFilter filter = new RemoteFolderFilter();
 	
 	public static class RemoteFolderFilter {
 		public ICVSRemoteResource[] filter(ICVSRemoteResource[] resource) {
@@ -45,9 +45,9 @@ public class FetchMembersOperation extends RemoteOperation {
 	}
 	
 	public class InternalRemoteFolderMemberFetcher extends RemoteFolderMemberFetcher {
-		int sendIncrement = 100;
-		int foldersSent = 0;
+		long sendIncrement = 100;
 		List unsent = new ArrayList();
+		long intervalStart;
 		protected InternalRemoteFolderMemberFetcher(RemoteFolder parentFolder, CVSTag tag) {
 			super(parentFolder, tag);
 		}
@@ -59,12 +59,17 @@ public class FetchMembersOperation extends RemoteOperation {
 		protected RemoteFolder recordFolder(String name) {
 			RemoteFolder folder = super.recordFolder(name);
 			unsent.add(folder);
-			if (unsent.size() == sendIncrement) {
+			if (isTimeToSend()) {
 				sendFolders();
 			}
 			return folder;
 		}
+		private boolean isTimeToSend() {
+			long currentTime = System.currentTimeMillis();
+			return (currentTime - intervalStart) >  sendIncrement;
+		}
 		protected IStatus performUpdate(IProgressMonitor progress) throws CVSException {
+			intervalStart = System.currentTimeMillis();
 			IStatus status = super.performUpdate(progress);
 			sendFolders();
 			return status;
@@ -77,6 +82,7 @@ public class FetchMembersOperation extends RemoteOperation {
 			updateParentFolderChildren();
 			collector.add(filter.filter((ICVSRemoteFolder[]) unsent.toArray(new ICVSRemoteFolder[unsent.size()])), getProgressMonitor());
 			unsent.clear();
+			intervalStart = System.currentTimeMillis();
 		}
 		private void sendFiles() {
 			collector.add(getFiles(), getProgressMonitor());
