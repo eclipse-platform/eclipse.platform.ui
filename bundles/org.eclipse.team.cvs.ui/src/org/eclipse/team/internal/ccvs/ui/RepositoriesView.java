@@ -59,8 +59,8 @@ public class RepositoriesView extends ViewPart {
 	// Listener
 	// This listener can be called from outside the UI thread.
 	IRepositoryListener listener = new IRepositoryListener() {
-		Display display = viewer.getControl().getDisplay();
 		public void repositoryAdded(ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					viewer.refresh();
@@ -68,6 +68,7 @@ public class RepositoriesView extends ViewPart {
 			});
 		}
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					viewer.refresh();
@@ -75,6 +76,7 @@ public class RepositoriesView extends ViewPart {
 			});
 		}
 		public void tagAdded(Tag tag, final ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					viewer.refresh(root);
@@ -82,6 +84,7 @@ public class RepositoriesView extends ViewPart {
 			});
 		}
 		public void tagRemoved(Tag tag, final ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					viewer.refresh(root);

@@ -83,7 +83,7 @@ public class AutoDefineTagsAction extends TeamAction {
 						return;
 					}
 					for (int j = 0; j < entries.length; j++) {
-						String[] tags = entries[i].getTags();
+						String[] tags = entries[j].getTags();
 						for (int k = 0; k < tags.length; k++) {
 							tagSet.add(tags[k]);
 						}

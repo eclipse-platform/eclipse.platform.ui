@@ -97,6 +97,7 @@ public class CVSProviderPlugin extends Plugin {
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
 		DirtyDeltaVisitor visitor = new DirtyDeltaVisitor();
 		visitor.register();
+		CVSProvider.initialize();
 	}
 	
 	/*
