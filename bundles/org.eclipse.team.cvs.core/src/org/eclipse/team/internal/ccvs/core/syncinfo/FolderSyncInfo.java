@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  */
  
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
