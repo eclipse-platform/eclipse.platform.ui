@@ -42,6 +42,13 @@ public final class WorkbenchActionBuilder {
 
 
 	private IWorkbenchWindow window;
+
+	/** 
+	 * A convience variable and method so that the actionConfigurer doesn't need to
+	 * get passed into registerGlobalAction every time it's called.
+	 */
+	private IActionBarConfigurer actionBarConfigurer;
+	
 	
 	// generic actions
 	private IWorkbenchAction closeAction;
@@ -750,12 +757,6 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(projectPropertyDialogAction);
 	}
 
-	/** 
-     * A convience variable and method so that the actionConfigurer doesn't need to
-     * get passed into registerGlobalAction every time it's called.
-     */
-	private IActionBarConfigurer actionBarConfigurer;
-	
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)
 	{
 		this.actionBarConfigurer = actionBarConfigurer;
