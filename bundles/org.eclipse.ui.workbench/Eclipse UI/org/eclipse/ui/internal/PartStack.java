@@ -819,7 +819,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         // Save the active tab.
         if (current != null)
                 memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID,
-                        current.getID());
+                        current.getCompoundId());
 
         Iterator iter = children.iterator();
         while (iter.hasNext()) {
@@ -834,7 +834,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 tabText = part.getName();
             }
             childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
-            childMem.putString(IWorkbenchConstants.TAG_CONTENT, next.getID());
+            childMem.putString(IWorkbenchConstants.TAG_CONTENT, next.getCompoundId());
         }
 
         memento

@@ -2423,6 +2423,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
 			String activePartID =
 				childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
+			String activePartSecondaryID = ViewFactory.extractSecondaryId(activePartID);
+			if (activePartSecondaryID != null) {
+			    activePartID = ViewFactory.extractPrimaryId(activePartID);
+			}
 			String activePerspectiveID =
 				childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
 
@@ -2483,7 +2487,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				// Restore active part.
 				if (activePartID != null) {
 					IViewReference ref =
-						activePerspective.findView(activePartID);
+						activePerspective.findView(activePartID, activePartSecondaryID);
 					IViewPart view = null;
 					if (ref != null)
 						view = ref.getView(true);
@@ -2587,10 +2591,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			childMem.putString(
 				IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE,
 				getPerspective().getId());
-		if (getActivePart() != null)
-			childMem.putString(
-				IWorkbenchConstants.TAG_ACTIVE_PART,
-				getActivePart().getSite().getId());
+		if (getActivePart() != null) {
+		    if (getActivePart() instanceof IViewPart) {
+		        IViewReference ref = (IViewReference) getReference(getActivePart());
+		        if (ref != null) {
+					childMem.putString(
+						IWorkbenchConstants.TAG_ACTIVE_PART,
+						ViewFactory.getKey(ref));
+		        }
+		    }
+		    else {
+				childMem.putString(
+					IWorkbenchConstants.TAG_ACTIVE_PART,
+					getActivePart().getSite().getId());
+		    }
+		}
 
 		// Save each perspective in opened order
 		Iterator enum = perspList.iterator();
@@ -2964,6 +2979,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			final String secondaryID, 
 			final int mode) throws PartInitException {
 		
+		if (secondaryID != null) {
+		    if (secondaryID.length() == 0 || secondaryID.indexOf(ViewFactory.ID_SEP) != -1)
+				throw new IllegalArgumentException(WorkbenchMessages.getString("WorkbenchPage.IllegalSecondaryId")); //$NON-NLS-1$
+		}
 		if (!certifyMode(mode)) 
 			throw new IllegalArgumentException(WorkbenchMessages.getString("WorkbenchPage.IllegalViewMode")); //$NON-NLS-1$
 		

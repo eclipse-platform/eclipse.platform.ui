@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
@@ -345,7 +344,7 @@ public class PerspectiveHelper {
 			ViewStack folder = (ViewStack) container;
 			if (folder.getVisiblePart() == null)
 				return false;
-			return part.getID().equals(folder.getVisiblePart().getID());
+			return part.getCompoundId().equals(folder.getVisiblePart().getCompoundId());
 		}
 		return true;
 	}
@@ -883,16 +882,15 @@ public class PerspectiveHelper {
 				String id = part.getID();
 				
 				// optimization: don't bother parsing id if it has no separator -- it can't match
-				if (id.indexOf(ViewFactory.ID_SEP) == -1) {
+				String phSecondaryId = ViewFactory.extractSecondaryId(id);
+				if (phSecondaryId == null) {
 				    // but still need to check for wildcard case
 					if (id.equals(PartPlaceholder.WILD_CARD))
 						matchingParts.add(new MatchingPart(id, null, part));
 					continue;
 				}
 				
-				StringTokenizer st = new StringTokenizer(id, ViewFactory.ID_SEP); //$NON-NLS-1$
-				String phPrimaryId = st.nextToken();
-				String phSecondaryId = st.nextToken();
+				String phPrimaryId = ViewFactory.extractPrimaryId(id);
 				// perfect matching pair
 				if (phPrimaryId.equals(primaryId) && 
 					phSecondaryId.equals(secondaryId)) {
@@ -1101,7 +1099,7 @@ public class PerspectiveHelper {
 		// object
 		PartPlaceholder[] placeholders = collectPlaceholders();
 		for (int i = 0, length = placeholders.length; i < length; i++) {
-			if (placeholders[i].getID().equals(part.getID())) {
+			if (placeholders[i].getCompoundId().equals(part.getCompoundId())) {
 				// found a matching placeholder which we can replace with the
 				// new View
 				ILayoutContainer container = placeholders[i].getContainer();

@@ -208,7 +208,31 @@ import org.eclipse.ui.internal.util.Util;
         return getKey(viewRef.getId(), viewRef.getSecondaryId());
     }
 	
-	/**
+    /**
+     * Extracts ths primary id portion of a compound id.
+     * @param compoundId a compound id of the form: primaryId [':' secondaryId]
+     * @return the primary id
+     */
+    static String extractPrimaryId(String compoundId) {
+        int i = compoundId.lastIndexOf(ID_SEP);
+        if (i == -1)
+            return compoundId;
+        return compoundId.substring(0, i);
+    }
+    
+    /**
+     * Extracts ths secondary id portion of a compound id.
+     * @param compoundId a compound id of the form: primaryId [':' secondaryId]
+     * @return the secondary id, or <code>null</code> if none
+     */
+    static String extractSecondaryId(String compoundId) {
+        int i = compoundId.lastIndexOf(ID_SEP);
+        if (i == -1)
+            return null;
+        return compoundId.substring(i+1);
+    }
+
+    /**
 	 * Constructs a new view factory.
 	 */
 	public ViewFactory(WorkbenchPage page, IViewRegistry reg) {
@@ -226,9 +250,9 @@ import org.eclipse.ui.internal.util.Util;
 		if (ref.getPart(false) != null)
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 
-		final String viewID = ref.getId();
-		final IMemento stateMem = getViewState(viewID);
-		mementoTable.remove(viewID);
+		final String key = getKey(ref);
+		final IMemento stateMem = getViewState(key);
+		mementoTable.remove(key);
 
 		final boolean resetPart[] = { true };
 		final IStatus result[] = new IStatus[] { new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null)}; //$NON-NLS-1$
@@ -242,14 +266,14 @@ import org.eclipse.ui.internal.util.Util;
 					}
 				}
 				//Execption is already logged.
-				result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { viewID }), //$NON-NLS-1$
+				result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { key }), //$NON-NLS-1$
 				e);
 
 			}
 			public void run() {
-				IViewDescriptor desc = viewReg.find(viewID);
+				IViewDescriptor desc = viewReg.find(ref.getId());
 				if (desc == null) {
-					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] { viewID }), //$NON-NLS-1$
+					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] { key }), //$NON-NLS-1$
 					null);
 					return;
 				}
@@ -294,7 +318,7 @@ import org.eclipse.ui.internal.util.Util;
 					}
 				} catch (PartInitException e) {
 					releaseView(ref);
-					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { viewID }), //$NON-NLS-1$
+					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { key }), //$NON-NLS-1$
 					e);
 					return;
 				}
@@ -353,7 +377,7 @@ import org.eclipse.ui.internal.util.Util;
 		String key = getKey(id, secondaryId);
 		IViewReference ref = (IViewReference) counter.get(key);
 		if (ref == null) {
-			IMemento memento = (IMemento)mementoTable.get(id); 
+			IMemento memento = (IMemento)mementoTable.get(key); 
 			ref = new ViewReference(id, secondaryId, memento);
 			counter.put(key, ref);
 		} else {
@@ -516,7 +540,7 @@ import org.eclipse.ui.internal.util.Util;
 	public IMemento saveViewState(IMemento memento, IViewReference ref, MultiStatus res) {
 		final MultiStatus result = res;
 		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
-		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
+		viewMemento.putString(IWorkbenchConstants.TAG_ID, ViewFactory.getKey(ref));
 		if (ref instanceof ViewReference) {
 			viewMemento.putString(IWorkbenchConstants.TAG_PART_NAME, ((ViewReference)ref).getPartName());
 		}
@@ -535,7 +559,7 @@ import org.eclipse.ui.internal.util.Util;
 				}
 			});
 		} else {
-			IMemento mem = getViewState(ref.getId());
+			IMemento mem = getViewState(ViewFactory.getKey(ref));
 			if(mem != null) {
 				IMemento child = viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
 				child.putMemento(mem);
@@ -546,12 +570,12 @@ import org.eclipse.ui.internal.util.Util;
 
 //	for dynamic UI
 	public void restoreViewState(IMemento memento){
-		String id = memento.getString(IWorkbenchConstants.TAG_ID);
-		mementoTable.put(id, memento);
+		String compoundId = memento.getString(IWorkbenchConstants.TAG_ID);
+		mementoTable.put(compoundId, memento);
 	}
 	
-	private IMemento getViewState(String viewId) {
-		IMemento memento = (IMemento) mementoTable.get(viewId);
+	private IMemento getViewState(String key) {
+		IMemento memento = (IMemento) mementoTable.get(key);
 		
 		if (memento == null) {
 			return null;

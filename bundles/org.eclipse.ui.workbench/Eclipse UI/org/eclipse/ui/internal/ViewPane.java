@@ -331,7 +331,18 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	protected void doDock() {
 		getPage().removeFastView(getViewReference());
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#getCompoundId()
+	 */
+	public String getCompoundId() {
+	    IViewReference ref = getViewReference();
+	    if (ref != null)
+	        return ViewFactory.getKey(ref);
+	    else
+	        return super.getCompoundId();
+	}
+	
 	/**
 	 * Returns the drag control.
 	 */

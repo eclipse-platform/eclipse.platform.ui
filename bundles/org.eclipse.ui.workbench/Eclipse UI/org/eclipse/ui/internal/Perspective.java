@@ -315,8 +315,10 @@ public PerspectiveHelper getPresentation() {
 	return presentation;
 }
 /**
- * Retrieves the ratio for the fast view with the given ID. If
+ * Retrieves the ratio for the fast view with the given compound id. If
  * the ratio is not known, the default ratio for the view is returned.
+ * 
+ * @param id the compound id for the view
  */
 private float getFastViewWidthRatio(String id) {
 	ViewLayoutRec rec = getViewLayoutRec(id, true);
@@ -819,16 +821,19 @@ private IStatus createReferences(IMemento views[]) {
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
-		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
+		String id = childMem.getString(IWorkbenchConstants.TAG_ID);
 		// skip creation of the intro reference -  it's handled elsewhere.
-		if (primaryId.equals(IIntroConstants.INTRO_VIEW_ID))
+		if (id.equals(IIntroConstants.INTRO_VIEW_ID))
 			continue;
 
-		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
+		String secondaryId = ViewFactory.extractSecondaryId(id);
+		if (secondaryId != null) {
+		    id = ViewFactory.extractPrimaryId(id);
+		}
 		// Create and open the view.
 		try {
 			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED))) { //$NON-NLS-1$
-				viewFactory.createView(primaryId, secondaryId);
+				viewFactory.createView(id, secondaryId);
 			}
 		} catch (PartInitException e) {
 			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true"); //$NON-NLS-1$
@@ -885,20 +890,23 @@ public IStatus restoreState() {
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
-		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
-		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
+		String id = childMem.getString(IWorkbenchConstants.TAG_ID);
+		String secondaryId = ViewFactory.extractSecondaryId(id);
+		if (secondaryId != null) {
+		    id = ViewFactory.extractPrimaryId(id);
+		}
 		
 		// skip the intro as it is restored higher up in workbench.
-		if (primaryId.equals(IIntroConstants.INTRO_VIEW_ID))
+		if (id.equals(IIntroConstants.INTRO_VIEW_ID))
 			continue;
 
 		// Create and open the view.
-		IViewReference viewRef = viewFactory.getView(primaryId, secondaryId);
+		IViewReference viewRef = viewFactory.getView(id, secondaryId);
 		WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
 		
 		// report error
 		if(ref == null) {
-		    String key = ViewFactory.getKey(primaryId, secondaryId);
+		    String key = ViewFactory.getKey(id, secondaryId);
 			result.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
                         WorkbenchMessages.format("Perspective.couldNotFind", //$NON-NLS-1$
                                 new String[] { key }),
@@ -937,7 +945,10 @@ public IStatus restoreState() {
 			// Get the view details.
 			IMemento childMem = views[x];
 			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-			String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
+			String secondaryId = ViewFactory.extractSecondaryId(viewID);
+			if (secondaryId != null) {
+			    viewID = ViewFactory.extractPrimaryId(viewID);
+			}
 				
 			IViewReference viewRef = viewFactory.getView(viewID, secondaryId);
 			WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
@@ -1291,10 +1302,7 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		ViewPane pane = (ViewPane)enum.next();
 		IViewReference ref = pane.getViewReference();
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
-		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
-		if (ref.getSecondaryId() != null) {
-			viewMemento.putString(IWorkbenchConstants.TAG_SECONDARY_ID, ref.getSecondaryId());
-		}
+		viewMemento.putString(IWorkbenchConstants.TAG_ID, ViewFactory.getKey(ref));
 	}
 	
 	if(fastViews.size() > 0) {
@@ -1303,7 +1311,7 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		while (enum.hasNext()) {
 			IViewReference ref = (IViewReference)enum.next();
 			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
-			String id = ref.getId();
+			String id = ViewFactory.getKey(ref);
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 			float ratio = getFastViewWidthRatio(id);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);

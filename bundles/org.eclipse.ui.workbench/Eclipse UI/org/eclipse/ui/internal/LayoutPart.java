@@ -115,6 +115,17 @@ abstract public class LayoutPart {
 	public String getID() {
 		return id;
 	}
+	
+	/**
+	 * Returns the compound ID for this part.
+	 * The compound ID is of the form: primaryId [':' + secondaryId]
+	 * 
+	 * @return the compound ID for this part.
+	 */
+	public String getCompoundId() {
+	    return getID();
+	}
+	
 	public boolean isCompressible() {
 		return false;
 	}
