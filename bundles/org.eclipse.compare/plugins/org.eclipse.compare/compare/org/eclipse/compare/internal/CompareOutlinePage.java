@@ -40,7 +40,7 @@ public class CompareOutlinePage implements IContentOutlinePage {
 	 */
 	public void createControl(Composite parent) {
 		if (fCompareEditorInput != null) {
-			fControl= fCompareEditorInput.createHierarchy(parent, SWT.VERTICAL);
+			fControl= fCompareEditorInput.createOutlineContents(parent, SWT.VERTICAL);
 		}
 	}
 
