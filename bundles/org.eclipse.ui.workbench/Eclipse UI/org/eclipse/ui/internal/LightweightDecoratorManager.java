@@ -1,12 +1,13 @@
 package org.eclipse.ui.internal;
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -128,37 +129,45 @@ class LightweightDecoratorManager {
 	/**
 	 * Decorate the Image supplied with the overlays for any of
 	 * the enabled lightweight decorators. 
+	 * @return ImageDescriptor[] is any work is done, otherwise null.
 	 */
-	Image decorateWithOverlays(Image image, Object element, Object adapted) {
-		
-		//Do not try to do anything if there is no source
-		if(image == null)
-			return image;
+	ImageDescriptor[] findOverlays(Object element, Object adapted) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
-		LightweightDecoratorDefinition[] adaptedDecorators;
-		if (adapted == null)
-			return overlayCache.getImageFor(image, element, decorators);
-		else {
-			adaptedDecorators = getDecoratorsFor(adapted);
-			return overlayCache.getImageFor(
-				image,
-				element,
-				decorators,
-				adapted,
-				adaptedDecorators);
+		ImageDescriptor[] descriptors = new ImageDescriptor[4];
+		boolean decorated =
+			overlayCache.findDescriptors(element, decorators, descriptors);
+		if (adapted != null) {
+			decorated =
+				decorated
+					|| overlayCache.findDescriptors(
+						adapted,
+						getDecoratorsFor(adapted),
+						descriptors);
 		}
+		if (decorated)
+			return descriptors;
+		else
+			return null;
 	}
 	/**
-		 * Decorate the String supplied with the prefixes and suffixes
-		 * for the enabled lightweight decorators.
-		 *  
-		 */
-	String decorateWithText(String text, Object element, Object adapted) {
+	* Fill the prefixResult and suffixResult with all of the applied prefixes
+	* and suffixes.
+	* 
+	* @param element The source element
+    * @param adapted The adapted value of element or null
+    * @param prefixResult. All of the applied prefixes
+    * @param suffixResult. All of the applied suffixes.
+	*/
+	
+	void getPrefixAndSuffix(
+		Object element,
+		Object adapted,
+		List prefixResult,
+		List suffixResult) {
 
 		LinkedList appliedDecorators = new LinkedList();
 		LinkedList appliedAdaptedDecorators = new LinkedList();
-		StringBuffer result = new StringBuffer();
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
@@ -168,7 +177,7 @@ class LightweightDecoratorManager {
 				appliedDecorators.addFirst(decorators[i]);
 				String prefix = decorators[i].getPrefix(element);
 				if (prefix != null)
-					result.append(prefix);
+					prefixResult.add(prefix);
 			}
 		}
 
@@ -183,16 +192,14 @@ class LightweightDecoratorManager {
 					appliedAdaptedDecorators.addFirst(adaptedDecorators[i]);
 					String prefix = adaptedDecorators[i].getPrefix(adapted);
 					if (prefix != null)
-						result.append(prefix);
+						prefixResult.add(prefix);
 				}
 			}
 		}
 
-		//Nothing happened so just return the text
+		//Nothing happened so just return
 		if (appliedDecorators.isEmpty() && appliedAdaptedDecorators.isEmpty())
-			return text;
-
-		result.append(text);
+			return;
 
 		if (adapted != null) {
 			Iterator appliedIterator = appliedAdaptedDecorators.iterator();
@@ -204,7 +211,7 @@ class LightweightDecoratorManager {
 							.getSuffix(
 						element);
 				if (suffix != null)
-					result.append(suffix);
+					suffixResult.add(suffix);
 			}
 		}
 
@@ -217,9 +224,16 @@ class LightweightDecoratorManager {
 						.getSuffix(
 					element);
 			if (suffix != null)
-				result.append(suffix);
+				suffixResult.add(suffix);
 		}
-		return result.toString();
 
 	}
+	/**
+	 * Returns the overlayCache.
+	 * @return OverlayCache
+	 */
+	OverlayCache getOverlayCache() {
+		return overlayCache;
+	}
+
 }

@@ -21,6 +21,8 @@ import org.eclipse.ui.IDecoratorManager;
 public class DecoratorManager
 	implements ILabelDecorator, ILabelProviderListener, IDecoratorManager {
 
+	private DecorationScheduler scheduler;
+	
 	private LightweightDecoratorManager lightweightManager;
 
 	//Hold onto the list of listeners to be told if a change has occured
@@ -68,6 +70,8 @@ public class DecoratorManager
 
 		lightweightManager =
 			new LightweightDecoratorManager(lightweightDefinitions);
+			
+		scheduler = new DecorationScheduler(this);
 	}
 
 	/**
@@ -154,7 +158,8 @@ public class DecoratorManager
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		String result = lightweightManager.decorateWithText(text, element, adapted);
+		String result =
+			scheduler.decorateWithText(text, element,adapted);
 		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
@@ -191,7 +196,8 @@ public class DecoratorManager
 	public Image decorateImage(Image image, Object element) {
 
 		Object adapted = getResourceAdapter(element);
-		Image result = lightweightManager.decorateWithOverlays(image, element, adapted);
+		Image result =
+			scheduler.decorateWithOverlays(image, element,adapted);
 		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
 		for (int i = 0; i < decorators.length; i++) {
@@ -286,10 +292,7 @@ public class DecoratorManager
 				return false;
 
 			fullCheck =
-				isLabelProperty(
-					adapted,
-					property,
-					getDecoratorsFor(adapted));
+				isLabelProperty(adapted, property, getDecoratorsFor(adapted));
 			if (fullCheck)
 				return fullCheck;
 
@@ -529,6 +532,7 @@ public class DecoratorManager
 				fullDefinitions[i].setEnabledWithErrorHandling(false);
 		}
 		lightweightManager.shutdown();
+		scheduler.shutdown();
 	}
 	/**
 	 * @see IDecoratorManager#getEnabled(String)
@@ -632,5 +636,13 @@ public class DecoratorManager
 		return decoratorArray;
 	}
 
-	
+
+	/**
+	 * Returns the lightweightManager.
+	 * @return LightweightDecoratorManager
+	 */
+	LightweightDecoratorManager getLightweightManager() {
+		return lightweightManager;
+	}
+
 }

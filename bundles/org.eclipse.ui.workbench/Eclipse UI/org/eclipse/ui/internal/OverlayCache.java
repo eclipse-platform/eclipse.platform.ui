@@ -38,68 +38,14 @@ class OverlayCache {
 	}
 
 	/**
-	 * Get the image for the decorators and the element.
-	 * Note that enablement checking is done here to prevent
-	 * the need for excess filtering be callers of this method.
-	 * @param Image. The source Image to decorate.
-	 * @param Object. The object being decorated.
-	 * @param LightweightDecoratorDefinition[]. The decorators to apply.
+	 * Apply the descriptors for the receiver to the supplied
+	 * image.
+	 * @param source
+	 * @param descriptors
+	 * @return Image
 	 */
-	Image getImageFor(
-		Image source,
-		Object element,
-		LightweightDecoratorDefinition[] decorators) {
 
-		//Do not bother if there is no work to do,
-		if (decorators.length == 0)
-			return source;
-
-		ImageDescriptor[] descriptors = new ImageDescriptor[4];
-
-		if (decorateWith(element, decorators, descriptors)) {
-
-			Rectangle bounds = source.getBounds();
-			Point size = new Point(bounds.width, bounds.height);
-			DecoratorOverlayIcon icon =
-				new DecoratorOverlayIcon(source, descriptors, size);
-			return getImageFor(icon);
-		} else
-			return source;
-	}
-
-	/**
-	 * Get the image for the decorators and the element and the 
-	 * adapted decorators and element.
-	 * Note that enablement checking is done here to prevent
-	 * the need for excess filtering be callers of this method.
-	 * @param Image. The source Image to decorate.
-	 * @param Object. The object being decorated.
-	 * @param LightweightDecoratorDefinition[]. The decorators to apply.
-	 * @param Object. The adapted value of the object.
-	 * @param LightweightDecoratorDefinition[]. The decorators for the adapted
-	 * 			object.
-	 */
-	Image getImageFor(
-		Image source,
-		Object element,
-		LightweightDecoratorDefinition[] decorators,
-		Object adapted,
-		LightweightDecoratorDefinition[] adaptedDecorators) {
-
-		//Do not bother if there is no work to do,
-		if (decorators.length == 0 && adaptedDecorators.length == 0)
-			return source;
-
-		ImageDescriptor[] descriptors = new ImageDescriptor[4];
-
-		boolean decorated = decorateWith(element, decorators, descriptors);
-		decorated =
-			decorated || decorateWith(adapted, adaptedDecorators, descriptors);
-
-		//Don't do the math if you don't need to
-		if (!decorated)
-			return source;
-
+	Image applyDescriptors(Image source, ImageDescriptor[] descriptors) {
 		Rectangle bounds = source.getBounds();
 		Point size = new Point(bounds.width, bounds.height);
 		DecoratorOverlayIcon icon =
@@ -114,7 +60,7 @@ class OverlayCache {
 	 * @param decorators
 	 * @param descriptors
 	 */
-	private boolean decorateWith(
+	boolean findDescriptors(
 		Object element,
 		LightweightDecoratorDefinition[] decorators,
 		ImageDescriptor[] descriptors) {
