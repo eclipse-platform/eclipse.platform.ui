@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -126,7 +127,7 @@ public class ExceptionHandler {
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (exceptionMessage == null || exceptionMessage.length() == 0)
-			msg.write(t.toString());
+			msg.write(SearchMessages.getString("ExceptionDialog.seeErrorLogMessage")); //$NON-NLS-1$
 		else
 			msg.write(exceptionMessage);
 		MessageDialog.openError(shell, title, msg.toString());			
