@@ -12,11 +12,11 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This causes debug targets which honor the manager's enablement
  * to skip (not suspend for) all breakpoints. 
  */
-public class SkipAllBreakpointsAction extends Action implements IBreakpointManagerListener {
+public class SkipAllBreakpointsAction extends Action {
 	
 	public SkipAllBreakpointsAction() {
 		super(ActionMessages.getString("SkipAllBreakpointsAction.0")); //$NON-NLS-1$
@@ -33,7 +33,6 @@ public class SkipAllBreakpointsAction extends Action implements IBreakpointManag
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_SKIP_BREAKPOINTS));
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
 		updateActionCheckedState();
-		getBreakpointManager().addBreakpointManagerListener(this);
 	}
 	/**
 	 * @see IAction#run()
@@ -41,14 +40,6 @@ public class SkipAllBreakpointsAction extends Action implements IBreakpointManag
 	public void run(){
 		IBreakpointManager manager = getBreakpointManager();
 		manager.setEnabled(!manager.isEnabled());
-	}
-	
-	/**
-	 * Keep the action's checked state in synch with the breakpoint
-	 * manager's enablement.
-	 */
-	public void breakpointManagerEnablementChanged(boolean enabled) {
-		updateActionCheckedState();
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -45,7 +46,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -54,7 +58,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
-public class BreakpointsView extends AbstractDebugView implements ISelectionListener {
+public class BreakpointsView extends AbstractDebugView implements ISelectionListener, IBreakpointManagerListener {
 
 	private BreakpointsViewEventHandler fEventHandler;
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
@@ -74,6 +78,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		super.createPartControl(parent);
 		if (getViewer() != null) {
 			initializeCheckedState();
+			updateViewerBackground();
+			DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 		}
 	}
 
@@ -92,7 +98,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		initIsTrackingSelection();
 		setEventHandler(new BreakpointsViewEventHandler(this));
 		return viewer;
-	}	
+	}
 	
 	/**
 	 * Initializes whether this view tracks selection in the
@@ -319,4 +325,37 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		IMemento node= memento.createChild(KEY_IS_TRACKING_SELECTION);
 		node.putString(KEY_VALUE, String.valueOf(fIsTrackingSelection));
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IAction action = getAction("SkipBreakpoints"); //$NON-NLS-1$
+				if (action != null) {
+					((SkipAllBreakpointsAction) action).updateActionCheckedState();
+				}
+				updateViewerBackground();
+			}
+		});
+	}
+
+	/**
+	 * Updates the background color of the viewer based
+	 * on the breakpoint manager enablement.
+	 */
+	protected void updateViewerBackground() {
+		Color color= null;
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			color= DebugUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
+		Table table = getCheckboxViewer().getTable();
+		TableItem[] items = table.getItems();
+		for (int i = 0; i < items.length; i++) {
+			items[i].setBackground(color);
+		}
+		table.setBackground(color);
+	}
+	
 }
