@@ -171,11 +171,11 @@ public abstract class CVSOperation extends TeamOperation {
 	 * @param project
 	 * @return
 	 */
-	protected boolean promptToOverwrite(String title, String msg) {
+	protected boolean promptToOverwrite(final String title, final String msg) {
 		if (!confirmOverwrite) {
 			return true;
 		}
-		String buttons[];
+		final String buttons[];
 		if (involvesMultipleResources()) {
 			buttons = new String[] {
 				IDialogConstants.YES_LABEL, 
@@ -185,24 +185,26 @@ public abstract class CVSOperation extends TeamOperation {
 		} else {
 			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
 		}	
-		Shell displayShell = getShell();
+		final Shell displayShell = getShell();
 		if (displayShell == null) {
 			// We couldn't get a shell (perhaps due to shutdown)
 			return false;
 		}
-		final MessageDialog dialog = 
-			new MessageDialog(displayShell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
 
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.
+		final int[] code = new int[] {0};
 		displayShell.getDisplay().syncExec(
 			new Runnable() {
 				public void run() {
+					MessageDialog dialog = 
+						new MessageDialog(displayShell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
 					dialog.open();
+					code[0] = dialog.getReturnCode();
 				}
 			});
 		if (involvesMultipleResources()) {
-			switch (dialog.getReturnCode()) {
+			switch (code[0]) {
 				case 0://Yes
 					return true;
 				case 1://Yes to all
@@ -215,7 +217,7 @@ public abstract class CVSOperation extends TeamOperation {
 					throw new OperationCanceledException();
 			}
 		} else {
-			return dialog.getReturnCode() == 0;
+			return code[0] == 0;
 		}
 	}
 
