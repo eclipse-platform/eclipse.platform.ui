@@ -172,7 +172,7 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 * @see IFeatureContentConsumer#getChildren()
 	 */
 	public IFeatureContentConsumer[] getChildren(){
-		if (children==null)
+		if (children==null || children.size() == 0)
 			return new IFeatureContentConsumer[0];
 
 		return (IFeatureContentConsumer[]) children.toArray(arrayTypeFor(children));

@@ -53,7 +53,7 @@ public class InstallConfigurationModel extends ModelObject {
 	public ConfiguredSiteModel[] getConfigurationSitesModel() {
 		if (!initialized) 
 			initialize();
-		if (configurationSites == null)
+		if (configurationSites == null || configurationSites.size() == 0)
 			return new ConfiguredSiteModel[0];
 	
 		return (ConfiguredSiteModel[]) configurationSites.toArray(arrayTypeFor(configurationSites));
@@ -117,7 +117,7 @@ public class InstallConfigurationModel extends ModelObject {
 	public ConfigurationActivityModel[] getActivityModel() {
 		if (activities == null && !initialized) 
 			initialize();
-		if (activities == null)
+		if (activities == null || activities.size() == 0)
 			return new ConfigurationActivityModel[0];
 		return (ConfigurationActivityModel[]) activities.toArray(arrayTypeFor(activities));
 	}

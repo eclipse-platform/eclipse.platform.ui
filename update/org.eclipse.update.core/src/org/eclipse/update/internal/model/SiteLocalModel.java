@@ -54,7 +54,7 @@ public class SiteLocalModel extends ModelObject {
 			// initialize history
 			processHistory();
 		
-		if (configurations == null)
+		if (configurations == null || configurations.size() == 0)
 			return new InstallConfigurationModel[0];
 		else
 			return (InstallConfigurationModel[])configurations.toArray(arrayTypeFor(configurations));

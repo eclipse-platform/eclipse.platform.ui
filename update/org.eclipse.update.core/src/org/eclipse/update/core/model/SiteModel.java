@@ -82,7 +82,7 @@ public class SiteModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public SiteFeatureReferenceModel[] getFeatureReferenceModels() {
-		if (featureReferences == null)
+		if (featureReferences == null || featureReferences.size() == 0)
 			return new SiteFeatureReferenceModel[0];
 
 		return (SiteFeatureReferenceModel[]) featureReferences.toArray(arrayTypeFor(featureReferences));
@@ -97,7 +97,7 @@ public class SiteModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public ArchiveReferenceModel[] getArchiveReferenceModels() {
-		if (archiveReferences == null)
+		if (archiveReferences == null || archiveReferences.size() == 0)
 			return new ArchiveReferenceModel[0];
 
 		return (ArchiveReferenceModel[]) archiveReferences.toArray(arrayTypeFor(archiveReferences));

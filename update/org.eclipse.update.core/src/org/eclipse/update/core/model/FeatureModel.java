@@ -345,7 +345,7 @@ public class FeatureModel extends ModelObject {
 	 */
 	public URLEntryModel[] getDiscoverySiteEntryModels() {
 		//delayedResolve(); no delay;
-		if (discoverySiteInfo == null)
+		if (discoverySiteInfo == null || discoverySiteInfo.size() == 0)
 			return new URLEntryModel[0];
 
 		return (URLEntryModel[]) discoverySiteInfo.toArray(arrayTypeFor(discoverySiteInfo));
@@ -359,7 +359,7 @@ public class FeatureModel extends ModelObject {
 	 */
 	public ImportModel[] getImportModels() {
 		//delayedResolve(); no delay;
-		if (imports == null)
+		if (imports == null || imports.size() == 0)
 			return new ImportModel[0];
 
 		return (ImportModel[]) imports.toArray(arrayTypeFor(imports));
@@ -372,7 +372,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public PluginEntryModel[] getPluginEntryModels() {
-		if (pluginEntries == null)
+		if (pluginEntries == null || pluginEntries.size() == 0)
 			return new PluginEntryModel[0];
 
 		return (PluginEntryModel[]) pluginEntries.toArray(arrayTypeFor(pluginEntries));
@@ -410,7 +410,7 @@ public class FeatureModel extends ModelObject {
 	 */
 	public IIncludedFeatureReference[] getFeatureIncluded() {
 		//delayedResolve(); no delay
-		if (featureIncludes == null)
+		if (featureIncludes == null || featureIncludes.size() == 0)
 			return new IIncludedFeatureReference[0];
 		return (IIncludedFeatureReference[]) featureIncludes.toArray(arrayTypeFor(featureIncludes));
 	}
@@ -422,7 +422,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public NonPluginEntryModel[] getNonPluginEntryModels() {
-		if (nonPluginEntries == null)
+		if (nonPluginEntries == null || nonPluginEntries.size() == 0)
 			return new NonPluginEntryModel[0];
 
 		return (NonPluginEntryModel[]) nonPluginEntries.toArray(arrayTypeFor(nonPluginEntries));
