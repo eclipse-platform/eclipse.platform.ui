@@ -66,18 +66,12 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.jface.viewers.ILabelDecorator&lt;/samp&gt;.
+                  a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.jface.viewers.ILabelDecorator&lt;/samp&gt;
+or &lt;samp&gt;org.eclipse.jface.viewers.ILightweightLabelDecorator&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelDecorator"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="objectClass" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a fully qualified name of a class which this decorator will be applied to.
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="adaptable" type="boolean">
@@ -95,10 +89,69 @@ This flag is used only if objectClass adapts to IResource.  Default value is fal
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="quadrant">
+            <annotation>
+               <documentation>
+                  The quadrant is the quadrant that the overlay will be drawn in. 
+Only used if lightweight is true.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="TOP_LEFT">
+                  </enumeration>
+                  <enumeration value="TOP_RIGHT">
+                  </enumeration>
+                  <enumeration value="BOTTOM_RIGHT">
+                  </enumeration>
+                  <enumeration value="BOTTOM_LEFT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="lightweight">
+            <annotation>
+               <documentation>
+                  The lightweight flag indicates that the decorator is either
+declarative or implements 
+&lt;samp&gt;org.eclipse.jface.viewers.ILightweightLabelDecorator&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="true">
+                  </enumeration>
+                  <enumeration value="false">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The icon is the plug-in relative path to the overlay. Only used 
+if the class attribute is not set.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="description" type="string">
+   </element>
+
+   <element name="enablement">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
    </element>
 
    <annotation>
