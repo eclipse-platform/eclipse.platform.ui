@@ -27,6 +27,7 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.resources.IFile;
@@ -231,9 +232,9 @@ public final class AntUtil {
 		int i= 0;
 		while (iter.hasNext()) {
 			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
-				urls[i]= entry.getEntryURL();
-				i++;
-			}
+			urls[i]= entry.getEntryURL();
+			i++;
+		}
 		return urls;
 		
 	}
@@ -274,11 +275,11 @@ public final class AntUtil {
 		}
 	}
 	
-	private static void getEntries(List entry, String urlString) {
+	private static void getEntries(List entries, String urlString) {
 		String[] entryStrings= AntUtil.parseString(urlString, AntUtil.ATTRIBUTE_SEPARATOR);
 		for (int i = 0; i < entryStrings.length; i++) {
 			String string = entryStrings[i];
-			entry.add(string);
+			entries.add(new AntClasspathEntry(string));
 		}
 	}
 

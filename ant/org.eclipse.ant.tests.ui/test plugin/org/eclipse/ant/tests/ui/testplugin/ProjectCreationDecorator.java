@@ -18,6 +18,7 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
@@ -121,17 +122,14 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		//URL newToolsURL= prefs.getToolsJarURL(newJavaPath);
 
 		StringBuffer urlString= new StringBuffer();
-		//mark as additional classpath entries
-		urlString.append(AntUtil.ANT_CLASSPATH_DELIMITER);
 
-		URL[] urls= prefs.getDefaultAntURLs();
-		for (int i = 0; i < urls.length; i++) {
-			URL url = urls[i];
-			try {
-				urlString.append(Platform.asLocalURL(url).getFile());
-				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
-			} catch (IOException e) {	
-			}
+		IAntClasspathEntry[] entries= prefs.getDefaultAntHomeEntries();
+		for (int i = 0; i < entries.length; i++) {
+			IAntClasspathEntry entry = entries[i];
+			
+			urlString.append(entry.getLabel());
+			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
+			
 		}
 		
 		IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
