@@ -41,6 +41,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.ui.texteditor.AddTaskAction;
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
@@ -219,8 +220,13 @@ public class TextEditor extends StatusTextEditor {
 	 */
 	protected void createActions() {
 		super.createActions();
+		
+		ResourceAction action= new AddTaskAction(TextEditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
+		setAction(ITextEditorActionConstants.ADD_TASK, action);
 
-		ResourceAction action= new ConvertLineDelimitersAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows.", this, "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		action= new ConvertLineDelimitersAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows.", this, "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CONVERT_LINE_DELIMITERS_TO_WINDOWS);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONVERT_LINE_DELIMITERS_TO_WINDOWS);
 		setAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, action);
