@@ -30,6 +30,11 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * The widget can be instantiated as-is, or subclassed to modify some aspects of
  * it.
  * 
+ * <p>Since 3.1, left/right arrow keys can be used to control the
+ * expansion state. If several expandable composites are created in
+ * the same parent, up/down arrow keys can be used to traverse
+ * between them.
+ * 
  * @see Section
  * @since 3.0
  */
@@ -526,8 +531,7 @@ public class ExpandableComposite extends Composite {
 			Hyperlink link = new Hyperlink(this, SWT.WRAP);
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					toggle.setExpanded(!toggle.isExpanded());
-					toggleState();
+					programmaticToggleState();
 				}
 			});
 			textLabel = link;
@@ -544,16 +548,29 @@ public class ExpandableComposite extends Composite {
 				label.addListener(SWT.MouseUp, new Listener() {
 					public void handleEvent(Event e) {
 						label.setCursor(FormsResources.getBusyCursor());
-						toggle.setExpanded(!toggle.isExpanded());
-						toggleState();
+						programmaticToggleState();
 						label.setCursor(FormsResources.getHandCursor());
 					}
 				});
 			}
 			textLabel = label;
 		}
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setMenu(getMenu());
+			textLabel.addTraverseListener(new TraverseListener() {
+				public void keyTraversed(TraverseEvent e) {
+					if (e.detail==SWT.TRAVERSE_MNEMONIC) {
+						// steal the mnemonic
+						if (!isVisible () || !isEnabled ()) return;
+						if (FormUtil.mnemonicMatch (getText(), e.character)) {
+							e.doit=false;
+							programmaticToggleState();
+							setFocus();							
+						}
+					}
+				}
+			});
+		}
 	}
 
 	/**
@@ -892,5 +909,10 @@ public class ExpandableComposite extends Composite {
 			loc = down?loc+1:loc-1;
 		}
 		return null;
+	}
+	private void programmaticToggleState() {
+		if (toggle!=null)
+			toggle.setExpanded(!toggle.isExpanded());
+		toggleState();
 	}
 }

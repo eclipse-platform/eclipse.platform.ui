@@ -440,4 +440,20 @@ public class FormUtil {
 		}
 		return new Font(display, fontDatas);
 	}
+	public static boolean mnemonicMatch (String text, char key) {
+		char mnemonic = findMnemonic (text);
+		if (mnemonic == '\0') return false;
+		return Character.toUpperCase (key) == Character.toUpperCase (mnemonic);
+	}
+	private static char findMnemonic (String string) {
+		int index = 0;
+		int length = string.length ();
+		do {
+			while (index < length && string.charAt (index) != '&') index++;
+			if (++index >= length) return '\0';
+			if (string.charAt (index) != '&') return string.charAt (index);
+			index++;
+		} while (index < length);
+	 	return '\0';
+	}
 }
