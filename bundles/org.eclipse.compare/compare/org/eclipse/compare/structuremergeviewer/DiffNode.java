@@ -276,7 +276,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 			if (dstParent instanceof IEditableContent) {
 				ITypedElement dst= leftToRight ? getRight() : getLeft();
 				ITypedElement src= leftToRight ? getLeft() : getRight();
-				//dst= ((IEditableContent)dstParent).replace(dst, src);
+				dst= ((IEditableContent)dstParent).replace(dst, src);
 				if (leftToRight)
 					setRight(dst);
 				else
