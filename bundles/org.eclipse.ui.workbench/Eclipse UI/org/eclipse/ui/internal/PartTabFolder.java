@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PartTabFolderSystemContribution;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -654,15 +653,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
                 IMemento childMem = children[i];
                 String partID = childMem
                         .getString(IWorkbenchConstants.TAG_CONTENT);
-                String tabText = childMem
-                        .getString(IWorkbenchConstants.TAG_LABEL);
-
-                IViewDescriptor descriptor = (IViewDescriptor) WorkbenchPlugin
-                        .getDefault().getViewRegistry().find(partID);
-
-                if (descriptor != null) {
-                    tabText = descriptor.getLabel();
-                }
 
                 // Create the part.
                 LayoutPart part = new PartPlaceholder(partID);
@@ -912,13 +902,15 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
     private void showPart(LayoutPart part, IPresentablePart position) {
 
         part.setContainer(this);
-
+        
         IPresentablePart presentablePart = part.getPresentablePart();
 
         if (presentablePart == null) { return; }
 
         part.createControl(getParent());
-        part.setContainer(this);
+        if (part.getControl().getParent() != getControl().getParent()) {
+        	part.reparent(getControl().getParent());
+        }
         part.moveAbove(getPresentation().getControl());
 
         presentationSite.getPresentation().addPart(presentablePart, position);
