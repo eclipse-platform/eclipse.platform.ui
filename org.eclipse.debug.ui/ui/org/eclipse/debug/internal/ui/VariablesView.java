@@ -116,10 +116,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	private static final int[] DEFAULT_SASH_WEIGHTS = {6, 2};
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
-
-	public VariablesView() {
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);		
-	}
 	
 	/**
 	 * Remove myself as a selection listener to the <code>LaunchesView</code> in this perspective,
@@ -194,7 +190,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	public void createPartControl(Composite parent) {
 		DebugUIPlugin.getDefault().addSelectionListener(this);
 		fModelPresentation = new DelegatingModelPresentation();
-		
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
 		fSashForm = new SashForm(parent, SWT.NONE);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
