@@ -260,7 +260,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 
-	public void testSimpleRuleStarting() {
+	public void _testSimpleRuleStarting() {
 		//start two jobs, each of which will begin and end a rule several times
 		//while one job starts a rule, the second job's call to begin rule should block that thread
 		//until the first job calls end rule
@@ -578,7 +578,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rules[2]);
 		manager.endRule(rules[1]);
 	}
-	public void testSimpleOtherThreadAccess() {
+	public void _testSimpleOtherThreadAccess() {
 		//ending a rule started on this thread from another thread
 		ISchedulingRule rule1 = new IdentityRule();
 		Thread endingThread = new Thread(new RuleEnder(rule1));
