@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.junit.util.UITestCase;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.navigator.ResourceNavigator;

@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import junit.framework.TestCase;
 
 public class IFileEditorMappingTest extends TestCase {

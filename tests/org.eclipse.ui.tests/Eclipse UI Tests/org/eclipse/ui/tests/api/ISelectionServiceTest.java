@@ -1,6 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.jdt.junit.util.UITestCase;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.tests.SelectionProviderView;

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
 

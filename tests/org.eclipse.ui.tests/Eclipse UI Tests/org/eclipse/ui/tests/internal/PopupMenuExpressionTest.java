@@ -1,6 +1,6 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchWindow;

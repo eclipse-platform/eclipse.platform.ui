@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 
 
 /**

@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.junit.util.CallHistory;
+import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;

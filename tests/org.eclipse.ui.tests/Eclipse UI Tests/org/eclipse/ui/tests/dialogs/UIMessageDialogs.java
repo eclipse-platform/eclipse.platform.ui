@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.dialogs;
 import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
-import org.eclipse.jdt.junit.util.DialogCheck;
+import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;

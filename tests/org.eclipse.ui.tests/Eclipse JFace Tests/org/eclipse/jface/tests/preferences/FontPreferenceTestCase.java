@@ -1,7 +1,7 @@
 package org.eclipse.jface.tests.preferences;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.junit.util.UITestCase;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.FontRegistry;

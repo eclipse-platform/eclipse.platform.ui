@@ -7,7 +7,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.jdt.junit.util.DialogCheck;
+import org.eclipse.ui.tests.util.DialogCheck;
 
 
 public class UIMessageDialogsAuto extends TestCase {

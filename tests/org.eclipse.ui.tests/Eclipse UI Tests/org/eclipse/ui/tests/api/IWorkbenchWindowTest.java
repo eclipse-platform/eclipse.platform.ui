@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 
 public class IWorkbenchWindowTest extends UITestCase {
 

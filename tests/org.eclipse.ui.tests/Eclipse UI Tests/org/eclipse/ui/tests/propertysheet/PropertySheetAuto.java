@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.propertysheet;
 
 import java.util.*;
 
-import org.eclipse.jdt.junit.util.UITestCase;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;

@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.ui.*;
 
 public class IEditorDescriptorTest extends TestCase {

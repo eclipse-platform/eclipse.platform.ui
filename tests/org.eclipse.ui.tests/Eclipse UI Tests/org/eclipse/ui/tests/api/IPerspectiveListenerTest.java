@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
 import junit.framework.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 
 public class IPerspectiveListenerTest extends UITestCase implements IPerspectiveListener {
 	private int fEvent;

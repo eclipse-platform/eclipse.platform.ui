@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 
 
 /**

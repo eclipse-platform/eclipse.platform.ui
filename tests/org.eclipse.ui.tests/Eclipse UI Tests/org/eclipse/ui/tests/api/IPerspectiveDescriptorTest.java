@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
 import org.eclipse.ui.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 
 public class IPerspectiveDescriptorTest extends TestCase {
 

@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;

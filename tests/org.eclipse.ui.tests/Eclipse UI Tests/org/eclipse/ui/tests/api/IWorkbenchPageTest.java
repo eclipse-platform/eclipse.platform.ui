@@ -4,7 +4,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
