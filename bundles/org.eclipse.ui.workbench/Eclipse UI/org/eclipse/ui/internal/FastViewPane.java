@@ -137,26 +137,8 @@ class FastViewPane {
 	
 	public void moveSash() {
 		hider.setEnabled(false);
-		final KeyListener listener = new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.character == SWT.ESC || e.character == '\r') {
-					currentPane.setFocus();
-					hider.setEnabled(true);
-				}
-			}
-		};
-		fastViewSash.addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				fastViewSash.setBackground(fastViewSash.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-				fastViewSash.addKeyListener(listener);
-			}
-			public void focusLost(FocusEvent e) {
-				fastViewSash.setBackground(null);
-				fastViewSash.removeKeyListener(listener);
-			}
-		});
-		fastViewSash.setFocus();
-		
+		fastViewSash.setVisible(true);
+		fastViewSash.setFocus();		
 	}
 	
 	private Listener resizeListener = new Listener() {
@@ -169,6 +151,8 @@ class FastViewPane {
 		
 	private SelectionAdapter selectionListener = new SelectionAdapter () {
 		public void widgetSelected(SelectionEvent e) {
+			hider.setEnabled(false);
+			
 			if (currentPane != null) {
 				Rectangle bounds = clientComposite.getClientArea();
 				Point location = new Point(e.x, e.y);
@@ -187,6 +171,7 @@ class FastViewPane {
 					getPresentation().getControl().moveAbove(null);
 					currentPane.moveAbove(null); 
 					fastViewSash.moveAbove(null);
+					hider.setEnabled(true);
 				}
 			}
 		}
@@ -307,6 +292,25 @@ class FastViewPane {
 		boolean horizontal = Geometry.isHorizontal(side);
 		fastViewSash = new Sash(parent, Geometry.getSwtHorizontalOrVerticalConstant(horizontal));
 		fastViewSash.setVisible(false);
+		final KeyListener listener = new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.ESC || e.character == '\r') {
+					currentPane.setFocus();
+				}
+			}
+		};
+		fastViewSash.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				hider.setEnabled(false);
+				fastViewSash.setBackground(fastViewSash.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+				fastViewSash.addKeyListener(listener);
+			}
+			public void focusLost(FocusEvent e) {
+				fastViewSash.setBackground(null);
+				fastViewSash.removeKeyListener(listener);
+				hider.setEnabled(true);
+			}
+		});
 
 		fastViewSash.addSelectionListener(selectionListener);
 
