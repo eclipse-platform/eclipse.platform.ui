@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IProjectDescription {
 	/**
-	 * Constant name of the project description file (value <code>".project"</code>). 
+	 * Constant that denotes the name of the project description file (value 
+	 * <code>".project"</code>). 
 	 * The handle of a project's description file is 
 	 * <code>project.getFile(DESCRIPTION_FILE_NAME)</code>.
 	 * The project description file is located in the root of the project's content area.
 	 * 
-	 * @return the filename for the project description
 	 * @since 2.0
 	 */
 	public static final String DESCRIPTION_FILE_NAME = ".project"; //$NON-NLS-1$
@@ -109,7 +109,7 @@ public ICommand newCommand();
  */
 public void setBuildSpec(ICommand[] buildSpec);
 /**
- * Sets the comment for the described project
+ * Sets the comment for the described project.
  * <p>
  * Users must call <code>IProject.setDescription</code> before changes 
  * made to this description take effect.
@@ -145,7 +145,7 @@ public void setComment(String comment);
  */
 public void setLocation(IPath location);
 /**
- * Sets the name of the described project
+ * Sets the name of the described project.
  * <p>
  * Setting the name on a description and then setting the 
  * description on the project has no effect; the new name is ignored.

@@ -191,7 +191,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
  * @see IResource#isLinked
- * @see IResource.ALLOW_MISSING_LOCAL
+ * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
  */
 public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;

@@ -824,8 +824,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * @see IFolder#delete
  * @see #FORCE
  * @see #KEEP_HISTORY
- * @see #ALWAYS_DELETE_PROJECT_CONTENTS
- * @see #NEVER_DELETE_PROJECT_CONTENTS
+ * @see #ALWAYS_DELETE_PROJECT_CONTENT
+ * @see #NEVER_DELETE_PROJECT_CONTENT
  * @since 2.0
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
