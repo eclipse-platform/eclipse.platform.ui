@@ -441,7 +441,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		}
 	}
 	if (!LaunchInfo.getCurrent().installPending(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
-		strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installPending_in_LaunchInfo");
+		strErrorMessage = UpdateManagerStrings.getString("S_Error_occurred_during_installation_setup");
 	}
 	
 	
@@ -638,7 +638,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 	//-----------------------------------------------
 	if (strErrorMessage == null) {
 		if (!LaunchInfo.getCurrent().installConfirmed(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
-			strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installConfirmed_in_LaunchInfo");
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_occurred_during_installation_completion");
 		}
 	}
 	
@@ -1141,7 +1141,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 	//-----------------------------------------------
 	if (strErrorMessage == null) {
 		if (!LaunchInfo.getCurrent().installConfirmed(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
-			strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installConfirmed_in_LaunchInfo");
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_occurred_during_installation_completion");
 		}
 	}
 	
