@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.views.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -104,10 +111,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		makeActions();
 		
 		// Create the popup menu for the page.
-		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
-		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
-		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
-		
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.add(copyAction);
 		menuMgr.add(new Separator());
@@ -267,30 +270,38 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * Make action objects.
 	 */
 	private void makeActions() {
-		// Default values
+		// Restore Default Value
 		defaultsAction = new DefaultsAction(viewer, "defaults"); //$NON-NLS-1$
-		defaultsAction.setToolTipText(PropertiesMessages.getString("Page.defaultToolTip")); //$NON-NLS-1$
-		defaultsAction.setText(PropertiesMessages.getString("Page.defaultToolTip")); //$NON-NLS-1$
+		defaultsAction.setText(PropertiesMessages.getString("Defaults.text")); //$NON-NLS-1$
+		defaultsAction.setToolTipText(PropertiesMessages.getString("Defaults.toolTip")); //$NON-NLS-1$
 		defaultsAction.setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setHoverImageDescriptor(getImageDescriptor("clcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setEnabled(false);
 
-		// Filter (expert)
+		// Show Advanced Properties
 		filterAction = new FilterAction(viewer, "filter"); //$NON-NLS-1$
-		filterAction.setToolTipText(PropertiesMessages.getString("Page.filterToolTip")); //$NON-NLS-1$
-		filterAction.setText(PropertiesMessages.getString("Page.filterToolTip")); //$NON-NLS-1$
+		filterAction.setText(PropertiesMessages.getString("Filter.text")); //$NON-NLS-1$
+		filterAction.setToolTipText(PropertiesMessages.getString("Filter.toolTip")); //$NON-NLS-1$
 		filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
 		filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
 		filterAction.setChecked(false);
 
-		// Categories
+		// Show Categories
 		categoriesAction = new CategoriesAction(viewer, "categories"); //$NON-NLS-1$
-		categoriesAction.setToolTipText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
-		categoriesAction.setText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
+		categoriesAction.setText(PropertiesMessages.getString("Categories.text")); //$NON-NLS-1$
+		categoriesAction.setToolTipText(PropertiesMessages.getString("Categories.toolTip")); //$NON-NLS-1$
 		categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setChecked(true);
+	
+		// Copy	
+		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
+		copyAction.setText(PropertiesMessages.getString("CopyProperty.text"));
+		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
+		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
+		
+		
 	}
 	/* (non-Javadoc)
 	 * Method declared on IPage (and Page).

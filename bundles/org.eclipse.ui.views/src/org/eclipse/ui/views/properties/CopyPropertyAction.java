@@ -1,9 +1,15 @@
-package org.eclipse.ui.views.properties;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.views.properties;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 	 * Creates the action.
 	 */
 	public CopyPropertyAction(PropertySheetViewer viewer, String name) {
-		super(viewer, PropertiesMessages.getString("CopyProperty.text")); //$NON-NLS-1$
+		super(viewer, name);
 		WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.COPY_PROPERTY_ACTION);
 		clipboard = new Clipboard(Display.getCurrent());
 	}

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.views.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.text.Collator;
 import java.util.*;
 import java.util.List; // otherwise ambiguous
@@ -42,7 +49,7 @@ class PropertySheetViewer extends Viewer {
 	private TableTree tableTree;
 	private TableTreeEditor tableTreeEditor;
 	private static String[] columnLabels = { PropertiesMessages.getString("PropertyViewer.property"), PropertiesMessages.getString("PropertyViewer.value")}; //$NON-NLS-2$ //$NON-NLS-1$
-	private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages.getString("PropertyViewer.miscellaneousCategoryName"); //$NON-NLS-1$
+	private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages.getString("PropertyViewer.misc"); //$NON-NLS-1$
 
 	// Cell editor support.
 	private int columnToEdit = 1;
