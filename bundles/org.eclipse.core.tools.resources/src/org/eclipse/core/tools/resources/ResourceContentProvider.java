@@ -11,10 +11,8 @@
 package org.eclipse.core.tools.resources;
 
 import java.util.*;
-import org.eclipse.core.internal.properties.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.util.SafeRunnable;
@@ -83,30 +81,17 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 * @param resource the resource object from where to extract information
 	 */
 	protected void extractPersistentProperties(IResource resource) {
-		try {
-
-			PropertyStore store = org.eclipse.core.internal.properties.SpySupport.getPropertyStore(resource);
-			if (store == null)
+		try {			
+			Map properties = ((Workspace) ResourcesPlugin.getWorkspace()).getPropertyManager().getProperties(resource);
+			if (properties.isEmpty())
 				return;
-
-			// retrieves the properties for the selected resource
-			IPath path = resource.getProjectRelativePath();
-			ResourceName resourceName = new ResourceName("", path); //$NON-NLS-1$
-			QueryResults results = store.getAll(resourceName, 1);
-			List projectProperties = results.getResults(resourceName);
-			int listSize = projectProperties.size();
-			if (listSize == 0)
-				return;
-
 			// creates a node for persistent properties and populates it
 			TreeContentProviderNode propertiesRootNode = createNode(Policy.bind("resource.persistent_properties")); //$NON-NLS-1$
 			getRootNode().addChild(propertiesRootNode);
-
-			for (int i = 0; i < listSize; i++) {
-				StoredProperty prop = (StoredProperty) projectProperties.get(i);
-				propertiesRootNode.addChild(createNode(prop.getName().toString(), prop.getStringValue()));
+			for (Iterator i = properties.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue().toString()));
 			}
-
 		} catch (CoreException ce) {
 			getRootNode().addChild(createNode(Policy.bind("resources.error_stored_properties", ce.toString()))); //$NON-NLS-1$
 		}
