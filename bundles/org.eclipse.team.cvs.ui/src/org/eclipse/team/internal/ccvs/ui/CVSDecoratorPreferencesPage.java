@@ -72,7 +72,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		Text t2;
 	}
 	
-	protected TextPair createFormatEditorControl(Composite composite, String title, final Map supportedBindings) {
+	protected TextPair createFormatEditorControl(Composite composite, String title, String buttonText, final Map supportedBindings) {
 		createLabel(composite, title, 1);
 		Text format = new Text(composite, SWT.BORDER);
 		format.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -82,7 +82,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			}
 		});
 		Button b = new Button(composite, SWT.NONE);
-		b.setText("Add Variables...");
+		b.setText(buttonText);
 		b.setLayoutData(new GridData());
 		final Text formatToInsert = format;
 		b.addListener(SWT.MouseDown, new Listener() {
@@ -148,17 +148,17 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		fileTextGroup.setText("Text Labels");
 		createLabel(fileTextGroup, "Select the format for file, folders, and project text labels:", 3);
 
-		TextPair format = createFormatEditorControl(fileTextGroup, "File Format:", getFileBindingDescriptions());
+		TextPair format = createFormatEditorControl(fileTextGroup, "&File Format:", "Add &Variables...", getFileBindingDescriptions());
 		fileTextFormat = format.t1;
 		fileTextFormatExample = format.t2;
-		format = createFormatEditorControl(fileTextGroup, "Folder Format:", getFolderBindingDescriptions());
+		format = createFormatEditorControl(fileTextGroup, "F&older Format:", "Add Varia&bles...", getFolderBindingDescriptions());
 		folderTextFormat = format.t1;
 		folderTextFormatExample = format.t2;
-		format = createFormatEditorControl(fileTextGroup, "Project Format:", getFolderBindingDescriptions());
+		format = createFormatEditorControl(fileTextGroup, "&Project Format:", "Add Variable&s...", getFolderBindingDescriptions());
 		projectTextFormat = format.t1;
 		projectTextFormatExample = format.t2;
 
-		createLabel(fileTextGroup, "Label decoration for outgoing:", 1);
+		createLabel(fileTextGroup, "&Label decoration for outgoing:", 1);
 		dirtyFlag = new Text(fileTextGroup, SWT.BORDER);
 		dirtyFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirtyFlag.addModifyListener(new ModifyListener() {
@@ -168,7 +168,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		});
 		createLabel(fileTextGroup, "", 1); // spacer
 		
-		createLabel(fileTextGroup, "Label decoration for added:", 1);
+		createLabel(fileTextGroup, "Label decorat&ion for added:", 1);
 		addedFlag = new Text(fileTextGroup, SWT.BORDER);
 		addedFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addedFlag.addModifyListener(new ModifyListener() {
@@ -188,11 +188,11 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
 		imageGroup.setText("Icon Overlays");
-		imageShowDirty = createCheckBox(imageGroup, "Show outgoing");
-		imageShowHasRemote = createCheckBox(imageGroup, "Show has remote");
-		imageShowAdded = createCheckBox(imageGroup, "Show is added");
+		imageShowDirty = createCheckBox(imageGroup, "&Show outgoing");
+		imageShowHasRemote = createCheckBox(imageGroup, "Show has &remote");
+		imageShowAdded = createCheckBox(imageGroup, "S&how is added");
 		
-		showDirty = createCheckBox(composite, "Compute deep outgoing state for folders (disabling this will improve decorator performance)");
+		showDirty = createCheckBox(composite, "&Compute deep outgoing state for folders (disabling this will improve decorator performance)");
 				
 		initializeValues();
 		return composite;
