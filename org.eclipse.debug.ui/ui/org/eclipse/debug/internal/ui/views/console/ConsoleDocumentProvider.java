@@ -21,7 +21,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 /**
