@@ -14,11 +14,8 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.indexing.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.properties.IndexedStoreWrapper;
+import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -35,37 +32,9 @@ public class HistoryStoreTest extends ResourceTest {
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+
 		VerificationFailedException(String message) {
 			super(message);
-		}
-	}
-
-	class HistoryStoreVisitorVerifier implements IHistoryStoreVisitor {
-		Set expected = new HashSet();
-		Set actual = new HashSet();
-
-		public boolean visit(HistoryStoreEntry state) {
-			actual.add(state.getPath());
-			return true;
-		}
-
-		public void reset() {
-			expected = new HashSet();
-			actual = new HashSet();
-		}
-
-		public void addExpected(IPath path) {
-			expected.add(path);
-		}
-
-		public void verify() throws VerificationFailedException {
-			if (expected.size() != actual.size())
-				throw new VerificationFailedException("Expected size (" + expected.size() + ") and actual size (" + actual.size() + ") differ.");
-			for (Iterator i = expected.iterator(); i.hasNext();) {
-				IPath path = (IPath) i.next();
-				if (!actual.contains(path))
-					throw new VerificationFailedException("Did not visit expected path: " + path);
-			}
 		}
 	}
 
@@ -128,10 +97,28 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new HistoryStoreTest("testBug28238"));
-		//	suite.addTest(new HistoryStoreTest("testIndexOrdering2"));
-		//	return suite;
+		if (false) {
+			TestSuite suite = new TestSuite();
+			//			suite.addTest(new HistoryStoreTest("testSimpleUse"));			
+			//			suite.addTest(new HistoryStoreTest("testSimpleMove"));
+			//			suite.addTest(new HistoryStoreTest("testSimpleCopy"));
+			//suite.addTest(new HistoryStoreTest("testMoveFolder"));
+			//			suite.addTest(new HistoryStoreTest("testCopyFolder"));
+			suite.addTest(new HistoryStoreTest("testCopyHistoryFolder"));
+
+			//	suite.addTest(new HistoryStoreTest("testIndexOrdering2"));
+			//			suite.addTest(new HistoryStoreTest("testAddStateAndPolicies"));
+			//			suite.addTest(new HistoryStoreTest("testClean"));
+			//			suite.addTest(new HistoryStoreTest("testExists"));						
+			//			suite.addTest(new HistoryStoreTest("testGetContents"));						
+			//			suite.addTest(new HistoryStoreTest("testRemoveAll"));
+			//suite.addTest(new HistoryStoreTest("testClean"));			
+			//			suite.addTest(new HistoryStoreTest("testBug28238"));
+			//			suite.addTest(new HistoryStoreTest("testBug28603"));
+			//			suite.addTest(new HistoryStoreTest("testDelete"));			
+			return suite;
+		}
+
 		return new TestSuite(HistoryStoreTest.class);
 	}
 
@@ -721,7 +708,7 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
-		assertTrue("4.1", states.length == ITERATIONS);
+		assertEquals("4.1", ITERATIONS, states.length);
 
 		/* Remove all states, and verify that no states remain. */
 		try {
@@ -1763,8 +1750,7 @@ public class HistoryStoreTest extends ResourceTest {
 		// this does not cause the history store states to be removed.
 		store.remove(Path.ROOT, getMonitor());
 		// Now make sure all the states are really removed.
-		if (store instanceof HistoryStore)
-			org.eclipse.core.internal.localstore.TestingSupport.removeGarbage((HistoryStore) store);
+		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
 	}
 
 	/*
@@ -1844,7 +1830,7 @@ public class HistoryStoreTest extends ResourceTest {
 		verifier.reset();
 
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(null, file2.getLocation());
+		store.copyHistory(null, file2);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -1853,7 +1839,7 @@ public class HistoryStoreTest extends ResourceTest {
 		verifier.reset();
 
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(file.getLocation(), null);
+		store.copyHistory(file, null);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -1863,7 +1849,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Try to copy the history store stuff to the same location
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(file.getLocation(), file.getLocation());
+		store.copyHistory(file, file);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -1876,7 +1862,7 @@ public class HistoryStoreTest extends ResourceTest {
 		log.removeLogListener(verifier);
 
 		// Test a valid copy of a file
-		store.copyHistory(file.getFullPath(), file2.getFullPath());
+		store.copyHistory(file, file2);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -1937,7 +1923,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Test a valid copy of a folder
 		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
-		store.copyHistory(folder.getFullPath(), folder2.getFullPath());
+		store.copyHistory(folder, folder2);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -1999,7 +1985,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Test a valid copy of a folder
 		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
-		store.copyHistory(project.getFullPath(), project2.getFullPath());
+		store.copyHistory(project, project2);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -2040,17 +2026,10 @@ public class HistoryStoreTest extends ResourceTest {
 		assertEquals("2.0", 1, states.length);
 
 		// copy the data
-		store.copyHistory(folder.getFullPath(), destinationFolder.getFullPath());
+		store.copyHistory(folder, destinationFolder);
 
 		states = store.getStates(destinationFile.getFullPath(), getMonitor());
 		assertEquals("3.0", 1, states.length);
-
-		// Cleanup
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("4.0", e);
-		}
 	}
 
 	public void testBug28603() {
@@ -2085,674 +2064,34 @@ public class HistoryStoreTest extends ResourceTest {
 			try {
 				states = file1.getHistory(getMonitor());
 			} catch (CoreException e) {
-				fail("2.0", e);
+				fail("2.0." + i, e);
 			}
-			assertEquals("2.1 file1 states", currentStates, states.length);
+			assertEquals("2.1." + i + " file1 states", currentStates, states.length);
 			try {
 				file1.move(file2.getFullPath(), true, true, getMonitor());
 			} catch (CoreException e) {
-				fail("2.2", e);
+				fail("2.2." + i, e);
 			}
 
 			try {
 				states = file2.getHistory(getMonitor());
 			} catch (CoreException e) {
-				fail("2.3", e);
+				fail("2.3." + i, e);
 			}
 			currentStates = currentStates < maxStates ? currentStates + 1 : maxStates;
-			assertEquals("2.4 file2 states", currentStates, states.length);
+			assertEquals("2.4." + i + " file2 states", currentStates, states.length);
 			try {
 				file2.move(file1.getFullPath(), true, true, getMonitor());
 			} catch (CoreException e) {
-				fail("2.5", e);
+				fail("2.5." + i, e);
 			}
 			try {
 				states = file1.getHistory(getMonitor());
 			} catch (CoreException e) {
-				fail("2.6", e);
+				fail("2.6." + i, e);
 			}
 			currentStates = currentStates < maxStates ? currentStates + 1 : maxStates;
-			assertEquals("2.7 file1 states", currentStates, states.length);
-		}
-	}
-
-	protected void addToHistory(String message, IHistoryStore store, IPath path, InputStream input) {
-		IPath localLocation = getRandomLocation();
-		try {
-			createFileInFileSystem(localLocation, input);
-		} catch (IOException e) {
-			fail(message, e);
-		}
-		store.addState(path, localLocation.toFile(), System.currentTimeMillis(), true);
-	}
-
-	public void testAccept() {
-		IHistoryStore hs = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
-		if (!(hs instanceof HistoryStore))
-			return;
-		HistoryStore store = (HistoryStore) hs;
-		IPath a = new Path("/a");
-		IPath ab = a.append("b");
-		IPath abc = ab.append("c");
-
-		IPath a1 = new Path("/a1");
-
-		addToHistory("1.0", store, a, getRandomContents());
-		addToHistory("1.1", store, ab, getRandomContents());
-		addToHistory("1.2", store, abc, getRandomContents());
-		addToHistory("1.3", store, a1, getRandomContents());
-
-		// visit only /a
-		HistoryStoreVisitorVerifier verifier = new HistoryStoreVisitorVerifier();
-		verifier.addExpected(a);
-		org.eclipse.core.internal.localstore.TestingSupport.accept(store, a, verifier, false);
-		try {
-			verifier.verify();
-		} catch (VerificationFailedException e) {
-			fail("2.0", e);
-		}
-
-		// visit /a and all its children. Ensure that we don't visit /a1
-		verifier.reset();
-		verifier.addExpected(a);
-		verifier.addExpected(ab);
-		verifier.addExpected(abc);
-		org.eclipse.core.internal.localstore.TestingSupport.accept(store, a, verifier, true);
-		try {
-			verifier.verify();
-		} catch (VerificationFailedException e) {
-			fail("2.1", e);
-		}
-
-		// visit starting at the root. Should visit all entries
-		verifier.reset();
-		verifier.addExpected(a);
-		verifier.addExpected(ab);
-		verifier.addExpected(abc);
-		verifier.addExpected(a1);
-		org.eclipse.core.internal.localstore.TestingSupport.accept(store, Path.ROOT, verifier, true);
-		try {
-			verifier.verify();
-		} catch (VerificationFailedException e) {
-			fail("2.2", e);
-		}
-	}
-
-	public void testSimultaneousStates() {
-		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("file.txt");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-			file.create(getRandomContents(), true, getMonitor());
-			file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		IFileState[] states = null;
-		try {
-			getWorkspace().save(true, null);
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertEquals("1.2", 1, states.length);
-
-		long lastModifiedTime = states[0].getModificationTime();
-
-		// Create more states for this file with the same path
-		// and last modification time
-		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.3", e);
-		}
-		assertEquals("1.4", 3, states.length);
-
-		// Now get all the HistoryStoreEntry's that match these
-		// states and make sure the counter is different for
-		// each one.
-		final String INDEX_FILE = ".index"; //$NON-NLS-1$
-		IPath location = ((Workspace) getWorkspace()).getMetaArea().getHistoryStoreLocation();
-		IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-
-		boolean[] counts = {false, false, false};
-
-		store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-		byte[] key = HistoryStoreEntry.keyPrefixToBytes(file.getFullPath(), lastModifiedTime);
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.find(key);
-			// Check for a prefix match.
-			while (cursor.keyMatches(key)) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				if (storedKey.length - ILocalStoreConstants.SIZE_COUNTER == key.length) {
-					HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-					int counter = storedEntry.getCount();
-					assertTrue("1.5", counter < 3);
-					// Make sure we haven't already seen this
-					// counter.
-					assertFalse("1.6", counts[counter]);
-					counts[counter] = true;
-				}
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.7");
-		}
-		// Make sure we saw each of the counts once
-		for (int i = 0; i < counts.length; i++) {
-			assertTrue("1.8" + i, counts[i]);
-		}
-
-		// Clean up
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("1.9", e);
-		}
-	}
-
-	public void testTooManySimultaneousStates() {
-		// What happens if we have so many simultaneous states, that we
-		// can't store them?
-		class checkErrorListener implements ILogListener {
-			private String expectedMessage = null;
-			private boolean triggered = false;
-
-			public void logging(IStatus status, String plugin) {
-				if (plugin.equals(ResourcesPlugin.PI_RESOURCES)) {
-					if (status.getCode() == IResourceStatus.FAILED_WRITE_LOCAL) {
-						assertTrue("1.4", expectedMessage.equals(status.getMessage()));
-						triggered = true;
-					}
-				}
-			}
-
-			public void setExpectedMessage(String message) {
-				expectedMessage = message;
-			}
-
-			public boolean hasBeenTriggered() {
-				return triggered;
-			}
-		}
-		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("file.txt");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-			file.create(getRandomContents(), true, getMonitor());
-			file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		IFileState[] states = null;
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertEquals("1.2", 1, states.length);
-
-		long lastModifiedTime = states[0].getModificationTime();
-
-		// Create more states for this file with the same path
-		// and last modification time
-		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		checkErrorListener myListener = new checkErrorListener();
-		String message = Policy.bind("history.tooManySimUpdates", file.getFullPath().toString(), new Date(lastModifiedTime).toString()); //$NON-NLS-1$
-		myListener.setExpectedMessage(message);
-		ResourcesPlugin.getPlugin().getLog().addLogListener(myListener);
-		for (int i = 0; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		}
-		// Make sure the we did hit the error message
-		assertTrue("1.3", myListener.hasBeenTriggered());
-	}
-
-	private void removeHistoryStoreEntry(IndexedStoreWrapper store, HistoryStoreEntry entry) throws IndexedStoreException {
-		// This method provided as a convenience for removing a HistoryStoreEntry.
-		// It is pirated directly from HistoryStore.remove(HistoryStoreEntry)
-		// which is a protected method.
-		try {
-			Vector objectIds = store.getIndex().getObjectIdentifiersMatching(entry.getKey());
-			if (objectIds.size() == 1) {
-				store.removeObject((ObjectID) objectIds.get(0));
-			} else if (objectIds.size() > 1) {
-				// There is a problem with more than one entry having the same
-				// key.
-				String message = Policy.bind("history.tooManySimUpdates", entry.getPath().toString(), new Date(entry.getLastModified()).toString()); //$NON-NLS-1$
-				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, entry.getPath(), message, null);
-				ResourcesPlugin.getPlugin().getLog().log(status);
-			}
-		} catch (Exception e) {
-			String[] messageArgs = {entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString()};
-			String message = Policy.bind("history.specificProblemsCleaning", messageArgs); //$NON-NLS-1$
-			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-		}
-		entry.remove();
-	}
-
-	public void testIndexOrdering1() {
-		/*
-		 * This test will create a file and give it a local history state.
-		 * It will then create 128 states for this file with the same last
-		 * modified time (this is currently the maximum number of states you
-		 * can have with the same filename and last modified time).  After this,
-		 * 3 states in the middle of the ordering of these 128 states will be
-		 * removed.  And finally a new state will be added (with the same 
-		 * filename and last modified time).  This last state should cause all
-		 * existing states to be reordered so that the new state is ordered last
-		 * (i.e., close the holes where the 3 states were removed and add the
-		 * new state on the end).
-		 */
-		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project2");
-		IFile file = project.getFile("file2.txt");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-			file.create(getRandomContents(), true, getMonitor());
-			file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		// Cause some new states to be added to this file with the same
-		// timestamp
-		IFileState[] states = null;
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertEquals("1.2", 1, states.length);
-		long lastModifiedTime = states[0].getModificationTime();
-
-		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		}
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.3", e);
-		}
-		assertEquals("1.4", Byte.MAX_VALUE + 1, states.length);
-
-		final String INDEX_FILE = ".index"; //$NON-NLS-1$
-		IPath location = ((Workspace) getWorkspace()).getMetaArea().getHistoryStoreLocation();
-		IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-
-		store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-		// Remove the states with counts 2, 3, and 4
-		try {
-			IndexCursor cursor = store.getCursor();
-			byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(file.getFullPath(), lastModifiedTime);
-			byte[] key = new byte[keyPrefix.length + 1];
-			// Copy all values into full key.
-			int destPosition = 0;
-			System.arraycopy(keyPrefix, 0, key, destPosition, keyPrefix.length);
-			destPosition += keyPrefix.length;
-			for (byte i = 2; i <= 4; i++) {
-				key[destPosition] = i;
-				cursor.find(key);
-				// Check for a prefix match.
-				if (cursor.keyMatches(key)) {
-					byte[] storedKey = cursor.getKey();
-					HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-					int counter = storedEntry.getCount();
-					removeHistoryStoreEntry(store, storedEntry);
-					cursor.reset();
-				}
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.5");
-		}
-		// Make sure that the states with counter 2, 3 or 4 are missing
-		BitSet counters = new BitSet();
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				byte counter = storedEntry.getCount();
-				counters.set(counter);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.6");
-		}
-
-		assertEquals("1.7", Byte.MAX_VALUE + 1, counters.length());
-		assertFalse("1.8", counters.get(2));
-		assertFalse("1.9", counters.get(3));
-		assertFalse("1.9", counters.get(4));
-		assertTrue("1.10", counters.get(Byte.MAX_VALUE));
-
-		// This should cause all the counts to be shifted and the new state
-		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		counters.clear();
-
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				int counter = storedEntry.getCount();
-				counters.set(counter);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.11");
-		}
-		assertEquals("1.12", Byte.MAX_VALUE - 1, counters.length());
-		assertTrue("1.13", counters.get(2));
-		assertTrue("1.14", counters.get(3));
-		assertTrue("1.15", counters.get(4));
-		assertFalse("1.16", counters.get(Byte.MAX_VALUE - 1));
-		assertFalse("1.17", counters.get(Byte.MAX_VALUE));
-
-		// cleanup
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
-	public void testIndexOrdering2() {
-		/*
-		 * This test will create a file and give it a local history state.
-		 * It will then create 128 states for this file with the same last
-		 * modified time (this is currently the maximum number of states you
-		 * can have with the same filename and last modified time).  After this,
-		 * 3 states at the beginning of the ordering of these 128 states will be
-		 * removed.  And finally a new state will be added (with the same 
-		 * filename and last modified time).  This last state should cause all
-		 * existing states to be reordered so that the new state is ordered last
-		 * (i.e., close the holes where the 3 states were removed and add the
-		 * new state on the end).
-		 */
-
-		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project11");
-		IFile file = project.getFile("file17.txt");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-			file.create(getRandomContents(), true, getMonitor());
-			file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		// Cause some new states to be added to this file with the same
-		// timestamp
-		IFileState[] states = null;
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertEquals("1.2", 1, states.length);
-		long lastModifiedTime = states[0].getModificationTime();
-
-		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		}
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.3", e);
-		}
-		assertEquals("1.4", Byte.MAX_VALUE + 1, states.length);
-
-		final String INDEX_FILE = ".index"; //$NON-NLS-1$
-		IPath location = ((Workspace) getWorkspace()).getMetaArea().getHistoryStoreLocation();
-		IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-
-		store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-		// Remove the states with counts 0, 1, and 2
-		try {
-			IndexCursor cursor = store.getCursor();
-			byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(file.getFullPath(), lastModifiedTime);
-			byte[] key = new byte[keyPrefix.length + 1];
-			// Copy all values into full key.
-			int destPosition = 0;
-			System.arraycopy(keyPrefix, 0, key, destPosition, keyPrefix.length);
-			destPosition += keyPrefix.length;
-			for (byte i = 0; i <= 2; i++) {
-				key[destPosition] = i;
-				cursor.find(key);
-				// Check for a prefix match.
-				if (cursor.keyMatches(key)) {
-					byte[] storedKey = cursor.getKey();
-					HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-					removeHistoryStoreEntry(store, storedEntry);
-					cursor.reset();
-				}
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.5");
-		}
-		// Make sure that the states with counter 0, 1 or 2 are missing
-		BitSet counters = new BitSet();
-		counters.clear();
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				byte stateCount = storedEntry.getCount();
-				counters.set(stateCount);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.6");
-		}
-
-		assertEquals("1.7", Byte.MAX_VALUE + 1, counters.length());
-		assertFalse("1.8", counters.get(0));
-		assertFalse("1.9.1", counters.get(1));
-		assertFalse("1.9.2", counters.get(2));
-		assertTrue("1.10", counters.get(Byte.MAX_VALUE));
-
-		// This should cause all the counts to be shifted and the new state
-		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		counters.clear();
-
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				int counter = storedEntry.getCount();
-				counters.set(counter);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.11");
-		}
-		assertEquals("1.12", Byte.MAX_VALUE - 1, counters.length());
-		assertTrue("1.13", counters.get(0));
-		assertTrue("1.14", counters.get(1));
-		assertTrue("1.15", counters.get(2));
-		assertFalse("1.16", counters.get(Byte.MAX_VALUE - 1));
-		assertFalse("1.17", counters.get(Byte.MAX_VALUE));
-
-		// cleanup
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
-	public void testIndexOrdering3() {
-		/*
-		 * This test will create a file and give it a local history state.
-		 * It will then create 128 states for this file with the same last
-		 * modified time (this is currently the maximum number of states you
-		 * can have with the same filename and last modified time).  After this,
-		 * 3 states at the end of the ordering of these 128 states will be
-		 * removed.  And finally a new state will be added (with the same 
-		 * filename and last modified time).  This last state should not need to
-		 * do any reordering of existing states and the new state should be
-		 * added at the end of the ordering.
-		 */
-		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project2");
-		IFile file = project.getFile("file2.txt");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-			file.create(getRandomContents(), true, getMonitor());
-			file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		// Cause some new states to be added to this file with the same
-		// timestamp
-		IFileState[] states = null;
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertEquals("1.2", 1, states.length);
-		long lastModifiedTime = states[0].getModificationTime();
-
-		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		}
-		try {
-			states = file.getHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("1.3", e);
-		}
-		assertEquals("1.4", Byte.MAX_VALUE + 1, states.length);
-
-		final String INDEX_FILE = ".index"; //$NON-NLS-1$
-		IPath location = ((Workspace) getWorkspace()).getMetaArea().getHistoryStoreLocation();
-		IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-
-		store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-		// Remove the states with counts 126, 127, and 128
-		try {
-			IndexCursor cursor = store.getCursor();
-			byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(file.getFullPath(), lastModifiedTime);
-			byte[] key = new byte[keyPrefix.length + 1];
-			// Copy all values into full key.
-			int destPosition = 0;
-			System.arraycopy(keyPrefix, 0, key, destPosition, keyPrefix.length);
-			destPosition += keyPrefix.length;
-			for (byte i = Byte.MAX_VALUE - 2; i <= Byte.MAX_VALUE && i >= 0; i++) {
-				key[destPosition] = i;
-				cursor.find(key);
-				// Check for a prefix match.
-				if (cursor.keyMatches(key)) {
-					byte[] storedKey = cursor.getKey();
-					HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-					int counter = storedEntry.getCount();
-					removeHistoryStoreEntry(store, storedEntry);
-					cursor.reset();
-				}
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.5");
-		}
-		// Make sure that the states with counter 2, 3 or 4 are missing
-		BitSet counters = new BitSet();
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				byte counter = storedEntry.getCount();
-				counters.set(counter);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.6");
-		}
-
-		assertEquals("1.7", Byte.MAX_VALUE - 2, counters.length());
-		assertFalse("1.8", counters.get(Byte.MAX_VALUE - 2));
-		assertFalse("1.9.1", counters.get(Byte.MAX_VALUE - 1));
-		assertFalse("1.9.2", counters.get(Byte.MAX_VALUE));
-		assertTrue("1.10", counters.get(Byte.MAX_VALUE - 3));
-
-		// This should cause all the counts to be shifted and the new state
-		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
-		counters.clear();
-
-		try {
-			IndexCursor cursor = store.getCursor();
-			cursor.findFirstEntry();
-			// Check for a prefix match.
-			while (cursor.isSet()) {
-				byte[] storedKey = cursor.getKey();
-				// set the boolean for the appropriate counter
-				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				int counter = storedEntry.getCount();
-				counters.set(counter);
-				cursor.next();
-			}
-			cursor.close();
-		} catch (Exception e) {
-			fail("1.11");
-		}
-		assertEquals("1.12", Byte.MAX_VALUE - 1, counters.length());
-		assertTrue("1.13", counters.get(Byte.MAX_VALUE - 2));
-		assertFalse("1.14", counters.get(Byte.MAX_VALUE - 1));
-		assertFalse("1.15", counters.get(Byte.MAX_VALUE));
-
-		// cleanup
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
+			assertEquals("2.7." + i + " file1 states", currentStates, states.length);
 		}
 	}
 }
