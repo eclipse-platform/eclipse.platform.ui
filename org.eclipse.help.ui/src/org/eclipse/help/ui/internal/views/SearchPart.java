@@ -352,7 +352,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		});
 		String desc = edesc.getDescription();
 		if (desc != null) {
-			toolkit.createLabel(container, null);
+			Label spacer = toolkit.createLabel(container, null);
+            spacer.setData(edesc);
 			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
 			dlabel
 					.setForeground(toolkit.getColors().getColor(
@@ -366,15 +367,16 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void removeEngine(EngineDescriptor desc) {
 		boolean reflowNeeded = false;
-		Control[] children = container.getChildren();
+		Control[] children = ((Composite)scopeSection.getClient()).getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			EngineDescriptor ed = (EngineDescriptor) child.getData();
-			if (ed == desc) {
-				child.dispose();
-				reflowNeeded = true;
-			}
-		}
+			if (ed==desc) {
+                child.setMenu(null);
+                child.dispose();
+                reflowNeeded=true;
+            }
+	    }
 		if (reflowNeeded)
 			parent.reflow();
 	}
