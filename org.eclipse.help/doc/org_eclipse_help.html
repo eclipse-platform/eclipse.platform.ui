@@ -65,6 +65,15 @@ Value is used in browsers displaying basic help UI.&nbsp; Default is "#FFFFFF"</
 index. &nbsp;If present, the index retrieved from the plug-in will be used
 as a starting point in creation of documentation index for use by help search.&nbsp;
 Default is ""<br>
+  <li><b>locales</b>: list of locales (space separated) that infocenter will recognize and provide a customized
+content for.  If locales (or languages) accepted by client browser are not matched with
+any locales in this list, the browser will be served content for default locale - the server locale,
+or locale specified by eclipse -nl command line option. If list is not specified, the browser will be
+served contents for its preferred locale.  Note: not providing this option may result in a large
+memory and disk space requirements as navigations and indexes will be created for each distinct
+preferred locale among browsers accessing the infocenter.
+Thos preference can be overridden by command line option when launching infocenter.
+Default is ""<br>
   </li>
 </ul>
 <p><br>
