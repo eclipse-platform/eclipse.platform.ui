@@ -1,8 +1,8 @@
-package org.eclipse.help.internal.context;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.context;
 import java.io.*;
 import java.util.Stack;
 import org.apache.xerces.parsers.SAXParser;
@@ -12,13 +12,15 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Parser for xml file
  */
-public class ContextContributionParser extends DefaultHandler {
-	protected Stack elementStack = new Stack();
-	protected IContextContributionNode contribution;
+public class ContextsFileParser extends DefaultHandler {
+	protected Stack stack = new Stack();
 	StringBuffer buffer = new StringBuffer();
 	boolean seenDescription = false;
-	public ContextContributionParser() {
+	ContextsFile contextsFile;
+	private ContextsBuilder builder;
+	public ContextsFileParser(ContextsBuilder builder) {
 		super();
+		this.builder = builder;
 	}
 	/**
 	  * Receive notification of character data.
@@ -28,7 +30,7 @@ public class ContextContributionParser extends DefaultHandler {
 			buffer.append(ch, start, length);
 		if (Logger.DEBUG)
 			Logger.logDebugMessage(
-				"XMLContextContributor",
+				"ContextsFileParser",
 				"got char from parser= "
 					+ new StringBuffer().append(ch, start, length).toString());
 	}
@@ -38,17 +40,19 @@ public class ContextContributionParser extends DefaultHandler {
 	public void endElement(String namespaceURI, String localName, String qName)
 		throws SAXException {
 		// make sure that no error has already occurred before adding to stack.
-		if (qName.equals(ContextContributor.DESC_ELEM)) {
+		if (qName.equals(ContextsNode.DESC_ELEM)) {
 			seenDescription = false;
-			((ContextContribution) elementStack.peek()).setText(buffer.toString());
+			((Context) stack.peek()).setText(buffer.toString());
 			buffer.setLength(0);
-		} else if (qName.equals(ContextContributor.DESC_TXT_BOLD)) {
+		} else if (qName.equals(ContextsNode.DESC_TXT_BOLD)) {
 			// pop the starting bold tag
-			elementStack.pop();
-			if (!(elementStack.peek()).equals(ContextContributor.BOLD_TAG))
-				buffer.append(ContextContributor.BOLD_CLOSE_TAG);
-		} else
-			elementStack.pop();
+			stack.pop();
+			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
+				buffer.append(ContextsNode.BOLD_CLOSE_TAG);
+		} else {
+			ContextsNode node = (ContextsNode) stack.pop();
+			node.build(builder);
+		}
 	}
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
@@ -65,9 +69,6 @@ public class ContextContributionParser extends DefaultHandler {
 		String message = getMessage("E002", ex);
 		Logger.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
-	}
-	public IContextContributionNode getContribution() {
-		return contribution;
 	}
 	public String getMessage(String messageID, SAXParseException ex) {
 		String param1 = ex.getSystemId();
@@ -87,9 +88,9 @@ public class ContextContributionParser extends DefaultHandler {
 		Attributes atts)
 		throws SAXException {
 		// We don't create a description element
-		if (qName.equals(ContextContributor.DESC_ELEM))
+		if (qName.equals(ContextsNode.DESC_ELEM))
 			seenDescription = true;
-		else if (qName.equals(ContextContributor.DESC_TXT_BOLD)) {
+		else if (qName.equals(ContextsNode.DESC_TXT_BOLD)) {
 			// peek into stack to findout if a bold tag element already
 			// exists. If we find one, then we do not add the bold tag to
 			// the current StringBuffer of description.
@@ -97,48 +98,43 @@ public class ContextContributionParser extends DefaultHandler {
 			// the tag only once to the description string.
 			// eg: (b) some text (b) more test (/b) more text (/b) will result 
 			// in all of the sentence being bold.
-			if (!(elementStack.peek()).equals(ContextContributor.BOLD_TAG))
-				buffer.append(ContextContributor.BOLD_TAG);
-			elementStack.push(ContextContributor.BOLD_TAG);
+			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
+				buffer.append(ContextsNode.BOLD_TAG);
+			stack.push(ContextsNode.BOLD_TAG);
 		} else {
-			IContextContributionNode e = null;
+			ContextsNode e = null;
 			// NOTE: we don't create an element for the description
-			if (qName.equals(ContextContributor.CONTEXTS_ELEM))
-				e = new ContextContribution(atts);
-			else if (qName.equals(ContextContributor.CONTEXT_ELEM))
-				e = new ContextContribution(atts);
-			else if (qName.equals(ContextContributor.RELATED_ELEM)) {
-				RelatedTopic hct = new RelatedTopic(atts);
-				if (!elementStack.isEmpty())
-					 ((IContextContributionNode) elementStack.peek()).addChild(hct);
-				elementStack.push(e);
+			if (qName.equals(ContextsNode.CONTEXTS_ELEM)) {
+				e = new Contexts(atts);
+			} else if (qName.equals(ContextsNode.CONTEXT_ELEM)) {
+				e = new Context(atts);
+			} else if (qName.equals(ContextsNode.RELATED_ELEM)) {
+				e = new RelatedTopic(atts);
+			} else
 				return;
-			}
-			if (e == null)
-				return;
-			if (elementStack.empty())
-				contribution = e;
-			else
-				 ((ContextContribution) elementStack.peek()).addChild(e);
-			elementStack.push(e);
+			if (!stack.empty())
+				 ((ContextsNode) stack.peek()).addChild(e);
+			stack.push(e);
 		}
 	}
 	public void warning(SAXParseException ex) {
 		String message = getMessage("E003", ex);
 		Logger.logWarning(message);
 	}
-	void parse(InputStream stream, String file) {
+	public void parse(ContextsFile contextsFile) {
+		this.contextsFile = contextsFile;
+		InputStream is = contextsFile.getInputStream();
+		if (is == null)
+			return;
+		InputSource inputSource = new InputSource(is);
+		String file = contextsFile.getDefiningPluginID() + "/" + contextsFile.getHref();
+		inputSource.setSystemId(file);
 		try {
-			InputSource source = new InputSource(stream);
-			// set id info for parser exceptions.
-			// use toString method to capture protocol...etc
-			// source.setSystemId(xmlURL.toString());
-			source.setSystemId(file);
 			SAXParser parser = new SAXParser();
 			parser.setErrorHandler(this);
 			parser.setContentHandler(this);
-			parser.parse(source);
-			stream.close();
+			parser.parse(inputSource);
+			is.close();
 		} catch (SAXException se) {
 			Logger.logError("", se);
 		} catch (IOException ioe) {

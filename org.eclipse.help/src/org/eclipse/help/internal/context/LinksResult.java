@@ -1,15 +1,13 @@
-package org.eclipse.help.internal.context;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.context;
 import java.io.*;
-import java.util.List;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.util.URLCoder;
 import org.w3c.dom.*;
 /**
  * An XML based links result. This is needed in order to decouple
@@ -25,16 +23,14 @@ public class LinksResult {
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
-		IContext context=HelpSystem.getContextManager().getContext(contextId);
-		if(context==null)
+		IContext context = HelpSystem.getContextManager().getContext(contextId);
+		if (context == null)
 			return;
-		IHelpResource[] links= context.getRelatedTopics();
-		if (links == null || links.length<=0)
+		IHelpResource[] links = context.getRelatedTopics();
+		if (links == null || links.length <= 0)
 			return;
 		for (int i = 0; i < links.length; i++)
 			addDocument(links[i]);
-
-		
 	}
 	/**
 	 * Adds a new link document to the result

@@ -1,8 +1,8 @@
-package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.context;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 /**
@@ -10,14 +10,14 @@ import org.eclipse.help.internal.HelpSystem;
  * context ID and HelpContext instantiation.
  * when any of the IContext methods are called.
  */
-public class ContextImpl implements IContext {
+public class ContextProxy implements IContext {
 	private String contextID;
 	private IContext context = null;
 	private boolean used = false;
 	/**
 	 * ContextImpl constructor.
 	 */
-	public ContextImpl(String contextId) {
+	public ContextProxy(String contextId) {
 		super();
 		this.contextID = contextId;
 	}
@@ -49,7 +49,7 @@ public class ContextImpl implements IContext {
 			return null;
 		return context.getText();
 	}
-	public String getID(){
+	public String getID() {
 		return contextID;
 	}
 }

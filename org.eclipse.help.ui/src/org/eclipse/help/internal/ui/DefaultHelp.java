@@ -150,7 +150,7 @@ public class DefaultHelp implements IHelp {
 	 */
 	public IContext findContext(String contextID) {
 		//return HelpSystem.getContextManager().getContext(contextID);
-		return new ContextImpl(contextID);
+		return new ContextProxy(contextID);
 	}
 	/**
 	 * Returns the list of all integrated tables of contents available.
@@ -285,10 +285,10 @@ public class DefaultHelp implements IHelp {
 		return instance;
 	}
 	private String getContextID(IContext context) {
-		if (context instanceof ContextContribution)
-			return ((ContextContribution) context).getID();
-		if (context instanceof ContextImpl)
-			return ((ContextImpl) context).getID();
+		if (context instanceof Context)
+			return ((Context) context).getID();
+		if (context instanceof ContextProxy)
+			return ((ContextProxy) context).getID();
 		// TODO add code not to generate new ID for the same context
 		String id = "org.eclipse.help.ID" + idCounter++;
 		HelpSystem.getContextManager().addContext(id, context);
