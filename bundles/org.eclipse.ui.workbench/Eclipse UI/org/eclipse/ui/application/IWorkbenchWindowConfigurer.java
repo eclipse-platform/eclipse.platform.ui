@@ -15,6 +15,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -297,5 +299,53 @@ public interface IWorkbenchWindowConfigurer {
 	 * @return the status line manager
 	 */
 	public IStatusLineManager getStatusLineManager();
+	
+	/**
+	 * Adds the given drag and drop <code>Transfer</code> type to the ones
+	 * supported for drag and drop on the editor area of this workbench window.
+	 * <p>
+	 * The workbench adviser ordinarily calls this method from the
+	 * <code>preWindowOpen</code> callback.
+	 * A newly-created workbench window supports no drag and drop transfer
+	 * types. Adding <code>EditorInputTransfer.getInstance()</code>
+	 * enables <code>IEditorInput</code>s to be transferred. 
+	 * </p>
+	 * <p>
+	 * Note that drag and drop to the editor area requires adding one or more
+	 * transfer types (using <code>addEditorAreaTransfer</code>) and 
+	 * configuring a drop target (with <code>configureEditorAreaTransfer</code>)
+	 * capable of handling all of those transfer types.
+	 * </p>
+	 * 
+	 * @param transfer a drag and drop transfer object
+	 * @see #configureEditorAreaTransfer(DropTarget)
+	 * @see org.eclipse.ui.IEditorInput
+	 * @see org.eclipse.ui.part.EditorInputTransfer
+	 */
+	public void addEditorAreaTransfer(Transfer tranfer);
+	
+	/**
+	 * Configures the drop target for the editor area of this workbench window.
+	 * <p>
+	 * The workbench adviser ordinarily calls this method from the
+	 * <code>preWindowOpen</code> callback.
+	 * A newly-created workbench window has no configured drop target for its
+	 * editor area.
+	 * </p>
+	 * <p>
+	 * Note that drag and drop to the editor area requires adding one or more
+	 * transfer types (using <code>addEditorAreaTransfer</code>) and 
+	 * configuring a drop target (with <code>configureEditorAreaTransfer</code>)
+	 * capable of handling all of those transfer types.
+	 * </p>
+	 * 
+	 * @param dropTarget the drop target that will handle requests to drop an
+	 * object on to the editor area of this window
+	 * 
+	 * @see #addEditorAreaTransfer(Transfer)
+	 * @see org.eclipse.ui.IEditorInput
+	 * @see org.eclipse.ui.part.EditorInputTransfer
+	 */
+	public void configureEditorAreaTransfer(DropTarget dropTarget);
 }
 
