@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.action;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -69,6 +71,12 @@ public class ToolBarContributionItem extends ContributionItem {
      * Current width of cool item.
      */
     private int currentWidth = -1;
+    
+    /**
+     * An exception generated at the time of disposal -- solely for the purpose
+     * of holding a stack trace.
+     */
+    private Exception disposalTrace = null; // TODO Remove this member.
 
     /**
      * Mininum number of tool items to show in the cool item widget.
@@ -123,6 +131,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#dispose()
      */
     public void dispose() {
+        // TODO Remove this.  Extra info for Bug 51000.
+        disposalTrace = new Exception();
+        
         // Dispose of the ToolBar and all its contributions
         if (toolBarManager != null) {
             toolBarManager.dispose();
@@ -381,6 +392,18 @@ public class ToolBarContributionItem extends ContributionItem {
      *         set to be visible.
      */
     public boolean isVisible() {
+        // TODO Remove this debugging code (Bug 51000).
+        if (disposalTrace != null) {
+			if ("true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			    System.out.println("ToolBarContributionItem.isVisible when item disposed."); //$NON-NLS-1$
+			    System.out.println("Item disposed by: "); //$NON-NLS-1$
+			    disposalTrace.printStackTrace(System.out);
+			    System.out.println("Call to isVisible by: "); //$NON-NLS-1$
+			    new Exception().printStackTrace(System.out);
+			}
+			return false;
+		}
+        
         boolean visibleItem = false;
         if (toolBarManager != null) {
             IContributionItem[] contributionItems = toolBarManager.getItems();
@@ -394,7 +417,7 @@ public class ToolBarContributionItem extends ContributionItem {
             }
         }
 
-        return visibleItem || super.isVisible();
+        return (visibleItem || super.isVisible());
     }
 
     /*
