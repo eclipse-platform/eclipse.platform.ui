@@ -62,14 +62,14 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 		layout.topMargin = 10;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 20;
-		HyperlinkListener urlAction = new HyperlinkAdapter() {
+		IHyperlinkListener urlAction = new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String url = (String) e.getHref();
 				if (url != null)
 					UpdateUI.showURL(url);
 			}
 		};
-		HyperlinkListener taskAction = new HyperlinkAdapter() {
+		IHyperlinkListener taskAction = new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String indexArg = (String) e.getHref();
 				try {
