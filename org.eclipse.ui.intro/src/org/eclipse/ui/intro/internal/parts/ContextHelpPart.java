@@ -237,8 +237,9 @@ public class ContextHelpPart implements IStandbyContentPart {
         String text = null;
         IWorkbenchPart part = ref.getPart(false);
         if (part != null) {
-            Control c = Display.getDefault().getFocusControl();
-            if (c.isVisible() && !c.isDisposed()) {
+        	Display display = part.getSite().getShell().getDisplay();
+            Control c = display.getFocusControl();
+            if (c!=null && c.isVisible() && !c.isDisposed()) {
                 IContext helpContext = findHelpContext(c);
                 if (helpContext != null) {
                     text = formatHelpContext(helpContext);
