@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,10 +56,29 @@ public interface IExtensionPoint {
 	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the idenifier of the parent
-	 * @see Plarform.getBundle(String)
+	 * @see Platform.getBundle(String)
 	 * @since 3.0
+	 * @deprecated Use #getNamespace instead. This method is going to be removed 
+	 * after M8 
 	 */
 	public String getParentIdentifier();
+	/**
+	 * Returns the namespace for this extension point. This value can be used
+	 * in various global facilities to discover this extension point's provider.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @return the namespace for this extension point
+	 * @see Platform.getBundle(String)
+	 * @see IExtensionRegistry
+	 * @since 3.0
+	 */	 
+	public String getNamespace();	
 	/**
 	 * Returns the extension with the given unique identifier configured into
 	 * this extension point, or <code>null</code> if there is no such extension.
@@ -114,8 +133,8 @@ public interface IExtensionPoint {
 	/**
 	 * Returns the unique identifier of this extension point.
 	 * This identifier is unique within the plug-in registry, and
-	 * is composed of the identifier of the plug-in that declared
-	 * this extension point and this extension point's simple identifier.
+	 * is composed of the namespace for this extension point 
+	 * and this extension point's simple identifier.
 	 *
 	 * @return the unique identifier of the extension point
 	 *    (e.g. <code>"org.eclipse.core.resources.builders"</code>)

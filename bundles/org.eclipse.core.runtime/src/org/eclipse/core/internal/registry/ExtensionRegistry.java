@@ -212,7 +212,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		return delta;
 	}
 	public String[] getElementIdentifiers() {
-		return (String[]) elements.keySet().toArray(new String[elements.size()]);
+		return getNamespaces();
 	}
 	public String[] getNamespaces() {
 		return (String[]) elements.keySet().toArray(new String[elements.size()]);

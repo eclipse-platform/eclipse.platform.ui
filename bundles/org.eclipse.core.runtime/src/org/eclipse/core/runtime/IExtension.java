@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,6 @@ public interface IExtension {
 	 *  
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
-
 	/**
 	 * Returns the identifier of the parent of this extension.  This value can be used
 	 * in various global facilities to discover the actual parent.
@@ -56,12 +55,30 @@ public interface IExtension {
 	 * that these APIs may well change in incompatible ways until they reach
 	 * their finished, stable form (post-3.0). </p>
 	 * 
-	 * @return the idenifier of the parent
-	 * @see Plarform.getBundle(String)
+	 * @return the identifier of the parent
+	 * @see Platform.getBundle(String)
 	 * @since 3.0
+	 * @deprecated Use #getNamespace instead. This method is going to be removed 
+	 * after M8
 	 */
 	public String getParentIdentifier();
-	//TODO Add a method returning the long ?
+	/**
+	 * Returns the namespace for this extension. This value can be used
+	 * in various global facilities to discover this extension's provider.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @return the namespace for this extension
+	 * @see Platform.getBundle(String)
+	 * @see IExtensionRegistry
+	 * @since 3.0
+	 */	 
+	public String getNamespace();
 	/**
 	 * Returns the unique identifier of the extension point
 	 * that this extension gets plugged into.
@@ -98,12 +115,11 @@ public interface IExtension {
 	 * Returns the unique identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier.
 	 * If available, this identifier is unique within the plug-in registry, and
-	 * is composed of the identifier of the plug-in that declared
-	 * this extension and this extension's simple identifier.
+	 * is composed of the namespace where this extension 
+	 * was declared and this extension's simple identifier.
 	 *
 	 * @return the unique identifier of the extension
 	 *    (e.g. <code>"com.example.acme.main"</code>), or <code>null</code>
 	 */
 	public String getUniqueIdentifier();
-
 }
