@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  */
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
 
 /**
  * Operation that enable a feature in a configuration.

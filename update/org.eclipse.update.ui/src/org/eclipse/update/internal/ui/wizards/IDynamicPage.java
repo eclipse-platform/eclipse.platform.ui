@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 /**
  * @author dejan

@@ -8,13 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  */
-package org.eclipse.update.operations;
-
+package org.eclipse.update.internal.api.operations;
 
 /**
- * A feature uninstall operation.
+ * Operation that reverts a feature to another version.
  * @since 3.0
  */
-public interface IUninstallFeatureOperation extends IFeatureOperation {
-	public final static String UNINSTALL = "uninstall";
+public interface IReplaceFeatureVersionOperation extends IFeatureOperation {
 }

@@ -17,7 +17,7 @@ import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.internal.api.search.*;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 

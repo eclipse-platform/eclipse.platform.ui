@@ -6,7 +6,7 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.search.*;
+import org.eclipse.update.internal.api.search.*;
 
 /**
  * @author dejan

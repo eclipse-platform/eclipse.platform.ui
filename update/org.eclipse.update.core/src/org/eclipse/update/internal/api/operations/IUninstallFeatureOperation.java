@@ -7,18 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ */
+package org.eclipse.update.internal.api.operations;
 
-package org.eclipse.update.operations;
 
 /**
- * Batch of operations on feature. For example, a batch features installation.
+ * A feature uninstall operation.
  * @since 3.0
  */
-public interface IBatchOperation  extends IOperation {
-	/**
-	 * Returns the batch operations.
-	 * @return
-	 */
-	public abstract IFeatureOperation[] getOperations();
+public interface IUninstallFeatureOperation extends IFeatureOperation {
+	public final static String UNINSTALL = "uninstall";
 }

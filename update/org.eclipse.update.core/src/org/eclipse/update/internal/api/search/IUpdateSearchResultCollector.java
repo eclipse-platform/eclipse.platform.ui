@@ -8,21 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.search;
+package org.eclipse.update.internal.api.search;
 
 import org.eclipse.update.core.*;
 
 /**
- * Base filter class
- * 
- * @see UpdateSearchRequest
- * @see IUpdateSearchFilter
+ * Search results are collected by implementing this interface
+ * and passing it to the search request. If the implementation is
+ * visual, it is recommended that the match is shown as soon
+ * as it is collected (rather than kept in a list and presented
+ * at the end of the search).
  */
-public class BaseFilter implements IUpdateSearchFilter {
-	public boolean accept(IFeature match) {
-		return true;
-	}
-	public boolean accept(IFeatureReference match) {
-		return true;
-	}	
+public interface IUpdateSearchResultCollector {
+/**
+ * Called when a matching feature has been found during
+ * the search.
+ * @param match the matching feature
+ */
+   void accept(IFeature match);
 }

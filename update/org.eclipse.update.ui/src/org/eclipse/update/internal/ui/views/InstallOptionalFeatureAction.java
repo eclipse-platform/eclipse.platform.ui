@@ -22,8 +22,8 @@ import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.internal.api.search.*;
 
 
 public class InstallOptionalFeatureAction extends Action {

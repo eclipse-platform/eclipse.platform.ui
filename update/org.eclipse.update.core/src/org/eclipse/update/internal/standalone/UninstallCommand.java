@@ -18,7 +18,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 public class UninstallCommand extends ScriptedCommand {
 

@@ -17,7 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 /**
  * @author dejan

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.search;
+package org.eclipse.update.internal.api.search;
 
 /**
  * This interface is used to represent sites that need to be

@@ -8,21 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.search;
+package org.eclipse.update.internal.api.search;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
 
 /**
- * This class can be added to the update search request
- * to filter out features that do not match the current
- * environment settings.
+ * Base filter class
  * 
  * @see UpdateSearchRequest
  * @see IUpdateSearchFilter
  */
-public class EnvironmentFilter extends BaseFilter {
+public class BaseFilter implements IUpdateSearchFilter {
 	public boolean accept(IFeature match) {
-		return UpdateManagerUtils.isValidEnvironment(match);
+		return true;
 	}
+	public boolean accept(IFeatureReference match) {
+		return true;
+	}	
 }

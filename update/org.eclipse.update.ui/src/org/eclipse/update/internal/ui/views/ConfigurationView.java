@@ -31,8 +31,8 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.operations.IUpdateModelChangedListener;
+import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.internal.api.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.ui.UpdateUI;
 
 /**

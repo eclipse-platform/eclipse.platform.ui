@@ -24,7 +24,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	// NL keys

@@ -1,7 +1,7 @@
 /*
  * Created on May 27, 2003
  */
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
 
 /**
  * An operation in which the unconfigured/configured state of a site is toggled.

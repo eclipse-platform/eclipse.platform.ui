@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;

@@ -18,7 +18,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;

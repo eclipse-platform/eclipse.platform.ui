@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
 
 import java.lang.reflect.*;
 

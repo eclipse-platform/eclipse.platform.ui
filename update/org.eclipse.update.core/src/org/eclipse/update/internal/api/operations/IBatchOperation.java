@@ -7,19 +7,18 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- */
-package org.eclipse.update.operations;
+ *******************************************************************************/
 
-import org.eclipse.update.core.*;
+package org.eclipse.update.internal.api.operations;
 
 /**
- * An installation operation.
+ * Batch of operations on feature. For example, a batch features installation.
  * @since 3.0
  */
-public interface IInstallFeatureOperation extends IFeatureOperation {
+public interface IBatchOperation  extends IOperation {
 	/**
-	 * Returns the list of optional features to be installed.
+	 * Returns the batch operations.
 	 * @return
 	 */
-	public IFeatureReference[] getOptionalFeatures();
+	public abstract IFeatureOperation[] getOperations();
 }

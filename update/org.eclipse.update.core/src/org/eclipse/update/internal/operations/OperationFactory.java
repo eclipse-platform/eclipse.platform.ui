@@ -12,7 +12,7 @@ package org.eclipse.update.internal.operations;
 
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 public class OperationFactory implements IOperationFactory {
 

@@ -8,26 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.search;
+package org.eclipse.update.internal.api.search;
 
-import java.net.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 
 /**
- * This interface wraps an update site URL and adds 
- * a presentation label. It is used to encapsulate sites that need
- * to be visited during the update search.
+ * This class can be added to the update search request
+ * to filter out features that do not match the current
+ * environment settings.
+ * 
+ * @see UpdateSearchRequest
+ * @see IUpdateSearchFilter
  */
-
-public interface IUpdateSiteAdapter {
-	/**
-	 * Returns the presentation string that can be used
-	 * for this site.
-	 * @return the update site label
-	 */
-	public String getLabel();
-	/**
-	 * Returns the URL of the update site.
-	 * @return the URL of the update site.
-	 */
-	public URL getURL();
+public class EnvironmentFilter extends BaseFilter {
+	public boolean accept(IFeature match) {
+		return UpdateManagerUtils.isValidEnvironment(match);
+	}
 }

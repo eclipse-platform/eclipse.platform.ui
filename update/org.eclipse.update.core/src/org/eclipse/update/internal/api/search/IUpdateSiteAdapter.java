@@ -8,22 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.search;
+package org.eclipse.update.internal.api.search;
 
-import org.eclipse.update.core.*;
+import java.net.*;
 
 /**
- * Search results are collected by implementing this interface
- * and passing it to the search request. If the implementation is
- * visual, it is recommended that the match is shown as soon
- * as it is collected (rather than kept in a list and presented
- * at the end of the search).
+ * This interface wraps an update site URL and adds 
+ * a presentation label. It is used to encapsulate sites that need
+ * to be visited during the update search.
  */
-public interface IUpdateSearchResultCollector {
-/**
- * Called when a matching feature has been found during
- * the search.
- * @param match the matching feature
- */
-   void accept(IFeature match);
+
+public interface IUpdateSiteAdapter {
+	/**
+	 * Returns the presentation string that can be used
+	 * for this site.
+	 * @return the update site label
+	 */
+	public String getLabel();
+	/**
+	 * Returns the URL of the update site.
+	 * @return the URL of the update site.
+	 */
+	public URL getURL();
 }

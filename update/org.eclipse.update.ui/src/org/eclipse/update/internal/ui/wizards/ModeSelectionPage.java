@@ -14,7 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.internal.api.search.UpdateSearchRequest;
 
 /**
  * @author dejan

@@ -14,7 +14,7 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.internal.api.search.*;
 
 /**
  * @author dejan

@@ -9,7 +9,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  */
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
 
 /**
  * An operation that disables a feature in a site.

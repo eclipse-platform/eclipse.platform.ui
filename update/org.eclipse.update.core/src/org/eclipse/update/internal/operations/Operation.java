@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 
 public abstract class Operation implements IOperation {

@@ -8,11 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  */
-package org.eclipse.update.operations;
+package org.eclipse.update.internal.api.operations;
+
+import org.eclipse.update.core.*;
 
 /**
- * Operation that reverts a feature to another version.
+ * An installation operation.
  * @since 3.0
  */
-public interface IReplaceFeatureVersionOperation extends IFeatureOperation {
+public interface IInstallFeatureOperation extends IFeatureOperation {
+	/**
+	 * Returns the list of optional features to be installed.
+	 * @return
+	 */
+	public IFeatureReference[] getOptionalFeatures();
 }

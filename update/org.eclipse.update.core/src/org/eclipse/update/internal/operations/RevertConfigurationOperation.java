@@ -15,7 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 
 public class RevertConfigurationOperation extends Operation implements IRevertConfigurationOperation {
 
