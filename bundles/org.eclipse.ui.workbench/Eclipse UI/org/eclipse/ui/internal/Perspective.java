@@ -47,7 +47,9 @@ public class Perspective
 	
 	// fields used by fast view resizing via a sash
 	private static final int SASH_SIZE = 3;
-	private static final int FASTVIEW_HIDE_STEPS = 3;
+	private static final int FASTVIEW_HIDE_STEPS = 5;
+	private static final long FASTVIEW_HIDE_MIN_DURATION = 50;
+	private static final long FASTVIEW_HIDE_MAX_DURATION = 250;
 	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
 	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
 	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
@@ -466,9 +468,33 @@ private void hideFastView(IViewReference ref, int steps) {
 		// Slide it off screen.
 		Rectangle bounds = pane.getBounds();
 		int increment = bounds.width / steps;
+		
+		// Record the longest we can go before cancelling the animation, 
+		// and the minimum time we will allow each step to take.
+		// Note: We always do at least one step of the animation.
+		long endTime = System.currentTimeMillis() + FASTVIEW_HIDE_MAX_DURATION;
+		long minStepTime = FASTVIEW_HIDE_MIN_DURATION / steps;
+
 		for (int i = 0; i <= bounds.width - 2; i += increment) {
+			long time = System.currentTimeMillis();
 			ctrl.setLocation(-i, bounds.y);
 			ctrl.getParent().update();
+			long afterTime = System.currentTimeMillis();
+			if (afterTime >= endTime) {
+				// Took too long. Just exit the loop.
+				break;
+			}
+			long stepDuration = afterTime - time;
+			if (stepDuration < minStepTime) {
+				// Note: This doesn't take into account the overhead of doing
+				// the loop and these calculations, so the total delay is
+				// always slightly more than "minStepTime".
+				try {
+					Thread.sleep (minStepTime - stepDuration);
+				} catch (InterruptedException ex) {
+					// Do nothing.
+				}
+			}
 		}
 	}
 	// Hide it completely.
