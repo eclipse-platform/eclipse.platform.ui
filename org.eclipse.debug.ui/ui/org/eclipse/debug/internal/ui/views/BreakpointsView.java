@@ -169,7 +169,10 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		((ShowBreakpointsForModelAction)getAction("ShowBreakpointsForModel")).dispose(); //$NON-NLS-1$
+		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
+		if (action != null) {
+			((ShowBreakpointsForModelAction)action).dispose(); 
+		}
 		
 		super.dispose();
 		
@@ -182,11 +185,10 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		IAction action; 
 		
 		setAction(REMOVE_ACTION, new RemoveBreakpointAction(getViewer()));
 			
-		action = new RemoveAllBreakpointsAction();
+		IAction action = new RemoveAllBreakpointsAction();
 		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 		setAction("RemoveAll", action); //$NON-NLS-1$
 		

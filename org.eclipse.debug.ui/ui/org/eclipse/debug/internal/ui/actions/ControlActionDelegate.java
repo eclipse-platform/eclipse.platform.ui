@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
@@ -68,6 +69,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void initializeForOwner(ControlAction controlAction) {
 		setActionImages(controlAction);
+		setAction(controlAction);
 		fHasOwner= true;
 	}
 	
@@ -136,6 +138,8 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * </ul>
 	 * <p>
 	 * Only want to call update(action, selection) for IViewActionDelegates and "fake".
+	 * An initialize call to update(action, selection) is made for all flavors to set the initial
+	 * enabled state of the underlying action.
 	 * Adding the "fHasOwner" check distinguishes between the "fake" and 
 	 * IWorkbenchWindowActionDelegate (before there was no way to distinguish). 
 	 * IWorkbenchWindowActionDelegate's listen to selection changes
@@ -145,10 +149,11 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-		initialize(action);		
-		setAction(action);
-		if (getView() != null || fHasOwner == true) {
-			update(action, s);
+		boolean wasInitialized= initialize(action, s);		
+		if (!wasInitialized) {
+			if (getView() != null || fHasOwner == true) {
+				update(action, s);
+			}
 		}
 	}
 	
@@ -160,7 +165,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 			setSelection(ss);
 		} else {
 			action.setEnabled(false);
-			setSelection(null);
+			setSelection(StructuredSelection.EMPTY);
 		}
 	}
 	
@@ -262,20 +267,27 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Initialize this delegate, updating this delegate's
 	 * presentation.
+	 * As well all of the flavors of ControlActionDelegates need to 
+	 * have the initial enabled state set with a call to update(IAction, ISelection).
 	 * 
 	 * @param action the presentation for this action
+	 * @return whether the action was initialized
 	 */
-	protected void initialize(IAction action) {
+	protected boolean initialize(IAction action, ISelection selection) {
 		if (!fInitialized) {
+			setAction(action);
 			setActionImages(action);
+			update(action, selection);
 			fInitialized = true;
+			return true;
 		}
+		return false;
 	}
 
 	/**
 	 * Returns the most recent selection
 	 * 
-	 * @return structured selection, or <code>null</code>
+	 * @return structured selection
 	 */	
 	protected IStructuredSelection getSelection() {
 		return fSelection;
@@ -284,7 +296,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Sets the most recent selection
 	 * 
-	 * @parm selection structured selection, or <code>null</code>
+	 * @parm selection structured selection
 	 */	
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
@@ -294,6 +306,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Track selection changes in the launch view.
 	 * 
 	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 * @see DebugSelectionManager
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		update(getAction(), event.getSelection());
