@@ -231,6 +231,21 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		gd.horizontalSpan = colSpan;
 		label.setLayoutData(gd);
 	}	
+	
+	/**
+	 * Create a horizontal separator.
+	 * 
+	 * @param comp parent widget
+	 * @param colSpan number of columns to span
+	 * @since 3.0
+	 */
+	protected void createSeparator(Composite comp, int colSpan) {
+		Label label = new Label(comp, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = colSpan;
+		label.setLayoutData(gd);
+	}	
+		
 	/**
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
