@@ -37,7 +37,6 @@ import org.eclipse.debug.internal.ui.launchVariables.LaunchVariableMessages;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -67,7 +66,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.0
  */
-public class RefreshTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
+public class RefreshTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Boolean attribute indicating if a refresh scope is recursive. Default
@@ -347,31 +346,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 			return "${project}"; //$NON-NLS-1$
 		}
 		if (fWorkingSetButton.getSelection()) {
-			if (fWorkingSet == null || fWorkingSet.getElements().length == 0) {
-				return null;
-			}
-			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(IVariableConstants.TAG_LAUNCH_CONFIGURATION_WORKING_SET);
-			IPersistableElement persistable = null;
-			if (fWorkingSet instanceof IPersistableElement) {
-				persistable = (IPersistableElement) fWorkingSet;
-			} else if (fWorkingSet instanceof IAdaptable) {
-				persistable = (IPersistableElement) ((IAdaptable) fWorkingSet).getAdapter(IPersistableElement.class);
-			}
-			if (persistable != null) {
-				workingSetMemento.putString(IVariableConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(workingSetMemento);
-				StringWriter writer= new StringWriter();
-				try {
-					workingSetMemento.save(writer);
-				} catch (IOException e) {
-					DebugUIPlugin.log(e);
-				}
-				StringBuffer memento = new StringBuffer();
-				memento.append("${working_set:"); //$NON-NLS-1$
-				memento.append(writer.toString());
-				memento.append("}"); //$NON-NLS-1$
-				return memento.toString();
-			}
+			return getRefreshAttribute(fWorkingSet);
 		}
 		return null;
 	}
@@ -399,32 +374,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		if (!enabled) {
 			super.setErrorMessage(null);
 		}
-	}
-	
-	/**
-	 * @see IVariableComponentContainer#setErrorMessage(String)
-	 */
-	public void setErrorMessage(String errorMessage) {
-		super.setErrorMessage(errorMessage);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.launchVariables.IVariableComponentContainer#updateValidState()
-	 */
-	public void updateValidState() {
-		updateLaunchConfigurationDialog();
-	}
-
-	/**
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-	 */
-	public int getMessageType() {
-		if (getErrorMessage() != null) {
-			return IMessageProvider.ERROR;
-		} else if (getMessage() != null) {
-			return IMessageProvider.WARNING;
-		}
-		return IMessageProvider.NONE;
 	}
 	
 	/**
@@ -515,8 +464,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 				return new IResource[]{resource};
 			}
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
-			String memento = scope.substring(14, scope.length() - 1);
-			IWorkingSet workingSet =  restoreWorkingSet(memento);
+			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
 				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, LaunchVariableMessages.getString("RefreshTab.39"), null)); //$NON-NLS-1$
 			} else {
@@ -616,4 +564,57 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ATTR_REFRESH_RECURSIVE, true);
 	}	
+	
+	/**
+	 * Creates and returns a memento for the given working set, to be used as a
+	 * refresh attribute, or <code>null</code> if the working set is empty or
+	 * <code>null</code>.
+	 * 
+	 * @param workingSet a working set, or <code>null</code>
+	 * @return an equivalent refresh attribute, or <code>null</code>
+	 */
+	public static String getRefreshAttribute(IWorkingSet workingSet) {
+		if (workingSet == null || workingSet.getElements().length == 0) {
+			return null;
+		}
+		XMLMemento workingSetMemento = XMLMemento.createWriteRoot(IVariableConstants.TAG_LAUNCH_CONFIGURATION_WORKING_SET);
+		IPersistableElement persistable = null;
+		if (workingSet instanceof IPersistableElement) {
+			persistable = (IPersistableElement) workingSet;
+		} else if (workingSet instanceof IAdaptable) {
+			persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
+		}
+		if (persistable != null) {
+			workingSetMemento.putString(IVariableConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+			persistable.saveState(workingSetMemento);
+			StringWriter writer= new StringWriter();
+			try {
+				workingSetMemento.save(writer);
+			} catch (IOException e) {
+				DebugUIPlugin.log(e);
+			}
+			StringBuffer memento = new StringBuffer();
+			memento.append("${working_set:"); //$NON-NLS-1$
+			memento.append(writer.toString());
+			memento.append("}"); //$NON-NLS-1$
+			return memento.toString();
+		}		
+		return null;
+	}
+	
+	/**
+	 * Creates and returns a working set from the given refresh attribute created by
+	 * the method <code>getRefreshAttribute(IWorkingSet)</code>, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param refreshAttribute a refresh attribute that represents a working set
+	 * @return equivalent working set, or <code>null</code>
+	 */
+	public static IWorkingSet getWorkingSet(String refreshAttribute) {
+		if (refreshAttribute.startsWith("${working_set:")) { //$NON-NLS-1$
+			String memento = refreshAttribute.substring(14, refreshAttribute.length() - 1);
+			return  restoreWorkingSet(memento);
+		}
+		return null;
+	}
 }

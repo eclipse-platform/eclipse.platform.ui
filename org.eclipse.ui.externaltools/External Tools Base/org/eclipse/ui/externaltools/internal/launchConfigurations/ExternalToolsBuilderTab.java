@@ -13,15 +13,14 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.IVariableComponent;
-import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
-import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,21 +32,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
+public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
 	private Button fullBuildButton;
 	private Button autoBuildButton;
 	private Button incrementalBuildButton;
 	private Button workingSetButton;
-	private IVariableComponent workingSetComponent;
+	private Button specifyResources;
 	protected Button fLaunchInBackgroundButton;
+	private IWorkingSet workingSet; 
 	
 	private SelectionListener selectionListener= new SelectionAdapter() {
 		/**
@@ -56,7 +59,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		public void widgetSelected(SelectionEvent e) {
 			boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
 			workingSetButton.setEnabled(enabled);
-			workingSetComponent.setEnabled(enabled);
+			specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 			updateLaunchConfigurationDialog();
 		}
 	};
@@ -68,14 +71,15 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		GridLayout layout = new GridLayout();
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = false;
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
 		createLaunchInBackgroundComposite(mainComposite);
 		createBuildScheduleComponent(mainComposite);
 		
-		workingSetComponent= DebugUITools.getVariableComponentManager().getComponent(IExternalToolConstants.VAR_WORKING_SET);
-		workingSetComponent.createContents(mainComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Working_Sets_1"), this); //$NON-NLS-1$
 	}
 	
 	/**
@@ -102,30 +106,35 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		Label label= new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
-		fullBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full")); //$NON-NLS-1$ //$NON-NLS-2$
-		incrementalBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc")); //$NON-NLS-1$ //$NON-NLS-2$
-		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto")); //$NON-NLS-1$ //$NON-NLS-2$
+		fullBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+		incrementalBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+				
+		createVerticalSpacer(parent, 2);
 		
-		SelectionAdapter listener= new SelectionAdapter() {
+		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_label"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_tooltip"), 1); //$NON-NLS-1$ //$NON-NLS-2$
+		specifyResources= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.13"), null); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		specifyResources.setLayoutData(gd);
+		specifyResources.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateWorkingSetComponent();
+				selectResources();
 			}
-		};
-		
-		new Label(parent, SWT.NONE);
-		
-		workingSetButton= createButton(parent, listener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_label"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_tooltip")); //$NON-NLS-1$ //$NON-NLS-2$
+		});
 	}
 	
 	/**
 	 * Creates a check button in the given composite with the given text
 	 */
-	private Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText) {
+	private Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText, int columns) {
 		Button button= new Button(parent, SWT.CHECK);
 		button.setText(text);
 		button.setToolTipText(tooltipText);
 		button.addSelectionListener(listener);
 		button.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = columns;
+		button.setLayoutData(gd);
 		return button;
 	}
 
@@ -164,11 +173,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		workingSetButton.setEnabled(buildScope != null);
 		
 		if (buildScope != null) {
-			LaunchVariableUtil.VariableDefinition variable= LaunchVariableUtil.extractVariableDefinition(buildScope, 0);
-			workingSetComponent.setVariableValue(variable.argument);
+			workingSet = RefreshTab.getWorkingSet(buildScope);
 		}
-		
-		updateWorkingSetComponent();
 		
 		int buildTypes[]= ExternalToolBuilder.buildTypesToArray(buildKindString);
 		for (int i = 0; i < buildTypes.length; i++) {
@@ -186,7 +192,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		}
 		boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
 		workingSetButton.setEnabled(enabled);
-		workingSetComponent.setEnabled(enabled);
+		specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 		updateRunInBackground(configuration);
 	}
 	
@@ -229,8 +235,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
 		if (workingSetButton.getSelection()) {
-			String variableTag= LaunchVariableUtil.newVariableExpression("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
-			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, variableTag);
+			String scope = RefreshTab.getRefreshAttribute(workingSet);
+			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, scope);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
@@ -250,45 +256,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.group.IVariableComponentContainer#updateValidState()
-	 */
-	public void updateValidState() {
-		updateLaunchConfigurationDialog();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-	 */
-	public int getMessageType() {
-		if (getErrorMessage() != null) {
-			return IMessageProvider.ERROR;
-		} else if (getMessage() != null) {
-			return IMessageProvider.WARNING;
-		}
-		return IMessageProvider.NONE;
-	}
 	
-	public void setErrorMessage(String errorMessage) {
-		super.setErrorMessage(errorMessage);
-	}
-	
-	private void updateWorkingSetComponent() {
-		workingSetComponent.getControl().setVisible(workingSetButton.getSelection());
-		setErrorMessage(null);
-		if (workingSetButton.getSelection()) {
-			workingSetComponent.validate();
-		}
-	
-		updateLaunchConfigurationDialog();			
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		if (!workingSetComponent.isValid()) {
-			return false;
-		}
 		setErrorMessage(null);
 		setMessage(null);
 		
@@ -297,8 +269,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.buildKindError")); //$NON-NLS-1$
 			return false;
 		}
-
-		return workingSetComponent.isValid();
+		if (workingSetButton.getSelection() && (workingSet == null || workingSet.getElements().length == 0)) {
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.16")); //$NON-NLS-1$
+		}
+		
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
@@ -306,12 +281,24 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	public boolean canSave() {
 		return isValid(null);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		workingSetComponent.dispose();
-	}
 
+	/**
+	 * Prompts the user to select the working set that triggers the build.
+	 */
+	private void selectResources() {
+		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		
+		if (workingSet == null){
+			workingSet = workingSetManager.createWorkingSet(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.15"), new IAdaptable[0]); //$NON-NLS-1$
+		}
+		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(workingSet);
+		WizardDialog dialog = new WizardDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell(), wizard);
+		dialog.create();		
+		
+		if (dialog.open() == Window.CANCEL) {
+			return;
+		}
+		workingSet = wizard.getSelection();
+		updateLaunchConfigurationDialog();
+	}
 }
