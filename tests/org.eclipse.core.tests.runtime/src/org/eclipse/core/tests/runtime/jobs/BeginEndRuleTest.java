@@ -13,7 +13,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.CancelingProgressMonitor;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
