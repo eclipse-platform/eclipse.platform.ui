@@ -302,7 +302,11 @@ protected Plugin[] getSaveParticipantPlugins() {
  * Initializes the snapshot mechanism for this workspace.
  */
 protected void initSnap(IProgressMonitor monitor) throws CoreException {
+	//the "lastSnap" tree must be frozen as the exact tree obtained from startup,
+	// otherwise ensuing snapshot deltas may be based on an incorrect tree (see bug 12575)
 	lastSnap = workspace.getElementTree();
+	lastSnap.immutable();
+	workspace.newWorkingTree();
 	operationCount = 0;
 	// delete the snapshot file, if any
 	IPath snapPath = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
@@ -637,9 +641,9 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 				input.close();
 				//reader returned an immutable tree, but since we're inside
 				//an operation, we must return an open tree
+				lastSnap = complete;
 				complete = complete.newEmptyDelta();
 				workspace.tree = complete;
-				lastSnap = complete;
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
