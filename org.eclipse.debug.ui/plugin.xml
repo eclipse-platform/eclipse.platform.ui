@@ -102,7 +102,7 @@
    <page
          name="%LaunchHistoryPreferencePage.name"
          category="org.eclipse.debug.ui.DebugPreferencePage"
-         class="org.eclipse.debug.internal.ui.launchConfigurations.preferences.LaunchHistoryPreferencePage"
+         class="org.eclipse.debug.internal.ui.preferences.LaunchHistoryPreferencePage"
          id="org.eclipse.debug.ui.LaunchHistoryPreferencePage">
    </page>
     <page
