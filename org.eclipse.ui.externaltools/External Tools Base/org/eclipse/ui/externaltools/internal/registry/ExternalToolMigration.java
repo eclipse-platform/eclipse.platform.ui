@@ -283,7 +283,11 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) args.get(TAG_TOOL_BUILD_TYPES));
+		String buildKinds= (String) args.get(TAG_TOOL_BUILD_TYPES);
+		if (buildKinds != null) {
+			buildKinds= buildKinds.replace(';', ','); // Replace the old separator with the new
+		}
+		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buildKinds);
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) args.get(TAG_TOOL_DIRECTORY));
 		return config;
 	}
