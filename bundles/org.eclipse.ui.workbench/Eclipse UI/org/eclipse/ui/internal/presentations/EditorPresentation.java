@@ -143,7 +143,7 @@ public class EditorPresentation extends BasicStackPresentation {
         String text = title;
 
         if (includePath) {
-            String titleTooltip = presentablePart.getTitleToolTipText().trim();
+            String titleTooltip = presentablePart.getTitleToolTip().trim();
 
             if (titleTooltip.endsWith(title))
                     titleTooltip = titleTooltip.substring(0,
@@ -175,7 +175,7 @@ public class EditorPresentation extends BasicStackPresentation {
     }
 
     String getLabelToolTipText(IPresentablePart presentablePart) {
-        return presentablePart.getTitleToolTipText();
+        return presentablePart.getTitleToolTip();
     }
     
     /*
