@@ -51,6 +51,9 @@ TD, TR {
 	padding:0px;
 	border:0px;
 }
+TD.radio {
+	white-space: nowrap;
+}
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
@@ -232,10 +235,10 @@ function closeWorkingSetDialog()
 <form onsubmit="selectWorkingSet();return false;">
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
-		<tr><td>
+		<tr><td class="radio">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs" accesskey="<%=ServletResources.getAccessKey("selectAll", request)%>"><%=ServletResources.getLabel("selectAll", request)%></label>
 		</td></tr>
-		<tr><td>
+		<tr><td class="radio">
 			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws" accesskey="<%=ServletResources.getAccessKey("selectWorkingSet", request)%>"><%=ServletResources.getLabel("selectWorkingSet", request)%>:</label>	
 		</td></tr>
 		<tr><td>
