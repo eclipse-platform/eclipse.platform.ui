@@ -87,8 +87,32 @@ public static void main (String [] args) {
      td.colspan = 2;
      td.align = TableData.FILL;
      label.setLayoutData(td);
-
      
+     ExpandableGroup exp = new ExpandableGroup () {
+     	public void fillExpansion(Composite container, FormWidgetFactory factory) {
+     		HTMLTableLayout layout = new HTMLTableLayout();
+     		container.setLayout(layout);
+     		Label label = factory.createLabel(container, null, SWT.WRAP);
+     		label.setText("This text will be part of the expandable section");
+     	}
+     	public void expanded() {
+     		c.layout(true);
+     		sc.layout();
+     	}
+     	public void collapsed() {
+     		c.layout(true);
+     		sc.layout();
+     	}
+     };
+     exp.setText("Expandable Section");
+     FormWidgetFactory factory = new FormWidgetFactory();
+     exp.createControl(c, factory);
+     exp.getControl().setBackground(label.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+     td = new TableData();
+     td.colspan = 2;
+     td.align = TableData.FILL;
+     exp.getControl().setLayoutData(td);
+   
      shell.open ();
      while (!shell.isDisposed ()) {
           if (!display.readAndDispatch ()) display.sleep ();
