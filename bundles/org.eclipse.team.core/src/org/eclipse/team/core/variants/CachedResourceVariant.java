@@ -266,9 +266,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	
 	/**
 	 * Return the full path of this resource that should be displayed to the
-	 * user. This path is used by the instabce of <code>IStorage</code> that 
-	 * is returned by this instance. By default, the path return by <code>getCachePath()</code>
-	 * is used to create a <code>Path</code> object which is returned by this method.
+	 * user. This path is also used as the path of the <code>IStorage</code> that 
+	 * is returned by this instance.
 	 * Subclasses may override.
 	 * @return the full path of this resource that should be displayed to the
 	 * user
