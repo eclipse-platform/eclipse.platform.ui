@@ -276,5 +276,24 @@
          </enablement>
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PreferencePages.IDEWorkbench"
+            class="org.eclipse.ui.internal.dialogs.IDEWorkbenchPreferencePage"
+            id="org.eclipse.ui.preferencePages.IDEWorkbench">
+      </page>
+      <page
+            name="%PreferencePages.LinkedResources"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.LinkedResourcesPreferencePage"
+            id="org.eclipse.ui.preferencePages.LinkedResources">
+      </page>
+      <page
+            name="%PreferencePages.BuildOrder"
+            class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage"
+            id="org.eclipse.ui.preferencePages.BuildOrder">
+      </page>
+   </extension>
 
 </plugin>
