@@ -10,6 +10,7 @@ package org.eclipse.ui.internal;
  * Contributors:
  * IBM - Initial implementation
  ******************************************************************************/
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -194,8 +195,7 @@ public abstract class DecoratorDefinition {
 	protected void handleCoreException(CoreException exception) {
 
 		//If there is an error then reset the enabling to false
-		ErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
-		exception.getLocalizedMessage(), exception.getStatus());
+		InternalPlatform.getRuntimePlugin().getLog().log(exception.getStatus());		
 		this.enabled = false;
 	}
 
