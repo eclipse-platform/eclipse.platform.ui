@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.text.ParseException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSDiffException;
@@ -17,10 +18,11 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
-import org.eclipse.team.internal.ccvs.core.util.FileUtil;
+import org.eclipse.team.internal.ccvs.core.response.ResponseHandler;
+import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 import org.eclipse.team.tests.ccvs.core.NullOutputStream;
 
@@ -447,13 +449,42 @@ public final class SameResultEnv extends JUnitTestCase {
 			return;
 		}
 		
-		assertEquals(mFile1.getSyncInfo().getKeywordMode(),mFile2.getSyncInfo().getKeywordMode());
-		assertEquals(mFile1.getSyncInfo().getTag(),mFile2.getSyncInfo().getTag());
-		assertEquals(mFile1.getSyncInfo().getName(), mFile2.getSyncInfo().getName());
-		assertEquals(mFile1.getSyncInfo().getRevision(),mFile2.getSyncInfo().getRevision());
+		ResourceSyncInfo info1 = mFile1.getSyncInfo();
+		ResourceSyncInfo info2 = mFile2.getSyncInfo();
+		
+		assertEquals(info1.getKeywordMode(), info2.getKeywordMode());
+		assertEquals(info1.getTag(), info2.getTag());
+		assertEquals(info1.getName(), info2.getName());
+		assertEquals(info1.getRevision(), info2.getRevision());
+		
+		// Ensure that timestamps are written in ISO C asctime() format and if timestamp
+		// has a conflict marker then both should have the marker. Also ensure that timestamps
+		// are written using same timezone.
+		assertTimestampEquals(info1.getTimeStamp(), info2.getTimeStamp());
+		
 		// We are not able to check for the permissions, as the reference-client doesn't save them
 	}
 
+	private static void assertTimestampEquals(String timestamp1, String timestamp2) {
+		try {			
+			EntryFileDateFormat timestampFormat = new EntryFileDateFormat();
+			boolean merge1 = timestamp1.indexOf(ResponseHandler.RESULT_OF_MERGE) != -1;
+			boolean merge2 = timestamp2.indexOf(ResponseHandler.RESULT_OF_MERGE) != -1;
+			boolean dummy1 = timestamp1.indexOf(ResponseHandler.DUMMY_TIMESTAMP) != -1;
+			boolean dummy2 = timestamp2.indexOf(ResponseHandler.DUMMY_TIMESTAMP) != -1;
+			assertEquals("both timestamps should show same conflict state", merge1, merge2);
+			assertEquals("both timestamps should show same dummy state", dummy1, dummy2);
+			if(!merge1 && !dummy1) {
+				long time1 = timestampFormat.toMilliseconds(timestamp1);
+				long time2 = timestampFormat.toMilliseconds(timestamp2);
+				long difference = Math.abs(time1 - time2);
+				assertTrue("timestamps should be in same timezone:" + timestamp1 + ":" + timestamp2, difference < (5*60*1000) /* 5 minutes */);
+			}
+		} catch(ParseException e) {			
+			fail("timestamps in CVS/Entry file are not in ISO C asctime format:" + timestamp1 + ":" + timestamp2);
+		}
+	}
+	
 	/**
 	 * Assert that two CVSFile's are equal. First the 
 	 * metainformation out of the FolderSync for this 
