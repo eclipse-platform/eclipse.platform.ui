@@ -41,4 +41,22 @@ java.lang.ClassLoader l = new java.net.URLClassLoader(new java.net.URL[] {new ja
 java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("feature", java.util.Locale.getDefault(), l);
 bundle
 
+String[] ss = {"a", "b"}; 
+java.util.List list = new java.util.ArrayList(0);
+list.addAll(java.util.Arrays.asList(ss)); 
+list.add("c");
+list.size();
 
+
+java.util.List list = new java.util.ArrayList(0);
+list.add("1");
+list.add("2");
+list.add("3");
+list.add("4");
+list.add("5");
+list.add("6");
+list.add("7");
+while (list.size()>5){
+	list.remove(0);
+}
+list.get(0)
