@@ -187,7 +187,9 @@ private void addKeyListener(final Table table,final Shell dialog) {
 	table.addKeyListener(new KeyListener() {
 		public void keyPressed(KeyEvent e) {
 			int acelaratorKey = getAcceleratorKey();
-			if((e.keyCode & SWT.SHIFT) != 0) {
+			if((e.character == SWT.CR) || (e.character == SWT.LF)) {
+				ok(dialog,table);
+			} else if((e.keyCode & SWT.SHIFT) != 0) {
 				forward = false;
 			} else if((e.keyCode & acelaratorKey) == acelaratorKey) {
 				int index = table.getSelectionIndex();
@@ -198,6 +200,11 @@ private void addKeyListener(final Table table,final Shell dialog) {
 					index = index >= 0 ? index : table.getItemCount() - 1;
 				}
 				table.setSelection(index);
+			} else if (((e.keyCode & SWT.ARROW_DOWN) != 0) ||
+				((e.keyCode & SWT.ARROW_UP) != 0) ||
+				((e.keyCode & SWT.ARROW_LEFT) != 0) ||
+				((e.keyCode & SWT.ARROW_RIGHT) != 0)) {
+					//Do nothing.
 			} else {
 				cancel(dialog);
 			}
