@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.AntRunner;
@@ -194,16 +195,24 @@ public class ProjectNode extends AntNode {
 				setDefaultTarget(targetNode);
 			}
 			// Execution Path -------
-			Vector topoSort = project.topoSort(target.getName(), project.getTargets());
-			int n = topoSort.indexOf(target) + 1;
-			while (topoSort.size() > n)
-				topoSort.remove(topoSort.size() - 1);
-			topoSort.trimToSize();
-			ListIterator topoElements = topoSort.listIterator();
-			while (topoElements.hasNext()) {
-				int i = topoElements.nextIndex();
-				Target topoTask = (Target) topoElements.next();
-				targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName());
+			Vector topoSort = null;
+			try {
+				topoSort= project.topoSort(target.getName(), project.getTargets());
+			} catch (BuildException be) {
+				setErrorMessage(be.toString());
+			}
+			if (topoSort != null) {
+				int n = topoSort.indexOf(target) + 1;
+				while (topoSort.size() > n) {
+					topoSort.remove(topoSort.size() - 1);
+				}
+				topoSort.trimToSize();
+				ListIterator topoElements = topoSort.listIterator();
+				while (topoElements.hasNext()) {
+					int i = topoElements.nextIndex();
+					Target topoTask = (Target) topoElements.next();
+					targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName());
+				}
 			}
 		}
 	}
