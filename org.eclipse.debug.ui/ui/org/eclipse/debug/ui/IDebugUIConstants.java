@@ -109,6 +109,16 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
 		
+	/**
+	 * Constant for referring to no perspective.
+	 */
+	public static final String PERSPECTIVE_NONE = "perspective_none"; //$NON-NLS-1$
+	
+	/**
+	 * Constant for referring to a default perspective.
+	 */
+	public static final String PERSPECTIVE_DEFAULT = "perspective_default"; //$NON-NLS-1$
+
 	// Preferences
 	/**
 	 * Boolean preference controlling automatic change to debug perspective when
@@ -134,6 +144,20 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	 //$NON-NLS-1$
 
+	/**
+	 * String preference that identifies the default 'switch to perspective id' when running a 
+	 * launch configuration.  This default is used if a particular launch configuration does not
+	 * override the 'switch to perspective when in run mode' attribute with something else.
+	 */
+	public static final String PREF_SHOW_RUN_PERSPECTIVE_DEFAULT= PLUGIN_ID + ".show_run_perspective_default";  //$NON-NLS-1$
+	
+	/**
+	 * String preference that identifies the default 'switch to perspective id' when debugging a 
+	 * launch configuration.  This default is used if a particular launch configuration does not
+	 * override the 'switch to perspective when in debug mode' attribute with something else.
+	 */
+	public static final String PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT= PLUGIN_ID + ".show_debug_perspective_default";  //$NON-NLS-1$
+	
 	/**
 	 * Boolean preference controlling whether a build is done before
 	 * launching a program (if one is needed).

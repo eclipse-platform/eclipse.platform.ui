@@ -262,8 +262,17 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		String mode = launch.getLaunchMode();
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
+			if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
+				perspectiveId = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT);
+			}
 		} else {
 			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
+			if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
+				perspectiveId = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT);
+			}
+		}
+		if (perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
+			perspectiveId = null;
 		}
 		return perspectiveId;
 	}

@@ -91,10 +91,15 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Button fDebugFavoriteButton;
 		
 	/**
-	 * Constant for perspective Combo widgets
+	 * Constant for the name of the drop-down choice 'None' for perspectives.
 	 */
-	private static final String PERSPECTIVE_NONE = LaunchConfigurationsMessages.getString("CommonTab.none_1"); //$NON-NLS-1$
-		
+	private static final String PERSPECTIVE_NONE_NAME = "None";	
+	
+	/**
+	 * Constant for the name of the drop-down choice 'Default' for perspectives.
+	 */
+	private static final String PERSPECTIVE_DEFAULT_NAME = "Default";	
+	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -403,7 +408,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param combo combo box
 	 */
 	private void fillWithPerspectives(Combo combo) {
-		combo.add(PERSPECTIVE_NONE);
+		combo.add(PERSPECTIVE_NONE_NAME);
+		combo.add(PERSPECTIVE_DEFAULT_NAME);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] persps = reg.getPerspectives();
 		for (int i = 0; i < persps.length; i++) {
@@ -509,8 +515,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param id perspective identifier or <code>null</code>
 	 */
 	private void updatePerspectiveCombo(Combo combo, String id) {
-		if (id == null) {
-			combo.setText(PERSPECTIVE_NONE);
+		if ((id == null) || (id.equals(IDebugUIConstants.PERSPECTIVE_NONE))) {
+			combo.setText(PERSPECTIVE_NONE_NAME);
+		} else if (id.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
+			combo.setText(PERSPECTIVE_DEFAULT_NAME);
 		} else {
 			IPerspectiveDescriptor pd = getPerspectiveWithId(id);
 			if (pd == null) {
@@ -537,10 +545,18 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * UI settings.
 	 */
 	private void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
-		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getRunPerspectiveCombo().getText());
+		String selectedText = getRunPerspectiveCombo().getText();
 		String perspID = null;
-		if (descriptor != null) {
-			perspID = descriptor.getId();
+		if (selectedText.equals(PERSPECTIVE_NONE_NAME)) {
+			perspID = IDebugUIConstants.PERSPECTIVE_NONE;
+		}
+		else if (selectedText.equals(PERSPECTIVE_DEFAULT_NAME)) {
+			perspID = IDebugUIConstants.PERSPECTIVE_DEFAULT;
+		} else {
+			IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(selectedText);
+			if (descriptor != null) {
+				perspID = descriptor.getId();
+			}
 		}
 		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, perspID);
 	}
@@ -550,10 +566,18 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * UI settings.
 	 */
 	private void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
-		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getDebugPerspectiveCombo().getText());
+		String selectedText = getDebugPerspectiveCombo().getText();
 		String perspID = null;
-		if (descriptor != null) {
-			perspID = descriptor.getId();
+		if (selectedText.equals(PERSPECTIVE_NONE_NAME)) {
+			perspID = IDebugUIConstants.PERSPECTIVE_NONE;
+		}
+		else if (selectedText.equals(PERSPECTIVE_DEFAULT_NAME)) {
+			perspID = IDebugUIConstants.PERSPECTIVE_DEFAULT;
+		} else {
+			IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(selectedText);
+			if (descriptor != null) {
+				perspID = descriptor.getId();
+			}
 		}
 		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, perspID);
 	}
@@ -613,16 +637,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
-		String debugId = null;
-		if (DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
-			debugId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-		}
-		String runId = null;
-		if (DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW)) {
-			runId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-		}		
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugId);
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, runId);
+		
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 	}
 
 	/**
