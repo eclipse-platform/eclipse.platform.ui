@@ -260,7 +260,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		Control previewer= createPreviewer(composite);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(60);
-		gd.heightHint= convertHeightInCharsToPixels(9);
+		gd.heightHint= convertHeightInCharsToPixels(13);
 		previewer.setLayoutData(gd);
 		
 		return composite;

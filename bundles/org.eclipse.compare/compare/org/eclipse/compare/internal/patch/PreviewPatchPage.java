@@ -237,7 +237,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		Group group= new Group(parent, SWT.NONE);
 		group.setText(PatchMessages.getString("PreviewPatchPage.PatchOptions.title")); //$NON-NLS-1$
-		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0; gl.verticalSpacing= 0;
+		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0;
 		group.setLayout(gl);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 	
