@@ -42,4 +42,12 @@ public class AntProjectNode extends AntElementNode {
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
 	}
+
+	/**
+	 * Returns the Ant project associated with this project node.
+	 * @return the Ant project
+	 */
+	public Project getProject() {
+		return fProject;
+	}
 }

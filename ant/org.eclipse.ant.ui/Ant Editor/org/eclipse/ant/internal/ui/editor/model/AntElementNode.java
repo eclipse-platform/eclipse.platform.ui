@@ -406,8 +406,25 @@ public class AntElementNode {
 		this.selectionLength= selectionLength;
 	}
 	
-	public boolean contains(int childOffset) {
-		return childOffset < (offset + length); 
+	/**
+	 * Returns the node with the narrowest source range that contains the offset.
+	 * It may be this node or one of its children or <code>null</code> if the offset is not in the source range of this node.
+	 * @param sourceOffset The source offset
+	 * @return the node that includes the offset in its source range or <code>null</code>
+	 */
+	public AntElementNode getNode(int sourceOffset) {
+		for (Iterator iter = childNodes.iterator(); iter.hasNext(); ) {
+			AntElementNode node = (AntElementNode) iter.next();
+			AntElementNode containingNode= node.getNode(sourceOffset);
+			if (containingNode != null) {
+				return containingNode;
+			}
+		}
+		if (offset <= sourceOffset && sourceOffset <= (offset + length - 2)) {
+			return this;
+		}
+		
+		return null;
 	}
 	
 	public Image getImage() {

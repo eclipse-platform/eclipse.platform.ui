@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -49,6 +50,7 @@ public class AntModel {
 	private AntProjectNode fProjectNode;
 	private AntTargetNode fCurrentTargetNode;
 	private AntElementNode fLastNode;
+	
 	 /**
      * Stack of still open elements.
      * <P>
@@ -134,6 +136,7 @@ public class AntModel {
 	}
 
 	public synchronized AntElementNode[] getRootElements() {
+		reconcile();
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
 		} else {
@@ -319,11 +322,19 @@ public class AntModel {
 				int offset;
 				if (column <= 0) {
 					int lineOffset= getOffset(line, 1);
-					IRegion result= fFindReplaceAdapter.search(lineOffset, ">", true, true, false, false); //$NON-NLS-1$
+					StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
+					searchString.append(element.getName());
+					searchString.append('>'); 
+					IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
 					if (result == null) {
-						offset= -1;
+						result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
+						if (result == null) {
+							offset= -1;
+						} else {
+							offset= result.getOffset() + 2;
+						}
 					} else {
-						offset= result.getOffset();
+						offset= result.getOffset() + searchString.length() - 1;
 					}
 					if (offset < 0 || getLine(offset) != line) {
 						offset= lineOffset;
@@ -517,6 +528,20 @@ public class AntModel {
 	public void fatalError(Exception exception) {
 		AntElementNode node= (AntElementNode)fStillOpenElements.pop();
 		generateExceptionOutline(node);
+		if (exception instanceof SAXParseException) {
+			SAXParseException parseException= (SAXParseException)exception;
+			computeLength(node, parseException.getLineNumber(), parseException.getColumnNumber());
+		}
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_FATAL_ERROR);
+		
+		while (node.getParentNode() != null) {
+			AntElementNode parentNode= node.getParentNode();
+			parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
+			node= parentNode;
+		}
+	}
+	
+	public Iterator getStillOpenElement() {
+		return fStillOpenElements.iterator();
 	}
 }

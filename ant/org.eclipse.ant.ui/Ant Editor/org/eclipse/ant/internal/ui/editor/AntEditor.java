@@ -203,7 +203,7 @@ public class AntEditor extends TextEditor {
             try {
                 
                 int offset= reference.getOffset();
-                int length= reference.getSelectionLength();
+                int length= reference.getLength();
                 
                 if (offset < 0) {
                     return;
@@ -290,6 +290,19 @@ public class AntEditor extends TextEditor {
 				page.setPageInput(model);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the Ant model for the current editor input of this editor.
+	 * @return the Ant model for this editor or <code>null</code>
+	 */
+	protected AntModel getAntModel() {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof AntEditorDocumentProvider) {
+			AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
+			return documentProvider.getAntModel(getEditorInput());
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

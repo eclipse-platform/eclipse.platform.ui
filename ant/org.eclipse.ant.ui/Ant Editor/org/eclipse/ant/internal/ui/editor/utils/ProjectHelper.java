@@ -405,7 +405,6 @@ public class ProjectHelper extends ProjectHelper2 {
 				}
 			}
 		}
-		
 	}
 	
 	 public static class RootHandler extends ProjectHelper2.RootHandler {
@@ -427,7 +426,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public void fatalError(SAXParseException e) {
 			if (fAntModel != null) {
-				fAntModel.error(e);
+				fAntModel.fatalError(e);
 			}
 		}
 		/* (non-Javadoc)
