@@ -479,7 +479,7 @@ public class CoreItem extends ViewItem {
 		final boolean[] listenerResult = { false };
 		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if(event.getNewValue() instanceof Boolean) {
+				if(event.getProperty().equals(IAction.RESULT) && event.getNewValue() instanceof Boolean) {
 					listenerFired[0] = true;
 					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
 				}
