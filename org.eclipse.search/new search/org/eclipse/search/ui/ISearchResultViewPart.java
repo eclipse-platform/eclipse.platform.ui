@@ -15,6 +15,10 @@ import org.eclipse.ui.IViewPart;
  * to the appropriate <code>ISearchResultPage</code>.
  * This insterface must not be implemented by clients.
  * 
+ * TODO the standard sentence is
+ *  - This interface is not intended to be implemented by clients.
+ *  - How do I access an instance of the search result view part. NewSearchUI ??
+ * 
  * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0

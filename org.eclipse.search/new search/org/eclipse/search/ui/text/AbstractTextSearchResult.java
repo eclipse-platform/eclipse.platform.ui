@@ -24,14 +24,24 @@ import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * An abstract superclass for text-match based search results. This search
+ * An abstract base implementation for text-match based search results. This search
  * result implementation consists of a list of matches. No assumptions are made about
  * the kind of elements these matches are reported against. 
+ * 
+ * TODO This see tag is embedded in the middle of the text.
+ * 
  * see {@link org.eclipse.search.ui.text.Match}
+ * 
+ * 
  * This class has abstract methods to map matches to both editors and files.
+ * 
+ * TODO the client has to implement these methods since they are abstract. So 
+ * we should give him some hints what a good implementation is.
+ * 
  * If a client implements the methods related to editors, matches will be highlighted
  * automatically in participating editors. Editors must implement or adapt to ITextEditor,
  * or they must adapt to IAnnotationModel in order for match highlighting to work.<br>
+ * 
  * see {@link #findContainedMatches(IEditorPart)}<br>
  * see {@link #isShownInEditor(Match,IEditorPart)}<br>
  * If a client implements the methods related to files, matches will be automatically
@@ -47,6 +57,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private MatchEvent fMatchEvent;
 
 	/**
+	 * TODO doc missing
 	 * Constructor
 	 */
 	protected AbstractTextSearchResult() {
@@ -78,7 +89,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Adds a Match to this search result. This method does nothing if the
 	 * Match is already present.
+	 * <p>
 	 * Subclasses may extend this method.
+	 * </p>
 	 * 
 	 * @param match The match to add.
 	 */
@@ -94,7 +107,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Adds a number of Matches to this search result. This method does nothing for 
 	 * matches that are already present.
+	 * <p>
 	 * Subclasses may extend this method.
+	 * </p>
 	 * @param matches the matches to add.
 	 */
 	public void addMatches(Match[] matches) {

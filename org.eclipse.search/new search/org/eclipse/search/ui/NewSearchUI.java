@@ -20,14 +20,16 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
  */
 public class NewSearchUI {
 	/**
-	 * Activates a search result view in the current workbench window page..
+	 * Activates a search result view in the current workbench window page.
+	 * 
+	 * TODO return value doc. What happens if there isn't any.
 	 */
 	public static ISearchResultViewPart activateSearchResultView() {
 		return InternalSearchUI.getInstance().activateSearchView();
 	}
 	
 	/**
-	 * Gets the search result view shown in the current worbench window.
+	 * Gets the search result view shown in the current workbench window.
 	 * @return the search result view or <code>null</code>, if none is open in the
 	 * 			current workbench window page
 	 */
@@ -38,6 +40,8 @@ public class NewSearchUI {
 	 * Runs the given search query. This method may run the given query in a separate thread 
 	 * if <code>ISearchQuery#canRunInBackground()</code> returns <code>true</code>.
 	 * Running a query adds it to the set of known queries.
+	 * 
+	 * TODO some words about the fact that the IQueryListener is notified.
 	 * 
 	 * @param query the query to execute.
 	 */
@@ -52,6 +56,8 @@ public class NewSearchUI {
 	 * Runs the given search query. This method will execute the query in the same thread 
 	 * as the caller. This method blocks until the query is finished.
 	 * Running a query adds it to the set of known queries.
+	 * 
+	 * TODO some words about the fact that the IQueryListener is notified.
 	 * 
 	 * @param context the runnable context to run the query in.
 	 * @param query the query to execute.
@@ -91,6 +97,10 @@ public class NewSearchUI {
 	/**
 	 * Returns whether the given query is currently running. Queries
 	 * may be run by client request or by actions in the search UI.
+	 * 
+	 * TODO see tags are always at the bottom. param and return sentences
+	 * are not closed with a period.
+	 * 
 	 * @see #runQuery(ISearchQuery)
 	 * @see #runQueryInForeground(IRunnableContext, ISearchQuery)
 	 * @param query the query

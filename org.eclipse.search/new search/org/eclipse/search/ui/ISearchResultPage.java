@@ -10,6 +10,9 @@ package org.eclipse.search.ui;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.IPageBookViewPage;
 /**
+ * TODO 
+ *  - what is a search result page. Its presneted in the search result view..
+ * 
  * Extensions of extension point org.eclipse.search.ui.searchResultViewPages
  * must implement this interface.
  * When the user selects an <code>ISearchResult</code> in the search results
@@ -23,12 +26,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public interface ISearchResultPage extends IPageBookViewPage {
 	/**
-	 * Returns an Object representing the current state of the page UI. For
+	 * Returns an Object representing the current user interface state of the page. For
 	 * example, the current selection in a viewer. The UI state will be later
 	 * passed into the <code>setInput()</code> method when the currently
 	 * shown <code>ISearchResult</code> is shown again.
 	 * 
-	 * @return An object representing the UI state of this page.
+	 * @return an object representing the UI state of this page
 	 */
 	Object getUIState();
 	/**
@@ -38,7 +41,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * @see ISearchResultPage#getUIState()
 	 * 
 	 * @param search the search result to be shown
-	 * @param uiState the previously saved UI state.
+	 * @param uiState the previously saved UI state
 	 */
 	void setInput(ISearchResult search, Object uiState);
 	/**

@@ -8,9 +8,23 @@
  ******************************************************************************/
 package org.eclipse.search.ui;
 /**
+ * TODO:
+ *  - for see please use @see tag
+ *  - where do I register a listener.
+ *  - we have to remove the This API is preliminary and subject to change at any time.
+ *    message
+ *  - @see tags are always below @param and @return. Order is
+ *      @param, @return, @throws, @see, @since when different from class. 
+ *  - formatting style 
+ *    - empty lines between methods
+ *    - imports empty line before and after block
+ *  - @see tags never appear in the middle of text. Use {@link } for this.
+ *  - @param, @return, @throws are not closed with periods
+ *  - don't use <br> we always use <p></p> to make paragraphs.
+ * 
  * A listener for changes to the set of search queries. Queries are added by running
  * them via the appropriate methods in the <code>NewSearchUI</code> facade class.<br>
- * see {@link org.eclipse.search.ui.NewSearchUI#runQuery(ISearchQuery)}<br>
+ * see {@link org.eclipse.search.ui.NewSearchUI#runQuery(ISearchQuery)})<br>
  * see {@link org.eclipse.search.ui.NewSearchUI#runQueryInForeground(IRunnableContext, ISearchQuery) }<br>
  * The search UI determines when queries are rerun, stopped or deleted (and will notify
  * interested parties via this interface).

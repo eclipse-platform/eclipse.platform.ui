@@ -13,6 +13,8 @@ import org.eclipse.search.ui.SearchResultEvent;
  * An event describing adding and removing of Matches. This API is preliminary
  * and subject to change at any time.
  * 
+ * TODO is this class intended to be sublcassed
+ * 
  * @since 3.0
  */
 public class MatchEvent extends SearchResultEvent {
@@ -46,7 +48,7 @@ public class MatchEvent extends SearchResultEvent {
 		return fKind;
 	}
 	/**
-	 * Returns the concerned match.
+	 * Returns the concerned matches.
 	 * 
 	 * @return The match this event is about.
 	 */
@@ -59,12 +61,14 @@ public class MatchEvent extends SearchResultEvent {
 			return fgEmtpyMatches;
 	}
 	/**
+	 * TODO Text missing
 	 * @param kind The kind to set.
 	 */
 	protected void setKind(int kind) {
 		fKind= kind;
 	}
 	/**
+	 * TODO Text missing
 	 * @param match The match to set.
 	 */
 	protected void setMatch(Match match) {

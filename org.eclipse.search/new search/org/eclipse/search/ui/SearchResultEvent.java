@@ -10,7 +10,11 @@ package org.eclipse.search.ui;
 /**
  * The common superclass of all events sent from ISearchResults. This class is
  * supposed to be subclassed to provide more specific notification.
+ * 
+ * TODO see tags are done by @see
  * see {@link org.eclipse.search.ui.ISearchResultListener#searchResultChanged(SearchResultEvent)}
+ * 
+ * Question ? Shouldn't this be a sublcass of event object ?
  * 
  * This API is preliminary and subject to change at any time.
  * 

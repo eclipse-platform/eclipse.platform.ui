@@ -13,7 +13,17 @@ import org.eclipse.core.runtime.IStatus;
  * Represents a particular search query (e.g. "find all occurrences of 'foo' in
  * workspace"). When run, the query must update its <code>ISearchResult</code>
  * with the results of the query. 
- * This interface may be implemented by clients.
+ * 
+ * TODO 
+ *   - it's up to the implementor of this interface to decide how the concrete
+ *     matches are represented in results. 
+ *   - what does this mean ... must update its search result. Add matches ?
+ *     How Do I run a query.
+ *   - some words about the life cycle. When is run called when getSearchResult
+ * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * 
  * This API is preliminary and subject to change at any time.
  * 
@@ -50,7 +60,9 @@ public interface ISearchQuery {
 	 */
 	boolean canRunInBackground();
 	/**
-	 * Returns the search result associated with this query.
+	 * Returns the search result associated with this query. This method can
+	 * be called before run is called.
+	 * 
 	 * @return This query's search result.
 	 */
 	ISearchResult getSearchResult();

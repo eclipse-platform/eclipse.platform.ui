@@ -14,6 +14,14 @@ package org.eclipse.search.ui.text;
 /**
  * A textual match in a given object. This class may be subclassed to, 
  * for example, add additional match state (i.e. accuracy, etc).
+ * 
+ * TODO
+ *  some words about the fact that the element is used for grouping ....
+ *  match is contained in the given element.
+ *  Matches contained in the same element are group together in the UI. 
+ * 
+ * 
+ * 
  * This API is preliminary and subject to change at any time.
  * @since 3.0
  */
@@ -24,6 +32,9 @@ public class Match {
 	
 	/**
 	 * Constructs a new Match object.
+	 * 
+	 * TODO text missing for params
+	 * 
 	 * @param element
 	 * @param offset
 	 * @param length
@@ -50,6 +61,7 @@ public class Match {
 	}
 
 	/**
+	 * TODO missing sentence
 	 * @return The length.
 	 */
 	public int getLength() {
@@ -65,13 +77,10 @@ public class Match {
 	}
 
 	/**
+	 * TODO missing sentence
 	 * @return The element this match points to.
 	 */
 	public Object getElement() {
 		return fElement;
 	}
-
-	
-
-
 }

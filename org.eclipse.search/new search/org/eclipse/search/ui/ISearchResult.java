@@ -13,12 +13,25 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Represents the result of a search. The class of an <code>ISearchResult</code> 
+ * Represents the result of a search. 
+ * 
+ * TODO 
+ *   - what is the result of a search. Some words that the representation of matches
+ *     are up to implementor of this calls.
+ * 
+ * The class of an <code>ISearchResult</code> 
  * is used to determine which <code>ISearchResultPage</code> is used
  * to display it, by matching the <code>targetClass</code> attribute in the 
- * <code>searchResultViewPages</code> extension point to the class of the seaarch 
+ * <code>searchResultViewPages</code> extension point to the class of the search 
  * result.
- * Clients may implement this interface.
+ * 
+ * TODO This is not really understandable... I would say something like. To present
+ *  search results to the user implementors of this interface must also provide 
+ *  an extension for the extension point <code>org.eclipse.search.searchResultViewPage</code>
+ * 
+ * @see org.eclipse.search.ui.ISearchResultPage
+ * 
+ *  * Clients may implement this interface.
  *
  * This API is preliminary and subject to change at any time.
  * @since 3.0
