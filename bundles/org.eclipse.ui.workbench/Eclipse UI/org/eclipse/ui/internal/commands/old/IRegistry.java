@@ -31,13 +31,6 @@ public interface IRegistry {
 	/**
 	 * JAVADOC
 	 * 
-	 * @param registryListener
-	 */	
-	void addRegistryListener(IRegistryListener registryListener);
-	
-	/**
-	 * JAVADOC
-	 * 
 	 * @return
 	 */	
 	List getActiveGestureConfigurations();
@@ -112,11 +105,4 @@ public interface IRegistry {
 	 */	
 	void load()
 		throws IOException;
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param registryListener
-	 */	
-	void removeRegistryListener(IRegistryListener registryListener);
 }	

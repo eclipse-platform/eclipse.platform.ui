@@ -11,9 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -27,69 +26,57 @@ import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
-final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
+final class PluginRegistry extends AbstractRegistry {
+
+	private final class PluginRegistryReader extends RegistryReader {
+
+		protected boolean readElement(IConfigurationElement element) {
+			String name = element.getName();
+
+			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
+				return readActiveKeyConfiguration(element);
+
+			if (Persistence.TAG_CATEGORY.equals(name))
+				return readCategory(element);
+
+			if (Persistence.TAG_COMMAND.equals(name))
+				return readCommand(element);
+
+			if (Persistence.TAG_CONTEXT_BINDING.equals(name))
+				return readContextBinding(element);
+
+			if (Persistence.TAG_IMAGE_BINDING.equals(name))
+				return readImageBinding(element);
+
+			if (Persistence.TAG_KEY_BINDING.equals(name))
+				return readKeyBinding(element);
+
+			if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
+				return readKeyConfiguration(element);
+
+			return true; // TODO return false;
+		}		
+	}
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
-
-	private List activeKeyConfigurations;	
-	private List categories;	
-	private List commands;
-	private List contextBindings;
-	private List imageBindings;
-	private List keyBindings;
-	private List keyConfigurations;
+	
 	private IPluginRegistry pluginRegistry;
-	private List unmodifiableActiveKeyConfigurations;
-	private List unmodifiableCategories;
-	private List unmodifiableCommands;
-	private List unmodifiableContextBindings;
-	private List unmodifiableImageBindings;
-	private List unmodifiableKeyBindings;
-	private List unmodifiableKeyConfigurations;
+	private PluginRegistryReader pluginRegistryReader;
 	
-	RegistryReader(IPluginRegistry pluginRegistry) {
+	PluginRegistry(IPluginRegistry pluginRegistry) {
 		super();	
+
+		if (pluginRegistry == null)
+			throw new NullPointerException();
+		
 		this.pluginRegistry = pluginRegistry;
-		unmodifiableActiveKeyConfigurations = Collections.EMPTY_LIST;
-		unmodifiableCategories = Collections.EMPTY_LIST;
-		unmodifiableCommands = Collections.EMPTY_LIST;
-		unmodifiableContextBindings = Collections.EMPTY_LIST;
-		unmodifiableImageBindings = Collections.EMPTY_LIST;		
-		unmodifiableKeyBindings = Collections.EMPTY_LIST;
-		unmodifiableKeyConfigurations = Collections.EMPTY_LIST;
 	}
 
-	List getActiveKeyConfigurations() {
-		return unmodifiableActiveKeyConfigurations;
-	}
-
-	List getCategories() {
-		return unmodifiableCategories;
-	}
-	
-	List getCommands() {
-		return unmodifiableCommands;
-	}
-
-	List getContextBindings() {
-		return unmodifiableContextBindings;
-	}
-	
-	List getImageBindings() {
-		return unmodifiableImageBindings;
-	}
-
-	List getKeyBindings() {
-		return unmodifiableKeyBindings;
-	}
-
-	List getKeyConfigurations() {
-		return unmodifiableKeyConfigurations;
-	}
-	
-	void load() {
+	public void load()
+		throws IOException {
 		if (activeKeyConfigurations == null)
 			activeKeyConfigurations = new ArrayList();
 		else 
@@ -125,43 +112,10 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		else 
 			keyConfigurations.clear();
 
-		if (pluginRegistry != null)	
-			readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
-			
-		unmodifiableActiveKeyConfigurations = Collections.unmodifiableList(new ArrayList(activeKeyConfigurations));
-		unmodifiableCategories = Collections.unmodifiableList(new ArrayList(categories));
-		unmodifiableCommands = Collections.unmodifiableList(new ArrayList(commands));
-		unmodifiableContextBindings = Collections.unmodifiableList(new ArrayList(contextBindings));
-		unmodifiableImageBindings = Collections.unmodifiableList(new ArrayList(imageBindings));
-		unmodifiableKeyBindings = Collections.unmodifiableList(new ArrayList(keyBindings));
-		unmodifiableKeyConfigurations = Collections.unmodifiableList(new ArrayList(keyConfigurations));
-	}
+		if (pluginRegistryReader == null)
+			pluginRegistryReader = new PluginRegistryReader();
 
-	protected boolean readElement(IConfigurationElement element) {
-		String name = element.getName();
-
-		if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
-			return readActiveKeyConfiguration(element);
-
-		if (Persistence.TAG_CATEGORY.equals(name))
-			return readCategory(element);
-
-		if (Persistence.TAG_COMMAND.equals(name))
-			return readCommand(element);
-
-		if (Persistence.TAG_CONTEXT_BINDING.equals(name))
-			return readContextBinding(element);
-
-		if (Persistence.TAG_IMAGE_BINDING.equals(name))
-			return readImageBinding(element);
-
-		if (Persistence.TAG_KEY_BINDING.equals(name))
-			return readKeyBinding(element);
-
-		if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
-			return readKeyConfiguration(element);
-
-		return true; // TODO return false;
+		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 	}
 
 	private String getPluginId(IConfigurationElement element) {

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -47,7 +48,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet definedKeyConfigurationIds = new TreeSet();
 	private SortedMap keyConfigurationHandlesById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
-	private RegistryReader registryReader;
+	private PluginRegistry registryReader;
 
 	public CommandManager() {
 		super();
@@ -147,9 +148,14 @@ public final class CommandManager implements ICommandManager {
 
 	public void updateFromRegistry() {
 		if (registryReader == null)
-			registryReader = new RegistryReader(Platform.getPluginRegistry());
+			registryReader = new PluginRegistry(Platform.getPluginRegistry());
 		
-		registryReader.load();	
+		try {
+			registryReader.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+			
 		List keyConfigurations = registryReader.getKeyConfigurations();
 		SortedMap keyConfigurationsById = KeyConfiguration.sortedMapById(keyConfigurations);			
 		SortedSet keyConfigurationChanges = new TreeSet();
