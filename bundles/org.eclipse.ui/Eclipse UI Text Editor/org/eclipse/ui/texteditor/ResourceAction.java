@@ -96,6 +96,6 @@ public abstract class ResourceAction extends Action {
 	 * @param contextId the help context id
 	 */
 	public final void setHelpContextId(String contextId) {
-		WorkbenchHelp.setHelp(this, contextId);
+		WorkbenchHelp.setHelp(this, new Object[] { contextId });
 	}	
 }

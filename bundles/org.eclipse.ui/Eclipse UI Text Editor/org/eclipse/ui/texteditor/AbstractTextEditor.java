@@ -925,7 +925,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.addKeyListener(getCursorListener());
 		
 		if (getHelpContextId() != null)
-			WorkbenchHelp.setHelp(styledText, getHelpContextId());
+			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
 			
 		
 		String id= fEditorContextMenuId != null ?  fEditorContextMenuId : DEFAULT_EDITOR_CONTEXT_MENU_ID;
