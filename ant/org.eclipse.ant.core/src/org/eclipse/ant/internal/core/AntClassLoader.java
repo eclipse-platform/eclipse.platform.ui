@@ -22,12 +22,14 @@ public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders, ClassLoader paren
 	this.pluginLoaders = pluginLoaders;
 }
 
-public Class loadClass(String name) {
+public Class loadClass(String name) throws ClassNotFoundException {
 	Class result = loadClassParent(name);
 	if (result == null)
 		result = loadClassURLs(name);
 	if (result == null)
 		result = loadClassPlugins(name);
+	if (result == null)
+		throw new ClassNotFoundException(name);
 	return result;
 }
 
