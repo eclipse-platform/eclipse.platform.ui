@@ -92,6 +92,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private String fLastEditorId = null;
 	
 	/**
+	 * Wether this view is in the active page of a perspective.
+	 */
+	private boolean fIsActive = true; 	
+	
+	/**
 	 * Creates a launch view and an instruction pointer marker for the view
 	 */
 	public LaunchView() {
@@ -151,6 +156,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setEventHandler(new LaunchViewEventHandler(this, lv));
+		
+		// determine if active
+		setActive(getSite().getPage().findView(getSite().getId()) != null);
 		
 		return lv;
 	}
@@ -290,9 +298,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void perspectiveActivated(
 		IWorkbenchPage page,
 		IPerspectiveDescriptor perspective) {
-			if (page.equals(getSite().getPage())) {
-				updateActions();
-			}
+			setActive(page.findView(getSite().getId()) != null);
+			updateActions();
 	}
 
 	/**
@@ -302,6 +309,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		IWorkbenchPage page,
 		IPerspectiveDescriptor perspective,
 		String changeId) {
+			setActive(page.findView(getSite().getId()) != null);
 	}
 
 	/**
@@ -359,6 +367,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Otherwise, nothing will happen.
 	 */
 	protected void showMarkerForCurrentSelection() {
+		// ensure this view is visible in the active page
+		if (!isActive()) {
+			return;
+		}		
 		if (!fShowingMarker) {
 			try {
 				fShowingMarker = true;
@@ -671,5 +683,28 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected String getLastEditorId() {
 		return fLastEditorId;
 	}	
+	
+	/**
+	 * Sets whether this view is in the active page of a
+	 * perspective. Since a page can have more than one
+	 * perspective, this view only show's source when in
+	 * the active perspective/page.
+	 * 
+	 * @param active whether this view is in the active page of a
+	 * perspective
+	 */
+	protected void setActive(boolean active) {
+		fIsActive = active;
+	} 
 
+	/**
+	 * Returns whether this view is in the ative page of
+	 * the active perspective.
+	 * 
+	 * @return whether this view is in the ative page of
+	 * the active perspective
+	 */
+	protected boolean isActive() {
+		return fIsActive;
+	}
 }
