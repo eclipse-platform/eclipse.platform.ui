@@ -218,8 +218,29 @@ In the above example, a launch shortcut will be shown in the run and debug casca
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
+         &lt;p&gt;
+Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
 interface &lt;b&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/b&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+Since 3.1, the debug platform registers a command handler for each launch shortcut and its applicable modes to allow clients to define key-bindings for a launch shortcut. The command id for a handler is generated as the launch shortcut id attribute, followed by a dot and the applicable launch mode. For example, the command id for the above launch shortcut example would be &lt;code&gt;com.example.ExampleLaunchShortcutId.debug&lt;/code&gt; for launching in debug mode. A command and key binding could be defined as follows, to bind &quot;&lt;code&gt;ALT-SHIFT-D, E&lt;/code&gt;&quot; to the launch shortcut.
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.ui.commands&quot;&gt;
+      &lt;command
+            name=&quot;Debug Example Launch&quot;
+            description=&quot;Debug Example Launch&quot;
+            categoryId=&quot;org.eclipse.debug.ui.category.run&quot;
+            id=&quot;com.example.ExampleLaunchShortcutId.debug&quot;&gt;
+      &lt;/command&gt;
+      &lt;keyBinding
+            keySequence=&quot;M3+M2+D E&quot;
+            contextId=&quot;org.eclipse.ui.globalScope&quot;
+            commandId=&quot;com.example.ExampleLaunchShortcutId.debug&quot;
+            keyConfigurationId=&quot;org.eclipse.ui.defaultAcceleratorConfiguration&quot;&gt;
+      &lt;/keyBinding&gt;
+   &lt;/extension&gt;      
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
