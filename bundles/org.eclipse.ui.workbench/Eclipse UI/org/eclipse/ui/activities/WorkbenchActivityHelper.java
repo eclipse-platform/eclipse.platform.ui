@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -44,11 +45,7 @@ public final class WorkbenchActivityHelper {
      * contributions.
      */
     public static RGB getFilterRGB() {
-        return PlatformUI
-		.getWorkbench()
-		.getDisplay()
-		.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW)
-		.getRGB();
+    	return JFaceResources.getColorRegistry().getRGB(IWorkbenchConstants.COLOR_ACTIVITY_HIGHLIGHT);
     }
 	
 
@@ -57,10 +54,7 @@ public final class WorkbenchActivityHelper {
      * contributions.
      */
     public static Color getFilterColor() {
-        return PlatformUI
-        		.getWorkbench()
-        		.getDisplay()
-        		.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+        return JFaceResources.getColorRegistry().get(IWorkbenchConstants.COLOR_ACTIVITY_HIGHLIGHT);
     }	
 	
 	/**

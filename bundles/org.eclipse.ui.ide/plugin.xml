@@ -186,8 +186,8 @@
       <editor
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
-            contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
+            contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
       </editor>
    </extension>
@@ -231,8 +231,8 @@
                label="%GoToResourceAction.label"
                hoverIcon="icons/full/clcl16/gotoobj_tsk.gif"
                icon="icons/full/elcl16/gotoobj_tsk.gif"
-               retarget="true"
                menubarPath="navigate/goTo/"
+               retarget="true"
                disabledIcon="icons/full/dlcl16/gotoobj_tsk.gif"
                id="goToResource">
          </action>
@@ -250,11 +250,11 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="BOTTOM_RIGHT"
             adaptable="true"
+            quadrant="BOTTOM_RIGHT"
             label="%DecoratorLinkedResource.label"
-            state="true"
             class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
+            state="true"
             id="org.eclipse.ui.LinkedResourceDecorator">
          <description>
             %DecoratorLinkedResource.description
@@ -269,9 +269,9 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            id="org.eclipse.ui.preferencePages.Workbench"
             name="%PreferencePages.Workbench"
-            class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage">
+            class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage"
+            id="org.eclipse.ui.preferencePages.Workbench">
       </page>
       <page
             name="%PreferencePages.Editors"
@@ -325,7 +325,7 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.colors.ColorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Colors">
-      </page>      
+      </page>
       <page
             name="%PreferencePages.Decorators"
             category="org.eclipse.ui.preferencePages.Workbench"
@@ -393,7 +393,7 @@
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.ViewIntroAdapterPart"
             id="org.eclipse.ui.internal.introview">
-      </view>      
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
@@ -405,19 +405,27 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
       </page>
       <page
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
             name="%PropertyPages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.colorDefinitions">
+      <colorDefinition
+            label="%Colors.activity.highlight"
+            value="COLOR_WIDGET_LIGHT_SHADOW"
+            id="org.eclipse.ui.activityHighlight">
+      </colorDefinition>
    </extension>
 
 </plugin>

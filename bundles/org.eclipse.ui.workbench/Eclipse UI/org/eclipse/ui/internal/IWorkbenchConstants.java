@@ -186,5 +186,8 @@ public interface IWorkbenchConstants {
 	//Fonts
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
-	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$	
+	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
+	
+	//Colors
+	public static final String COLOR_ACTIVITY_HIGHLIGHT = "org.eclipse.ui.activityHighlight"; //$NON-NLS-1$
 }
