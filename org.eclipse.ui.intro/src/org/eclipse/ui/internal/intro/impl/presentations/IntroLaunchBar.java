@@ -128,22 +128,22 @@ public class IntroLaunchBar {
 	private void fillToolBar() {
 		Action action;
 
-		closeAction = new Action("close") {
+		closeAction = new Action("close") { //$NON-NLS-1$
 			public void run() {
 				closeLaunchBar(false);
 			}
 		};
-		closeAction.setText("Close");
-		closeAction.setToolTipText("Close this bar");
+		closeAction.setText(IntroPlugin.getString("IntroLaunchBar.close.label")); //$NON-NLS-1$
+		closeAction.setToolTipText(IntroPlugin.getString("IntroLaunchBar.close.tooltip")); //$NON-NLS-1$
 
-		action = new Action("restore") {
+		action = new Action("restore") { //$NON-NLS-1$
 			public void run() {
 				openPage(lastPageId);
 			}
 		};
-		action.setToolTipText("Return to Welcome");
+		action.setToolTipText(IntroPlugin.getString("IntroLaunchBar.restore.tooltip")); //$NON-NLS-1$
 		action.setImageDescriptor(ImageUtil
-				.createImageDescriptor("full/etool16/restore_welcome.gif"));
+				.createImageDescriptor("full/etool16/restore_welcome.gif")); //$NON-NLS-1$
 		toolBarManager.add(action);
 		toolBarManager.add(new Separator());
 		if (element == null)
@@ -211,7 +211,7 @@ public class IntroLaunchBar {
 		if (intro == null)
 			return;
 		StringBuffer url = new StringBuffer();
-		url.append("http://org.eclipse.ui.intro/showPage?id=");
+		url.append(IntroPlugin.getString("IntroLaunchBar.6")); //$NON-NLS-1$
 		url.append(id);
 		IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
 		if (introURL != null)
