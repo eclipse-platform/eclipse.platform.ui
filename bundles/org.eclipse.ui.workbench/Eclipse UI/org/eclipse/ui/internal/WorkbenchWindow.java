@@ -713,7 +713,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setLayout(getLayout());
-		shell.setSize(800, 600);
 		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		createShortcutBar(shell);
 		createProgressIndicator(shell);
@@ -1039,6 +1038,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window
+	 */
+	protected void initializeBounds() {
+		getShell().setSize(800, 600);
+	}
+	
 	/**
 	 * @see IWorkbenchWindow
 	 */
