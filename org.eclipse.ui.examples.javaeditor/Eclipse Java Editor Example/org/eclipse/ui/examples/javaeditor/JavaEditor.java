@@ -118,8 +118,8 @@ public class JavaEditor extends TextEditor {
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", a); //$NON-NLS-1$
 		
-		a= new DefineFoldingRegionAction(JavaEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this);
-		setAction("DefineFoldingRegion", a);
+		a= new DefineFoldingRegionAction(JavaEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this); //$NON-NLS-1$
+		setAction("DefineFoldingRegion", a); //$NON-NLS-1$
 	}
 	
 	/** The <code>JavaEditor</code> implementation of this 
@@ -179,7 +179,7 @@ public class JavaEditor extends TextEditor {
 		super.editorContextMenuAboutToShow(menu);
 		addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, "ContentAssistTip"); //$NON-NLS-1$
-		addAction(menu, "DefineFoldingRegion"); 
+		addAction(menu, "DefineFoldingRegion");  //$NON-NLS-1$
 	}
 	
 	/** The <code>JavaEditor</code> implementation of this 
@@ -236,8 +236,8 @@ public class JavaEditor extends TextEditor {
 		super.createPartControl(parent);
 		ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();
 		fProjectionSupport= new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error");
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning");
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		fProjectionSupport.install();
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 	}
