@@ -45,7 +45,7 @@ public class VersionedIdentifier {
 	public VersionedIdentifier(String id, String versionName) {
 		if (id == null	|| (id = id.trim()).equals("")) //$NON-NLS-1$
 			throw new IllegalArgumentException(
-				Policy.bind("VersionedIdentifier.IdOrVersionNull", id, versionName));
+				Policy.bind("VersionedIdentifier.IdOrVersionNull", id, versionName)); //$NON-NLS-1$
 		//$NON-NLS-1$
 		this.id = id;
 		// 15707
@@ -54,7 +54,7 @@ public class VersionedIdentifier {
 			try {
 				this.version = new PluginVersionIdentifier(versionName);
 			} catch (RuntimeException e){
-				UpdateCore.warn("Invalid Version:"+versionName,e);
+				UpdateCore.warn("Invalid Version:"+versionName,e); //$NON-NLS-1$
 			}
 		}
 		if (this.version==null)
@@ -90,7 +90,7 @@ public class VersionedIdentifier {
 	 * @since 2.0
 	 */
 	public String toString() {
-		return id.equals("") ? "" : id + SEPARATOR + version.toString();
+		return id.equals("") ? "" : id + SEPARATOR + version.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		//$NON-NLS-1$ //$NON-NLS-2$
 	}
 

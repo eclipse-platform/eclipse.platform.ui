@@ -72,13 +72,13 @@ public abstract class FeatureContentProvider
 			// check same file extension if extension exists (a.txt/*.txt)
 			// or same file name (a.txt,a.*)
 			String extension = filterPath.getFileExtension();
-			if (!extension.equals("*")) {
+			if (!extension.equals("*")) { //$NON-NLS-1$
 				if (!extension.equalsIgnoreCase(namePath.getFileExtension()))
 					return false;
 			} else {
 				IPath noExtension = filterPath.removeFileExtension();
 				String fileName = noExtension.lastSegment();
-				if (!fileName.equals("*")) {
+				if (!fileName.equals("*")) { //$NON-NLS-1$
 					if (!namePath.lastSegment().startsWith(fileName))
 						return false;
 				}
@@ -97,8 +97,8 @@ public abstract class FeatureContentProvider
 	private File tmpDir; // local work area for each provider
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$	
 
-	private static final String DOT_PERMISSIONS = "permissions.properties";
-	private static final String EXECUTABLES = "permissions.executable";
+	private static final String DOT_PERMISSIONS = "permissions.properties"; //$NON-NLS-1$
+	private static final String EXECUTABLES = "permissions.executable"; //$NON-NLS-1$
 
 	// lock
 	private final static Object lock = new Object();
@@ -208,7 +208,7 @@ public abstract class FeatureContentProvider
 			if (monitor != null) {
 				monitor.saveState();
 				monitor.setTaskName(
-					Policy.bind("FeatureContentProvider.Downloading"));
+					Policy.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
 				//$NON-NLS-1$
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
@@ -217,7 +217,7 @@ public abstract class FeatureContentProvider
 
 			try {
 				if (localFileFragment != null
-					&& "http".equals(ref.asURL().getProtocol())) {
+					&& "http".equals(ref.asURL().getProtocol())) { //$NON-NLS-1$
 					localFile = localFileFragment.getFile();
 					try {
 						// get partial input stream
@@ -250,7 +250,7 @@ public abstract class FeatureContentProvider
 					} catch (IOException e) {
 						throw Utilities.newCoreException(
 							Policy.bind(
-								"FeatureContentProvider.UnableToRetrieve",
+								"FeatureContentProvider.UnableToRetrieve", //$NON-NLS-1$
 								new Object[] { ref }),
 							e);
 					}
@@ -262,7 +262,7 @@ public abstract class FeatureContentProvider
 					} catch (FileNotFoundException e) {
 						throw Utilities.newCoreException(
 							Policy.bind(
-								"FeatureContentProvider.UnableToCreate",
+								"FeatureContentProvider.UnableToCreate", //$NON-NLS-1$
 								new Object[] { localFile }),
 							e);
 					}
@@ -292,7 +292,7 @@ public abstract class FeatureContentProvider
 					} else {
 						throw new FeatureDownloadException(
 							Policy.bind(
-								"FeatureContentProvider.ExceptionDownloading",
+								"FeatureContentProvider.ExceptionDownloading", //$NON-NLS-1$
 								new Object[] { getURL().toExternalForm()}),
 							new IOException());
 					}
@@ -315,7 +315,7 @@ public abstract class FeatureContentProvider
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
 					Policy.bind(
-						"FeatureContentProvider.UnableToCreate",
+						"FeatureContentProvider.UnableToCreate", //$NON-NLS-1$
 						new Object[] { localFile }),
 					e);
 			} finally {
@@ -491,7 +491,7 @@ public abstract class FeatureContentProvider
 		String nonPluginBaseID =
 			Site.DEFAULT_FEATURE_PATH
 				+ feature.getVersionedIdentifier().toString()
-				+ "/";
+				+ "/"; //$NON-NLS-1$
 		//$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier();
 	}
@@ -570,14 +570,14 @@ public abstract class FeatureContentProvider
 		try {
 			prop.load(permissionReference.getInputStream());
 		} catch (IOException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 		}
 
 		String executables = prop.getProperty(EXECUTABLES);
 		if (executables == null)
 			return result;
 
-		StringTokenizer tokenizer = new StringTokenizer(executables, ",");
+		StringTokenizer tokenizer = new StringTokenizer(executables, ","); //$NON-NLS-1$
 		Integer defaultExecutablePermission =
 			new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
 		while (tokenizer.hasMoreTokens()) {

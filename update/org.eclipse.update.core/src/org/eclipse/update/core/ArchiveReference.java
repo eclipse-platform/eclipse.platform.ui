@@ -43,7 +43,7 @@ public class ArchiveReference
 			result
 				+ ((getPath() == null)
 					? getURL().toExternalForm()
-					: getPath() + " : " + getURL().toExternalForm());
+					: getPath() + " : " + getURL().toExternalForm()); //$NON-NLS-1$
 		//$NON-NLS-1$
 		return result;
 	}

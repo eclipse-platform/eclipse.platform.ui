@@ -54,12 +54,12 @@ public class Utilities {
 
 			// on Unix/Linux, the temp dir is shared by many users, so we need to ensure 
 			// that the top working directory is different for each user
-			if (!Platform.getOS().equals("win32")) {
-				String home = System.getProperty("user.home");
+			if (!Platform.getOS().equals("win32")) { //$NON-NLS-1$
+				String home = System.getProperty("user.home"); //$NON-NLS-1$
 				home = Integer.toString(home.hashCode());
 				dirRoot += home + File.separator;
 			}
-			dirRoot += "eclipse" + File.separator + ".update" + File.separator + Long.toString(tmpseed) + File.separator;
+			dirRoot += "eclipse" + File.separator + ".update" + File.separator + Long.toString(tmpseed) + File.separator; //$NON-NLS-1$ //$NON-NLS-2$
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -201,20 +201,20 @@ public class Utilities {
 			return (FeatureDownloadException)e;
 		else if (e instanceof CoreException) {
 			if (s == null)
-				s = "";
+				s = ""; //$NON-NLS-1$
 			status = new MultiStatus(id, code, s, e);
 			IStatus childrenStatus = ((CoreException) e).getStatus();
 			((MultiStatus) status).add(childrenStatus);
 			((MultiStatus) status).addAll(childrenStatus);
 		} else {
-			StringBuffer completeString = new StringBuffer("");
+			StringBuffer completeString = new StringBuffer(""); //$NON-NLS-1$
 			if (s != null)
 				completeString.append(s);
 			if (e != null) {
-				completeString.append(" [");
+				completeString.append(" ["); //$NON-NLS-1$
 				String msg = e.getLocalizedMessage();
 				completeString.append(msg!=null?msg:e.toString());
-				completeString.append("]");
+				completeString.append("]"); //$NON-NLS-1$
 			}
 			status = new Status(IStatus.ERROR, id, code, completeString.toString(), e);
 		}
@@ -252,7 +252,7 @@ public class Utilities {
 	public static CoreException newCoreException(String s, String s1, String s2, CoreException e1, CoreException e2) {
 		String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
 		if (s == null)
-			s = "";
+			s = ""; //$NON-NLS-1$
 
 		IStatus childStatus1 = ((CoreException) e1).getStatus();
 		IStatus childStatus2 = ((CoreException) e2).getStatus();
@@ -277,7 +277,7 @@ public class Utilities {
 	 */
 	public static String format(Date date) {
 		if (date == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return dateFormat.format(date);
 	}
 
