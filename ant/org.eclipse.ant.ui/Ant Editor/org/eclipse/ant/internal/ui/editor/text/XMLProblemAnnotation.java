@@ -10,21 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Annotation representating an <code>IProblem</code>.
  */
-public class XMLProblemAnnotation extends Annotation implements IXMLAnnotation {
+public class XMLProblemAnnotation extends Annotation {
 	
-	private List fOverlaids;
+	public static final String ERROR_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.error"; //$NON-NLS-1$
+	public static final String WARNING_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.warning"; //$NON-NLS-1$
+	public static final String INFO_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.info"; //$NON-NLS-1$
+	
 	private IProblem fProblem;
 	
 	public XMLProblemAnnotation(IProblem problem) {
@@ -38,81 +35,7 @@ public class XMLProblemAnnotation extends Annotation implements IXMLAnnotation {
 		} else {
 			setType(INFO_ANNOTATION_TYPE);
 		}	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getImage(org.eclipse.swt.widgets.Display)
-	 */
-	public Image getImage(Display display) {
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getMessage()
-	 */
-	public String getMessage() {
-		return fProblem.getMessage();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isTemporary()
-	 */
-	public boolean isTemporary() {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isProblem()
-	 */
-	public boolean isProblem() {
-		return WARNING_ANNOTATION_TYPE.equals(getType()) || ERROR_ANNOTATION_TYPE.equals(getType());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isRelevant()
-	 */
-	public boolean isRelevant() {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#hasOverlay()
-	 */
-	public boolean hasOverlay() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#addOverlaid(org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation)
-	 */
-	public void addOverlaid(IXMLAnnotation annotation) {
-		if (fOverlaids == null) {
-			fOverlaids= new ArrayList(1);
-		}
-		fOverlaids.add(annotation);
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#removeOverlaid(org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation)
-	 */
-	public void removeOverlaid(IXMLAnnotation annotation) {
-		if (fOverlaids != null) {
-			fOverlaids.remove(annotation);
-			if (fOverlaids.size() == 0) {
-				fOverlaids= null;
-			}
-		}
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getOverlaidIterator()
-	 */
-	public Iterator getOverlaidIterator() {
-		if (fOverlaids != null) {
-			return fOverlaids.iterator();
-		}
-		return null;
+		
+		setText(fProblem.getMessage());
 	}
 }

@@ -91,12 +91,12 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		IAnnotationModel model= sourceViewer.getAnnotationModel();
 		
 		if (model != null) {
-			Iterator e= new XMLAnnotationIterator(model, true);
+			Iterator e= model.getAnnotationIterator();
 			while (e.hasNext()) {
 				Annotation a= (Annotation) e.next();
 				Position p= model.getPosition(a);
 				if (p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
-					String msg= ((IXMLAnnotation) a).getMessage();
+					String msg= a.getText();
 					if (msg != null && msg.trim().length() > 0)
 						return formatMessage(msg);
 				}

@@ -24,7 +24,6 @@ import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.AntModelChangeEvent;
 import org.eclipse.ant.internal.ui.editor.outline.IAntModelListener;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
-import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
 import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
@@ -48,7 +47,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -570,13 +568,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			return documentProvider.getAntModel(getEditorInput());
 		}
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createAnnotationAccess()
-	 */
-	protected IAnnotationAccess createAnnotationAccess() {
-		return new AnnotationAccess();
 	}
 	
 	/* (non-Javadoc)
