@@ -13,7 +13,7 @@ Contributors:
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.TableViewer;
  * Handles breakpoint events, updating the breakpoints view
  * and viewer.
  */
-public class BreakpointsViewEventHandler implements IBreakpointListener {
+public class BreakpointsViewEventHandler implements IBreakpointsListener {
 
 	private BreakpointsView fView;
 
@@ -38,14 +38,14 @@ public class BreakpointsViewEventHandler implements IBreakpointListener {
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
-	public void breakpointAdded(final IBreakpoint breakpoint) {
-		if (fView.isAvailable()&& breakpoint.getMarker().exists()) {		
+	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
+		if (fView.isAvailable()) {		
 			fView.asyncExec(new Runnable() {
 				public void run() {
-					if (fView.isAvailable() && breakpoint.getMarker().exists()) {
-						((TableViewer)fView.getViewer()).add(breakpoint);
+					if (fView.isAvailable()) {
+						((TableViewer)fView.getViewer()).add(breakpoints);
 						fView.updateObjects();
 					}
 				}
@@ -54,16 +54,18 @@ public class BreakpointsViewEventHandler implements IBreakpointListener {
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (fView.isAvailable()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
 						TableViewer viewer= (TableViewer)fView.getViewer();
 						int[] indices= viewer.getTable().getSelectionIndices();
-						viewer.remove(breakpoint);
+						viewer.getControl().setRedraw(false);
+						viewer.remove(breakpoints);
+						viewer.getControl().setRedraw(true);
 						if (viewer.getSelection().isEmpty()) {
 							if (indices.length > 0) {
 								int index= indices[0];
@@ -81,14 +83,14 @@ public class BreakpointsViewEventHandler implements IBreakpointListener {
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (fView.isAvailable() && breakpoint.getMarker().exists()) {
+	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+		if (fView.isAvailable()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
-					if (fView.isAvailable() && breakpoint.getMarker().exists()) {
-						((TableViewer)fView.getViewer()).refresh(breakpoint);
+					if (fView.isAvailable()) {
+						((TableViewer)fView.getViewer()).refresh(breakpoints);
 						fView.updateObjects();
 					}
 				}
