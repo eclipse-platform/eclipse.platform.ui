@@ -560,7 +560,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 					IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
 					image = registry.getImageDescriptor(input.getName());
 					if (image == null) {
-						image = registry.getDefaultEditor().getImageDescriptor();
+						// @issue what should be the default image?
+						// image = registry.getDefaultEditor().getImageDescriptor();
 					}
 				}
 				if (image != null) {
@@ -591,12 +592,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				IWorkbenchPage p = window.getActivePage();
 				if (p != null) {
 					try {
-						if(desc != null) {
-							p.openEditor(input,desc.getId(),true);
-						} else if(input instanceof IFileEditorInput) {
-							// @issue fix up
-							p.openEditor(((IFileEditorInput)input).getFile());
-						}
+						p.openEditor(input, desc.getId(), true);
 					} catch (PartInitException e) {
 					}
 				}
