@@ -66,7 +66,7 @@ public void partCircle() {
 	// just below the root plugin (so the root is not part
 	// of the circle).
 	
-	String errorMessage = "Detected prerequisite loop from tests.a to tests.b.";
+	String errorMessage = "Detected prerequisite loop from \"tests.a\" to \"tests.b\".";
 
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "circularTestProblems", null);
 	InternalFactory factory = new InternalFactory(problems);

@@ -32,17 +32,7 @@ public BadPluginsTest(String name) {
 }
 
 public static Test suite() {
-
 	return new TestSuite(BadPluginsTest.class);
-
-//	TestSuite suite = new TestSuite();
-//	suite.addTest(new BadPluginsTest("badElements"));
-//	suite.addTest(new BadPluginsTest("badAttributes"));
-//	suite.addTest(new BadPluginsTest("badPlugins"));
-//	suite.addTest(new BadPluginsTest("badFragment"));
-//	suite.addTest(new BadPluginsTest("failedFragment"));
-//	suite.addTest(new BadPluginsTest("duplicatePlugin"));
-//	return suite;
 }
 
 public void testBadElements() {
@@ -57,14 +47,14 @@ public void testBadElements() {
 		"badRuntimeElementsTest",
 	};
 	String[] errorMessages = {
-		"badTopLevelElementsTest.xml: Unknown element notAPlugin, found at the top level, ignored.",
-		"badPluginElementsTest.xml: Unknown element somethingBad, found within a plugin / fragment, ignored.",
-		"badExtensionPointElementsTest.xml: Unknown element nameless, found within a extension-point, ignored.",
-		"badLibrary1ElementsTest.xml: Unknown element notAnExport, found within a library, ignored.",
-		"badLibrary2ElementsTest.xml: Unknown element badElement, found within a export, ignored.",
-		"badRequiresImportElementsTest.xml: Unknown element unrecognizedElement, found within a requires, ignored.",
-		"badRequiresElementsTest.xml: Unknown element notAnImport, found within a requires, ignored.",
-		"badRuntimeElementsTest.xml: Unknown element notALibrary, found within a runtime, ignored.",
+		"badTopLevelElementsTest.xml: Unknown element \"notAPlugin\", found at the top level, ignored.",
+		"badPluginElementsTest.xml: Unknown element \"somethingBad\", found within a \"plugin / fragment\", ignored.",
+		"badExtensionPointElementsTest.xml: Unknown element \"nameless\", found within a \"extension-point\", ignored.",
+		"badLibrary1ElementsTest.xml: Unknown element \"notAnExport\", found within a \"library\", ignored.",
+		"badLibrary2ElementsTest.xml: Unknown element \"badElement\", found within a \"export\", ignored.",
+		"badRequiresImportElementsTest.xml: Unknown element \"unrecognizedElement\", found within a \"requires\", ignored.",
+		"badRequiresElementsTest.xml: Unknown element \"notAnImport\", found within a \"requires\", ignored.",
+		"badRuntimeElementsTest.xml: Unknown element \"notALibrary\", found within a \"runtime\", ignored.",
 	};
 
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -120,17 +110,17 @@ public void testBadAttributes() {
 		"badFragment2AttributesTest", 
 	};
 	String[] errorMessages = {
-		"badPluginAttributesTest.xml: Unknown attribute a-bad-attribute for element plugin ignored.",
-		"badFragment1AttributesTest.xml: Unknown attribute vendor-name for element fragment ignored.",
-		"badExtensionPointAttributesTest.xml: Unknown attribute bogusAttribute for element extension-point ignored.",
-		"badExtensionAttributesTest.xml: Unknown attribute hello for element extension ignored.",
-		"badRequiresImport1AttributesTest.xml: Unknown attribute badImportAttr for element import ignored.",
-		"badRequiresImport2AttributesTest.xml: notTrue is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
-		"badRequiresImport3AttributesTest.xml: incompatible is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
-		"badLibrary1AttributesTest.xml: Unknown attribute badAttribute for element library ignored.",
-		"badLibrary2AttributesTest.xml: Unknown attribute badExportAttribute for element library ignored.",
-		"badLibrary3AttributesTest.xml: Unknown library type source for library lib1.jar.",
-		"badFragment2AttributesTest.xml: nothing is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
+		"badPluginAttributesTest.xml: Unknown attribute \"a-bad-attribute\" for element \"plugin\" ignored.",
+		"badFragment1AttributesTest.xml: Unknown attribute \"vendor-name\" for element \"fragment\" ignored.",
+		"badExtensionPointAttributesTest.xml: Unknown attribute \"bogusAttribute\" for element \"extension-point\" ignored.",
+		"badExtensionAttributesTest.xml: Unknown attribute \"hello\" for element \"extension\" ignored.",
+		"badRequiresImport1AttributesTest.xml: Unknown attribute \"badImportAttr\" for element \"import\" ignored.",
+		"badRequiresImport2AttributesTest.xml: \"notTrue\" is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
+		"badRequiresImport3AttributesTest.xml: \"incompatible\" is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
+		"badLibrary1AttributesTest.xml: Unknown attribute \"badAttribute\" for element \"library\" ignored.",
+		"badLibrary2AttributesTest.xml: Unknown attribute \"badExportAttribute\" for element \"library\" ignored.",
+		"badLibrary3AttributesTest.xml: Unknown library type \"source\" for library \"lib1.jar\".",
+		"badFragment2AttributesTest.xml: \"nothing\" is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -188,18 +178,17 @@ public void testBadPlugins() {
 		"badPluginVersion5Test", 
 	};
 	String[] errorMessages = {
-		"Id attribute missing from plugin or fragment at file:",
-		"Id attribute missing from plugin or fragment at file:",
-		"Name attribute missing from plugin or fragment at file:",
-		"Name attribute missing from plugin or fragment at file:",
-		"Version attribute missing from plugin or fragment at file:",
-		"A plugin version identifier must be non-empty.",
-		"The service (3rd) component of plugin version identifier, 1.2.bad, must be numeric.",
-		"The minor (2nd) component of plugin version identifier, 1.bad.0, must be numeric.",
-		"Plugin version identifier, ..., must not start with a separator character.",
-		"The major (1st) component of plugin version identifier, one, must be numeric.",
-		"Plugin version identifier, 1.2.3.4.5, can contain a maximum of four components.",
-		"",
+		"Id attribute missing from plug-in or fragment at \"file:",
+		"Id attribute missing from plug-in or fragment at \"file:",
+		"Name attribute missing from plug-in or fragment at \"file:",
+		"Name attribute missing from plug-in or fragment at \"file:",
+		"Version attribute missing from plug-in or fragment at \"file:",
+		"A plug-in version identifier must be non-empty.",
+		"The service (3rd) component of plug-in version identifier, \"1.2.bad\", must be numeric.",
+		"The minor (2nd) component of plug-in version identifier, \"1.bad.0\", must be numeric.",
+		"Plug-in version identifier, \"...\", must not start with a separator character.",
+		"The major (1st) component of plug-in version identifier, \"one\", must be numeric.",
+		"Plug-in version identifier, \"1.2.3.4.5\", can contain a maximum of four components.",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -240,8 +229,8 @@ public void testBadFragment() {
 		"fragment10799",
 	};
 	String[] errorMessages = {
-		"Plugin descriptor org.eclipse.not.there not found for fragment badFragmentsTest.  Fragment ignored.",
-		"Fragment Fragment 10799 requires non-existant plugin org.apache.something.which.does.not.exist.  Fragment ignored.",
+		"Plug-in descriptor \"org.eclipse.not.there\" not found for fragment \"badFragmentsTest\".  Fragment ignored.",
+		"Fragment \"Fragment 10799\" requires non-existant plug-in \"org.apache.something.which.does.not.exist\".  Fragment ignored.",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -301,17 +290,17 @@ public void testFailedFragment() {
 		"blankFragmentPluginVersionTest",
 	};
 	String[] errorMessages = {
-		"Id attribute missing from plugin or fragment at file:",
-		"Id attribute missing from plugin or fragment at file:",
-		"Name attribute missing from plugin or fragment at file:",
-		"Name attribute missing from plugin or fragment at file:",
-		"Version attribute missing from plugin or fragment at file:",
-		"A plugin version identifier must be non-empty.",
-		"The service (3rd) component of plugin version identifier, 1.2.bad, must be numeric.",
-		"Plugin name attribute missing from fragment at file:",
-		"Plugin name attribute missing from fragment at file:",
-		"Plugin version attribute missing from fragment at file:",
-		"A plugin version identifier must be non-empty.",
+		"Id attribute missing from plug-in or fragment at \"file:",
+		"Id attribute missing from plug-in or fragment at \"file:",
+		"Name attribute missing from plug-in or fragment at \"file:",
+		"Name attribute missing from plug-in or fragment at \"file:",
+		"Version attribute missing from plug-in or fragment at \"file:",
+		"A plug-in version identifier must be non-empty.",
+		"The service (3rd) component of plug-in version identifier, \"1.2.bad\", must be numeric.",
+		"Plug-in name attribute missing from fragment at \"file:",
+		"Plug-in name attribute missing from fragment at \"file:",
+		"Plug-in version attribute missing from fragment at \"file:",
+		"A plug-in version identifier must be non-empty.",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -348,7 +337,7 @@ public void testFailedFragment() {
 }
 public void testDuplicatePlugin() {
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
-	String errorMessage = "Two plugins found with the same id: duplicatePluginTest. Ignoring duplicate at file:";
+	String errorMessage = "Two plug-ins found with the same id: \"duplicatePluginTest\". Ignoring duplicate at \"file:";
 	try {
 		MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
 		InternalFactory factory = new InternalFactory(problems);
