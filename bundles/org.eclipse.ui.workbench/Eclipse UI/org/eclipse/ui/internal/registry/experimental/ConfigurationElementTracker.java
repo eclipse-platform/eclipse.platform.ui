@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.1
@@ -133,7 +134,12 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 						display.syncExec(new Runnable() {
 
 							public void run() { 
-								handler.removeInstance(element, object);	
+								try {
+									handler.removeInstance(element, object);
+								}
+								catch (Exception e) {
+									WorkbenchPlugin.log(getClass(), "doRemove", e);
+								}
 							}
 						});						
 					}
@@ -157,7 +163,12 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 				final IConfigurationElementAdditionHandler handler = (IConfigurationElementAdditionHandler) j.next();
 				display.syncExec(new Runnable() {
 					public void run() { 
-						handler.addInstance(ConfigurationElementTracker.this, element);	
+						try {
+							handler.addInstance(ConfigurationElementTracker.this, element);
+						}
+						catch (Exception e) {
+							WorkbenchPlugin.log(getClass(), "doAdd", e);
+						}
 					}
 				});						
 			}
