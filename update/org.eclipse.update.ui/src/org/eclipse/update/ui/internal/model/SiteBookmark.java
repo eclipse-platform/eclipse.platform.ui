@@ -3,11 +3,11 @@ package org.eclipse.update.ui.internal.model;
 import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.model.*;
 
-public class SiteBookmark extends ModelObject {
+public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 	private String name;
 	private URL url;
 	private ISite site;
@@ -16,6 +16,13 @@ public class SiteBookmark extends ModelObject {
 	public static final String P_URL="p_url";
 	
 	public SiteBookmark() {
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IWorkbenchAdapter.class)) {
+			return this;
+		}
+		return super.getAdapter(adapter);
 	}
 	
 	public SiteBookmark(String name, URL url) {
@@ -55,4 +62,32 @@ public class SiteBookmark extends ModelObject {
 	
 	public void connect(IProgressMonitor monitor) throws CoreException {
 	}
+	/**
+	 * @see IWorkbenchAdapter#getChildren(Object)
+	 */
+	public Object[] getChildren(Object arg0) {
+		return null;
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object arg0) {
+		return null;
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getLabel(Object)
+	 */
+	public String getLabel(Object arg0) {
+		return getName();
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getParent(Object)
+	 */
+	public Object getParent(Object arg0) {
+		return null;
+	}
+
 }

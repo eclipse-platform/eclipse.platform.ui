@@ -12,6 +12,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.ui.internal.model.*;
 
 public class SiteForm extends UpdateWebForm {
+	private Label url;
 	
 public SiteForm(UpdateFormPage page) {
 	super(page);
@@ -39,6 +40,7 @@ protected void createContents(Composite parent) {
 	layout.numColumns = 1;
 	
 	FormWidgetFactory factory = getFactory();
+	url = factory.createHeadingLabel(parent, null);
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText("Expand the site folder to browse the features available for download.");
@@ -63,6 +65,8 @@ public void expandTo(Object obj) {
 
 private void inputChanged(SiteBookmark site) {
 	setHeadingText(site.getName());
+	url.setText(site.getURL().toString());
+	url.getParent().layout();
 	((Composite)getControl()).layout();
 	getControl().redraw();
 }

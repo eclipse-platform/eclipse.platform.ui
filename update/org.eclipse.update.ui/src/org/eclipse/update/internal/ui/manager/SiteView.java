@@ -15,12 +15,14 @@ import org.eclipse.swt.graphics.Image;
 import java.util.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.dialogs.*;
 
 /**
  * Insert the type's description here.
  * @see ViewPart
  */
 public class SiteView extends BaseTreeView implements IUpdateModelChangedListener {
+	private Action propertiesAction;
 	private Action newAction;
 	private Action deleteAction;
 	private Image siteImage;
@@ -84,6 +86,7 @@ public void initProviders() {
 }
 
 public void makeActions() {
+	propertiesAction = new PropertyDialogAction(UpdateUIPlugin.getActiveWorkbenchShell(), viewer);
 	newAction = new Action() {
 		public void run() {
 			performNew();
@@ -105,6 +108,8 @@ public void fillActionBars() {
 public void fillContextMenu(IMenuManager manager) {
 	manager.add(newAction);
 	manager.add(deleteAction);
+	manager.add(new Separator());
+	manager.add(propertiesAction);
 	ISelection selection = viewer.getSelection();
 	deleteAction.setEnabled(!selection.isEmpty());
 }

@@ -13,7 +13,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.*;
+import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.jface.wizard.*;
 public class DetailsForm extends UpdateWebForm {
 private Label imageLabel;
 private Label providerLabel;
@@ -253,8 +255,18 @@ private void doButtonSelected() {
 		if (currentFeature.getSite() instanceof ILocalSite) {
 			mode = ChecklistJob.UNINSTALL;
 		}
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		model.addJob(new ChecklistJob(currentFeature, mode));
+		final ChecklistJob job = new ChecklistJob(currentFeature, mode);
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//model.addJob(job);
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			public void run() {
+				InstallWizard wizard = new InstallWizard(job);
+				WizardDialog dialog = new WizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				dialog.getShell().setSize(500, 500);
+				dialog.open();
+			}
+		});
 	}
 }
 }

@@ -15,6 +15,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
@@ -304,6 +305,13 @@ class FakeFeature implements IFeature {
 		InputStream inStream) {
 	}
 
+	/**
+	 * @see IFeature#getImage()
+	 */
+	public URL getImage() {
+		return null;
+	}
+
 }
 
 class FakeLocalSite implements ILocalSite {
@@ -457,6 +465,22 @@ class FakeLocalSite implements ILocalSite {
 		String contentKey,
 		InputStream inStream) {
 	}
+	/**
+	 * @see ISite#getArchives()
+	 */
+	public IInfo[] getArchives() {
+		return null;
+	}
+
+	/**
+	 * @see ISite#storeFeatureInfo(VersionedIdentifier, String, InputStream)
+	 */
+	public void storeFeatureInfo(
+		VersionedIdentifier featureIdentifier,
+		String contentKey,
+		InputStream inStream) {
+	}
+
 }
 
 private ILocalSite createFakeLocalSite() {

@@ -100,4 +100,13 @@
          id="org.eclipse.update.ui.UpdatePerspective">
    </perspective>
 </extension>
+<extension
+      point="org.eclipse.ui.propertyPages">
+   <page
+         objectClass="org.eclipse.update.ui.internal.model.SiteBookmark"
+         name="Site Information"
+         class="org.eclipse.update.internal.ui.manager.SiteBookmarkPropertyPage"
+         id="org.eclipse.update.ui.propertyPage">
+   </page>
+</extension>
 </plugin>
