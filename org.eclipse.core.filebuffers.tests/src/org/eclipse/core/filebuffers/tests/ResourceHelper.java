@@ -95,7 +95,14 @@ public class ResourceHelper {
 	}
 
 	public static IFile createFile(IFolder folder, String name, String contents) throws CoreException {
-		IFile file= folder.getFile(name);
+		return createFile(folder.getFile(name), name, contents);
+	}
+	
+	public static IFile createFile(IProject project, String name, String contents) throws CoreException {
+		return createFile(project.getFile(name), name, contents);
+	}
+	
+	private static IFile createFile(IFile file, String name, String contents) throws CoreException {
 		if (contents == null)
 			contents= "";
 		InputStream inputStream= new StringBufferInputStream(contents);
