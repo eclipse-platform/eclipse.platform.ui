@@ -98,7 +98,6 @@ function getAnchorNode(node) {
  * Collapses a tree rooted at the specified element
  */
 function collapse(node) {
-  alert(node.parentElement);
   node.className = "collapsed";
 }
 
