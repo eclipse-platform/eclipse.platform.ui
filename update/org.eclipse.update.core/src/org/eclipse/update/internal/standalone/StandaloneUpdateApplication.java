@@ -22,6 +22,8 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 			String[] params = (String[]) args;
 			CmdLineArgs cmdLineArgs = new CmdLineArgs(params);
 			ScriptedCommand cmd = cmdLineArgs.getCommand();
+			if (cmd == null)
+				return EXIT_ERROR;
 			boolean result = cmd.run();
 			if (result)
 				return IPlatformRunnable.EXIT_OK;

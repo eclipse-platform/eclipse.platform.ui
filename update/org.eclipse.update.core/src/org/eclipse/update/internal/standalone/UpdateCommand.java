@@ -25,32 +25,31 @@ public class UpdateCommand extends ScriptedCommand {
 	private UpdateSearchRequest searchRequest;
 	private UpdateSearchResultCollector collector;
 	private String featureId;
+	private IFeature currentFeature;
 
 	public UpdateCommand(
 		String featureId,
-		String toSite,
-		String verifyOnly) {
+		String verifyOnly) throws Exception {
 		
 		super(verifyOnly);
 		
 		try {
 			this.featureId = featureId;
-			
-			// Get site to install to
-			IConfiguredSite[] sites = config.getConfiguredSites();
-			if (toSite != null) {
-				URL toSiteURL = new URL(toSite);
-				if (SiteManager.getSite(toSiteURL, null) == null) {
-					System.out.println(
-						"Cannot find site to install to: " + toSite);
-					return;
+			if (featureId != null) {
+				this.targetSite = UpdateUtils.getSiteWithFeature(config, featureId);
+				if (targetSite == null) {
+					System.out.println("Cannot find configured site for " + featureId);
+					throw new Exception();
 				}
-				targetSite =
-					SiteManager
-						.getSite(toSiteURL, null)
-						.getCurrentConfiguredSite();
-			}
-			if (targetSite == null) {
+				IFeature[] currentFeatures = UpdateUtils.searchSite(featureId, targetSite, true);
+				if (currentFeatures == null || currentFeatures.length == 0) {
+					System.out.println("Cannot find configured feature " + featureId);
+					throw new Exception();
+				}
+				this.currentFeature = currentFeatures[0];
+			} else {
+				// Get site to install to
+				IConfiguredSite[] sites = config.getConfiguredSites();
 				for (int i = 0; i < sites.length; i++) {
 					if (sites[i].isProductSite()) {
 						targetSite = sites[i];
@@ -58,7 +57,11 @@ public class UpdateCommand extends ScriptedCommand {
 					}
 				}
 			}
-			searchRequest = UpdateUtils.createNewUpdatesRequest(null);
+			if (currentFeature == null)
+				searchRequest = UpdateUtils.createNewUpdatesRequest(null);
+			else
+				searchRequest = UpdateUtils.createNewUpdatesRequest(new IFeature[]{currentFeature});
+				
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {
@@ -140,21 +143,29 @@ public class UpdateCommand extends ScriptedCommand {
 		private ArrayList operations = new ArrayList();
 
 		public void accept(IFeature feature) {
-			if (feature
-				.getVersionedIdentifier()
-				.getIdentifier()
-				.equals(featureId)) {
-				operations.add(
-					OperationsManager
-						.getOperationFactory()
-						.createInstallOperation(
-						config,
-						targetSite,
-						feature,
-						null,
-						null,
-						null));
-			}
+//			if (feature
+//				.getVersionedIdentifier()
+//				.getIdentifier()
+//				.equals(featureId) ||
+//				UpdateUtils.isPatch()) {
+		
+			IInstallFeatureOperation op =
+				OperationsManager.getOperationFactory().createInstallOperation(
+					config,
+					null,
+					feature,
+					null,
+					null,
+					null);
+
+			IConfiguredSite site = UpdateUtils.getDefaultTargetSite(config, op);
+			if (site == null)
+				site = targetSite;
+
+			op.setTargetSite(site);
+			operations.add(op);
+			
+//			}
 		}
 		public IInstallFeatureOperation[] getOperations() {
 			IInstallFeatureOperation[] opsArray = new IInstallFeatureOperation[operations.size()];

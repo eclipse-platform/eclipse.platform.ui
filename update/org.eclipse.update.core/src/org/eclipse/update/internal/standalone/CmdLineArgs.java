@@ -52,35 +52,38 @@ public class CmdLineArgs {
 	}
 
 	public ScriptedCommand getCommand() {
-		String cmd = (String) options.get("-command");
-		if (cmd.equals("install"))
-			return new InstallCommand(
-				(String) options.get("-featureId"),
-				(String) options.get("-version"),
-				(String) options.get("-from"),
-				(String) options.get("-to"),
-				(String) options.get("-verifyOnly"));
-		else if (cmd.equals("enable"))
-			return new EnableCommand(
-				(String) options.get("-featureId"),
-				(String) options.get("-version"),
-				(String) options.get("-to"),
-				(String) options.get("-verifyOnly"));
-		else if (cmd.equals("disable"))
-			return new DisableCommand(
-				(String) options.get("-featureId"),
-				(String) options.get("-version"),
-				(String) options.get("-to"),
-				(String) options.get("-verifyOnly"));
-		else if (cmd.equals("search"))
-			return new SearchCommand(
-				(String) options.get("-from"));
-		else if (cmd.equals("update"))
-			return new UpdateCommand(
-				(String) options.get("-featureId"),
-				(String) options.get("-to"),
-				(String) options.get("-verifyOnly"));		
-		return null;
+		try {
+			String cmd = (String) options.get("-command");
+			if (cmd.equals("install"))
+				return new InstallCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-version"),
+					(String) options.get("-from"),
+					(String) options.get("-to"),
+					(String) options.get("-verifyOnly"));
+			else if (cmd.equals("enable"))
+				return new EnableCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-version"),
+					(String) options.get("-to"),
+					(String) options.get("-verifyOnly"));
+			else if (cmd.equals("disable"))
+				return new DisableCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-version"),
+					(String) options.get("-to"),
+					(String) options.get("-verifyOnly"));
+			else if (cmd.equals("search"))
+				return new SearchCommand(
+					(String) options.get("-from"));
+			else if (cmd.equals("update"))
+				return new UpdateCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-verifyOnly"));		
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }
