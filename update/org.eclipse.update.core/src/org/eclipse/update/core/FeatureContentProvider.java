@@ -197,7 +197,7 @@ public abstract class FeatureContentProvider
 			// download the referenced file into local temporary area
 			InputStream is = null;
 			OutputStream os = null;
-			int[] bytesCopied = new int[1];
+			int bytesCopied = 0;
 			boolean success = false;
 			if (monitor != null) {
 				monitor.saveState();
@@ -261,45 +261,43 @@ public abstract class FeatureContentProvider
 				}
 
 				Date start = new Date();
-				try {
-					if (localFileFragment != null) {
-						bytesCopied = new int[1];
-						bytesCopied[0] = localFileFragment.getSize();
-						if (monitor != null) {
-							monitor.incrementCount(bytesCopied[0]);
-						}
+				if (localFileFragment != null) {
+					bytesCopied = localFileFragment.getSize();
+					if (monitor != null) {
+						monitor.incrementCount(bytesCopied);
 					}
-					UpdateManagerUtils.copy(is, os, monitor, bytesCopied);
-					Date stop = new Date();
-					long timeInseconds =
-						(stop.getTime() - start.getTime()) / 1000;
-					// time in milliseconds /1000 = time in seconds
-					InternalSiteManager.downloaded(
-						ref.getInputSize(),
-						(timeInseconds),
-						ref.asURL());
-
-					success = true;
-
-					// file is downloaded succesfully, map it
-					Utilities.mapLocalFile(key, localFile);
-				} catch (IOException ioe) {
-					if (bytesCopied[0] > 0) {
-						// preserve partially downloaded file
-						UpdateManagerUtils.mapLocalFileFragment(
-							key,
-							new FileFragment(localFile, bytesCopied[0]));
-					}
-					throw ioe;
-				} catch (InstallAbortedException iae) {
-					if (bytesCopied[0] > 0) {
-						// preserve partially downloaded file
-						UpdateManagerUtils.mapLocalFileFragment(
-							key,
-							new FileFragment(localFile, bytesCopied[0]));
-					}
-					throw iae;
 				}
+				try {
+					UpdateManagerUtils.copy(is, os, monitor);
+					UpdateManagerUtils.unMapLocalFileFragment(key);
+				} catch (UpdateManagerUtils.CopyException ce) {
+					bytesCopied += ce.getBytesCopied();
+					if (bytesCopied > 0) {
+						// preserve partially downloaded file
+						UpdateManagerUtils.mapLocalFileFragment(
+							key,
+							new FileFragment(localFile, bytesCopied));
+					}
+					Exception root = ce.getRootException();
+					if (root instanceof IOException) {
+						throw (IOException) root;
+					} else {
+						throw (InstallAbortedException) root;
+
+					}
+				}
+				Date stop = new Date();
+				long timeInseconds = (stop.getTime() - start.getTime()) / 1000;
+				// time in milliseconds /1000 = time in seconds
+				InternalSiteManager.downloaded(
+					ref.getInputSize(),
+					(timeInseconds),
+					ref.asURL());
+
+				success = true;
+
+				// file is downloaded succesfully, map it
+				Utilities.mapLocalFile(key, localFile);
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
 					Policy.bind(
@@ -320,7 +318,7 @@ public abstract class FeatureContentProvider
 					} catch (IOException e) {
 					}
 
-				if (success || bytesCopied[0] > 0) {
+				if (success || bytesCopied > 0) {
 					// set the timestamp on the temp file to match the remote
 					// timestamp
 					localFile.setLastModified(ref.getLastModified());

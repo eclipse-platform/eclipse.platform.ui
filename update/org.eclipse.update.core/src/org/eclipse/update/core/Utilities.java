@@ -156,7 +156,16 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException, InstallAbortedException {
-		UpdateManagerUtils.copy(is, os, monitor, new int[0]);
+		try{
+			UpdateManagerUtils.copy(is, os, monitor);
+		}catch (UpdateManagerUtils.CopyException e){
+			Exception root = e.getRootException();
+			if (root instanceof IOException){
+				throw (IOException)root;
+			}else{
+				throw (InstallAbortedException)root;
+			}
+		}
 	}
 
 	/**

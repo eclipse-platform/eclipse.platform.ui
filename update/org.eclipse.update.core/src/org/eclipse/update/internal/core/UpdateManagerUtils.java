@@ -767,7 +767,6 @@ public static class Writer {
 	 * The file is associated with a lookup key.
 	 * @param key optional lookup key, or <code>null</code>.
 	 * @param temp the local working file
-	 * @since 2.0.2
 	 */
 	public synchronized static void mapLocalFileFragment(String key, FileFragment temp) {
 		// create file association 
@@ -777,6 +776,17 @@ public static class Writer {
 			localFileFragmentMap.put(key, temp);
 		}
 	}
+
+	/**
+	 * The file is associated with a lookup key.
+	 * @param key optional lookup key, or <code>null</code>.
+	 */
+	public synchronized static void unMapLocalFileFragment(String key) {
+		// remove file association 
+		if (key != null && localFileFragmentMap !=null) {
+			localFileFragmentMap.remove(key);
+		}
+	}
 	
 	/**
 	 * Returns a previously cached local file (in temporary area) matching the
@@ -784,7 +794,6 @@ public static class Writer {
 	 * 
 	 * @param key lookup key
 	 * @return cached file, or <code>null</code>.
-	 * @since 2.0
 	 */
 	public static synchronized FileFragment lookupLocalFileFragment(String key) {
 		if (localFileFragmentMap == null)
@@ -799,24 +808,21 @@ public static class Writer {
 	 * @param is input stream
 	 * @param os output stream
 	 * @param monitor progress monitor
-	 * @param bytesCopied - first element (if exists) will be incremented by number of byes copied
-	 * @exception IOException
-	 * @exception InstallAbortedException
+	 * @exception CopyException encapsulating IOException or InstallAbortedException
 	 * @since 2.0
 	 */
-	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor, int[] bytesCopied) throws IOException, InstallAbortedException {
+	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws CopyException {
 		byte[] buf = getBuffer();
+		int bytesCopied=0;
 		try {
 			int len = is.read(buf);
 			int nextIncrement = 0;
 			while (len != -1) {
 				os.write(buf, 0, len);
-				if (bytesCopied.length > 0) {
-					bytesCopied[0] += len;
-				}
+					bytesCopied += len;
 				if (monitor != null) {
 					nextIncrement += len;
-					// only report in 2k increments
+					// update monitor periodically
 					if (nextIncrement >= INCREMENT_SIZE){ 	
 						monitor.incrementCount(nextIncrement);
 						nextIncrement = 0;
@@ -830,11 +836,40 @@ public static class Writer {
 			}
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
+		} catch(IOException e){
+			throw new CopyException(e, bytesCopied);
+		} catch(InstallAbortedException e){
+			throw new CopyException(e, bytesCopied);
 		} finally {
 			freeBuffer(buf);
 		}
 	}
 
+	public static class CopyException extends Exception {
+		Exception rootException;
+		int bytesCopied;
+
+		/**
+		 * 
+		 */
+		public CopyException(Exception rootException, int bytesCopied) {
+			super();
+			this.rootException= rootException;
+			this.bytesCopied=bytesCopied;
+		}
+		/**
+		 * Instance of IOException or InstallAbortedException
+		 * @return
+		 */
+		public Exception getRootException(){
+			return rootException;
+		}
+		public int getBytesCopied(){
+			return bytesCopied;
+		}
+
+	}
+	
 	private static synchronized byte[] getBuffer() {
 		if (bufferPool == null) {
 			return new byte[BUFFER_SIZE];
