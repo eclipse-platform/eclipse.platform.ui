@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -22,11 +21,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -181,6 +182,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
 			}
 		}
+		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fPageDropDown);
+		page.getSite().getActionBars().updateActionBars();
 	}
 
 	/* (non-Javadoc)
