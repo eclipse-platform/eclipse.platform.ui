@@ -183,7 +183,7 @@
 &lt;a href="hglegal.htm"&gt;
 	&lt;img	SRC="ngibmcpy.gif"
 			ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
-			BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+			BORDER=0 height=14 width=324/&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
