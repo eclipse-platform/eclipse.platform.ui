@@ -149,7 +149,7 @@
       </page>
       <!-- WORK IN PROGRESS PAGE TO BE REMOVED -->
       <page
-            name="Work in Progress"
+            name="%workInProgress"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage"
             id="org.eclipse.debug.ui.WorkInProgressPreferencePage">
