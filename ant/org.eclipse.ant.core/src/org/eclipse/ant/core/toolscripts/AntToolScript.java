@@ -6,6 +6,7 @@ package org.eclipse.ant.core.toolscripts;
 
 import java.util.Map;
 
+import org.eclipse.ant.core.IAntRunnerListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,7 +32,7 @@ public static ToolScript createFromArguments(Map arguments) {
 /**
  * @see ToolScript#execute(IProgressMonitor)
  */
-protected void execute(IProgressMonitor monitor) throws CoreException {
+protected void execute(IAntRunnerListener listener, IProgressMonitor monitor) throws CoreException {
 }
 protected void fillBuilderArguments(Map arguments) {
 }

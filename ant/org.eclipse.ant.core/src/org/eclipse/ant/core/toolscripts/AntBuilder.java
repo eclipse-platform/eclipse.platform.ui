@@ -26,7 +26,7 @@ public class AntBuilder extends IncrementalProjectBuilder {
 protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 	ToolScript script = ToolScript.createFromArguments(args);
 	if (script != null) {
-		script.run(monitor);
+		script.run(null, monitor);
 	}
 	return null;
 }

@@ -3,6 +3,7 @@ package org.eclipse.ant.core.toolscripts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.ant.core.IAntRunnerListener;
 import org.eclipse.ant.core.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
@@ -87,24 +88,27 @@ public abstract int getKind();
 /**
  * Runs the main tool script, supplying progress to the given progress monitor.
  */
-protected abstract void execute(IProgressMonitor monitor) throws CoreException;
+protected abstract void execute(IAntRunnerListener listener, IProgressMonitor monitor) throws CoreException;
 /**
  * Adds builder arguments that are specific to this type of tool script
  */
 protected abstract void fillBuilderArguments(Map arguments);
 /**
- * Runs the tool script, including local refresh at the end.
+ * Runs the tool script, including local refresh at the end.  An 
+ * additional listener may be provided for logging more feedback.
+ * @param listener the listener to provide feedback to, or null.
+ * @param the monitor to report progress to, or null.
  */
-public void run(IProgressMonitor monitor) throws CoreException {
+public void run(IAntRunnerListener listener, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		if (refreshContainer == null) {
-			execute(monitor);
+			execute(listener, monitor);
 			return;
 		}
 		//need to divide into run and refresh segments
 		monitor.beginTask("Running tool script...", 100);
-		execute(new SubProgressMonitor(monitor, 70));
+		execute(listener, new SubProgressMonitor(monitor, 70));
 		refreshContainer.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
 	} finally {
 		monitor.done();
