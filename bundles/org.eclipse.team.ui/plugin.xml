@@ -117,20 +117,7 @@
             label="%Deployment.synchronize">
       </action>
 	</objectContribution>	
-	
-    <objectContribution
-	   id="org.eclipse.team.ui.ProjectContributions"
-	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
-		<action 
-			id="org.eclipse.team.ui.TargetProject"
-			label="%Deployment.configSite"
-			tooltip="%ConfigureTargetProject.tooltip"
-			menubarPath="team.main/projectGroup"
-			enablesFor="1"
-			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
-		</action>
-   </objectContribution>
-   
+	   
    <objectContribution
             objectClass="org.eclipse.team.internal.ui.target.RemoteResourceElement"
             id="org.eclipse.team.internal.ui.target.RemoteResourceElement">
@@ -177,20 +164,6 @@
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
-
-	<category 
-		id="org.eclipse.team.ui.target"
-		name="%Deployment.viewCategory">
-	</category>
-	<view
-            id="org.eclipse.team.ui.target.SiteExplorerView"
-            name="%SiteExplorerView.name"
-            icon="icons/full/cview16/site_view.gif"
-            category="org.eclipse.team.ui.target"
-       		fastViewWidthRatio="0.75"
-            class="org.eclipse.team.internal.ui.target.SiteExplorerView">
-      </view>
-
 </extension>	
 
 <!-- ****************** Import Wizards ********************* -->

@@ -46,6 +46,7 @@ import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
@@ -375,7 +376,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		// Create actions
 		
 		// Refresh (toolbar)
-		addSiteAction = new Action(Policy.bind("SiteExplorerView.addSiteAction"), TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
+		addSiteAction = new Action(Policy.bind("SiteExplorerView.addSiteAction"), TeamImages.getImageDescriptor(UIConstants.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
 			public void run() {
 				ConfigureTargetWizard wizard = new ConfigureTargetWizard();
 				wizard.init(null, null);

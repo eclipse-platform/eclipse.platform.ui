@@ -276,18 +276,17 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			container.run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-//						try {
-//							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), monitor.UNKNOWN); //$NON-NLS-1$
-//							IRemoteTargetResource remote = site.getRemoteResource();
-//							valid[0] = remote.canBeReached(monitor);
-							valid[0] = true;
-//						} catch(TeamException e) {
-//							message[0] = e.getStatus().getMessage();
-//							code[0] = e.getStatus().getCode();
-//							valid[0] = false;
-//						} finally {
+						try {
+							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), monitor.UNKNOWN); //$NON-NLS-1$
+							IRemoteTargetResource remote = site.getRemoteResource();
+							valid[0] = remote.canBeReached(monitor);
+						} catch(TeamException e) {
+							message[0] = e.getStatus().getMessage();
+							code[0] = e.getStatus().getCode();
+							valid[0] = false;
+						} finally {
 							monitor.done();
-//						}
+						}
 				}
 			});
 		} catch (InvocationTargetException e) {

@@ -103,4 +103,14 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	 * Return the site where this remote resource exists
 	 */
 	public Site getSite();
+	
+	/**
+	 * Return true if this can be reached (in some fashion).
+	 * This method is not guaranteed to catch all connection failure cases but is used
+	 * to at least test the waters.
+	 * @param monitor
+	 * @return boolean
+	 */
+	boolean canBeReached(IProgressMonitor monitor) throws TeamException;
+
 }

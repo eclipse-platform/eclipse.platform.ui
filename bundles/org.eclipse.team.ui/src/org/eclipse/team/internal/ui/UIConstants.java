@@ -41,4 +41,8 @@ public interface UIConstants {
 	
 	// preferences
 	public final String PREF_ALWAYS_IN_INCOMING_OUTGOING = "pref_always_in_incoming_outgoing"; //$NON-NLS-1$
+
+	//objects
+	public final String IMG_SITE_ELEMENT = "clcl16/site_element.gif"; //$NON-NLS-1$
+
 }
