@@ -154,6 +154,7 @@
 				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
 				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
 	         	<separator name="contextMenuActionsGroup"/>
+				<separator name="internalOccurrencesGroup"/> <!-- not to be used by clients  -->
 	      	</menu>
 	      	
 	      	<!-- dialog group  -->
