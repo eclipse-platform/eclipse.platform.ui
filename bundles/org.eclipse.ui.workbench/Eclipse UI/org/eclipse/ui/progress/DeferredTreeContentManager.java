@@ -124,18 +124,22 @@ public class DeferredTreeContentManager {
 
 		// Cancel any jobs currently fetching children for the same parent instance.
 		Platform.getJobManager().cancel(parent);
-		Job job = new Job(adapter.getLabel(parent)) { //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					adapter.fetchDeferredChildren(parent, collector, monitor);
-				} catch (OperationCanceledException e) {
-					return Status.CANCEL_STATUS;
+			String jobName = 
+				ProgressMessages.format(
+					"DeferredTreeContentManager.FetchingName", //$NON-NLS-1$
+					new Object[] { adapter.getLabel(parent)});
+			Job job = new Job(jobName) {
+				public IStatus run(IProgressMonitor monitor) {
+					try {
+						adapter.fetchDeferredChildren(parent, collector, monitor);
+					} catch (OperationCanceledException e) {
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
-			}
-			public boolean belongsTo(Object family) {
-				return parent.equals(family);
-			}
+				public boolean belongsTo(Object family) {
+					return parent.equals(family);
+				}
 		};
 
 		job.setRule(adapter.getRule());
@@ -153,25 +157,25 @@ public class DeferredTreeContentManager {
 		final Object[] children,
 		IProgressMonitor monitor) {
 
-		UIJob updateJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.AddChildrenJob")) { //$NON-NLS-1$
+		UIJob updateJob =
+			new UIJob(
+				ProgressMessages.getString(
+					"DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				//Cancel the job if the tree viewer got closed
-				if(treeViewer.getControl().isDisposed())
+					//Cancel the job if the tree viewer got closed
+				if (treeViewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
-					
-				monitor.beginTask(ProgressMessages.getString("DeferredTreeContentManager.AddingChildren"), 100); //$NON-NLS-1$
+
 				if (placeholder != null) {
-					monitor.subTask(ProgressMessages.getString("DeferredTreeContentManager.RemovingProgress")); //$NON-NLS-1$
 					treeViewer.remove(placeholder);
 					placeholder = null;
-				}				
-				monitor.worked(20);
+				}
 				treeViewer.add(parent, children);
-				monitor.worked(80);
+
 				return Status.OK_STATUS;
 			}
 		};
