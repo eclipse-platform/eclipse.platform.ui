@@ -383,14 +383,14 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
 
-	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
-	if (locationStatus.getSeverity() == IStatus.ERROR) 
-		return locationStatus;
-	
 	IStatus nameStatus = validateLinkTargetName(linkTargetName); 
 	if (nameStatus.isOK() == false)
 		return nameStatus;
 			
+	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
+	if (locationStatus.getSeverity() == IStatus.ERROR) 
+		return locationStatus;
+	
 	String resolvedName = resolvedPathLabel.getText();
 	if (resolvedName.length() > 0) {
 		linkTargetName = resolvedName;
