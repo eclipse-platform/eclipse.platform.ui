@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -92,6 +95,29 @@ public final class BuilderPropertyPage extends PropertyPage {
 			handleButtonPressed((Button) e.widget);
 			}
 		};
+	private ILaunchConfigurationListener configurationListener= new ILaunchConfigurationListener() {
+		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfiguration oldConfig= manager.getMovedFrom(configuration);
+			if (oldConfig == null) {
+				return;
+			}
+			TableItem[] items= builderTable.getItems();
+			for (int i = 0; i < items.length; i++) {
+				TableItem item = items[i];
+				Object data= item.getData();
+				if (data == oldConfig) {
+					item.setData(configuration);
+					updateConfigItem(item, configuration);
+					return;
+				}
+			}
+		}
+		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		}
+		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		}
+	};
 
 	/**
 	 * Creates an initialized property page
@@ -288,8 +314,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		return topLevel;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on DialogPage.
+	/**
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
@@ -298,6 +324,20 @@ public final class BuilderPropertyPage extends PropertyPage {
 			image.dispose();
 		}
 		imagesToDispose.clear();
+	}
+	
+	/**
+	 * Turns autobuilding on or off in the workspace.
+	 */
+	private boolean setAutobuild(boolean newState) throws CoreException {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceDescription wsDescription= workspace.getDescription();
+		boolean oldState= wsDescription.isAutoBuilding();
+		if (oldState != newState) {
+			wsDescription.setAutoBuilding(newState);
+			workspace.setDescription(wsDescription);
+		}
+		return oldState;
 	}
 
 	/**
@@ -365,14 +405,23 @@ public final class BuilderPropertyPage extends PropertyPage {
 		Object results[]= dialog.getResult();
 		ILaunchConfiguration config= (ILaunchConfiguration) results[0];
 		ILaunchConfiguration newConfig= null;
+		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
+			setAutobuild(false);
 			newConfig= duplicateConfiguration(config);
 		} catch (CoreException e) {
 			handleException(e);
-			return;
+		} finally {
+			try {
+				setAutobuild(wasAutobuilding);
+			} catch (CoreException e) {
+				handleException(e);
+			}
 		}
-		userHasMadeChanges= true;
-		addConfig(newConfig, true);
+		if (newConfig != null) {
+			userHasMadeChanges= true;
+			addConfig(newConfig, true);
+		}
 	}
 	
 	/**
@@ -428,10 +477,18 @@ public final class BuilderPropertyPage extends PropertyPage {
 			for (int i = 0; i < selection.length; i++) {
 				Object data= selection[i].getData();
 				if (data instanceof ILaunchConfiguration) {
+					boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 					try {
+						setAutobuild(false);
 						((ILaunchConfiguration) data).delete();
 					} catch (CoreException e) {
 						handleException(e);
+					} finally {
+						try {
+							setAutobuild(wasAutobuilding);
+						} catch (CoreException e) {
+							handleException(e);
+						}
 					}
 				}
 				selection[i].dispose();
@@ -448,14 +505,16 @@ public final class BuilderPropertyPage extends PropertyPage {
 		if (type == null) {
 			return;
 		}
+		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
 			workingCopy = type.newInstance(getBuilderFolder(), name);		
 			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
 			ILaunchConfiguration config = null;
+			setAutobuild(false);
 			config = workingCopy.doSave();
-			int code= DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+			int code= editConfiguration(config);
 			if (code == Dialog.CANCEL) {
 				// If the user cancelled, delete the newly created config
 				config.delete();
@@ -464,7 +523,26 @@ public final class BuilderPropertyPage extends PropertyPage {
 				addConfig(config, true);
 			}
 		} catch (CoreException e) {
+			handleException(e);
+		} finally {
+			try {
+				setAutobuild(wasAutobuilding);
+			} catch (CoreException e) {
+				handleException(e);
+			}
 		}
+	}
+	
+	/**
+	 * Prompts the user to edit the given launch configuration. Returns the
+	 * return code from opening the launch configuration dialog.
+	 */
+	private int editConfiguration(ILaunchConfiguration config) throws CoreException {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		manager.addLaunchConfigurationListener(configurationListener);
+		int code= DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+		manager.removeLaunchConfigurationListener(configurationListener);
+		return code;
 	}
 	
 	/**
@@ -530,8 +608,19 @@ public final class BuilderPropertyPage extends PropertyPage {
 					selection.setData(config);
 				}
 				userHasMadeChanges= true;
-				DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
-				updateConfigItem(selection, (ILaunchConfiguration) data);
+				boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
+				try {
+					setAutobuild(false);
+					editConfiguration(config);
+				} catch (CoreException e) {
+					handleException(e);
+				} finally {
+					try {
+						setAutobuild(wasAutobuilding);
+					} catch (CoreException e) {
+						handleException(e);
+					}
+				}
 			}
 		}
 	}
