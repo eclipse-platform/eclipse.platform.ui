@@ -140,19 +140,20 @@ public class R21BasicStackPresentation extends StackPresentation {
 		public void handleEvent(Event event) {
 			
 			Point localPos = new Point(event.x, event.y);
-//			// Ignore drags unless they are on the title area
-//			if ((tabFolder.getControl().getStyle() & SWT.TOP) != 0) {
-//				if (localPos.y > tabFolder.getTabHeight()) {
-//					return;
-//				}
-//			} else {
-//				if (localPos.y < tabFolder.getControl().getBounds().height - tabFolder.getTabHeight()) {
-//					return;
-//				}
-//			}
-//			
 			CTabItem tabUnderPointer = paneFolder.getItem(localPos);
-	
+
+			// Drags on the title area drag the selected part only
+			if (tabUnderPointer == null) {
+				if (paneFolder.getTabPosition() == SWT.BOTTOM
+                        && localPos.y < paneFolder.getControl().getBounds().height
+                                - paneFolder.getTabHeight())
+                    tabUnderPointer = paneFolder.getSelection();
+                else if (paneFolder.getTabPosition() == SWT.TOP
+                        && localPos.y > paneFolder.getTabHeight())
+                    tabUnderPointer = paneFolder.getSelection();
+			}
+
+			// Not in a tab, not in a title area, must be dragging the whole stack
 			if (tabUnderPointer == null) {
 				getSite().dragStart(paneFolder.getControl().toDisplay(localPos), false);
 				return;
