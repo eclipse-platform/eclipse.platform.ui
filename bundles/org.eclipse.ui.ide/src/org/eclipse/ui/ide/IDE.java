@@ -161,6 +161,7 @@ public final class IDE {
 	 * Block instantiation.
 	 */
 	private IDE() {
+		// do nothing
 	}
 	
 	/**
@@ -234,25 +235,11 @@ public final class IDE {
 		if (page == null || input == null) {
 			throw new IllegalArgumentException();
 		}
-		
-		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
-		IEditorDescriptor editorDesc = null;
-		
-		// determine the editor id to open the file input
-		// first look for the persistent property
-		try {
-			String editorID = input.getPersistentProperty(EDITOR_KEY);
-			if (editorID != null) {
-				editorDesc = editorReg.findEditor(editorID);
-			}
-		} catch (CoreException e) {
-			// ignore this
-		}
 
-		// next look for editor registered for file name
-		if (editorDesc == null) {
-			editorDesc = editorReg.getDefaultEditor(input.getName());
-		}
+		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+		
+		// check for a default editor
+		IEditorDescriptor editorDesc = getDefaultEditor(input);
 		
 		// next check the OS for in-place editor (OLE on Win32)
 		if (editorDesc == null && editorReg.isSystemInPlaceEditorAvailable(input.getName())) {
@@ -351,7 +338,9 @@ public final class IDE {
 	public static void setDefaultEditor(IFile file, String editorID) {
 		try {
 			file.setPersistentProperty(EDITOR_KEY,editorID);
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+			// do nothing
+		}
 	}
 	
 	/**
@@ -379,6 +368,7 @@ public final class IDE {
 					return desc;
 			}
 		} catch (CoreException e) {
+			// do nothing
 		}
 		
 		// Try lookup with filename
