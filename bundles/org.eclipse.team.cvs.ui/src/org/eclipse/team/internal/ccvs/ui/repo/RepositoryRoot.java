@@ -277,7 +277,6 @@ public class RepositoryRoot extends PlatformObject {
 				tags.addAll(Arrays.asList(fetchTags(file, Policy.subMonitorFor(monitor, 5))));
 			}
 			if (!tags.isEmpty()) {
-				clearTags(remotePath);
 				addTags(remotePath, (CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
 			}
 		} finally {
