@@ -39,6 +39,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	private List resultCache = new ArrayList();
 	
 	private boolean started = false;
+	private boolean initializing = true;
 
 	private IProgressMonitor progressGroup;
 
@@ -127,6 +128,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		// We are gaurenteed to be the first since this method is synchronized.
 		started = true;
 		reset(syncSetInput.getSubscriber().roots(), SubscriberEvent.INITIALIZE);
+		initializing = false;
 	}
 
 	protected synchronized void queueEvent(Event event, boolean front) {
@@ -140,11 +142,13 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 */
 	public void schedule() {
 		Job job = getEventHandlerJob();
-		if(progressGroup != null) {
-			job.setSystem(false);
-			job.setProgressGroup(progressGroup, ticks);
-		} else {
-			job.setSystem(true);
+		if (job.getState() == Job.NONE) {
+			if(progressGroup != null) {
+				job.setSystem(false);
+				job.setProgressGroup(progressGroup, ticks);
+			} else {
+				job.setSystem(!initializing);
+			}
 		}
 		getEventHandlerJob().schedule();
 	}
@@ -388,7 +392,6 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 						monitor);
 					break;
 				case SubscriberEvent.INITIALIZE :
-					getEventHandlerJob().setSystem(false);
 					monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
 					collectAll(
 							event.getResource(),
