@@ -30,7 +30,7 @@ public class WizardsRegistryReader extends RegistryReader {
 	protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
 
 	protected final static String ATT_NAME = "name";//$NON-NLS-1$
-	public final static String ATT_CLASS = "class";//$NON-NLS-1$
+	protected final static String ATT_CLASS = "class";//$NON-NLS-1$
 	protected final static String ATT_ICON = "icon";//$NON-NLS-1$
 	protected final static String ATT_ID = "id";//$NON-NLS-1$
 	protected final static String trueString = "TRUE";//$NON-NLS-1$

@@ -9,6 +9,7 @@
    <runtime>
       <library name="ide.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.ui"/>
       </library>
    </runtime>
    <requires>
