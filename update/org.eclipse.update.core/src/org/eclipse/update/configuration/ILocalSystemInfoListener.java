@@ -10,22 +10,26 @@ import java.io.File;
  * Local system change listener interface.
  * @see LocalSystemInfo#addInfoListener(ILocalSystemInfoListener)
  * @see LocalSystemInfo#removeInfoListener(ILocalSystemInfoListener)
- * @see LocalSystemInfo#fireRootChanged(File)
+ * @see LocalSystemInfo#fireSystemInfoChanged(IVolume,int)
  * @since 2.0
  */
 public interface ILocalSystemInfoListener {
 	
 	/**
-	 * Root change notification.
-	 * Called each time there are relevant file system changes
+	 * Volume change notification.
+	 * Called each time there are relevant volume changes
 	 * detected. This specifically includes changes to the
 	 * file system structure as a result of removable drive/ media
 	 * operations (eg. CD insertion), and changes to volume 
 	 * mount structure.
-	 * @param path file path to the root of the changed file
+	 * @param volume volume of the changed file
 	 * system structure. Any current paths beyond
-	 * the specified root are assumed to be invalidated.
+	 * the specified 'root' file of the volume are assumed to be invalidated.
+	 * @param changeType type of the change that occured.
+	 * @see LocalSystemInfo#VOLUME_ADDED
+	 * @see LocalSystemInfo#VOLUME_REMOVED
+	 * @see LocalSystemInfo#VOLUME_CHANGED
 	 * @since 2.0
 	 */
-	public void rootChanged(File path);
+	public void systemInfoChanged(IVolume volume, int changeType);
 }

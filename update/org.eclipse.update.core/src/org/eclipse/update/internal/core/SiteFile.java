@@ -183,6 +183,12 @@ public class SiteFile extends Site {
 				}
 			}
 
+			// remove any children feature
+			IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < childrenRef.length; i++) {
+				remove(childrenRef[i].getFeature(),monitor);
+			}
+			
 			success = true;
 		} catch (Throwable t) {
 			originalException = t;

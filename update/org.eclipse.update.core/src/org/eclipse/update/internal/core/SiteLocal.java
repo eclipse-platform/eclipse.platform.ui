@@ -29,6 +29,8 @@ public class SiteLocal
 	private ListenersList listeners = new ListenersList();
 	private SiteReconciler reconciler;
 	private boolean isTransient = false;
+	private List /* of IPluginEntry */
+	allConfiguredPlugins;
 
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
@@ -285,16 +287,16 @@ public class SiteLocal
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
-			
-        // SITE 
+
+		// SITE 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.print(gap +"label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			w.print(gap + "label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.print(gap +"history=\"" + getMaximumHistoryCount() + "\" ");
+		w.print(gap + "history=\"" + getMaximumHistoryCount() + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.print(gap +"stamp=\"" + changeStamp + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print(gap + "stamp=\"" + changeStamp + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(""); //$NON-NLS-1$
 
 		// CONFIGURATIONS
@@ -314,9 +316,11 @@ public class SiteLocal
 		w.println(""); //$NON-NLS-1$
 
 		// PRESERVED CONFIGURATIONS
-		if (getPreservedConfigurations() != null && getPreservedConfigurations().length!=0) {
+		if (getPreservedConfigurations() != null
+			&& getPreservedConfigurations().length != 0) {
 			// write preserved configurations
-			w.println(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			w.println(
+				gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
 			//$NON-NLS-1$ //$NON-NLS-2$
 
 			InstallConfigurationModel[] preservedConfig = getPreservedConfigurationsModel();
@@ -329,7 +333,7 @@ public class SiteLocal
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// end
-		w.println(gap+"</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap + "</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp);
@@ -638,10 +642,11 @@ public class SiteLocal
 	/*
 	 * 
 	 */
-	 private SiteReconciler getReconciler(){
-		if (reconciler==null) reconciler = new SiteReconciler(this);
+	private SiteReconciler getReconciler() {
+		if (reconciler == null)
+			reconciler = new SiteReconciler(this);
 		return reconciler;
-	 }
+	}
 	/*
 	 * Get update state location relative to platform configuration
 	 */
@@ -841,7 +846,7 @@ public class SiteLocal
 		}
 		return 0;
 	}
-	
+
 	/*
 	 *  check if the Plugins of the feature are on the plugin path
 	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY
@@ -851,42 +856,103 @@ public class SiteLocal
 	 */
 	public int getStatus(IFeature feature) {
 
-		// get configured plugins from configured features
-		// 
-
-		ISite currentSite =null;//=getSite();
-		IPluginEntry[] siteEntries =null;// = getSite().getPluginEntries();
-		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
-		
-		// missing plugins - > UNHAPPY
-		if (result == null || (result.length != 0)) {
-			IPluginEntry[] missing = UpdateManagerUtils.diff(featuresEntries, result);
-			String listOfMissingPlugins = ""; //$NON-NLS-1$
-			for (int k = 0; k < missing.length; k++) {
-				listOfMissingPlugins =
-					"\r\nplugin:" + missing[k].getVersionedIdentifier().toString();
-				//$NON-NLS-1$
-			}
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureString =
-				(feature == null) ? null : feature.getURL().toExternalForm();
-			String siteString =
-				(currentSite == null) ? null : currentSite.getURL().toExternalForm();
-			String[] values =
-				new String[] { featureString, siteString, listOfMissingPlugins };
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values),
-					null);
-			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
-			return IFeature.STATUS_UNHAPPY;
+		// check if broken first
+		IConfiguredSite[] configuredSites =
+			getCurrentConfiguration().getConfiguredSites();
+		ISite featureSite = feature.getSite();
+		if (featureSite == null) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+				UpdateManagerPlugin.getPlugin().debug(
+					"Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
+			return IFeature.STATUS_AMBIGUOUS;
 		}
+
+		for (int i = 0; i < configuredSites.length; i++) {
+			if (featureSite.equals(configuredSites[i].getSite())) {
+				if (configuredSites[i].isBroken(feature)) {
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+						UpdateManagerPlugin.getPlugin().debug(
+							"Feature broken:"
+								+ feature.getLabel()
+								+ ".Site:"
+								+ configuredSites[i].toString());
+					return IFeature.STATUS_UNHAPPY;
+				}
+			}
+		}
+
+		// not broken, get all plugins of feature
+		// and all plugins of configured features of all configured sites
+		IPluginEntry[] featuresEntries = feature.getPluginEntries();
+		IPluginEntry[] allPluginsEntries = getAllConfiguredPlugins();
+		return status(featuresEntries, allPluginsEntries);
+	}
+
+	/*
+	 * return all the configured plugins. Not recalculated when a install/remove/configure/unconfigure occurs
+	 * as we expect the user to restart
+	 */
+	private IPluginEntry[] getAllConfiguredPlugins() {
+		if (allConfiguredPlugins == null) {
+			allConfiguredPlugins = new ArrayList();
+			IConfiguredSite[] configuredSites;
+			IFeatureReference[] configuredFeaturesRef;
+			IFeature feature;
+			configuredSites = getCurrentConfiguration().getConfiguredSites();
+			for (int i = 0; i < configuredSites.length; i++) {
+				configuredFeaturesRef = configuredSites[i].getConfiguredFeatures();
+				for (int j = 0; j < configuredFeaturesRef.length; j++) {
+					try {
+						feature = configuredFeaturesRef[j].getFeature();
+						allConfiguredPlugins.addAll(Arrays.asList(feature.getPluginEntries()));
+					} catch (CoreException e) {
+						// eat the exception and log it
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
+							UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+					}
+				}
+			}
+
+		}
+
+		if (allConfiguredPlugins == null || allConfiguredPlugins.isEmpty()) {
+			return new IPluginEntry[0];
+		}
+
+		IPluginEntry[] result = new IPluginEntry[allConfiguredPlugins.size()];
+		allConfiguredPlugins.toArray(result);
+		return result;
+	}
+
+	/*
+	 * compute the status based on getStatus() rules 
+	 */
+	private int status(IPluginEntry[] featurePlugins, IPluginEntry[] allPlugins) {
+		VersionedIdentifier featureID;
+		VersionedIdentifier compareID;
+		
+		// is Ambigous if we find a plugin from the feature
+		// with a different version
+		for (int i = 0; i < featurePlugins.length; i++) {
+			featureID = featurePlugins[i].getVersionedIdentifier();
+			for (int j = 0; j < allPlugins.length; j++) {
+				compareID = allPlugins[j].getVersionedIdentifier();
+				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
+					if (!featureID.getVersion().equals(compareID.getVersion())) {
+						// there is a plugin with a different version on the path
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
+							UpdateManagerPlugin.getPlugin().debug(
+								"Found 2 versions of the same plugin on the path:"
+									+ featureID.toString()
+									+ " & "
+									+ compareID.toString());
+						return IFeature.STATUS_AMBIGUOUS;
+					}
+				}
+			}
+		}
+
+		// we return happy as we consider the isBroken verification has been done
 		return IFeature.STATUS_HAPPY;
 	}
 }

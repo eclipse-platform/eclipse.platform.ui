@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.Volume;
  
 /**
  * Utility class providing local file system information.
@@ -22,6 +23,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the amount of available free space is not known
+	 * 
 	 * @see LocalSystemInfo#getFreeSpace(File)
 	 * @since 2.0
 	 */
@@ -29,6 +31,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume type is not known
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -36,6 +39,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume could not be determined from path
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -43,6 +47,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume is removable (other than floppy disk)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -50,6 +55,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume is fixed (hard drive)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -57,6 +63,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates a remote (network) volume
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -64,6 +71,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates a cdrom volume (compact disc)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -71,6 +79,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates a ramdisk volume (memory)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -78,6 +87,7 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume is removable (floppy disk 3 1/2)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -85,11 +95,39 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates the volume is removable (floppy disk 5 1/4)
+	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
 	public static final int VOLUME_FLOPPY_5 = 7;		
 	
+	/**
+	 * Indicates a new volume has been added
+	 * 
+	 * @see LocalSystemInfo#addInfoListener(File)
+	 * @see LocalSystemInfo#removeInfoListener(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_ADDED = 0;
+			
+	/**
+	 * Indicates a volume has been removed
+	 * 
+	 * @see LocalSystemInfo#addInfoListener(File)
+	 * @see LocalSystemInfo#removeInfoListener(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_REMOVED = 1;
+
+	/**
+	 * Indicates a volume has been changed
+	 * 
+	 * @see LocalSystemInfo#addInfoListener(File)
+	 * @see LocalSystemInfo#removeInfoListener(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_CHANGED = 2;
+
 	
 	private static ArrayList listeners = new ArrayList();	
 	private static boolean hasNatives = false;	
@@ -119,6 +157,7 @@ public class LocalSystemInfo {
 	 * of Kbyte), or an indication the size is not known 
 	 * @see LocalSystemInfo#SIZE_UNKNOWN
 	 * @since 2.0
+	 * @deprecated use getVolumes().getFreeSpace() instead
 	 */
 	public static long getFreeSpace(File path) {
 		if (hasNatives) {
@@ -140,6 +179,7 @@ public class LocalSystemInfo {
 	 * @return volume label (as string), or <code>null</code> if
 	 * the label cannot be determined.
 	 * @since 2.0
+	 * @deprecated use getVolumes().getLabel() instead
 	 */
 	public static String getLabel(File path) {
 		if (hasNatives) {
@@ -164,7 +204,10 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#VOLUME_FIXED
 	 * @see LocalSystemInfo#VOLUME_REMOTE
 	 * @see LocalSystemInfo#VOLUME_CDROM
+	 * @see LocalSystemInfo#VOLUME_FLOPPY_3
+	 * @see LocalSystemInfo#VOLUME_FLOPPY_5
 	 * @since 2.0
+	 * @deprecated use getVolumes().getType() instead
 	 */
 	public static int getType(File path) {
 		if (hasNatives) {
@@ -181,6 +224,7 @@ public class LocalSystemInfo {
 	 * @return array of absolute file paths representing mount
 	 * points, or <code>null</code> if none found
 	 * @since 2.0
+	 * @deprecated use getVolumes() instead
 	 */
 	public static String[] listMountPoints() {
 		if (hasNatives) {
@@ -192,15 +236,39 @@ public class LocalSystemInfo {
 		}
 		return null;
 	}
+
+	/**
+	 * Lists the file system volume.
+	 * @return array of volume representing mount
+	 * points, or <code>null</code> if none found
+	 * @since 2.0
+	 */
+	public static IVolume[] getVolumes() {
+		String[] mountPoints = listMountPoints();
+		Volume[] vol = new Volume[0];
+		if (mountPoints!=null){
+			vol = new Volume[mountPoints.length];
+			for (int i = 0; i < mountPoints.length; i++) {
+				File root = new File(mountPoints[i]);
+				String label = getLabel(root);
+				int type = getType(root);
+				long size = getFreeSpace(root);
+				vol[i] = new Volume(root,label,type,size);
+				vol[i].markReadOnly();
+			}
+		}
+		return vol;
+	}
+
 	
 	/**
 	 * Add local system change listener.
 	 * Allows a listener to be added for monitoring changes
 	 * in the local system information. The listener is notified
-	 * each time there are relevant file system changes
+	 * each time there are relevant volume changes
 	 * detected. This specifically includes changes to the
-	 * file system structure as a result of removable drive/ media
-	 * operations (eg. CD insertion), and changes to volume 
+	 * list of volumes as a result of removable drive/ media
+	 * operations (eg. CD insertion, removal), and changes to volume 
 	 * mount structure.
 	 * @param listener change listener
 	 * @since 2.0
@@ -221,13 +289,18 @@ public class LocalSystemInfo {
 		
 	/**
 	 * Notify listeners of change.
-	 * @param path file path representing the "root" of the
+	 * 
+	 * @param volume the volume representing the
 	 * change file system structure. Any current paths beyond
-	 * the specified "root" are assumed to be invalidated.
+	 * the specified "root" file of the volume are assumed to be invalidated.
+	 * @param changeType type of the change that occured.
+	 * @see LocalSystemInfo#VOLUME_ADDED
+	 * @see LocalSystemInfo#VOLUME_REMOVED
+	 * @see LocalSystemInfo#VOLUME_CHANGED
 	 */
-	public static void fireRootChanged(File path) {
+	public static void fireSystemInfoChanged(IVolume volume, int changeType) {
 		for (int i=0; i< listeners.size(); i++) {
-			((ILocalSystemInfoListener)listeners.get(i)).rootChanged(path);
+			((ILocalSystemInfoListener)listeners.get(i)).systemInfoChanged(volume,changeType);
 		}
 	}
 		

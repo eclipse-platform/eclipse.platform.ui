@@ -86,7 +86,7 @@ public class ConfiguredSite
 			gap
 				+ increment
 				+ "policy=\""
-				+ getConfigurationPolicyModel().getPolicy()
+				+ getConfigurationPolicy().getPolicy()
 				+ "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		String install = isUpdatable() ? "true" : "false";
@@ -119,7 +119,7 @@ public class ConfiguredSite
 		
 		// unconfigured features ref
 		featuresReferences =
-			((ConfigurationPolicy) getConfigurationPolicyModel()).getUnconfiguredFeatures();
+			getConfigurationPolicy().getUnconfiguredFeatures();
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
@@ -303,10 +303,20 @@ public class ConfiguredSite
 	 */
 	private void configure(IFeature feature, boolean callInstallHandler)
 		throws CoreException {
+			
+		ConfigurationPolicy configPolicy = getConfigurationPolicy();
+		if (configPolicy == null)
+			return;
+						
+		// bottom up approach, same configuredSite
+		IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
+		for (int i = 0; i < childrenRef.length; i++) {
+			configPolicy.configure(childrenRef[i],callInstallHandler);
+		}
+		
+		// configure root feature 	
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(
-			featureReference,
-			callInstallHandler);
+		configPolicy.configure(featureReference,callInstallHandler);
 
 		// notify listeners
 		Object[] siteListeners = listeners.getListeners();
@@ -321,12 +331,19 @@ public class ConfiguredSite
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		ConfigurationPolicy configPolicy =
-			((ConfigurationPolicy) getConfigurationPolicyModel());
+
+		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return false;
 
 		if (configPolicy.unconfigure(featureReference)) {
+
+			// top down approach, same configuredSite
+			IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < childrenRef.length; i++) {
+				configPolicy.unconfigure(childrenRef[i]);
+			}			
+
 			// notify listeners
 			Object[] siteListeners = listeners.getListeners();
 			for (int i = 0; i < siteListeners.length; i++) {
@@ -343,10 +360,10 @@ public class ConfiguredSite
 	 * @see IConfiguredSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		ConfigurationPolicy configPolicy =
-			((ConfigurationPolicy) getConfigurationPolicyModel());
+		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return new IFeatureReference[0];
+			
 		return configPolicy.getConfiguredFeatures();
 	}
 
@@ -355,8 +372,7 @@ public class ConfiguredSite
 	 */
 	public IFeatureReference[] getFeatureReferences() {
 
-		ConfigurationPolicy configPolicy =
-			((ConfigurationPolicy) getConfigurationPolicyModel());
+		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return new IFeatureReference[0];
 
@@ -696,6 +712,15 @@ public class ConfiguredSite
 		if (featureReference == null)
 			return false;
 		return getConfigurationPolicy().isConfigured(featureReference);
+	}
+
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		if (getSite()==null) return "No Site";
+		if (getSite().getURL() == null) return "No URL";
+		return getSite().getURL().toExternalForm();
 	}
 
 }

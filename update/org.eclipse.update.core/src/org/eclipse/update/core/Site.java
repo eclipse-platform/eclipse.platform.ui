@@ -60,9 +60,6 @@ public class Site extends SiteModel implements ISite {
 	 */
 	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
-	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
-	private static final String INSTALLED_FEATURE_TYPE = "installed";
-	//$NON-NLS-1$	
 	private ISiteContentProvider siteContentProvider;
 
 	/**
