@@ -186,12 +186,20 @@ public abstract class PluginAction extends Action
 		if (delegate == null) {
 			// High noon to load the delegate.
 			createDelegate();
-			if (delegate == null || !isEnabled()) {
+			if (delegate == null) {
 				MessageDialog
 					.openInformation(
 						Display.getDefault().getActiveShell(),
 						WorkbenchMessages.getString("Information"), //$NON-NLS-1$
 				WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage")); //$NON-NLS-1$
+				return;
+			}
+			if (!isEnabled()) {
+				MessageDialog
+					.openInformation(
+						Display.getDefault().getActiveShell(),
+						WorkbenchMessages.getString("Information"), //$NON-NLS-1$
+				WorkbenchMessages.getString("PluginAction.disabledMessage")); //$NON-NLS-1$
 				return;
 			}
 		}
