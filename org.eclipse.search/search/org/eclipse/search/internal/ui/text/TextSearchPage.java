@@ -267,7 +267,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		layout.numColumns= 3;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		layouter= new RowLayouter(3);
+		layouter= new RowLayouter(3, true);
 		layouter.setDefaultSpan();
 
 		createFileNamePatternComposite(layouter, group);
@@ -314,7 +314,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		// Text line which explains the special characters
 		label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
-		layouter.perform(label);
+		Label filler= new Label(group, SWT.NONE);
+		layouter.perform(filler, label, 1);
+
 	}
 
 	private void handleWidgetSelected() {
@@ -322,6 +324,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			return;
 		int index= fgPreviousSearchPatterns.size() - 1 - fExtensions.getSelectionIndex();
 		SearchPatternData patternData= (SearchPatternData) fgPreviousSearchPatterns.get(index);
+		if (patternData == null  || !fFileTypeEditor.getFileTypes().equals(patternData.fileNamePatterns))
+			return;
 		fIgnoreCase.setSelection(patternData.ignoreCase);
 		fPattern.setText(patternData.textPattern);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
@@ -461,7 +465,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		// Text line which explains the special characters
 		label= new Label(group, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
-		layouter.perform(label);
+		Label filler= new Label(group, SWT.NONE);
+		layouter.perform(filler, label, 1);
 	}
 	
 	public boolean isValid() {
