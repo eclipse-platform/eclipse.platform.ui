@@ -47,7 +47,7 @@ public class AntTestChecker {
 	}
 	
 	/**
-	 * Returns the singleton AntLoggerChecker
+	 * Returns the singleton AntTestChecker
 	 */
 	public static AntTestChecker getDefault() {
 		if (deflt == null) {
@@ -57,7 +57,7 @@ public class AntTestChecker {
 	}
 	
 	/**
-	 * Returns the singleton AntLoggerChecker
+	 * Resets the singleton AntTestChecker
 	 */
 	public static void reset() {
 		if (deflt != null) {
