@@ -102,8 +102,23 @@ public final class BuilderPropertyPage extends PropertyPage {
 			handleButtonPressed((Button) e.widget);
 			}
 		};
-		
+	
+	/**
+	 * Launch configuration listener which is responsible for updating items in
+	 * the tree when the user renames configurations in the dialog.
+	 * 
+	 * This is necessary because when we tell the configuration dialog to open
+	 * on a launch config and the user renames that config, the old config (the
+	 * one in the tree) is made obsolete and a new config is created. This
+	 * listener hears when new configurations are created this way and replaces
+	 * the old configuration with the new.
+	 */
 	private ILaunchConfigurationListener configurationListener= new ILaunchConfigurationListener() {
+		/**
+		 * A launch configuration has been added. If this config has been
+		 * movedFrom a configuration in the tree, replace the old config with
+		 * the new.
+		 */
 		public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 			final ILaunchConfiguration oldConfig= manager.getMovedFrom(configuration);
