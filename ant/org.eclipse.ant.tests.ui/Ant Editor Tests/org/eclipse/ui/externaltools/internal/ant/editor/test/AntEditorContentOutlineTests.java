@@ -133,56 +133,56 @@ public class AntEditorContentOutlineTests extends TestCase {
         // <project>
         assertEquals(2, project.getStartingRow());
         assertEquals(1, project.getStartingColumn());
-        int tempOffset = wholeDocumentString.indexOf("<project");
+        int offset = wholeDocumentString.indexOf("<project");
           
-	    assertEquals(tempOffset, project.getOffset());
+	    assertEquals(offset, project.getOffset());
         
         List children = project.getChildNodes();
 		
 		// <property name="propD">
-		XmlElement tempEle = (XmlElement)children.get(0);
-        assertEquals(3, tempEle.getStartingRow());
-        assertEquals(2, tempEle.getStartingColumn()); // with tab in file
-        assertEquals(3, tempEle.getEndingRow());
-        assertEquals(40, tempEle.getEndingColumn());  // with tab in file
-        tempOffset = wholeDocumentString.indexOf("<property");
+		XmlElement element = (XmlElement)children.get(0);
+        assertEquals(3, element.getStartingRow());
+        assertEquals(2, element.getStartingColumn()); // with tab in file
+        assertEquals(3, element.getEndingRow());
+        assertEquals(40, element.getEndingColumn());  // with tab in file
+        offset = wholeDocumentString.indexOf("<property");
        
-        assertEquals(tempOffset, tempEle.getOffset());
+        assertEquals(offset, element.getOffset());
 // (T)
-        int tempLength = "<property name=\"propD\" value=\"valD\" />".length();
-        assertEquals(tempLength, tempEle.getLength());
+        int length = "<property name=\"propD\" value=\"valD\" />".length();
+        assertEquals(length, element.getLength());
 
 		
 		// <property file="buildtest1.properties">
-		tempEle = (XmlElement)children.get(1);
-        assertEquals(4, tempEle.getStartingRow());
-        assertEquals(5, tempEle.getStartingColumn()); // no tab
-        assertEquals(4, tempEle.getEndingRow());
-        assertEquals(46, tempEle.getEndingColumn());
+		element = (XmlElement)children.get(1);
+        assertEquals(4, element.getStartingRow());
+        assertEquals(5, element.getStartingColumn()); // no tab
+        assertEquals(4, element.getEndingRow());
+        assertEquals(46, element.getEndingColumn());
 		
 		// <property name="propV">
-		tempEle = (XmlElement)children.get(2);
-        assertEquals(5, tempEle.getStartingRow());
-        assertEquals(5, tempEle.getStartingColumn());
-        assertEquals(5, tempEle.getEndingRow());
-        assertEquals(43, tempEle.getEndingColumn());
+		element = (XmlElement)children.get(2);
+        assertEquals(5, element.getStartingRow());
+        assertEquals(5, element.getStartingColumn());
+        assertEquals(5, element.getEndingRow());
+        assertEquals(43, element.getEndingColumn());
 		
 		// <target name="main">
-		tempEle = (XmlElement)children.get(3);
-        assertEquals(6, tempEle.getStartingRow());
-        assertEquals(5, tempEle.getStartingColumn());
-        assertEquals(8, tempEle.getEndingRow());
-        assertEquals(14, tempEle.getEndingColumn());
+		element = (XmlElement)children.get(3);
+        assertEquals(6, element.getStartingRow());
+        assertEquals(5, element.getStartingColumn());
+        assertEquals(8, element.getEndingRow());
+        assertEquals(14, element.getEndingColumn());
 		
 		// <property name="property_in_target">
-		tempEle = (XmlElement)tempEle.getChildNodes().get(0);
-        assertEquals(7, tempEle.getStartingRow());
-        assertEquals(9, tempEle.getStartingColumn());
-        assertEquals(7, tempEle.getEndingRow());
-        assertEquals(58, tempEle.getEndingColumn());
-        tempOffset = wholeDocumentString.indexOf("<property name=\"property_in_target\"");
+		element = (XmlElement)element.getChildNodes().get(0);
+        assertEquals(7, element.getStartingRow());
+        assertEquals(9, element.getStartingColumn());
+        assertEquals(7, element.getEndingRow());
+        assertEquals(58, element.getEndingColumn());
+        offset = wholeDocumentString.indexOf("<property name=\"property_in_target\"");
           
-        assertEquals(tempOffset, tempEle.getOffset());
+        assertEquals(offset, element.getOffset());
 		
         assertEquals(9, project.getEndingRow());
         assertEquals(11, project.getEndingColumn());
@@ -207,14 +207,14 @@ public class AntEditorContentOutlineTests extends TestCase {
         List children = root.getChildNodes();
 
 		// <target name="main">
-		XmlElement tempEle = (XmlElement)children.get(2);
-        assertEquals(5, tempEle.getStartingRow());
-        assertEquals(2, tempEle.getStartingColumn()); // with tab in file
-        assertEquals(5, tempEle.getEndingRow());
-        assertEquals(43, tempEle.getEndingColumn());
-        int tempOffset = wholeDocumentString.indexOf("<target name=\"main\"");
+		XmlElement element = (XmlElement)children.get(2);
+        assertEquals(5, element.getStartingRow());
+        assertEquals(2, element.getStartingColumn()); // with tab in file
+        assertEquals(5, element.getEndingRow());
+        assertEquals(43, element.getEndingColumn());
+        int offset = wholeDocumentString.indexOf("<target name=\"main\"");
          
-	    assertEquals(tempOffset, tempEle.getOffset()); // ???
+	    assertEquals(offset, element.getOffset()); // ???
     }
 
 	
@@ -256,19 +256,19 @@ public class AntEditorContentOutlineTests extends TestCase {
         assertNotNull(project);
         assertEquals(2, project.getStartingRow());
         assertEquals(1, project.getStartingColumn());
-        int tempOffset = wholeDocumentString.indexOf("<project");
+        int offset = wholeDocumentString.indexOf("<project");
         
-	    assertEquals(tempOffset, project.getOffset());
+	    assertEquals(offset, project.getOffset());
         
 		// <target name="properties">
-        XmlElement tempEle = (XmlElement)project.getChildNodes().get(1);
-        assertNotNull(tempEle);
-        assertEquals("properties", tempEle.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
-        assertEquals(16, tempEle.getStartingRow());
-        assertEquals(2, tempEle.getStartingColumn());
-        tempOffset = wholeDocumentString.indexOf("<target name=\"properties\"");
+        XmlElement element = (XmlElement)project.getChildNodes().get(1);
+        assertNotNull(element);
+        assertEquals("properties", element.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
+        assertEquals(16, element.getStartingRow());
+        assertEquals(2, element.getStartingColumn());
+        offset = wholeDocumentString.indexOf("<target name=\"properties\"");
       
-	    assertEquals(tempOffset, tempEle.getOffset());
+	    assertEquals(offset, element.getOffset());
 	}
 
 

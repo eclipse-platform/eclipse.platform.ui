@@ -27,8 +27,6 @@ import java.util.Hashtable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -37,16 +35,17 @@ import junit.framework.TestSuite;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.ui.internal.editor.AntEditorSaxDefaultHandler;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.externaltools.internal.ant.editor.support.TestTextCompletionProcessor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 
 /**
@@ -70,47 +69,47 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for attributes of tasks.
      */
     public void testAttributeProposals() throws IOException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        ICompletionProposal[] tempProposals = tempProcessor.getAttributeProposals("contains", "ca");
-        assertEquals(1, tempProposals.length);
-        assertEquals("casesensitive - (true | false | on | off | yes | no)", tempProposals[0].getDisplayString());
+        ICompletionProposal[] proposals = processor.getAttributeProposals("contains", "ca");
+        assertEquals(1, proposals.length);
+        assertEquals("casesensitive - (true | false | on | off | yes | no)", proposals[0].getDisplayString());
 
-        tempProposals = tempProcessor.getAttributeProposals("move", "");
-        assertEquals(14, tempProposals.length);
-        ICompletionProposal tempProposal = tempProposals[0];
-        String tempString = tempProposal.getDisplayString();
-        assertTrue(tempString.equals("id") 
-        || tempString.equals("flatten - (true | false | on | off | yes | no)")
-        || tempString.equals("encoding")
-        || tempString.equals("tofile")
-        || tempString.equals("todir")
-        || tempString.equals("file")
-        || tempString.equals("verbose - (true | false | on | off | yes | no)")
-        || tempString.equals("includeemptydirs")
-        || tempString.equals("overwrite - (true | false | on | off | yes | no)")
-        || tempString.equals("taskname")
-        || tempString.equals("failonerror - (true | false | on | off | yes | no)")
-        || tempString.equals("description")
-        || tempString.equals("preservelastmodified - (true | false | on | off | yes | no)")
-        || tempString.equals("filtering - (true | false | on | off | yes | no)"));
+        proposals = processor.getAttributeProposals("move", "");
+        assertEquals(14, proposals.length);
+        ICompletionProposal proposal = proposals[0];
+        String displayString = proposal.getDisplayString();
+        assertTrue(displayString.equals("id") 
+        || displayString.equals("flatten - (true | false | on | off | yes | no)")
+        || displayString.equals("encoding")
+        || displayString.equals("tofile")
+        || displayString.equals("todir")
+        || displayString.equals("file")
+        || displayString.equals("verbose - (true | false | on | off | yes | no)")
+        || displayString.equals("includeemptydirs")
+        || displayString.equals("overwrite - (true | false | on | off | yes | no)")
+        || displayString.equals("taskname")
+        || displayString.equals("failonerror - (true | false | on | off | yes | no)")
+        || displayString.equals("description")
+        || displayString.equals("preservelastmodified - (true | false | on | off | yes | no)")
+        || displayString.equals("filtering - (true | false | on | off | yes | no)"));
 
-        tempProposals = tempProcessor.getAttributeProposals("move", "to");
-        assertEquals(2, tempProposals.length);
+        proposals = processor.getAttributeProposals("move", "to");
+        assertEquals(2, proposals.length);
 
-        tempProposals = tempProcessor.getAttributeProposals("reference", "idl");
-        assertEquals(0, tempProposals.length);
+        proposals = processor.getAttributeProposals("reference", "idl");
+        assertEquals(0, proposals.length);
 
-        tempProposals = tempProcessor.getAttributeProposals("reference", "id");
-        assertEquals(1, tempProposals.length);
-        assertEquals("id", tempProposals[0].getDisplayString());
+        proposals = processor.getAttributeProposals("reference", "id");
+        assertEquals(1, proposals.length);
+        assertEquals("id", proposals[0].getDisplayString());
 
-        tempProposals = tempProcessor.getAttributeProposals("reference", "i");
-        assertEquals(1, tempProposals.length);
-        assertEquals("id", tempProposals[0].getDisplayString());
+        proposals = processor.getAttributeProposals("reference", "i");
+        assertEquals(1, proposals.length);
+        assertEquals("id", proposals[0].getDisplayString());
 
-        tempProposals = tempProcessor.getAttributeProposals("project", "de");
-        assertEquals(1, tempProposals.length);
+        proposals = processor.getAttributeProposals("project", "de");
+        assertEquals(1, proposals.length);
         
         // assertEquals("default - #REQUIRED", tempProposals[0].getDisplayString());
 
@@ -121,41 +120,41 @@ public class CodeCompletionTest extends TestCase {
      * Test the code completion for properties.
      */
     public void testPropertyProposals1() {
-		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        String tempDocumentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
-        tempDocumentText += "<property name=\"prop2\" value=\"val2\" />\n";
-        tempDocumentText += "<property name=\"alf\" value=\"horst\" />\n";
-        tempDocumentText += "<test name=\"$";
-		tempProcessor.setLineNumber(4);
-		tempProcessor.setColumnNumber(14);
-        int tempCursorPos = tempDocumentText.length();
-        ICompletionProposal[] tempProposals = tempProcessor.getPropertyProposals(tempDocumentText, "", tempCursorPos);
-        assertTrue(tempProposals.length >= 3);
-        assertContains("alf", tempProposals);
-        tempDocumentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
-        tempDocumentText += "<property name=\"prop2\" value=\"val2\" />\n";
-        tempDocumentText += "<property name=\"alf\" value=\"horst\" />\n";
-        tempDocumentText += "<test name=\"$a}";
-		tempProcessor.setLineNumber(4);
-		tempProcessor.setColumnNumber(15);
-        tempCursorPos = tempDocumentText.length()-1;
-        tempProposals = tempProcessor.getPropertyProposals(tempDocumentText, "a", tempCursorPos);
-        assertTrue(tempProposals.length >= 1);
-        assertContains("alf", tempProposals);
+        String documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
+        documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+        documentText += "<property name=\"alf\" value=\"horst\" />\n";
+        documentText += "<test name=\"$";
+		processor.setLineNumber(4);
+		processor.setColumnNumber(14);
+        int cursorPos = documentText.length();
+        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPos);
+        assertTrue(proposals.length >= 3);
+        assertContains("alf", proposals);
+        documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
+        documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+        documentText += "<property name=\"alf\" value=\"horst\" />\n";
+        documentText += "<test name=\"$a}";
+		processor.setLineNumber(4);
+		processor.setColumnNumber(15);
+        cursorPos = documentText.length()-1;
+        proposals = processor.getPropertyProposals(documentText, "a", cursorPos);
+        assertTrue(proposals.length >= 1);
+        assertContains("alf", proposals);
 
     }
  
  	/**
- 	 * Asserts that <code>aProposalDisplayString</code> is in one of the 
+ 	 * Asserts that <code>displayString</code> is in one of the 
  	 * completion proposals.
  	 */
-    private void assertContains(String aProposalDisplayString, ICompletionProposal[] aProposalArray) {
+    private void assertContains(String displayString, ICompletionProposal[] proposalArray) {
         boolean found = false;
-        for (int i = 0; i < aProposalArray.length; i++) {
-            ICompletionProposal tempProposal = aProposalArray[i];
-            String tempDisplayString = tempProposal.getDisplayString();
-            if(aProposalDisplayString.equals(tempDisplayString)) {
+        for (int i = 0; i < proposalArray.length; i++) {
+            ICompletionProposal proposal = proposalArray[i];
+            String proposalDisplayString = proposal.getDisplayString();
+            if(displayString.equals(proposalDisplayString)) {
                 found = true;
                 break;
             }
@@ -168,67 +167,67 @@ public class CodeCompletionTest extends TestCase {
 	 * a seperate property file.
 	 */
     public void testBuildWithProperties() {
-        Project tempProject = new Project();
-        tempProject.init();
-        URL tempURL = getClass().getResource("buildtest1.xml");
-        assertNotNull(tempURL);
-        File tempFile = new File(tempURL.getPath());
-        assertTrue(tempFile.exists());
+        Project project = new Project();
+        project.init();
+        URL url = getClass().getResource("buildtest1.xml");
+        assertNotNull(url);
+        File file = new File(url.getPath());
+        assertTrue(file.exists());
         
-        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath());
+        project.setUserProperty("ant.file", file.getAbsolutePath());
 
-        ProjectHelper.configureProject(tempProject, tempFile);  // File will be parsed here
-        Hashtable tempTable = tempProject.getProperties();
-        assertEquals("valD", tempTable.get("propD"));
-        assertEquals("val1", tempTable.get("prop1"));
-        assertEquals("val2", tempTable.get("prop2"));
-        assertEquals("valV", tempTable.get("propV"));
+        ProjectHelper.configureProject(project, file);  // File will be parsed here
+        Hashtable table = project.getProperties();
+        assertEquals("valD", table.get("propD"));
+        assertEquals("val1", table.get("prop1"));
+        assertEquals("val2", table.get("prop2"));
+        assertEquals("valV", table.get("propV"));
         // assertEquals("val", tempTable.get("property_in_target"));  // (T) is known and should be fixed
 
         // test with not valid (complete) build file
-        tempProject = new Project();
-        tempProject.init();
-        tempURL = getClass().getResource("buildtest2.xml");
-        assertNotNull(tempURL);
-        tempFile = new File(tempURL.getPath());
-		assertTrue(tempFile.exists());
-        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath());
+        project = new Project();
+        project.init();
+        url = getClass().getResource("buildtest2.xml");
+        assertNotNull(url);
+        file = new File(url.getPath());
+		assertTrue(file.exists());
+        project.setUserProperty("ant.file", file.getAbsolutePath());
         try {
-            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(tempProject, tempFile);  // File will be parsed here
+            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file);  // File will be parsed here
         }
         catch(BuildException e) {
             // ignore a build exception on purpose 
         }    
-        tempTable = tempProject.getProperties();
-        assertEquals("valD", tempTable.get("propD"));
-        assertEquals("val1", tempTable.get("prop1"));
-        assertEquals("val2", tempTable.get("prop2"));
+        table = project.getProperties();
+        assertEquals("valD", table.get("propD"));
+        assertEquals("val1", table.get("prop1"));
+        assertEquals("val2", table.get("prop2"));
 
         // test with not valid whole document string
-        tempProject = new Project();
-        tempProject.init();
-        tempURL = getClass().getResource("buildtest2.xml");
-        assertNotNull(tempURL);
-        String tempPath = tempURL.getPath();
-        tempPath = tempPath.substring(0, tempPath.lastIndexOf('/')+1) + "someNonExisting.xml";
-        tempFile = new File(tempPath);
-        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath());
-        StringBuffer tempStrBuf = new StringBuffer();
-        tempStrBuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        tempStrBuf.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
-        tempStrBuf.append("<property name=\"propA\" value=\"valA\" />\n");
-		tempStrBuf.append("<property file=\"buildtest1.properties\" />\n");
-        tempStrBuf.append("<target name=\"main\" depends=\"properties\">\n");
+        project = new Project();
+        project.init();
+        url = getClass().getResource("buildtest2.xml");
+        assertNotNull(url);
+        String path = url.getPath();
+        path = path.substring(0, path.lastIndexOf('/')+1) + "someNonExisting.xml";
+        file = new File(path);
+        project.setUserProperty("ant.file", file.getAbsolutePath());
+        StringBuffer buff = new StringBuffer();
+        buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
+        buff.append("<property name=\"propA\" value=\"valA\" />\n");
+		buff.append("<property file=\"buildtest1.properties\" />\n");
+        buff.append("<target name=\"main\" depends=\"properties\">\n");
         try {
-            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(tempProject, tempFile, tempStrBuf.toString());  // File will be parsed here
+            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file, buff.toString());  // File will be parsed here
         }
         catch (BuildException e) {
             //ignore a build exception on purpose
 			//as the document does not start and end within the same entity
         }    
-        tempTable = tempProject.getProperties();
-        assertEquals("valA", tempTable.get("propA"));
-        assertEquals("val2", tempTable.get("prop2"));
+        table = project.getProperties();
+        assertEquals("valA", table.get("propA"));
+        assertEquals("val2", table.get("prop2"));
     }
 
 
@@ -237,26 +236,26 @@ public class CodeCompletionTest extends TestCase {
 	 * a dependent targets.
 	 */
     public void testPropertyProposalDefinedInDependendTargets() throws FileNotFoundException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        URL tempURL = getClass().getResource("dependencytest.xml");
-        assertNotNull(tempURL);
-        File tempFile = new File(tempURL.getPath());
-        assertTrue(tempFile.exists());
-        tempProcessor.setEditedFile(tempFile);
-		String tempDocumentText = getFileContentAsString(tempFile);
+        URL url = getClass().getResource("dependencytest.xml");
+        assertNotNull(url);
+        File file = new File(url.getPath());
+        assertTrue(file.exists());
+        processor.setEditedFile(file);
+		String documentText = getFileContentAsString(file);
 
-		tempProcessor.setLineNumber(35);
-		tempProcessor.setColumnNumber(41);
-		int tempCursorPosition = tempDocumentText.lastIndexOf("${");
-		assertTrue(tempCursorPosition != -1);
-        ICompletionProposal[] tempProposals = tempProcessor.getPropertyProposals(tempDocumentText, "", tempCursorPosition+2);
-		assertContains("init_prop", tempProposals);
-		assertContains("main_prop", tempProposals);
-		assertContains("prop_prop", tempProposals);
-		assertContains("do_not_compile", tempProposals);
-		assertContains("adit_prop", tempProposals);
-		assertContains("compile_prop", tempProposals);
+		processor.setLineNumber(35);
+		processor.setColumnNumber(41);
+		int cursorPosition = documentText.lastIndexOf("${");
+		assertTrue(cursorPosition != -1);
+        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPosition+2);
+		assertContains("init_prop", proposals);
+		assertContains("main_prop", proposals);
+		assertContains("prop_prop", proposals);
+		assertContains("do_not_compile", proposals);
+		assertContains("adit_prop", proposals);
+		assertContains("compile_prop", proposals);
     }
 
     
@@ -264,74 +263,74 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for tasks having parent tasks.
      */
     public void testTaskProposals() throws IOException, ParserConfigurationException {
-		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        DocumentBuilder tempDocBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document tempDocument = tempDocBuilder.newDocument();
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
 
-        ICompletionProposal[] tempProposals = tempProcessor.getTaskProposals("         <", tempDocument.createElement("rename"), "");
-        assertEquals(0, tempProposals.length);
+        ICompletionProposal[] proposals = processor.getTaskProposals("         <", doc.createElement("rename"), "");
+        assertEquals(0, proposals.length);
 
-        tempProposals = tempProcessor.getTaskProposals("       <cl", createTestPropertyElement(tempDocument), "cl");
-        assertEquals(1, tempProposals.length);
-        ICompletionProposal tempProposal = tempProposals[0];
-        assertEquals("classpath", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("       <cl", createTestPropertyElement(doc), "cl");
+        assertEquals(1, proposals.length);
+        ICompletionProposal proposal = proposals[0];
+        assertEquals("classpath", proposal.getDisplayString());
         
         //case insensitivity
-		tempProposals = tempProcessor.getTaskProposals("       <CL", createTestPropertyElement(tempDocument), "cl");
-	   	assertEquals(1, tempProposals.length);
-	   	tempProposal = tempProposals[0];
-	   	assertEquals("classpath", tempProposal.getDisplayString());
+		proposals = processor.getTaskProposals("       <CL", createTestPropertyElement(doc), "cl");
+	   	assertEquals(1, proposals.length);
+	   	proposal = proposals[0];
+	   	assertEquals("classpath", proposal.getDisplayString());
 
-        tempProposals = tempProcessor.getTaskProposals("       <cl", tempDocument.createElement("property"), "cl");
-        assertEquals(1, tempProposals.length);
-        tempProposal = tempProposals[0];
-        assertEquals("classpath", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("       <cl", doc.createElement("property"), "cl");
+        assertEquals(1, proposals.length);
+        proposal = proposals[0];
+        assertEquals("classpath", proposal.getDisplayString());
 
-        tempProposals = tempProcessor.getTaskProposals("       <pr", tempDocument.createElement("property"), "");
-        assertEquals(1, tempProposals.length);
-        tempProposal = tempProposals[0];
-        assertEquals("classpath", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("       <pr", doc.createElement("property"), "");
+        assertEquals(1, proposals.length);
+        proposal = proposals[0];
+        assertEquals("classpath", proposal.getDisplayString());
 
-        tempProposals = tempProcessor.getTaskProposals("       <pr", createTestProjectElement(tempDocument), "pr");
-        assertEquals(1, tempProposals.length); // is choice and already used with classpath
-        tempProposal = tempProposals[0];
-        assertEquals("property", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("       <pr", createTestProjectElement(doc), "pr");
+        assertEquals(1, proposals.length); // is choice and already used with classpath
+        proposal = proposals[0];
+        assertEquals("property", proposal.getDisplayString());
         
-        tempProposals = tempProcessor.getTaskProposals("       <fi", createTestProjectElement(tempDocument), "fi");
-        assertEquals(5, tempProposals.length); // is choice and already used with classpath
+        proposals = processor.getTaskProposals("       <fi", createTestProjectElement(doc), "fi");
+        assertEquals(5, proposals.length); // is choice and already used with classpath
         
-        tempProposals = tempProcessor.getTaskProposals("          ", tempDocument.createElement("project"), "");
-        assertEquals(22, tempProposals.length);
+        proposals = processor.getTaskProposals("          ", doc.createElement("project"), "");
+        assertEquals(22, proposals.length);
 
-        tempProposals = tempProcessor.getTaskProposals("          ", null, "");
-        assertEquals(1, tempProposals.length);
-        tempProposal = tempProposals[0];
-        assertEquals("project", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("          ", null, "");
+        assertEquals(1, proposals.length);
+        proposal = proposals[0];
+        assertEquals("project", proposal.getDisplayString());
 
-        tempProposals = tempProcessor.getTaskProposals("            jl", null, "jl");
-        assertEquals(0, tempProposals.length);
+        proposals = processor.getTaskProposals("            jl", null, "jl");
+        assertEquals(0, proposals.length);
 
-        tempProposals = tempProcessor.getTaskProposals("             ", tempDocument.createElement("projexxx"), "");
-        assertEquals(0, tempProposals.length);
+        proposals = processor.getTaskProposals("             ", doc.createElement("projexxx"), "");
+        assertEquals(0, proposals.length);
 
-        tempProposals = tempProcessor.getTaskProposals("              ", tempDocument.createElement("filelist"), "");
-        assertEquals(0, tempProposals.length);
+        proposals = processor.getTaskProposals("              ", doc.createElement("filelist"), "");
+        assertEquals(0, proposals.length);
 
         // "<project><target><mk"
-        String tempString = "<project><target><mk";
-        tempProposals = tempProcessor.getTaskProposals("             <mk", tempProcessor.findParentElement(tempString, 0, 20), "mk");
-        assertEquals(1, tempProposals.length);
-        tempProposal = tempProposals[0];
-        assertEquals("mkdir", tempProposal.getDisplayString());
+        String string = "<project><target><mk";
+        proposals = processor.getTaskProposals("             <mk", processor.findParentElement(string, 0, 20), "mk");
+        assertEquals(1, proposals.length);
+        proposal = proposals[0];
+        assertEquals("mkdir", proposal.getDisplayString());
         
-        tempProposals = tempProcessor.getTaskProposals("", null, "");
-        assertEquals(1, tempProposals.length);
-        tempProposal = tempProposals[0];
-        assertEquals("project", tempProposal.getDisplayString());
+        proposals = processor.getTaskProposals("", null, "");
+        assertEquals(1, proposals.length);
+        proposal = proposals[0];
+        assertEquals("project", proposal.getDisplayString());
 
-        tempProposals = tempProcessor.getTaskProposals("    \n<project></project>", null, "");
-        assertEquals(1, tempProposals.length);
+        proposals = processor.getTaskProposals("    \n<project></project>", null, "");
+        assertEquals(1, proposals.length);
 
     }
 
@@ -341,62 +340,53 @@ public class CodeCompletionTest extends TestCase {
     public void testFindChildElement() throws ParserConfigurationException {
         
         // Create the test data
-        DocumentBuilder tempDocBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document tempDocument = tempDocBuilder.newDocument();
-        Element tempParentElement = tempDocument.createElement("parent");
-        Attr tempAttribute = tempDocument.createAttribute("att1");
-        tempParentElement.setAttributeNode(tempAttribute);
-        Comment tempComment = tempDocument.createComment("lakjjflsakdfj");
-        tempParentElement.appendChild(tempComment);
-        Element tempChildElement = tempDocument.createElement("child");
-        tempParentElement.appendChild(tempChildElement);
-        tempChildElement = tempDocument.createElement("secondchild");
-        tempParentElement.appendChild(tempChildElement);
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
+        Element parentElement = doc.createElement("parent");
+        Attr attribute = doc.createAttribute("att1");
+        parentElement.setAttributeNode(attribute);
+        Comment comment = doc.createComment("lakjjflsakdfj");
+        parentElement.appendChild(comment);
+        Element childElement = doc.createElement("child");
+        parentElement.appendChild(childElement);
+        childElement = doc.createElement("secondchild");
+        parentElement.appendChild(childElement);
         
         // Create the processor
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
         
         // Test it!
-        tempChildElement = tempProcessor.findChildElementNamedOf(tempParentElement, "jkl");
-        assertNull(tempChildElement);
-        tempChildElement = tempProcessor.findChildElementNamedOf(tempParentElement, "secondchild");
-        assertNotNull(tempChildElement);
-        assertEquals("secondchild", tempChildElement.getTagName());
+        childElement = processor.findChildElementNamedOf(parentElement, "jkl");
+        assertNull(childElement);
+        childElement = processor.findChildElementNamedOf(parentElement, "secondchild");
+        assertNotNull(childElement);
+        assertEquals("secondchild", childElement.getTagName());
     }
     
     
-    protected Element createTestProjectElement(Document aDocument) throws ParserConfigurationException {
-        Element tempParentElement = aDocument.createElement("project");
-        Element tempChildElement = aDocument.createElement("property");
-        tempParentElement.appendChild(tempChildElement);
-        Element tempClasspathElement = aDocument.createElement("classpath");
-        tempChildElement.appendChild(tempClasspathElement);
+    private Element createTestProjectElement(Document aDocument) throws ParserConfigurationException {
+        Element parentElement = aDocument.createElement("project");
+        Element childElement = aDocument.createElement("property");
+        parentElement.appendChild(childElement);
+        Element classpathElement = aDocument.createElement("classpath");
+        childElement.appendChild(classpathElement);
         
-        return tempParentElement;
+        return parentElement;
     }
 
-    protected Element createTestPropertyElement(Document aDocument) {
-        Element tempChildElement = aDocument.createElement("property");
-        Element tempClasspathElement = aDocument.createElement("classpath");
-        tempChildElement.appendChild(tempClasspathElement);
+    private Element createTestPropertyElement(Document aDocument) {
+        Element childElement = aDocument.createElement("property");
+        Element classpathElement = aDocument.createElement("classpath");
+        childElement.appendChild(classpathElement);
 
-        return tempChildElement;
+        return childElement;
     }
-    
-    protected Element createTestTargetElement(Document aDocument) {
-        Element tempChildElement = aDocument.createElement("property");
-        Element tempClasspathElement = aDocument.createElement("classpath");
-        tempChildElement.appendChild(tempClasspathElement);
-
-        return tempChildElement;
-    }
-    
     
     /**
      * Tests how the processor determines the proposal mode.
      */
     public void testDeterminingProposalMode() throws IOException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         // Modes:
         // 0 None
@@ -406,47 +396,47 @@ public class CodeCompletionTest extends TestCase {
         // 4 Attribute Value Proposal
         // 5 Property Proposal
         
-        int tempMode = tempProcessor.determineProposalMode("<project><property ta", 21, "ta");
-        assertEquals(2, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><property ", 19, "");
-        assertEquals(2, tempMode);
+        int mode = processor.determineProposalMode("<project><property ta", 21, "ta");
+        assertEquals(2, mode);
+        mode = processor.determineProposalMode("<project><property ", 19, "");
+        assertEquals(2, mode);
         // (T) has to be implemented still
-        tempMode = tempProcessor.determineProposalMode("<project><property   ", 21, "");
-        assertEquals(2, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><prop", 14, "prop");
-        assertEquals(1, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><prop bla", 18, "bla");
-        assertEquals(0, tempMode); // task not known
-        tempMode = tempProcessor.determineProposalMode("<project> hjk", 13, "");
-        assertEquals(0, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project> hjk<", 14, "");
-        assertEquals(1, tempMode); // allow this case though it is not valid with Ant
-        tempMode = tempProcessor.determineProposalMode("<project>", 9, "");
-        assertEquals(1, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project> ", 10, "");
-        assertEquals(1, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project></", 11, "");
-        assertEquals(3, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project>< </project>", 10, "");
-        assertEquals(1, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<property id=\"hu\" ", 18, "");
-        assertEquals(2, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<property id=\"hu\" \r\n ", 21, "");
-        assertEquals(2, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<property\n", 10, "");
-        assertEquals(2, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<property id=\"\" \r\n ", 14, "");
-        assertEquals(4, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
-        assertEquals(3, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><target name=\"$\"", 24, "");
-        assertEquals(5, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><target name=\"${\"", 25, "");
-        assertEquals(5, tempMode);
-        tempMode = tempProcessor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
-        assertEquals(5, tempMode);
-        tempMode = tempProcessor.determineProposalMode("", 0, "");
-        assertEquals(1, tempMode);
+        mode = processor.determineProposalMode("<project><property   ", 21, "");
+        assertEquals(2, mode);
+        mode = processor.determineProposalMode("<project><prop", 14, "prop");
+        assertEquals(1, mode);
+        mode = processor.determineProposalMode("<project><prop bla", 18, "bla");
+        assertEquals(0, mode); // task not known
+        mode = processor.determineProposalMode("<project> hjk", 13, "");
+        assertEquals(0, mode);
+        mode = processor.determineProposalMode("<project> hjk<", 14, "");
+        assertEquals(1, mode); // allow this case though it is not valid with Ant
+        mode = processor.determineProposalMode("<project>", 9, "");
+        assertEquals(1, mode);
+        mode = processor.determineProposalMode("<project> ", 10, "");
+        assertEquals(1, mode);
+        mode = processor.determineProposalMode("<project></", 11, "");
+        assertEquals(3, mode);
+        mode = processor.determineProposalMode("<project>< </project>", 10, "");
+        assertEquals(1, mode);
+        mode = processor.determineProposalMode("<property id=\"hu\" ", 18, "");
+        assertEquals(2, mode);
+        mode = processor.determineProposalMode("<property id=\"hu\" \r\n ", 21, "");
+        assertEquals(2, mode);
+        mode = processor.determineProposalMode("<property\n", 10, "");
+        assertEquals(2, mode);
+        mode = processor.determineProposalMode("<property id=\"\" \r\n ", 14, "");
+        assertEquals(4, mode);
+        mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
+        assertEquals(3, mode);
+        mode = processor.determineProposalMode("<project><target name=\"$\"", 24, "");
+        assertEquals(5, mode);
+        mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
+        assertEquals(5, mode);
+        mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
+        assertEquals(5, mode);
+        mode = processor.determineProposalMode("", 0, "");
+        assertEquals(1, mode);
     }
 
 
@@ -454,26 +444,26 @@ public class CodeCompletionTest extends TestCase {
      * Tests how the prefix will be determined.
      */
     public void testDeterminingPrefix() {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         // cursor after ${
-        String tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${}\"", 25);
-        assertEquals("", tempPrefix);
+        String prefix = processor.getPrefixFromDocument("<project><target name=\"${}\"", 25);
+        assertEquals("", prefix);
 
         // cursor after $
-        tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${\"", 24);
-        assertEquals("", tempPrefix);
+        prefix = processor.getPrefixFromDocument("<project><target name=\"${\"", 24);
+        assertEquals("", prefix);
 
         // cursor after ${ja.
-        tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${ja.\"", 28);
-        assertEquals("ja.", tempPrefix);
+        prefix = processor.getPrefixFromDocument("<project><target name=\"${ja.\"", 28);
+        assertEquals("ja.", prefix);
         
         // cursor after <
-		tempPrefix = tempProcessor.getPrefixFromDocument("<project><", 10);
-		assertEquals("", tempPrefix);
+		prefix = processor.getPrefixFromDocument("<project><", 10);
+		assertEquals("", prefix);
 		
-		tempPrefix = tempProcessor.getPrefixFromDocument("<project name= \"test\"><tar", 26);
-		assertEquals("tar", tempPrefix);
+		prefix = processor.getPrefixFromDocument("<project name= \"test\"><tar", 26);
+		assertEquals("tar", prefix);
     }    
 
 
@@ -481,61 +471,52 @@ public class CodeCompletionTest extends TestCase {
      * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
      */
     public void testXMLParsingWithAntEditorDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
-        SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
+        SAXParser parser = getSAXParser();
 
 		URL url= getClass().getResource("test1.xml");
 		File file= new File(url.getFile());
-        AntEditorSaxDefaultHandler tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
-        InputStream tempStream = getClass().getResourceAsStream("test1.xml");
-        try {
-            tempParser.parse(tempStream, tempHandler);
-        } catch(SAXParseException e) {
-        }
-        Element tempElement = tempHandler.getParentElement(true);
-        assertNotNull(tempElement);
-        assertEquals("klick", tempElement.getTagName());
-        NodeList tempChildNodes = tempElement.getChildNodes();
-        assertEquals(1, tempChildNodes.getLength());
-        assertEquals("gurgel", ((Element)tempChildNodes.item(0)).getTagName());
+        AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
+        InputStream stream = getClass().getResourceAsStream("test1.xml");
+		parse(stream, parser, handler, file);
+        Element element = handler.getParentElement(true);
+        assertNotNull(element);
+        assertEquals("klick", element.getTagName());
+        NodeList childNodes = element.getChildNodes();
+        assertEquals(1, childNodes.getLength());
+        assertEquals("gurgel", ((Element)childNodes.item(0)).getTagName());
 
 		url= getClass().getResource("test2.xml");
 		file= new File(url.getFile());
-        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
-        tempStream = getClass().getResourceAsStream("test2.xml");
-        tempParser.parse(tempStream, tempHandler);
-        tempElement = tempHandler.getParentElement(false);
-        assertNotNull(tempElement);
-        assertEquals("klick", tempElement.getTagName());
-        tempChildNodes = tempElement.getChildNodes();
-        assertEquals(4, tempChildNodes.getLength());
-        assertEquals("gurgel", ((Element)tempChildNodes.item(0)).getTagName());
-        assertEquals("hal", ((Element)tempChildNodes.item(1)).getTagName());
-        assertEquals("klack", ((Element)tempChildNodes.item(2)).getTagName());
-        assertEquals("humpf", ((Element)tempChildNodes.item(3)).getTagName());
+        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
+        stream = getClass().getResourceAsStream("test2.xml");
+		parse(stream, parser, handler, file);
+        element = handler.getParentElement(false);
+        assertNotNull(element);
+        assertEquals("klick", element.getTagName());
+        childNodes = element.getChildNodes();
+        assertEquals(4, childNodes.getLength());
+        assertEquals("gurgel", ((Element)childNodes.item(0)).getTagName());
+        assertEquals("hal", ((Element)childNodes.item(1)).getTagName());
+        assertEquals("klack", ((Element)childNodes.item(2)).getTagName());
+        assertEquals("humpf", ((Element)childNodes.item(3)).getTagName());
 
 		url= getClass().getResource("test3.xml");
 		file= new File(url.getFile());
-        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 3, 1);
-        tempStream = getClass().getResourceAsStream("test3.xml");
-        try {
-            tempParser.parse(tempStream, tempHandler);
-        } catch(SAXParseException e) {
-        }
-        tempElement = tempHandler.getParentElement(true);
-        assertNotNull(tempElement);
-        assertEquals("bla", tempElement.getTagName());
+        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 3, 1);
+        stream = getClass().getResourceAsStream("test3.xml");
+		parse(stream, parser, handler, file);
+        element = handler.getParentElement(true);
+        assertNotNull(element);
+        assertEquals("bla", element.getTagName());
 
 		url= getClass().getResource("test4.xml");
 		file= new File(url.getFile());
-        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 0, 46);
-        tempStream = getClass().getResourceAsStream("test4.xml");
-        try {
-            tempParser.parse(tempStream, tempHandler);
-        } catch(SAXParseException e) {
-        }
-        tempElement = tempHandler.getParentElement(true);
-        assertNotNull(tempElement);
-        assertEquals("target", tempElement.getTagName());
+        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 0, 46);
+        stream = getClass().getResourceAsStream("test4.xml");
+		parse(stream, parser, handler, file);
+        element = handler.getParentElement(true);
+        assertNotNull(element);
+        assertEquals("target", element.getTagName());
     }
     
     
@@ -543,29 +524,52 @@ public class CodeCompletionTest extends TestCase {
 	 * Returns the content of the specified file as <code>String</code>.
 	 */
 	private String getFileContentAsString(File aFile) throws FileNotFoundException {
-        InputStream tempStream = new FileInputStream(aFile);
-        InputStreamReader tempReader = new InputStreamReader(tempStream);
-        BufferedReader tempBufferedReader = new BufferedReader(tempReader);
+        InputStream stream = new FileInputStream(aFile);
+        InputStreamReader reader = new InputStreamReader(stream);
+        BufferedReader bufferedReader = new BufferedReader(reader);
 
-        String tempResult = "";
+        String result = "";
         try {
-            String tempLine;
-            tempLine = tempBufferedReader.readLine();
+            String line= bufferedReader.readLine();
         
-            while(tempLine != null) {
-                tempResult += "\n";
-                tempResult += tempLine;
-                tempLine = tempBufferedReader.readLine();
+            while(line != null) {
+                result += "\n";
+                result += line;
+                line = bufferedReader.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-		return tempResult;
+		return result;
 	}
 
 
     public static Test suite() {
         return new TestSuite(CodeCompletionTest.class);
     }
+    
+	private SAXParser getSAXParser() throws SAXException {
+		SAXParser parser = parser = new SAXParser();
+		parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
+		return parser;
+	}
+
+	private void parse(InputStream stream, SAXParser parser, AntEditorSaxDefaultHandler handler, File editedFile) {
+		InputSource inputSource= new InputSource(stream);
+		if (editedFile != null) {
+			//needed for resolving relative external entities
+			inputSource.setSystemId(editedFile.getAbsolutePath());
+		}
+
+		parser.setContentHandler(handler);
+		parser.setDTDHandler(handler);
+		parser.setEntityResolver(handler);
+		parser.setErrorHandler(handler);
+		try {
+			parser.parse(inputSource);
+		} catch (SAXException e) {
+		} catch (IOException e) {
+		}
+	}
 }
