@@ -113,7 +113,7 @@ public class WizardProjectsImportPage extends WizardPage {
 	}
 
 	private Text locationPathField;
-
+	
 	private CheckboxTreeViewer projectsList;
 
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
@@ -121,6 +121,12 @@ public class WizardProjectsImportPage extends WizardPage {
 	// Keep track of the directory that we browsed to last time
 	// the wizard was invoked.
 	private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
+	
+	/**
+	 * The last path on which we performed a search.  Avoids searching
+	 * the same path twice.
+	 */
+	private String previouslySearchedDirectory;
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -389,7 +395,13 @@ public class WizardProjectsImportPage extends WizardPage {
 	 * @param path
 	 */
 	protected void updateProjectsList(final String path) {
-
+		//don't search on empty path
+		if (path == null || path.length() == 0)
+			return;
+		//don't repeat the same search - the user might just be tabbing to traverse
+		if (previouslySearchedDirectory != null && previouslySearchedDirectory.equals(path))
+			return;
+		previouslySearchedDirectory = path;
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 
@@ -504,6 +516,7 @@ public class WizardProjectsImportPage extends WizardPage {
 		if (selectedDirectory != null) {
 			previouslyBrowsedDirectory = selectedDirectory;
 			locationPathField.setText(previouslyBrowsedDirectory);
+			updateProjectsList(selectedDirectory);
 		}
 
 	}
