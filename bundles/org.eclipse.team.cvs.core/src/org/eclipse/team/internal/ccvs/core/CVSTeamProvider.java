@@ -178,14 +178,15 @@ public class CVSTeamProvider extends RepositoryProvider {
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
-	public void deconfigure() throws CoreException {
+	public void deconfigure() {
 		// when a nature is removed from the project, notify the synchronizer that
 		// we no longer need the sync info cached. This does not affect the actual CVS
 		// meta directories on disk, and will remain unless a client calls unmanage().
 		try {
 			EclipseSynchronizer.getInstance().deconfigure(getProject(), null);
 		} catch(CVSException e) {
-			throw new CoreException(e.getStatus());
+			// Log the exception and let the disconnect continue
+			CVSProviderPlugin.log(e);
 		}
 	}
 	
