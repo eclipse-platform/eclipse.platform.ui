@@ -103,9 +103,24 @@ public class ImportOperationTest
 			fail(e.toString());
 		}
 	}
+	
+	public void testGetStatus() throws Exception {
+		project = FileUtil.createProject("ImportGetStatus");
+		File element = new File(localDirectory);
+		List importElements = new ArrayList();
+		importElements.add(element);
+		ImportOperation operation =
+			new ImportOperation(
+				project.getFullPath(),
+				FileSystemStructureProvider.INSTANCE,
+				this,
+				importElements);
+		
+		assertTrue(operation.getStatus().getCode() == IStatus.OK);		
+	}
 
-	public void testImportAll() throws Exception {
-		project = FileUtil.createProject("ImportAll");
+	public void testImportList() throws Exception {
+		project = FileUtil.createProject("ImportList");
 		File element = new File(localDirectory);
 		List importElements = new ArrayList();
 		importElements.add(element);
@@ -121,7 +136,7 @@ public class ImportOperationTest
 	}
 	
 	public void testImportSource() throws Exception {
-		project = FileUtil.createProject("ImportAll");
+		project = FileUtil.createProject("ImportSource");
 		File element = new File(localDirectory);
 		ImportOperation operation =
 			new ImportOperation(
@@ -134,7 +149,7 @@ public class ImportOperationTest
 	}
 
 	public void testImportSourceList() throws Exception {
-		project = FileUtil.createProject("ImportAll");
+		project = FileUtil.createProject("ImportSourceList");
 		File element = new File(localDirectory + File.separator + directoryNames[0]);
 		List importElements = new ArrayList();
 		importElements.add(element);
@@ -149,8 +164,57 @@ public class ImportOperationTest
 		verifyFiles(importElements.size());
 	}
 
+	public void testSetContext() throws Exception {
+		project = FileUtil.createProject("ImportSetContext");
+		File element = new File(localDirectory);
+		List importElements = new ArrayList();
+		importElements.add(element);
+		ImportOperation operation =
+			new ImportOperation(
+				project.getFullPath(),
+				FileSystemStructureProvider.INSTANCE,
+				this,
+				importElements);
+		
+		operation.setContext(null);
+		operation.setContext(openTestWindow().getShell());
+	}
+
+	public void testSetCreateContainerStructure() throws Exception {
+		project = FileUtil.createProject("ImportSetCreateContainerStructure");
+		File element = new File(localDirectory);
+		List importElements = new ArrayList();
+		importElements.add(element);
+		ImportOperation operation =
+			new ImportOperation(
+				project.getFullPath(),
+				FileSystemStructureProvider.INSTANCE,
+				this,
+				importElements);
+		
+		operation.setCreateContainerStructure(false);
+		openTestWindow().run(true,true,operation);
+
+		try {
+			IPath path = new Path(localDirectory);
+			IResource targetFolder = project.findMember(path.lastSegment());
+			
+			assertTrue("Import failed", targetFolder instanceof IContainer);
+			
+			IResource[] resources = ((IContainer) targetFolder).members();			
+			assertEquals("Import failed to import all directories", directoryNames.length, resources.length); 
+			for (int i = 0; i < resources.length; i++) {
+				assertTrue("Import failed", resources[i] instanceof IContainer);
+				verifyFolder((IContainer) resources[i]);
+			}
+		}
+		catch (CoreException e) {
+			fail(e.toString());
+		}
+	}
+
 	public void testSetFilesToImport() throws Exception {
-		project = FileUtil.createProject("SetFilesToImport");
+		project = FileUtil.createProject("ImportSetFilesToImport");
 		File element = new File(localDirectory + File.separator + directoryNames[0]);
 		ImportOperation operation =
 			new ImportOperation(
@@ -165,17 +229,39 @@ public class ImportOperationTest
 		verifyFiles(importElements.size());
 	}
 
+	public void testSetOverwriteResources() throws Exception {
+		project = FileUtil.createProject("ImportSetOverwriteResources");
+		File element = new File(localDirectory);
+		List importElements = new ArrayList();
+		importElements.add(element);
+		ImportOperation operation =
+			new ImportOperation(
+				project.getFullPath(),
+				FileSystemStructureProvider.INSTANCE,
+				this,
+				importElements);
+		
+		openTestWindow().run(true,true,operation);
+		operation.setOverwriteResources(true);
+		openTestWindow().run(true,true,operation);
+	}
+
+	/**
+	 * Verifies that all files were imported.
+	 * 
+	 * @param folderCount number of folders that were imported
+	 */
 	private void verifyFiles(int folderCount) {
 		try {
 			IPath path = new Path(localDirectory);
 			IResource targetFolder = project.findMember(path.makeRelative());
 			
-			assertTrue("Import All failed", targetFolder instanceof IContainer);
+			assertTrue("Import failed", targetFolder instanceof IContainer);
 			
 			IResource[] resources = ((IContainer) targetFolder).members();			
-			assertEquals("Import All failed to import all directories", folderCount, resources.length); 
+			assertEquals("Import failed to import all directories", folderCount, resources.length); 
 			for (int i = 0; i < resources.length; i++) {
-				assertTrue("Import All failed", resources[i] instanceof IContainer);
+				assertTrue("Import failed", resources[i] instanceof IContainer);
 				verifyFolder((IContainer) resources[i]);
 			}
 		}
@@ -183,18 +269,20 @@ public class ImportOperationTest
 			fail(e.toString());
 		}
 	}
-
+	/**
+	 * Verifies that all files were imported into the specified folder.
+	 */
 	private void verifyFolder(IContainer folder) {
 		try {
 			IResource[] files = folder.members();
-			assertEquals("Import All failed to import all files", fileNames.length, files.length);
+			assertEquals("Import failed to import all files", fileNames.length, files.length);
 			for (int j = 0; j < fileNames.length; j++) {
 				String fileName = fileNames[j];
 				int k;
 				for (k = 0; k < files.length; k++) {
 					if (fileName.equals(files[k].getName())) break;
 				}
-				assertTrue("Import All failed to import file " + fileName, k < fileNames.length);
+				assertTrue("Import failed to import file " + fileName, k < fileNames.length);
 			}
 		}
 		catch (CoreException e) {
