@@ -2676,7 +2676,7 @@ public class TextViewer extends Viewer implements
 					fTextWidget.copy();
 				break;
 			case PASTE:
-				fIgnoreAutoIndent= true;
+//				fIgnoreAutoIndent= true;
 				fTextWidget.paste();
 				break;
 			case DELETE:
