@@ -121,16 +121,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @return the singleton plugin instance
 	 */
 	public static TeamUIPlugin getPlugin() {
-		// If the instance has not been initialized, we will wait.
-		// This can occur if multiple threads try to load the plugin at the same
-		// time (see bug 33825: http://bugs.eclipse.org/bugs/show_bug.cgi?id=33825)
-		while (instance == null) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// ignore and keep trying
-			}
-		}
 		return instance;
 	}
 	/**
