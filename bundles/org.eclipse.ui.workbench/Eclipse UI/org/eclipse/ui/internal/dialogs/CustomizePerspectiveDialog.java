@@ -1167,10 +1167,12 @@ private void initializeShortcutMenuInput() {
 		ICategory category = categories[i];
 		ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
 		ArrayList views = category.getElements();
-		for (int j=0; j<views.size(); j++) {
-			IViewDescriptor view = (IViewDescriptor)views.get(j);
-			viewCategory.addItem(view);
-			if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+		if (views != null) {
+			for (int j=0; j<views.size(); j++) {
+				IViewDescriptor view = (IViewDescriptor)views.get(j);
+				viewCategory.addItem(view);
+				if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+			}
 		}
 	}
 }
