@@ -102,4 +102,12 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		super.setParent(node);
 		getProjectNode().addDefiningTaskNode(this);
 	}
+	
+	public boolean collapseProjection() {
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
+		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING)) {
+			return true;
+		}
+		return false;
+	}
 }

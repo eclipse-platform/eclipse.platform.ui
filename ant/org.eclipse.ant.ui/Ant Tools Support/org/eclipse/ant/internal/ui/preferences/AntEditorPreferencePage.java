@@ -319,6 +319,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS));
 	
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_DTD));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS));
 		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
@@ -532,6 +536,14 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		composite.setLayout(layout);
 		
 		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.20"), AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, 0);  //$NON-NLS-1$
+		
+		Label label= new Label(composite, SWT.LEFT);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.21")); //$NON-NLS-1$
+		
+		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.22"), AntEditorPreferenceConstants.EDITOR_FOLDING_DTD, 0); //$NON-NLS-1$
+		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.23"), AntEditorPreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); //$NON-NLS-1$
+		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.24"), AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING, 0); //$NON-NLS-1$
+		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.25"), AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS, 0); //$NON-NLS-1$
 		return composite;
 	}
 

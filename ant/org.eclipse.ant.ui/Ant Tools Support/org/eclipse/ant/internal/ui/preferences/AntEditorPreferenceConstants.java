@@ -105,7 +105,7 @@ public class AntEditorPreferenceConstants {
 	 * when formatting. If <code>true</code> the formatter inserts a tab character for indenting.
 	 * </p>
 	 */
-	public static String FORMATTER_TAB_CHAR= "formatter_tab_char"; //$NON-NLS-1$
+	public static final String FORMATTER_TAB_CHAR= "formatter_tab_char"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that specifies if the Ant formatter aligns the final
@@ -197,6 +197,47 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_FOLDING_ENABLED= "editor_folding_enabled"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the value for comment folding.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_FOLDING_COMMENTS= "editor_folding_comments"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the value for target folding.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_FOLDING_TARGETS= "editor_folding_targets"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the value for DTD folding.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_FOLDING_DTD= "editor_folding_dtd"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the value for defining elements folding.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_FOLDING_DEFINING= "editor_folding_defining"; //$NON-NLS-1$
+
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);

@@ -17,7 +17,10 @@ import java.util.Map;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntTargetNode extends AntElementNode {
@@ -107,5 +110,13 @@ public class AntTargetNode extends AntElementNode {
 			 }
 		}
 		return null;
+	}
+	
+	public boolean collapseProjection() {
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
+		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS)) {
+			return true;
+		}
+		return false;
 	}
 }

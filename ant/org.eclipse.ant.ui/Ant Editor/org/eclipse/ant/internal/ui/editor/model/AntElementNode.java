@@ -586,4 +586,8 @@ public class AntElementNode implements IAdaptable {
 	public boolean isStructuralNode() {
 		return true;
 	}
+	
+	public boolean collapseProjection() {
+		return false;
+	}
 }

@@ -11,6 +11,10 @@
 
 package org.eclipse.ant.internal.ui.editor.model;
 
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 public class AntDTDNode extends AntElementNode {
 	public AntDTDNode(String name) {
 		super(name);
@@ -20,6 +24,14 @@ public class AntDTDNode extends AntElementNode {
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#isStructuralNode()
 	 */
 	public boolean isStructuralNode() {
+		return false;
+	}
+	
+	public boolean collapseProjection() {
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
+		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_DTD)) {
+			return true;
+		}
 		return false;
 	}
 }

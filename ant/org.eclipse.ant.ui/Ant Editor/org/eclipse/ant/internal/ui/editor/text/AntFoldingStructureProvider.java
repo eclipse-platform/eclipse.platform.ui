@@ -36,6 +36,11 @@ public class AntFoldingStructureProvider {
 	private AntEditor fEditor;
 	private IDocument fDocument;
 	
+	/**
+	 * A mapping of the foldable position to the <code>AntElementNode<code> that represent that region
+	 */
+	private Map fPositionToElement= new HashMap();
+	
 	public AntFoldingStructureProvider(AntEditor editor) {
 		super();
 		fEditor = editor;
@@ -46,7 +51,9 @@ public class AntFoldingStructureProvider {
 
 		Map additionsMap = new HashMap();
 		for (Iterator iter = currentRegions.iterator(); iter.hasNext();) {
-			additionsMap.put(new ProjectionAnnotation(), iter.next());
+			Object position= iter.next();
+			AntElementNode node= (AntElementNode)fPositionToElement.get(position);
+			additionsMap.put(new ProjectionAnnotation(node.collapseProjection()), position);
 		}
 
 		if ((deletions.length != 0 || additionsMap.size() != 0)) {
@@ -71,6 +78,7 @@ public class AntFoldingStructureProvider {
 	}
 
 	public void updateFoldingRegions(AntModel antModel) {
+		fPositionToElement= new HashMap();
 		try {
 			ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
 			if (model == null) {
@@ -108,6 +116,7 @@ public class AntFoldingStructureProvider {
 				int end= fDocument.getLineOffset(endLine) + fDocument.getLineLength(endLine);
 				Position position= new Position(start, end - start);
 				regions.add(position);
+				fPositionToElement.put(position, element);
 			}
 			
 			children= element.getChildNodes();
