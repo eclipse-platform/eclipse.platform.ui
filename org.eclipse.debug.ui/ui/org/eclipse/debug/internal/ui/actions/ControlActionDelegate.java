@@ -124,7 +124,23 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Set the icons for this action on the first selection changed
 	 * event. This is necessary because the XML currently only
-	 * supports setting the enabled icon.  
+	 * supports setting the enabled icon. 
+	 * <p>
+	 * ControlActionDelegates come in 3 flavors: IViewActionDelegate, 
+	 * IWorkbenchWindowActionDelegate and "fake" action delegate.
+	 * </p>
+	 * <ul>
+	 * <li>IViewActionDelegate delegate: getView() != null && fHasOwner == false</li>
+	 * <li>IWorkbenchWindowActionDelegate: getView == null && fHasOwner == false</li>
+	 * <li>"fake": getView == null && fHasOwner == true</li>
+	 * </ul>
+	 * <p>
+	 * Only want to call update(action, selection) for IViewActionDelegates and "fake".
+	 * Adding the "fHasOwner" check distinguishes between the "fake" and 
+	 * IWorkbenchWindowActionDelegate (before there was no way to distinguish). 
+	 * IWorkbenchWindowActionDelegate's listen to selection changes
+	 * in the debug view only.
+	 * </p>
 	 * 
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
