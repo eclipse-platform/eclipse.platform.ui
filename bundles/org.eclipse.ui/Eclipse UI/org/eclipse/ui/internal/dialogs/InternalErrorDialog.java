@@ -47,6 +47,7 @@ public InternalErrorDialog(
 		dialogButtonLabels,
 		defaultIndex);
 	this.detail = detail;
+	setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
 }
 /**
  * Set the detail button;

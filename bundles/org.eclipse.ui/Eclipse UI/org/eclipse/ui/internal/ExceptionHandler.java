@@ -15,8 +15,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -30,7 +32,9 @@ import org.eclipse.swt.widgets.Shell;
 class ExceptionHandler implements Window.IExceptionHandler {
 	
 	private int exceptionCount = 0; //To avoid recursive errors
-	private List dialogs = new ArrayList(3);
+	private InternalErrorDialog dialog;
+	//Workaround. MessageDialog should accept null as parent;
+	private Shell defaultParent = new Shell();
 	private boolean closing = false;
 	private Workbench workbench;
 	
@@ -41,6 +45,9 @@ class ExceptionHandler implements Window.IExceptionHandler {
 	private static String MSG_VirtualMachineError = WorkbenchMessages.getString("FatalError_VirtualMachineError"); //$NON-NLS-1$
 	private static String MSG_SWTError = WorkbenchMessages.getString("FatalError_SWTError"); //$NON-NLS-1$
 	private static String MSG_FATAL_ERROR = WorkbenchMessages.getString("FatalError"); //$NON-NLS-1$
+	private static String MSG_FATAL_ERROR_Recursive = WorkbenchMessages.getString("FatalError_RecurciveError"); //$NON-NLS-1$
+	private static String MSG_FATAL_ERROR_RecursiveTitle = WorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
+
 
 /**
  * Initializes a new ExceptionHandler with its workbench.
@@ -64,6 +71,21 @@ public void handleException(Throwable t) {
 		if(t instanceof ThreadDeath) {
 			// Don't catch ThreadDeath as this is a normal occurrence when the thread dies
 			throw (ThreadDeath)t;
+		} if(exceptionCount == 2) {
+			if(closing)
+				return;
+			log(t);
+			Shell parent = defaultParent;
+			if(dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed())
+				parent = dialog.getShell();
+			MessageBox box = new MessageBox(parent,SWT.ICON_ERROR | SWT.YES | SWT.NO | SWT.SYSTEM_MODAL);
+			box.setText(MSG_FATAL_ERROR_RecursiveTitle);
+			box.setMessage(MSG_FATAL_ERROR_Recursive + MSG_FATAL_ERROR);
+			int result = box.open();
+			if(result == SWT.YES) {
+				if(!closing)
+					closeWorkbench();
+			}
 		} else {
 			log(t);
 			if(openQuestionDialog(t)) {
@@ -81,11 +103,8 @@ public void handleException(Throwable t) {
 private void closeWorkbench() {
 	try {
 		closing = true;
-		for (Iterator iterator = dialogs.iterator(); iterator.hasNext();) {
-			InternalErrorDialog dialog = (InternalErrorDialog)iterator.next();
-			if(dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed())
-				dialog.close();
-		}
+		if(dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed())
+			dialog.close();
 		workbench.close(IPlatformRunnable.EXIT_OK,true);
 	} catch (RuntimeException th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
@@ -175,7 +194,7 @@ private boolean openQuestion(Shell parent, String title, String message, Throwab
     else
 		labels = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,IDialogConstants.SHOW_DETAILS_LABEL};
 
-	InternalErrorDialog dialog = new InternalErrorDialog(
+	dialog = new InternalErrorDialog(
 		parent,
 		title, 
 		null,	// accept the default window icon
@@ -184,11 +203,11 @@ private boolean openQuestion(Shell parent, String title, String message, Throwab
 		InternalErrorDialog.QUESTION, 
 		labels, 
 		defaultIndex);
-	dialogs.add(dialog);
+		
 	if(detail != null)
 	    dialog.setDetailButton(2);
 	boolean result = dialog.open() == 0;
-	dialogs.remove(dialog);
+	dialog = null;
 	return result;
 }
 }
