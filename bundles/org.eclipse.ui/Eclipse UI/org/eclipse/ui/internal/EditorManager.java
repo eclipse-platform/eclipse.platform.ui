@@ -357,7 +357,7 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
 	
 	// Test the result.
 	if (ex[0] != null) {
-		throw new PartInitException(WorkbenchMessages.format("EditorManager.errorInitializingExternalEditor", new Object[] {desc.getFileName(),desc.getId(),ex[0]})); //$NON-NLS-1$
+		throw new PartInitException(ex[0].getMessage()); //$NON-NLS-1$
 	}
 }
 /*
