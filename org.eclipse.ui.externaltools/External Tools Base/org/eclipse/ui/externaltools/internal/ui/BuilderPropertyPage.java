@@ -107,6 +107,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * invalid launch configurations
 	 */
 	public class ErrorConfig {
+		private ICommand command;
+		public ErrorConfig(ICommand command) {
+			this.command= command;
+		}
+		public ICommand getCommand() {
+			return command;
+		}
 	}
 	
 	/**
@@ -211,7 +218,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				String builderID = commands[i].getBuilderName();
 				if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(LAUNCH_CONFIG_HANDLE) != null) {
 					// An invalid external tool entry.
-					element= new ErrorConfig();
+					element= new ErrorConfig(commands[i]);
 				} else {
 					element= commands[i];
 				}
@@ -969,8 +976,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					}
 				}
 				data= translateLaunchConfigurationToCommand(config, project);
+			} else if (data instanceof ErrorConfig) {
+				data= ((ErrorConfig) data).getCommand();
 			}
-			commands[i] = (ICommand) data;
+			if (data != null) {
+				commands[i] = (ICommand) data;
+			}
 		}
 		
 		if (checkCommandsForChange(commands)) {
