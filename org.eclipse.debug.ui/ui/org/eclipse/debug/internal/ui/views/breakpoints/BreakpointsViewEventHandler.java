@@ -70,7 +70,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                         viewer.getControl().setRedraw(false);
                         BreakpointsContentProvider provider = (BreakpointsContentProvider)viewer.getContentProvider();
                         provider.reorganize();
-                        fView.initializeCheckedState();
+                        
 						// This code is left in as a test case for platform bug 77075
 						//for (int i = 0; i < breakpoints.length; i++) { 
 							//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
@@ -85,8 +85,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                                 }
                             }
                         }
-                        viewer.getControl().setRedraw(true);
+                        fView.initializeCheckedState();
                         viewer.setSelection(new StructuredSelection(breakpoints));
+                        viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
 				}
