@@ -104,38 +104,49 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * This method should only be called on initial startup of 
 	 * the debug plugin.
 	 */
-	public void startup() {
+	public void startup() throws CoreException {
 		initBreakpointExtensions();
+		deleteNonPersistedBreakpoints(ResourcesPlugin.getWorkspace().getRoot());
 		getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/**
-	 * Loads all the breakpoints on the given resource. Any
-	 * breakpoints marked as not to be persisted are deleted.
+	 * Loads all the breakpoints on the given resource.
 	 * 
 	 * @param resource the resource which contains the breakpoints
 	 */
 	private void loadBreakpoints(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-		final List delete = new ArrayList();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
-				// ensure the marker has a valid model identifier attribute
-				// and delete the breakpoint if not
-				String modelId = marker.getAttribute(IBreakpoint.ID, null);
-				if (modelId == null) {
-					// marker with old/invalid format - delete
-					delete.add(marker);
-				} else if (marker.getAttribute(IBreakpoint.PERSISTED, true)) {
-					createBreakpoint(marker);
-				} else {
-					// the breakpoint is marked as not to be persisted,
-					// schedule for deletion
-					delete.add(marker);
-				}
+				createBreakpoint(marker);
 			} catch (DebugException e) {
 				logError(e);
+			}
+		}
+	}
+	
+	/**
+	 * Delete any non-persisted/invalid breakpoint markers. This is done
+	 * at startup rather than shutdown, since we are unable
+	 * to modify the resource tree at shutdown time
+	 */
+	protected void deleteNonPersistedBreakpoints(IResource resource) throws CoreException {
+		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+		final List delete = new ArrayList();
+		for (int i = 0; i < markers.length; i++) {
+			IMarker marker= markers[i];
+			// ensure the marker has a valid model identifier attribute
+			// and delete the breakpoint if not
+			String modelId = marker.getAttribute(IBreakpoint.ID, null);
+			if (modelId == null) {
+				// marker with old/invalid format - delete
+				delete.add(marker);
+			} else if (!marker.getAttribute(IBreakpoint.PERSISTED, true)) {
+				// the breakpoint is marked as not to be persisted,
+				// schedule for deletion
+				delete.add(marker);
 			}
 		}
 		// delete any markers that are not to be restored
@@ -146,7 +157,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 			};
 			fork(wr);
-		}	
+		}		
 	}
 	
 	/**
