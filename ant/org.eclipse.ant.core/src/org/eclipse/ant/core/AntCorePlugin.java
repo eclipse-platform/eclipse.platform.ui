@@ -145,10 +145,10 @@ public class AntCorePlugin extends Plugin {
 		plugin = this;
 	}
 
-	/**
-	 * @see Plugin#shutdown()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		if (preferences == null) {
 			return;
 		}

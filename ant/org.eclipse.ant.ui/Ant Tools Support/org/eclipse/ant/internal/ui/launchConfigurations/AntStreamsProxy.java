@@ -11,8 +11,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
-import java.io.IOException;
-
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -50,7 +48,7 @@ public class AntStreamsProxy implements IStreamsProxy {
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamsProxy#write(java.lang.String)
 	 */
-	public void write(String input) throws IOException {
+	public void write(String input) {
 	}
 
 	public IStreamMonitor getWarningStreamMonitor() {

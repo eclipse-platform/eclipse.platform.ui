@@ -372,8 +372,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
-    public void endElement(String aUri, String aLocalName, String aQualifiedName)
-        throws SAXException {
+    public void endElement(String aUri, String aLocalName, String aQualifiedName) {
 
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         
@@ -415,7 +414,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /*
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
-    public void warning(SAXParseException anException) throws SAXException {
+    public void warning(SAXParseException anException) {
 		if (errorHandler != null) {
 			XmlElement element= createProblemElement(anException);
 			errorHandler.warning(anException, element);
@@ -425,7 +424,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#error(SAXParseException)
      */
-    public void error(SAXParseException anException) throws SAXException {
+    public void error(SAXParseException anException) {
 		generateErrorElementHierarchy();
 		if (errorHandler != null) {
 			XmlElement errorElement= createProblemElement(anException);
@@ -439,7 +438,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * 
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
-    public void fatalError(SAXParseException anException) throws SAXException {
+    public void fatalError(SAXParseException anException) {
 		generateErrorElementHierarchy();
 		if (errorHandler != null) {
 			XmlElement errorElement= createProblemElement(anException);
@@ -473,7 +472,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	/**
 	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
 	 */
-	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+	public InputSource resolveEntity(String publicId, String systemId) {
 			int index= systemId.indexOf(':');
 			if (index > 0) {
 				//remove file:
@@ -498,7 +497,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 	 */
-	public void comment(char[] ch, int start, int length) throws SAXException {
+	public void comment(char[] ch, int start, int length) {
 		if (isInDTD || isExternal()) {
 			return;
 		}
@@ -513,20 +512,20 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
 	 */
-	public void endCDATA() throws SAXException {
+	public void endCDATA() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 	 */
-	public void endDTD() throws SAXException {
+	public void endDTD() {
 		isInDTD= false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
 	 */
-	public void endEntity(String name) throws SAXException {
+	public void endEntity(String name) {
 		if (isInDTD) {
 			return;
 		}
@@ -544,13 +543,13 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
 	 */
-	public void startCDATA() throws SAXException {
+	public void startCDATA() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+	public void startDTD(String name, String publicId, String systemId) {
 		isInDTD= true;
 	}
 

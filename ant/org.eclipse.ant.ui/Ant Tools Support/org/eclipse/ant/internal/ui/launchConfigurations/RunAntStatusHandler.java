@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -25,7 +24,7 @@ public class RunAntStatusHandler implements IStatusHandler {
 	/**
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(IStatus status, Object source) {
 		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog)source;
 		dialog.setActiveTab(2);
 		return null;

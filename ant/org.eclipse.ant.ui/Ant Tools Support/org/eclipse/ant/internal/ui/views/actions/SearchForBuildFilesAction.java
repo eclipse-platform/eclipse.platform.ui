@@ -54,7 +54,7 @@ public class SearchForBuildFilesAction extends Action {
 			final ProjectNode[] existingProjects= view.getProjects();
 			try {
 				progressDialog.run(true, true, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					public void run(IProgressMonitor monitor) {
 						monitor.beginTask(AntViewActionMessages.getString("SearchForBuildFilesAction.Processing_search_results_3"), files.length); //$NON-NLS-1$
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String buildFileName= files[i].getFullPath().toString();

@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -92,7 +91,7 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getExitValue()
 	 */
-	public int getExitValue() throws DebugException {
+	public int getExitValue() {
 		return 0;
 	}
 
@@ -129,7 +128,7 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
-	public void terminate() throws DebugException {
+	public void terminate() {
 		setCanceled(true);
 	}
 

@@ -389,7 +389,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		/**
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
-		public boolean visit(IResourceProxy proxy) throws CoreException {
+		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
 				if (matcher.match(proxy.getName())) {
 					results.add(proxy.requestResource());

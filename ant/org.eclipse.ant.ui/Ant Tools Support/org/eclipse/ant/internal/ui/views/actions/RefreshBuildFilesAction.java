@@ -70,7 +70,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(Display.getDefault().getActiveShell());
 		try {
 			progressDialog.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(AntViewActionMessages.getString("RefreshBuildFilesAction.Refreshing_buildfiles_3"), projects.size()); //$NON-NLS-1$
 					ProjectNode project;
 					while (iter.hasNext()) {
