@@ -58,7 +58,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * 
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
-public interface IWorkbench {
+public interface IWorkbench extends IServiceProvider {
     /**
      * Returns the display for this workbench.
      * <p>
@@ -168,25 +168,6 @@ public interface IWorkbench {
      * @since 2.0
      */
     public IPreferenceStore getPreferenceStore();
-    
-    /**
-	 * <p>
-	 * Returns the service of the given type. If the service does not currently
-	 * exist for the workbench, then this returns <code>null</code>.
-	 * </p>
-	 * <p>
-	 * <em>EXPERIMENTAL</em>. The commands architecture is currently under
-	 * development for Eclipse 3.1. This class -- its existence, its name and
-	 * its methods -- are in flux. Do not use this class yet.
-	 * </p>
-	 * 
-	 * @since 3.1
-	 * @param type
-	 *            The type of service to retrieve. The services provided by the
-	 *            workbench are defined in <code>IWorkbenchServices</code>.
-	 * @return The given service, if available; <code>null</code> otherwise.
-	 */
-	public IService getService(int type);
 
     /**
 	 * Returns the shared images for the workbench.
