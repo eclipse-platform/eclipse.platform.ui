@@ -45,11 +45,6 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements 
 	private BlockedJobsDialog dialog;
 	
 	/**
-	 * The name of the task that is being executed
-	 */
-	private String taskName;
-
-	/**
 	 * Last time the event loop was spun.
 	 */
 	private long lastTime = System.currentTimeMillis();
@@ -64,7 +59,6 @@ public EventLoopProgressMonitor(IProgressMonitor monitor) {
  * @see IProgressMonitor#beginTask
  */
 public void beginTask(String name, int totalWork) {
-	this.taskName = name;
 	super.beginTask(name, totalWork);
 	runEventLoop();
 }
@@ -134,7 +128,7 @@ private void runEventLoop() {
 public void setBlocked(IStatus reason) {
 	//The UI operation has been blocked.  Open a progress dialog
 	//to report the situation and give the user an opportunity to cancel.
-	dialog = new BlockedJobsDialog(null);
+	dialog = new BlockedJobsDialog(null,this);
 	dialog.setBlockOnOpen(false);
 	dialog.setStatus(reason);
 	dialog.open();
