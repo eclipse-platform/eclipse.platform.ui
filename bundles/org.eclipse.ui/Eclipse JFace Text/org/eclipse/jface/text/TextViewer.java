@@ -397,7 +397,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 			offset += TextViewer.this.getVisibleRegionOffset();
-			return TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+			offset= TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+			offset -= TextViewer.this.getVisibleRegionOffset();
+			return offset;
 		}
 		
 		/*
@@ -2299,7 +2301,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				fTextWidget.setSelectionRange(pos, findString.length());
 				internalRevealRange(pos, pos + findString.length());
 			}
-			return pos;
+			return pos + getVisibleRegionOffset();
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$

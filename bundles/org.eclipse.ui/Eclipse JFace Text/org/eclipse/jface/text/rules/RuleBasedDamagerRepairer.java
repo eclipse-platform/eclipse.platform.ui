@@ -150,40 +150,29 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 		int lastStart= region.getOffset();
 		int length= 0;
 		IToken lastToken= Token.UNDEFINED;
+		TextAttribute lastAttribute= getTokenTextAttribute(lastToken);
 		
 		fScanner.setRange(fDocument, lastStart, region.getLength());
 		
 		while (true) {
-			
-			IToken token= fScanner.nextToken();
-			
-			if (token.isEOF()) {
-				if (!lastToken.isUndefined() && length != 0)
-					addRange(presentation, lastStart, length, getTokenTextAttribute(lastToken));
+			IToken token= fScanner.nextToken();			
+			if (token.isEOF())
 				break;
-			}
 			
-			if (token.isWhitespace()) {
-				length += fScanner.getTokenLength();
-				continue;
-			}
-			
-			if (lastToken.isUndefined()) {
+			TextAttribute attribute= getTokenTextAttribute(token);			
+			if (attribute == lastAttribute) {
+				length += fScanner.getTokenLength();			    
+			} else {
+				addRange(presentation, lastStart, length, lastAttribute);
 				lastToken= token;
-				length += fScanner.getTokenLength();
-				continue;
-			}
-			
-			if (token != lastToken) {
-				addRange(presentation, lastStart, length, getTokenTextAttribute(lastToken));
-				lastToken= token;
+				lastAttribute= attribute;
 				lastStart= fScanner.getTokenOffset();
-				length= fScanner.getTokenLength();
-				continue;
+				length= fScanner.getTokenLength();						    
 			}
-			
-			length += fScanner.getTokenLength();
 		}
+
+		if (!lastToken.isUndefined() && length != 0)
+			addRange(presentation, lastStart, length, lastAttribute);
 	}
 	
 	/**
