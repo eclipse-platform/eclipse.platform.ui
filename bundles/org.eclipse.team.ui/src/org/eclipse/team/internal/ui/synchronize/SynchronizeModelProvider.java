@@ -308,7 +308,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 
 	protected void reset() {
 		try {
-			refreshViewer = false;
+			setAllowRefreshViewer(false);
 			
 			// Clear existing model, but keep the root node
 			resourceMap.clear();
@@ -329,7 +329,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				((SynchronizeModelElement)root).fireChanges();
 			}
 		} finally {
-			refreshViewer = true;
+			setAllowRefreshViewer(true);
 		}
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -423,7 +423,15 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	private boolean canUpdateViewer() {
 		StructuredViewer viewer = getViewer();
-		return refreshViewer && viewer != null && ! viewer.getControl().isDisposed();
+		return getAllowRefreshViewer() && viewer != null && ! viewer.getControl().isDisposed();
+	}
+	
+	protected void setAllowRefreshViewer(boolean allowRefresh) {
+		this.refreshViewer = allowRefresh;
+	}
+	
+	protected boolean getAllowRefreshViewer() {
+		return this.refreshViewer;
 	}
 	
 	/**

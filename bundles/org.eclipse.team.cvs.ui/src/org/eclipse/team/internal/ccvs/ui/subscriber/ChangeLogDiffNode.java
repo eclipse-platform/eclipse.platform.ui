@@ -51,7 +51,7 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	 */
 	public String getName() {
 		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
-		return date + ": " + logEntry.getComment() + " (" + logEntry.getAuthor() +")";
+		return logEntry.getComment() + " (" + logEntry.getAuthor() + " on "+ date +")";
 	}
 	
 	/* (non-Javadoc)

@@ -35,6 +35,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.progress.UIJob;
 
 /**
+ * This is a prototype model provider using *internal* team classes. It is not meant
+ * to be an example or sanctioned use of team. This provider groups changes 
  * It would be very useful to support showing changes grouped logically
  * instead of grouped physically. This could be used for showing incoming
  * changes and also for showing the results of comparisons.
@@ -56,6 +58,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		Date date;
 		String comment;
 		private String user;
+		
 		DateComment(Date date, String comment, String user) {
 			this.date = date;
 			this.comment = comment;
@@ -77,16 +80,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			int yearOther = c2.get(Calendar.YEAR);
 			int dayOther = c2.get(Calendar.DAY_OF_YEAR);
 			
-			return year == yearOther && day == dayOther && comment.equals(other.comment) &&
-				user.equals(other.user);
+			return comment.equals(other.comment) && user.equals(other.user);
 		}
-		
 		
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
-			return date.hashCode() + comment.hashCode() + user.hashCode();
+			return comment.hashCode() + user.hashCode();
 		}
 	}
 	
@@ -102,7 +103,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private class FetchLogEntriesJob extends Job {
 		private SyncInfoSet set;
 		public FetchLogEntriesJob() {
-			super("Fetching CVS logs");  //$NON-NLS-1$;
+			super("Retrieving revision histories");  //$NON-NLS-1$;
 			setUser(true);
 		}
 		public void setSyncInfoSet(SyncInfoSet set) {
@@ -114,7 +115,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		public IStatus run(IProgressMonitor monitor) {
 			if (set != null && !shutdown) {
 				final ISynchronizeModelElement[] nodes = calculateRoots(getSyncInfoSet(), monitor);				
-				UIJob updateUI = new UIJob("updating change log viewers") {
+				UIJob updateUI = new UIJob("") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						StructuredViewer tree = getViewer();	
 						tree.refresh();
@@ -170,7 +171,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				}
 			}
 			fetchLogEntriesJob.setSyncInfoSet(getSyncInfoSet());
-			fetchLogEntriesJob.schedule();						
+			fetchLogEntriesJob.schedule();
 		}
 		return new IDiffElement[0];
 	}
@@ -180,24 +181,37 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			commentRoots.clear();
 			SyncInfo[] infos = set.getSyncInfos();
 			RemoteLogOperation logs = getSyncInfoComment(infos, monitor);
-			monitor.beginTask("fetching from server", set.size() * 100);
-			for (int i = 0; i < infos.length; i++) {
-				if(monitor.isCanceled()) {
-					break;
-				}
-				// TODO: handle outgoing additions that don't have log entries!!
-				ILogEntry logEntry = logs.getLogEntry(getRemoteResource((CVSSyncInfo)infos[i]));
-				if(logEntry != null) {
+			for (int i = 0; i < infos.length; i++) {	
+				ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)infos[i]);
+				ILogEntry logEntry = logs.getLogEntry(remoteResource);
+				ISynchronizeModelElement element;
+				
+				// If the element has a comment then group with common comment
+				if(remoteResource != null) {
 					DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
 					ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
 					if (changeRoot == null) {
 						changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
 						commentRoots.put(dateComment, changeRoot);
+						try {
+						setAllowRefreshViewer(false);
+						addToViewer(changeRoot);
+						} finally {
+							setAllowRefreshViewer(true);
+						}
 					}
-					ISynchronizeModelElement element = new FullPathSyncInfoElement(changeRoot, infos[i]);
-					associateDiffNode(element);
+					element = new FullPathSyncInfoElement(changeRoot, infos[i]);
+				} else {
+					// For nodes without comments, simply parent with the root. These will be outgoing
+					// additions.
+					element = new FullPathSyncInfoElement(getModelRoot(), infos[i]);
+				}	
+				try {
+					setAllowRefreshViewer(false);
+				addToViewer(element);
+				} finally {
+					setAllowRefreshViewer(true);
 				}
-				monitor.worked(100);
 			}
 			return (ChangeLogDiffNode[]) commentRoots.values().toArray(new ChangeLogDiffNode[commentRoots.size()]);
 		} catch (CVSException e) {
@@ -235,10 +249,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
 		try {
 			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
-			ICVSRemoteResource base = (ICVSRemoteResource) info.getBase();
 			ICVSRemoteResource local = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
 
-			String baseRevision = getRevisionString(base);
 			String remoteRevision = getRevisionString(remote);
 			String localRevision = getRevisionString(local);
 
@@ -282,7 +294,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
 	 */
 	public ViewerSorter getViewerSorter() {
-		return new SynchronizeModelElementSorter();
+		return new ChangeLogModelSorter();
 	}
 
 	/* (non-Javadoc)
