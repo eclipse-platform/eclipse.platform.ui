@@ -8,10 +8,14 @@
 
    <runtime>
       <library name="startup.jar"/>
+      <library name="platform.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.ui.cheatsheets"/>
+      <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui"/>
    </requires>
    
@@ -62,4 +66,14 @@
          </description>
       </cheatSheet>
    </extension>
+   <!-- =====================================================  -->
+   <!-- Standby Content Part contributions                     -->
+   <!-- =====================================================  -->
+   <extension point="org.eclipse.ui.intro.configExtension">
+      <standbyPart
+            id="org.eclipse.platform.cheatsheet"
+            class="org.eclipse.platform.internal.CheatSheetStandbyContent"
+            pluginId="org.eclipse.platform"/>
+   </extension>
+
 </plugin>
