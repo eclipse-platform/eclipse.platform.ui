@@ -56,4 +56,15 @@ public class TagLocalAction extends TagAction {
 			}
 		};
 	}
+	
+	/**
+	 * Return the resources that have been selected by the user. The user has been given 
+	 * a chance to remove any resources with outgoing changes so all provided resources
+	 * are to be tagged.
+	 * @return Returns the resources.
+	 */
+	protected IResource[] getResources() {
+		return resources;
+	}
+
 }
