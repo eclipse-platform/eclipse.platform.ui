@@ -72,10 +72,12 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_SEARCH, LOCALTOOL + "search.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_UP, LOCALTOOL + "moveUp.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_DOWN, LOCALTOOL + "moveDown.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ACTIVATE, LOCALTOOL + "activate.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_DEACTIVATE, LOCALTOOL + "deactivate.gif"); //$NON-NLS-1$
 		// Ant View Labels
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, LOCALTOOL + "ant_project.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "file_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, LOCALTOOL + "ant_project_err.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, LOCALTOOL + "ant_tsk_arrow.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, LOCALTOOL + "ant_target.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, LOCALTOOL + "error.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, LOCALTOOL + "elements.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT, LOCALTOOL + "element.gif"); //$NON-NLS-1$

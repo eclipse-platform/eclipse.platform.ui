@@ -237,7 +237,7 @@
 		<launchConfigurationTypeImage
 			id="org.eclipse.ant.launchConfigurationTypeImage.ant"
 			configTypeID="org.eclipse.ant.AntLaunchConfigurationType"
-			icon="icons/full/obj16/ant_file.gif">
+			icon="icons/full/obj16/ant.gif">
 		</launchConfigurationTypeImage>
 		<launchConfigurationTypeImage
 			id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program.builder"
@@ -247,7 +247,7 @@
 		<launchConfigurationTypeImage
 			id="org.eclipse.ant.launchConfigurationTypeImage.ant.builder"
 			configTypeID="org.eclipse.ant.AntBuilderLaunchConfigurationType"
-			icon="icons/full/obj16/ant_file.gif">
+			icon="icons/full/obj16/ant.gif">
 		</launchConfigurationTypeImage>	
 	</extension>
 	
@@ -276,7 +276,7 @@
 			id="org.eclipse.ui.externaltools.antShortcut"
 			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut"
 			label="%AntLaunchShortcut.label"
-			icon="icons/full/obj16/ant_file.gif"
+			icon="icons/full/obj16/ant.gif"
 			modes="run"
 			category ="org.eclipse.ui.externaltools">
 		</shortcut>

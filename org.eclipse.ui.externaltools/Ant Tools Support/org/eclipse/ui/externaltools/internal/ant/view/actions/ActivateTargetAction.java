@@ -6,6 +6,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -15,7 +17,7 @@ public class ActivateTargetAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public ActivateTargetAction(AntView view) {
-		super("Activate Target");
+		super("Activate Target", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ACTIVATE));
 		setDescription("Activate the selected target");
 		this.view= view;
 	}

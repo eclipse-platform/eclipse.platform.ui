@@ -6,6 +6,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class DeactivateTargetAction extends Action implements IUpdate {
@@ -13,7 +15,7 @@ public class DeactivateTargetAction extends Action implements IUpdate {
 	private AntView view;
 
 	public DeactivateTargetAction(AntView view) {
-		super("Deactivate Target");
+		super("Deactivate Target", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_DEACTIVATE));
 		setDescription("Deactivate the selected target");
 		this.view= view;
 	}
