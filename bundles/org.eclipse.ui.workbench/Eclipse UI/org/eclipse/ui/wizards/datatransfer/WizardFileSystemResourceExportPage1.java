@@ -41,9 +41,6 @@ class WizardFileSystemResourceExportPage1
 	protected Button createDirectoryStructureButton;
 	protected Button createSelectionOnlyButton;
 
-	// constants
-	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID =
 		"WizardFileSystemResourceExportPage1.STORE_DESTINATION_NAMES_ID";	//$NON-NLS-1$
