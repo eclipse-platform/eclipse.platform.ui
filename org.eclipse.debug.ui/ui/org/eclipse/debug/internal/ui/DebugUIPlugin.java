@@ -141,6 +141,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	protected ListenerList fEventFilters = new ListenerList(2);
 	
 	/**
+	 * Flag indicating whether the debug UI is in trace
+	 * mode. When in trace mode, extra debug information
+	 * is produced.
+	 */
+	private boolean fTrace = false;	
+	
+	/**
 	 * The visitor used to traverse resource deltas and keep the run & debug
 	 * histories in synch with resource deletions.
 	 */
@@ -164,6 +171,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			// check for deletions in launch history
 			removeDeletedHistories();
 			return false;
+		}
+	}
+	
+	/**
+	 * Returns whether the debug UI plug-in is in trace
+	 * mode.
+	 * 
+	 * @return whether the debug UI plug-in is in trace
+	 *  mode
+	 */
+	public boolean isTraceMode() {
+		return fTrace;
+	}
+	
+	/**
+	 * Logs the given message if in trace mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logTraceMessage(String message) {
+		if (getDefault().isTraceMode()) {
+			IStatus s = new Status(IStatus.WARNING, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, message, null);
+			getDefault().getLog().log(s);
 		}
 	}
 
