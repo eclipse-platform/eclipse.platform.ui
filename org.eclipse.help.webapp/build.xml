@@ -165,7 +165,7 @@
 		<property name="precompile.temp.folder" value="${temp.folder}.precompile"/>
 		<property name="precompile.java.folder" value="${precompile.temp.folder}/java"/>
 		<property name="precompile.classes.folder" value="${precompile.temp.folder}/classes"/>
-		<property name="tomcat.home" value="d:\jakarta-tomcat-4.0.4"/>
+		<property name="tomcat.home" value="../org.eclipse.tomcat"/>
 		<path id="jasper.classpath" > 
 			<pathelement location="../org.eclipse.help/help.jar"/>
 			<pathelement location="../org.eclipse.help/bin"/> 
@@ -173,12 +173,13 @@
 			<pathelement location="../org.eclipse.core.runtime/bin"/>
 			<pathelement location="${basedir}/WEB-INF/classes"/>
 			<pathelement location="${basedir}/WEB-INF/lib/webapp.jar" />
-			<pathelement location="${tomcat.home}/common/lib/xerces.jar"/>
-			<pathelement location="${tomcat.home}/server/lib/catalina.jar" />
-			<pathelement location="${tomcat.home}/common/lib/servlet.jar" />
-			<pathelement location="${tomcat.home}/lib/jasper-compiler.jar" />
-			<pathelement location="${tomcat.home}/lib/jasper-runtime.jar" />
-			<pathelement location="${tomcat.home}/server/lib/tomcat_util.jar" />  
+			<pathelement location="../org.apache.xerces/xmlParserAPIs.jar"/>
+			<pathelement location="../org.apache.xerces/xercesImpl.jar"/>
+			<pathelement location="${tomcat.home}/catalina.jar" />
+			<pathelement location="${tomcat.home}/servlet.jar" />
+			<pathelement location="${tomcat.home}/jasper-compiler.jar" />
+			<pathelement location="${tomcat.home}/jasper-runtime.jar" />
+			<pathelement location="${tomcat.home}/tomcat_util.jar" />  
 		</path>
 	</target>
 	
