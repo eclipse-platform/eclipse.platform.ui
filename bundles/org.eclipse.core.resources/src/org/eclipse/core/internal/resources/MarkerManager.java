@@ -22,6 +22,10 @@ public class MarkerManager implements IManager {
 	protected MarkerWriter writer = new MarkerWriter(this);
 	private long changeId = 0;
 	
+	//singletons
+	private static final MarkerInfo[] NO_MARKER_INFO = new MarkerInfo[0];
+	private static final IMarker[] NO_MARKERS = new IMarker[0];
+	
 /**
  * Creates a new marker manager
  */
@@ -75,7 +79,10 @@ private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo[] newMar
  * Returns the markers in the given set of markers which match the given type.
  */
 private MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean includeSubtypes) {
-	List result = new ArrayList(markers.size());
+	int size = markers.size();
+	if (size <= 0) 
+		return NO_MARKER_INFO;
+	List result = new ArrayList(size);
 	IMarkerSetElement[] elements = markers.elements();
 	for (int i = 0; i < elements.length; i++) {
 		MarkerInfo marker = (MarkerInfo) elements[i];
@@ -92,14 +99,20 @@ private MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean i
 			}
 		}
 	}
-	return (MarkerInfo[]) result.toArray(new MarkerInfo[result.size()]);
+	size = result.size();
+	if (size <= 0) 
+		return NO_MARKER_INFO;
+	return (MarkerInfo[]) result.toArray(new MarkerInfo[size]);
 }
 /**
  * Removes markers of the specified type from the given resource.
  */
-private void basicRemoveMarkers(IResource resource, String type, boolean includeSubtypes) {
+private void basicRemoveMarkers(IPath path, String type, boolean includeSubtypes) {
 	//don't get a modifiable info until we know we need to modify it.
-	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), false, false);
+	ResourceInfo info = workspace.getResourceInfo(path, false, false);
+	//phantoms don't have markers
+	if (info == null)
+		return;
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
 		return;
@@ -107,7 +120,7 @@ private void basicRemoveMarkers(IResource resource, String type, boolean include
 	if (type == null) {
 		// if the type is null, all markers are to be removed.
 		//now we need to crack open the tree
-		info = workspace.getResourceInfo(resource.getFullPath(), false, true);
+		info = workspace.getResourceInfo(path, false, true);
 		info.setMarkers(null);
 		matching = markers.elements();
 	} else {
@@ -116,7 +129,7 @@ private void basicRemoveMarkers(IResource resource, String type, boolean include
 		if (matching.length == 0)
 			return;
 		//now we need to crack open the tree
-		info = workspace.getResourceInfo(resource.getFullPath(), false, true);
+		info = workspace.getResourceInfo(path, false, true);
 		
 		// remove all the matching markers and also the whole 
 		// set if there are no remaining markers
@@ -126,20 +139,23 @@ private void basicRemoveMarkers(IResource resource, String type, boolean include
 	}
 	info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	IMarkerDelta[] changes = new IMarkerDelta[matching.length];
+	IResource resource = workspace.getRoot().findMember(path);
 	for (int i = 0; i < matching.length; i++)
 		changes[i] = new MarkerDelta(IResourceDelta.REMOVED, resource, (MarkerInfo) matching[i]);
 	if (changes != null)
 		changedMarkers(resource, changes);
 }
 /**
- * Returns the markers on the given target which match the specified type
+ * Adds the markers on the given target which match the specified type to the list.
  */
-private IMarker[] buildMarkers(IMarkerSetElement[] markers, IResource target) {
-	IMarker[] result = new IMarker[markers.length];
+private void buildMarkers(IMarkerSetElement[] markers, IPath path, ArrayList list) {
+	if (markers.length == 0)
+		return;
+	IResource resource = workspace.getRoot().findMember(path);
+	list.ensureCapacity(list.size() + markers.length);
 	for (int i = 0; i < markers.length; i++) {
-		result[i] = new Marker(target, ((MarkerInfo) markers[i]).getId());
+		list.add(new Marker(resource, ((MarkerInfo) markers[i]).getId()));
 	}
-	return result;
 }
 /**
  * Markers have changed on the given resource.  Remember the changes for subsequent notification.
@@ -203,34 +219,13 @@ public MarkerInfo findMarkerInfo(IResource resource, long id) {
  * for all types (i.e., <code>null</code> is a wildcard.
   */
 public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
-	final List result = new ArrayList(10);
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			IMarker[] matching = findMatchingMarkers(resource, type, includeSubtypes);
-			if (matching != null)
-				result.addAll(Arrays.asList(matching));
-			return true;
-		}
-	};
-	target.accept(visitor, depth, false);
-	return (IMarker[]) result.toArray(new IMarker[result.size()]);
+	ArrayList result = new ArrayList();
+	recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
+	if (result.size() == 0) {
+		return NO_MARKERS;
+	}
+	return (IMarker[])result.toArray(new IMarker[result.size()]);
 }
-/**
- * Returns the markers on the given target which match the specified type
- */
-public IMarker[] findMatchingMarkers(IResource target, String type, boolean includeSubtypes) {
-	ResourceInfo info = ((Workspace) target.getWorkspace()).getResourceInfo(target.getFullPath(), false, false);
-	MarkerSet markers = info.getMarkers();
-	IMarkerSetElement[] matching;
-	if (markers == null)
-		return null;
-	if (type == null)
-		matching = markers.elements();
-	else
-		matching = basicFindMatching(markers, type, includeSubtypes);
-	return buildMarkers(matching, target);
-}
-
 public boolean hasDeltas() {
 	return markerDeltas != null && !markerDeltas.isEmpty();
 }
@@ -291,6 +286,51 @@ public void moved(final IResource source, final IResource destination, int depth
 public void opening(IProject project) {
 }
 /**
+ * Adds the markers for a subtree of resources to the list.
+ */
+private void recursiveFindMarkers(IPath path, ArrayList list, String type, boolean includeSubtypes, int depth) {
+	ResourceInfo info = workspace.getResourceInfo(path, false, false);
+	if (info == null)
+		return;
+	MarkerSet markers = info.getMarkers();
+	
+	//add the matching markers for this resource
+	if (markers != null) {
+		IMarkerSetElement[] matching;
+		if (type == null)
+			matching = markers.elements();
+		else
+			matching = basicFindMatching(markers, type, includeSubtypes);
+		buildMarkers(matching, path, list);
+	}
+	
+	//recurse
+	if (depth == IResource.DEPTH_ZERO)
+		return;
+	if (depth == IResource.DEPTH_ONE)
+		depth = IResource.DEPTH_ZERO;
+	IPath[] children = workspace.getElementTree().getChildren(path);
+	for (int i = 0; i < children.length; i++) {
+		recursiveFindMarkers(children[i], list, type, includeSubtypes, depth);
+	}	
+}
+/**
+ * Adds the markers for a subtree of resources to the list.
+ */
+private void recursiveRemoveMarkers(IPath path, String type, boolean includeSubtypes, int depth) {
+	basicRemoveMarkers(path, type, includeSubtypes);
+	//recurse
+	if (depth == IResource.DEPTH_ZERO)
+		return;
+	if (depth == IResource.DEPTH_ONE)
+		depth = IResource.DEPTH_ZERO;
+	IPath[] children = workspace.getElementTree().getChildren(path);
+	for (int i = 0; i < children.length; i++) {
+		recursiveRemoveMarkers(children[i], type, includeSubtypes, depth);
+	}	
+}
+
+/**
  * Removes the specified marker 
  */
 public void removeMarker(IResource resource, long id) {
@@ -315,7 +355,7 @@ public void removeMarker(IResource resource, long id) {
  * Remove all markers for the given resource to the specified depth.
  */
 public void removeMarkers(IResource resource) throws CoreException {
-	removeMarkers(resource, null, false, IResource.DEPTH_INFINITE);
+	recursiveRemoveMarkers(resource.getFullPath(), null, false, IResource.DEPTH_INFINITE);
 }
 /**
  * Remove all markers with the given type from the node at the given path.
@@ -323,13 +363,7 @@ public void removeMarkers(IResource resource) throws CoreException {
  * for all types (i.e., <code>null</code> is a wildcard.
  */
 public void removeMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			basicRemoveMarkers(resource, type, includeSubtypes);
-			return true;
-		}
-	};
-	target.accept(visitor, depth, false);
+	recursiveRemoveMarkers(target.getFullPath(), type, includeSubtypes, depth);
 }
 /**
  * Reset the marker deltas.
