@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 
 	// Dialogs
 	public static final String FILTERS_DIALOG = PREFIX + "task_filters_dialog_context"; //$NON-NLS-1$
+	public static final String PROPERTIES_DIALOG = PREFIX + "task_properties_dialog_context"; //$NON-NLS-1$
 	
 	// Views
 	public static final String TASK_LIST_VIEW = PREFIX + "task_list_view_context"; //$NON-NLS-1$

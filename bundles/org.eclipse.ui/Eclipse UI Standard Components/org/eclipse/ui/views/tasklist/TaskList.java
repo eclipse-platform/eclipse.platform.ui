@@ -72,6 +72,7 @@ public class TaskList extends ViewPart {
 	private TaskAction resolveMarkerAction;
 	private TaskAction filtersAction;
 	private TaskAction markCompletedAction;
+	private TaskAction propertiesAction;
 	
 	private Clipboard clipboard;
 	 
@@ -475,6 +476,8 @@ void fillContextMenu(IMenuManager menu) {
 	menu.add(new Separator());
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
+	menu.add(new Separator());
+	menu.add(propertiesAction);
 }
 /**
  * The filter settings have changed.
@@ -626,6 +629,66 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
 	super.init(site,memento);
 	this.memento = memento;
 }
+
+/**
+ * Returns whether we are interested in the given marker delta.
+ */
+boolean isAffectedBy(IMarkerDelta markerDelta) {
+	return checkType(markerDelta) && checkResource(markerDelta.getResource());
+}
+/**
+ * Returns whether we are interested in markers on the given resource.
+ */
+private boolean checkResource(IResource resource) {
+	if (!showSelections()) {
+		return true;
+	}
+	if (showOwnerProject()) {
+		IProject currentProj = getResource().getProject();
+		return currentProj == null ? true : currentProj.equals(resource.getProject());
+	}
+	if (showChildrenHierarchy()) {
+		return getResource().getFullPath().isPrefixOf(resource.getFullPath());
+	}
+	else {
+		return resource.equals(getResource());
+	}
+}
+
+/**
+ * Returns whether we are interested in the type of the given marker.
+ */
+private boolean checkType(IMarkerDelta markerDelta) {
+	String[] types = getMarkerTypes();
+	for (int i = 0; i < types.length; ++i) {
+		if (markerDelta.isSubtypeOf(types[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Returns whether we are interested in the type of the given marker.
+ */
+private boolean checkType(IMarker marker) {
+	String[] types = getMarkerTypes();
+	for (int i = 0; i < types.length; ++i) {
+		if (MarkerUtil.isMarkerType(marker, types[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Returns whether the given marker should be shown,
+ * given the current filter settings.
+ */
+boolean shouldShow(IMarker marker) {
+	return checkType(marker) && checkResource(marker.getResource()) && getFilter().select(marker);
+}
+
 /**
  * Makes actions used in the local tool bar and
  * popup menu.
@@ -698,6 +761,11 @@ void makeActions() {
 	filtersAction.setText(TaskListMessages.getString("Filters.text")); //$NON-NLS-1$
 	filtersAction.setToolTipText(TaskListMessages.getString("Filters.tooltip")); //$NON-NLS-1$
 	filtersAction.setImageDescriptor(MarkerUtil.getImageDescriptor("filter")); //$NON-NLS-1$
+	
+	// properties
+	propertiesAction = new TaskPropertiesAction(this, "properties"); //$NON-NLS-1$
+	propertiesAction.setText(TaskListMessages.getString("Properties.text")); //$NON-NLS-1$
+	propertiesAction.setToolTipText(TaskListMessages.getString("Properties.tooltip")); //$NON-NLS-1$
 }
 /**
  * The markers have changed.  Update the status line and title bar.

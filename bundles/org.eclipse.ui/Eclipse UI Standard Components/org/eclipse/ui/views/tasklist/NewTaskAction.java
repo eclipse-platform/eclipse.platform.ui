@@ -38,70 +38,41 @@ public NewTaskAction(TaskList tasklist, String id) {
 	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.NEW_TASK_ACTION);
 }
 /**
- * Creates a new task marker, sets its priority to LOW,
- * sets the initial description, makes sure that it is
- * always on top until first edited, and opens
- * description field for direct editing.
+ * Opens the new task dialog and shows the newly created task when done.
+ * The new task is created on the currently selected resource.
  */
 public void run() {
-	if (!verifyVisibility()) return;
-	final IMarker[] result = new IMarker[1];
-	try {
-		getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				TaskList taskList = getTaskList();
-				IResource resource = taskList.getWorkspace().getRoot();
-				IMarker marker = resource.createMarker(IMarker.TASK);
-				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-				marker.setAttribute(IMarker.MESSAGE, TaskListMessages.getString("NewTask.enterDescription")); //$NON-NLS-1$
-				taskList.setNewlyCreatedTaskInstance(marker);
-				result[0] = marker;
-			}
-		}, null);
-	} catch (CoreException e) {
-		ErrorDialog.openError(
-			getShell(),
-			TaskListMessages.getString("NewTask.errorMessage"), //$NON-NLS-1$
-			null,
-			e.getStatus());
+	TaskList taskList = getTaskList();
+	TaskPropertiesDialog dialog = new TaskPropertiesDialog(taskList);
+	dialog.setResource(taskList.getResource());
+	int result = dialog.open();
+	if (result == dialog.OK) {
+		showMarker(dialog.getMarker());
+	}
+}
+
+/**
+ * Show the newly created marker.
+ */
+private void showMarker(final IMarker marker) {
+	if (marker == null) {
 		return;
 	}
-	// Need to do this in an asyncExec, even though we're in the UI thread here,
-	// since the task list updates itself with the addition in an asyncExec,
-	// which hasn't been processed yet.
-	// Must be done outside IWorkspaceRunnable above since notification for add is
-	// sent after IWorkspaceRunnable is run.
-	if (result[0] != null) {
+	if (getTaskList().shouldShow(marker)) {
+		// Need to do this in an asyncExec, even though we're in the UI thread here,
+		// since the task list updates itself with the addition in an asyncExec,
+		// which hasn't been processed yet.
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				selectAndEdit(result[0]);
+				getTaskList().setSelection(new StructuredSelection(marker), true);
 			}
 		});
 	}
-}
-/**
- * Selects newly created marker and opens
- * description cell for editing.
- */
-private void selectAndEdit(IMarker marker) {
-	TaskList taskList = getTaskList();
-	taskList.setSelection(new StructuredSelection(marker), true);
-	taskList.edit(marker);
-}
-/**
- * Returns true if the new task will be visible
- * when added and its description changed.
- */
-private boolean verifyVisibility() {
-	return true;
-/*	
-	if (getTaskList().showTasks())
-		return true;
-	// ask the user
-	return MessageDialog.openConfirm(
-		getShell(), 
-		"Question", 
-		"The task you are about create will not immediately show up in the task list due to the current filter settings. Do you want to proceed?");
-*/		
+	else {
+		MessageDialog.openInformation(
+			getShell(),
+			TaskListMessages.getString("NewTask.notShownTitle"),
+			TaskListMessages.getString("NewTask.notShownMsg"));
+	}
 }
 }

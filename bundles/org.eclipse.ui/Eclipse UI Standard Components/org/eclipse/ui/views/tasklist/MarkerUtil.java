@@ -209,12 +209,20 @@ static ImageDescriptor getImageDescriptor(String key) {
 	}
 	return desc;
 }
+
 /**
- * Returns the text for the line and location column.
+ * Returns the text for the line and location column given the marker.
  */
 public static String getLineAndLocation(IMarker marker) {
 	int lineNumber = getLineNumber(marker);
 	String location = getLocation(marker);
+	return getLineAndLocation(lineNumber, location);
+}
+
+/**
+ * Returns the text for the line and location column given the line number and location text.
+ */
+public static String getLineAndLocation(int lineNumber, String location) {
 	if (lineNumber == -1) {
 		if (location.equals("")) {//$NON-NLS-1$
 			return "";//$NON-NLS-1$

@@ -69,7 +69,7 @@ public void run() {
 	} catch (CoreException e) {
 		ErrorDialog.openError(
 			getShell(),
-			TaskListMessages.getString("NewTask.errorMessage"), //$NON-NLS-1$
+			TaskListMessages.getString("PasteTask.errorMessage"), //$NON-NLS-1$
 			null,
 			e.getStatus());
 		return;

@@ -148,8 +148,12 @@ public void saveState(IMemento memento) {
 	memento.putInteger(TAG_FILTER_ON_COMPLETION,filterOnCompletion?1:0);
 	memento.putInteger(TAG_COMPLETION_FILTER,completionFilter);
 }
+
 public boolean select(Viewer viewer, Object parentElement, Object element) {
-	IMarker marker = (IMarker) element;
+	return select((IMarker) element);
+}
+	
+public boolean select(IMarker marker) {
 
 	// types and resource settings are handled by the content provider
 

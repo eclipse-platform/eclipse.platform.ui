@@ -39,42 +39,6 @@ public TaskListContentProvider(TaskList taskList) {
 	this.viewer = taskList.getTableViewer();
 }
 /**
- * Returns whether we are interested in the given marker delta.
- */
-protected boolean check(IMarkerDelta markerDelta) {
-	return checkType(markerDelta) && checkResource(markerDelta.getResource());
-}
-/**
- * Returns whether we are interested in markers on the given resource.
- */
-protected boolean checkResource(IResource resource) {
-	if (!taskList.showSelections()) {
-		return true;
-	}
-	if (taskList.showOwnerProject()) {
-		IProject currentProj = taskList.getResource().getProject();
-		return currentProj == null ? true : currentProj.equals(resource.getProject());
-	}
-	if (taskList.showChildrenHierarchy()) {
-		return taskList.getResource().getFullPath().isPrefixOf(resource.getFullPath());
-	}
-	else {
-		return resource.equals(taskList.getResource());
-	}
-}
-/**
- * Returns whether we are interested in the type of the given marker.
- */
-protected boolean checkType(IMarkerDelta markerDelta) {
-	String[] types = taskList.getMarkerTypes();
-	for (int i = 0; i < types.length; ++i) {
-		if (markerDelta.isSubtypeOf(types[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-/**
  * Clears any cached summary info.
  */
 void clearSummary() {
@@ -153,15 +117,15 @@ protected void getMarkerDeltas(IResourceDelta delta, List additions, List remova
 		IMarker marker = markerDelta.getMarker();
 		switch (markerDelta.getKind()) {
 			case IResourceDelta.ADDED:
-				if (check(markerDelta))
+				if (taskList.isAffectedBy(markerDelta))
 					additions.add(marker);
 				break;
 			case IResourceDelta.REMOVED:
-				if (check(markerDelta))
+				if (taskList.isAffectedBy(markerDelta))
 					removals.add(marker);
 				break;
 			case IResourceDelta.CHANGED:
-				if (check(markerDelta))
+				if (taskList.isAffectedBy(markerDelta))
 					changes.add(marker);
 				break;
 		}
