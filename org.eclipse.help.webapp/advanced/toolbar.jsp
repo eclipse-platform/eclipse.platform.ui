@@ -123,7 +123,7 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>
-	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
+	<div id="borderLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
 				<td id="tdborder">
@@ -132,40 +132,43 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>	
-	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-top:3px; padding-right:3px;">
+	<div id="iconLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%">
 			<tr>
-				<td>
-					&nbsp;
-				</td>
+				<td align="right">
+					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-top:3px; padding-right:3px;background:<%=prefs.getToolbarBackground()%>">
+					<tr>
 <%
 	ToolbarButton[] buttons = data.getButtons();
 	for (int i=0; i<buttons.length; i++) {
 		if (buttons[i].isSeparator()) {
 %>
-				<td align="middle" valign="middle" width="9">
-				<!--
-					<img width="1" height=18 src="<%=prefs.getImagesDirectory()%>/tool_separator.gif" alt='' border="0">
-				-->
-				</td>
+						<td align="middle" valign="middle" width="9">
+						<!--
+							<img width="1" height=18 src="<%=prefs.getImagesDirectory()%>/tool_separator.gif" alt='' border="0">
+						-->
+						</td>
 <%
 		} else {
 %>
-				<td align="middle" width="22">
-					<a href="#" 
-					   onclick="<%=buttons[i].getAction()%>(this);" 
-					   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
-					   onmouseout="window.status='';">
-					   <img src="<%=buttons[i].getImage()%>" 
-					        alt='<%=buttons[i].getTooltip()%>' 
-					        border="0" 
-					        name="<%=buttons[i].getName()%>">
-					</a>
-				</td>
+						<td align="middle" width="22">
+							<a href="#" 
+							   onclick="<%=buttons[i].getAction()%>(this);" 
+							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
+							   onmouseout="window.status='';">
+							   <img src="<%=buttons[i].getImage()%>" 
+							        alt='<%=buttons[i].getTooltip()%>' 
+							        border="0" 
+							        name="<%=buttons[i].getName()%>">
+							</a>
+						</td>
 <%
 		}
 	}
 %>				
+					</tr>
+					</table>
+				</td>
 			</tr>
 		</table>
 	</div>	
