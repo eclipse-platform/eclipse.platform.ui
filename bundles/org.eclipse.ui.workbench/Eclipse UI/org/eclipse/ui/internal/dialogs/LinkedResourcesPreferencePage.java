@@ -22,12 +22,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -60,6 +59,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
 		// define container & its gridding
 		Composite pageComponent = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

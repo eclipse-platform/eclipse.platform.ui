@@ -156,6 +156,7 @@ public interface IHelpContextIds {
 	public static final String FONT_PREFERENCE_PAGE = PREFIX + "font_preference_page_context"; //$NON-NLS-1$
 	public static final String DECORATORS_PREFERENCE_PAGE = PREFIX + "decorators_preference_page_context"; //$NON-NLS-1$
 	public static final String STARTUP_PREFERENCE_PAGE = PREFIX + "startup_preference_page_context"; //$NON-NLS-1$
+	public static final String LINKED_RESOURCE_PREFERENCE_PAGE = PREFIX + "linked_resource_preference_page_context"; //$NON-NLS-1$
 
 	// Property pages
 	public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX + "project_reference_property_page_context"; //$NON-NLS-1$
