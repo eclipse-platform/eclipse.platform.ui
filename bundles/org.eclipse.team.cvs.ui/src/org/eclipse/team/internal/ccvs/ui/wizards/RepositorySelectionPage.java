@@ -86,7 +86,12 @@ public class RepositorySelectionPage extends CVSWizardPage {
 				setPageComplete(true);
 			}
 		});
-
+		table.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				getContainer().showPage(getNextPage());
+			}
+		});
+		
 		useExistingRepo.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (useNewRepo.getSelection()) {
