@@ -42,6 +42,7 @@ class WorkManager implements IManager {
 			return contains(rule);
 		}
 	}
+	protected NotifyRule notifyRule = new NotifyRule();
 	/**
 	 * Indicates that the last checkIn failed due to the tree being locked.  Checkout
 	 * must not be done in this case
@@ -54,7 +55,6 @@ class WorkManager implements IManager {
 	private IJobManager jobManager;
 	private final ILock lock;
 	private int nestedOperations = 0;
-	protected NotifyRule notifyRule = new NotifyRule();
 	private boolean operationCanceled = false;
 	private int preparedOperations = 0;
 	private Workspace workspace;
@@ -63,23 +63,6 @@ class WorkManager implements IManager {
 		this.workspace = workspace;
 		this.jobManager = Platform.getJobManager();
 		this.lock = jobManager.newLock();
-	}
-	/**
-	 * Begins a resource change notification.
-	 * @param currentRule The rule for the operation that is ending.
-	 */
-	public void beginNotify(final ISchedulingRule currentRule) {
-		//if we don't currently have a rule, we must released the ws lock
-		// before beginRule to prevent deadlock
-		int depth = 0;
-		if (currentRule == null)
-			depth = beginUnprotected();
-		try {
-			jobManager.beginRule(notifyRule, null);
-		} finally {
-			if (currentRule == null)
-				endUnprotected(depth);
-		}
 	}
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
@@ -146,9 +129,6 @@ class WorkManager implements IManager {
 	 */
 	private void decrementPreparedOperations() {
 		preparedOperations--;
-	}
-	public void endNotify() {
-		jobManager.endRule(notifyRule);
 	}
 	/**
 	 * Re-acquires the workspace lock that was temporarily released during an
