@@ -18,13 +18,13 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.core.ILogicalStructureType;
-import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
@@ -159,7 +159,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	private IValue getLogicalValue(IValue value) {
 		if (isShowLogicalStructure()) {
-			ILogicalStructureType[] types = LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
+			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			if (types.length > 0) {
 				try {
 					return types[0].getLogicalStructure(value);

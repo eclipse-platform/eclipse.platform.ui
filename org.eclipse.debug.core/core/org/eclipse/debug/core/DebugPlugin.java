@@ -33,12 +33,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.debug.internal.core.LogicalStructureManager;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -512,6 +514,20 @@ public class DebugPlugin extends Plugin {
 			return new RuntimeProcess(launch, process, label, attributes);
 		}
 	}	
+	
+	/**
+	 * Returns any logical structure types that have been contributed for the given
+	 * value.
+	 * 
+	 * @param value the value for which logical structure types have been requested
+	 * @return logical structure types that have been contributed for the given
+	 * value, possibly an empty collection
+	 * 
+	 * @since 3.0
+	 */
+	public static ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
+		return LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
+	}
 	
 	/**
 	 * Convenience method that performs a runtime exec on the given command line

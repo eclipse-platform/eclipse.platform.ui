@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.debug.core.model.IValue;
 
 /**
