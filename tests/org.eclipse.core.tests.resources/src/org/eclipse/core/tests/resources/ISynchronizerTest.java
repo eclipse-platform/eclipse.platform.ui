@@ -16,10 +16,12 @@ import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+
 //
 public class ISynchronizerTest extends EclipseWorkspaceTest {
 	public static int NUMBER_OF_PARTNERS = 100;
@@ -912,5 +914,85 @@ public void testSyncInfo() {
 	} catch (CoreException e) {
 		fail("9.1", e);
 	}
+}
+/**
+ * Removes resources, sets sync info to <code>null</code> and ensures the
+ * phantoms do not exist any more (see bug 3024)
+ */
+public void testPhantomRemoval() {
+	final QualifiedName partner = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
+	final IWorkspace workspace = getWorkspace();
+	final ISynchronizer synchronizer = workspace.getSynchronizer();
+	
+	// set up 
+	synchronizer.add(partner);	
+	IProject project = workspace.getRoot().getProject("MyProject");
+	IFolder folder = project.getFolder("foo");
+	IFile file1 = folder.getFile("file1.txt");
+	IFile file2 = folder.getFile("file2.txt");
+	ensureExistsInWorkspace(new IResource[] {file1, file2}, true);		 
+	
+	// sets sync info for the folder and its children	
+	try {
+		synchronizer.setSyncInfo(partner, folder, getRandomString().getBytes());
+		synchronizer.setSyncInfo(partner, file1, getRandomString().getBytes());
+		synchronizer.setSyncInfo(partner, file2, getRandomString().getBytes());
+	} catch (CoreException ce) {
+		fail("1.0",ce);
+	}
+	
+	// 1) tests with one child first	
+	assertTrue("1.1", file1.exists());
+	assertTrue("1.2", !file1.isPhantom());	
+	// deletes file
+	try {
+		file1.delete(true,getMonitor());
+	} catch (CoreException ce) {
+		fail("2.0",ce);
+	} 	
+	// file is now a phantom resource		
+	assertTrue("2.1", !file1.exists());
+	assertTrue("2.2", file1.isPhantom());
+	// removes sync info
+	try {
+		synchronizer.setSyncInfo(partner, file1, null);
+	} catch (CoreException ce) {
+		fail("3.0",ce);
+	}
+	// phantom should not exist any more
+	assertTrue("3.1", !file1.exists());
+	assertTrue("3.2", !file1.isPhantom());
+
+	// 2) tests with the folder and remaining child
+	assertTrue("4.1", folder.exists());
+	assertTrue("4.2", !folder.isPhantom());
+	assertTrue("4.3", file2.exists());
+	assertTrue("4.4", !file2.isPhantom());	
+	// deletes the folder and its only child
+	try {
+		folder.delete(true,getMonitor());
+	} catch (CoreException ce) {
+		fail("5.0",ce);
+	}
+	// both resources are now phantom resources
+	assertTrue("5.1", !folder.exists());
+	assertTrue("5.2", folder.isPhantom());
+	assertTrue("5.3", !file2.exists());
+	assertTrue("5.4", file2.isPhantom());	
+	// removes only folder sync info
+	try {
+		synchronizer.setSyncInfo(partner, folder, null);
+	} catch (CoreException ce) {
+		fail("6.0",ce);
+	}
+	// phantoms should not exist any more
+	assertTrue("6.1", !folder.exists());
+	assertTrue("6.2", !folder.isPhantom());
+	assertTrue("6.3", !file2.exists());
+	assertTrue("6.4", !file2.isPhantom());
+	
+	// clean-up
+	synchronizer.remove(partner);	
+	ensureDoesNotExistInWorkspace(project);	
 }
 }
