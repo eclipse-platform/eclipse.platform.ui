@@ -33,6 +33,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected Synchronizer synchronizer;
 	protected WorkManager workManager;
 	protected IProject[] buildOrder = null;
+	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 
 	protected static final String REFRESH_ON_STARTUP = "-refresh";
 	// whether the resources plugin is in debug mode.
@@ -856,7 +857,7 @@ public ResourceInfo getResourceInfo(IPath path, boolean phantom, boolean mutable
  * @see IWorkspace#getRoot
  */
 public IWorkspaceRoot getRoot() {
-	return new WorkspaceRoot(Path.ROOT, this);
+	return defaultRoot;
 }
 public SaveManager getSaveManager() {
 	return saveManager;
