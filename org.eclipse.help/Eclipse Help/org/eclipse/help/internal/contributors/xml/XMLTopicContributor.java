@@ -1,0 +1,74 @@
+package org.eclipse.help.internal.contributors.xml;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.contributors.*;
+import org.eclipse.help.internal.contributions.*;
+import org.eclipse.help.internal.contributions.xml.HelpTopic;
+
+/**
+ * Topic contributor
+ */
+public class XMLTopicContributor
+	extends XMLContributor
+	implements TopicContributor {
+	/**
+	 * @param plugin com.ibm.itp.core.api.plugins.IPluginDescriptor
+	 * @param configuration com.ibm.itp.core.api.plugins.IConfigurationElement
+	 */
+	public XMLTopicContributor(
+		IPluginDescriptor plugin,
+		IConfigurationElement configuration) {
+		super(plugin, configuration);
+
+	}
+	/**
+	 * @return org.w3c.dom.Document
+	 */
+	public Contribution getContribution() {
+		return getContribution(TOPICS_NAME_ATTR);
+	}
+	/**
+	 * @return java.lang.String
+	 */
+	public String getType() {
+		return TopicContributor.TOPICS_ELEM;
+	}
+	/**
+	 * @param doc org.w3c.dom.Document
+	 */
+	protected void preprocess(Contribution contrib) {
+		updateIDs(contrib);
+		for (Iterator topics = contrib.getChildren(); topics.hasNext();)
+			updateHrefs((Topic) topics.next());
+	}
+	/**
+	 * Utility method that scans the topics for all href attributes and update them
+	 * to include the plugin id (i.e. create a help url).
+	 */
+	protected void updateHrefs(Topic topic) {
+		// set the href on the input contribution   
+		String href = topic.getHref();
+		if (href == null)
+			 ((HelpTopic) topic).setHref("");
+		else {
+			if (!href.equals("") // no empty link
+				&& !href.startsWith("/") // no help url
+				&& href.indexOf(':') == -1) // no other protocols
+				{
+				((HelpTopic) topic).setHref("/" + plugin.getUniqueIdentifier() + "/" + href);
+			}
+		}
+
+		// recurse to children
+		for (Iterator topics = topic.getChildren(); topics.hasNext();) {
+			updateHrefs((Topic) topics.next());
+		}
+	}
+}

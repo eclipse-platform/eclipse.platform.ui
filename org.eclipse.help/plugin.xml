@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<!-- ================================================= -->
+<!-- This is the plugin for user assistance (help).    -->
+<!-- It defines the extension points for help          -->
+<!-- contributions and the help support.               -->
+<!-- ================================================= -->
+
+<plugin
+   name = "%help_plugin_name"
+   id = "org.eclipse.help"
+   version = "0.5"
+   vendor-name = "IBM"
+   class="org.eclipse.help.internal.HelpPlugin">
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.apache.xerces"/>
+   </requires>
+
+   <runtime>
+      <library name="help.jar">
+        <export name="*"/>
+      </library>
+   </runtime>
+
+   <!-- For remote install, run this application -->
+   <!-- ======================================== -->
+   <extension id="workbench" point="org.eclipse.core.runtime.applications">
+     <application> 
+        <run class="org.eclipse.help.internal.remote.StandaloneFacade">
+	  <!--<parameter name="productInfo" value="product.ini"/>-->
+        </run>
+     </application>
+   </extension>
+
+
+
+   <!-- ========================================================================== -->
+   <!-- Extension point: org.eclipse.help.support                              -->
+   <!-- Purpose: Extension point for configuring a help system.                    -->
+   <!--          Only one help system can be registered to the platform.           -->
+   <!-- Extension Implementation: must implement org.eclipse.help.IHelp        -->
+   <!-- Sample usage:                                                              -->
+   <!--   <extension point="org.eclipse.help.support">                         -->
+   <!--       	<config class="com.xyzCompany.xyzIHelpImpl"/>                      -->
+   <!--   </extension>                                                             -->
+   <!-- ========================================================================== -->
+   <extension-point id="support" name="%support_extention_point_name"/>
+
+
+   <!-- ========================================================================== -->
+   <!-- Extension point: org.eclipse.help.contributions                        -->
+   <!-- Purpose: Extension point for registering documentation contributions       -->
+   <!--          by individual plugins                                             -->
+   <!-- Extension Implementation: must provide one or more manifest files for      -->
+   <!--                           the documentation navigation and interleaving    -->
+   <!-- Sample usage:                                                              -->
+   <!--   <extension point="org.eclipse.help.contributions">                   -->
+   <!--	  	<infoset name="infoSet.xml"/>                                      -->
+   <!--	  	<topics  name="infoTopics.xml"/>                                   -->
+   <!--	  	<actions name="infoTopicsWiring.xml"/>                             -->
+   <!--   </extension>                                                             -->
+   <!-- ========================================================================== -->
+   <extension-point id="contributions" name="%contributions_extention_point_name"/>
+   
+
+   <!-- ========================================================================== -->
+   <!-- Extension point: org.eclipse.help.contexts                             -->
+   <!-- Purpose: Extension point for registering context help contributions        -->
+   <!--          by individual plugins                                             -->
+   <!-- Extension Implementation: must provide one or more manifests files for     -->
+   <!--                           context help descriptions and links              -->
+   <!-- Sample usage:                                                              -->
+   <!--   <extension point="org.eclipse.help.contexts">                        -->
+   <!--       	<contexts name="xyzContexts.xml"/>                                 -->
+   <!--   </extension>                                                             -->
+   <!-- ========================================================================== -->
+   <extension-point id="contexts" name="%contexts_extention_point_name"/>
+
+   
+   <!-- ========================================================================== -->
+   <!-- Extension point: org.eclipse.help.searchEngine                         -->
+   <!-- Purpose: Extension point for registering search engine                     -->
+   <!-- Extension Implementation:                                                  -->
+   <!--         must implement org.eclipse.help.internal.search.ISearchEngine  -->
+   <!-- Note: this extension point is for internal use only, and might be removed. -->
+   <!-- ========================================================================== -->
+   <extension-point id="searchEngine" name="%searchengine_extention_point_name"/>
+
+   
+</plugin>
