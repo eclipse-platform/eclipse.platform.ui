@@ -17,17 +17,11 @@ private static String createErrorString(IManifestDescriptor manifest, IManifestD
 
    StringBuffer strbMessage = new StringBuffer();
 	
-	strbMessage.append(manifest.getUniqueIdentifier());
-	strbMessage.append(" ");
-	strbMessage.append(manifest.getVersionIdentifier());
-	strbMessage.append("\n");
-	strbMessage.append(Policy.bind("update.conflicts"));
+	strbMessage.append(Policy.bind("update.conflicts",manifest.getUniqueIdentifier(),manifest.getVersionIdentifier().toString()));
 	strbMessage.append("\n");
 	
 	for (int j = 0; j < manifestsConflicting.length; ++j) {
-		strbMessage.append(manifestsConflicting[j].getUniqueIdentifier());
-		strbMessage.append(" ");
-		strbMessage.append(manifestsConflicting[j].getVersionIdentifier());
+		strbMessage.append(Policy.bind("update.conflictsWith",manifestsConflicting[j].getUniqueIdentifier(),manifestsConflicting[j].getVersionIdentifier().toString()));
 		strbMessage.append("\n");
 	}
 	
@@ -124,23 +118,23 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 
 		for (int i = 0; i < vidConfigurations.length; i++) {			
 
-			IManifestDescriptor manifestDescriptor = registryInstalled.getProductDescriptor(vidConfigurations[i].getIdentifier(), vidConfigurations[i].getVersion());
-			if (manifestDescriptor!=null) {
+			IProductDescriptor productDescriptor = registryInstalled.getProductDescriptor(vidConfigurations[i].getIdentifier(), vidConfigurations[i].getVersion());
+			if (productDescriptor!=null) {
 
 				// Validate existence
 				//-------------------
-				IManifestDescriptor[] manifestsConflicting = registryCurrent.getConflictingManifests(manifestDescriptor);
+				IManifestDescriptor[] manifestsConflicting = registryCurrent.getConflictingManifests(productDescriptor);
 
 				// Add to launch info
 				//-------------------
 				if (manifestsConflicting.length == 0) {
-					launchInfo.setConfiguration(vidConfigurations[i]);
+					launchInfo.setConfiguration(vidConfigurations[i], productDescriptor.getApplication());
 				}
 
 				// Create error message string
 				//----------------------------
 				else {
-					String strError = createErrorString(manifestDescriptor, manifestsConflicting);
+					String strError = createErrorString(productDescriptor, manifestsConflicting);
 					vectorMessages.add(new LaunchInfo.Status(strError));
 				}
 			}

@@ -1300,10 +1300,12 @@ public void setComponent(VersionedIdentifier component) {
 	set(component, comps, compsInact);
 }
 
-public void setConfiguration(VersionedIdentifier config) {
+public void setConfiguration(VersionedIdentifier config, String application) {
 	set(config, configs, configsInact);
-	if (this.appconfig.equals(DEFAULT_APP_CONFIG) || isDominantConfiguration(config.toString()))
+	if (this.appconfig.equals(DEFAULT_APP_CONFIG) || isDominantConfiguration(config.toString())) {
 		setDominantConfiguration(config.toString());
+		setApplication(application);
+	}
 }
 
 /*
