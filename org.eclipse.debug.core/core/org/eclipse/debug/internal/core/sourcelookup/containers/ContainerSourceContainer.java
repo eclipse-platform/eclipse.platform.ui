@@ -151,11 +151,5 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		}
 		return new ISourceContainer[0];
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		fContainer = null;
-	}
+
 }

@@ -167,11 +167,5 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		}
 		return new ISourceContainer[0];
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		fDirectory = null;
-	}
+
 }

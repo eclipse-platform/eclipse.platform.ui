@@ -139,5 +139,17 @@
             id="org.eclipse.debug.core.containerType.archive">
       </sourceContainerType>      
    </extension>
+   
+<!-- ===================================== -->
+<!--  launch configuration comparators     -->                        					 
+<!-- ===================================== -->
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationComparators">
+      <launchConfigurationComparator
+            attribute="org.eclipse.debug.core.source_locator_memento"
+            class="org.eclipse.debug.internal.core.sourcelookup.SourceLocatorMementoComparator"
+            id="org.eclipse.debug.core.sourceLocatorMementoComparator">
+      </launchConfigurationComparator>
+   </extension>   
 
 </plugin>

@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
@@ -38,8 +39,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		return obj instanceof DefaultSourceContainer &&
-		  getLaunchConfiguration().equals(((DefaultSourceContainer)obj).getLaunchConfiguration());
+		return obj instanceof DefaultSourceContainer;
 	}	
 
 	/* (non-Javadoc)
@@ -57,7 +57,11 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * path will be computed, or <code>null</code>
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration() {
-		return getDirector().getLaunchConfiguration();
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			return director.getLaunchConfiguration();
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)

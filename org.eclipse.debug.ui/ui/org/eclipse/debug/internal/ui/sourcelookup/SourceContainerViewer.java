@@ -120,10 +120,14 @@ public class SourceContainerViewer extends TreeViewer {
 			if(entries[i] != null)
 				fEntries.add(entries[i]);
 		}
-		setInput(fEntries);	
-		//select first item in list
-		if(!fEntries.isEmpty() && fEntries.get(0)!=null)
-			setSelection(new StructuredSelection(fEntries.get(0)));
+		if (getInput() == null) {
+			setInput(fEntries);
+			//select first item in list
+			if(!fEntries.isEmpty() && fEntries.get(0)!=null)
+				setSelection(new StructuredSelection(fEntries.get(0)));			
+		} else {
+			refresh();
+		}
 		fPanel.setDirty(true);
 		fPanel.updateLaunchConfigurationDialog(); 
 	}

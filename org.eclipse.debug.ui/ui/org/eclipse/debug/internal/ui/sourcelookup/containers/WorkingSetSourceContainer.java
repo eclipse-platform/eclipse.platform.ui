@@ -102,11 +102,5 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 		
 		return (ISourceContainer[])locationList.toArray(new ISourceContainer[locationList.size()]);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		fWorkingSet = null;
-	}
+
 }

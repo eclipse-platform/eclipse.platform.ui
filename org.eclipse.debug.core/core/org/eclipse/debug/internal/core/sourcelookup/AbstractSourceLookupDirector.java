@@ -254,15 +254,12 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * 
 	 * Updates source containers in repsonse to changes in underlying launch
-	 * configuration. A source lookup director can be initialized from a
-	 * working copy launch configuration or a persisted launch configuration.
-	 * This director responds to changes in the launch configuration it was
-	 * initialized from.
+	 * configuration. Only responds to changes in non-working copies.
 	 * 
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		if (fConfig == null) {
+		if (fConfig == null || configuration.isWorkingCopy()) {
 			return;
 		}
 		if(fConfig.equals(configuration)) {

@@ -441,12 +441,6 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		if(fLocator == null) {
-			setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.0")); //$NON-NLS-1$
-			return; 
-		}		
-		// the source director listens for changes in the launch config & updates
-		// so we do not need to update the source director here
-		initializeFrom(fLocator);
+		initializeFrom(workingCopy);
 	}
 }
