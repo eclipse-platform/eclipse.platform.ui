@@ -22,7 +22,7 @@ import org.eclipse.jface.util.Util;
  * 
  * @since 3.1
  */
-public final class CachedBindingSet {
+final class CachedBindingSet {
 
 	/**
 	 * A factor for computing the hash code for all cached binding sets.
@@ -100,6 +100,15 @@ public final class CachedBindingSet {
 	 * </p>
 	 */
 	private final String[] platforms;
+
+	/**
+	 * A map of prefixes (<code>TriggerSequence</code>) to a map of
+	 * available completions (possibly <code>null</code>, which means there
+	 * is an exact match). The available completions is a map of trigger (<code>TriggerSequence</code>)
+	 * to command identifier (<code>String</code>). This value is
+	 * <code>null</code> if it has not yet been initialized.
+	 */
+	private Map prefixTable = null;
 
 	/**
 	 * <p>
@@ -197,14 +206,29 @@ public final class CachedBindingSet {
 	}
 
 	/**
-	 * Returns the map of command identifiers indexed by trigger.
+	 * Returns the map of command identifiers indexed by trigger sequence.
 	 * 
-	 * @return A map of triggers (<code>Trigger</code>) to command
+	 * @return A map of triggers (<code>TriggerSequence</code>) to command
 	 *         identifiers (<code>String</code>). This value may be
 	 *         <code>null</code> if this was not yet initialized.
 	 */
-	public final Map getCommandIdsByTrigger() {
+	final Map getCommandIdsByTrigger() {
 		return commandIdsByTrigger;
+	}
+
+	/**
+	 * Returns the map of prefixes to a map of trigger sequence to command
+	 * identifiers.
+	 * 
+	 * @return A map of prefixes (<code>TriggerSequence</code>) to a map of
+	 *         available completions (possibly <code>null</code>, which means
+	 *         there is an exact match). The available completions is a map of
+	 *         trigger (<code>TriggerSequence</code>) to command identifier (<code>String</code>).
+	 *         This value may be <code>null</code> if it has not yet been
+	 *         initialized.
+	 */
+	final Map getPrefixTable() {
+		return prefixTable;
 	}
 
 	/**
@@ -237,12 +261,33 @@ public final class CachedBindingSet {
 	 *            map of triggers (<code>Trigger</code>) to command
 	 *            identifiers (<code>String</code>).
 	 */
-	final void setCommandIdsByTrigger(Map commandIdsByTrigger) {
+	final void setCommandIdsByTrigger(final Map commandIdsByTrigger) {
 		if (commandIdsByTrigger == null) {
 			throw new NullPointerException(
 					"Cannot set a null binding resolution"); //$NON-NLS-1$
 		}
 
 		this.commandIdsByTrigger = commandIdsByTrigger;
+	}
+
+	/**
+	 * Sets the map of prefixes to a map of trigger sequence to command
+	 * identifiers.
+	 * 
+	 * @param prefixTable
+	 *            A map of prefixes (<code>TriggerSequence</code>) to a map
+	 *            of available completions (possibly <code>null</code>, which
+	 *            means there is an exact match). The available completions is a
+	 *            map of trigger (<code>TriggerSequence</code>) to command
+	 *            identifier (<code>String</code>). Must not be
+	 *            <code>null</code>.
+	 */
+	final void setPrefixTable(final Map prefixTable) {
+		if (prefixTable == null) {
+			throw new NullPointerException(
+					"Cannot set a null prefix table"); //$NON-NLS-1$
+		}
+
+		this.prefixTable = prefixTable;
 	}
 }

@@ -194,6 +194,15 @@ public final class BindingManager implements IContextManagerListener,
 	private String[] platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 
 	/**
+	 * A map of prefixes (<code>TriggerSequence</code>) to a map of
+	 * available completions (possibly <code>null</code>, which means there
+	 * is an exact match). The available completions is a map of trigger (<code>TriggerSequence</code>)
+	 * to command identifier (<code>String</code>). This value may be
+	 * <code>null</code> if there is no existing solution.
+	 */
+	private Map prefixTable = null;
+
+	/**
 	 * The map of scheme identifiers (<code>String</code>) to scheme (
 	 * <code>Scheme</code>). This value may be empty, but is never
 	 * <code>null</code>.
@@ -275,6 +284,67 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
+	 * Builds a prefix table look-up for a map of active bindings.
+	 * </p>
+	 * <p>
+	 * This method takes <code>O(mn)</code>, where <code>m</code> is the
+	 * length of the trigger sequences and <code>n</code> is the number of
+	 * bindings.
+	 * </p>
+	 * 
+	 * @param activeBindings
+	 *            The map of triggers (<code>TriggerSequence</code>) to
+	 *            command ids (<code>String</code>) which are currently
+	 *            active. This value may be <code>null</code> if there are no
+	 *            active bindings, and it may be empty. It must not be
+	 *            <code>null</code>.
+	 * @return A map of prefixes (<code>TriggerSequence</code>) to a map of
+	 *         available completions (possibly <code>null</code>, which means
+	 *         there is an exact match). The available completions is a map of
+	 *         trigger (<code>TriggerSequence</code>) to command identifier (<code>String</code>).
+	 *         This value will never be <code>null</code>, but may be empty.
+	 */
+	private final Map buildPrefixTable(final Map activeBindings) {
+		final Map prefixTable = new HashMap();
+
+		final Iterator bindingItr = activeBindings.entrySet().iterator();
+		while (bindingItr.hasNext()) {
+			final Map.Entry entry = (Map.Entry) bindingItr.next();
+			final TriggerSequence triggerSequence = (TriggerSequence) entry
+					.getKey();
+
+			// Add the perfect match.
+			prefixTable.put(triggerSequence, null);
+
+			final List prefixes = triggerSequence.getPrefixes();
+			if (prefixes.isEmpty()) {
+				continue;
+			}
+
+			// Break apart the trigger sequence.
+			final String commandId = (String) entry.getValue();
+			final Iterator prefixItr = prefixes.iterator();
+			while (prefixItr.hasNext()) {
+				final TriggerSequence prefix = (TriggerSequence) prefixItr
+						.next();
+				final Object value = prefixTable.get(prefix);
+				if (prefixTable.containsKey(prefix)) {
+					if (value instanceof Map) {
+						((Map) value).put(triggerSequence, commandId);
+					}
+				} else {
+					final Map map = new HashMap();
+					prefixTable.put(prefix, map);
+					map.put(triggerSequence, commandId);
+				}
+			}
+		}
+
+		return prefixTable;
+	}
+
+	/**
+	 * <p>
 	 * Clears the cache, and the existing solution. If debugging is turned on,
 	 * then this will also print a message to standard out.
 	 * </p>
@@ -299,6 +369,7 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	private final void clearSolution() {
 		activeBindings = null;
+		prefixTable = null;
 	}
 
 	/**
@@ -628,7 +699,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         value may be <code>null</code> if there are no active bindings,
 	 *         and it may be empty.
 	 */
-	public final Map getActiveBindings() {
+	private final Map getActiveBindings() {
 		if (activeBindings == null) {
 			recomputeBindings();
 		}
@@ -832,11 +903,10 @@ public final class BindingManager implements IContextManagerListener,
 	 * (but are not equal to the given trigger).
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n)</code>, where <code>n</code> is
-	 * the number of active bindings. If the bindings aren't currently computed,
-	 * then this completes in <code>O(n+mn)</code>, where <code>n</code> is
-	 * the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(1)</code>. If the bindings aren't
+	 * currently computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -846,15 +916,9 @@ public final class BindingManager implements IContextManagerListener,
 	 *         it is never <code>null</code>.
 	 */
 	public final Map getPartialMatches(final TriggerSequence trigger) {
-		final Map partialMatches = new HashMap();
-		final Iterator bindingItr = getActiveBindings().entrySet().iterator();
-		while (bindingItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) bindingItr.next();
-			final TriggerSequence triggerSequence = (TriggerSequence) entry
-					.getKey();
-			if (triggerSequence.startsWith(trigger, false)) {
-				partialMatches.put(triggerSequence, entry.getValue());
-			}
+		Map partialMatches = (Map) getPrefixTable().get(trigger);
+		if (partialMatches == null) {
+			partialMatches = Collections.EMPTY_MAP;
 		}
 
 		return partialMatches;
@@ -894,6 +958,31 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final String getPlatform() {
 		return platform;
+	}
+
+	/**
+	 * <p>
+	 * Returns the prefix table.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
+	 * </p>
+	 * 
+	 * @return A map of prefixes (<code>TriggerSequence</code>) to a map of
+	 *         available completions (possibly <code>null</code>, which means
+	 *         there is an exact match). The available completions is a map of
+	 *         trigger (<code>TriggerSequence</code>) to command identifier (<code>String</code>).
+	 *         This value will never be <code>null</code> but may be empty.
+	 */
+	private final Map getPrefixTable() {
+		if (prefixTable == null) {
+			recomputeBindings();
+		}
+
+		return Collections.unmodifiableMap(prefixTable);
 	}
 
 	/**
@@ -962,11 +1051,10 @@ public final class BindingManager implements IContextManagerListener,
 	 * given sequence.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n)</code>, where <code>n</code> is
-	 * the number of active bindings. If the bindings aren't currently computed,
-	 * then this completes in <code>O(n+mn)</code>, where <code>n</code> is
-	 * the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(1)</code>. If the bindings aren't
+	 * currently computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -976,17 +1064,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public final boolean isPartialMatch(final TriggerSequence trigger) {
-		final Iterator bindingItr = getActiveBindings().entrySet().iterator();
-		while (bindingItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) bindingItr.next();
-			final TriggerSequence triggerSequence = (TriggerSequence) entry
-					.getKey();
-			if (triggerSequence.startsWith(trigger, false)) {
-				return true;
-			}
-		}
-
-		return false;
+		return (getPrefixTable().get(trigger) != null);
 	}
 
 	/**
@@ -1088,15 +1166,17 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>CachedBindingSet</code> representing these bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
-	 * is the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(n+mn+pn)</code>, where <code>n</code>
+	 * is the number of bindings, <code>m</code> is the number of deletion
+	 * markers, and <code>p</code> is the average number of triggers in a
+	 * trigger sequence.
 	 * </p>
 	 */
 	private final void recomputeBindings() {
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
 			activeBindings = Collections.EMPTY_MAP;
+			prefixTable = Collections.EMPTY_MAP;
 			return;
 		}
 
@@ -1124,6 +1204,7 @@ public final class BindingManager implements IContextManagerListener,
 				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
 			}
 			activeBindings = commandIdsByTrigger;
+			prefixTable = existingCache.getPrefixTable();
 			return;
 		}
 
@@ -1137,6 +1218,8 @@ public final class BindingManager implements IContextManagerListener,
 		computeBindings(activeContextTree, commandIdsByTrigger);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
 		activeBindings = commandIdsByTrigger;
+		prefixTable = buildPrefixTable(activeBindings);
+		existingCache.setPrefixTable(prefixTable);
 	}
 
 	/**
