@@ -13,6 +13,7 @@ package org.eclipse.jface.window;
 import java.util.ArrayList;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -753,6 +754,21 @@ public abstract class Window {
 		System.arraycopy(images, 0, newArray, 0, newArray.length);
 		defaultImages = newArray;
 	}
+	
+	/**
+     * Changes the parent shell. This is only safe to use when the shell is not
+     * yet realized (i.e., created). Once the shell is created, it must be
+     * disposed (i.e., closed) before this method can be called.
+     * 
+     * @param newParentShell
+     *            The new parent shell; this value may be <code>null</code> if
+     *            there is to be no parent.
+     * @since 3.1
+     */
+    protected void setParentShell(final Shell newParentShell) {
+        Assert.isTrue((shell == null), "There must not be an existing shell."); //$NON-NLS-1$
+        parentShell = newParentShell;
+    }
 
 	/**
 	 * Sets this window's return code. The return code is automatically returned
