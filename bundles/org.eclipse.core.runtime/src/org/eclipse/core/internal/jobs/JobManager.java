@@ -12,7 +12,6 @@ package org.eclipse.core.internal.jobs;
 
 import java.text.*;
 import java.util.*;
-
 import org.eclipse.core.internal.jobs.ImplicitJobs.ThreadJob;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;

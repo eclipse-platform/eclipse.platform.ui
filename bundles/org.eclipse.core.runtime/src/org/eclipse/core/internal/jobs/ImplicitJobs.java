@@ -11,7 +11,6 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;

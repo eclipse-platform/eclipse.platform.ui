@@ -10,7 +10,6 @@
 package org.eclipse.core.runtime.jobs;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * An event describing a change to the state of a job.

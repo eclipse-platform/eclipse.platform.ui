@@ -12,7 +12,6 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;

@@ -11,8 +11,6 @@
 package org.eclipse.core.internal.preferences;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.osgi.service.prefs.BackingStoreException;

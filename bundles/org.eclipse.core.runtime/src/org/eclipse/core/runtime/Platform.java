@@ -15,8 +15,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.runtime.FindSupport;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;

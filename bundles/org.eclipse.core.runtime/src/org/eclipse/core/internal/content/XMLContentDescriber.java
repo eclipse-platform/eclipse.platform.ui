@@ -11,8 +11,8 @@
 package org.eclipse.core.internal.content;
 
 import java.io.*;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentDescriber;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 /**
  * A content interpreter for XML files. 

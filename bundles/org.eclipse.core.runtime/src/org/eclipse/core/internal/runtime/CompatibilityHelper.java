@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.runtime;
 
 import java.lang.reflect.Method;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.Bundle;
 
 //TODO Some comments could be welcomed here.
