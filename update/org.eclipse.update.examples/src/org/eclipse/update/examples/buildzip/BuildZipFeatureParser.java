@@ -169,9 +169,9 @@ public class BuildZipFeatureParser {
 	}
 	
 	private void parseNonPluginEntries(BuildZipFeatureContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
-		NonPluginEntryModel nonPluginEntry = factory.createNonPluginEntryModel();
-		nonPluginEntry.setIdentifier("root");
-		feature.addNonPluginEntryModel(nonPluginEntry);
+	//	NonPluginEntryModel nonPluginEntry = factory.createNonPluginEntryModel();
+	//	nonPluginEntry.setIdentifier("root");
+	//	feature.addNonPluginEntryModel(nonPluginEntry);
 	}
 	
 	private String parsePluginVersionInManifest(BuildZipFeatureContentProvider cp, String pluginId, PluginEntryModel pluginEntry) {
