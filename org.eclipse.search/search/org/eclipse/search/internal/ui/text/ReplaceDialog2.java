@@ -44,6 +44,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -71,6 +72,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -158,6 +160,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 		
 	protected Control createPageArea(Composite parent) {
+		WorkbenchHelp.setHelp(parent, ISearchHelpContextIds.REPLACE_DIALOG);
 		Composite result= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		result.setLayout(layout);
@@ -196,6 +199,11 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
 		fReplaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label"));//$NON-NLS-1$
+		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setContentAssistsEnablement(fReplaceWithRegex.getSelection());
+			}
+		});
 		if (isRegexQuery()) {
 			fReplaceWithRegex.setSelection(true);
 		} else {
@@ -203,12 +211,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			fReplaceWithRegex.setEnabled(false);
 		}
 	
-		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean newState= fReplaceWithRegex.getSelection();
-				setContentAssistsEnablement(newState);
-			}
-		});
 		
 		fStatusLabel= new Label(result, SWT.NULL);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -216,6 +218,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		gd.horizontalSpan= 2;
 		fStatusLabel.setLayoutData(gd);
 
+		setContentAssistsEnablement(fReplaceWithRegex.getSelection());
+		
 		applyDialogFont(result);
 		return result;
 	}
@@ -643,12 +647,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		return fMarkers.size() > 0;
 	}
 	
-	public static SubjectControlContentAssistant createContentAssistant() {
+	public static SubjectControlContentAssistant createContentAssistant(ArrayList proposalKeys) {
 		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
 		
 		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings()); //$NON-NLS-1$
 		
-		IContentAssistProcessor processor= new RegExContentAssistProcessor();
+		IContentAssistProcessor processor= new RegExContentAssistProcessor(proposalKeys);
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		
 		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
@@ -666,7 +670,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForText(fTextField, createContentAssistant());
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForText(fTextField, createContentAssistant(RegExContentAssistProcessor.fgReplaceProposalKeys));
 			}
 			fReplaceContentAssistHandler.setEnabled(true);
 			

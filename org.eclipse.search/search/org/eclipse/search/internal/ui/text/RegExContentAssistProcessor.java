@@ -44,13 +44,19 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	/**
 	 * The available proposal keys.
 	 */
-	private final static ArrayList fgProposalKeys= new ArrayList();
+	public static ArrayList fgProposalKeys= new ArrayList();
+	public static ArrayList fgFindProposalKeys;
+	public static ArrayList fgReplaceProposalKeys;
+	
+	private ArrayList fProposalKeys;
+	
 	
 	
 	static {
 
 		//---------- Proposal Keys ----------
 
+		fgProposalKeys= new ArrayList();
 		fgProposalKeys.add("\\\\"); //$NON-NLS-1$
 		fgProposalKeys.add("\\0"); //$NON-NLS-1$
 		fgProposalKeys.add("\\x"); //$NON-NLS-1$
@@ -116,36 +122,11 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalKeys.add("[^ecq]"); //$NON-NLS-1$
 		fgProposalKeys.add("[e-q]"); //$NON-NLS-1$
 		fgProposalKeys.add("&&"); //$NON-NLS-1$
-
-//		fgProposalKeys.add("\\p{Lower}");  //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Upper}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{ASCII}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Alpha}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Digit}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Alnum}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Punct}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Graph}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Print}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Blank}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Cntrl}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{XDigit}"); //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Space}"); //$NON-NLS-1$
-//
-//		fgProposalKeys.add("\\p{InGreek}");  //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Lu}");  //$NON-NLS-1$
-//		fgProposalKeys.add("\\p{Sc}");  //$NON-NLS-1$
-//		fgProposalKeys.add("\\P{InGreek}");  //$NON-NLS-1$
-//		fgProposalKeys.add("[\\p{L}&&[^\\p{Lu}]");  //$NON-NLS-1$
-
-//		fgProposalKeys.add("(?idmsux-idmsux)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?idmsux-idmsux:U)");  //$NON-NLS-1$
-
-//		fgProposalKeys.add("(?:U)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?=U)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?!U)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?<=U)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?<!U)");  //$NON-NLS-1$
-//		fgProposalKeys.add("(?>U)");  //$NON-NLS-1$
+		
+		fgFindProposalKeys= (ArrayList) fgProposalKeys.clone();
+		fgFindProposalKeys.remove("$i"); //$NON-NLS-1$
+		fgReplaceProposalKeys= new ArrayList();
+		fgReplaceProposalKeys.add("$i"); //$NON-NLS-1$
 		
 		//---------- Proposals ----------
 		
@@ -242,6 +223,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalStrings.put("(?<=U)", "(?<=)");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(?<!U)", "(?<!)");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(?>U)", "(?>)");  //$NON-NLS-1$ //$NON-NLS-2$
+		
 	}
 
 	/**
@@ -249,6 +231,10 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	 */
 	private IContextInformationValidator fValidator= new SubjectControlContextInformationValidator(this);
 	
+	public RegExContentAssistProcessor(ArrayList proposalKeys) {
+		super();
+		fProposalKeys= proposalKeys;
+	}
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
@@ -296,13 +282,13 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	 * @see ISubjectControlContentAssistProcessor#computeCompletionProposals(IContentAssistSubjectControl, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
-		List results= new ArrayList(fgProposalKeys.size());
-		Iterator iter= fgProposalKeys.iterator();
+		List results= new ArrayList(fProposalKeys.size());
+		Iterator iter= fProposalKeys.iterator();
 		while (iter.hasNext())
 			addProposal((String)iter.next(), contentAssistSubjectControl, documentOffset, results, true);
 
 		if (results.isEmpty()) {
-			iter= fgProposalKeys.iterator();
+			iter= fProposalKeys.iterator();
 			while (iter.hasNext())
 				addProposal((String)iter.next(), contentAssistSubjectControl, documentOffset, results, false);
 		}
