@@ -348,7 +348,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.RECENT_FILES, IPreferenceConstants.MAX_RECENT_FILES_SIZE);
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, "");
 
@@ -357,6 +356,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.BANNER_FONT, registry, store);
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
+		
+		// deprecated constants - keep to be backward compatible
+		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
+		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
+		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
+		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 	}
 
 	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
