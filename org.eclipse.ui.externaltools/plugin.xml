@@ -50,7 +50,7 @@
          <action
                label="%Action.externalTools"
                pulldown="true"
-               icon="icons/full/ctool16/external_tools.gif"
+               icon="icons/full/obj16/external_tools.gif"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
                id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateMenu">
@@ -59,7 +59,7 @@
                definitionId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
                label="%Action.externalTools"
                pulldown="true"
-               icon="icons/full/ctool16/external_tools.gif"
+               icon="icons/full/obj16/external_tools.gif"
                tooltip="%Action.externalToolsTip"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
