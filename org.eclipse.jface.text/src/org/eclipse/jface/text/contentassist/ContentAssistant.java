@@ -71,7 +71,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
 
 		/** The shell that a <code>ControlListener</code> is registered with. */
-		private Control fShell;
+		private Shell fShell;
 		/** The control that a <code>MouseListener</code>, a<code>FocusListener</code> and a <code>DisposeListener</code> are registered with. */
 		private Control fControl;
 		
@@ -83,7 +83,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fControl= control;
 			if (Helper.okToUse(control)) {
 				
-				Control shell= control.getShell();
+				Shell shell= control.getShell();
 				fShell= shell;
 				shell.addControlListener(this);
 					
