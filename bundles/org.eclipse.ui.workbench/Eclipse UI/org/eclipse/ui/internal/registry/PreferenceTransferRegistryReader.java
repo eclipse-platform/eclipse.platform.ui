@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -54,7 +55,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
     private static final String TAG_ENTRY = "entry"; //$NON-NLS-1$
     
     private static final String ATT_SCOPE = "scope"; //$NON-NLS-1$
-    private static final String ATT_NODE = "nodes"; //$NON-NLS-1$
+    private static final String ATT_NODE = "node"; //$NON-NLS-1$
     private static final String ATT_KEYS = "keys"; //$NON-NLS-1$
  
     /**
@@ -175,9 +176,21 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
         Map map = new HashMap(entries.length);
         for (int i = 0; i < entries.length; i++) {
             IConfigurationElement entry = entries[i];
-            map.put(entry.getAttribute(ATT_NODE), entry.getAttribute(ATT_KEYS));            
+            map.put(entry.getAttribute(ATT_NODE), convertToStringArray(entry.getAttribute(ATT_KEYS)));            
         }
         return map;
+    }
+
+    private static String[] convertToStringArray(String commaSepString) {
+        if (commaSepString == null)
+            return null;
+        StringTokenizer tokens = new StringTokenizer(commaSepString,","); //$NON-NLS-1$
+        String[] strings = new String[tokens.countTokens()];
+        int i = 0;
+        while (tokens.hasMoreTokens()) {
+            strings[i++] = tokens.nextToken();
+        }
+        return strings;
     }
 
 }
