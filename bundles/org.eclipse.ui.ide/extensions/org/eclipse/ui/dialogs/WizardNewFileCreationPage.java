@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -290,9 +291,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
         final InputStream initialContents = getInitialContents();
 
         createLinkTarget();
-        WorkspaceModifyOperation op = new WorkspaceModifyOperation(null) {
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation(createRule(newFileHandle)) {
             protected void execute(IProgressMonitor monitor)
-                    throws CoreException, InterruptedException {
+                    throws CoreException {
                 try {
                     monitor
                             .beginTask(
@@ -343,6 +344,25 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
     }
 
     /**
+     * Returns the scheduling rule to use when creating the resource at
+     * the given container path. The rule should be the creation rule for
+     * the top-most non-existing parent.
+     * @param resource The resource being created
+     * @return The scheduling rule for creating the given resource
+     * @since 3.1
+     */
+    protected ISchedulingRule createRule(IResource resource) {
+		IResource parent = resource.getParent();
+    	while (parent != null) {
+    		if (parent.exists())
+    			return resource.getWorkspace().getRuleFactory().createRule(resource);
+    		resource = parent;
+    		parent = parent.getParent();
+    	}
+		return resource.getWorkspace().getRoot();
+	}
+
+	/**
      * Returns the current full path of the containing resource as entered or 
      * selected by the user, or its anticipated initial value.
      *

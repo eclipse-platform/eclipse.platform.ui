@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -280,7 +281,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         final IFolder newFolderHandle = createFolderHandle(newFolderPath);
 
         createLinkTarget();
-        WorkspaceModifyOperation op = new WorkspaceModifyOperation(null) {
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation(createRule(newFolderHandle)) {
             public void execute(IProgressMonitor monitor) throws CoreException {
                 try {
                     monitor
@@ -331,6 +332,25 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
         return newFolder;
     }
+
+    /**
+     * Returns the scheduling rule to use when creating the resource at
+     * the given container path. The rule should be the creation rule for
+     * the top-most non-existing parent.
+     * @param resource The resource being created
+     * @return The scheduling rule for creating the given resource
+     * @since 3.1
+     */
+    private ISchedulingRule createRule(IResource resource) {
+		IResource parent = resource.getParent();
+    	while (parent != null) {
+    		if (parent.exists())
+    			return resource.getWorkspace().getRuleFactory().createRule(resource);
+    		resource = parent;
+    		parent = parent.getParent();
+    	}
+		return resource.getWorkspace().getRoot();
+	}
 
     /**
      * Shows/hides the advanced option widgets. 
