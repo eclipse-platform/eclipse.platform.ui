@@ -644,10 +644,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		// Update the perspective list and shortcut
 		perspList.swap(oldPersp, newPersp);
 
-		SetPagePerspectiveAction action =
-			(SetPagePerspectiveAction) ((ActionContributionItem) item)
-				.getAction();
-		action.setPerspective(newPersp.getDesc());
+		((PerspectiveBarContributionItem) item).setPerspective(newPersp.getDesc());
 
 		// Install new persp.
 		setPerspective(newPersp);

@@ -124,7 +124,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
 	
-	private PerspectiveBarManager newBar;
+	//private PerspectiveBarManager newBar;
 	
 	private TrimLayout layout = new TrimLayout(); 
 	
@@ -248,7 +248,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		addStatusLine();
 		fastViewBar = new FastViewBar(this);
 		addPerspectiveBar(perspectiveBarStyle());
-		addNewBar(perspectiveBarStyle());
+		//addNewBar(perspectiveBarStyle());
 
 		actionPresentation = new ActionPresentation(this);
 
@@ -328,13 +328,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 		perspectiveListeners.addPerspectiveListener(l);
 	}
+	
 	/**
 	 * add a shortcut for the page.
 	 */
-	/* package */
-	void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
-		SetPagePerspectiveAction action = new SetPagePerspectiveAction(perspective, page);
-		perspectiveBar.add(action);
+	void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
+		perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
 		perspectiveBar.update(false);
 		topBar.layout(true);
 	}
@@ -347,6 +346,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected void addPerspectiveBar(int style) {
 		if ((getShell() == null) && (perspectiveBar == null)) {
 			perspectiveBar = new PerspectiveBarManager(style);
+			//perspectiveBar.add(new PerspectiveDropDownContributionItem(this));	
+			//perspectiveBar.add(new PerspectiveNewContributionItem(this));	
 		}
 	}
 	
@@ -355,12 +356,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * Does nothing if it already has one.
 	 * This method must be called before this window's shell is created.
 	 */
+	/*
 	protected void addNewBar(int style) {
 		if ((getShell() == null) && (newBar == null)) {
 			newBar = new PerspectiveBarManager(style);
-			newBar.add(new PerspectiveContributionItem(this));
+			//newBar.add(new PerspectiveContributionItem(this));
 		}
-	}	
+	}
+	*/	
 	
 	/**
 	 * Close the window.
@@ -607,16 +610,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		createCoolBarControl(topBar);
 		createPerspectiveBar(topBar);
-		createNewBar(topBar);
+		//createNewBar(topBar);
 
+		perspectiveBar.setBanner(topBar);
+		
 		topBar.setLeft(getCoolBarControl());		
 		topBar.setRight(perspectiveBar.getControl());
-		topBar.setMiddle(newBar.getControl());
+		//topBar.setMiddle(newBar.getControl());
 
 		//ColorSchemeService.setCBannerColors(topBar);
 		ColorSchemeService.setCoolBarColors(getCoolBarControl());
 		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
-		ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
+		//ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
 	
 		createStatusLine(parent);
 		fastViewBar.createControl(parent);
@@ -662,11 +667,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Create the new toolbar control
 	 */
+	/*
 	private void createNewBar(Composite parent) {
 
 		newBar.createControl(parent);
 
 	}
+	*/
 	
 	/**
 	 * Returns the shortcut for a page.
@@ -679,14 +686,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		int length = array.length;
 		for (int i = 0; i < length; i++) {
 			IContributionItem item = array[i];
-			if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				if (action instanceof SetPagePerspectiveAction) {
-					SetPagePerspectiveAction sp = (SetPagePerspectiveAction) action;
-					if (sp.handles(perspective, page))
-						return item;
-				}
-			}
+						
+			if (item instanceof PerspectiveBarContributionItem)
+				if (((PerspectiveBarContributionItem) item).handles(perspective, page))
+					return item;
 		}
 		return null;
 	}
@@ -1584,10 +1587,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		WorkbenchPage page,
 		boolean selected) {
 		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		if (item != null) {
-			IAction action = ((ActionContributionItem) item).getAction();
-			action.setChecked(selected);
-		}
+		
+		if (item != null)
+			((PerspectiveBarContributionItem) item).setSelection(selected);
 	}
 	/**
 	 * Sets the active page within the window.
@@ -1650,12 +1652,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Get the action for the tool item.
 		Object data = toolItem.getData();
 
-		if (!(data instanceof ActionContributionItem))
+		if (!(data instanceof PerspectiveBarContributionItem))
 			return;
-		IAction action = ((ActionContributionItem) data).getAction();
-
-		// The tool item is an icon for a perspective.
-		if (action instanceof SetPagePerspectiveAction) {
+		
 			// The perspective bar menu is created lazily here.
 			// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
 			// which in turn refers to the page and perspective.
@@ -1672,11 +1671,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					public void widgetSelected(SelectionEvent e) {
 						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
 						if (toolItem != null && !toolItem.isDisposed()) {
-							ActionContributionItem item =
-								(ActionContributionItem) toolItem.getData();
-							SetPagePerspectiveAction action =
-								(SetPagePerspectiveAction) item.getAction();
-							action.getPage().closePerspective(action.getPerspective(), true);
+							PerspectiveBarContributionItem item =
+								(PerspectiveBarContributionItem) toolItem.getData();
+							item.getPage().closePerspective(item.getPerspective(), true);
 						}
 					}
 				});
@@ -1686,11 +1683,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					public void widgetSelected(SelectionEvent e) {
 						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
 						if (toolItem != null && !toolItem.isDisposed()) {
-							ActionContributionItem item =
-								(ActionContributionItem) toolItem.getData();
-							SetPagePerspectiveAction action =
-								(SetPagePerspectiveAction) item.getAction();
-							action.getPage().closeAllPerspectives();
+							PerspectiveBarContributionItem item =
+								(PerspectiveBarContributionItem) toolItem.getData();
+							item.getPage().closeAllPerspectives();
 						}
 					}
 				});
@@ -1703,8 +1698,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				perspectiveBarMenu.setLocation(pt.x, pt.y);
 				perspectiveBarMenu.setVisible(true);
 			}
-		}
-
 	}
 
 	/**
@@ -1854,11 +1847,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			return;
 
 		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
-		if (item != null) {
-			SetPagePerspectiveAction action =
-				(SetPagePerspectiveAction) ((ActionContributionItem) item).getAction();
-			action.update(newDesc);
-		}
+		
+		if (item != null)
+			((PerspectiveBarContributionItem) item).update(newDesc);
 	}
 
 	/**
