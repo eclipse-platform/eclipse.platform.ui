@@ -1274,7 +1274,7 @@
             overviewRulerPreferenceKey="currentIPOverviewRuler"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="currentIPHighlight"
-            highlightPreferenceValue="false"
+            highlightPreferenceValue="true"
             markerType="org.eclipse.debug.ui.instructionPointer.current"
             presentationLayer="6"
             textPreferenceValue="false"
@@ -1283,7 +1283,7 @@
             markerSeverity="0">
       </specification>      
       <specification
-            colorPreferenceValue="0,128,0"
+            colorPreferenceValue="0,160,0"
             annotationType="org.eclipse.debug.core.secondaryIP"
             colorPreferenceKey="secondaryIPColor"
             verticalRulerPreferenceKey="secondaryIPVerticalRuler"
@@ -1291,7 +1291,7 @@
             overviewRulerPreferenceKey="secondaryIPOverviewRuler"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="secondaryIPHighlight"
-            highlightPreferenceValue="false"
+            highlightPreferenceValue="true"
             markerType="org.eclipse.debug.ui.instructionPointer.secondary"
             presentationLayer="6"
             textPreferenceValue="false"

@@ -752,15 +752,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private void selectAndReveal(ITextEditor editor, int lineNumber, int charStart, int charEnd, IThread thread) {
 		lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
 		if (charStart > 0 && charEnd > charStart) {
-			int length = charEnd - charStart;
-			editor.selectAndReveal(charStart, length);
-			// add decoration
-			Decoration decoration = new TextEditorSelection(editor, lineNumber, charStart, length, thread);
-			DecorationManager.addDecoration(decoration);
+			editor.selectAndReveal(charStart, 0);
 			return;
 		}
 		int offset= -1;
-		int length= -1;
 		IRegion region= getLineInformation(editor, lineNumber);
 		if (region == null) {
 			// use "goto marker" if line info not available
@@ -780,11 +775,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		} else { 
 			offset= region.getOffset();
 		}
-		length= region.getLength();
-		editor.selectAndReveal(offset, length);
-		// add decoration
-		Decoration decoration = new TextEditorSelection(editor, lineNumber, offset, length, thread);
-		DecorationManager.addDecoration(decoration);
+		editor.selectAndReveal(offset, 0);
 	}
 	
 	/**

@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
@@ -83,25 +84,30 @@ public class InstructionPointerManager {
 		
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;
-		int charStart = 0;
+		int charStart = -1;
+		int length = -1; 
 		try {
 			charStart = stackFrame.getCharStart();
+			length = stackFrame.getCharEnd() - charStart;
 		} catch (DebugException de) {
 		}
-		if (charStart >= 0) {
-			position = new Position(charStart);
-		} else {
+		if (charStart < 0) {
 			IDocument doc = docProvider.getDocument(editorInput);
 			try {
 				int lineNumber = stackFrame.getLineNumber() - 1;
-				position = new Position(doc.getLineOffset(lineNumber));
+				IRegion region = doc.getLineInformation(lineNumber);
+				charStart = region.getOffset();
+				length = region.getLength();
 			} catch (BadLocationException ble) {
 				return;
 			} catch (DebugException de) {
-				DebugUIPlugin.log(de);
 				return;
 			}
 		}
+		if (charStart < 0) {
+			return;
+		}
+		position = new Position(charStart, length);
 		
 		// Add the annotation at the position to the editor's annotation model.
 		// If there is no annotation model, there's nothing more to do
