@@ -30,6 +30,8 @@ public class TestStartup extends UpdateManagerTestCase {
 	public void testConfigurationCreation() {
 		Performance perf= Performance.getDefault();
 		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		perf.tagAsGlobalSummary(performanceMeter, "Configuration creation", Dimension.ELAPSED_PROCESS);
+		
 		try {
 			for (int i= 0; i < 10; i++) {
 				performanceMeter.start();
@@ -51,6 +53,8 @@ public class TestStartup extends UpdateManagerTestCase {
 	public void testConfigurationDetection() {
 		Performance perf= Performance.getDefault();
 		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		perf.tagAsGlobalSummary(performanceMeter, "Configuration detection", Dimension.ELAPSED_PROCESS);
+
 		try {
 			for (int i= 0; i < 10; i++) {
 				performanceMeter.start();
