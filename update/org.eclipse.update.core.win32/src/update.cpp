@@ -167,8 +167,9 @@ jlong getFloppy(TCHAR driveLetter[]){
 	sprintf(floppyPath, "\\\\.\\%c:", driveLetter[0]);
 	if (DEBUG)
 		printf("Path %s\n",floppyPath);
-	handle=CreateFile(floppyPath,
-		0,FILE_SHARE_READ,NULL,OPEN_ALWAYS,0,NULL);
+	// BUG 25719
+    SetErrorMode( SEM_FAILCRITICALERRORS ); 		
+	handle=CreateFile(floppyPath,0,FILE_SHARE_READ,NULL,OPEN_ALWAYS,0,NULL);
 	if (handle==INVALID_HANDLE_VALUE){
 		if (DEBUG)
 			printf("Invalid Handle %s\n",floppyPath);
