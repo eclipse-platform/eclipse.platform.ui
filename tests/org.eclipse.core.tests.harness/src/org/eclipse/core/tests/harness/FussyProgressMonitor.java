@@ -118,8 +118,9 @@ public void sanityCheck() {
 		EclipseWorkspaceTest.log("sanityCheck has already been called");
 	sanityCheckCalled = true;
 //	EclipseWorkspaceTest.log("sanity checking: " + taskName + " : " + (System.currentTimeMillis() - beginTime) + " ms, " + workedSoFar);
-	if (System.currentTimeMillis() - beginTime > NOTICEABLE_DELAY) {
-		assert("this operation took a long time, it should report progress", workedSoFar > 0);
+	long duration = System.currentTimeMillis() - beginTime;
+	if (duration > NOTICEABLE_DELAY && beginTaskCalled) {
+		assert("this operation took: " + duration + "ms, it should report progress", workedSoFar > 0);
 	}
 	assert("done has not been called on ProgressMonitor", hasFailed || !beginTaskCalled || doneCalls > 0);
 }
