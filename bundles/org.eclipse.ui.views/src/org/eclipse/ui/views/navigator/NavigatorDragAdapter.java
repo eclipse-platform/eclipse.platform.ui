@@ -32,7 +32,6 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	ISelectionProvider selectionProvider;
 
 	private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.getString("DragAdapter.title"); //$NON-NLS-1$
-	private static final String CHECK_MOVE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkMoveMessage"); //$NON-NLS-1$
 	private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkDeleteMessage"); //$NON-NLS-1$	
 
 	/**

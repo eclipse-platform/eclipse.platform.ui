@@ -30,7 +30,6 @@ public class WorkingSetNewWizard extends Wizard {
 	private IWorkingSetPage workingSetEditPage;
 	private String editPageId;
 	private IWorkingSet workingSet;
-	private String workingSetEditPageId;
 
 	/**
 	 * Creates a new instance of the receiver.
