@@ -153,8 +153,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTreeFont(org.eclipse.swt.graphics.Font)
 	 */
 	protected void updateTreeFont(Font dialogFont) {
-		unfilteredViewer.getControl().setFont(dialogFont);
-		if (filteredViewer != null)
-			filteredViewer.getControl().setFont(dialogFont);
+		filteredViewer.getControl().setFont(dialogFont);
+		if (unfilteredViewer != null)
+			unfilteredViewer.getControl().setFont(dialogFont);
 	}
 }
