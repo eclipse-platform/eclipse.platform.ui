@@ -1562,6 +1562,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void handleSavePressed() {
 		try {
+			// trim name
+			Text widget = getNameTextWidget();
+			widget.setText(widget.getText().trim());
+			
 			doSave();
 		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while saving launch configuration.", e.getStatus());
