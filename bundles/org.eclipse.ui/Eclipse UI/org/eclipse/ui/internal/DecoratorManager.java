@@ -344,12 +344,7 @@ public class DecoratorManager
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		//Disable all fo the enabled decorators 
-		//so as to force a dispose of thier decorators
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].isEnabled())
-				definitions[i].setEnabled(false);
-		}
+		//Do nothing as this is not viewer dependant
 	}
 
 	/**
@@ -436,5 +431,19 @@ public class DecoratorManager
 			}
 		}
 
+	}
+	
+	/**
+	 * Shutdown the decorator manager by disabling all
+	 * of the decorators so that dispose() will be called
+	 * on them.
+	 */
+	public void shutdown() {
+		//Disable all fo the enabled decorators 
+		//so as to force a dispose of thier decorators
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].isEnabled())
+				definitions[i].setEnabled(false);
+		}
 	}
 }
