@@ -92,8 +92,8 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		return (i == length ? line : line.substring(0, i)) + " "; //$NON-NLS-1$
 	}
 	
-	/*
-	 * @see IHoverInformationPresenter#updatePresentation(Display display, String, TextPresentation, int, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display, java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
 	 */
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		
