@@ -5,10 +5,10 @@
 <!-- ======================================================================= -->
 <plugin
 	name="%pluginName"
-	id= "org.eclipse.search"
-	version= "2.0.0"
-	provider-name= "Eclipse.org"
-	class= "org.eclipse.search.internal.ui.SearchPlugin">
+	id="org.eclipse.search"
+	version="2.0.0"
+	provider-name="%providerName"
+	class="org.eclipse.search.internal.ui.SearchPlugin">
 
 <requires>
   <import plugin="org.apache.xerces"/>
