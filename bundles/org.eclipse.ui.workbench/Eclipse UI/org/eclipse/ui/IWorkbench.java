@@ -301,5 +301,11 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * </p>
  */
 public IDecoratorManager getDecoratorManager();
-
+/**
+ * Save all dirty editors in the workbench. Opens
+ * a dialog to prompt the user if <code>confirm</code> is 
+ * true. Return true if successful. Return false if the
+ * user has cancelled the command.
+ *  * @param confirm prompt the user if true * @return boolean false if the operation was cancelled. */
+public boolean saveAllEditors(boolean confirm);
 }
