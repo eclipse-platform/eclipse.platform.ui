@@ -47,7 +47,7 @@ class ProgressFloatingWindow extends Window {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setTransparent(50);
+		newShell.setTransparent(75);
 	}
 
 	/* (non-Javadoc)
@@ -117,7 +117,7 @@ class ProgressFloatingWindow extends Window {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider = new ProgressContentProvider(viewer);
+		IContentProvider provider = new CondensedProgressContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}

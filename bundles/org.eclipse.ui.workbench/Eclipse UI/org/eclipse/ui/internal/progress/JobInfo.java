@@ -238,4 +238,11 @@ class JobInfo extends JobTreeElement {
 		this.job.cancel();
 	}
 
+	/**
+	 * @return Returns the taskInfo.
+	 */
+	TaskInfo getTaskInfo() {
+		return taskInfo;
+	}
+
 }
