@@ -15,19 +15,23 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Extends the Perspectives preference page with IDE-specific settings.
- *
- * @issue want IDE settings to appear in main Perspectives preference page (via subclassing),
- *   however the superclass, PerspectivesPreferencePage, is internal
+ * 
+ * @issue want IDE settings to appear in main Perspectives preference page (via
+ * subclassing), however the superclass, PerspectivesPreferencePage, is
+ * internal
  */
 public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
 	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
@@ -41,8 +45,11 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
 	 * Creates the page's UI content.
 	 */
 	protected Control createContents(Composite parent) {
-		// @issue if the product subclasses this page, then it should provide the help content
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
+		// @issue if the product subclasses this page, then it should provide
+		// the help content
+		WorkbenchHelp.setHelp(
+			parent,
+			IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
 		Composite composite = createComposite(parent);
 
@@ -55,46 +62,58 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
 	}
 
 	/**
-	 * Creates a composite that contains buttons for selecting the 
-	 * preference opening new project selections. 
+	 * Creates a composite that contains buttons for selecting the preference
+	 * opening new project selections.
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
-		
+
 		Composite projectComposite = new Composite(composite, SWT.NONE);
 		projectComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectComposite.setFont(composite.getFont()); 
-		
-		String[][] namesAndValues = {
-					{PSPM_ALWAYS_TEXT, IDEInternalPreferences.PSPM_ALWAYS},
-					{PSPM_NEVER_TEXT, IDEInternalPreferences.PSPM_NEVER},
-					{PSPM_PROMPT_TEXT, IDEInternalPreferences.PSPM_PROMPT}
+		projectComposite.setFont(composite.getFont());
+
+		String[][] namesAndValues =
+			{ { PSPM_ALWAYS_TEXT, IDEInternalPreferences.PSPM_ALWAYS }, {
+				PSPM_NEVER_TEXT, IDEInternalPreferences.PSPM_NEVER }, {
+				PSPM_PROMPT_TEXT, IDEInternalPreferences.PSPM_PROMPT }
 		};
-		projectSwitchField =	new RadioGroupFieldEditor(
+		projectSwitchField =
+			new RadioGroupFieldEditor(
 				IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
 				PROJECT_SWITCH_PERSP_MODE_TITLE,
 				namesAndValues.length,
 				namesAndValues,
 				projectComposite,
 				true);
-		projectSwitchField.setPreferenceStore(getPreferenceStore());
+		projectSwitchField.setPreferenceStore(getIDEPreferenceStore());
 		projectSwitchField.setPreferencePage(this);
 		projectSwitchField.load();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the IDE preference store.
+	 */
+	protected IPreferenceStore getIDEPreferenceStore() {
+		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		projectSwitchField.loadDefault();
 		super.performDefaults();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		projectSwitchField.store();
 		return super.performOk();
 	}
-	
+
 }

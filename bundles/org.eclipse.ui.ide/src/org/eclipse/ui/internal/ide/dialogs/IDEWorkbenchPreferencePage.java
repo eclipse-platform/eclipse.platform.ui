@@ -73,11 +73,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		createSpace(composite);
 		createOpenModeGroup(composite);
 		
-//		createEncodingGroup(composite);
-//
-//		createSpace(composite);
-//		createProjectPerspectiveGroup(composite);
-		
 		return composite;
 	}
 
@@ -85,7 +80,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		showTasks = new Button(composite, SWT.CHECK);
 		showTasks.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
 		showTasks.setFont(composite.getFont());
-		showTasks.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
+		showTasks.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 	}
 
 	protected void createExitPromptPref(Composite composite) {
@@ -94,7 +89,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		exitPromptButton.setFont(composite.getFont());
 		// @issue temporarily disabled
 		exitPromptButton.setEnabled(false);
-//		exitPromptButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+//		exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		
 	}
 
@@ -102,14 +97,14 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		refreshButton = new Button(composite, SWT.CHECK);
 		refreshButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 		refreshButton.setFont(composite.getFont());
-		refreshButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+		refreshButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
 	}
 
 	protected void createSaveAllBeforeBuildPref(Composite composite) {
 		autoSaveAllButton = new Button(composite, SWT.CHECK);
 		autoSaveAllButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
 		autoSaveAllButton.setFont(composite.getFont());
-		autoSaveAllButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
+		autoSaveAllButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 	}
 
 	private void createAutoBuildPref(Composite composite) {
@@ -136,7 +131,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		saveInterval = new IntegerFieldEditor(IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
 
 		// @issue we should drop our preference constant and let clients use core's pref. ours is not up-to-date anyway if someone changes this interval directly thru core api.
-		saveInterval.setPreferenceStore(getPreferenceStore());
+		saveInterval.setPreferenceStore(getIDEPreferenceStore());
 		saveInterval.setPreferencePage(this);
 		saveInterval.setTextLimit(Integer.toString(IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
 		saveInterval.setErrorMessage(IDEWorkbenchMessages.format("WorkbenchPreference.saveIntervalError", new Object[] { new Integer(IDEInternalPreferences.MAX_SAVE_INTERVAL)})); //$NON-NLS-1$
@@ -156,15 +151,13 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		
 	}	
 
-	/* (non-Javadoc)
-	 * @see PreferencePage
+	/**
+	 * Returns the IDE preference store.
 	 */
-	protected IPreferenceStore doGetPreferenceStore() {
-		// use the generic workbench's preference store for backwards compatibility
-		// @issue is this really appropriate?
-		return super.doGetPreferenceStore();
+	protected IPreferenceStore getIDEPreferenceStore() {
+		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 	}
-
+	
 	/**
 	 *	@see IWorkbenchPreferencePage
 	 */
@@ -181,7 +174,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		boolean autoBuild = ResourcesPlugin.getPlugin().getPluginPreferences().getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 		autoBuildButton.setSelection(autoBuild);
 		
-		IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore store = getIDEPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
 		// @issue temporarily disabled
@@ -209,7 +202,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 			}
 		}
 
-		IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore store = getIDEPreferenceStore();
 
 		// store the save all prior to build setting
 		store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
