@@ -20,6 +20,17 @@ package org.eclipse.ui.keys;
 public class FormatManager {
 
 	/**
+	 * An integer constant used to ask for a <code>CompactKeyFormatter</code>.
+	 * This formatter is used for persistence.
+	 */
+	public static final int COMPACT = 3;
+
+	/**
+	 * A compact formatter instance.
+	 */
+	private static final KeyFormatter COMPACT_FORMATTER = new CompactKeyFormatter();
+
+	/**
 	 * An integer constant used to ask for a <code>FormalKeyFormatter</code>.
 	 * This formatter is used for persistence.
 	 */
@@ -60,6 +71,9 @@ public class FormatManager {
 		switch (format) {
 			case NATIVE :
 				return NATIVE_FORMATTER;
+
+			case COMPACT :
+				return COMPACT_FORMATTER;
 
 			case XEMACS :
 				return XEMACS_FORMATTER;
