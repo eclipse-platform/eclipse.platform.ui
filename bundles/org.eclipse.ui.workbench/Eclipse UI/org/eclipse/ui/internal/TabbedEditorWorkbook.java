@@ -81,21 +81,27 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			*/
 		}
 		
-		public void restore(CTabFolderEvent event) {
-			EditorPane visibleEditor = getVisibleEditor();
-			WorkbenchPage page = visibleEditor.getPage(); 
-	  	
-			if (page != null && page.isZoomed()) doZoom();
-			
-			//forceLayout();
-		}
-		
-		public void maximize(CTabFolderEvent event) {
-			EditorPane visibleEditor = getVisibleEditor();
-			WorkbenchPage page = visibleEditor.getPage(); 
-			
-			if (page != null && !page.isZoomed()) doZoom();
-		}
+        public void restore(CTabFolderEvent event) {
+            EditorPane visibleEditor = getVisibleEditor();
+
+            if (visibleEditor != null) {
+                WorkbenchPage page = visibleEditor.getPage();
+
+                if (page != null && page.isZoomed()) doZoom();
+
+                //forceLayout();
+            }
+        }
+
+        public void maximize(CTabFolderEvent event) {
+            EditorPane visibleEditor = getVisibleEditor();
+
+            if (visibleEditor != null) {
+                WorkbenchPage page = visibleEditor.getPage();
+
+                if (page != null && !page.isZoomed()) doZoom();
+            }
+        }
 	};
 	
 	/*

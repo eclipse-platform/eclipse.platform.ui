@@ -62,7 +62,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     }
 
     public void fill(ToolBar parent, int index) {
-        if (toolItem == null && parent != null) {
+        if (toolItem == null && parent != null && !parent.isDisposed()) {
             toolBar = parent;
             if (index >= 0)
                 toolItem = new ToolItem(parent, SWT.CHECK, index);
@@ -92,7 +92,8 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                         workbenchPage.setPerspective(perspective);
                         update();
                         getParent().update(true);
-                    }
+                    } else
+                        toolItem.setSelection(true);
                 }
             });
             toolItem.setData(this); //TODO review need for this
@@ -101,7 +102,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     }
 
     public void update() {
-        if (!toolItem.isDisposed()) {
+        if (toolItem != null && !toolItem.isDisposed()) {
             toolItem
                     .setSelection(workbenchPage.getPerspective() == perspective);
             if (preferenceStore
@@ -114,7 +115,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     public void update(IPerspectiveDescriptor newDesc) {
         perspective = newDesc;
-        if (!toolItem.isDisposed()) {
+        if (toolItem != null && !toolItem.isDisposed()) {
             ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
             if (imageDescriptor != null) {
                 toolItem.setImage(imageDescriptor.createImage());
@@ -154,15 +155,17 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         this.perspective = newPerspective;
     }
 
-    // TODO review need for this method;
+    // TODO review need for this method
     void setSelection(boolean b) {
-        if (!toolItem.isDisposed()) toolItem.setSelection(b);
+        if (toolItem != null && !toolItem.isDisposed())
+                toolItem.setSelection(b);
     }
 
     private static final String ellipsis = "..."; //$NON-NLS-1$
 
     protected String shortenText(String textValue, ToolItem item) {
-        if (textValue == null) return null;
+        if (textValue == null || toolItem == null || toolItem.isDisposed())
+                return null;
         GC gc = new GC(item.getDisplay());
         int maxWidth = item.getImage().getBounds().width * 5;
         if (gc.textExtent(textValue).x < maxWidth) return textValue;

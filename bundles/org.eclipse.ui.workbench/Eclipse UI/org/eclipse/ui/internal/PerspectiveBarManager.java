@@ -18,45 +18,46 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
 public class PerspectiveBarManager extends ToolBarManager {
-	
-	/**
-	 * The symbolic font name for the small font (value <code>"org.eclipse.jface.smallfont"</code>).
-	 */
-	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 
-	public PerspectiveBarManager(int style) {
-		super(style);	
-	}
+    /**
+     * The symbolic font name for the small font (value <code>"org.eclipse.jface.smallfont"</code>).
+     */
+    public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 
-	public ToolBar createControl(Composite parent) {
-		ToolBar control =  super.createControl(parent);
-		control.setFont(getFont());
-		return control;
-	}
-	
-	public PerspectiveBarManager(ToolBar toolbar) {
-		super(toolbar);
-		toolbar.setFont(getFont());
-	}
-	
-	// TODO begin refactor this out? 
-	private CBanner banner;
-	
-	void layout(boolean b) {
-		if (banner != null)
-			banner.layout(b);
-	}
-	
-	void setBanner(CBanner banner) {
-		this.banner = banner;
-	}
-	// TODO end refactor this out? 
+    public PerspectiveBarManager(int style) {
+        super(style);
+    }
 
-	public void updateFont(){
-		getControl().setFont(getFont());
-	}
-	
-	private Font getFont(){
-		return JFaceResources.getFont(SMALL_FONT);
-	}
+    public ToolBar createControl(Composite parent) {
+        ToolBar control = super.createControl(parent);
+
+        if (control != null && !control.isDisposed())
+                control.setFont(getFont());
+
+        return control;
+    }
+
+    public PerspectiveBarManager(ToolBar toolbar) {
+        super(toolbar);
+
+        if (toolbar != null && !toolbar.isDisposed())
+                toolbar.setFont(getFont());
+    }
+
+    // TODO begin refactor this out?
+    private CBanner banner;
+
+    void layout(boolean b) {
+        if (banner != null && !banner.isDisposed()) banner.layout(b);
+    }
+
+    void setBanner(CBanner banner) {
+        this.banner = banner;
+    }
+
+    // TODO end refactor this out?
+
+    private Font getFont() {
+        return JFaceResources.getFont(SMALL_FONT);
+    }
 }
