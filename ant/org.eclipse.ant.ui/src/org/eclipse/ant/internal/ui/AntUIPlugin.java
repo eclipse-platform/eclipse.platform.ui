@@ -5,8 +5,10 @@ package org.eclipse.ant.internal.ui;
  * All Rights Reserved.
  */
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -14,14 +16,19 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The plug-in runtime class for the AntUI plug-in.
  */
-public final class AntUIPlugin extends AbstractUIPlugin{
+public final class AntUIPlugin extends AbstractUIPlugin {
+	/**
+	 * 
+	 */
+	protected IProgressMonitor currentProgressMonitor;
+	
+	protected final HashMap imageDescriptors = new HashMap(30);
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.ui"</code>)
@@ -33,6 +40,9 @@ public final class AntUIPlugin extends AbstractUIPlugin{
 	
 	public static final String IMG_ANT_SCRIPT= "icons/full/eview16/ant_view.gif";
 	public static final String IMG_BUILDER= "icons/full/eview16/build_exec.gif";
+	public static final String IMG_JAR_FILE = "icons/full/eview16/jar_l_obj.gif";
+	public static final String IMG_CLASSPATH = "icons/full/eview16/classpath.gif";
+	public static final String IMG_TYPE = "icons/full/eview16/type.gif";
 	
 	private static final String SETTINGS_COMMAND_HISTORY = "CommandHistory";
 	private static final int MAX_COMMAND_HISTORY = 15;
@@ -48,7 +58,14 @@ public final class AntUIPlugin extends AbstractUIPlugin{
 	 * The most recent debug launches
 	 */
 	private IFile[] antHistory = new IFile[MAX_HISTORY_SIZE];
-	
+
+public IProgressMonitor getCurrentProgressMonitor() {
+	return currentProgressMonitor;
+}
+
+public void setCurrentProgressMonitor(IProgressMonitor monitor) {
+	this.currentProgressMonitor = monitor;
+}
 
 public AntUIPlugin(IPluginDescriptor desc) {
 	super(desc);
@@ -160,10 +177,15 @@ public IFile[] getHistory() {
  * @return the ImageDescriptor object
  */
 public ImageDescriptor getImageDescriptor(String path) {
+	ImageDescriptor desc = (ImageDescriptor)imageDescriptors.get(path);
+	if (desc != null)
+		return desc;
 	try {
 		URL installURL = getDescriptor().getInstallURL();
 		URL url = new URL(installURL,path);
-		return ImageDescriptor.createFromURL(url);
+		desc = ImageDescriptor.createFromURL(url);
+		imageDescriptors.put(path, desc);
+		return desc;
 	} catch (MalformedURLException e) {
 		return null;
 	}
@@ -185,5 +207,4 @@ protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 	PreferenceConverter.setDefault(prefs, IAntPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0));			// black
 	
 }
-
 }

@@ -1,11 +1,11 @@
-package org.eclipse.ant.internal.ui;/*
+package org.eclipse.ant.internal.ui;/*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 import java.util.*;
-import org.eclipse.jface.util.*;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.util.*;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Display;
 public class AntPropertyChangeListener implements IPropertyChangeListener {
-		// unique instance	private static AntPropertyChangeListener instance = new AntPropertyChangeListener();	// private constructor to ensure the singletonprivate AntPropertyChangeListener() {}// access to the singletonpublic static AntPropertyChangeListener getInstance() {	return instance;}
+		// unique instance	private static AntPropertyChangeListener instance = new AntPropertyChangeListener();	// private constructor to ensure the singletonprivate AntPropertyChangeListener() {}// access to the singletonpublic static AntPropertyChangeListener getInstance() {	return instance;}
 /**
  * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
  */
@@ -35,5 +35,5 @@ public void propertyChange(PropertyChangeEvent event) {
 	} else if (propertyName.equals(IAntPreferenceConstants.CONSOLE_FONT)) {		FontData data= AntConsolePreferencePage.getConsoleFontData();		Font temp= AntConsole.ANT_FONT;		AntConsole.ANT_FONT = new Font(Display.getCurrent(), data);		temp.dispose();		updateFont();		} else
 		return;
 }
-/** * Clears the output of all the consoles */private void clearOutput(){	for (Iterator iterator = AntConsole.instances.iterator(); iterator.hasNext();)		((AntConsole) iterator.next()).clearOutput();}/** * Updates teh font in all the consoles */private void updateFont() {	for (Iterator iterator = AntConsole.instances.iterator(); iterator.hasNext();)		((AntConsole) iterator.next()).updateFont();	}
+/** * Clears the output of all the consoles */private void clearOutput(){	for (Iterator iterator = AntConsole.getInstances().iterator(); iterator.hasNext();)		((AntConsole) iterator.next()).clearOutput();}/** * Updates teh font in all the consoles */private void updateFont() {	for (Iterator iterator = AntConsole.getInstances().iterator(); iterator.hasNext();)		((AntConsole) iterator.next()).updateFont();	}
 }

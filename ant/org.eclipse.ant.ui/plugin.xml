@@ -8,9 +8,10 @@
   class="org.eclipse.ant.internal.ui.AntUIPlugin">
 
   <requires>
-    <import plugin="org.eclipse.ui"/>
-    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.apache.ant"/>
     <import plugin="org.eclipse.ant.core"/>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.ui"/>
   </requires>
 
   <runtime>
@@ -61,6 +62,12 @@
   		class="org.eclipse.ant.internal.ui.AntConsolePreferencePage"
   		category="org.eclipse.ant.ui.AntPreferences">
   	</page>
+  	<page 
+  		id="org.eclipse.ant.ui.AntClasspathPreferences" 
+  		name="%antClasspathPreferences"
+  		class="org.eclipse.ant.internal.ui.CustomizeAntPreferencePage"
+  		category="org.eclipse.ant.ui.AntPreferences">
+  	</page>
   </extension>
   
   <extension point="org.eclipse.ui.actionSets">
@@ -77,4 +84,14 @@
 	</actionSet>
   </extension>
   
+
+   <!-- Objects -->
+   <extension point="org.eclipse.ant.core.antObjects">
+      <antObject
+         name="org.eclipse.ant.internal.ui.ant.UIBuildLogger"
+         class="org.eclipse.ant.internal.ui.ant.UIBuildLogger"
+         library="lib/antuilib.jar">
+      </antObject>
+   </extension>
+
 </plugin>
