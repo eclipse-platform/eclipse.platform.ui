@@ -20,7 +20,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
@@ -47,7 +46,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see org.eclipse.ui.part.EditorPart
  */
 public abstract class WorkbenchPart implements IWorkbenchPart2,
-        IExecutableExtension {
+        IExecutableExtension, IWorkbenchPartOrientation {
     private String title = ""; //$NON-NLS-1$
 
     private ImageDescriptor imageDescriptor;
@@ -440,16 +439,12 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
 
     }
     
-    /**
-     * Return the orientation of this part. By default it
-     * will use the default orientation from Window.
-     * @return int SWT#RIGHT_TO_LEFT or SWT#LEFT_TO_RIGHT
-     * @see Window#getDefaultOrientation()
-     * @see SWT#RIGHT_TO_LEFT
-	 * @see SWT#LEFT_TO_RIGHT
-     * @since 3.1
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.IWorkbenchPartOrientation#getOrientation()
      */
     public int getOrientation(){
+		//By default use the orientation in Window
     	return Window.getDefaultOrientation();
     }
 
