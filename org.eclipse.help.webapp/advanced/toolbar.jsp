@@ -149,7 +149,7 @@ if (data.getScript() != null) {
  
 <body>
 	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:100%;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5px;">
 			<tr>
 				<td nowrap style="font: <%=prefs.getToolbarFont()%>">
 					<div id="titleText">&nbsp;<%=data.getTitle()%>
