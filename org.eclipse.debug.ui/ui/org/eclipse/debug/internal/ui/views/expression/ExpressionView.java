@@ -114,7 +114,6 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void treeSelectionChanged(SelectionChangedEvent event) {
 		super.treeSelectionChanged(event);
-		IDebugElement element= null;
 		ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel= (IStructuredSelection)selection;
