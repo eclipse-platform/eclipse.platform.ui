@@ -36,6 +36,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -223,6 +224,12 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			CommonTab tab = new CommonTab();
 			tab.setDefaults(workingCopy);
 			tab.dispose();
+			
+			//set the project name so that the correct default VM install can be determined
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, file.getProject().getName());
+			AntJRETab jreTab = new AntJRETab();
+			jreTab.setDefaults(workingCopy);
+			jreTab.dispose();
 			
 			return workingCopy.doSave();
 		} catch (CoreException e) {

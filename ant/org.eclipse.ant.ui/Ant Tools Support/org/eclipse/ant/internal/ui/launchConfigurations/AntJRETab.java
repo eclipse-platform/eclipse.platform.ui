@@ -46,6 +46,7 @@ import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -149,21 +150,24 @@ public class AntJRETab extends JavaJRETab {
 		if (fJREBlock.isDefaultJRE()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
 		} else {
 			super.performApply(configuration);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
-			configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+			applySeparateVMAttributes(configuration);
 			fVMArgumentsBlock.performApply(configuration);
 			fWorkingDirectoryBlock.performApply(configuration);
 		}
 		setLaunchConfigurationWorkingCopy(configuration);
 	}
 	
+	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
+		configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+	}
+
 	/**
 	 * Updates the classpath for this Ant build based on the selected JRE.
 	 * If running in the same VM as Eclipse, the appropriate tools.jar is added if not already present.
@@ -405,5 +409,26 @@ public class AntJRETab extends JavaJRETab {
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		warningShown= false;
 		super.activated(workingCopy);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		super.setDefaults(config);
+		//by default set an Ant build to occur in a separate VM
+		IVMInstall defaultInstall= null;
+		try {
+			defaultInstall = JavaRuntime.computeVMInstall(config);
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
+		}
+		if (defaultInstall != null) {
+			String vmName = defaultInstall.getName();
+			String vmTypeID = defaultInstall.getVMInstallType().getId();					
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
+			applySeparateVMAttributes(config);
+		}
 	}
 }
