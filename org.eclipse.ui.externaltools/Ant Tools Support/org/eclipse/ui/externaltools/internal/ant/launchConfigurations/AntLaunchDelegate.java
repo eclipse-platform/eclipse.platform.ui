@@ -35,7 +35,9 @@ import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
  */
 public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	
+	private static final String TRUE = "true"; //$NON-NLS-1$
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.AntProcessBuildLogger"; //$NON-NLS-1$
+	private static final String NULL_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.BullBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ui.externaltools.internal.ant.inputhandler.AntInputHandler"; //$NON-NLS-1$	
 
@@ -109,7 +111,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		final AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
-		runner.addBuildLogger(ANT_LOGGER_CLASS);
+		if (AntUtil.getCaptureOutput(configuration)) {
+			runner.addBuildLogger(ANT_LOGGER_CLASS);
+		} else {
+			runner.addBuildLogger(NULL_LOGGER_CLASS);
+		}
 		runner.setInputHandler(INPUT_HANDLER_CLASS);
 		runner.setArguments(runnerArgs);
 		if (userProperties != null) {
