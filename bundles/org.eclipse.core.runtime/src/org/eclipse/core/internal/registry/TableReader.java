@@ -177,7 +177,8 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadConfigurationElement(mainInput, null);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, mainDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading a configuration element (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -206,7 +207,8 @@ public class TableReader {
 			goToExtraFile(offset);
 			return loadConfigurationElementAndChildren(null, extraInput, 3, Integer.MAX_VALUE, objectManager, null);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, extraDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading a third level configuration element (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -252,7 +254,8 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadExtension(mainInput);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, mainDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 		} finally {
@@ -293,7 +296,8 @@ public class TableReader {
 			}
 			return xpt;
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, mainDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension point tree (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -308,7 +312,8 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadExtensionPoint();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, mainDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension point (" + offset + ") from the registry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -355,7 +360,8 @@ public class TableReader {
 			goToExtraFile(dataPosition);
 			return basicLoadExtensionExtraData();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, extraDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading extension label (" + dataPosition + ") from the registry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -374,7 +380,8 @@ public class TableReader {
 			goToExtraFile(offset);
 			return basicLoadExtensionPointExtraData();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, extraDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading extension point data (" + offset + ") from the resgistry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -407,7 +414,8 @@ public class TableReader {
 			}
 			return result;
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, NLS.bind(Messages.meta_regCacheIOExceptionReading, contributionsFile), e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, contributionsFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			return null;
 		} finally {
 			if (namespaceInput != null)
@@ -444,7 +452,8 @@ public class TableReader {
 			}
 			loadAllOrphans(objectManager);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
+			String message = NLS.bind(Messages.meta_regCacheIOExceptionReading, mainDataFile);
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, message, e));
 			return false;
 		} finally {
 			closeExtraFile();
