@@ -211,7 +211,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                         IDEWorkbenchMessages
                                 .getString("IDEApplication.workspaceCannotLockMessage")); //$NON-NLS-1$                
             } catch (IOException e) {
-                IDEWorkbenchPlugin.log("Could not obtain lock for workspace location",
+                IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
                         e);            	
                 MessageDialog
                 .openError(
