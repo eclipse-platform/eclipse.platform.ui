@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -77,17 +75,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	private Button openEmbedButton;
 	private Button openFastButton;
 
-	private RadioGroupFieldEditor projectSwitchField;
-
-//	private static final int LIST_WIDTH = 200;
-//	private static final int LIST_HEIGHT = 200;
-
 	// labels
-	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
-	private final String PSPM_ALWAYS_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.always"); //$NON-NLS-1$
-	private final String PSPM_NEVER_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.never"); //$NON-NLS-1$
-	private final String PSPM_PROMPT_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.prompt"); //$NON-NLS-1$
-
 	private final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
 	private final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
 	private final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
@@ -115,7 +103,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		createOpenPerspButtonGroup(pageComponent);
 		createOpenViewButtonGroup(pageComponent);
-		createProjectPerspectiveGroup(pageComponent);
 		createCustomizePerspective(pageComponent);
 
 		return pageComponent;
@@ -204,34 +191,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		openFastButton.setFont(font);
 
 	}
-	
-	/**
-	 * Create a composite that contains buttons for selecting the 
-	 * preference opening new project selections. 
-	 */
-	private void createProjectPerspectiveGroup(Composite composite) {
-		
-		Composite projectComposite = new Composite(composite, SWT.NONE);
-		projectComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectComposite.setFont(composite.getFont()); 
-		
-		String[][] namesAndValues = {
-			{PSPM_ALWAYS_TEXT, IPreferenceConstants.PSPM_ALWAYS},
-			{PSPM_NEVER_TEXT, IPreferenceConstants.PSPM_NEVER},
-			{PSPM_PROMPT_TEXT, IPreferenceConstants.PSPM_PROMPT}
-		};
-		projectSwitchField =
-			new RadioGroupFieldEditor(
-				IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE,
-				PROJECT_SWITCH_PERSP_MODE_TITLE,
-				namesAndValues.length,
-				namesAndValues,
-				projectComposite,
-				true);
-		projectSwitchField.setPreferenceStore(getPreferenceStore());
-		projectSwitchField.setPreferencePage(this);
-		projectSwitchField.load();
-	}
+
 	/**
 	 * Create a table a 3 buttons to enable the user to manage customized
 	 * perspectives.
@@ -403,8 +363,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		//Project perspective preferences
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 				
-		projectSwitchField.loadDefault();
-
 		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		// Open view as float no longer supported
 		if (openViewMode == IPreferenceConstants.OVM_FLOAT)
@@ -459,23 +417,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		// Revert the perspectives
 		perspectiveRegistry.revertPerspectives(perspToRevert);
 
-		// store the open new project perspective settings
-		projectSwitchField.store();
 		IPreferenceStore store = getPreferenceStore();
-		String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
-		String newProjectPerspectiveSetting;
-		if (IPreferenceConstants.PSPM_NEVER.equals(pspm)) {
-			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
-		}
-		else { // PSPM_ALWAYS or PSPM_PROMPT
-			if(openPerspMode == IPreferenceConstants.OPM_NEW_WINDOW)
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-			else
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE; 
-		}
-		getUIPublicPreferenceStore().setValue(
-			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
-			newProjectPerspectiveSetting);
 
 		// store the open view mode setting
 		store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
