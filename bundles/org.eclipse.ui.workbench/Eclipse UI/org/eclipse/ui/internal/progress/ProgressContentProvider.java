@@ -30,21 +30,34 @@ public class ProgressContentProvider implements ITreeContentProvider {
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		listener = new JobChangeAdapter() {
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void scheduled(IJobChangeEvent event) {
-				jobs.put(event.getJob(),new JobInfo(event.getJob()));
+				jobs.put(event.getJob(), new JobInfo(event.getJob()));
 				refreshViewer(null);
 			}
 			
-			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void aboutToRun(IJobChangeEvent event) {
+				JobInfo info = getJobInfo(event.getJob());
+				info.setRunning();
+				refreshViewer(null);
+			}
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				jobs.remove(event.getJob());
+				if (event.getResult().getCode() == IStatus.ERROR) {
+					JobInfo info = getJobInfo(event.getJob());
+					info.setError(event.getResult());
+				} else {
+					jobs.remove(event.getJob());
+				}
 				refreshViewer(null);
 
 			}

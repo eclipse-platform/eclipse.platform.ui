@@ -12,16 +12,33 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * JobInfo is the class that keeps track of the tree structure 
  * for objects that display job status in a tree.
  */
-class JobInfo extends JobTreeElement{
+class JobInfo extends JobTreeElement {
 	ArrayList children = new ArrayList();
 	Job job;
 	TaskInfo taskInfo;
+
+	private static IStatus createStatus(int code, Job job) {
+		return new Status(
+			IStatus.INFO,
+			PlatformUI.PLUGIN_ID,
+			code,
+			job.getName(),
+			null);
+	}
+
+	static int PENDING_STATUS = 0;
+	static int RUNNING_STATUS = 1;
+	static int DONE_STATUS = 2;
+	IStatus status;
 
 	/**
 	 * Create a top level JobInfo.
@@ -29,13 +46,14 @@ class JobInfo extends JobTreeElement{
 	 */
 	JobInfo(Job enclosingJob) {
 		this.job = enclosingJob;
+		status = createStatus(PENDING_STATUS, enclosingJob);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
-		return job.getName();
+		return status.getMessage();
 	}
 
 	/* (non-Javadoc)
@@ -44,7 +62,7 @@ class JobInfo extends JobTreeElement{
 	Object[] getChildren() {
 		return children.toArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
@@ -84,7 +102,7 @@ class JobInfo extends JobTreeElement{
 		children.clear();
 		this.taskInfo = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
@@ -92,4 +110,22 @@ class JobInfo extends JobTreeElement{
 		return null;
 	}
 
+	/**
+	 * Set the status to running.
+	 */
+	void setRunning() {
+		status = createStatus(RUNNING_STATUS, job);
+	}
+	/**
+	 * Set the status to error.
+	 */
+	void setError(IStatus errorStatus) {
+		status = errorStatus;
+	}
+	/**
+	 * Set the status to done.
+	 */
+	void setDone() {
+		status = createStatus(DONE_STATUS, job);
+	}
 }
