@@ -1220,8 +1220,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	} 
  	
  	/**
- 	 * Clears the configuration being shown/edited.  
- 	 * Removes all tabs from the tab folder.  
+ 	 * Clears the configuration being shown/edited.   
  	 * Resets all configuration-related state.
  	 */
  	protected void clearLaunchConfiguration() {
@@ -1229,7 +1228,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		fUnderlyingConfig = null;
  		setLastSavedName(null);
  		getNameTextWidget().setText(""); 
- 		disposeExistingTabs();
  		refreshStatus();
  	}
  	
