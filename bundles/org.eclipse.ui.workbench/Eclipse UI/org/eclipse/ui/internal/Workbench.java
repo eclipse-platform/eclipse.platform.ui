@@ -389,22 +389,19 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		final KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
 		final Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 		commandManager.setMode(modeAfterKeyStroke);
+		modeContributionItem.setText(modeAfterKeyStroke.format());					
 		final Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 		boolean consumeKeyStroke = false;
 
 		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {			
-			// this key stroke is part of one or more possible completions: increase the mode and consume the keystroke
-			commandManager.setMode(modeAfterKeyStroke);
-			modeContributionItem.setText(commandManager.getMode().format());							
+			// this key stroke is part of one or more possible completions: consume the keystroke						
 			consumeKeyStroke = true;	
 		} else {		
 			// there are no possible longer multi-stroke sequences, allow a completion now if possible
 			final Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
 			
 			if (match != null) {
-				// a completion was found. increase mode before execution (allows ui to show proper mode during execution of a long blocking action)
-				commandManager.setMode(modeAfterKeyStroke);
-				modeContributionItem.setText(commandManager.getMode().format());				
+				// a completion was found. 
 				final String commandId = match.getCommandId();
 				final Map actionsById = commandManager.getActionsById();
 				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
