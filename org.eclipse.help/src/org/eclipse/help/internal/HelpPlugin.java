@@ -5,7 +5,7 @@
 package org.eclipse.help.internal;
 import org.eclipse.core.runtime.*;
 /**
- * Simple plugin for a remote help system.
+ * Simple plugin for help system.
  */
 public class HelpPlugin extends Plugin {
 	public final static String PLUGIN_ID = "org.eclipse.help";
