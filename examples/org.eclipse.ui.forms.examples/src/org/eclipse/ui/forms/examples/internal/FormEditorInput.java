@@ -36,7 +36,6 @@ public class FormEditorInput implements IEditorInput {
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 	/*

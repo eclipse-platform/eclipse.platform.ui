@@ -69,6 +69,7 @@ public abstract class MasterDetailsBlock {
 		form.getBody().setLayout(layout);
 		sashForm = new SashForm(form.getBody(), SWT.NULL);
 		toolkit.adapt(sashForm, false, false);
+		sashForm.setMenu(form.getBody().getMenu());
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createMasterPart(managedForm, sashForm);
 		createDetailsPart(managedForm, sashForm);

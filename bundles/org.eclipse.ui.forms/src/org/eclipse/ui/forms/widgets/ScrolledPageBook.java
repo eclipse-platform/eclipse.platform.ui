@@ -209,6 +209,7 @@ public final class ScrolledPageBook extends SharedScrolledComposite {
 		Composite page = new LayoutComposite(pageBook, SWT.NULL);
 		page.setBackground(getBackground());
 		page.setForeground(getForeground());
+		page.setMenu(pageBook.getMenu());
 		return page;
 	}
 }
