@@ -41,24 +41,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private IntegerFieldEditor reuseEditorsThreshold;
 	private IntegerFieldEditor recentFilesEditor;
 
-	//Widgets for perspective switching when creating new projects
-	private Button openProjectInNewWindowButton;
-	private Button openProjectInSameWindowButton;
-	private Button switchOnNewProjectButton;
-	
 	// hashtable mapping accelerator configuration names to accelerator configuration
 	private Hashtable namesToConfiguration;
 	// the name of the active accelerator configuration
 	private String activeAcceleratorConfigurationName;
-
-	private String newProjectPerspectiveSetting;
-
-	//Labels
-	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
-
-	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
-	private static final String OPEN_SAME_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
-	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
 
 	/**
 	 * Creates composite control and sets the default layout data.
@@ -113,9 +99,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createSpace(composite);
 		createEditorReuseGroup(composite);
-		
-		createSpace(composite);
-		createProjectPerspectiveGroup(composite);
 		
 //		createSpace(composite);
 //		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
@@ -237,46 +220,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 	}
 	/**
-	 * Create a composite that contains buttons for selecting the 
-	 * preference opening new project selections. 
-	 */
-	private void createProjectPerspectiveGroup(Composite composite) {
-
-		Group buttonComposite = new Group(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
-
-		// Open same window button
-		openProjectInSameWindowButton = createRadioButton(buttonComposite, OPEN_SAME_WINDOW_PROJECT_LABEL);
-		openProjectInSameWindowButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-		openProjectInSameWindowButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
-			}
-		});
-
-		// Open New Window button
-		openProjectInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_PROJECT_LABEL);
-		openProjectInNewWindowButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		openProjectInNewWindowButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-			}
-		});
-
-		// No switch button
-		switchOnNewProjectButton = createRadioButton(buttonComposite, DO_NOT_SWITCH_PERSPECTIVES);
-		switchOnNewProjectButton.setSelection(newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
-		switchOnNewProjectButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
-			}
-		});
-	}
-	/**
 	 * Utility method that creates a radio button instance
 	 * and sets the default layout data.
 	 *
@@ -284,7 +227,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * @param label  the label for the new button
 	 * @return the newly-created button
 	 */
-	protected Button createRadioButton(Composite parent, String label) {
+	protected static Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
 		GridData data = new GridData();
@@ -326,7 +269,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *
 	 * @param parent  the parent in which the tab should be created
 	 */
-	protected void createSpace(Composite parent) {
+	protected static void createSpace(Composite parent) {
 		Label vfiller = new Label(parent, SWT.LEFT);
 		GridData gridData = new GridData();
 		gridData = new GridData();
@@ -349,9 +292,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		newProjectPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-
 //		acceleratorInit(aWorkbench);
 	}
 	protected void acceleratorInit(IWorkbench aWorkbench) {
@@ -381,16 +321,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		recentFilesEditor.loadDefault();
 		
 //		acceleratorPerformDefaults(store);
-
-		//Project perspective preferences
-		String projectPreference = store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-		newProjectPerspectiveSetting = projectPreference;
-		openProjectInSameWindowButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-		openProjectInNewWindowButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		switchOnNewProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
-
 		super.performDefaults();
 	}
+	
 	protected void acceleratorPerformDefaults(IPreferenceStore store) {
 		// Sets the accelerator configuration selection to the default configuration
 		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
@@ -444,9 +377,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the recent files setting
 		recentFilesEditor.store();
-
-		// store the open new project perspective settings
-		store.setValue(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, newProjectPerspectiveSetting);
 
 //		acceleratorPerformOk(store);
 		return true;

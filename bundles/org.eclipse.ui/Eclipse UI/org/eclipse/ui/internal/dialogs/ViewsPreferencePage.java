@@ -29,8 +29,7 @@ public class ViewsPreferencePage
 	private Button editorBottomButton;
 	private Button viewTopButton;
 	private Button viewBottomButton;
-	private Button openEmbedButton;
-	private Button openFastButton;
+
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
 	/*
@@ -39,7 +38,6 @@ public class ViewsPreferencePage
 	 */
 	private int editorAlignment;
 	private int viewAlignment;
-	private int openViewMode;
 
 	private static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
 	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
@@ -47,9 +45,6 @@ public class ViewsPreferencePage
 	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
 	private static final String VIEWS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.views.top"); //$NON-NLS-1$
 	private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
-	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
-	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
-	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
@@ -92,7 +87,6 @@ protected Control createContents(Composite parent) {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	editorAlignment = store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	viewAlignment =	store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-	openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
 	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
@@ -138,8 +132,6 @@ protected Control createContents(Composite parent) {
 	messageLabel.setText(APPLY_MESSAGE);
 	
 	createSpacer(composite);
-	createOpenViewButtonGroup(composite);
-
 	JFaceResources.getFontRegistry().addListener(fontListener);
 	
 	Group colorComposite = new Group(composite,SWT.NULL);
@@ -207,59 +199,6 @@ private void createEditorTabButtonGroup(Composite composite) {
 		}
 	});
 
-}
-/**
- * Create a composite that contains buttons for selecting open view mode.
- * @param composite Composite
- */
-private void createOpenViewButtonGroup(Composite composite) {
-
-	Group buttonComposite = new Group(composite, SWT.LEFT);
-	buttonComposite.setText(OVM_TITLE);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 1;
-	buttonComposite.setLayout(layout);
-	GridData data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.grabExcessHorizontalSpace = true;
-	buttonComposite.setLayoutData(data);
-
-	openEmbedButton = new Button(buttonComposite, SWT.RADIO);
-	openEmbedButton.setText(OVM_EMBED);
-	openEmbedButton.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
-	openEmbedButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			openViewMode = IPreferenceConstants.OVM_EMBED;
-		}
-	});
-
-	// Open view as float no longer supported
-	if (openViewMode == IPreferenceConstants.OVM_FLOAT)
-		openViewMode = IPreferenceConstants.OVM_FAST;
-
-	openFastButton = new Button(buttonComposite, SWT.RADIO);
-	openFastButton.setText(OVM_FAST);
-	openFastButton.setSelection(openViewMode == IPreferenceConstants.OVM_FAST);
-	openFastButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			openViewMode = IPreferenceConstants.OVM_FAST;
-		}
-	});
-
-	/*
-	 * No longer supported - remove when confirmed!
-	 * 
-	 * if (getShell().isReparentable()) {
-	 * 	openFloatButton = new Button(buttonComposite, SWT.RADIO);
-	 * 	openFloatButton.setText(OVM_FLOAT);
-	 * 	openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
-	 * 	openFloatButton.addSelectionListener(new SelectionAdapter() {
-	 * 		public void widgetSelected(SelectionEvent e) {
-	 * 			openViewMode = IPreferenceConstants.OVM_FLOAT;
-	 * 		}
-	 * 	});
-	 * }
-	 */
 }
 
 /**
@@ -336,14 +275,6 @@ protected void performDefaults() {
 		store.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
 	viewTopButton.setSelection(viewTopValue == SWT.TOP);
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
-
-	int value = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
-	// Open view as float no longer supported
-	if (value == IPreferenceConstants.OVM_FLOAT)
-		value = IPreferenceConstants.OVM_FAST;
-		
-	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
-	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
 	
 	errorColorEditor.loadDefault();
 	hyperlinkColorEditor.loadDefault();
@@ -367,10 +298,7 @@ public boolean performOk() {
 
 	// store the view tab value to setting
 	store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
-
-	// store the open view mode to setting
-	store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
-	
+		
 	errorColorEditor.store();
 	hyperlinkColorEditor.store();
 	return true;
