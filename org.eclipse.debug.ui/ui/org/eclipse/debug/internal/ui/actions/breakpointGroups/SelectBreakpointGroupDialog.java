@@ -107,7 +107,7 @@ class SelectBreakpointGroupDialog extends InputDialog {
     /**
      * The browse button has been pressed. Prompt the user to choose a group.
      */
-    private void handleBrowsePressed(final Object[] groups) {
+    private void handleBrowsePressed(Object[] groups) {
         ElementListSelectionDialog dialog= new ElementListSelectionDialog(
                 getShell(),
                 new LabelProvider() {
