@@ -30,7 +30,7 @@ final class PreferenceRegistry extends AbstractMutableRegistry {
 
 	private IPreferenceStore preferenceStore;
 
-	private PreferenceRegistry(IPreferenceStore preferenceStore) {
+	PreferenceRegistry(IPreferenceStore preferenceStore) {
 		super();
 		
 		if (preferenceStore == null)

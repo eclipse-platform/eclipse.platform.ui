@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.internal.commands.old;
 
-import java.util.SortedSet;
-
-import org.eclipse.ui.commands.IKeyConfiguration;
 
 /**
  * <p>
@@ -31,11 +28,6 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 public interface IKeyMachine {
 
 	/*
-	void addKeyMachineListener();
-	void removeKeyMachineListener();
-
-	IKeyManager getKeyManager();
-
 	SortedSet getContextIds()
 	String getKeyConfigurationId()
 	String getLocale()
@@ -57,35 +49,6 @@ public interface IKeyMachine {
 	IKeyBinding getKeyBinding(KeySequence);
 	SortedSet getKeyBindingsForKeySequence()
 	IKeyBinding getKeyBinding
-	*/
-
-	/**
-	 * Registers an IKeyManagerListener instance with this key manager.
-	 *
-	 * @param keyManagerListener the IKeyManagerListener instance to register.
-	 * @throws IllegalArgumentException
-	 */	
-	//void addKeyManagerListener(IKeyManagerListener keyManagerListener)
-	//	throws IllegalArgumentException;
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param keyConfigurationId
-	 * @return
-	 * @throws IllegalArgumentException
-	 */	
-	IKeyConfiguration getKeyConfiguration(String keyConfigurationId)
-		throws IllegalArgumentException;
-
-	/**
-	 * Unregisters an IKeyManagerListener instance with this key manager.
-	 *
-	 * @param keyManagerListener the IKeyManagerListener instance to unregister.
-	 * @throws IllegalArgumentException
-	 */
-	//void removeKeyManagerListener(IKeyManagerListener keyManagerListener)
-	//	throws IllegalArgumentException;
 
 	String getApplicationActiveKeyConfigurationId();
 	String getUserActiveKeyConfigurationId();
@@ -101,4 +64,5 @@ public interface IKeyMachine {
 	SortedSet getUserKeyConfigurations();
 	void setUserKeyConfigurations(SortedSet userKeyConfigurations);
 	SortedSet getKeyConfigurations();	
+	*/	
 }

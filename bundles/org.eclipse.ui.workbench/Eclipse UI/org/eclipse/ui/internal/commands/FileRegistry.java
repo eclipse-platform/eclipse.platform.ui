@@ -31,7 +31,7 @@ final class FileRegistry extends AbstractMutableRegistry {
 
 	private File file;
 
-	private FileRegistry(File file) {
+	FileRegistry(File file) {
 		super();
 		
 		if (file == null)
