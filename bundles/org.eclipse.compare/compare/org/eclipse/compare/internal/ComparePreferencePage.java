@@ -21,7 +21,6 @@ import org.eclipse.jface.util.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.compare.*;
@@ -58,14 +57,12 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
 	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
 	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
-	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
 	
 	
-	private WorkbenchChainedTextFontFieldEditor fFontEditor;
 	private TextMergeViewer fPreviewViewer;
 	private IPropertyChangeListener	fPreferenceChangeListener;
 	private CompareConfiguration fCompareConfiguration;
@@ -80,7 +77,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_PSEUDO_CONFLICTS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TEXT_FONT),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		
@@ -106,8 +102,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		//store.setDefault(USE_RESOLVE_UI, false);
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
-
-		WorkbenchChainedTextFontFieldEditor.startPropagate(store, TEXT_FONT);
 	}
 
 	public ComparePreferencePage() {
@@ -141,7 +135,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fFontEditor.store();
 		fOverlayStore.propagate();
 		return true;
 	}
@@ -150,8 +143,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		
-		fFontEditor.loadDefault();
 		
 		fOverlayStore.loadDefaults();
 		initializeFields();
@@ -163,10 +154,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
-		
-		fFontEditor.setPreferencePage(null);
-		fFontEditor.setPreferenceStore(null);
-		
+				
 		if (fOverlayStore != null) {
 			if (fPreferenceChangeListener != null) {
 				fOverlayStore.removePropertyChangeListener(fPreferenceChangeListener);
@@ -253,14 +241,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		// a spacer
 		new Label(composite, SWT.NONE);
-
-		fFontEditor= addTextFontEditor(composite, "ComparePreferencePage.textFont.label", TEXT_FONT);	//$NON-NLS-1$
-		fFontEditor.setPreferenceStore(getPreferenceStore());
-		fFontEditor.setPreferencePage(this);
-		fFontEditor.load();
-		
-		// a spacer
-		new Label(composite, SWT.NONE);
 		
 		Label previewLabel= new Label(composite, SWT.NULL);
 		previewLabel.setText(Utilities.getString("ComparePreferencePage.preview.label"));	//$NON-NLS-1$
@@ -317,25 +297,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	// overlay stuff
-	
-	private WorkbenchChainedTextFontFieldEditor addTextFontEditor(Composite parent, String labelKey, String key) {
-		
-		String label= Utilities.getString(labelKey);
-
-		Group group= new Group(parent, SWT.NULL);
-		group.setText(label);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		layout.marginWidth+= 3;
-		group.setLayout(layout);		
-		WorkbenchChainedTextFontFieldEditor fe= new WorkbenchChainedTextFontFieldEditor(key, "", group);	//$NON-NLS-1$
-				
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		group.setLayoutData(gd);
-		
-		return fe;
-	}
 	
 	private Button addCheckBox(Composite parent, String labelKey, String key, int indentation) {
 		

@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Cursor;
@@ -37,7 +36,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
@@ -194,10 +192,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private IPreferenceStore fPreferenceStore;
 	private IPropertyChangeListener fPreferenceChangeListener;
 	
-	/** The editor's font properties change listener */
-	private IPropertyChangeListener fFontPropertyChangeListener;
-
-	
 	/** All diffs for calculating scrolling position (includes line ranges without changes) */
 	private ArrayList fAllDiffs;
 	/** Subset of above: just real differences. */
@@ -237,6 +231,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private boolean fUseSingleLine= true;
 	private boolean fUseResolveUI= fUseSingleLine;	// resolve UI only for single lines	private boolean fShowSummeryIcon;
 
+	private String fSymbolicFontName;
+
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
 	private ActionContributionItem fCopyDiffLeftToRightItem;
@@ -266,7 +262,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	// SWT resources to be disposed
 	private Map fColors;
-	private Font fFont;
 	private Cursor fBirdsEyeCursor;
 	private Image fOKImage;
 	private Image fNOTOKImage;
@@ -597,23 +592,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
 		
+		fSymbolicFontName= getClass().getName();
+		
 		String platform= SWT.getPlatform();
 		fIsMotif= "motif".equals(platform); //$NON-NLS-1$
 		
 		if (fIsMotif)
 			fMarginWidth= 0;
 			
+		Display display= parent.getDisplay();
+		
+		fPreferenceChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				TextMergeViewer.this.propertyChange(event);
+			}
+		};
+
 		fPreferenceStore= configuration.getPreferenceStore();
 		if (fPreferenceStore != null) {
-			fPreferenceChangeListener= new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					TextMergeViewer.this.propertyChange(event);
-				}
-			};
 			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 			
-			Display display= parent.getDisplay();
-			updateFont(fPreferenceStore, display);
 			checkForColorUpdate(display);
 
 			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
@@ -647,47 +645,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		fBirdsEyeCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		
-		// Internal property change listener for handling workbench font changes.
-		fFontPropertyChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				String property= event.getProperty();
-				if (ComparePreferencePage.TEXT_FONT.equals(property)) {
-					Font font= JFaceResources.getFont(ComparePreferencePage.TEXT_FONT);
-					System.out.println("workbench font: " + font);
-				}					
-				/*
-				if (fSourceViewer == null)
-					return;
-				if (getFontPropertyPreferenceKey().equals(property))
-					initializeViewerFont(fSourceViewer);
-				*/
-			}			
-		};
-		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+		JFaceResources.getFontRegistry().addListener(fPreferenceChangeListener);
+		updateFont();
 	}
 	
-	private void updateFont(IPreferenceStore ps, Display display) {
-		
-		Font oldFont= fFont;
-		
-		FontData fontData= null;
-		if (ps.contains(ComparePreferencePage.TEXT_FONT)
-					&& !ps.isDefault(ComparePreferencePage.TEXT_FONT))
-			fontData= PreferenceConverter.getFontData(ps, ComparePreferencePage.TEXT_FONT);
-		else
-			fontData= PreferenceConverter.getDefaultFontData(ps, ComparePreferencePage.TEXT_FONT);
-		if (fontData != null) {
-			fFont= new Font(display, fontData);
-			
+	private void updateFont() {
+		Font f= JFaceResources.getFont(fSymbolicFontName);
+		if (f != null) {
 			if (fAncestor != null)
-				fAncestor.setFont(fFont);
+				fAncestor.setFont(f);
 			if (fLeft != null)
-				fLeft.setFont(fFont);
+				fLeft.setFont(f);
 			if (fRight != null)
-				fRight.setFont(fFont);
-				
-			if (oldFont != null)
-				oldFont.dispose();
+				fRight.setFont(f);
 		}
 	}
 	
@@ -878,14 +848,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			DocumentManager.dump();
 
 		if (fPreferenceChangeListener != null) {
+			JFaceResources.getFontRegistry().removeListener(fPreferenceChangeListener);
 			if (fPreferenceStore != null)
 				fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
-		}
-		
-		if (fFontPropertyChangeListener != null) {
-			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
-			fFontPropertyChangeListener= null;
 		}
 		
 		fLeftCanvas= null;
@@ -908,10 +874,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fColors= null;
 		}
 		
-		if (fFont != null) {
-			fFont.dispose();
-			fFont= null;
-		}
 		if (fBirdsEyeCursor != null) {
 			fBirdsEyeCursor.dispose();
 			fBirdsEyeCursor= null;
@@ -1422,9 +1384,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		);
 		
-		if (fFont != null)
-			te.setFont(fFont);
-			
+		Font font= JFaceResources.getFont(fSymbolicFontName);
+		if (font != null)
+			te.setFont(font);
+		
 		if (fBackground != null)	// not default
 			te.setBackground(getColor(parent.getDisplay(), fBackground));			
 		
@@ -2955,11 +2918,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 //			updateResolveStatus();
 //			invalidateLines();
 		
-		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
-			if (fPreferenceStore != null) {
-				updateFont(fPreferenceStore, fComposite.getDisplay());
-				invalidateLines();
-			}
+		} else if (key.equals(fSymbolicFontName)) {
+			updateFont();
+			invalidateLines();
 			
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			
