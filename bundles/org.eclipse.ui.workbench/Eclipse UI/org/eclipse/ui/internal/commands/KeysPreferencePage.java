@@ -820,7 +820,7 @@ public class KeysPreferencePage
 		IWorkbenchContextSupport workbenchContextSupport = workbench.getContextSupport();
 		contextManager = workbenchContextSupport.getContextManager();
 		// TODO remove blind cast
-		commandManager = (CommandManager) workbench.getCommandManager();
+		commandManager = (CommandManager) workbench.getCommandSupport().getCommandManager();
 		commandAssignments = new TreeSet();
 		keySequenceAssignments = new TreeSet();
 	}

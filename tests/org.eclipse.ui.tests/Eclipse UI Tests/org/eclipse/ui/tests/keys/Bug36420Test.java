@@ -100,7 +100,7 @@ public class Bug36420Test extends UITestCase {
 		 */
 
 		// Check to see that the key binding for the given command matches.
-		ICommandManager manager = fWorkbench.getCommandManager();
+		ICommandManager manager = fWorkbench.getCommandSupport().getCommandManager();
 		List keyBindings = manager.getCommand(commandId).getKeySequenceBindings();
 		Iterator keyBindingItr = keyBindings.iterator();
 		boolean found = false;

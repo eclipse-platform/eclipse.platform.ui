@@ -17,9 +17,6 @@ package org.eclipse.ui.contexts;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see IContextActivationService#addContextActivationServiceListener

@@ -25,12 +25,15 @@ import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.activities.ProxyActivityManager;
 
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 	private IMutableActivityManager mutableActivityManager;
+	private ProxyActivityManager proxyActivityManager;
 
 	public WorkbenchActivitySupport() {
 		mutableActivityManager = ActivityManagerFactory.getMutableActivityManager();
+		proxyActivityManager = new ProxyActivityManager(mutableActivityManager);
 		mutableActivityManager.addActivityManagerListener(new IActivityManagerListener() {
 
 			private Set lastEnabled = new HashSet(mutableActivityManager.getEnabledActivityIds());
@@ -68,8 +71,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 	}
 
 	public IActivityManager getActivityManager() {
-		// TODO need to proxy this to prevent casts to IMutableActivityManager
-		return mutableActivityManager;
+		return proxyActivityManager;
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {

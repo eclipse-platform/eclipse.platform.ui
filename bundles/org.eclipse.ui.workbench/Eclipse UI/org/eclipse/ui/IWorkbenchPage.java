@@ -697,13 +697,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	IWorkbenchPageContextSupport getContextSupport();
 
 	/**
-	 * @deprecated please change before next i-build to use the equivalent
-	 *             direct method [get*Support()]
-	 * @since 3.0
-	 */
-	Object getAdapter(Class adapter);
-	
-	/**
 	 * Returns an array of IViewParts that are stacked with the given part.
 	 * 
 	 * <em>EXPERIMENTAL</em>

@@ -159,7 +159,7 @@ public final class MutableActivityManager
 		}
 	}
 
-	public boolean isMatch(String string, Set activityIds) {
+	private boolean isMatch(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {

@@ -48,7 +48,7 @@ public class Bug36537Test extends UITestCase {
 	public void testForRedundantKeySequenceBindings() {
 		IWorkbenchWindow window = openTestWindow();
 		Workbench workbench = (Workbench) window.getWorkbench();
-		CommandManager commandManager = (CommandManager) workbench.getCommandManager();
+		CommandManager commandManager = (CommandManager) workbench.getCommandSupport().getCommandManager();
 
 		List keySequenceBindings = commandManager.getCommandRegistry().getKeySequenceBindingDefinitions();
 		Iterator keySequenceBindingItr = keySequenceBindings.iterator();

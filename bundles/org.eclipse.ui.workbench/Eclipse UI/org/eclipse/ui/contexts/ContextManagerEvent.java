@@ -16,9 +16,6 @@ package org.eclipse.ui.contexts;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see IContextManagerListener#contextManagerChanged

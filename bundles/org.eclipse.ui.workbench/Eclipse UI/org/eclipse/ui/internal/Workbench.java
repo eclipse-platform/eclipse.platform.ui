@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
@@ -36,19 +35,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -69,7 +55,17 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -90,21 +86,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.progress.IProgressService;
-
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.colors.ColorDefinition;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
@@ -120,6 +108,11 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1970,29 +1963,6 @@ public final class Workbench implements IWorkbench {
 	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
 		new WorkbenchCommandsAndContexts(this);
 	private ActivityPersistanceHelper activityHelper;
-
-	public Object getAdapter(Class adapter) {
-		if (IWorkbenchActivitySupport.class.equals(adapter))
-			return getActivitySupport();
-		else if (IWorkbenchCommandSupport.class.equals(adapter))
-			return workbenchCommandSupport;
-		else if (IWorkbenchContextSupport.class.equals(adapter))
-			return workbenchContextSupport;
-		else
-			return null;
-	}
-
-	public IActivityManager getActivityManager() {
-		return getActivitySupport().getActivityManager();
-	}
-
-	public ICommandManager getCommandManager() {
-		return getCommandSupport().getCommandManager();
-	}
-
-	public void setEnabledActivityIds(Set enabledActivityIds) {
-		getActivitySupport().setEnabledActivityIds(enabledActivityIds);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#closeIntro(org.eclipse.ui.intro.IIntroPart)

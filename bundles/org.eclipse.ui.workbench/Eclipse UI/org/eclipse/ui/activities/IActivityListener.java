@@ -17,9 +17,6 @@ package org.eclipse.ui.activities;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see IActivity#addActivityListener

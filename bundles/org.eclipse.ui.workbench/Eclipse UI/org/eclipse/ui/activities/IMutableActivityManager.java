@@ -19,9 +19,6 @@ import java.util.Set;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see ActivityManagerFactory

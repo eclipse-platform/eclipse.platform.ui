@@ -3392,15 +3392,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		return workbenchPageContextSupport;
 	}
 
-	public Object getAdapter(Class adapter) {
-		if (IWorkbenchPageCommandSupport.class.equals(adapter))
-			return getCommandSupport();
-		else if (IWorkbenchPageContextSupport.class.equals(adapter))
-			return getContextSupport();
-		else
-			return null;
-	}
-
 	//for dynamic UI
 	protected HashMap getStateMap() {
 		return stateMap;

@@ -19,9 +19,6 @@ import java.util.Set;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see ActivityManagerFactory
@@ -108,11 +105,6 @@ public interface IActivityManager {
 	 * @return an instance of <code>IIdentifier</code>.
 	 */
 	IIdentifier getIdentifier(String identifierId);
-
-	/**
-	 * @deprecated
-	 */
-	boolean isMatch(String string, Set activityIds);
 
 	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code>

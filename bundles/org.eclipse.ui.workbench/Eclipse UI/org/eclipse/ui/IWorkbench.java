@@ -10,24 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import java.util.Set;
-
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
-import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.IProgressService;
-
-import org.eclipse.ui.internal.intro.IIntroRegistry;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -415,35 +407,6 @@ public interface IWorkbench {
 	 * @since 3.0
 	 */
 	IWorkbenchContextSupport getContextSupport();
-
-	/**
-	 * @deprecated please change before next i-build to use the equivalent
-	 *             direct method [get*Support()]
-	 * @since 3.0
-	 */
-	Object getAdapter(Class adapter);
-
-	/**
-	 * @deprecated please change before next i-build to use
-	 *             getActivitySupport().getActivityManager()
-	 * @since 3.0
-	 */
-	IActivityManager getActivityManager();
-
-	/**
-	 * @deprecated please change before next i-build to use
-	 *             getCommandSupport().getCommandManager()
-	 * @since 3.0
-	 */
-	ICommandManager getCommandManager();
-
-	/**
-	 * @deprecated please change before next i-build to use
-	 *             getActivitySupport().setEnabledActivityIds(Set
-	 *             enabledActivityIds)
-	 * @since 3.0
-	 */
-	void setEnabledActivityIds(Set enabledActivityIds);
 	
 	/**
 	 * Close the intro part, if one is open.

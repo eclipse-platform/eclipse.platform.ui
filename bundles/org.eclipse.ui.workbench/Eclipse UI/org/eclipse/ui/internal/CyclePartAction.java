@@ -129,7 +129,7 @@ public class CyclePartAction extends PageEventAction {
 
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
-				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandManager();
+				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
 
 				if (commandForward != null) {
 					ICommand command = commandManager.getCommand(commandForward);

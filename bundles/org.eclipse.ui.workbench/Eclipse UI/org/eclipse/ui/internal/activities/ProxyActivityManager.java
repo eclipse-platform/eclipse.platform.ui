@@ -67,8 +67,4 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 	public IIdentifier getIdentifier(String identifierId) {
 		return activityManager.getIdentifier(identifierId);
 	}
-
-	public boolean isMatch(String string, Set activityIds) {
-		return activityManager.isMatch(string, activityIds);
-	}
 }
