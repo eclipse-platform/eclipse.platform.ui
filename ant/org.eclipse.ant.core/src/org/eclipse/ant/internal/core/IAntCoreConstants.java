@@ -23,4 +23,11 @@ public interface IAntCoreConstants {
 	public static final int ERROR_COULD_NOT_CONFIGURE_PROJECT = 1;
 	public static final int ERROR_RUNNING_SCRIPT = 2;
 	
+	// preferences
+	public static final String PREFERENCE_TASKS = "tasks";
+	public static final String PREFERENCE_TYPES = "types";
+	public static final String PREFERENCE_URLS = "urls";
+	public static final String PREFIX_TASK = "task.";
+	public static final String PREFIX_TYPE = "type.";
+	public static final String PREFIX_URL = "url.";
 }

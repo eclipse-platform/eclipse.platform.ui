@@ -14,9 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.internal.core.AntCorePreferences;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.*;
 
-public class AntCorePlugin extends Plugin {
+public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -96,6 +97,13 @@ public void startup() throws CoreException {
 	typeExtensions = extractExtensions(PT_TYPES);
 }
 
+public void shutdown() throws CoreException {
+	if (preferences == null)
+		return;
+	preferences.updatePluginPreferences();
+	savePluginPreferences();
+}
+
 protected Map extractExtensions(String point) {
 	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
 	if (extensionPoint == null)
@@ -123,4 +131,5 @@ public AntCorePreferences getPreferences() {
 public static AntCorePlugin getPlugin() {
 	return plugin;
 }
+
 }
