@@ -14,7 +14,7 @@ div.dtd-fragment {
 <b><i>Identifier: </i></b>org.eclipse.debug.ui.consoleColorProviders<p>
 <b><i>Since: </i></b>2.1<p>
 <b><i>Description: </i></b>This extension point provides a mechanism for contributing a console document coloring scheme for a process. The color provider will be used to color output in the console.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.consoleColorProvider">consoleColorProvider</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
