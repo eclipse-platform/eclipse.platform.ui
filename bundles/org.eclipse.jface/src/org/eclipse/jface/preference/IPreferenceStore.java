@@ -96,9 +96,25 @@ public interface IPreferenceStore {
     public static final String FALSE = "false"; //$NON-NLS-1$
 
     /**
+     * <p>
      * Adds a property change listener to this preference store.
+     * </p>
+     * <p>
+     * <b>Note</b> The types of the oldValue and newValue of the
+     * generated PropertyChangeEvent are determined by whether
+     * or not the typed API in IPreferenceStore was called.
+     * If values are changed via setValue(name,type) the 
+     * values in the PropertyChangedEvent will be of that type.
+     * If they are set using a non typed API (i.e. #setToDefault
+     * or using the OSGI Preferences) the values will be unconverted
+     * Strings.
+     * </p>
      *
      * @param listener a property change listener
+     * @see org.eclipse.jface.util.PropertyChangeEvent
+     * @see #setToDefault(String)
+     * @see #setValue(String, <type>)
+     * @see org.osgi.service.prefs.Preferences
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener);
 
