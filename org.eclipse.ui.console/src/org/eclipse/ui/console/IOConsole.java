@@ -465,11 +465,13 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
     private void testForMatch(CompiledPatternMatchListener compiled, int eventOffset) throws BadLocationException {
-        String matchContext = compiled.listener.getMatchContext();
-        if (IPatternMatchListener.LINE_MATCH.equals(matchContext)) {
-            matchByLine(compiled, eventOffset);
-        } else {
-            matchByDocument(compiled, eventOffset);
+        switch (compiled.listener.getMatchContext()) {
+        	case IPatternMatchListener.LINE_MATCH:
+        	    matchByLine(compiled, eventOffset);
+        		break;
+        	case IPatternMatchListener.DOCUMENT_MATCH:
+        	    matchByDocument(compiled, eventOffset);
+        		break;
         }
     }
     private void matchByLine(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {

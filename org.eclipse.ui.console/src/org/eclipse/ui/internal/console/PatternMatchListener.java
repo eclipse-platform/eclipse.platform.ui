@@ -20,10 +20,16 @@ public class PatternMatchListener implements IPatternMatchListener {
 
     private PatternMatchListenerExtension fExtension;
     private IPatternMatchListenerDelegate fDelegate;
+    private int fMatchContext;
     
     public PatternMatchListener(PatternMatchListenerExtension extension) throws CoreException {
         fExtension = extension;
         fDelegate = fExtension.createDelegate();
+        if (fExtension.getMatchContext().equals("document")) { //$NON-NLS-1$
+            fMatchContext = IPatternMatchListener.DOCUMENT_MATCH;
+        } else {
+            fMatchContext = IPatternMatchListener.LINE_MATCH;
+        }
     }   
 
     /* (non-Javadoc)
@@ -43,8 +49,8 @@ public class PatternMatchListener implements IPatternMatchListener {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#getMatchContext()
      */
-    public String getMatchContext() {
-        return fExtension.getMatchContext();
+    public int getMatchContext() {
+        return fMatchContext;
     }
     
     /* (non-Javadoc)
