@@ -826,7 +826,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		boolean hasTreeChanges = false;
 		try {
 			workManager.setBuild(build);
-			notificationManager.notifyIfNeeded();
+			notificationManager.endOperation();
 			// if we are not exiting a top level operation then just decrement the count and return
 			boolean depthOne = workManager.getPreparedOperationDepth() == 1;
 			if (!(notificationManager.shouldNotify() || depthOne))
@@ -848,27 +848,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//double check if the tree has actually changed
 				if (hasTreeChanges)
 					hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
-
-				OperationCanceledException cancel = null;
-				CoreException signal = null;
-				if (depthOne && !Policy.BACKGROUND_BUILD) {
-					buildManager.endTopLevel(hasTreeChanges);
-					IStatus result = buildManager.runAutoBuild(Policy.subMonitorFor(monitor, Policy.opWork));
-					switch (result.getSeverity()) {
-						case IStatus.CANCEL :
-							cancel = new OperationCanceledException();
-						case IStatus.ERROR :
-						case IStatus.WARNING :
-							signal = new CoreException(result);
-					}
-				}
 				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 				// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 				saveManager.snapshotIfNeeded(hasTreeChanges);
-				if (cancel != null)
-					throw cancel;
-				if (signal != null)
-					throw signal;
 			} finally {
 				workManager.endNotify();
 				// make sure the tree is immutable if we are ending a top-level operation.
@@ -881,8 +863,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			workManager.checkOut(rule);
 		}
-		if (Policy.BACKGROUND_BUILD)
-			buildManager.endTopLevel(hasTreeChanges);
+		buildManager.endTopLevel(hasTreeChanges);
 	}
 
 	/**

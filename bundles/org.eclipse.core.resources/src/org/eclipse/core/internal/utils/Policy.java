@@ -72,9 +72,6 @@ public class Policy {
 	public static boolean DEBUG_SAVE_SNAPSHOTS = false;
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 	
-	//temporary debug flag for background build
-	public static boolean BACKGROUND_BUILD = false;
-
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
 		
@@ -85,7 +82,6 @@ public class Policy {
 			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
 			DEBUG_BUILD_INVOKING = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ 
 			DEBUG_BUILD_DELTA = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ 
-			BACKGROUND_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/background")); //$NON-NLS-1$ 
 			DEBUG_NATURES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ 
 			DEBUG_HISTORY = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ 
 

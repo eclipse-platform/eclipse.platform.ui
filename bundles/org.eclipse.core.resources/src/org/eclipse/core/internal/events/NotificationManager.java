@@ -98,11 +98,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The main broadcast point for notification deltas */
 	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) throws CoreException {
-		// Do the notification if there are listeners for events of the given
-		// type.
-		// Be sure to update the state if requested. This needs to happen
-		// regardless of
-		// whether people are listening.
+		// Do the notification if there are listeners for events of the given type.
+		// Update the state regardless of whether people are listening.
 		ResourceDelta delta = null;
 		try {
 			if (listeners.hasListenerFor(type))
@@ -114,28 +111,21 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			long start = System.currentTimeMillis();
 			notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
 			lastNotifyDuration = System.currentTimeMillis() - start;
-			// Remember the current state as the last notified state if
-			// requested.
-			// Be sure to clear out the old delta
 		} finally {
+			// Remember the current state as the last notified state if requested.
+			// Be sure to clear out the old delta
 			boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
-			//temporary condition for background build as an option
-			//XXX clean up all this code once background build is NOT an
-			// option
-			boolean postBuild = Policy.BACKGROUND_BUILD && type == IResourceChangeEvent.POST_AUTO_BUILD;
-			if (postChange || postBuild) {
+			if (postChange || type == IResourceChangeEvent.POST_AUTO_BUILD) {
 				long id = workspace.getMarkerManager().getChangeId();
-				if (Policy.BACKGROUND_BUILD) {
-					id = postChange ? lastPostChangeId = id : (lastPostBuildId = id);
-				} else
-					//keep both ids in sync
-					lastPostBuildId = lastPostChangeId = id;
-				workspace.getMarkerManager().resetMarkerDeltas(Math.min(lastPostBuildId, lastPostChangeId));
 				lastState.immutable();
-				if (postBuild)
-					lastPostBuildTree = lastState;
-				else
+				if (postChange) {
 					lastPostChangeTree = lastState;
+					lastPostChangeId = id;
+				} else {
+					lastPostBuildTree = lastState;
+					lastPostBuildId = id;
+				}
+				workspace.getMarkerManager().resetMarkerDeltas(Math.min(lastPostBuildId, lastPostChangeId));
 				lastDelta = null;
 				lastDeltaState = lastState;
 			}
@@ -151,23 +141,19 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	protected ResourceDelta getDelta(ElementTree tree, int type) {
 		long id = workspace.getMarkerManager().getChangeId();
 		// if we have a delta from last time and no resources have changed
-		// since then, we
-		// can reuse the delta structure
-		boolean postBuild = Policy.BACKGROUND_BUILD && type != IResourceChangeEvent.POST_CHANGE;
+		// since then, we can reuse the delta structure
+		boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
 		if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, ResourceComparator.getComparator(true), true)) {
-			// Markers may have changed since the delta was generated. If so,
-			// get the new
-			// marker state and insert it in to the delta which is being
-			// reused.
+			// Markers may have changed since the delta was generated. If so, get the new
+			// marker state and insert it in to the delta which is being reused.
 			if (id != lastDeltaId) {
 				Map markerDeltas = workspace.getMarkerManager().getMarkerDeltas(lastPostBuildId);
 				lastDelta.updateMarkers(markerDeltas);
 			}
 		} else {
-			// We don't have a delta or something changed so recompute the
-			// whole deal.
-			ElementTree oldTree = postBuild ? lastPostBuildTree : lastPostChangeTree;
-			long markerId = postBuild ? lastPostBuildId : lastPostChangeId;
+			// We don't have a delta or something changed so recompute the whole deal.
+			ElementTree oldTree = postChange ? lastPostChangeTree : lastPostBuildTree;
+			long markerId = postChange ? lastPostChangeId : lastPostBuildId;
 			lastDelta = ResourceDeltaFactory.computeDelta(workspace, oldTree, tree, Path.ROOT, markerId + 1);
 		}
 		// remember the state of the world when this delta was consistent
@@ -235,7 +221,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			}
 		}
 	}
-	public void notifyIfNeeded() {
+	public void endOperation() {
 		//notifications must never take more than one tenth of operation time
 		long delay = Math.max(NOTIFICATION_DELAY, lastNotifyDuration * 10);
 		if (notifyJob.getState() == Job.NONE)
@@ -256,9 +242,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// get the current state of the workspace as the starting point and
 		// tell the workspace to track changes from there. This gives the
 		// notification manager an initial basis for comparison.
-		lastPostChangeTree = workspace.getElementTree();
-		if (Policy.BACKGROUND_BUILD)
-			lastPostBuildTree = lastPostChangeTree;
+		lastPostBuildTree = lastPostChangeTree = workspace.getElementTree();
 		workspace.addLifecycleListener(this);
 	}
 	/**

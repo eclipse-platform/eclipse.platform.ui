@@ -88,10 +88,8 @@ class AutoBuildJob extends Job {
 	}
 	public synchronized void endTopLevel(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		if (Policy.BACKGROUND_BUILD) {
-			long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
-			schedule(delay);
-		}
+		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+		schedule(delay);
 	}
 	/**
 	 * Forces a build to occur at the end of the next top level operation. This
@@ -104,7 +102,7 @@ class AutoBuildJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this) {
-			if (Policy.BACKGROUND_BUILD && monitor.isCanceled())
+			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 		}
 		try {
