@@ -92,19 +92,26 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			autoconnectPage.setProject(project);
 			addPage(autoconnectPage);
 		} else {
-			getRepositoryLocationFromOneO(project);
-			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
-			if (locations.length > 0) {
-				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				addPage(locationPage);
+			FolderSyncInfo info = getRepositoryInfoFromOneO(project);
+			if (info != null) {
+				// The project is from 1.0 and has sharing info
+				autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectOneOTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				autoconnectPage.setSharing(info);
+				addPage(autoconnectPage);
+			} else {
+				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
+				if (locations.length > 0) {
+					locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+					addPage(locationPage);
+				}
+				createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				addPage(createLocationPage);
+				createLocationPage.setDialogSettings(getDialogSettings());
+				modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				addPage(modulePage);
+				finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				addPage(finishPage);
 			}
-			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			addPage(createLocationPage);
-			createLocationPage.setDialogSettings(getDialogSettings());
-			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			addPage(modulePage);
-			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			addPage(finishPage);
 		}
 	}
 	public boolean canFinish() {
@@ -157,7 +164,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						monitor.beginTask("", 100); //$NON-NLS-1$
-						if (autoconnectPage != null) {
+						if (autoconnectPage != null && doesCVSDirectoryExist()) {
 							// Autoconnect to the repository using CVS/ directories
 							
 							FolderSyncInfo info = autoconnectPage.getFolderSyncInfo();
@@ -214,7 +221,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
 									projectExists[0] = true;
-									boolean sync = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
+									boolean sync = true;
+									if (autoconnectPage == null) {
+										sync = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
+									}
 									result[0] = sync;
 									doSync[0] = sync;
 									return;
@@ -256,15 +266,20 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						try {
 							ICVSRepositoryLocation location = getLocation();
 							String moduleName = getModuleName();
-							TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
-								new ICVSFolder[] {(ICVSFolder)location.getRemoteFolder(moduleName, null)}, 
-								Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
-								Policy.bind("SharingWizard.selectTag"), TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, false /*don't show recurse option*/); //$NON-NLS-1$
-							dialog.setBlockOnOpen(true);
-							if (dialog.open() == Dialog.CANCEL) {
-								return false;
+							CVSTag tag;
+							if (autoconnectPage == null) {
+								TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
+									new ICVSFolder[] {(ICVSFolder)location.getRemoteFolder(moduleName, null)}, 
+									Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
+									Policy.bind("SharingWizard.selectTag"), TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, false /*don't show recurse option*/); //$NON-NLS-1$
+								dialog.setBlockOnOpen(true);
+								if (dialog.open() == Dialog.CANCEL) {
+									return false;
+								}
+								tag = dialog.getResult();
+							} else {
+								tag = autoconnectPage.getSharing().getTag();
 							}
-							CVSTag tag = dialog.getResult();
 							input = new CVSSyncCompareUnsharedInput(project, getLocation(), moduleName, tag);
 						} catch (TeamException e) {
 							throw new InvocationTargetException(e);
@@ -296,6 +311,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	 * Return an ICVSRepositoryLocation
 	 */
 	private ICVSRepositoryLocation getLocation() throws TeamException {
+		// If there is an autoconnect page then it has the location
+		if (autoconnectPage != null) {
+			return autoconnectPage.getLocation();
+		}
+		
 		// If the import page has a location, use it.
 		if (locationPage != null) {
 			ICVSRepositoryLocation location = locationPage.getLocation();
@@ -314,6 +334,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	 * Return the module name.
 	 */
 	private String getModuleName() {
+		// If there is an autoconnect page then it has the module name
+		if (autoconnectPage != null) {
+			return autoconnectPage.getSharing().getRepository();
+		}
 		String moduleName = modulePage.getModuleName();
 		if (moduleName == null) moduleName = project.getName();
 		return moduleName;
@@ -372,7 +396,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		return isCVSFolder[0];
 	}
 	
-	private ICVSRepositoryLocation getRepositoryLocationFromOneO(IProject project) {
+	private FolderSyncInfo getRepositoryInfoFromOneO(IProject project) {
 		try {
 			QualifiedName key = new QualifiedName("org.eclipse.vcm.core", "Sharing");
 			byte[] syncBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(key, project); //$NON-NLS-1$ //$NON-NLS-2$
@@ -380,10 +404,20 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				DataInputStream reader = new DataInputStream(new ByteArrayInputStream(syncBytes));
 				String repoType = reader.readUTF();
 				String repoLocation = reader.readUTF();
+				String stream = reader.readUTF();
 				reader.close();
 				ResourcesPlugin.getWorkspace().getSynchronizer().flushSyncInfo(key, project, IResource.DEPTH_INFINITE);
 				if (repoType.equals("CVS")) { //$NON-NLS-1$
-					return CVSProviderPlugin.getProvider().getRepository(repoLocation);
+					// Get the repository so it is added to the provider 
+					// (in case the user cancels after we purge the old info)
+					CVSProviderPlugin.getProvider().getRepository(repoLocation);
+					CVSTag tag;
+					if (stream.equals("HEAD")) { //$NON-NLS-1$
+						tag = CVSTag.DEFAULT;
+					} else {
+						tag = new CVSTag(stream, CVSTag.BRANCH);
+					}
+					return new FolderSyncInfo(project.getName(), repoLocation, tag, false);
 				}
 			}
 		} catch (CVSException ex) {
