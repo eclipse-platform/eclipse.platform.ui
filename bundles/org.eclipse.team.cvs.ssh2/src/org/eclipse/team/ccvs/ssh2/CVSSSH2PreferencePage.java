@@ -11,6 +11,7 @@ Contributors:
 **********************************************************************/
 package org.eclipse.team.ccvs.ssh2;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -127,6 +128,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     initDefaults(store);
     initControls();
 
+    Dialog.applyDialogFont(parent);
     return container;
   }
 
@@ -222,7 +224,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  for(int i=0; i<files.length; i++){
 	    String foo=files[i];
-	    keys=keys+","+dir+foo; //$NON-NLS-1$
+	    if(keys.length()!=0)keys=keys+",";
+	    keys=keys+dir+foo;
 	  }
 	  privateKeyText.setText(keys);
 	}
@@ -387,6 +390,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyFingerPrintLabel.setText(Policy.bind("CVSSSH2PreferencePage.41")); //$NON-NLS-1$
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyFingerPrintText.setFont(group.getFont());
+    keyFingerPrintText.setEditable(false);
     gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
     keyFingerPrintText.setLayoutData(gd);
