@@ -18,7 +18,8 @@ public class IndexedStore {
  */
 private static final Map registry = new HashMap();
 
-	private static final ObjectAddress ContextAddress = new ObjectAddress(1, 1);
+	private static final ObjectAddress ContextAddress10 = new ObjectAddress(1, 0);
+	private static final ObjectAddress ContextAddress11 = new ObjectAddress(1, 1);
 
 	private ObjectAddress objectDirectoryAddress; /* initialized at open */	
 	private Index objectDirectory; /* initialized at open */	
@@ -27,6 +28,7 @@ private static final Map registry = new HashMap();
 	private ObjectAddress indexDirectoryAddress; /* initialized at open */	
 	private Index indexDirectory; /* initialized at open */	
 	private IndexCursor indexDirectoryCursor; /* initialized at open */
+	private ObjectAddress contextAddress;
 
 	private ObjectStore objectStore; /* initialized at open */
 	private String name; /* initialized at open */
@@ -40,8 +42,13 @@ private static final Map registry = new HashMap();
 	/**
 	 * Acquires a context.
 	 */
-	IndexedStoreContext acquireContext(ObjectAddress address) throws IndexedStoreException {
-		return (IndexedStoreContext) acquireObject(address);
+	IndexedStoreContext acquireContext(ObjectAddress address) {
+		IndexedStoreContext context = null;
+		try {
+			context = (IndexedStoreContext) acquireObject(address);
+		} catch (IndexedStoreException e) {
+		}
+		return context;
 	}
 	/**
 	 * Acquire an index node.
@@ -253,7 +260,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 	 * Returns the next ObjectID
 	 */
 	private ObjectID getNextObjectID() throws IndexedStoreException {
-		IndexedStoreContext context = acquireContext(ContextAddress);
+		IndexedStoreContext context = acquireContext(contextAddress);
 		long objectNumber = context.getNextObjectNumber();
 		context.release();
 		return new ObjectID(objectNumber);
@@ -309,7 +316,15 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			objectStore = new ObjectStore(new IndexedStoreObjectPolicy());
 			objectStore.open(name);
 			checkMetadata();
-			IndexedStoreContext context = acquireContext(ContextAddress);
+			contextAddress = ContextAddress10;
+			IndexedStoreContext context = acquireContext(contextAddress);
+			if (context == null) {
+				contextAddress = ContextAddress11;
+				context = acquireContext(contextAddress);
+			}
+			if (context == null) {
+				throw new IndexedStoreException(IndexedStoreException.StoreFormatError);
+			}
 			indexDirectoryAddress = context.getIndexDirectoryAddress();
 			objectDirectoryAddress = context.getObjectDirectoryAddress();
 			context.release();
@@ -319,6 +334,8 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			objectDirectoryCursor = objectDirectory.open();
 			this.name = name;
 			registry.put(name, this);
+		} catch (IndexedStoreException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new IndexedStoreException(IndexedStoreException.GenericError);
 		}

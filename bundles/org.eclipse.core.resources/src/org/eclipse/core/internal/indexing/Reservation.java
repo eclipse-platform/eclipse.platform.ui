@@ -12,11 +12,13 @@ public class Reservation {
 	protected int freeSlots = 0;
 	protected int freeSpace = 0;
 	protected int reservedSpace = 0;
+	protected int initialEntry = 0;
 	protected Map reservedItems = new HashMap();
 	
-	public Reservation(int freeSpace, int freeSlots) {
+	public Reservation(int freeSpace, int freeSlots, int initialEntry) {
 		this.freeSlots = freeSlots;
 		this.freeSpace = freeSpace;
+		this.initialEntry = initialEntry;
 	}
 	
 	public void add(int slot, int bytes) {
@@ -37,6 +39,14 @@ public class Reservation {
 	int getFreeSpace() {
 		if (reservedItems.size() >= freeSlots) return 0;
 		return Math.max(0, freeSpace - reservedSpace);
+	}
+	
+	public int getInitialEntry() {
+		return initialEntry;
+	}
+	
+	public void setInitialEntry(int n) {
+		initialEntry = n;
 	}
 
 }

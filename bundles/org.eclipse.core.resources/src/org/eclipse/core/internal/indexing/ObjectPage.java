@@ -64,8 +64,7 @@ class ObjectPage extends ObjectStorePage {
 			usedEntries = pageBuffer.getUInt(UsedEntriesOffset, 2);
 			initialEntry = pageBuffer.getUInt(InitialEntryOffset, 2);
 			freeSpaceOffset = pageBuffer.getUInt(FreeSpaceOffset, 2);
-		}
-		else {
+		} else {
 			usedSpace = 0;
 			usedEntries = 0;
 			initialEntry = 0;
@@ -126,6 +125,7 @@ class ObjectPage extends ObjectStorePage {
 		freeSpaceOffset += blockLength;						// update where the new free space is
 		usedSpace += blockLength;							// indicate that space is used up
 		usedEntries++;									// indicate that an entry is used up
+		initialEntry = (objectNumber + 1) % MaxEntries;	// set where to begin the next search
 		setChanged();
 		notifyObservers();
 	}
@@ -145,25 +145,28 @@ class ObjectPage extends ObjectStorePage {
 		// get the reservation for this page from the table, create a new one if necessary
 		Reservation r = reservations.get(pageNumber);
 		if (r == null) {
-			r = new Reservation(getFreeSpace(), MaxEntries - usedEntries);
+			r = new Reservation(getFreeSpace(), MaxEntries - usedEntries, initialEntry);
 			reservations.put(pageNumber, r);
 		}		
 
 		// find an empty slot that is not already reserved
-		int objectNumber = initialEntry;
+		int objectNumber = r.getInitialEntry();
 		int blockOffset = 0;
 		int entryOffset = 0;
 		for (int i = 0; i < MaxEntries; i++) {
-			objectNumber++;
-			if (objectNumber == MaxEntries) objectNumber = 0;
-			if (r.contains(objectNumber)) continue;
-			entryOffset = ObjectDirectoryOffset + (objectNumber * 2);
-			blockOffset = pageBuffer.getUInt(entryOffset, 2);
-			if (blockOffset == 0) break;
+			if (!r.contains(objectNumber)) {
+				entryOffset = ObjectDirectoryOffset + (objectNumber * 2);
+				blockOffset = pageBuffer.getUInt(entryOffset, 2);
+				if (blockOffset == 0) break;
+			}
+			objectNumber = (objectNumber + 1) % MaxEntries;
 		}
 		if (blockOffset != 0) {
 			throw new ObjectStoreException(ObjectStoreException.PageVacancyFailure);
 		}
+		
+		// begin the next search just after where we left off
+		r.setInitialEntry((objectNumber + 1) % MaxEntries);
 		
 		// update the reservation for this page
 		r.add(objectNumber, blockLength);
