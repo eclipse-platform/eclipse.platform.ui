@@ -49,6 +49,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -692,42 +693,27 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	
     /**
 	 * Create the perspective toolbar control
-	 */
-	private void createPerspectiveBar() {
-		if (!getWindowConfigurer().getShowPerspectiveBar()) {
-			return;
-		}
-
+ 	 */
+ 	private void createPerspectiveBar() {
+		
+ 		if (!getWindowConfigurer().getShowPerspectiveBar()) {
+ 			return;
+ 		}
+	
 		if (perspectiveBar.getControl() == null) {
-			
-			// TODO CoolBarManager is not locked by default, need to fix this
-			CoolBarManager perspCoolBarManager = new CoolBarManager(SWT.FLAT | SWT.DROP_DOWN);
-			perspCoolBarManager.setLockLayout(true);
-			 // Set up the context Menu
-			IMenuManager popUpMenu = new MenuManager();
-			popUpMenu.add(new PerspectiveBarNewContributionItem(this));
-			perspCoolBarManager.setContextMenuManager(popUpMenu);
-						
-			perspectiveCoolBar = perspCoolBarManager.createControl(topBar);
-			perspCoolBarManager.add(perspectiveBar);
-			perspectiveBar.setParent(perspectiveCoolBar);
+			perspectiveCoolBar = new CoolBar(topBar, SWT.FLAT);
+			final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
 			perspectiveBar.createControl(perspectiveCoolBar);
+			coolItem.setControl(perspectiveBar.getControl());
 			perspectiveCoolBar.setLocked(true);
-			perspCoolBarManager.update(true);   
-			
-
-			//perspectiveCoolBar = new CoolBar(topBar, SWT.FLAT);
-			//final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
-			//coolItem.setControl(perspectiveBar.getControl());
-
+			perspectiveBar.setParent(perspectiveCoolBar);
+			perspectiveBar.update(true);
 			
 			// adjust the toolbar size to display as many items as possible
-			/*perspectiveCoolBar.addControlListener(new ControlAdapter() {
+			perspectiveCoolBar.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {
 					ToolBar toolbar = perspectiveBar.getControl();
-					if (perspectiveCoolBar.getItemCount() <= 0)
-						return;
-					CoolItem coolItem = perspectiveCoolBar.getItems()[0];
+
 					Rectangle area = perspectiveCoolBar.getClientArea();
 					Rectangle bounds = toolbar.getItem(0).getBounds();
 					int rows = (int)Math.floor(area.height / bounds.height);
@@ -749,18 +735,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					}
 					Point size = toolbar.computeSize(width, SWT.DEFAULT);
 					coolItem.setSize(coolItem.computeSize(size.x, size.y));
-				}
+ 				}
+
 			});
 			
-			*/
-/*			coolItem.addSelectionListener(new SelectionAdapter() {
+			
+			coolItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (e.detail == SWT.ARROW) {
 						perspectiveBar.handleChevron(e);
 					}
 				}
 			});
-			coolItem.setMinimumSize(0, 0);*/
+			coolItem.setMinimumSize(0, 0);
 			
 		    // TODO: encapsulate the listener and showPerspectiveBarPopup in PerspectiveBar
 		    Listener listener = new Listener() {
@@ -771,20 +758,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			};
 			perspectiveBar.getControl().addListener(SWT.MenuDetect, listener);
-			
 		}
-		
-		if (dockPerspectiveBar) {
-			topBar.setRight(null);
+ 		
+ 		if (dockPerspectiveBar) {
+ 			topBar.setRight(null);
 			topBar.setBottom(perspectiveCoolBar);
-		} else {
+ 		} else {
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBar);
-			topBar.setRightWidth(SWT.DEFAULT);
-		}
+ 			topBar.setRightWidth(SWT.DEFAULT);
+ 		}
+ 		perspectiveBar.getControl().getShell().layout();		
+ 	}
 
-		perspectiveBar.getControl().getShell().layout();		
-	}
 
 	/**
 	 * Returns the shortcut for a page.
