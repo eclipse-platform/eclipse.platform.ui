@@ -126,8 +126,10 @@ public Object createExecutableExtension(String className, Object initData, IConf
 	Class classInstance = null;
 	try {
 		classInstance = getPluginClassLoader(true).loadClass(className);
-	} catch (Exception e1) {
-		throwException(Policy.bind("plugin.loadClassError", getId(), className), e1); //$NON-NLS-1$
+	} catch (Exception e) {
+		throwException(Policy.bind("plugin.loadClassError", getId(), className), e); //$NON-NLS-1$
+	} catch (LinkageError e) {
+		throwException(Policy.bind("plugin.loadClassError", getId(), className), e); //$NON-NLS-1$
 	}
 
 	// create a new instance
@@ -601,7 +603,7 @@ public String getResourceString(String value, ResourceBundle b) {
 			b = getResourceBundle();
 		} catch (MissingResourceException e) {
 			// just return the default (dflt)
-		};
+		}
 	}
 	
 	if (b==null) return dflt;
@@ -734,7 +736,7 @@ private void internalDoPluginActivation() throws CoreException {
 			pluginObject.startup();
 		}
 		public void handleException(Throwable e) {
-			multiStatus.add(new Status(Status.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e));
+			multiStatus.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e));
 			try {
 				pluginObject.shutdown();
 			} catch (Exception ex) {
