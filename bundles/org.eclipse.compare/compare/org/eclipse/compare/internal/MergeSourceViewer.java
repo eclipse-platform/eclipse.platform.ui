@@ -15,10 +15,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Color;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.ITextSelection;
 
-import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 
@@ -27,7 +31,7 @@ import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
  */
 public class MergeSourceViewer extends SourceViewer {
 						
-	class TextMergeAction extends Action implements IUpdate {
+	class TextMergeAction extends Action implements IUpdate, ISelectionChangedListener {
 		
 		int fOperationCode;
 		
@@ -47,8 +51,14 @@ public class MergeSourceViewer extends SourceViewer {
 		
 		public void update() {
 			this.setEnabled(isEnabled());
-		}	
-	}
+		}
+		
+		public void selectionChanged(SelectionChangedEvent event) {
+			ISelection selection= event.getSelection();
+			if (selection instanceof ITextSelection)
+				update();
+		}
+}
 
 
 	private IRegion fRegion;
@@ -247,12 +257,44 @@ public class MergeSourceViewer extends SourceViewer {
 		}
 	}
 	
-	public Action getAction(int operation) {
-		Integer key= new Integer(operation);
-		Action action= (Action) fActions.get(key);
+	/**
+	 * Returns -1 on error
+	 */
+	private int getOperationCode(String operation) {
+		if (IWorkbenchActionConstants.UNDO.equals(operation))
+			return UNDO;
+		if (IWorkbenchActionConstants.REDO.equals(operation))
+			return REDO;
+		if (IWorkbenchActionConstants.CUT.equals(operation))
+			return CUT;
+		if (IWorkbenchActionConstants.CUT.equals(operation))
+			return CUT;
+		if (IWorkbenchActionConstants.COPY.equals(operation))
+			return COPY;
+		if (IWorkbenchActionConstants.PASTE.equals(operation))
+			return PASTE;
+		if (IWorkbenchActionConstants.DELETE.equals(operation))
+			return DELETE;
+		if (IWorkbenchActionConstants.SELECT_ALL.equals(operation))
+			return SELECT_ALL;
+//		if (IWorkbenchActionConstants.SHIFT_RIGHT.equals(operation))
+//			return SHIFT_RIGHT;
+//		if (IWorkbenchActionConstants.SHIFT_LEFT.equals(operation))
+//			return SHIFT_LEFT;
+//		if (IWorkbenchActionConstants.PREFIX.equals(operation))
+//			return PREFIX;
+//		if (IWorkbenchActionConstants.STRIP_PREFIX.equals(operation))
+//			return STRIP_PREFIX;
+		return -1;	// error
+	}
+	
+	public Action getAction(String operation) {
+		Action action= (Action) fActions.get(operation);
 		if (action == null) {
-			action= new TextMergeAction(operation);
-			fActions.put(key, action);
+			action= new TextMergeAction(getOperationCode(operation));
+//			if (action instanceof ISelectionChangedListener)
+//				addSelectionChangedListener((ISelectionChangedListener)action);
+			fActions.put(operation, action);
 		}
 		return action;
 	}

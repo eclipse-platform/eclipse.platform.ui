@@ -336,27 +336,35 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					if (dn.hasChildren())
 						return createDiffViewer(this);
 				}
-				return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
 			}
 		};
 		
 		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.NONE, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
 			}
 		};
 		h.setVisible(fStructurePane1, false);
 		
 		fStructurePane2= new CompareViewerSwitchingPane(h, SWT.NONE, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
 			}
 		};
 		h.setVisible(fStructurePane2, false);
 				
 		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.NONE) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return findContentViewer(oldViewer, (ICompareInput)input, this);
+				if (input instanceof ICompareInput)
+					return findContentViewer(oldViewer, (ICompareInput)input, this);
+				return null;
 			}
 		};
 		fComposite.setVisible(h, false);

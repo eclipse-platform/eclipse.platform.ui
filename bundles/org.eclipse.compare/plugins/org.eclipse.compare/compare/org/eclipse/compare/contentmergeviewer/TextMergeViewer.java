@@ -95,33 +95,7 @@ import org.eclipse.compare.internal.DocLineComparator;
  * @see org.eclipse.compare.IStreamContentAccessor
  */
 public class TextMergeViewer extends ContentMergeViewer  {
-	
-	static class TextMergeAction extends Action implements IUpdate {
 		
-		int fOperationCode;
-		ITextOperationTarget fTarget;
-		
-		TextMergeAction(ResourceBundle bundle, String key, ITextOperationTarget target, int operationCode) {
-			Utilities.initAction(this, bundle, key);
-			fTarget= target;
-			fOperationCode= operationCode;
-			update();
-		}
-		
-		public void run() {
-			if (fOperationCode != -1 && fTarget.canDoOperation(fOperationCode))
-				fTarget.doOperation(fOperationCode);
-		}
-
-		public boolean isEnabled() {
-			return fTarget.canDoOperation(fOperationCode);
-		}
-		
-		public void update() {
-			setEnabled(isEnabled());
-		}	
-	}
-	
 	private static final String MY_UPDATER= "my_updater";
 	
 	private static final String SYNC_SCROLLING= "SYNC_SCROLLING";
@@ -565,8 +539,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			new FocusAdapter() {
 				public void focusGained(FocusEvent fe) {
 					fFocusPart= part;
-					globalActions(fFocusPart);
+//					connectGlobalActions(fFocusPart);
 				}
+//				public void focusLost(FocusEvent fe) {
+//					connectGlobalActions(null);
+//				}
 			}
 		);
 		
@@ -594,7 +571,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return part;
 	}
 	
-	
 	/**
 	 * Allows the viewer to add menus and/or tools to the context menu.
 	 */
@@ -604,43 +580,65 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 		menu.add(new Separator("undo"));
 		if (mutable) {
-			menu.add(getAction(part, MergeSourceViewer.UNDO, "UndoText"));
-			menu.add(getAction(part, MergeSourceViewer.REDO, "RedoText"));
+			menu.add(getAction(part, IWorkbenchActionConstants.UNDO));
+			menu.add(getAction(part, IWorkbenchActionConstants.REDO));
 		}
 	
 		menu.add(new Separator("ccp"));
 		if (mutable)
-			menu.add(getAction(part, MergeSourceViewer.CUT, "CutText"));
-		menu.add(getAction(part, MergeSourceViewer.COPY, "CopyText"));
+			menu.add(getAction(part, IWorkbenchActionConstants.CUT));
+		menu.add(getAction(part, IWorkbenchActionConstants.COPY));
 		if (mutable) {
-			menu.add(getAction(part, MergeSourceViewer.PASTE, "PasteText"));
-			menu.add(getAction(part, MergeSourceViewer.DELETE, "DeleteText"));
+			menu.add(getAction(part, IWorkbenchActionConstants.PASTE));
+			menu.add(getAction(part, IWorkbenchActionConstants.DELETE));
 		}
-		menu.add(getAction(part, MergeSourceViewer.SELECT_ALL, "SelectAllText"));
+		menu.add(getAction(part, IWorkbenchActionConstants.SELECT_ALL));
 
 		menu.add(new Separator("edit"));
 		menu.add(new Separator("find"));
-		//menu.add(getAction(part, MergeSourceViewer.FIND, "Find"));
+		//menu.add(getAction(part, IWorkbenchActionConstants.FIND));
 		
 		menu.add(new Separator("save"));
 		//if (mutable)
-		//	contributeAction(menu, part, "save", "Save");
+		//	contributeAction(menu, part, "save");
 		
 		menu.add(new Separator("rest"));
 	}
 	
-	private Action getAction(MergeSourceViewer part, int operation, String prefix) {
+	private Action getAction(MergeSourceViewer part, String operation) {
 		Action action= part.getAction(operation);
 		if (action.getText() == null)
-			Utilities.initAction(action, getResourceBundle(), "action." + prefix + ".");
+			Utilities.initAction(action, getResourceBundle(), "action." + operation + ".");
 		return action;
 	}
 	
-	void globalActions(MergeSourceViewer part) {
+	void connectGlobalActions(MergeSourceViewer part) {
+		String[] GLOBAL_ACTIONS= {
+			' ' + IWorkbenchActionConstants.UNDO,
+			' ' + IWorkbenchActionConstants.REDO,
+			' ' + IWorkbenchActionConstants.CUT,
+			'r' + IWorkbenchActionConstants.COPY,
+			' ' + IWorkbenchActionConstants.PASTE,
+			' ' + IWorkbenchActionConstants.DELETE,
+			'r' + IWorkbenchActionConstants.SELECT_ALL,
+			'r' + IWorkbenchActionConstants.FIND
+		};
+		
 		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
 		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CUT,
-							getAction(part, MergeSourceViewer.CUT, "CutText"));
+			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
+				String name= GLOBAL_ACTIONS[i].substring(1);
+				char tag= GLOBAL_ACTIONS[i].charAt(0);
+				Action action= null;
+				if (part != null && (part.isEditable() || tag == 'r'))
+						action= getAction(part, name);
+				if (action instanceof IUpdate) {
+					((IUpdate)action).update();
+					if (!action.isEnabled())
+						action= null;
+				}
+				actionBars.setGlobalActionHandler(name, action);
+			}
 			actionBars.updateActionBars();
 		}
 	}
