@@ -3,7 +3,6 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,7 +94,19 @@ public class ClasspathModel {
 	}
 	
 	public void removeAll(Object[] entries) {
-		elements.removeAll(Arrays.asList(entries));
+		
+		for (int i = 0; i < entries.length; i++) {
+			Object object = entries[i];
+			if (object instanceof ClasspathEntry) {
+				Object parent= ((ClasspathEntry)object).getParent();
+				if (parent != null) {
+					((GlobalClasspathEntries)parent).removeEntry((ClasspathEntry) object);
+					continue;
+				} 
+			}
+			remove(object);
+		}
+		
 	}
 
 	/**

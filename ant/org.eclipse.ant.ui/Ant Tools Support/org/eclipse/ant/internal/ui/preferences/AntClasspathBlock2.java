@@ -35,6 +35,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -99,6 +100,8 @@ public class AntClasspathBlock2 {
 	private boolean tablesEnabled= true;
 	
 	private int validated= 3;
+	
+	private Object currentParent;
 	
 	public AntClasspathBlock2() {
 		super();
@@ -197,10 +200,7 @@ public class AntClasspathBlock2 {
 	private void remove(TreeViewer viewer) {
 		AntClasspathContentProvider2 viewerContentProvider = (AntClasspathContentProvider2) viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		Iterator itr = sel.iterator();
-		while (itr.hasNext()) {
-			viewerContentProvider.remove(itr.next());
-		}
+		viewerContentProvider.remove(sel);
 		updateContainer();
 	}
 
@@ -249,8 +249,7 @@ public class AntClasspathBlock2 {
 			try {
 				IPath path = filterPath.append(jarName).makeAbsolute();
 				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
-				//TODO
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, url);
+				((AntClasspathContentProvider2)viewer.getContentProvider()).add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -342,6 +341,7 @@ public class AntClasspathBlock2 {
 
 		antContentProvider = new AntClasspathContentProvider2();
 		treeViewer = new TreeViewer(tree);
+		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.setContentProvider(antContentProvider);
 		treeViewer.setLabelProvider(labelProvider);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -460,12 +460,47 @@ public class AntClasspathBlock2 {
 			}
 		}
 
+		boolean canAdd= false;
+		if (notEmpty) {
+			canAdd= resolveCurrentParent(selection);
+		}
+		
+		addExternalJARButton.setEnabled(canAdd);
+		addFolderButton.setEnabled(canAdd);
 		removeButton.setEnabled(notEmpty);
 		upButton.setEnabled(notEmpty && !first);
 		downButton.setEnabled(notEmpty && !last);
 		
 	}
 	
+	private boolean resolveCurrentParent(IStructuredSelection selection) {
+		currentParent= null;
+		Iterator selected= selection.iterator();
+		
+		while (selected.hasNext()) {
+			Object element = selected.next();
+			if (element instanceof ClasspathEntry) {
+				Object parent= ((ClasspathEntry)element).getParent();
+				if (currentParent != null) {
+					if (!currentParent.equals(parent)) {
+						return false;
+					}
+				} else {
+					currentParent= parent;
+				}
+			} else {
+				if (currentParent != null) {
+					if (!currentParent.equals(element)) {
+						return false;
+					}
+				} else {
+					currentParent= element;
+				}
+			}
+		}
+		return true;
+	}
+
 	private void specifyAntHome() {
 		antHome.setEnabled(!antHome.getEnabled());
 		browseAntHomeButton.setEnabled(!browseAntHomeButton.getEnabled());

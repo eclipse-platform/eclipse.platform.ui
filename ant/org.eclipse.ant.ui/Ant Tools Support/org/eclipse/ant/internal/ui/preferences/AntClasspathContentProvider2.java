@@ -162,6 +162,6 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	public void remove(IStructuredSelection selection) {
 		Object[] array= selection.toArray();
 		model.removeAll(array);
-		treeViewer.remove(array);
+		treeViewer.refresh();
 	}
 }
