@@ -108,18 +108,18 @@ public class LinkedPositionGroupTest extends TestCase {
 		"	MARGARETE:\n" + 
 		"	Nun sag, wie hast du\'s mit der Religion?\n" + 
 		"	Du bist ein herzlich guter Mann,\n" + 
-		"	Allein ich glaub, du hältst nicht viel davon.\n" + 
+		"	Allein ich glaub, du haeltst nicht viel davon.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Laß das, mein Kind! Du fühlst, ich bin dir gut;\n" + 
-		"	Für meine Lieben ließ\' ich Leib und Blut,\n" + 
-		"	Will niemand sein Gefühl und seine Kirche rauben.\n" + 
+		"	Lass das, mein Kind! Du fuehlst, ich bin dir gut;\n" + 
+		"	Fuer meine Lieben liess\' ich Leib und Blut,\n" + 
+		"	Will niemand sein Gefuehl und seine Kirche rauben.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Das ist nicht recht, man muß dran glauben.\n" + 
+		"	Das ist nicht recht, man muss dran glauben.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Muß man?\n" + 
+		"	Muss man?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Ach! wenn ich etwas auf dich konnte! Du ehrst auch nicht die heil\'gen Sakramente.\n" + 
@@ -135,38 +135,38 @@ public class LinkedPositionGroupTest extends TestCase {
 		"	Mein Liebchen, wer darf sagen: Ich glaub an Gott?\n" + 
 		"	Magst Priester oder Weise fragen,\n" + 
 		"	Und ihre Antwort scheint nur Spott\n" + 
-		"	Über den Frager zu sein.\n" + 
+		"	Ueber den Frager zu sein.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	So glaubst du nicht?\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Mißhör mich nicht, du holdes Angesicht!\n" + 
+		"	Misshoer mich nicht, du holdes Angesicht!\n" + 
 		"	Wer darf ihn nennen?\n" + 
 		"	Und wer bekennen:\n" + 
-		"	»Ich glaub ihn!«?\n" + 
+		"	\"Ich glaub ihn!\"?\n" + 
 		"	Wer empfinden,\n" + 
 		"	Und sich unterwinden\n" + 
-		"	Zu sagen: »Ich glaub ihn nicht!«?\n" + 
+		"	Zu sagen: \"Ich glaub ihn nicht!\"?\n" + 
 		"	Der Allumfasser,\n" + 
 		"	Der Allerhalter,\n" + 
-		"	Faßt und erhält er nicht\n" + 
+		"	Fasst und erhaelt er nicht\n" + 
 		"	Dich, mich, sich selbst?\n" + 
-		"	Wölbt sich der Himmel nicht da droben?\n" + 
+		"	Woelbt sich der Himmel nicht da droben?\n" + 
 		"	Liegt die Erde nicht hier unten fest?\n" + 
 		"	Und steigen freundlich blickend\n" + 
 		"	Ewige Sterne nicht herauf?\n" + 
 		"	Schau ich nicht Aug in Auge dir,\n" + 
-		"	Und drängt nicht alles\n" + 
+		"	Und draengt nicht alles\n" + 
 		"	Nach Haupt und Herzen dir,\n" + 
 		"	Und webt in ewigem Geheimnis\n" + 
 		"	Unsichtbar sichtbar neben dir?\n" + 
-		"	Erfüll davon dein Herz, so groß es ist,\n" + 
-		"	Und wenn du ganz in dem Gefühle selig bist,\n" + 
+		"	Erfuell davon dein Herz, so gross es ist,\n" + 
+		"	Und wenn du ganz in dem Gefuehle selig bist,\n" + 
 		"	Nenn es dann, wie du willst,\n" + 
-		"	Nenn\'s Glück! Herz! Liebe! Gott\n" + 
+		"	Nenn\'s Glueck! Herz! Liebe! Gott\n" + 
 		"	Ich habe keinen Namen\n" + 
-		"	Dafür! Gefühl ist alles;\n" + 
+		"	Dafuer! Gefuehl ist alles;\n" + 
 		"	Name ist Schall und Rauch,\n" + 
 		"	Umnebelnd Himmelsglut.\n";
 }
