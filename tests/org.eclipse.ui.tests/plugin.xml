@@ -539,7 +539,7 @@
     </decorator>
     <decorator 
         id="org.eclipse.ui.tests.navigator.declareddecorator" 
-        label="Lightweight Test Decorator" 
+        label="Declarative Test Decorator" 
         state="true"
         tooltip="No tip" 
         adaptable="true"
