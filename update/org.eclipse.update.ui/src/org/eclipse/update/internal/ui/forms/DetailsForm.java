@@ -579,7 +579,7 @@ public class DetailsForm extends PropertyWebForm {
 			format = UpdateUI.getString(KEY_UNKNOWN_SIZE_VALUE);
 		}
 		sizeLabel.setText(format);
-		long estimate = SiteManager.estimate(feature.getURL());
+		long estimate = SiteManager.getEstimatedTransferRate(feature.getURL());
 		String estimateFormat = null;
 		if (estimate >= 0 && size != -1) {
 			long nhours = estimate / 3600000;

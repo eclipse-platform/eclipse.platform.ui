@@ -221,16 +221,17 @@ public class SiteManager {
 	public static void setNL(String nl) {
 		SiteManager.nl = nl;
 	}
+	
 	/**
-	 * Returns an estimate of bytes per milliseconds transfer rate for this URL
+	 * Returns an estimate of bytes per second transfer rate for this URL
 	 * @param URL the URL of the site
-	 * @return long a bytes per millisecond estimate rate
+	 * @return long a bytes per second estimate rate
 	 * @since 2.1
-		 */
-	public static long estimate(URL site) {
+ 	 */	
+	public static long getEstimatedTransferRate(URL site) {
 		if (site == null)
 			return 0;
-		return InternalSiteManager.estimate(site.getHost());
+		return InternalSiteManager.getEstimatedTransferRate(site.getHost());
 	}
 
 	/**

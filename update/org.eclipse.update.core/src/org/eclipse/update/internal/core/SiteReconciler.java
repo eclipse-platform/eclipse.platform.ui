@@ -681,10 +681,10 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 
 		// find "unique" top level features (latest version)
-		ArrayList topFeatures = computeTopFeatures(allPossibleConfiguredFeatures);
+		ArrayList topFeatures = computeTopFeatures(allPossibleConfiguredFeatures, configuredSite);
 
 		// expand features (compute full nesting structures).
-		ArrayList configuredFeatures = expandFeatures(topFeatures);
+		ArrayList configuredFeatures = expandFeatures(topFeatures,configuredSite);
 
 		// compute extra features
 		ArrayList extras = diff(allPossibleConfiguredFeatures, configuredFeatures);
@@ -709,7 +709,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * 
 	 */
-	private static ArrayList computeTopFeatures(ArrayList features) {
+	private static ArrayList computeTopFeatures(ArrayList features, IConfiguredSite configuredSite) {
 
 		// start with the features passed in
 		ArrayList result = new ArrayList();
@@ -730,7 +730,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					IFeature child = null;
 					try {
 						//remove best match and exact feature
-						child = children[j].getFeature(false, null, null);
+						child = children[j].getFeature(false, configuredSite, null);
 						result.remove(child);
 						child = children[j].getFeature(true, null, null);
 						result.remove(child);
@@ -781,12 +781,12 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * 
 	 */
-	private static ArrayList expandFeatures(ArrayList features){
+	private static ArrayList expandFeatures(ArrayList features, IConfiguredSite configuredSite){
 		ArrayList result = new ArrayList();
 
 		// expand all top level features
 		for (int i = 0; i < features.size(); i++) {
-			expandFeature((IFeature) features.get(i), result);
+			expandFeature((IFeature) features.get(i), result, configuredSite);
 		}
 
 		return result;
@@ -795,7 +795,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * 
 	 */
-	private static void expandFeature(IFeature feature, ArrayList features) {
+	private static void expandFeature(IFeature feature, ArrayList features, IConfiguredSite configuredSite) {
 
 		// add feature
 		if (!features.contains(feature)) {
@@ -818,14 +818,17 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		for (int j = 0; j < children.length; j++) {
 			IFeature child = null;
 			try {
-				child = children[j].getFeature(null);
+				if (children[j] instanceof IIncludedFeatureReference)
+					child = ((IIncludedFeatureReference)children[j]).getFeature(false, configuredSite,null);
+				else 
+					child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
 					UpdateCore.warn("", e);
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null)
-				expandFeature(child, features);
+				expandFeature(child, features, configuredSite);
 		}
 	}
 

@@ -779,6 +779,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			return multi;
 		}
 
+		// check os, arch, and ws
+
 		String msg = Policy.bind("SiteLocal.FeatureHappy");
 		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY, msg, null);
 	}
@@ -792,8 +794,11 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		if (getConfigurationPolicy() == null)
 			return false;
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		if (featureReference == null)
+		if (featureReference == null){
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+				UpdateCore.warn("Unable to retrieve featureReference for feature:"+feature);
 			return false;
+		} 
 		return getConfigurationPolicy().isConfigured(featureReference);
 	}
 

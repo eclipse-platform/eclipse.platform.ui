@@ -192,7 +192,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				Date start = new Date();				
 				Utilities.copy(is, os, monitor);
 				Date stop = new Date();
-				InternalSiteManager.downloaded(ref.getInputSize(),(stop.getTime()-start.getTime()),ref.asURL());
+				long timeInseconds = (stop.getTime()-start.getTime())/1000; // time in milliseconds /1000 = time in seconds
+				InternalSiteManager.downloaded(ref.getInputSize(),(timeInseconds),ref.asURL());
 				
 				sucess = true;
 				

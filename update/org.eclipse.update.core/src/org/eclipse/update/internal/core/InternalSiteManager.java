@@ -395,8 +395,8 @@ public class InternalSiteManager {
 
 	/**
 	 * Method downloaded.
-	 * @param l
-	 * @param l1
+	 * @param l size downloaded in bytes
+	 * @param l1 time in seconds
 	 * @param uRL
 	 */
 	public static void downloaded(long downloadSize, long time, URL url) {
@@ -416,11 +416,11 @@ public class InternalSiteManager {
 		estimates.put(host, value);
 	}
 	/**
-	 * Method estimate.
+	 * Method getEstimatedTransferRate rate bytes/seconds.
 	 * @param string
 	 * @return long
 	 */
-	public static long estimate(String host) {
+	public static long getEstimatedTransferRate(String host) {
 		if (estimates == null)
 			return 0;
 		Long value = (Long) estimates.get(host);
