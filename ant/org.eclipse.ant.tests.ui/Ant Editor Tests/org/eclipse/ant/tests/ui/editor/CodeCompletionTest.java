@@ -62,24 +62,26 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals("casesensitive - (true | false | on | off | yes | no)", proposals[0].getDisplayString());
 
         proposals = processor.getAttributeProposals("move", "");
-        assertEquals(14, proposals.length);
+        assertEquals(16, proposals.length);
         ICompletionProposal proposal = proposals[0];
         String displayString = proposal.getDisplayString();
         assertTrue(displayString.equals("id") 
-        || displayString.equals("flatten - (true | false | on | off | yes | no)")
-        || displayString.equals("encoding")
+        || displayString.equals("taskname")
+        || displayString.equals("description")
+        || displayString.equals("file")
+        || displayString.equals("preservelastmodified - (true | false | on | off | yes | no)")
         || displayString.equals("tofile")
         || displayString.equals("todir")
-        || displayString.equals("file")
-        || displayString.equals("verbose - (true | false | on | off | yes | no)")
-        || displayString.equals("includeemptydirs")
         || displayString.equals("overwrite - (true | false | on | off | yes | no)")
-        || displayString.equals("taskname")
+        || displayString.equals("filtering - (true | false | on | off | yes | no)")
+        || displayString.equals("flatten - (true | false | on | off | yes | no)")
+        || displayString.equals("includeemptydirs")
         || displayString.equals("failonerror - (true | false | on | off | yes | no)")
-        || displayString.equals("description")
-        || displayString.equals("preservelastmodified - (true | false | on | off | yes | no)")
-        || displayString.equals("filtering - (true | false | on | off | yes | no)"));
-
+        || displayString.equals("verbose - (true | false | on | off | yes | no)")
+        || displayString.equals("encoding")
+        || displayString.equals("outputencoding")
+        || displayString.equals("enablemultiplemapping - (true | false | on | off | yes | no)"));
+        
         proposals = processor.getAttributeProposals("move", "to");
         assertEquals(2, proposals.length);
 
@@ -91,14 +93,15 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals("id", proposals[0].getDisplayString());
 
         proposals = processor.getAttributeProposals("reference", "i");
-        assertEquals(1, proposals.length);
-        assertEquals("id", proposals[0].getDisplayString());
+        //id includesfile includes
+        assertEquals(3, proposals.length);
+        displayString= proposals[0].getDisplayString();
+        assertTrue(displayString.equals("id") 
+        		||  displayString.equals("includeFile")
+				|| displayString.equals("includes"));
 
         proposals = processor.getAttributeProposals("project", "de");
         assertEquals(1, proposals.length);
-        
-        // assertEquals("default - #REQUIRED", tempProposals[0].getDisplayString());
-
     }
     
     /**
@@ -291,7 +294,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 //        assertEquals(5, proposals.length); // is choice and already used with classpath
         
         proposals = processor.getTaskProposals("          ", "project", "");
-        assertEquals(22, proposals.length);
+        //all tasks and types legal for outside of a target in 1.6.0
+        assertEquals(214, proposals.length);
 
         proposals = processor.getTaskProposals("          ", null, "");
         assertEquals(1, proposals.length);
@@ -334,7 +338,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertEquals("transaction", proposal.getDisplayString());
 		
 		proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 76), "");
-		assertEquals(2, proposals.length);
+		//filelist fileset filterchain footer header path
+		assertEquals(6, proposals.length);
 		proposal = proposals[0];
 		assertEquals("filelist", proposal.getDisplayString());
 	}
