@@ -105,7 +105,7 @@ public class DefaultStackPresentationSite implements IStackPresentationSite {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
 	 */
-	public void dragStart(boolean keyboard) {
+	public void dragStart(Point initialPosition, boolean keyboard) {
 		// TODO Auto-generated method stub
 	}
 
