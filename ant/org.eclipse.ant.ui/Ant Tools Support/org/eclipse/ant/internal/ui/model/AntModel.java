@@ -1547,21 +1547,27 @@ public class AntModel implements IAntModel {
             fCurrentNodeIdentifiers= new HashMap();
         }
         
-        Object key= node.getIdentifier();
+        Object nodeIdentifier= node.getIdentifier();
         String nodeText= null;
         if (fPreviousDefinersToText != null) {
-            nodeText= (String) fPreviousDefinersToText.get(key);
+            nodeText= (String) fPreviousDefinersToText.get(nodeIdentifier);
         }
         String newNodeText= getText(node.getOffset(), node.getLength());
         if (nodeText != null) {
             if (nodeText.equals(newNodeText)) {
                 node.setNeedsToBeConfigured(false);
+				//update the datastructures for the new node as the offset may have changed.
+				List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
+				for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {
+					String taskName = (String) iter.next();
+					fTaskNameToDefiningNode.put(taskName, node);
+				}
             }
         }
         if (newNodeText != null) {
-            fDefinersToText.put(key, newNodeText);
+            fDefinersToText.put(nodeIdentifier, newNodeText);
         }
-        fCurrentNodeIdentifiers.put(key, key);
+        fCurrentNodeIdentifiers.put(nodeIdentifier, nodeIdentifier);
     }
     
     protected void removeDefiningTaskNodeInfo(AntDefiningTaskNode node) {
@@ -1585,11 +1591,11 @@ public class AntModel implements IAntModel {
         if (newTasks.isEmpty() && fCurrentNodeIdentifiers != null) {
             fCurrentNodeIdentifiers.remove(identifier);
         }
+		fDefinerNodeIdentifierToDefinedTasks.put(identifier, newTasks);
         Iterator iter= newTasks.iterator();
         while (iter.hasNext()) {
             String name = (String) iter.next();
-            fTaskNameToDefiningNode.put(name, node);
-            fDefinerNodeIdentifierToDefinedTasks.put(identifier, newTasks);
+            fTaskNameToDefiningNode.put(name, node);   
         }
     }
     
