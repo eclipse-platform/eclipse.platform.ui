@@ -165,11 +165,13 @@ public interface IStatus {
 
 	/**
 	 * Returns whether the severity of this status matches the given
-	 * specification.
+	 * severity mask. Note that a status with severity <code>OK</code>
+	 * will never match; use <code>isOK</code> instead to detect
+	 * a status with a severity of <code>OK</code>.
 	 *
 	 * @param severityMask a mask formed by bitwise or'ing severity mask
 	 *    constants (<code>ERROR</code>, <code>WARNING</code>,
-	 *    <code>INFO</code>)
+	 *    <code>INFO</code>, <code>CANCEL</code>)
 	 * @return <code>true</code> if there is at least one match, 
 	 *    <code>false</code> if there are no matches
 	 * @see #getSeverity()
