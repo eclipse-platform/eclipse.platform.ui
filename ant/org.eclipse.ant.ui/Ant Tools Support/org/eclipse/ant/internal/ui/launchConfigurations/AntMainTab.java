@@ -19,6 +19,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -129,11 +130,14 @@ public class AntMainTab extends ExternalToolsMainTab {
 		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), AntLaunchConfigurationMessages.getString("AntMainTab.&Select_a_build_file__1")); //$NON-NLS-1$
 		dialog.setFileFilter("*.xml", true); //$NON-NLS-1$
 		dialog.open();
-		IFile file = dialog.getResult();
-		if (file == null) {
+		IStructuredSelection result = dialog.getResult();
+		if (result == null) {
 			return;
 		}
-		locationField.setText(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
+		Object file= result.getFirstElement();
+		if (file instanceof IFile) {
+			locationField.setText(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", ((IFile)file).getFullPath().toString())); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)

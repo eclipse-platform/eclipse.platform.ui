@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.views.actions.AddBuildFileAction;
+import org.eclipse.ant.internal.ui.views.actions.AddBuildFilesAction;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.ant.internal.ui.views.actions.EditLaunchConfigurationAction;
 import org.eclipse.ant.internal.ui.views.actions.FilterInternalTargetsAction;
@@ -140,7 +140,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private List updateProjectActions;
 	// Ant View Actions
-	private AddBuildFileAction addBuildFileAction;
+	private AddBuildFilesAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
 	private RefreshBuildFilesAction refreshBuildFilesAction;
 	private RunTargetAction runTargetAction;
@@ -250,7 +250,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private void initializeActions() {
 		updateProjectActions= new ArrayList(5);
 		
-		addBuildFileAction = new AddBuildFileAction(this);
+		addBuildFileAction = new AddBuildFilesAction(this);
 		
 		removeProjectAction = new RemoveProjectAction(this);
 		updateProjectActions.add(removeProjectAction);

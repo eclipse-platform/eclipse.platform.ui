@@ -307,15 +307,15 @@ public class AddCustomDialog extends StatusDialog {
 		}
 	}
 
-	/**
-	*	Create the import source selection widget
+	/*
+	* Create the file selection widget
 	*/
 	private void createFileSelectionGroup(Composite parent) {
 		//Just create with a dummy root.
 		FileSystemElement dummyRoot= new FileSystemElement("Dummy", null, true); //$NON-NLS-1$
 		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, 
 				getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(),
-				new WorkbenchLabelProvider(), SWT.NONE, 400, 150);
+				new WorkbenchLabelProvider(), SWT.NONE, 400, 150, false);
 
 		ISelectionChangedListener listener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
