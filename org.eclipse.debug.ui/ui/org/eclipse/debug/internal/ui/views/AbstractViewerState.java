@@ -119,14 +119,16 @@ public abstract class AbstractViewerState {
 	                }
 	            }
 	        }
-	        viewer.setExpandedElements(newExpansion.toArray());
+            if (newExpansion.size() > 0) {
+                viewer.setExpandedElements(newExpansion.toArray());
+            }
 	        if (expansionComplete) {
 	            fSavedExpansion = null;
 	        }
 	    }
 	    
 	    boolean selectionComplete = true;
-	    if (fSelection != null) {
+	    if (fSelection != null && fSelection.length > 0) {
 	        List selection = new ArrayList(fSelection.length);
 	        for (int i = 0; i < fSelection.length; i++) {
 	            IPath path = fSelection[i];
@@ -141,7 +143,9 @@ public abstract class AbstractViewerState {
 	            } catch (DebugException e) {
 	            }
 	        }
-	        viewer.setSelection(new StructuredSelection(selection));
+            if (selection.size() > 0) {
+                viewer.setSelection(new StructuredSelection(selection));
+            }
 	        if (selectionComplete) {
 	            fSelection = null;
 	        }
