@@ -22,6 +22,8 @@ import org.eclipse.ui.PlatformUI;
  * @see org.eclipse.core.runtime.PerformanceStats
  */
 public class UIStats {
+	
+	public static final String PERFORMANCE_VIEW = "org.eclipse.ui.ide.performanceView";//$NON-NLS-1$
 
     private static HashMap operations = new HashMap();
 

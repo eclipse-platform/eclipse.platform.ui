@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.internal.misc.UIStats;
 
 /**
  */
@@ -45,6 +47,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
 
     /**
      * Defines the initial actions for a page.  
+     * @param layout The layout we are filling
      */
     public void defineActions(IPageLayout layout) {
         // Add "new wizards".
@@ -64,6 +67,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
 
     /**
      * Defines the initial layout for a page.  
+     * @param layout The layout we are filling
      */
     public void defineLayout(IPageLayout layout) {
         // Editors are placed for free.
@@ -82,7 +86,12 @@ public class ResourcePerspective implements IPerspectiveFactory {
         bottomLeft.addView(IPageLayout.ID_OUTLINE);
 
         // Bottom right.
-        layout.addView(IPageLayout.ID_TASK_LIST, IPageLayout.BOTTOM,
-                (float) 0.66, editorArea);
+		IFolderLayout bottomRight = layout.createFolder(
+                "bottomRight", IPageLayout.BOTTOM, (float) 0.66,//$NON-NLS-1$
+                editorArea);
+		
+		bottomRight.addView(IPageLayout.ID_TASK_LIST);
+		if(PerformanceStats.ENABLED)
+			bottomRight.addView(UIStats.PERFORMANCE_VIEW);
     }
 }
