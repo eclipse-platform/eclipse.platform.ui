@@ -64,7 +64,7 @@ public class StringFieldEditor extends FieldEditor {
 	/**
 	 * The text field, or <code>null</code> if none.
 	 */
-	private Text textField;
+	Text textField;
 
 	/**
 	 * Width of text field in characters; initially unlimited.
@@ -308,16 +308,15 @@ public Text getTextControl(Composite parent) {
 					public void keyPressed(KeyEvent e) {
 						valueChanged();
 					}
-				});
-
-				textField.addFocusListener(new FocusAdapter() {
-					public void focusGained(FocusEvent e) {
+					
+					/* (non-Javadoc)
+					 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+					 */
+					public void keyReleased(KeyEvent e) {
 						refreshValidState();
 					}
-					public void focusLost(FocusEvent e) {
-						clearErrorMessage();
-					}
 				});
+
 				break;
 			case VALIDATE_ON_FOCUS_LOST :
 				textField.addKeyListener(new KeyAdapter() {
