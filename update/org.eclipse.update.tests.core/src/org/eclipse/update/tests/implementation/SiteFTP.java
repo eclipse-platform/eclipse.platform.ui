@@ -29,7 +29,7 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#getFeatureReferences()
 	 */
-	public IFeatureReference[] getFeatureReferences() {
+	public ISiteFeatureReference[] getFeatureReferences() {
 		return null;
 	}
 
@@ -202,7 +202,7 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#getFeatureReference(IFeature)
 	 */
-	public IFeatureReference getFeatureReference(IFeature feature) {
+	public ISiteFeatureReference getFeatureReference(IFeature feature) {
 		return null;
 	}
 
@@ -230,6 +230,20 @@ public class SiteFTP implements ISite {
 	 * @see org.eclipse.update.core.ISite#install(IFeature, IFeatureReference[], IVerificationListener, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature feature, IFeatureReference[] optionalfeatures, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.ISite#getConfiguredSite()
+	 */
+	public IConfiguredSite getCurrentConfiguredSite() {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
+	 */
+	public IFeature createFeature(String type, URL url) throws CoreException {
 		return null;
 	}
 

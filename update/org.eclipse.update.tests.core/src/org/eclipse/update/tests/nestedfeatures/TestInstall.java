@@ -4,12 +4,11 @@ package org.eclipse.update.tests.nestedfeatures;
  * All Rights Reserved.
  */
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 

@@ -4,8 +4,6 @@ package org.eclipse.update.tests.core.boot;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;

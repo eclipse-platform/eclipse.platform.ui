@@ -9,7 +9,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
 import org.eclipse.update.internal.core.SiteURLContentProvider;
 import org.eclipse.update.tests.UpdateManagerTestCase;

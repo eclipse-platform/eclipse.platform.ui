@@ -3,12 +3,8 @@ package org.eclipse.update.tests.api;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.File;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 

@@ -7,10 +7,9 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -182,7 +181,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);	
+		((ConfiguredSite)configSite).setConfigurationPolicyModel((ConfigurationPolicyModel)configPolicy);	
 		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			
@@ -210,20 +209,18 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// does not throw error.
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference[] refs = configSite2.getConfiguredFeatures();
-		boolean found = false;
 		IFeature feature2 = null;
 		for (int i = 0; i < refs.length; i++) {
 			IFeature feature3 = refs[i].getFeature();			
 			if ("org.eclipse.update.core.tests.feature3_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
 				feature2 = feature3;
-				found = true;
 			}		
 		}
 		assertNotNull("Feature 2 is Null",feature2);
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site
-		//assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
+		assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
 		
 		// test # of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
@@ -266,7 +263,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);	
+		((ConfiguredSite)configSite).setConfigurationPolicyModel((ConfigurationPolicyModel)configPolicy);	
 		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		
@@ -309,7 +306,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		
 		// test only 2 install config in local site
-		//assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
+		assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
 		
 		// test same number of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);

@@ -8,7 +8,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.FeatureReference;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -33,7 +32,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 		URL url = UpdateManagerUtils.getURL(site.getURL(),"testAPI/"+Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/",null);
-		FeatureReference ref = new FeatureReference();
+		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
 		IFeature feature = ref.getFeature();

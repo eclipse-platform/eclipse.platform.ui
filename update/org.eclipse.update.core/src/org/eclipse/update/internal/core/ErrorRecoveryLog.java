@@ -208,7 +208,8 @@ public class ErrorRecoveryLog {
 	 * Delete the file from the file system
 	 */
 	public void delete() {
-		File logFile = getRecoveryLogFile();
+		//File logFile = getRecoveryLogFile();
+		getRecoveryLogFile();
 		//if (logFile.exists())
 			//logFile.delete();	
 	}

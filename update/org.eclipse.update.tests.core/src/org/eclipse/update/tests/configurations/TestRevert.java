@@ -7,19 +7,12 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.ConfigurationPolicy;
-import org.eclipse.update.internal.core.InternalSiteManager;
-import org.eclipse.update.internal.core.SiteLocal;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
-import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
-import org.eclipse.update.internal.model.InstallConfigurationModel;
 import org.eclipse.update.tests.UpdateManagerTestCase;
-import org.eclipse.update.tests.regularInstall.*;
 
 public class TestRevert extends UpdateManagerTestCase {
 	
@@ -50,7 +43,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		ConfigurationPolicy excludepolicy = new ConfigurationPolicy();
 		excludepolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 		IConfiguredSite oldConfigSite = old.getConfiguredSites()[0];
-		excludepolicy.setConfiguredSite(oldConfigSite);		
+		excludepolicy.setConfiguredSiteModel((ConfiguredSiteModel)oldConfigSite);		
 		((ConfiguredSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
 		// install one feature
@@ -109,7 +102,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		int newNumberUnconfiguredFeatures = ((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;
 		int oldNumberUnconfiguredFeatures = ((ConfiguredSite)oldConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;		
-		//assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+2,newNumberUnconfiguredFeatures);
+		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+2,newNumberUnconfiguredFeatures);
 		
 		// cleanup
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());

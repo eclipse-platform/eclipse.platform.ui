@@ -3,14 +3,8 @@ package org.eclipse.update.tests.api;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.FeatureReference;
+import org.eclipse.update.core.FeatureContentProvider;
 import org.eclipse.update.internal.core.FeatureExecutableContentProvider;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 

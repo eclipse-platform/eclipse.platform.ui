@@ -3,11 +3,10 @@ package org.eclipse.update.tests.api;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.update.tests.UpdateManagerTestCase;
-import java.io.File;
-import junit.framework.*;
 
 /**
  * Manages the API tests

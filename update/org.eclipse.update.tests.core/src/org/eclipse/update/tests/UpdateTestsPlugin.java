@@ -5,8 +5,6 @@ package org.eclipse.update.tests;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.AppServer;
-import org.eclipse.help.IAppServer;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * manages the startuo and shutown of the 

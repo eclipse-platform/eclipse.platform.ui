@@ -11,7 +11,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.SiteURLContentProvider;
 import org.eclipse.update.internal.core.URLEncoder;
 
 public class SiteFTPFactory extends SiteModelFactory implements ISiteFactory {

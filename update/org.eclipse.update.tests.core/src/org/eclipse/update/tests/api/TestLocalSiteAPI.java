@@ -6,12 +6,8 @@ package org.eclipse.update.tests.api;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.ICategory;
-import org.eclipse.update.core.Category;
 import org.eclipse.update.core.model.CategoryModel;
 import org.eclipse.update.core.model.SiteModel;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.FeatureReference;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestLocalSiteAPI extends UpdateManagerTestCase {
@@ -66,7 +62,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 		}
 		if (!found) fail("cannot find category 'category' in site");
 
-		IFeatureReference ref = new FeatureReference();
+		ISiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.addCategory(category);		
 		categories = ref.getCategories();

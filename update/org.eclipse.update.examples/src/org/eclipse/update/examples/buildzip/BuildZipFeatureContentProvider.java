@@ -164,7 +164,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		ContentReference[] refs = baseReference.unpack(tmpDir, selector, monitor);
 		
 		// write out feature manifest (feature.xml);
-		File manifest = Utilities.createLocalFile(tmpDir, null/*key*/,"feature.xml");
+		File manifest = Utilities.createLocalFile(tmpDir,"feature.xml");
 		ContentReference manifestReference = new ContentReference("feature.xml", manifest);
 		DefaultModelWriter w = new DefaultModelWriter(feature);
 		FileOutputStream os = null;

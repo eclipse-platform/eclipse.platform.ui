@@ -5,15 +5,11 @@ package org.eclipse.update.tests.parser;
  */
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.DefaultFeatureParser;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.core.FeatureReference;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class TestFeatureParse extends UpdateManagerTestCase {
@@ -31,7 +27,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 			URL url = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
 			
-			FeatureReference ref = new FeatureReference();
+			SiteFeatureReference ref = new SiteFeatureReference();
 			ref.setSite(remoteSite);
 			ref.setURL(url);
 			IFeature feature = ref.getFeature();

@@ -7,17 +7,14 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
 import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 import org.eclipse.core.internal.boot.PlatformConfiguration;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.InternalSiteManager;
-import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteReconciliation extends UpdateManagerTestCase {

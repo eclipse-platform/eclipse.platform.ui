@@ -6,7 +6,7 @@ package org.eclipse.update.core;
 
 import java.io.*;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+//import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -196,7 +196,8 @@ public class Utilities {
 				completeString.append(s);
 			if (e != null) {
 				completeString.append(" [");
-				completeString.append(e.toString());
+				String msg = e.getLocalizedMessage();
+				completeString.append(msg!=null?msg:e.toString());
 				completeString.append("]");
 			}
 			status = new Status(IStatus.ERROR, id, code, completeString.toString(), e);
@@ -335,23 +336,27 @@ public class Utilities {
 	}
 
 	public static void startTimer(String task) {
+		/*
 		Date d = new Date();
-		//UpdateManagerPlugin.debug("TIMER: start " + task + " " + format(d));
+		UpdateManagerPlugin.debug("TIMER: start " + task + " " + format(d));
 		timerMap.put(task, d);
+		*/
 	}
 
 	public static void stopTimer(String task) {
+		/*
 		Date d = new Date();
-		//UpdateManagerPlugin.debug("TIMER: stop " + task + " " + format(d));
+		UpdateManagerPlugin.debug("TIMER: stop " + task + " " + format(d));
 		Date start = (Date) timerMap.get(task);
 		if (start == null) {
-			//UpdateManagerPlugin.debug("Unknown task:" + task);
+			UpdateManagerPlugin.debug("Unknown task:" + task);
 			return;
 		}
 		long diff = d.getTime() - start.getTime();
 		Date delta = new Date(diff);
 		SimpleDateFormat simple = new SimpleDateFormat("mm:ss:SS");
-		//UpdateManagerPlugin.debug("TIMER:" + task + " " + simple.format(delta));
+		UpdateManagerPlugin.debug("TIMER:" + task + " " + simple.format(delta));
+		*/
 	}
 
 }

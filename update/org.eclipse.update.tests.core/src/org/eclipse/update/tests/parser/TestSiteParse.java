@@ -5,17 +5,13 @@ package org.eclipse.update.tests.parser;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.DefaultSiteParser;
-import org.eclipse.update.core.model.SiteModel;
-import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.SiteFileFactory;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 import org.xml.sax.SAXParseException;
 
@@ -166,11 +162,11 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of features", featureRef.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 0);
 		
-		try {
+		try { 
 			((FeatureReference)featureRef[0]).getFeature();
 		} catch (CoreException e){
 			Throwable e1 = e.getStatus().getException();
-				if (!e1.getMessage().endsWith("www.eclipse.org/feature3/feature.xml")){
+				if (e1.getMessage().indexOf("not-eclipse")==-1){
 					throw e;
 				}
 		}		
@@ -211,7 +207,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
-		ICategory[] categories = ((FeatureReference)featureRef[0]).getCategories();
+		ICategory[] categories = ((SiteFeatureReference)featureRef[0]).getCategories();
 		assertTrue(categories.length==0);
 	}	
 	

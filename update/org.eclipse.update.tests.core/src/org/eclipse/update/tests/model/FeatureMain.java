@@ -1,18 +1,10 @@
 package org.eclipse.update.tests.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.eclipse.update.core.model.DefaultFeatureParser;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.FeatureModelFactory;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class FeatureMain extends UpdateManagerTestCase {
@@ -132,8 +124,8 @@ public class FeatureMain extends UpdateManagerTestCase {
 		ImportModel[] imp = feature.getImportModels();
 		for (int i=0; i<imp.length; i++) {
 			w.println(in2+"<import");
-			w.println(in2+"   "+"plugin=\""+imp[i].getPluginIdentifier()+"\"");
-			w.println(in2+"   "+"version=\""+imp[i].getPluginVersion()+"\"");
+			w.println(in2+"   "+"plugin=\""+imp[i].getIdentifier()+"\"");
+			w.println(in2+"   "+"version=\""+imp[i].getVersion()+"\"");
 			w.println(in2+"   "+"match=\""+imp[i].getMatchingRuleName()+"\"");
 			w.println(in2+"   "+"/>");
 		}
