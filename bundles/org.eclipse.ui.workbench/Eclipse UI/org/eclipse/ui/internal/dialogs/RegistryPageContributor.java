@@ -16,15 +16,16 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.SelectionEnabler;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This property page contributor is created from page entry
@@ -95,7 +96,11 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
  */
 public ImageDescriptor getPageIcon() {
 	if (iconName==null) return null;
-	return WorkbenchImages.getImageDescriptorFromExtension(pageElement.getDeclaringExtension(), iconName);
+	IExtension extension = pageElement.getDeclaringExtension();
+	String extendingPluginId =
+		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+	return AbstractUIPlugin.imageDescriptorFromPlugin(
+		extendingPluginId, iconName);
 }
 /**
  * Returns page ID as defined in the registry.

@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.preference.*;
-import java.text.Collator;
-import java.util.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.EmptyPreferencePage;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.misc.Sorter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time in order
@@ -231,7 +238,8 @@ protected boolean readElement(IConfigurationElement element) {
 	}
 	ImageDescriptor image = null;
 	if (imageName != null) {
-		image = WorkbenchImages.getImageDescriptorFromPlugin(element.getDeclaringExtension().getDeclaringPluginDescriptor(), imageName);
+		String contributingPluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
 	}
 	WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category, image, element, workbench);
 	nodes.add(node);

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class is used to read resource editor registry descriptors from
@@ -91,7 +92,10 @@ protected boolean readElement(IConfigurationElement element) {
 		}
 	}
 	if (icon != null) {
-		editor.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(extension, icon));
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		editor.setImageDescriptor(
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
 		editor.setImageFilename(icon);
 	}
 	

@@ -12,10 +12,16 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Capture the attributes of a view extension.
@@ -83,10 +89,11 @@ public ImageDescriptor getImageDescriptor() {
 	String iconName = configElement.getAttribute(ATT_ICON);
 	if (iconName == null)
 		return null;
-	imageDescriptor = 
-		WorkbenchImages.getImageDescriptorFromExtension(
-			configElement.getDeclaringExtension(), 
-			iconName); 
+	IExtension extension = configElement.getDeclaringExtension();
+	String extendingPluginId =
+		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+	imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+		extendingPluginId, iconName);
 	return imageDescriptor;
 }
 
