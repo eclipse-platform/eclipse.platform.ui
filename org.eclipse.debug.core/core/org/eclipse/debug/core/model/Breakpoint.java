@@ -126,6 +126,12 @@ public abstract class Breakpoint implements IBreakpoint {
 		}
 	}
 	
+	/**
+	 * Attribute setting of the underlying marker must occur in a 
+	 * workspace runnable (to prevent deadlock).
+	 * To be safe, all subclasses should not directly set the attributes
+	 * of the underlying marker.
+	 */
 	protected void setAttribute(final String attributeName, final boolean value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -137,6 +143,12 @@ public abstract class Breakpoint implements IBreakpoint {
 		workspace.run(runnable, null);
 	}
 	
+	/**
+	 * Attribute setting of the underlying marker must occur in a 
+	 * workspace runnable (to prevent deadlock).
+	 * To be safe, all subclasses should not directly set the attributes
+	 * of the underlying marker.
+	 */
 	protected void setAttribute(final String attributeName, final int value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -148,6 +160,12 @@ public abstract class Breakpoint implements IBreakpoint {
 		workspace.run(runnable, null);
 	}
 
+	/**
+	 * Attribute setting of the underlying marker must occur in a 
+	 * workspace runnable (to prevent deadlock).
+	 * To be safe, all subclasses should not directly set the attributes
+	 * of the underlying marker.
+	 */
 	protected void setAttribute(final String attributeName, final Object value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -159,6 +177,12 @@ public abstract class Breakpoint implements IBreakpoint {
 		workspace.run(runnable, null);
 	}
 
+	/**
+	 * Attribute setting of the underlying marker must occur in a 
+	 * workspace runnable (to prevent deadlock).
+	 * To be safe, all subclasses should not directly set the attributes
+	 * of the underlying marker.
+	 */
 	protected void setAttributes(final String[] attributeNames, final Object[] values) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -170,6 +194,12 @@ public abstract class Breakpoint implements IBreakpoint {
 		workspace.run(runnable, null);
 	}
 
+	/**
+	 * Attribute setting of the underlying marker must occur in a 
+	 * workspace runnable (to prevent deadlock).
+	 * To be safe, all subclasses should not directly set the attributes
+	 * of the underlying marker.
+	 */
 	protected void setAttributes(final Map attributes) throws CoreException{
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
