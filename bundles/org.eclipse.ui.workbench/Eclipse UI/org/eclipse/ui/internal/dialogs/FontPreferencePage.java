@@ -38,6 +38,7 @@ public class FontPreferencePage
 	private List fontList;
 	private Button changeFontButton;
 	private Button useSystemButton;
+	private Button resetButton;
 	private Text descriptionText;
 	private Font appliedDialogFont;
 
@@ -172,7 +173,7 @@ public class FontPreferencePage
 
 		Composite buttonColumn = new Composite(previewColumn, SWT.NULL);
 		layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonColumn.setLayout(layout);
@@ -180,8 +181,9 @@ public class FontPreferencePage
 		buttonColumn.setLayoutData(data);
 		buttonColumn.setFont(defaultFont);
 
-		createUseDefaultsControl(buttonColumn, WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
-		createChangeControl(buttonColumn, JFaceResources.getString("openChange")); //$NON-NLS-1$
+		createUseDefaultsControl(buttonColumn);
+		createChangeControl(buttonColumn);
+		createResetControl(buttonColumn);
 		createNoteControl(previewColumn);
 
 		createDescriptionControl(parent);
@@ -242,13 +244,17 @@ public class FontPreferencePage
 				FontDefinition selectedFontDefinition =
 					getSelectedFontDefinition();
 				if (selectedFontDefinition == null) {
-					changeFontButton.setEnabled(false);
-					useSystemButton.setEnabled(false);
+					enableButtons(false);
 				} else {
-					changeFontButton.setEnabled(true);
-					useSystemButton.setEnabled(true);
+					enableButtons(true);
 					updateForSelectedFontDefinition(selectedFontDefinition);
 				}
+			}
+
+			private void enableButtons(boolean enable) {
+				changeFontButton.setEnabled(enable);
+				useSystemButton.setEnabled(enable);
+				resetButton.setEnabled(enable);
 			}
 		});
 
@@ -288,16 +294,11 @@ public class FontPreferencePage
 	}
 
 	/**
-	 * Creates the change button for this field editor.=
+	 * Creates the change button.
 	 */
-	private void createChangeControl(
-		Composite parent,
-		String changeButtonLabel) {
-		changeFontButton = new Button(parent, SWT.PUSH);
-
-		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
-		applyDialogFont(changeFontButton);
-		setButtonLayoutData(changeFontButton);
+	private void createChangeControl(Composite parent) {
+		changeFontButton =
+			createButton(parent, JFaceResources.getString("openChange")); //$NON-NLS-1$
 
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -314,26 +315,39 @@ public class FontPreferencePage
 						fontDataSettings.put(definition.getId(), fonts);
 						updateForSelectedFontDefinition(definition);
 					}
-
 				}
-
 			}
 		});
+	}
 
-		changeFontButton.setEnabled(false);
+	/**
+	 * Creates the change button.
+	 */
+	private void createResetControl(Composite parent) {
+		resetButton =
+			createButton(
+				parent,
+				WorkbenchMessages.getString("FontsPreference.reset")); //$NON-NLS-1$
+
+		resetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				FontDefinition definition = getSelectedFontDefinition();
+				//Put an entry of null in to represent the reset
+				fontDataSettings.put(definition.getId(), DEFAULT_TOKEN);
+				updateForSelectedFontDefinition(definition);
+			}
+		});
 	}
 
 	/**
 	 * Creates the Use System Font button for the editor.
 	 */
-	private void createUseDefaultsControl(
-		Composite parent,
-		String useSystemLabel) {
+	private void createUseDefaultsControl(Composite parent) {
 
-		useSystemButton = new Button(parent, SWT.PUSH | SWT.CENTER);
-		useSystemButton.setText(useSystemLabel); //$NON-NLS-1$
-		applyDialogFont(useSystemButton);
-		setButtonLayoutData(useSystemButton);
+		useSystemButton =
+			createButton(
+				parent,
+				WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
 
 		useSystemButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -347,7 +361,20 @@ public class FontPreferencePage
 			}
 		});
 
-		useSystemButton.setEnabled(false);
+	}
+
+	/**
+	 * Create a button for the preference page.
+	 * @param parent
+	 * @param label
+	 */
+	private Button createButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
+		button.setText(label);
+		applyDialogFont(button);
+		setButtonLayoutData(button);
+		button.setEnabled(false);
+		return button;
 	}
 
 	/**
@@ -577,18 +604,20 @@ public class FontPreferencePage
 
 			}
 		}
-		
+
 		//Now do a post process to be sure that anything
 		//that defaults to anything else is up to date
 		//in the font registry.
 		Iterator defaults = defaultFonts.iterator();
 		FontRegistry registry = JFaceResources.getFontRegistry();
-		while(defaults.hasNext()){
+		while (defaults.hasNext()) {
 			FontDefinition nextDefinition = (FontDefinition) defaults.next();
 			String defaultsTo = nextDefinition.getDefaultsTo();
-			if(defaultsTo != null){
-				registry.put(nextDefinition.getId(),registry.getFontData(defaultsTo));
-			}			
+			if (defaultsTo != null) {
+				registry.put(
+					nextDefinition.getId(),
+					registry.getFontData(defaultsTo));
+			}
 		}
 
 		return super.performOk();
