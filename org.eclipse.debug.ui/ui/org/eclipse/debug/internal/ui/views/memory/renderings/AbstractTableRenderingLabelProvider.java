@@ -41,6 +41,14 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 		fRendering = rendering;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		fRendering = null;
+		super.dispose();
+	}
+
 	/**
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */

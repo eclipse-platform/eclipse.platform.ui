@@ -22,9 +22,10 @@ import org.eclipse.swt.graphics.Color;
 /**
  * @since 3.0
  */
-public class TableRenderingLabelProvider
-extends AbstractTableRenderingLabelProvider implements IColorProvider {
+public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProvider implements IColorProvider {
 	
+	private IMemoryBlockTablePresentation fTablePresentation;
+
 	/**
 	 * Constructor for MemoryViewLabelProvider
 	 */
@@ -34,8 +35,21 @@ extends AbstractTableRenderingLabelProvider implements IColorProvider {
 	
 	public TableRenderingLabelProvider(AbstractTableRendering rendering){
 		super(rendering);
+		fTablePresentation = (IMemoryBlockTablePresentation)rendering.getAdapter(IMemoryBlockTablePresentation.class);
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		if (fTablePresentation != null) {
+			fTablePresentation.dispose();
+			fTablePresentation = null;
+		}
+		super.dispose();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
@@ -70,15 +84,12 @@ extends AbstractTableRenderingLabelProvider implements IColorProvider {
 		// consult model presentation for address presentation
 		if (columnIndex == 0)
 		{	
-			// get model presentation
-			IMemoryBlockTablePresentation presentation = (IMemoryBlockTablePresentation)fRendering.getAdapter(IMemoryBlockTablePresentation.class);
-			
-			if (presentation != null)
+			if (fTablePresentation != null)
 			{	
 				String address = ((TableRenderingLine)element).getAddress();
 				
 				// get address presentation
-				String tempLabel = presentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
+				String tempLabel = fTablePresentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
 				
 				if (tempLabel != null)
 					return tempLabel;
