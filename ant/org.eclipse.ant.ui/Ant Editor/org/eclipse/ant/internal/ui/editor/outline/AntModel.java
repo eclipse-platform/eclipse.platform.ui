@@ -13,7 +13,6 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,6 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
@@ -1147,18 +1145,10 @@ public class AntModel {
 	}
 	
 	private ClassLoader getClassLoader() {
-//		if (fgClassLoader == null) {
-//			fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader();
-//		}
-//		return fgClassLoader;
-		
-		AntCorePreferences corePreferences= AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls= corePreferences.getURLs();
-		org.apache.tools.ant.AntClassLoader loader= new org.apache.tools.ant.AntClassLoader(this.getClass().getClassLoader(), true);
-		for (int i = 0; i < urls.length; i++) {
-			loader.addPathElement(urls[i].getFile());
+		if (fgClassLoader == null) {
+			fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader();
 		}
-		return loader;
+		return fgClassLoader;
 	}
 
 	
