@@ -60,8 +60,6 @@ public class ResourceComponent extends AbstractVariableComponent {
 		createSelectedResourceOption();
 		createSpecificResourceOption();
 		createResourceList();
-		
-		updateResourceListEnablement();
 	}
 
 	/**
