@@ -14,7 +14,8 @@ public class SyncInfoWriter {
 	protected Workspace workspace;
 
 	// version number
-	public static final int SYNCINFO_VERSION = 3;
+	public static final int SYNCINFO_SAVE_VERSION = 3;
+	public static final int SYNCINFO_SNAP_VERSION = 3;
 
 	// for sync info
 	public static final byte INDEX = 1;
@@ -35,37 +36,16 @@ public void savePartners(DataOutputStream output) throws IOException {
 	}
 }
 /**
- * VERSION_ID
- * RESOURCE[]
- * 
- * VERSION_ID:
- * 	int (used for backwards compatibiliy)
- * 
- * RESOURCE:
- * 	String - resource full path
- * 	int - sync info table size
- * 	SYNCINFO[]
- * 
- * SYNCINFO:
- * 	CONST
- * 	(NAME | INT)
- * 	VALUE
- * 
- * CONST:
- * 	INDEX
- * 	QNAME
- * 
- * NAME:
- * 	String - qualifier
- * 	String - local
- * 
- * INT:
- * 	int - Integer index into list of names which have already been written
- * 
- * VALUE:
- * 	int - byte array length
- * 	byte[] - sync info bytes
- * 
+ * SAVE_FILE -> VERSION_ID RESOURCE+
+ * VERSION_ID -> int
+ * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
+ * RESOURCE_PATH -> String
+ * SIZE -> int
+ * SYNCINFO -> TYPE BYTES
+ * TYPE -> INDEX | QNAME
+ * INDEX -> byte int
+ * QNAME -> byte String
+ * BYTES -> byte[]
  */ 
 public void saveSyncInfo(IResource target, DataOutputStream output, List writtenPartners) throws IOException {
 	Resource resource = (Resource) target;
@@ -78,7 +58,7 @@ public void saveSyncInfo(IResource target, DataOutputStream output, List written
 	// if this is the first sync info that we have written, then
 	// write the version id for the file.
 	if (output.size() == 0)
-		output.writeInt(SYNCINFO_VERSION);
+		output.writeInt(SYNCINFO_SAVE_VERSION);
 	output.writeUTF(resource.getFullPath().toString());
 	output.writeInt(table.size());
 	for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
@@ -103,37 +83,14 @@ public void saveSyncInfo(IResource target, DataOutputStream output, List written
 	}
 }
 /**
- * VERSION_ID
- * RESOURCE
- * 
- * VERSION_ID:
- * 	int (used for backwards compatibiliy)
- * 
- * RESOURCE:
- * 	String - resource full path
- * 	int - sync info table size
- * 	SYNCINFO[]
- * 
- * SYNCINFO:
- * 	CONST
- * 	(NAME | INT)
- * 	VALUE
- * 
- * CONST:
- * 	INT_CONSTANT
- * 	QNAME_CONSTANT
- * 
- * NAME:
- * 	String - qualifier
- * 	String - local
- * 
- * INT:
- * 	Integer index into list of names which have already been written
- * 
- * VALUE:
- * 	int - byte array length
- * 	byte[] - sync info bytes
- * 
+ * SNAP_FILE -> [VERSION_ID RESOURCE]*
+ * VERSION_ID -> int
+ * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
+ * RESOURCE_PATH -> String
+ * SIZE -> int
+ * SYNCINFO -> QNAME BYTES
+ * QNAME -> String String
+ * BYTES -> byte[]
  */
 public void snapSyncInfo(IResource target, DataOutputStream output) throws IOException {
 	Resource resource = (Resource) target;
@@ -146,7 +103,7 @@ public void snapSyncInfo(IResource target, DataOutputStream output) throws IOExc
 	if (table == null)
 		return;
 	// write the version id for the snapshot.
-	output.writeInt(SYNCINFO_VERSION);
+	output.writeInt(SYNCINFO_SNAP_VERSION);
 	output.writeUTF(resource.getFullPath().toString());
 	output.writeInt(table.size());
 	for (Iterator i = table.entrySet().iterator(); i.hasNext();) {

@@ -24,7 +24,7 @@ public SyncInfoSnapReader(Workspace workspace, Synchronizer synchronizer) {
 protected SyncInfoSnapReader getReader(int formatVersion) throws IOException {
 	switch (formatVersion) {
 		case 3 :
-			return new SyncInfoSnapReader_1(workspace, synchronizer);
+			return new SyncInfoSnapReader_3(workspace, synchronizer);
 		default :
 			throw new IOException("Unknown format");
 	}

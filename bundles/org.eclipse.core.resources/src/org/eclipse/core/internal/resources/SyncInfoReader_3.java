@@ -20,9 +20,6 @@ import java.util.*;
  */
 public class SyncInfoReader_3 extends SyncInfoReader {
 	
-	// version number
-	public static final int SYNCINFO_VERSION = 3;
-
 	// for sync info
 	public static final byte INDEX = 1;
 	public static final byte QNAME = 2;

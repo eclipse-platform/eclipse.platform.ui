@@ -11,9 +11,9 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
-public class SyncInfoSnapReader_1 extends SyncInfoSnapReader {
+public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 	
-public SyncInfoSnapReader_1(Workspace workspace, Synchronizer synchronizer) {
+public SyncInfoSnapReader_3(Workspace workspace, Synchronizer synchronizer) {
 	super(workspace, synchronizer);
 }
 private HashMap internalReadSyncInfo(DataInputStream input) throws IOException {
