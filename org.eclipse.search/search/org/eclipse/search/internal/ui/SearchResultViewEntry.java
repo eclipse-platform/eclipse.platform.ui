@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
@@ -19,7 +20,7 @@ import org.eclipse.search.ui.SearchUI;
 /**
  * Represents an entry in the search result view
  */
-public class SearchResultViewEntry implements ISearchResultViewEntry {
+public class SearchResultViewEntry extends PlatformObject implements ISearchResultViewEntry {
 
 	private Object fGroupByKey= null;
 	private IResource fResource= null;

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
@@ -23,10 +24,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IViewPart;
@@ -37,6 +38,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
+import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -53,6 +55,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 			
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
+	
+	private SearchResultViewEntryAdapterFactory fSearchResultViewEntryAdapterFactory;
 
 	public SearchPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -191,12 +195,19 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 	}
 
+
+	public void startup() throws CoreException {
+		super.startup();
+		registerAdapters();
+	}
+	
 	/**
 	 * Shuts down this plug-in.
 	 */
 	public void shutdown() throws CoreException {
-		super.shutdown();
+		unregisterAdapters();
 		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
+		super.shutdown();
 		fgSearchPlugin = null;
 	}
 
@@ -286,10 +297,22 @@ public class SearchPlugin extends AbstractUIPlugin {
 		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
 		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
 		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
 		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
+
+	private void registerAdapters() {
+		IAdapterManager manager= Platform.getAdapterManager();
+		fSearchResultViewEntryAdapterFactory= new SearchResultViewEntryAdapterFactory();
+		manager.registerAdapters(fSearchResultViewEntryAdapterFactory, ISearchResultViewEntry.class);
+	}
+
+	private void unregisterAdapters() {
+		IAdapterManager manager= Platform.getAdapterManager();
+		manager.unregisterAdapters(fSearchResultViewEntryAdapterFactory);
 	}
 }
