@@ -38,4 +38,10 @@ interface IJobProgressManagerListener {
 	 * @param info
 	 */
 	void remove(final JobInfo info);
+	
+	/**
+	 * Return whether or not this listener shows debug information.
+	 * @return boolean
+	 */
+	boolean showsDebug();
 }

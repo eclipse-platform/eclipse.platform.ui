@@ -14,7 +14,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -70,12 +71,15 @@ public class ProgressContentProvider
 		}
 	}
 
-	TreeViewer viewer;
+	ProgressTreeViewer viewer;
 	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
 	Object updateLock = new Object();
+	boolean debug = false;
+	private Collection filteredJobs =
+		Collections.synchronizedList(new ArrayList());
 
-	public ProgressContentProvider(TreeViewer mainViewer) {
+	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
 		viewer = mainViewer;
 		JobProgressManager.getInstance().addListener(this);
 		createUpdateJob();
@@ -111,7 +115,19 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return JobProgressManager.getInstance().getJobInfos();
+
+		JobInfo[] infos = JobProgressManager.getInstance().getJobInfos();
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < infos.length; i++) {
+			if (isNonDisplayableJob(infos[i].getJob()))
+				addToFiltered(infos[i].getJob());
+			else
+				result.add(infos[i]);
+		}
+		JobInfo[] resultArray = new JobInfo[result.size()];
+		result.toArray(resultArray);
+		return resultArray;
+
 	}
 
 	/* (non-Javadoc)
@@ -134,8 +150,16 @@ public class ProgressContentProvider
 	 */
 	public void refresh(JobInfo info) {
 
+		if (isNonDisplayableJob(info.getJob()))
+			return;
+
 		synchronized (updateLock) {
-			currentInfo.refresh(info);
+			//If we never displayed this job then add it instead.
+			if (isFiltered(info.getJob())) {
+				add(info);
+				removeFromFiltered(info.getJob());
+			} else
+				currentInfo.refresh(info);
 		}
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);
@@ -147,6 +171,7 @@ public class ProgressContentProvider
 	 */
 	public void refreshAll() {
 
+		filteredJobs.clear();
 		synchronized (updateLock) {
 			currentInfo.updateAll = true;
 		}
@@ -161,10 +186,14 @@ public class ProgressContentProvider
 	 */
 	public void add(JobInfo info) {
 
-		synchronized (updateLock) {
-			currentInfo.add(info);
+		if (isNonDisplayableJob(info.getJob()))
+			addToFiltered(info.getJob());
+		else {
+			synchronized (updateLock) {
+				currentInfo.add(info);
+			}
+			updateJob.schedule(100);
 		}
-		updateJob.schedule(100);
 
 	}
 
@@ -172,10 +201,39 @@ public class ProgressContentProvider
 	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void remove(JobInfo info) {
+
+		removeFromFiltered(info.getJob());
+		if (isNonDisplayableJob(info.getJob()))
+			return;
 		synchronized (updateLock) {
 			currentInfo.remove(info);
 		}
 		updateJob.schedule(100);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	 */
+	public boolean showsDebug() {
+		return true;
+	}
+
+	/**
+	 * Return whether or not this job is currently displayable.
+	 * @param job
+	 * @param debug If the listener is in debug mode.
+	 * @return
+	 */
+	boolean isNonDisplayableJob(Job job) {
+
+		//	Never display the update job
+		if (job == updateJob)
+			return true;
+
+		if (debug) //Always display in debug mode
+			return false;
+		else
+			return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
 
 	/**
@@ -215,5 +273,30 @@ public class ProgressContentProvider
 		updateJob.setSystem(true);
 		updateJob.setPriority(Job.DECORATE);
 
+	}
+
+	/**
+	 * Add job to the list of filtered jobs.
+	 * @param job
+	 */
+	void addToFiltered(Job job) {
+		filteredJobs.add(job);
+	}
+
+	/**
+	 * Remove job from the list of fitlered jobs.
+	 * @param job
+	 */
+	void removeFromFiltered(Job job) {
+		filteredJobs.remove(job);
+	}
+
+	/**
+	 * Return whether or not the job is currently filtered.
+	 * @param job
+	 * @return
+	 */
+	boolean isFiltered(Job job) {
+		return filteredJobs.contains(job);
 	}
 }

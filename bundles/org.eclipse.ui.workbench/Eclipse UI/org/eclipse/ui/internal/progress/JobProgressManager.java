@@ -37,9 +37,7 @@ public class JobProgressManager
 
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection filteredJobs =
-		Collections.synchronizedList(new ArrayList());
-	boolean debug = false;
+
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 
@@ -48,7 +46,7 @@ public class JobProgressManager
 	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_80 = "progress80.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_100 = "progress100.gif"; //$NON-NLS-1$
-	
+
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String RUNNING_JOB = "runstate.gif"; //$NON-NLS-1$
@@ -59,7 +57,7 @@ public class JobProgressManager
 	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
 	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
-	
+
 	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
 	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
 	private static final String RUNNING_JOB_KEY = "RUNNING_JOB"; //$NON-NLS-1$
@@ -103,8 +101,6 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 		 */
 		public void beginTask(String taskName, int totalWork) {
-			if (isNonDisplayableJob(job))
-				return;
 			JobInfo info = getJobInfo(job);
 			info.beginTask(taskName, totalWork);
 			refresh(info);
@@ -143,8 +139,6 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String taskName) {
-			if (isNonDisplayableJob(job))
-				return;
 
 			JobInfo info = getJobInfo(job);
 			if (info.hasTaskInfo())
@@ -162,8 +156,7 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
-			if (isNonDisplayableJob(job))
-				return;
+
 			if (name.length() == 0)
 				return;
 			JobInfo info = getJobInfo(job);
@@ -178,8 +171,6 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-			if (isNonDisplayableJob(job))
-				return;
 
 			JobInfo info = getJobInfo(job);
 			if (info.hasTaskInfo()) {
@@ -201,17 +192,17 @@ public class JobProgressManager
 				new Path(JobProgressManager.PROGRESS_FOLDER));
 
 		try {
-			setUpImage(iconsRoot,PROGRESS_20,PROGRESS_20_KEY);
-			setUpImage(iconsRoot,PROGRESS_40,PROGRESS_40_KEY);
-			setUpImage(iconsRoot,PROGRESS_60,PROGRESS_60_KEY);
-			setUpImage(iconsRoot,PROGRESS_80,PROGRESS_80_KEY);
-			setUpImage(iconsRoot,PROGRESS_100,PROGRESS_100_KEY);
-			
-			setUpImage(iconsRoot,RUNNING_JOB,RUNNING_JOB_KEY);
-			setUpImage(iconsRoot,SLEEPING_JOB,SLEEPING_JOB_KEY);
-			setUpImage(iconsRoot,WAITING_JOB,WAITING_JOB_KEY);
-			setUpImage(iconsRoot,ERROR_JOB,ERROR_JOB_KEY);
-			
+			setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);
+			setUpImage(iconsRoot, PROGRESS_40, PROGRESS_40_KEY);
+			setUpImage(iconsRoot, PROGRESS_60, PROGRESS_60_KEY);
+			setUpImage(iconsRoot, PROGRESS_80, PROGRESS_80_KEY);
+			setUpImage(iconsRoot, PROGRESS_100, PROGRESS_100_KEY);
+
+			setUpImage(iconsRoot, RUNNING_JOB, RUNNING_JOB_KEY);
+			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
+			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
+			setUpImage(iconsRoot, ERROR_JOB, ERROR_JOB_KEY);
+
 		} catch (MalformedURLException e) {
 			ProgressUtil.logException(e);
 		}
@@ -227,9 +218,9 @@ public class JobProgressManager
 	 */
 	private void setUpImage(URL iconsRoot, String fileName, String key)
 		throws MalformedURLException {
-		JFaceResources
-			.getImageRegistry()
-			.put(key, ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
+		JFaceResources.getImageRegistry().put(
+			key,
+			ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
 
 	}
 
@@ -264,20 +255,15 @@ public class JobProgressManager
 			return;
 		JobInfo info = new JobInfo(event.getJob());
 		jobs.put(event.getJob(), info);
-		if (isNonDisplayableJob(event.getJob()))
-			addToFiltered(event.getJob());
-		else
-			add(info);
+		add(info);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void aboutToRun(IJobChangeEvent event) {
-		if (!isNonDisplayableJob(event.getJob())) {
-			JobInfo info = getJobInfo(event.getJob());
-			refresh(info);
-		}
+		JobInfo info = getJobInfo(event.getJob());
+		refresh(info);
 	}
 
 	/* (non-Javadoc)
@@ -306,14 +292,12 @@ public class JobProgressManager
 				}
 			};
 			job.schedule();
-			if (!isNonDisplayableJob(event.getJob()))
-				refresh(info);
+			refresh(info);
 
 		} else {
 			jobs.remove(event.getJob());
 			//Only refresh if we are showing it
-			if (!isNonDisplayableJob(event.getJob()))
-				remove(info);
+			remove(info);
 		}
 	}
 
@@ -338,16 +322,12 @@ public class JobProgressManager
 	 */
 	public void refresh(JobInfo info) {
 
-		//If we never displayed this job then add it instead.
-		if (isFiltered(info.getJob())) {
-			add(info);
-			removeFromFiltered(info.getJob());
-		}
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			IJobProgressManagerListener listener =
 				(IJobProgressManagerListener) iterator.next();
-			listener.refresh(info);
+			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+				listener.refresh(info);
 		}
 
 	}
@@ -357,7 +337,6 @@ public class JobProgressManager
 	 * @param info
 	 */
 	public void refreshAll() {
-		filteredJobs.clear();
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			IJobProgressManagerListener listener =
@@ -372,13 +351,13 @@ public class JobProgressManager
 	 * @param info
 	 */
 	public void remove(JobInfo info) {
-		removeFromFiltered(info.getJob());
 
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			IJobProgressManagerListener listener =
 				(IJobProgressManagerListener) iterator.next();
-			listener.remove(info);
+			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+				listener.remove(info);
 		}
 
 	}
@@ -390,9 +369,10 @@ public class JobProgressManager
 	public void add(JobInfo info) {
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			IJobProgressManagerListener provider =
+			IJobProgressManagerListener listener =
 				(IJobProgressManagerListener) iterator.next();
-			provider.add(info);
+			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+				listener.add(info);
 		}
 
 	}
@@ -400,9 +380,10 @@ public class JobProgressManager
 	/**
 	 * Return whether or not this job is currently displayable.
 	 * @param job
+	 * @param debug If the listener is in debug mode.
 	 * @return
 	 */
-	boolean isNonDisplayableJob(Job job) {
+	boolean isNonDisplayableJob(Job job, boolean debug) {
 		if (isNeverDisplayedJob(job))
 			return true;
 		if (debug) //Always display in debug mode
@@ -417,12 +398,7 @@ public class JobProgressManager
 	 * @return
 	 */
 	private boolean isNeverDisplayedJob(Job job) {
-		if (job == null)
-			return true;
-		//Never display the update job
-		if (job.getName().equals(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob"))) //$NON-NLS-1$
-			return true;
-		return false;
+		return job == null;
 	}
 
 	/**
@@ -435,8 +411,6 @@ public class JobProgressManager
 			Collection result = new ArrayList();
 			while (iterator.hasNext()) {
 				Job next = (Job) iterator.next();
-				if (isNonDisplayableJob(next))
-					continue;
 				result.add(jobs.get(next));
 			}
 			JobInfo[] infos = new JobInfo[result.size()];
@@ -444,7 +418,7 @@ public class JobProgressManager
 			return infos;
 		}
 	}
-	
+
 	/**
 	 * Return whether or not there are any jobs being displayed.
 	 * @return boolean
@@ -453,9 +427,6 @@ public class JobProgressManager
 		synchronized (jobs) {
 			Iterator iterator = jobs.keySet().iterator();
 			while (iterator.hasNext()) {
-				Job next = (Job) iterator.next();
-				if (isNonDisplayableJob(next))
-					continue;
 				return true;
 			}
 			return false;
@@ -510,30 +481,6 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Add job to the list of filtered jobs.
-	 * @param job
-	 */
-	void addToFiltered(Job job) {
-		filteredJobs.add(job);
-	}
-
-	/**
-	 * Remove job from the list of fitlered jobs.
-	 * @param job
-	 */
-	void removeFromFiltered(Job job) {
-		filteredJobs.remove(job);
-	}
-
-	/**
-	 * Return whether or not the job is currently filtered.
-	 * @param job
-	 * @return
-	 */
-	boolean isFiltered(Job job) {
-		return filteredJobs.contains(job);
-	}
-	/**
 	 * Returns the image descriptor with the given relative path.
 	 * @param source
 	 * @return Image
@@ -563,32 +510,31 @@ public class JobProgressManager
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Get the current image for the receiver. If there is no
 	 * progress yet return null.
 	 * @param element
 	 * @return
 	 */
-	Image getDisplayImage(JobTreeElement element){
-		if(element.isJobInfo()){
+	Image getDisplayImage(JobTreeElement element) {
+		if (element.isJobInfo()) {
 			JobInfo info = (JobInfo) element;
 			int done = info.getPercentDone();
-			if(done > 0){
-				int index = Math.min(4,(done / 20));
+			if (done > 0) {
+				int index = Math.min(4, (done / 20));
 				return JFaceResources.getImage(keys[index]);
-			}
-			else{
-				if(info.getErrorStatus() != null)
+			} else {
+				if (info.getErrorStatus() != null)
 					return JFaceResources.getImage(ERROR_JOB_KEY);
 				int state = info.getJob().getState();
-				if(state == Job.SLEEPING)
+				if (state == Job.SLEEPING)
 					return JFaceResources.getImage(SLEEPING_JOB_KEY);
-				if(state == Job.WAITING)
+				if (state == Job.WAITING)
 					return JFaceResources.getImage(WAITING_JOB_KEY);
 				return JFaceResources.getImage(RUNNING_JOB_KEY);
-			}				
+			}
 		}
-		return null;		
+		return null;
 	}
 }

@@ -404,7 +404,7 @@ class AnimationManager {
 				JobInfo[] currentInfos = manager.getJobInfos();
 				for (int i = 0; i < currentInfos.length; i++) {
 					JobInfo info = currentInfos[i];
-					if (manager.isNonDisplayableJob(info.getJob()))
+					if (manager.isNonDisplayableJob(info.getJob(),showsDebug()))
 						continue;
 					add(currentInfos[i]);
 				}
@@ -419,6 +419,13 @@ class AnimationManager {
 					decrementJobCount(info.getJob());
 				}
 
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+			 */
+			public boolean showsDebug() {
+				return false;
 			}
 
 			private void incrementJobCount(JobInfo info) {

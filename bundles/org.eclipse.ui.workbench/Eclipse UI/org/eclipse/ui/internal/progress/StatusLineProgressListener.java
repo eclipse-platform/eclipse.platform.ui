@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * The StatusLineProgressListener is a class that prints the current
@@ -113,6 +112,13 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 
 		refreshJob.setMessage(getNextMessage());
 		refreshJob.schedule(100);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	 */
+	public boolean showsDebug() {
+		return false;
 	}
 
 	/**
