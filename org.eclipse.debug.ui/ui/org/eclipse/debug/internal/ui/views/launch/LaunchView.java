@@ -370,40 +370,64 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Select the first stack frame in a suspended thread,
 	 * if any.
 	 */
-	protected void initializeSelection() {
+	private void initializeSelection() {
 		if (!isAvailable()) {
 			return;
 		}
 		TreeViewer tv = (TreeViewer)getViewer();
 		tv.expandToLevel(2);
-		Object[] elements = tv.getExpandedElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof ILaunch) {
-				IStackFrame frame = findFrame((ILaunch)elements[i]);
-				if (frame != null) {
-					autoExpand(frame, true);
+		final Object[] elements = tv.getExpandedElements();
+		// traverse debug model in non UI thread
+		Job initJob = new Job(DebugUIViewsMessages.getString("LaunchView.2")) { //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				for (int i = 0; i < elements.length; i++) {
+					if (elements[i] instanceof ILaunch) {
+						final IStackFrame frame = findFrame((ILaunch)elements[i]);
+						if (frame != null) {
+							Runnable runnable = new Runnable() {
+								public void run() {
+									autoExpand(frame, true);
+								}
+							};
+							asyncExec(runnable);
+						}
+					}
 				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		initJob.schedule();
 	}
 	
 	/**
 	 * Returns the first stack frame in the first suspended
 	 * thread of the given launch, or <code>null</code> if
-	 * none.
+	 * none. Prioritizes selection based on which thread is
+	 * suspended at a breakpoint.
 	 * 
 	 * @param launch a launch in this view
 	 * @return stack frame or <code>null</code>
 	 */
-	protected IStackFrame findFrame(ILaunch launch) {
+	private IStackFrame findFrame(ILaunch launch) {
 		IDebugTarget target = launch.getDebugTarget();
 		if (target != null) {
 			try {
 				IThread[] threads = target.getThreads();
+				IThread suspended = null;
 				for (int i = 0; i < threads.length; i++) {
 					if (threads[i].isSuspended()) {
-						return threads[i].getTopStackFrame();
+						if (threads[i].getBreakpoints().length > 0) {
+							return threads[i].getTopStackFrame();
+						} else if (suspended == null) {
+							suspended = threads[i];
+						}
 					}
+				}
+				if (suspended != null) {
+					return suspended.getTopStackFrame();
 				}
 			} catch (DebugException e) {
 			}
