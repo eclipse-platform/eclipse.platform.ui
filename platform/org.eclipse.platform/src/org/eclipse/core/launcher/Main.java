@@ -158,6 +158,8 @@ public class Main {
 	 */
 	protected boolean inDevelopmentMode = false;
 
+	private static boolean runningOSGi = false;
+
 	// splash handling
 	private String showSplash = null; 
 	private String endSplash = null; 
@@ -192,6 +194,7 @@ public class Main {
 	private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
 	private static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader"; //$NON-NLS-1$
+	private static final String OSGI_BOOTLOADER = "org.eclipse.core.internal.boot.OSGiBootLoader"; //$NON-NLS-1$
 	private static final String BOOTJAR = "boot.jar"; //$NON-NLS-1$
 	private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
 	
@@ -383,7 +386,15 @@ private String[] getArrayFromList(String prop) {
  */
 public Class getBootLoader(URL[] path) throws Exception {
 	URLClassLoader loader = new URLClassLoader(path, null);
-	return loader.loadClass(BOOTLOADER);
+	// look for the normal boot loader first.  If it is not there then look for the OSGi boot loader
+	Class result = null; 
+	try {
+		result = loader.loadClass(BOOTLOADER);
+	} catch (ClassNotFoundException e) {
+		result = loader.loadClass(OSGI_BOOTLOADER);
+		runningOSGi = true;
+	}
+	return result;
 }
 /**
  * Returns the <code>URL</code>-based class path describing where the boot classes
@@ -595,8 +606,10 @@ public static void main(String[] args) {
 		// there is information in their log file.
 		System.exit(13);
 	}
-	int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-	System.exit(exitCode);
+	if (!runningOSGi) {
+		int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
+		System.exit(exitCode);
+	}
 }
 
 /**
