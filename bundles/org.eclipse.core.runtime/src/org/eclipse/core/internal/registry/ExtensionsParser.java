@@ -379,7 +379,11 @@ public class ExtensionsParser extends DefaultHandler {
 				locationName = manifestName;
 			try {
 				factory.setNamespaceAware(true);
-				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+				try {
+					factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+				} catch (SAXException se) {
+					// ignore; we can still operate without string-interning
+				}
 				factory.setValidating(false);
 				factory.newSAXParser().parse(in, this);
 			} catch (ParserConfigurationException e) {
