@@ -722,7 +722,7 @@ private ArrayList getArrayList(String[] args) {
  */
 private ArrayList getArrayList(String args) {
 	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(args, ","); tokens.hasMoreTokens();) {
+	for (StringTokenizer tokens = new StringTokenizer(args, ", "); tokens.hasMoreTokens();) {
 		String token = tokens.nextToken().trim();
 		if (!token.equals(""))
 			result.add(token);
