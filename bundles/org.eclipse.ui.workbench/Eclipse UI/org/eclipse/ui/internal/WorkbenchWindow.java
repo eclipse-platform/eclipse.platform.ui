@@ -73,9 +73,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keybindings.KeyManager;
-import org.eclipse.ui.internal.keybindings.KeySequence;
-import org.eclipse.ui.internal.keybindings.KeyStroke;
+import org.eclipse.ui.internal.commands.keys.KeyManager;
+import org.eclipse.ui.internal.commands.keys.KeySequence;
+import org.eclipse.ui.internal.commands.keys.KeyStroke;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.IActionSet;
 

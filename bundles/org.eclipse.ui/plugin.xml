@@ -1633,7 +1633,7 @@
       <page
             name="%PreferencePages.Keys"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.keybindings.PreferencePage"
+            class="org.eclipse.ui.internal.commands.keys.PreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>      
    </extension>

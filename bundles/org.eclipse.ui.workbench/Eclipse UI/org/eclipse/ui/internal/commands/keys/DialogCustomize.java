@@ -10,7 +10,7 @@ Contributors:
 	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346
 ************************************************************************/
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.commands.keys;
 
 import java.text.Collator;
 import java.util.ArrayList;

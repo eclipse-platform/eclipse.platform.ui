@@ -104,7 +104,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.commands.Item;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.keybindings.KeyManager;
+import org.eclipse.ui.internal.commands.keys.KeyManager;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.core.SiteManager;

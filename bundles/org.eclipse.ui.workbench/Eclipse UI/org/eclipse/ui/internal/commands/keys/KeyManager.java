@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.commands.keys;
 
 import java.io.IOException;
 import java.io.StringReader;

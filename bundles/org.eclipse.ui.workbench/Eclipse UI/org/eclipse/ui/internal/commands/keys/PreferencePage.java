@@ -9,22 +9,41 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.gesturebindings;
+package org.eclipse.ui.internal.commands.keys;
+
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.Item;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 	
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 	
-	/*
 	private Button buttonCustomize;
 	private Combo comboConfiguration;
 	private String configurationId;
@@ -35,12 +54,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	private SortedSet registryBindingSet;
 	private SortedMap registryConfigurationMap;
 	private SortedMap registryScopeMap;
-	*/
 	private IWorkbench workbench;
 
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		/*
 		composite.setFont(parent.getFont());
 		GridLayout gridLayoutComposite = new GridLayout();
 		gridLayoutComposite.marginWidth = 0;
@@ -63,10 +80,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			String[] items = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
 			Arrays.sort(items, Collator.getInstance());
 			comboConfiguration.setItems(items);
-			Configuration configuration = (Configuration) registryConfigurationMap.get(configurationId);
+			Item configuration = (Item) registryConfigurationMap.get(configurationId);
 
 			if (configuration != null)
-				comboConfiguration.select(comboConfiguration.indexOf(configuration.getLabel().getName()));
+				comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
 		}
 
 		buttonCustomize = new Button(composite, SWT.CENTER | SWT.PUSH);
@@ -89,16 +106,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			}	
 		});
 
-		//TBD: WorkbenchHelp.setHelp(parent, IHelpContextIds.
-		WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
-		 */
+		//TBD: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
 
 		return composite;	
 	}
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		/*
 		preferenceStore = getPreferenceStore();
 		configurationId = loadConfiguration();		
 		keyManager = KeyManager.getInstance();
@@ -111,17 +125,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		Iterator iterator = configurations.iterator();
 
 		while (iterator.hasNext()) {
-			Configuration configuration = (Configuration) iterator.next();
-			String name = configuration.getLabel().getName();
+			Item configuration = (Item) iterator.next();
+			String name = configuration.getName();
 			
 			if (!nameToConfigurationMap.containsKey(name))
 				nameToConfigurationMap.put(name, configuration);
-		}
-		*/	
+		}	
 	}
 	
 	protected void performDefaults() {
-		/*
 		int result = SWT.YES;
 		
 		if (!preferenceBindingSet.isEmpty()) {		
@@ -136,19 +148,17 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				comboConfiguration.clearSelection();
 				comboConfiguration.deselectAll();
 				configurationId = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-				Configuration configuration = (Configuration) registryConfigurationMap.get(configurationId);
+				Item configuration = (Item) registryConfigurationMap.get(configurationId);
 
 				if (configuration != null)
-					comboConfiguration.select(comboConfiguration.indexOf(configuration.getLabel().getName()));
+					comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
 			}
 
 			preferenceBindingSet = new TreeSet();
 		}
-		*/
 	}	
 	
 	public boolean performOk() {
-		/*
 		if (comboConfiguration != null && comboConfiguration.isEnabled()) {
 			int i = comboConfiguration.getSelectionIndex();
 			
@@ -156,10 +166,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				String configurationName = comboConfiguration.getItem(i);
 				
 				if (configurationName != null) {				
-					Configuration configuration = (Configuration) nameToConfigurationMap.get(configurationName);
+					Item configuration = (Item) nameToConfigurationMap.get(configurationName);
 					
 					if (configuration != null) {
-						configurationId = configuration.getLabel().getId();
+						configurationId = configuration.getId();
 						saveConfiguration(configurationId);					
 	
 						keyManager.setPreferenceBindingSet(preferenceBindingSet);
@@ -174,7 +184,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				}
 			}
 		}
-		*/
+		
 		return super.performOk();
 	}
 	
@@ -183,7 +193,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	}
 	
 	private String loadConfiguration() {
-		/*
 		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
 
 		if (configuration == null || configuration.length() == 0)
@@ -193,17 +202,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			configuration = ZERO_LENGTH_STRING;
 
 		return configuration;
-		*/
-		return null;
 	}
 	
 	private void saveConfiguration(String configuration)
 		throws IllegalArgumentException {
-		/*
 		if (configuration == null)
 			throw new IllegalArgumentException();
 
 		preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, configuration);
-		*/
 	}
 }

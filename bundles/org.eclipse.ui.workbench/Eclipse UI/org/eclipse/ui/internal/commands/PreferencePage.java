@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.keybindings.KeyMachine;
-import org.eclipse.ui.internal.keybindings.KeyManager;
+import org.eclipse.ui.internal.commands.keys.KeyMachine;
+import org.eclipse.ui.internal.commands.keys.KeyManager;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {

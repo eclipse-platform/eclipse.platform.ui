@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.keybindings;
+package org.eclipse.ui.internal.commands.keys;
 
 public final class Match implements Comparable {
 

@@ -30,11 +30,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.keybindings.KeyMachine;
-import org.eclipse.ui.internal.keybindings.KeyManager;
-import org.eclipse.ui.internal.keybindings.KeySequence;
-import org.eclipse.ui.internal.keybindings.KeyStroke;
-import org.eclipse.ui.internal.keybindings.Match;
+import org.eclipse.ui.internal.commands.keys.KeyMachine;
+import org.eclipse.ui.internal.commands.keys.KeyManager;
+import org.eclipse.ui.internal.commands.keys.KeySequence;
+import org.eclipse.ui.internal.commands.keys.KeyStroke;
+import org.eclipse.ui.internal.commands.keys.Match;
 import org.eclipse.ui.internal.commands.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
