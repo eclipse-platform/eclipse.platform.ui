@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog for setting the padded string in renderings.
@@ -43,7 +43,7 @@ public class SetPaddedStringDialog extends Dialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".SetPaddedStrDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".SetPaddedStrDialog_context"); //$NON-NLS-1$
 		
 		getShell().setText(DebugUIMessages.getString("SetPaddedStringDialog.0")); //$NON-NLS-1$
 		

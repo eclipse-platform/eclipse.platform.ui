@@ -27,15 +27,15 @@ import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatColumnAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
-import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingCellModifier;
-import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.SetColumnSizeDefaultAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingCellModifier;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentInput;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentProvider;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProvider;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -82,7 +82,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 /**
@@ -175,7 +175,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 
 		public ToggleAddressColumnAction() {
 			super();
-			WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID
 					+ ".ShowAddressColumnAction_context"); //$NON-NLS-1$
 			updateActionLabel();
 		}

@@ -15,7 +15,7 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -52,7 +52,7 @@ public class FormatColumnAction extends Action
 
 		fNumBytesPerCol = numUnits*addressibleSize;
 		
-		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".FormatColumnAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".FormatColumnAction_context"); //$NON-NLS-1$ 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
