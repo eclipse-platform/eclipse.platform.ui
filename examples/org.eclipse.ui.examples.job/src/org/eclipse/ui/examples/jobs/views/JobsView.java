@@ -4,11 +4,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,14 +19,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.UIJob;
 /**
  * A view that allows a user to create jobs of various types.
  */
@@ -225,16 +221,7 @@ public class JobsView extends ViewPart {
 			}
 		});
 		
-		Button requestInUI = new Button(body, SWT.PUSH);
-		requestInUI.setText("Request In UI");
-		requestInUI.addSelectionListener(new SelectionAdapter(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				runRequestInUIJob();
-			}
-		});
+		
 	}
 	protected void doRun(long duration, IProgressMonitor monitor) {
 		final long sleep = 10;
@@ -313,28 +300,4 @@ public class JobsView extends ViewPart {
 		}
 	}
 	
-	private void runRequestInUIJob(){
-		Job requestJob = new Job("Request in UI"){
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				IStatus result = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-						"Did not block until the answer was done!", null);
-				result = PlatformUI.getWorkbench().getProgressService().requestInUI(new UIJob("Message"){
-						/* (non-Javadoc)
-						 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							if(MessageDialog.openQuestion(delayField.getShell(),"Answer please","Yes or No?"))
-								return Status.OK_STATUS;
-							else
-								return Status.CANCEL_STATUS;
-						}
-					},"Answer the question");
-				return result;
-			}
-		};
-		requestJob.schedule();
-	}
 }

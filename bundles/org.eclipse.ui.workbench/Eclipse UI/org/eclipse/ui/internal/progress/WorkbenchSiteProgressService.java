@@ -30,7 +30,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.PartSite;
 /**
@@ -128,16 +127,7 @@ public class WorkbenchSiteProgressService
 		waitCursor = null;
 		ProgressManager.getInstance().removeListener(this);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IProgressService#requestInUI(org.eclipse.ui.progress.UIJob,
-	 *      java.lang.String)
-	 */
-	public IStatus requestInUI(UIJob job, String message) {
-		return site.getWorkbenchWindow().getWorkbench().getProgressService()
-				.requestInUI(job, message);
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -10,10 +10,9 @@
 package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
@@ -29,24 +28,6 @@ public interface IProgressService {
 	 * monitor.
 	 */
 	public int LONG_OPERATION_MILLISECONDS = 5000;
-
-	/**
-	 * Block the current thread until UIJob is served. The message is used to
-	 * announce to the user a pending UI Job.
-	 * 
-	 * <b>Note: This is experimental API and subject to change at any time
-	 * </b>. *
-	 * 
-	 * @param job UIJob
-	 * @param message
-	 *            The message that informs the user of the waiting UI job.
-	 * @return IStatus
-	 * @throws IllegalThreadStateException
-	 *             if this is called from the UIThread as we do not want to
-	 *             block the UIThread to make a request in the UIThread.
-	 * @since 3.0
-	 */
-	public IStatus requestInUI(UIJob job, String message);
 
 	/**
 	 * Set the cursor to busy and run runnable within the UI Thread. After the

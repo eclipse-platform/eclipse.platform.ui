@@ -48,7 +48,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -72,7 +71,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	final private Collection listeners = Collections.synchronizedList(new ArrayList());
 	final Object listenerKey = new Object();
 	final ErrorNotificationManager errorManager = new ErrorNotificationManager();
-	final private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
+
 	IJobChangeListener changeListener;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
@@ -732,28 +731,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			return null;
 		}
 	}
-	/**
-	 * Block the current thread until UIJob is served. The message is used to
-	 * announce to the user a pending UI Job.
-	 * 
-	 * Note: This is experimental API and subject to change at any time.
-	 * 
-	 * @param job
-	 * @param message
-	 * @return IStatus
-	 * @since 3.0
-	 */
-	public IStatus requestInUI(UIJob job, String message) {
-		return feedbackManager.requestInUI(job, message);
-	}
-	/**
-	 * Return the ProgressFeedbackManager for the receiver.
-	 * 
-	 * @return ProgressFeedbackManager
-	 */
-	ProgressFeedbackManager getFeedbackManager() {
-		return feedbackManager;
-	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
