@@ -333,7 +333,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			Property property = (Property) iter.next();
 			key= property.getName();
 			String value= property.getValue();
-			if (value != null && (userProperties == null || userProperties.get(key) == null)) {
+			//if we have user properties this means that the user has chosen to override the global properties
+			//if in a separate VM and have only two user properties these are really only Eclipse generated properties
+			//and the user is still using the global properties
+			if (value != null && (userProperties == null || (separateVM && userProperties.size() == 2))) {
 				appendProperty(commandLine, key, value);
 			}
 		}
