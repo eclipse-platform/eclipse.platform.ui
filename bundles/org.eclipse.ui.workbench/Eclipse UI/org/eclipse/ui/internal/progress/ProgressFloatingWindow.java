@@ -315,6 +315,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
+				window.toggleFloatingWindow();
 				ProgressManagerUtil.openProgressView(window);
 			}
 		});
