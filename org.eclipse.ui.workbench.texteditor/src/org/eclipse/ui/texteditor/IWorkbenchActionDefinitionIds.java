@@ -128,4 +128,22 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @since 2.1
 	 */
 	public static final String FIND_INCREMENTAL_REVERSE= "org.eclipse.ui.edit.findIncrementalReverse"; //$NON-NLS-1$
+	
+	
+	/**
+	 * The command identifier for the "move" action that typically appears in
+	 * the file menu.  
+	 * Value: <code>"org.eclipse.ui.edit.move"</code>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String MOVE = "org.eclipse.ui.edit.move"; //$NON-NLS-1$
+	/**
+	 * The command identifier for the "rename" action that typically appears in
+	 * the file menu.  
+	 * Value: <code>"org.eclipse.ui.edit.rename"</code>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String RENAME = "org.eclipse.ui.edit.rename"; //$NON-NLS-1$
 }
