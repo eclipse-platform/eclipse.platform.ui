@@ -121,7 +121,7 @@ public class RefreshJob extends WorkspaceJob {
 				Policy.debug(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
 			int refreshCount = 0;
 			int depth = 2;
-			monitor.beginTask(Policy.bind("refresh.task"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 			IResource toRefresh;
 			while ((toRefresh = nextRequest()) != null) {
 				if (monitor.isCanceled())
@@ -133,18 +133,18 @@ public class RefreshJob extends WorkspaceJob {
 					refreshTime += System.currentTimeMillis();
 					if (refreshTime > longestRefresh)
 						longestRefresh = refreshTime;
+					//show occasional progress
+					if (refreshCount % 100 == 0)
+						monitor.subTask(Policy.bind("refresh.task", Integer.toString(fRequests.size()))); //$NON-NLS-1$
 					if (refreshCount % 1000 == 0) {
 						//be polite to other threads (no effect on some platforms)
 						Thread.yield();
-//						System.out.println("Refresh count: " + refreshCount + " longest refresh: " + longestRefresh + " depth: " + depth);
 						//throttle depth if it takes too long
 						if (longestRefresh > 2000 && depth > 1) {
 							depth = 1;
-//							System.out.println("Decreasing depth to " + depth);
 						}
 						if (longestRefresh < 1000) {
 							depth *= 2;
-//							System.out.println("Increasing depth to " + depth);
 						}
 						longestRefresh = 0;
 					}
