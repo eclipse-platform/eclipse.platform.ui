@@ -642,9 +642,9 @@ public final class AntUtil {
      * Opens an external browser on the provided <code>urlString</code>
      * @param urlString The url to open
      * @param shell the shell
-     * @param dialogTitle the title of any error dialog
+     * @param errorDialogTitle the title of any error dialog
      */
-    public static void openBrowser(final String  urlString, final Shell shell, final String dialogTitle) {
+    public static void openBrowser(final String  urlString, final Shell shell, final String errorDialogTitle) {
     	shell.getDisplay().syncExec(new Runnable() {
     		public void run() {
     			String platform= SWT.getPlatform();
@@ -661,7 +661,7 @@ public final class AntUtil {
     				succeeded= Program.launch(urlString.toString());
     			}
     			if (!succeeded) {
-    				MessageDialog.openInformation(shell, dialogTitle, AntUIModelMessages.getString("AntUtil.1")); //$NON-NLS-1$
+    				MessageDialog.openInformation(shell, errorDialogTitle, AntUIModelMessages.getString("AntUtil.1")); //$NON-NLS-1$
     			}
     		}
     	});
