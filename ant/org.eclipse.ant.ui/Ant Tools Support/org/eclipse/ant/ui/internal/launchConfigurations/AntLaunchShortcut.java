@@ -150,7 +150,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());
 					try {
 						configuration= configuration.copy(newName);
-						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, targetAttribute);
+						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
 					} catch (CoreException exception) {
 						reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
 						return;
@@ -209,7 +209,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public static ILaunchConfiguration createDefaultLaunchConfiguration(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntUIConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		StringBuffer buffer = new StringBuffer(file.getProject().getName());
 		buffer.append(' ');
 		buffer.append(file.getName());
@@ -240,7 +240,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public static List findExistingLaunchConfigurations(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntUIConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		List validConfigs= new ArrayList();
 		if (type != null) {
 			ILaunchConfiguration[] configs = null;

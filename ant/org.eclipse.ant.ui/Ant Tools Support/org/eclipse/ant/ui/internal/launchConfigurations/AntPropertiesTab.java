@@ -78,14 +78,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		setMessage(null);
 		Map properties= null;
 		try {
-			properties= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, (Map)null);
+			properties= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		String propertyFiles= null;
 		try {
-			propertyFiles= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+			propertyFiles= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
@@ -114,7 +114,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			}
 		}
 		
-		configuration.setAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, properties);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 		
 		items= antPropertiesBlock.getPropertyFiles();
 		String files= null;
@@ -128,7 +128,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			files= buff.toString();
 		}
 		
-		configuration.setAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, files);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, files);
 	}
 
 	/**

@@ -299,7 +299,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		String newLocation= null;
 		fOrderedTargets = new ArrayList();
 		try {
-			configTargets= configuration.getAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String)null);
+			configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
@@ -365,7 +365,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
-				configuration.setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String)null);
+				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 				return;
 			}
 		} else if (fOrderedTargets.size() == 0) {
@@ -384,7 +384,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			targets= buff.toString();
 		}  
 
-		configuration.setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, targets);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targets);
 	}
 
 	/**

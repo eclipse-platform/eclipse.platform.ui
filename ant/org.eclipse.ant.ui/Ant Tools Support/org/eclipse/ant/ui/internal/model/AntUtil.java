@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.ui.internal.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.ui.internal.views.AntView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -78,7 +79,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getTargetsFromConfig(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String) null);
+		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
 		if (attribute == null) {
 			return null;
 		} else {
@@ -96,7 +97,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
-		Map map = configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, (Map) null);
+		Map map = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map) null);
 		return map;
 	}
 	
@@ -109,7 +110,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IAntUIConstants.ATTR_ANT_HOME, (String) null);
+		return configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String) null);
 	}
 
 	/**
@@ -122,7 +123,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
+		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
 		if (attribute == null) {
 			return null;
 		} else {
@@ -185,7 +186,7 @@ public final class AntUtil {
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
 	 */
 	public static URL[] getCustomClasspath(ILaunchConfiguration config) throws CoreException {
-		String classpathString= config.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		String classpathString= config.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
 		if (classpathString == null) {
 			return null;
 		}
@@ -209,7 +210,7 @@ public final class AntUtil {
 	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) {
 		String classpathString= null;
 		try {
-			classpathString = config.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			classpathString = config.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
 		}
 		if (classpathString == null) {

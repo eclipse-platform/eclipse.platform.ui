@@ -103,7 +103,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		String urlStrings= null;
 		try {
-			urlStrings = configuration.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			urlStrings = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
 		}
 		if (urlStrings == null) {
@@ -113,7 +113,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		} else {
 			String antHomeString= null;
 			try {
-				antHomeString= configuration.getAttribute(IAntUIConstants.ATTR_ANT_HOME, (String)null);
+				antHomeString= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 			} catch (CoreException e) {
 			}
 			antClasspathBlock.initializeAntHome(antHomeString);
@@ -135,8 +135,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (useDefaultButton.getSelection()) {
-			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			configuration.setAttribute(IAntUIConstants.ATTR_ANT_HOME, (String)null);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 			return;
 		}
 		List antUrls= antClasspathBlock.getAntURLs();
@@ -158,13 +158,13 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			urlString.append(',');
 		}
 		if (urlString.length() > 0) {
-			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
 		} else {
-			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
 		}
 		
 		String antHomeText= antClasspathBlock.getAntHome();
-		configuration.setAttribute(IAntUIConstants.ATTR_ANT_HOME, antHomeText);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antHomeText);
 	}
 
 	/**

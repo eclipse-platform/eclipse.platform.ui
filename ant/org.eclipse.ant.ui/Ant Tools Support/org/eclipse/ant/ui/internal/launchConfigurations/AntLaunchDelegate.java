@@ -175,7 +175,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		Map attributes= new HashMap();
-		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntUIConstants.ID_ANT_PROCESS_TYPE);
+		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 				
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
@@ -224,7 +224,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 
 	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine) {
 		// link the process to its build logger via a timestamp
-		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntUIConstants.ID_ANT_PROCESS_TYPE);
+		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		
 		// create "fake" command line for the process
