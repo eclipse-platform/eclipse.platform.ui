@@ -177,13 +177,16 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
 	}
 	
 	private void updateSelectionCount() {
 		Object[] checked = fTableViewer.getCheckedElements();
-		String numSelected = new Integer(checked.length).toString();
-		String total = new Integer(allTargets.length).toString();
+		String numSelected = Integer.toString(checked.length);
+		int length= 0;
+		if (allTargets != null) {
+			length= allTargets.length;
+		}
+		String total = Integer.toString(length);
 		fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab2.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
 		
 		fOrderButton.setEnabled(checked.length > 1);
@@ -236,19 +239,6 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 			}
 		}
 		return allTargets;
-	}
-	
-	/**
-	 * A target was selected; update the description field.
-	 */
-	private void targetsSelected(TargetInfo target) {
-		String description= ""; //$NON-NLS-1$
-		if (target != null) {
-			description =target.getDescription();
-			if (description == null) {
-				description = ""; //$NON-NLS-1$
-			}
-		}
 	}
 	
 	/**
