@@ -181,7 +181,7 @@ public abstract class Site implements ISite, IWritable {
 	/**
 	 * returns the default prefered feature for this site
 	 */
-	public abstract IFeature getDefaultFeature(URL featureURL);
+	public abstract IFeature getDefaultFeature(URL featureURL) throws CoreException;
 
 	/**
 	 * parse the physical site to initialize the site object
