@@ -286,7 +286,13 @@ public void testDelete_Bug8754() {
 	try {
 		file.delete(false, getMonitor());
 	} catch (CoreException e) {
-		assertEquals("1.0", e.getStatus().getCode(), IResourceStatus.OUT_OF_SYNC_LOCAL);
+		IStatus status = e.getStatus();
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			assertEquals("1.0", 1, children.length);
+			status = children[0];
+		}
+		assertEquals("1.1", IResourceStatus.OUT_OF_SYNC_LOCAL, status.getCode());
 	}
 	//cleanup
 	ensureDoesNotExistInWorkspace(new IResource[] {project, file});
