@@ -6,21 +6,25 @@
       <meta.schema plugin="org.eclipse.update.core" id="featureTypes" name="Feature Type Factory"/>
    </appInfo>
    <documentation>
-      The platform update mechanism supports pluggable feature type
-implementations. A new feature type can be registered in order to support
+      &lt;p&gt;The platform update mechanism supports pluggable feature type
+implementations. A new feature type can be registered in order
+to support
 alternate packaging and verification schemes.
-&lt;br&gt;&lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
 The &lt;code&gt;featureTypes&lt;/code&gt;
 extension point allows alternate feature implementations to be
 registered using a symbolic type identifier. Whenever the 
 type is referenced using this identifier, the supplied factory
 is used to create the correct concrete feature implementation.
+&lt;/p&gt;
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="feature-factory" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -53,6 +57,9 @@ is used to create the correct concrete feature implementation.
                <documentation>
                   fully qualified name of the factory class for the identified feature type
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.update.core.IFeatureFactory"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

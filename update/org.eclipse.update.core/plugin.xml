@@ -17,10 +17,11 @@
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.boot"/>
    </requires>
-   
-   <extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory"/>
-   <extension-point id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
-   <extension-point id="installHandlers" name="Install/Update Global Install Handlers"/>
+
+
+   <extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory" schema="schema/featureTypes.exsd"/>
+   <extension-point id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory" schema="schema/siteTypes.exsd"/>
+   <extension-point id="installHandlers" name="Install/Update Global Install Handlers" schema="schema/installHandlers.exsd"/>
 
    <extension
          id="reconciler"
@@ -29,7 +30,6 @@
             run="org.eclipse.update.internal.core.UpdateManagerReconciler">
       </application>
    </extension>
-
    <extension
          id="packaged"
          point="org.eclipse.update.core.featureTypes">
@@ -37,7 +37,6 @@
             class="org.eclipse.update.internal.core.FeaturePackagedFactory">
       </feature-factory>
    </extension>
-   
    <extension
          id="installed"
          point="org.eclipse.update.core.featureTypes">
@@ -45,7 +44,6 @@
             class="org.eclipse.update.internal.core.FeatureExecutableFactory">
       </feature-factory>
    </extension>
-   
    <extension
          id="http"
          point="org.eclipse.update.core.siteTypes">
@@ -53,7 +51,6 @@
             class="org.eclipse.update.internal.core.SiteURLFactory">
       </site-factory>
    </extension>
-   
    <extension
          id="file"
          point="org.eclipse.update.core.siteTypes">
@@ -61,7 +58,6 @@
             class="org.eclipse.update.internal.core.SiteFileFactory">
       </site-factory>
    </extension>
-   
    <extension
          id="DefaultInstallHandler"
          point="org.eclipse.update.core.installHandlers">

@@ -7,16 +7,19 @@
 <H1><CENTER>Feature Type Factory</CENTER></H1>
 <H2>Identifier</H2>
 org.eclipse.update.core.featureTypes<H2>Description</H2>
-The platform update mechanism supports pluggable feature type
-implementations. A new feature type can be registered in order to support
+<p>The platform update mechanism supports pluggable feature type
+implementations. A new feature type can be registered in order
+to support
 alternate packaging and verification schemes.
-<br><br>
+</p>
+<p>
 The <code>featureTypes</code>
 extension point allows alternate feature implementations to be
 registered using a symbolic type identifier. Whenever the 
 type is referenced using this identifier, the supplied factory
-is used to create the correct concrete feature implementation.<H2>Markup</H2>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (EMPTY)&gt;</samp>
+is used to create the correct concrete feature implementation.
+</p><H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (feature-factory+)&gt;</samp>
 <br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
