@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
@@ -264,9 +265,11 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * contribute actions to the toolbar.
 	 * <p>
 	 * To properly initialize toggle actions that are contributed
-	 * to this view, toggle actions that have an initial state
-	 * of 'checked' are invoked. The actions are invoked in a
-	 * runnable, after the view is created.
+	 * to this view, state is restored for toggle actions that have
+	 * a persisted state in the view's memento.  As well, any toggle
+	 * actions that have an initial state of 'checked' are invoked.
+	 * The actions' states are restored and the actions are invoked 
+	 * in a runnable, after the view is created.
 	 * </p>
 	 */
 	protected void initializeToolBar() {
@@ -403,7 +406,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	
 	/**
 	 * Registers the given runnable with the display
-	 * assocaited with this view's control, if any.
+	 * associated with this view's control, if any.
 	 * 
 	 * @see Display.asyncExec(Runnable)
 	 */
@@ -418,7 +421,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	
 	/**
 	 * Registers the given runnable with the display
-	 * assocaited with this view's control, if any.
+	 * associated with this view's control, if any.
  	 *
 	 * @see Display.syncExec(Runnable)
 	 */
@@ -431,21 +434,35 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 	}	
 	
+	/**
+	 * @see IViewPart#init(IViewSite, IMemento)
+	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		//store the memento to be used when this view is created.
 		setMemento(memento);
 	}
 	
+	/**
+	 * Returns the memento that contains the persisted state of
+	 * the view.  May be <code>null</code>.
+	 */
 	protected IMemento getMemento() {
 		return fMemento;
 	}
 
+	/** 
+	 * Sets the memento that contains the persisted state of the 
+	 * view.
+	 */
 	protected void setMemento(IMemento memento) {
 		fMemento = memento;
 	}
 	
 	/**
+	 * Persists the state of the check box actions contributed
+	 * to this view.
+	 * 
 	 * @see IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
@@ -463,6 +480,11 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 	}
 	
+	/**
+	 * Persists the checked state of the action in the memento.
+	 * The state is persisted as an <code>Integer</code>: <code>1</code>
+	 * meaning the action is checked; <code>0</code> representing unchecked.
+	 */
 	protected void saveActionState(IMemento memento, IAction action) {
 		String id= action.getId();
 		if (id != null) {
@@ -471,6 +493,13 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 	}
 	
+	/**
+	 * Restores the persisted checked state of the action as stored
+	 * in the memento.
+	 * <p>
+	 * The state was persisted as an <code>Integer</code>: <code>1</code>
+	 * meaning the action is checked; <code>0</code> representing unchecked.
+	 */
 	protected void initActionState(IMemento memento, IAction action) {
 		String id= action.getId();
 		if (id != null) {
@@ -480,5 +509,4 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			}
 		}
 	}	
-}	
-
+}
