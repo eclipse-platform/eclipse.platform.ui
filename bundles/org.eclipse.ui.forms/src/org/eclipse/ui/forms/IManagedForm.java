@@ -91,6 +91,13 @@ public interface IManagedForm {
 	 */
 	void dirtyStateChanged();
 	/**
+	 * Commits the dirty form. All pending changes in the widgets are flushed
+	 * into the model.
+	 * 
+	 * @param onSave
+	 */
+	void commit(boolean onSave);
+	/**
 	 * Tests if form is stale. A managed form is stale if at least one managed
 	 * part is stale. This can happen when the underlying model changes,
 	 * resulting in the presentation of the part being out of sync with the
