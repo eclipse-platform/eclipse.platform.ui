@@ -65,8 +65,8 @@ public class AntOpenWithMenu extends ContributionItem {
 
 	private static Map imageCache = new Hashtable(11);
 	
-	private int fLine;
-	private int fColumn;
+	private int fLine= -1;
+	private int fColumn= -1;
 
 	/**
 	 * The id of this action.
@@ -278,6 +278,9 @@ public class AntOpenWithMenu extends ContributionItem {
 			}
 		} catch (PartInitException e) {
 			AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+		}
+		if (fLine == -1) {
+			return;
 		}
 		if (editorPart instanceof ITextEditor) {
 			ITextEditor editor= (ITextEditor)editorPart;
