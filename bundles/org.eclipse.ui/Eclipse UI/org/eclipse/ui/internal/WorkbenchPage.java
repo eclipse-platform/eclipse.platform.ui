@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
 
@@ -31,6 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
  
 /**
@@ -1655,13 +1657,38 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {
-		zoomOutIfNecessary(editor);
-		setEditorAreaVisible(true);
-		if (activate)
-			activate(editor);
-		else
-			bringToTop(editor);
-		return editor;
+		if(IWorkbenchConstants.SYSTEM_EDITOR_ID.equals(editorID)) {
+			if(editor.isDirty()) {
+				MessageDialog dialog = new MessageDialog(
+					getWorkbenchWindow().getShell(),
+					WorkbenchMessages.getString("Save"), 
+					null,	// accept the default window icon
+					WorkbenchMessages.format("WorkbenchPage.editorAlreadyOpenedMsg",new String[]{input.getName()}), 
+					MessageDialog.QUESTION, 
+					new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
+					0);	
+				int saveFile = dialog.open();
+				if(saveFile == 0) {
+					try {
+						final IEditorPart editorToSave = editor;
+						getWorkbenchWindow().run(false,false,new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								editorToSave.doSave(monitor);
+							}
+						});
+					} catch (InvocationTargetException e) {	
+						throw (RuntimeException)e.getTargetException();
+					} catch (InterruptedException e) {
+						return null;
+					}
+				} else if(saveFile == 2) {
+					return null;
+				}
+			}
+		} else {
+			showEditor(activate, editor);
+			return editor;
+		}
 	}
 
 // Disabled turning redraw off, because it causes setFocus
@@ -1714,6 +1741,14 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 //	getClientComposite().setRedraw(true);
 
 	return editor;
+}
+private void showEditor(boolean activate, IEditorPart editor) {
+	zoomOutIfNecessary(editor);
+	setEditorAreaVisible(true);
+	if (activate)
+		activate(editor);
+	else
+		bringToTop(editor);
 }
 /**
  * See IWorkbenchPage.
