@@ -561,8 +561,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		// work in progress START
 		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, true);
-		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, false);
-		store.setDefault(ICVSUIConstants.USE_NEW_SYNCVIEW, false);
+		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, true);
+		store.setDefault(ICVSUIConstants.USE_NEW_SYNCVIEW, true);
 		// work in progress END
 		
 		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
