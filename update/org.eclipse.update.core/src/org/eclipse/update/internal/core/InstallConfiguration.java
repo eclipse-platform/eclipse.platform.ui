@@ -229,7 +229,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
 				IInstallConfigurationChangedListener listener = ((IInstallConfigurationChangedListener) configurationListeners[i]);
-				listener.installSiteAdded(site);
+				listener.installSiteRemoved(site);
 			}
 
 			//activity
