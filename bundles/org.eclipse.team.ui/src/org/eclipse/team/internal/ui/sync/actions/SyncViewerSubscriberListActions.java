@@ -118,13 +118,13 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 		boolean enableFirstContext = actions.isEmpty();
 		SubscriberInput input = (SubscriberInput)context.getInput();
 		SwitchSubscriberAction action =  new SwitchSubscriberAction(input);
-		actions.put(input.getSubscriber().getId(), action);
-		if(enableFirstContext) {
-			activate(action);
-		}			
+		actions.put(input.getSubscriber().getId(), action);		
 		if(cancelAction == null) {
 			cancelAction = new CancelSubscription(input.getSubscriber());
 		}
+		if(enableFirstContext) {
+			activate(action);
+		}	
 	}
 	
 	/* 
