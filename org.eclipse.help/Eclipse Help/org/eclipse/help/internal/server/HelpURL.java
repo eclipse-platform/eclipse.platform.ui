@@ -15,6 +15,7 @@ import org.eclipse.help.internal.util.URLCoder;
  * queries; only one instance of a name=value pair exists at at time.
  */
 public class HelpURL {
+	private final static String lang = "lang";
 	protected String url; // url string
 	protected StringBuffer query;
 	protected HashMap arguments = null;
@@ -115,6 +116,27 @@ public class HelpURL {
 			return null;
 		}
 
+	}
+	
+	/**
+	 * Returns the locale specified by client.
+	 */
+	protected Locale getLocale()
+	{	
+		String clientLocale = getValue(lang);
+
+
+		// The clientLocale takes precedence over the Help Server locale.
+		if (clientLocale != null) {
+			if (clientLocale.indexOf("_") != -1) {
+				return new Locale(clientLocale.substring(0, 2), clientLocale.substring(3, 5));
+			} else {
+				return new Locale(clientLocale.substring(0, 2), "_  ");
+				// In case client locale only contains language info and no country info
+			}
+		}
+		else
+			return Locale.getDefault();
 	}
 	// this returns whether or not a response created for a request
 	// to this URL is cached by the browser client.

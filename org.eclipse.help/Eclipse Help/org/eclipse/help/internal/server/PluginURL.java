@@ -16,7 +16,6 @@ import org.eclipse.help.internal.util.*;
  * URL for documentation coming from a plugin.
  */
 public class PluginURL extends HelpURL {
-	private final static String lang = "lang";
 	private final static String INI = ".ini";
 	protected IPluginDescriptor plugin;
 	protected String file;
@@ -67,25 +66,7 @@ public class PluginURL extends HelpURL {
 			plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		}
 		return plugin;
-	}
-
-	private Locale getLocale()
-	{	
-		String clientLocale = getValue(lang);
-
-		// The clientLocale takes precedence over the Help Server locale.
-		if (clientLocale != null) {
-			if (clientLocale.indexOf("_") != -1) {
-				return new Locale(clientLocale.substring(0, 2), clientLocale.substring(3, 5));
-			} else {
-				return new Locale(clientLocale.substring(0, 2), "_  ");
-				// In case client locale only contains language info and no country info
-			}
-		}
-		else
-			return Locale.getDefault();
-	}
-		
+	}	
 		
 		
 	public boolean isCacheable() {

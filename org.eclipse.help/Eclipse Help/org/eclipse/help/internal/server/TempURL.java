@@ -77,7 +77,7 @@ public class TempURL extends HelpURL {
 				File.separatorChar,
 				'/');
 		try {
-			File f = new File(path + "/" + url);
+			File f = new File(path + "/nl/"+getLocale().toString()+"/" + url);
 			if (!f.exists())
 				return null;
 			contentSize = f.length();
