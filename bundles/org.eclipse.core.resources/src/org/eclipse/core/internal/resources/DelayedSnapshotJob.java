@@ -24,6 +24,7 @@ public class DelayedSnapshotJob extends Job {
 	public DelayedSnapshotJob(SaveManager manager) {
 		super(MSG_SNAPSHOT);
 		this.saveManager = manager;
+		setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
 	/*
 	 * @see Job#run()
