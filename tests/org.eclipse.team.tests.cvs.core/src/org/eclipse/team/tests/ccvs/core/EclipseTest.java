@@ -9,73 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Import;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.connection.*;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
-import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
@@ -835,6 +790,32 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}
 	}
 
+	protected void write(IStatus status, int indent) {
+		PrintStream output = System.out;
+		indent(output, indent);
+		output.println("Severity: " + status.getSeverity());
+
+		indent(output, indent);
+		output.println("Plugin ID: " + status.getPlugin());
+
+		indent(output, indent);
+		output.println("Code: " + status.getCode());
+
+		indent(output, indent);
+		output.println("Message: " + status.getMessage());
+		
+		Throwable t = status.getException();
+		if (t != null) {
+			t.printStackTrace(output);
+		}
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++)
+				write(children[i], indent + 1);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#runBare()
 	 */
