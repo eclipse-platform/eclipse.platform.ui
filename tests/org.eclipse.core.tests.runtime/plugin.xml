@@ -27,10 +27,10 @@
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.adapters">
-		<adapter
-			adaptableType="org.eclipse.core.tests.runtime.TestAdaptable"
-			adapterType="org.eclipse.core.tests.runtime.TestAdapter">
-		</adapter>
+		<factory class="org.eclipse.core.tests.runtime.TestAdapterFactory"
+			adaptableType="org.eclipse.core.tests.runtime.TestAdaptable">
+			<adapter type="org.eclipse.core.tests.runtime.TestAdapter"/>
+		</factory>
 	</extension>
 
   <extension point="org.eclipse.core.tests.harness.tests">
