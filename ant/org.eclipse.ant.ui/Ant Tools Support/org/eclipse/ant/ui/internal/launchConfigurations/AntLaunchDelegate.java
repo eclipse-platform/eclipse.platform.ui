@@ -179,7 +179,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 			port= SocketUtil.findFeePort();
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
-			userProperties.put("eclipse.connect.port", Integer.toString(port));
+			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 		}
 		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, vmTypeID != null);
 		if (vmTypeID != null) {
