@@ -281,10 +281,10 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 		else {
 			//If there is a current working update defer the setting
-			if (fUpdateThread == null || fUpdateThread.fStop){
+			if (fUpdateThread == null || fUpdateThread.fStop) {
 				fList.setSelection(selection);
 				fList.notifyListeners(SWT.Selection, new Event());
-			}else
+			} else
 				fUpdateThread.selectIndices(selection);
 		}
 	}
@@ -549,13 +549,7 @@ public class FilteredList extends Composite {
 		 */
 		public void updateSelection(final int[] indices) {
 
-			fDisplay.syncExec(new Runnable() {
-				public void run() {
-					selectAndNotify(indices);
-				}
-
-			});
-
+			selectAndNotify(indices);
 		}
 
 		/**
@@ -563,16 +557,12 @@ public class FilteredList extends Composite {
 		 */
 		public void defaultSelect() {
 
-			fDisplay.syncExec(new Runnable() {
-				public void run() {
-					/**
-					 * Reset to the first selection if no
-					 * index has been queued.
-					 */
-					
-					selectAndNotify(new int[] { 0 });
-				}
-			});
+			/**
+			* Reset to the first selection if no
+			* index has been queued.
+			*/
+
+			selectAndNotify(new int[] { 0 });
 
 		}
 
@@ -580,9 +570,20 @@ public class FilteredList extends Composite {
 		 * Select the supplied indices and notify any listeners
 		 * @param indices
 		 */
-		private void selectAndNotify(int[] indices) {
-			fTable.setSelection(indices);
-			fTable.notifyListeners(SWT.Selection, new Event());
+		private void selectAndNotify(final int[] indices) {
+
+			fDisplay.syncExec(new Runnable() {
+				public void run() {
+					//It is possible that the table was disposed
+					//before the update finished. If so then leave
+					if (fTable.isDisposed())
+						return;
+					fTable.setSelection(indices);
+					fTable.notifyListeners(SWT.Selection, new Event());
+				}
+
+			});
+
 		}
 
 	}
