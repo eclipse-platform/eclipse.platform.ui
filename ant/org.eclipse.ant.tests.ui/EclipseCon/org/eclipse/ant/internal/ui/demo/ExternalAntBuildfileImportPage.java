@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -64,9 +63,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public class ExternalAntBuildfileImportPage extends WizardPage {
 
@@ -76,6 +79,12 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			return pathName.getName().endsWith(".xml");
 		}
 	};
+	
+	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		public String queryOverwrite(String file) {
+			return ALL;
+		}	
+	}	
 
 	//Keep track of the directory that we browsed to last time
 	//the wizard was invoked.
@@ -87,7 +96,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private Button browseButton;
 	private IProjectDescription description;
 	
-	private File fBuildfile;
 	private AntModel fAntModel;
 	private IDocument fCurrentDocument;
 
@@ -206,7 +214,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText("&Browse...");
+		this.browseButton.setText("B&rowse...");
 		this.browseButton.setFont(dialogFont);
 		setButtonLayoutData(this.browseButton);
 		
@@ -294,12 +302,12 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 			String result = dialog.open();
 			if (result == null) {
-				fBuildfile= null;
+				return;
 			}
 			IPath filterPath= new Path(dialog.getFilterPath());
 			String buildFileName= dialog.getFileName();
 			IPath path= filterPath.append(buildFileName).makeAbsolute();	
-			fBuildfile= path.toFile();
+			
 //			previouslyBrowsedDirectory = selectedDirectory;
 			locationPathField.setText(path.toOSString());
 //			setProjectName(projectFile(previouslyBrowsedDirectory));
@@ -355,15 +363,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		return workspace;
 	}
 
-
-	/**
-	 * Return whether or not the specifed location is a prefix
-	 * of the root.
-	 */
-	private boolean isPrefixOfRoot(IPath locationPath) {
-		return Platform.getLocation().isPrefixOf(locationPath);
-	}
-
 	/**
 	 * Set the project name using either the name of the
 	 * parent of the file or the name entry in the xml for 
@@ -396,41 +395,34 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	}
 
 	/**
-	 * Return a.project file from the specified location.
+	 * Return a .xml file from the specified location.
 	 * If there isn't one return null.
 	 */
-	private File projectFile(String locationFieldContents) {
-		File directory = new File(locationFieldContents);
-		if (directory.isFile())
+	private File getBuildFile(String locationFieldContents) {
+		File buildFile = new File(locationFieldContents);
+		if (!buildFile.isFile() && buildFile.exists()) { 
 			return null;
+		}
 
-		File[] files = directory.listFiles(this.projectFilter);
-		if (files != null && files.length == 1)
-			return files[0];
-		else
-			return null;
+		return buildFile;
 	}
 
 	/**
-	 * Creates a new project resource with the selected name.
-	 * <p>
-	 * In normal usage, this method is invoked after the user has pressed Finish on
-	 * the wizard; the enablement of the Finish button implies that all controls
-	 * on the pages currently contain valid values.
-	 * </p>
+	 * Creates a new project resource based on the Ant buildfile.
 	 *
 	 * @return the created project resource, or <code>null</code> if the project
 	 *    was not created
 	 */
 	protected IJavaProject createProject() {
 		
-		fAntModel= getAntModel(fBuildfile);
+		fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
 		AntProjectNode projectNode= getProjectNode();
 		
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
 		final IJavaProject[] result= new IJavaProject[1];
 		final String projectName= getProjectName(projectNode);
+		final File buildFile= getBuildFile(getProjectLocationFieldValue());
 		if (javacNodes.size() > 1) {
 			MessageDialog.openInformation(
 				getShell(),
@@ -447,8 +439,9 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				Iterator iter= javacTasks.iterator();
 				while (iter.hasNext()) {
 					Javac javacTask = (Javac) iter.next();
-					
-					result[0]= creator.createJavaProjectFromJavacNode(projectName, javacTask);
+					IJavaProject javaProject= creator.createJavaProjectFromJavacNode(projectName, javacTask);
+					importBuildFile(monitor, javaProject.getPath(), buildFile);
+					result[0]= javaProject;
 				}
 			}
 		};
@@ -470,6 +463,27 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		return result[0];
 	}
 	
+	protected void importBuildFile(IProgressMonitor monitor, IPath destPath, File buildFile) {
+		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
+		List files = new ArrayList(1);
+		
+		files.add(buildFile);
+		File rootDir= buildFile.getParentFile();
+		try {
+			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
+			op.setCreateContainerStructure(false);
+			op.run(monitor);
+		} catch (InterruptedException e) {
+			// should not happen
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			if (t instanceof CoreException) {	
+				ErrorDialog.openError(getShell(), "Error occurred importing buildfile",
+				null, ((CoreException) t).getStatus());
+			}
+		}
+	}
+
 	private List resolveJavacTasks(List javacNodes) {
 		List resolvedJavacTasks= new ArrayList(javacNodes.size());
 		Iterator nodes= javacNodes.iterator();
