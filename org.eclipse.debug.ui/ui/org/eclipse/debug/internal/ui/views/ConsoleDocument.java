@@ -151,7 +151,6 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		} catch (BadLocationException ble) {
 			DebugUIPlugin.logError(ble);
 		}
-		
 	}
 
 	

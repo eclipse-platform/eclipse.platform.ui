@@ -191,6 +191,7 @@ public class VariablesViewer extends TreeViewer {
 							treeItem.setImage(getDisabledImage(image));
 						}
 					} catch (DebugException e) {
+						DebugUIPlugin.logError(e);
 					}
 				}
 			}

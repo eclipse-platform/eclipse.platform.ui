@@ -145,6 +145,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
 				}
 			} catch (DebugException de) {
+				DebugUIPlugin.logError(de);
 			}
 		}
 		return getDefaultText(item);

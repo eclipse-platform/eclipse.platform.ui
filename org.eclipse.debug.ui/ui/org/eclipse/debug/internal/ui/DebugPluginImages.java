@@ -18,7 +18,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * The images provided by the debug plugin.
@@ -161,6 +160,7 @@ public class DebugPluginImages {
 					iconURL = new URL(iconURL, iconPath);			
 					desc= ImageDescriptor.createFromURL(iconURL);
 				} catch (MalformedURLException e) {
+					DebugUIPlugin.logError(e);
 				} 
 				imageRegistry.put(launcher.getIdentifier(), desc);				
 				imageDescriptors.put(launcher.getIdentifier(), desc);
@@ -180,12 +180,12 @@ public class DebugPluginImages {
 				iconURL = new URL(iconURL, iconPath);
 				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
 			} catch (MalformedURLException mue) {
+				DebugUIPlugin.logError(mue);
 			}
 			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);			
 			imageRegistry.put(configTypeID, imageDescriptor);				
 			imageDescriptors.put(configTypeID, imageDescriptor);
-		}
-		
+		}	
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class DebugPluginImages {
 		try {
 			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
 		} catch (MalformedURLException me) {
-			
+			DebugUIPlugin.logError(me);
 		}
 		imageRegistry.put(key, desc);
 		imageDescriptors.put(key, desc);

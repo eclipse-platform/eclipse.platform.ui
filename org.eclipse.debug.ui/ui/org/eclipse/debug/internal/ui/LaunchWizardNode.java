@@ -62,7 +62,8 @@ public class LaunchWizardNode implements IWizardNode {
 		}
 		try {
 			fWizard= createWizard(); // create instance of target wizard
-		} catch (CoreException e) {		
+		} catch (CoreException e) {
+			DebugUIPlugin.logError(e);		
 			DebugUIPlugin.errorDialog(fParentWizardPage.getControl().getShell(), DebugUIMessages.getString("LaunchWizardNode.Problem_Opening_Wizard_4"),DebugUIMessages.getString("LaunchWizardNode.The_selected_wizard_could_not_be_started._5") , e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}

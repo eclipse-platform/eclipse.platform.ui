@@ -329,6 +329,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				candidateResource = candidateResource.getParent();
 			}
 		} catch (CoreException ce) {
+			DebugPlugin.logError(ce);
 		}
 			
 		// Otherwise, return the default associated with the resource's file extension
@@ -466,6 +467,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
 		} catch (CoreException ce) {
+			DebugPlugin.logError(ce);
 		}
 	}
 	

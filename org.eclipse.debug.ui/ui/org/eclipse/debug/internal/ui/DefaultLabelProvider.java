@@ -202,6 +202,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				buff.append(config.getType().getName());
 			} catch (CoreException e) {
 				//XXX: unknown configuration type
+				DebugUIPlugin.logError(e);
 			}
 			buff.append("]"); //$NON-NLS-1$
 			return buff.toString();			
@@ -216,6 +217,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				valueString= value.getValueString();
 			} catch (DebugException de) {
+				DebugUIPlugin.logError(de);
 			}
 		}
 		if (valueString != null && valueString.length() > 0) {
@@ -234,6 +236,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			buffer.append(" = "); //$NON-NLS-1$
 			buffer.append(value.getValueString());
 		} catch (DebugException de) {
+			DebugUIPlugin.logError(de);
 		}
 		return buffer.toString();
 	}

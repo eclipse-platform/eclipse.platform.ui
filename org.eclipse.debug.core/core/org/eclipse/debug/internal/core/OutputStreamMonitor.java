@@ -163,6 +163,7 @@ public class OutputStreamMonitor implements IStreamMonitor {
 			try {
 				fStream.close();
 			} catch(IOException e) {
+				DebugPlugin.logError(e);
 			}
 		}
 	}
