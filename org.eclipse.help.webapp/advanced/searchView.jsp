@@ -107,3 +107,9 @@ setTimeout('refresh()', 2000);
 </body>
 </html>
 
+
+<%
+// After each search we preserve the scope (working set), if any
+if (data.isSearchRequest())
+	data.saveScope();
+%>

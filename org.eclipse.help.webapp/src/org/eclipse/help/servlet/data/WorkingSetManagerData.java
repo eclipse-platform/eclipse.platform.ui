@@ -59,13 +59,13 @@ public class WorkingSetManagerData extends RequestData {
 		String name = request.getParameter("workingSet");
 		if (name != null && name.length() > 0) {
 
-			String[] books = request.getParameterValues("books");
-			if (books == null)
-				books = new String[0];
+			String[] hrefs = request.getParameterValues("hrefs");
+			if (hrefs == null)
+				hrefs = new String[0];
 			
-			ArrayList selectedElements = new ArrayList(books.length);
-			for (int i = 0; i < books.length; i++) {
-				AdaptableHelpResource res = getAdaptableHelpResource(books[i]);
+			ArrayList selectedElements = new ArrayList(hrefs.length);
+			for (int i = 0; i < hrefs.length; i++) {
+				AdaptableHelpResource res = getAdaptableHelpResource(hrefs[i]);
 				if (res != null)
 					selectedElements.add(res);
 			}
@@ -100,13 +100,13 @@ public class WorkingSetManagerData extends RequestData {
 				oldName = name;
 			WorkingSet ws = wsmgr.getWorkingSet(oldName);
 			if (ws != null) {
-				String[] books = request.getParameterValues("books");
-				if (books == null)
-					books = new String[0];
+				String[] hrefs = request.getParameterValues("hrefs");
+				if (hrefs == null)
+					hrefs = new String[0];
 				
-				ArrayList selectedElements = new ArrayList(books.length);
-				for (int i = 0; i < books.length; i++) {
-					AdaptableHelpResource res = getAdaptableHelpResource(books[i]);
+				ArrayList selectedElements = new ArrayList(hrefs.length);
+				for (int i = 0; i < hrefs.length; i++) {
+					AdaptableHelpResource res = getAdaptableHelpResource(hrefs[i]);
 					if (res != null)
 						selectedElements.add(res);
 				}

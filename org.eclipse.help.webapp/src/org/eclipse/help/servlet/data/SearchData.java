@@ -13,6 +13,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.servlet.*;
 import org.eclipse.help.servlet.UrlUtil;
 
 /**
@@ -53,7 +54,7 @@ public class SearchData extends RequestData {
 		}
 
 		// try loading search results or get the indexing progress info.
-		if (isSearchRequest()) {
+		if (isSearchRequest() && !isScopeRequest()) {
 			loadSearchResults();
 
 			if (!isProgressRequest()) {
@@ -67,17 +68,6 @@ public class SearchData extends RequestData {
 			}
 		}
 
-		// if a working set is defined, set it in the preferences
-		String workingSet = request.getParameter("workingSet");
-		if (workingSet != null
-			&& !workingSet.equals(
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					HelpSystem.WORKING_SET))) {
-			HelpPlugin.getDefault().getPluginPreferences().setValue(
-				HelpSystem.WORKING_SET,
-				workingSet);
-			HelpPlugin.getDefault().savePluginPreferences();
-		}
 	}
 
 	/**
@@ -93,6 +83,13 @@ public class SearchData extends RequestData {
 	 */
 	public boolean isProgressRequest() {
 		return (hits == null && indexCompletion != 100);
+	}
+
+	/**
+	 * Returns true when there is a request to change the scope (working set)
+	 */
+	public boolean isScopeRequest() {
+		return (request.getParameter("workingSet") != null);
 	}
 
 	/**
@@ -179,6 +176,48 @@ public class SearchData extends RequestData {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the working set selected. This is used to display the working set
+	 * name in the search banner.
+	 * @return String
+	 */
+	public String getScope() {
+		String workingSetName;
+		if (isSearchRequest()) {
+			workingSetName = request.getParameter("scope");
+		} else if (isScopeRequest()) {
+			workingSetName = request.getParameter("workingSet");
+		} else {
+			workingSetName =
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					HelpSystem.WORKING_SET);
+		}
+
+		if (workingSetName == null || workingSetName.length() == 0)
+			workingSetName = WebappResources.getString("All", request);
+		return workingSetName;
+	}
+
+	/**
+	 * This method is used to persist the working set name and is called
+	 * from the search view, after each search.
+	 */
+	public void saveScope() {
+		if (getMode() == MODE_INFOCENTER)
+			return;
+		// if a working set is defined, set it in the preferences
+		String workingSet = request.getParameter("workingSet");
+		if (workingSet != null
+			&& !workingSet.equals(
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					HelpSystem.WORKING_SET))) {
+			HelpPlugin.getDefault().getPluginPreferences().setValue(
+				HelpSystem.WORKING_SET,
+				workingSet);
+			HelpPlugin.getDefault().savePluginPreferences();
+		}
 	}
 
 	/**

@@ -7,7 +7,6 @@
 <% 
 	SearchData data = new SearchData(application, request);
 	WebappPreferences prefs = data.getPrefs();
-	WorkingSetManagerData workingSetData = new WorkingSetManagerData(application, request);
 %>
 
 
@@ -55,7 +54,8 @@ INPUT {
 }
 
 A {
-	color:#0066FF;
+	color:WindowText;
+	text-decoration:none;
 }
 
 #searchTable {
@@ -75,14 +75,19 @@ A {
 	border:1px solid WindowText;
 }
 
-
-#workingSet {
+#scopeLabel {
 	text-decoration:underline; 
-	text-align:right;
 	color:#0066FF; 
 	cursor:hand;
+	padding-left:10px;
+}
+
+#workingSet { 
+	text-align:right;
 	margin-left:4px;
 	border:0px;
+	color:WindowText;
+	text-decoration:none;
 }
 
 <%
@@ -106,7 +111,10 @@ var h = 300;
 
 function openAdvanced()
 {
-	var workingSet = document.getElementById("scope").firstChild.nodeValue;
+	var scope = document.getElementById("scope").firstChild;
+	var workingSet = "";
+	if (scope != null)
+	 	workingSet = document.getElementById("scope").firstChild.nodeValue;
 	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
@@ -137,7 +145,7 @@ function doSearch(query)
 			return;
 		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
 		if (workingSet != '<%=WebappResources.getString("All", request)%>')
-			query = query +"&scope="+workingSet+"&workingSet="+workingSet;
+			query = query +"&scope="+workingSet;//+"&workingSet="+workingSet;
 	}
 	query=query+"&encoding=js";
 		
@@ -182,11 +190,11 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					&nbsp;Scope:
+					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Scope", request)%></a>:
 				</td>
 				<td nowrap>
-					<input type="hidden" name="workingSet" value='<%=workingSetData.getWorkingSetName()%>' >
-					<a id="scope" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=workingSetData.getWorkingSetName()%></a>
+					<input type="hidden" name="workingSet" value='<%=data.getScope()%>' >
+					<div id="scope" ><%=data.getScope()%></div>
 				</td>
 			</tr>
 

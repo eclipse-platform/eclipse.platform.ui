@@ -130,8 +130,8 @@ function doSubmit()
 		if (!workingSet || workingSet == "")
 			return;
 	
-		var books = getSelectedResources();
-		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ books+"&oldName="+escape(oldName);
+		var hrefs = getSelectedResources();
+		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ hrefs+"&oldName="+escape(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
 		window.close();
@@ -139,7 +139,7 @@ function doSubmit()
 }
 
 function getSelectedResources() {
-	var books = "";
+	var hrefs = "";
 	var inputs = document.getElementsByTagName("INPUT");
 	for (var i=0; i<inputs.length; i++)
 	{
@@ -147,12 +147,12 @@ function getSelectedResources() {
 		if (inputs[i].checked == false) continue;
 		if (getGrayed(inputs[i])) continue;
 		if (isToc(inputs[i].name)) {
-			books += "&books="+escape(inputs[i].name);
+			hrefs += "&hrefs="+escape(inputs[i].name);
 		} else if (!isParentTocSelected(inputs[i].name)) {
-			books += "&books="+escape(inputs[i].name);
+			hrefs += "&hrefs="+escape(inputs[i].name);
 		}
 	}
-	return books;
+	return hrefs;
 }
 
 // Assumption: last character of a toc reference cannot be underscore _
