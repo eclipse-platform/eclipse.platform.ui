@@ -162,6 +162,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			public void run() {
 				//must do a full refresh to re-sort
 				projectViewer.refresh();
+				//update the status line
+				handleSelectionChanged((IStructuredSelection) projectViewer.getSelection());
 			}
 		});
 	}
@@ -310,7 +312,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
+				handleSelectionChanged((IStructuredSelection)event.getSelection());
 			}
 		});
 		
@@ -355,24 +357,24 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Updates the actions and status line for selection change in one of the
 	 * viewers.
 	 */
-	private void handleSelectionChanged(SelectionChangedEvent event) {
+	private void handleSelectionChanged(IStructuredSelection selection) {
 		updateProjectActions();
-		Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
-		Object selection = null;
+		Iterator selectionIter = selection.iterator();
+		AntElementNode selected = null;
 		if (selectionIter.hasNext()) {
-			selection = selectionIter.next();
+			selected = (AntElementNode) selectionIter.next();
 		}
 		String messageString= null;
 		if (!selectionIter.hasNext()) { 
-		    if (selection != null) {
-		        String errorString= ((AntElementNode)selection).getProblemMessage();
+		    if (selected != null) {
+		        String errorString= selected.getProblemMessage();
 		        if (errorString != null) {
 		            getViewSite().getActionBars().getStatusLineManager().setErrorMessage(errorString);
 		            return;
 		        }
 		    }
 		    getViewSite().getActionBars().getStatusLineManager().setErrorMessage(null);
-			messageString= getStatusLineText((AntElementNode)selection);
+			messageString= getStatusLineText(selected);
 		} 
 		getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 	}
@@ -448,7 +450,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		contentProvider.add(project);
 		projectViewer.refresh();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		updateProjectActions();
+		handleSelectionChanged(new StructuredSelection(project));
 	}
 
 	/**
@@ -467,7 +469,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (children.length > 0) {
 			ViewerSorter sorter= projectViewer.getSorter();
 			sorter.sort(projectViewer, children);
-			projectViewer.setSelection(new StructuredSelection(children[0]));
+			IStructuredSelection selection= new StructuredSelection(children[0]);
+			projectViewer.setSelection(selection);
+			handleSelectionChanged(selection);
 		}
 	}
 
