@@ -49,7 +49,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					final int[] result = new int[] { Dialog.OK };
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 					final ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(shell, project);
-					dialog.setTitle(Policy.bind("CheckoutAsAction.enterProjectTitle", name));	
+					dialog.setTitle(Policy.bind("CheckoutAsAction.enterProjectTitle", name)); //$NON-NLS-1$
 
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -66,7 +66,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					// prompt if the project exists locally
 					project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 					PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { project },
-						getOverwriteLocalAndFileSystemPrompt(), Policy.bind("ReplaceWithAction.confirmOverwrite"));
+						getOverwriteLocalAndFileSystemPrompt(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 					if (prompt.promptForMultiple().length == 0) return;
 
 					monitor.beginTask(null, 100);

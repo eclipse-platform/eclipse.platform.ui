@@ -44,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -256,9 +257,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			final boolean[] exists = new boolean[] {true};
 			final List exceptions = new ArrayList();
 			final IUpdateMessageListener listener = new IUpdateMessageListener() {
-				public void directoryInformation(ICVSFolder parent, IPath path, boolean newDirectory) {
+				public void directoryInformation(ICVSFolder commandRoot, IPath path, boolean newDirectory) {
 					try {
-						path = getRelativePathRootRelativePath(parent, path);
+						path = getRelativePathFromRootRelativePath(commandRoot, path);
 						if (newDirectory && path.segmentCount() == 1) {
 							newRemoteDirectories.add(path.lastSegment());
 							progress.subTask(path.lastSegment().toString());
@@ -270,7 +271,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 				public void directoryDoesNotExist(ICVSFolder parent, IPath path) {
 					try {
-						path = getRelativePathRootRelativePath(parent, path);
+						path = getRelativePathFromRootRelativePath(parent, path);
 						if (path.isEmpty()) {
 							// the remote folder doesn't exist
 							exists[0] = false;
@@ -282,7 +283,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				public void fileInformation(int type, ICVSFolder parent, String filename) {
 					try {
 						IPath filePath = new Path(filename);
-						filePath = getRelativePathRootRelativePath(parent, filePath);	
+						filePath = getRelativePathFromRootRelativePath(parent, filePath);	
 						if( filePath.segmentCount() == 1 ) {
 							String properFilename = filePath.lastSegment();
 							newRemoteFiles.add(properFilename);
@@ -734,13 +735,16 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return tag1.equals(tag2);
 	}
 	
-	protected IPath getRelativePathRootRelativePath(ICVSFolder root, IPath path) throws CVSException {
+	/*
+	 * The given root must be an ancestor of the receiver (or the receiver)
+	 * and the path of the receiver must be a prefix of the provided path.
+	 */
+	protected IPath getRelativePathFromRootRelativePath(ICVSFolder root, IPath path) throws CVSException {
+		// If the root is the receiver, then the path is already relative to the receiver
 		if (root == this) {
 			return path;
 		}
-		if (path.isEmpty()) {
-			throw new CVSException(Policy.bind("RemoteFolder.invalidPath"));
-		}
-		return getRelativePathRootRelativePath((ICVSFolder)root.getChild(path.segment(0)), path.removeFirstSegments(1));
+		Assert.isTrue( ! path.isEmpty());
+		return getRelativePathFromRootRelativePath((ICVSFolder)root.getChild(path.segment(0)), path.removeFirstSegments(1));
 	}
 }

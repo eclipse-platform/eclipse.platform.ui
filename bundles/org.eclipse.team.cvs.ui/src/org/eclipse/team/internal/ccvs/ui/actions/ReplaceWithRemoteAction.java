@@ -31,7 +31,7 @@ public class ReplaceWithRemoteAction extends TeamAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					PromptingDialog dialog = new PromptingDialog(getShell(), getSelectedResources(), 
-						getPromptCondition(), Policy.bind("ReplaceWithAction.confirmOverwrite"));
+						getPromptCondition(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 					IResource[] resources = dialog.promptForMultiple();
 					if(resources.length == 0) {
 						// nothing to do

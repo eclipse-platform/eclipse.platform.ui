@@ -93,7 +93,7 @@ public class AddToWorkspaceAction extends TeamAction {
 					
 					PromptingDialog prompt = new PromptingDialog(getShell(), projects, 
 																  getOverwriteLocalAndFileSystemPrompt(), 
-																  Policy.bind("ReplaceWithAction.confirmOverwrite"));
+																  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 					projects = prompt.promptForMultiple();
 															
 					monitor.beginTask(null, 100);
@@ -140,10 +140,10 @@ public class AddToWorkspaceAction extends TeamAction {
 			public String promptMessage(IResource resource) {
 				File localLocation  = getFileLocation(resource);
 				if(resource.exists()) {
-					return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());
+					return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());//$NON-NLS-1$
 				} else {
-					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", resource.getName());
-				}
+					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", resource.getName());//$NON-NLS-1$
+				}//$NON-NLS-1$
 			}
 			private File getFileLocation(IResource resource) {
 				return new File(resource.getParent().getLocation().toFile(), resource.getName());

@@ -57,7 +57,7 @@ public class TagSelectionDialog extends Dialog {
 	 * @param resource The resource to select a version for.
 	 */
 	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title) {
-		this(parentShell, getCVSFoldersFor(projects), title, Policy.bind("TagSelectionDialog.Select_a_Tag_1"), true);
+		this(parentShell, getCVSFoldersFor(projects), title, Policy.bind("TagSelectionDialog.Select_a_Tag_1"), true); //$NON-NLS-1$
 	}
 	
 	private static ICVSFolder[] getCVSFoldersFor(IProject[] projects) {

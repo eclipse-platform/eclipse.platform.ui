@@ -51,7 +51,7 @@ public class ReplaceWithTagAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(), 
 																  PromptingDialog.getOverwriteLocalChangesPrompt(), 
-																  Policy.bind("ReplaceWithAction.confirmOverwrite"));
+																  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 				final IResource[] resources = prompt.promptForMultiple();
 				if(resources.length == 0) {
 					// nothing to do

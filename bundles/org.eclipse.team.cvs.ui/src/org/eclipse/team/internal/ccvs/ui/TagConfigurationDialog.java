@@ -390,7 +390,7 @@ public class TagConfigurationDialog extends Dialog {
 			try {
 				CVSUIPlugin.runWithProgress(getShell(), true /*cancelable*/, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask(Policy.bind("Updating tags"), filesSelection.length);
+						monitor.beginTask(Policy.bind("TagConfigurationDialog.22"), filesSelection.length); //$NON-NLS-1$
 						try {
 							for (int i = 0; i < filesSelection.length; i++) {
 								ICVSFile file = filesSelection[i].getCVSFile();

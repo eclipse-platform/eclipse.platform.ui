@@ -57,7 +57,7 @@ public class TagAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-					getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));
+					getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
 				IResource[] resources = prompt.promptForMultiple();
 				if(resources.length == 0) {
 					// nothing to do
@@ -105,7 +105,7 @@ public class TagAction extends TeamAction {
 			if(resourceCount[0] == 1) {
 				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
 			} else {
-				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", 
+				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", //$NON-NLS-1$
 												  Integer.toString(resourceCount[0] - failureCount[0]), Integer.toString(failureCount[0])), null); //$NON-NLS-1$
 			}
 			for (int i = 0; i < messages.size(); i++) {
@@ -185,7 +185,7 @@ public class TagAction extends TeamAction {
 				return CVSDecorator.isDirty(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return Policy.bind("TagAction.uncommittedChanges", resource.getName());
+				return Policy.bind("TagAction.uncommittedChanges", resource.getName());//$NON-NLS-1$
 			}
 		};
 	}

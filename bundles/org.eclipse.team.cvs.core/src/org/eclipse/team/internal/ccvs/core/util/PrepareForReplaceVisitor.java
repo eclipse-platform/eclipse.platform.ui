@@ -74,7 +74,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 		ICVSResource[] ignoredFiles = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.IGNORED_MEMBERS);
 		for (int i = 0; i < ignoredFiles.length; i++) {
 			ICVSResource cvsResource = ignoredFiles[i];
-			if (cvsResource.getName().startsWith(".#")) {
+			if (cvsResource.getName().startsWith(".#")) { //$NON-NLS-1$
 				cvsResource.delete();
 			}
 		}

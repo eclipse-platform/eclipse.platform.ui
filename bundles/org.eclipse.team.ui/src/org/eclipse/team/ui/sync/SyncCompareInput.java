@@ -393,8 +393,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				try {
-					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("SyncView.saveTitle"),
-						Policy.bind("SyncView.saveMessage"));
+					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("SyncView.saveTitle"),//$NON-NLS-1$
+						Policy.bind("SyncView.saveMessage"));//$NON-NLS-1$
 					if (result[0]) {
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) throws CoreException {
@@ -404,7 +404,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 					}
 				} catch (CoreException e) {
 					IStatus status = e.getStatus();
-					ErrorDialog.openError(getShell(), status.getMessage(), Policy.bind("SyncView.errorSaving"), status);
+					ErrorDialog.openError(getShell(), status.getMessage(), Policy.bind("SyncView.errorSaving"), status);//$NON-NLS-1$
 					result[0] = false;
 				}
 			}

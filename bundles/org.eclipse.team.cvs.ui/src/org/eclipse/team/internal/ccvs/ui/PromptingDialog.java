@@ -80,7 +80,7 @@ public class PromptingDialog {
 				return CVSDecorator.isDirty(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());
+				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$
 			}
 		};
 	}
