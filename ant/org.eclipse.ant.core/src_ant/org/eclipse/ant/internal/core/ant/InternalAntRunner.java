@@ -695,16 +695,6 @@ public class InternalAntRunner {
 	}
 
 	protected boolean preprocessCommandLine(List commands) {
-	
-		if (commands.remove("-help")) { //$NON-NLS-1$
-			printUsage();
-			return false;
-		}
-		
-		if (commands.remove("-version")) { //$NON-NLS-1$
-			printVersion();
-			return false;
-		}
 		
 		String[] args = getArguments(commands, "-listener"); //$NON-NLS-1$
 		if (args != null) {
@@ -718,7 +708,7 @@ public class InternalAntRunner {
 		if (args != null) {
 			fLoggerClassname = args[0];
 		}
-	
+		
 		return true;
 	}
 	
@@ -727,6 +717,16 @@ public class InternalAntRunner {
 	 * Returns whether it is OK to run the script.
 	 */
 	protected boolean processCommandLine(List commands) {
+		
+		if (commands.remove("-help")) { //$NON-NLS-1$
+			printUsage();
+			return false;
+		}
+		
+		if (commands.remove("-version")) { //$NON-NLS-1$
+			printVersion();
+			return false;
+		}
 		
 		if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
 			printVersion();
