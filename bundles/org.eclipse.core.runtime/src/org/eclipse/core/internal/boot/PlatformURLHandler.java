@@ -43,6 +43,7 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 			spec = spec.substring(1); //$NON-NLS-1$
 		int ix = spec.indexOf("/"); //$NON-NLS-1$
 		if (ix == -1) {
+			//TODO need to create message in catalog and use Policy to retrieve it 
 			String message = "url.invalidURL";
 			throw new MalformedURLException(message);
 		}
@@ -50,19 +51,22 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 		String type = spec.substring(0, ix);
 		Constructor construct = (Constructor) connectionType.get(type);
 		if (construct == null) {
+			//TODO need to use Policy to retrieve it (message already defined in catalog)
 			String message = "url.badVariant";
 			throw new MalformedURLException(message);
 		}
 
-		PlatformURLConnection c = null;
+		PlatformURLConnection connection = null;
 		try {
-			c = (PlatformURLConnection) construct.newInstance(new Object[] { url });
+			connection = (PlatformURLConnection) construct.newInstance(new Object[] { url });
 		} catch (Exception e) {
+			//TODO original exception is lost - consider wrapping it into the IOException
+			//TODO need to create message in catalog and use Policy to retrieve it
 			String message = "url.createConnection";
 			throw new IOException(message);
 		}
-		c.setResolvedURL(c.resolve());
-		return c;
+		connection.setResolvedURL(connection.resolve());
+		return connection;
 	}
 	public static void register(String type, Class connectionClass) {
 		try {

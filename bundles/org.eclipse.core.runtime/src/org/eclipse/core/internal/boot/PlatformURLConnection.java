@@ -64,25 +64,28 @@ public abstract class PlatformURLConnection extends URLConnection {
 		connect(false);
 	}
 	private synchronized void connect(boolean asLocal) throws IOException {
-		if (!connected) {
-			if (shouldCache(asLocal)) {
-				try {
-					URL inCache = getURLInCache();
-					if (inCache != null)
-						connection = inCache.openConnection();
-				} catch (IOException e) {
-					// failed to cache ... will use resolved URL instead
-				}
-			}
+		if (connected)
+			return;
 
-			// use resolved URL
-			if (connection == null)
-				connection = resolvedURL.openConnection();
-			connected = true;
-			if (DEBUG && DEBUG_CONNECT)
-				debug("Connected as " + connection.getURL()); //$NON-NLS-1$
+		if (shouldCache(asLocal)) {
+			try {
+				URL inCache = getURLInCache();
+				if (inCache != null)
+					connection = inCache.openConnection();
+			} catch (IOException e) {
+				// failed to cache ... will use resolved URL instead
+			}
 		}
+
+		// use resolved URL
+		if (connection == null)
+			connection = resolvedURL.openConnection();
+		connected = true;
+		if (DEBUG && DEBUG_CONNECT)
+			debug("Connected as " + connection.getURL()); //$NON-NLS-1$
 	}
+	//TODO consider refactoring this method... it is too long
+	//TODO avoid cryptic identifiers such as ix, tgt, tmp, srcis, tgtos...
 	private void copyToCache() throws IOException {
 
 		if (isInCache | cachedURL == null)
@@ -201,10 +204,12 @@ public abstract class PlatformURLConnection extends URLConnection {
 		if (!up.equals(PlatformURLHandler.FILE) && 
 			!up.equals(PlatformURLHandler.JAR) &&
 			!up.startsWith(PlatformURLHandler.BUNDLE)) {
+			//TODO: this needs to be properly NL'd 
 			throw new IOException("url.noaccess");
 		}
 		return u;
 	}
+	//TODO consider refactoring this method... it is too long
 	private URL getURLInCache() throws IOException {
 
 		if (!allowCaching())
@@ -277,8 +282,8 @@ public abstract class PlatformURLConnection extends URLConnection {
 	 * to be implemented by subclass
 	 * @return URL resolved URL
 	 */
-
 	protected URL resolve() throws IOException {
+		// TODO throw UnsupportedOperationException instead - this is a bug in subclass, not an actual failure
 		throw new IOException();
 	}
 
@@ -317,18 +322,17 @@ public abstract class PlatformURLConnection extends URLConnection {
 	}
 
 	void setResolvedURL(URL url) throws IOException {
-		if (url == null) {
-			throw new IOException();
-		}
-		if (resolvedURL == null) {
-			int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
-			isJar = -1 != ix;
-			// Resolved URLs containing !/ separator are assumed to be jar URLs.
-			// If the resolved protocol is not jar, new jar URL is created.
-			if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR))
-				url = new URL(PlatformURLHandler.JAR, "", -1, url.toExternalForm()); //$NON-NLS-1$
-			resolvedURL = url;
-		}
+		if (url == null)
+			throw new IOException();		
+		if (resolvedURL != null) 
+			return;
+		int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
+		isJar = -1 != ix;
+		// Resolved URLs containing !/ separator are assumed to be jar URLs.
+		// If the resolved protocol is not jar, new jar URL is created.
+		if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR))
+			url = new URL(PlatformURLHandler.JAR, "", -1, url.toExternalForm()); //$NON-NLS-1$
+		resolvedURL = url;
 	}
 	private boolean shouldCache(boolean asLocal) {
 
@@ -377,6 +381,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 			}
 		}
 	}
+	//TODO consider splitting this method into two or more steps - it is too long 
 	static void startup(String location, String os, String ws, String nl) {
 
 		PlatformURLConnection.os = os;
