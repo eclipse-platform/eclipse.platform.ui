@@ -53,7 +53,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		//No special behaviour on focus
+	    if (viewer != null) {
+	        viewer.getControl().setFocus();
+	    }
 	}
 	/**
 	 * Sets the content provider for the viewer.
