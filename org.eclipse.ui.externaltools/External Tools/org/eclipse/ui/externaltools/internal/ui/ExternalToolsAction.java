@@ -210,7 +210,7 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 			ErrorDialog.openError(
 				window.getShell(), 
 				ToolMessages.getString("ExternalToolsAction.runErrorTitle"), //$NON-NLS-1$;
-				ToolMessages.getString("ExternalToolsAction.runAntProblem"), //$NON-NLS-1$;
+				ToolMessages.getString("ExternalToolsAction.runProblem"), //$NON-NLS-1$;
 				status);
 			return;
 		}
