@@ -47,7 +47,7 @@ public class SearchForBuildFilesAction extends Action {
 				progressDialog.run(false, true, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask("Processing search results", files.length);
-						for (int i = 0; i < files.length; i++) {
+						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String fileName= files[i].getLocation().toString();
 							monitor.subTask(MessageFormat.format("Adding {0}", new String[] {fileName}));
 							ProjectNode project= new ProjectNode(fileName);
