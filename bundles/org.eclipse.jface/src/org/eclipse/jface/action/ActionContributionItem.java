@@ -656,9 +656,12 @@ public void update(String propertyName) {
 						if (commandResolver != null) {
 							accelerator = commandResolver.getAccelerator(commandId);
 							acceleratorText = commandResolver.getAcceleratorText(commandId);
-						}
-					}
-				}				
+						}					
+					} 
+					/* else
+						System.out.println("command is null for action: " + action + ", " + action.getId() + ", " + action.getText());
+					*/
+				} 
 				
 				IContributionManagerOverrides overrides = null;
 					
