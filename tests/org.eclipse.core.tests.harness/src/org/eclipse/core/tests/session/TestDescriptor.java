@@ -46,10 +46,6 @@ public class TestDescriptor extends TestCase {
 		return applicationId;
 	}
 
-	String getMethod() {
-		return method;
-	}
-
 	public String getName() {
 		return getTestMethod();
 	}
