@@ -152,7 +152,7 @@ public class Parser {
 	 * @param reader Reader for external subset DTD
 	 * @param root Plausible root element qname. Any name will do but a
 	 * name that will not cause a validation error is preferred.
-	 * @return IWalker that can be used to traverse document.
+	 * @return ISchema that can be used to traverse document.
 	 * @throws ParseError for NOT_SUPPORTED or PARSE_ERROR.
 	 * @throws IOException
 	 */
