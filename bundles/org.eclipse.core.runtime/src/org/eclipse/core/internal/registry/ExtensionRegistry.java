@@ -101,6 +101,9 @@ public class ExtensionRegistry implements IExtensionRegistry {
 	// deltas not broadcasted yet. Deltas are kept organized by bundle name (fragments go with their host)
 	private transient Map deltas = new HashMap(11);
 
+	//file manager associated with the registry
+	private FileManager currentFileManager = null;
+	
 	// all registry change listeners
 	private transient ListenerList listeners = new ListenerList();
 
@@ -615,7 +618,6 @@ public class ExtensionRegistry implements IExtensionRegistry {
 
 			//Find the cache in the local configuration area
 			File cacheFile = null;
-			FileManager currentFileManager = null;
 			try {
 				currentFileManager = InternalPlatform.getDefault().getRuntimeFileManager();
 				cacheFile = currentFileManager.lookup(TableReader.TABLE, false);
@@ -628,7 +630,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 				Location parentLocation = null;
 				if (currentLocation != null && (parentLocation = currentLocation.getParentLocation()) != null) {
 					try {
-						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), "none"); //$NON-NLS-1$
+						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), parentLocation.isReadOnly() ? "none" : null); //$NON-NLS-1$
 						currentFileManager.open(false);
 						cacheFile = currentFileManager.lookup(TableReader.TABLE, false);
 					} catch (IOException e) {
@@ -723,6 +725,8 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		} catch (IOException e) {
 			//Ignore the exception since we can recompute the cache
 		}
+		if (currentFileManager != InternalPlatform.getDefault().getRuntimeFileManager())
+			currentFileManager.close();
 	}
 
 	private long computeRegistryStamp() {
