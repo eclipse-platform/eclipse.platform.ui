@@ -41,17 +41,13 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
     
     // list of renderingBindings
     private List fBindings = new ArrayList();
-    
-    // list of default bindings
-    private List fDefaultBindings = new ArrayList();
-    
+        
     // singleton manager
     private static MemoryRenderingManager fgDefault;
     
     // elements in the memory renderings extension point
     public static final String ELEMENT_MEMORY_RENDERING_TYPE = "memoryRenderingType"; //$NON-NLS-1$
     public static final String ELEMENT_RENDERING_BINDINGS = "renderingBindings"; //$NON-NLS-1$
-    public static final String ELEMENT_DEFAULT_RENDERINGS = "defaultRenderings"; //$NON-NLS-1$
     
     /**
      * Returns the memory rendering manager.
@@ -98,63 +94,56 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
-        List list = gatherEnabledRenderingTypes(fDefaultBindings, block);
-        return (IMemoryRenderingType[]) list.toArray(new IMemoryRenderingType[list.size()]);
+        List allTypes = new ArrayList();
+        Iterator iterator = fBindings.iterator();
+        while (iterator.hasNext()) {
+            RenderingBindings binding = (RenderingBindings)iterator.next();
+            IMemoryRenderingType[] renderingTypes = binding.getDefaultRenderingTypes(block);
+            for (int i = 0; i < renderingTypes.length; i++) {
+                IMemoryRenderingType type = renderingTypes[i];
+                if (!allTypes.contains(type)) {
+                    allTypes.add(type);
+                }
+            }
+        }
+        return (IMemoryRenderingType[]) allTypes.toArray(new IMemoryRenderingType[allTypes.size()]);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
-        Iterator iterator = fDefaultBindings.iterator();
+        Iterator iterator = fBindings.iterator();
         while (iterator.hasNext()) {
-            DefaultBindings binding = (DefaultBindings)iterator.next();
-            if (binding.hasPrimary() && binding.isEnabled(block)) {
-                return getRenderingType(binding.getPrimaryId());
+            RenderingBindings binding = (RenderingBindings)iterator.next();
+            IMemoryRenderingType renderingType = binding.getPrimaryRenderingType(block);
+            if (renderingType != null) {
+                return renderingType;
             }
         }
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
-        List def = gatherEnabledRenderingTypes(fDefaultBindings, block);
-        List others = gatherEnabledRenderingTypes(fBindings, block);
-        def.addAll(others);
-        return (IMemoryRenderingType[]) def.toArray(new IMemoryRenderingType[def.size()]);
-    }
-    
-    /**
-     * Collects and returns a list of enabled rendering types based on the given bindings,
-     * for the specified memory block.
-     * 
-     * @param bindings bindings to consider
-     * @param block the memory block to consider
-     * @return a list of enabled rendering types based on the given bindings,
-     * for the specified memory block
-     */
-    private List gatherEnabledRenderingTypes(List bindings, IMemoryBlock block) {
-        List types = new ArrayList();
-        Iterator iterator = bindings.iterator();
+        List allTypes = new ArrayList();
+        Iterator iterator = fBindings.iterator();
         while (iterator.hasNext()) {
             RenderingBindings binding = (RenderingBindings)iterator.next();
-            if (binding.isEnabled(block)) {
-                String[] enabledRenderingIds = binding.getRenderingIds(block);
-                for (int i = 0; i < enabledRenderingIds.length; i++) {
-                    String id = enabledRenderingIds[i];
-                    IMemoryRenderingType type = getRenderingType(id);
-                    if (type != null && !types.contains(type)) {
-                        types.add(type);
-                    }
+            IMemoryRenderingType[] renderingTypes = binding.getRenderingTypes(block);
+            for (int i = 0; i < renderingTypes.length; i++) {
+                IMemoryRenderingType type = renderingTypes[i];
+                if (!allTypes.contains(type)) {
+                    allTypes.add(type);
                 }
             }
         }
-        return types;
+        return (IMemoryRenderingType[]) allTypes.toArray(new IMemoryRenderingType[allTypes.size()]);
     }
     
     /**
@@ -179,14 +168,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
                 try {
                     bindings.validate();
                     fBindings.add(bindings);
-                } catch (CoreException e) {
-                    DebugUIPlugin.log(e);
-                }
-            } else if (name.equals(ELEMENT_DEFAULT_RENDERINGS)) {
-                DefaultBindings bindings = new DefaultBindings(element);
-                try {
-                    bindings.validate();
-                    fDefaultBindings.add(bindings);
                 } catch (CoreException e) {
                     DebugUIPlugin.log(e);
                 }

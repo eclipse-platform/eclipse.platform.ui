@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.memory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -22,9 +25,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
+import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
-import org.eclipse.debug.ui.memory.IMemoryRenderingTypeProvider;
 
 /**
  * Represents a renderingBindings element of a memoryRenderings
@@ -32,22 +37,30 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeProvider;
  * 
  * @since 3.1
  */
-class RenderingBindings {
+class RenderingBindings implements IMemoryRenderingBindingsProvider {
     
     // element
     protected IConfigurationElement fConfigurationElement;
     
+    // cached rendering ids
+    private IMemoryRenderingType[] fAllTypes;
+    private IMemoryRenderingType[] fRenderingTypes;
+    private IMemoryRenderingType[] fDefaultTypes;
+    
     // rendering type provider, or null (optional)
-    private IMemoryRenderingTypeProvider fProvider;
+    private IMemoryRenderingBindingsProvider fProvider;
+    
     // optional exprssion
     private Expression fExpression;
-    
-    // cached rendering ids, if specified
-    private String[] fRenderingIds;
 
     // element attribute
     public static final String ATTR_RENDERING_IDS = "renderingIds"; //$NON-NLS-1$
+    public static final String ATTR_DEFAULT_IDS = "defaultIds"; //$NON-NLS-1$
+    public static final String ATTR_PRIMARY = "primaryId"; //$NON-NLS-1$
     public static final String ATTR_PROVIDER = "class"; //$NON-NLS-1$
+    
+    // empty bindings
+    private static final IMemoryRenderingType[] EMPTY = new IMemoryRenderingType[0]; 
     
     /**
      * Constructs a bindings element from the given contribution.
@@ -59,59 +72,88 @@ class RenderingBindings {
     }
     
     /**
-     * Returns the rendering ids attribute as an array of ids, or <code>null</code>
-     * if none.
-     * @return the rendering ids attribute as an array of ids, or <code>null</code>
-     * if none
+     * Returns the non-default bindings specified by this contribution.
+     * 
+     * @return the non-default bindings specified by this contribution
      */
-    String[] getRenderingIds() {
-        if (fRenderingIds == null) {
+    private IMemoryRenderingType[] getBindings() {
+        if (fRenderingTypes == null) {
             String ids = fConfigurationElement.getAttribute(ATTR_RENDERING_IDS);
+            List list = new ArrayList();
+            IMemoryRenderingManager manager = getManager();
             if (ids != null) {
                 String[] strings = ids.split(","); //$NON-NLS-1$
-                fRenderingIds = new String[strings.length];
                 for (int i = 0; i < strings.length; i++) {
-                    String string = strings[i];
-                    fRenderingIds[i] = string.trim();
+                    String id = strings[i].trim();
+                    IMemoryRenderingType type = manager.getRenderingType(id);
+                    if (type != null) {
+                        list.add(type);
+                    }
                 }
             }
+            // remove any default bindings, in case of duplicate specification
+            IMemoryRenderingType[] defaultBindings = getDefaultBindings();
+            for (int i = 0; i < defaultBindings.length; i++) {
+                list.remove(defaultBindings[i]);
+            }
+            fRenderingTypes = (IMemoryRenderingType[]) list.toArray(new IMemoryRenderingType[list.size()]);
         }
-        return fRenderingIds;
+        return fRenderingTypes;
     }
     
     /**
-     * Returns the rendering type ids applicable to the given memory block.
+     * Returns the default bindings specified by this contribution.
      * 
-     * @param block
-     * @return
+     * @return the default bindings specified by this contribution
      */
-    String[] getRenderingIds(IMemoryBlock block) {
-        String[] ids = getRenderingIds();
-        if (ids == null) {
-            IMemoryRenderingTypeProvider provider = getProvider();
-            if (provider == null) {
-                return new String[0];
+    private IMemoryRenderingType[] getDefaultBindings() {
+        if (fDefaultTypes == null) {
+            String ids = fConfigurationElement.getAttribute(ATTR_DEFAULT_IDS);
+            List list = new ArrayList();
+            IMemoryRenderingManager manager = getManager();
+            if (ids != null) {
+                String[] strings = ids.split(","); //$NON-NLS-1$
+                for (int i = 0; i < strings.length; i++) {
+                    String id = strings[i].trim();
+                    IMemoryRenderingType type = manager.getRenderingType(id);
+                    if (type != null) {
+                        list.add(type);
+                    }
+                }
             }
-            IMemoryRenderingType[] types = provider.getRenderingTypes(block);
-            ids = new String[types.length];
-            for (int i = 0; i < types.length; i++) {
-                ids[i] = types[i].getId();
+            // the primary is also considered a default rendering
+            String primaryId = getPrimaryId();
+            if (primaryId != null) {
+                IMemoryRenderingType type = manager.getRenderingType(primaryId);
+                if (type != null) {
+                    list.add(type);
+                }
             }
+            fDefaultTypes = (IMemoryRenderingType[]) list.toArray(new IMemoryRenderingType[list.size()]);
         }
-        return ids;
+        return fDefaultTypes;
+    }  
+    
+    /**
+     * Returns the primary id, or <code>null</code> if none.
+     * 
+     * @return the primary id, or <code>null</code> if none
+     */
+    private String getPrimaryId() {
+        return fConfigurationElement.getAttribute(ATTR_PRIMARY);
     }
     
     /**
      * Returns the provider for this binding or <code>null</code> of none.
      * 
-     * @return
+     * @return the provider for this binding or <code>null</code> of none
      */
-    IMemoryRenderingTypeProvider getProvider() {
+    private IMemoryRenderingBindingsProvider getProvider() {
         if (fProvider == null) {
             String name = fConfigurationElement.getAttribute(ATTR_PROVIDER);
             if (name != null) {
                 try {
-                    fProvider = (IMemoryRenderingTypeProvider) fConfigurationElement.createExecutableExtension(name);
+                    fProvider = (IMemoryRenderingBindingsProvider) fConfigurationElement.createExecutableExtension(name);
                 } catch (CoreException e) {
                     DebugUIPlugin.log(e);
                 }
@@ -121,12 +163,12 @@ class RenderingBindings {
     }
     
     /**
-     * Returns whether this binding is enabled for the given memory block.
+     * Returns whether this binding is applies to the given memory block.
      * 
      * @param block memory block
-     * @return whether this binding is enabled for the given memory block
+     * @return whether this binding is applies to the given memory block
      */
-    boolean isEnabled(IMemoryBlock block) {
+    private boolean isBound(IMemoryBlock block) {
         Expression expression = getExpression();
         if (expression != null) {
             IEvaluationContext context = new EvaluationContext(null, block);
@@ -146,11 +188,14 @@ class RenderingBindings {
      * @exception CoreException if invalid
      */
     void validate() throws CoreException {
-        if (fConfigurationElement.getAttribute(ATTR_RENDERING_IDS) == null
-                && fConfigurationElement.getAttribute(ATTR_PROVIDER) == null) {
-            Status status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR,
-                    "<renderingBindings> element must specify one of " + ATTR_RENDERING_IDS + " or " + ATTR_PROVIDER, null); //$NON-NLS-1$ //$NON-NLS-2$
-            throw new CoreException(status);
+        if (fConfigurationElement.getAttribute(ATTR_PROVIDER) != null) {
+            if (fConfigurationElement.getAttribute(ATTR_RENDERING_IDS) != null ||
+                    fConfigurationElement.getAttribute(ATTR_DEFAULT_IDS) != null ||
+                    fConfigurationElement.getAttribute(ATTR_PRIMARY) != null) {
+                Status status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR,
+                        "<renderingBindings> element cannot specify other attributes when " + ATTR_PROVIDER + " is present", null); //$NON-NLS-1$ //$NON-NLS-2$
+                throw new CoreException(status);
+            }
         }
     }
     
@@ -159,7 +204,7 @@ class RenderingBindings {
      * 
      * @return enablement expression, or <code>null</code> if none
      */
-    Expression getExpression() {
+    private Expression getExpression() {
         if (fExpression == null) {
             IConfigurationElement[] elements = fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
             IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
@@ -172,6 +217,67 @@ class RenderingBindings {
             }
         }
         return fExpression;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+     */
+    public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
+        if (isBound(block)) {
+            IMemoryRenderingBindingsProvider provider = getProvider();
+            if (provider == null) {
+                if (fAllTypes == null) {
+                    IMemoryRenderingType[] defaultBindings = getDefaultBindings();
+                    IMemoryRenderingType[] bindings = getBindings();
+                    fAllTypes = new IMemoryRenderingType[defaultBindings.length + bindings.length];
+                    for (int i = 0; i < defaultBindings.length; i++) {
+                        fAllTypes[i] = defaultBindings[i];
+                    }
+                    for (int i = 0, j = defaultBindings.length; i < bindings.length; i++, j++) {
+                        fAllTypes[j] = bindings[i];
+                    }
+                }
+                return fAllTypes;
+            }
+            return provider.getRenderingTypes(block);
+        }
+        return EMPTY;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+     */
+    public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
+        if (isBound(block)) {
+            IMemoryRenderingBindingsProvider provider = getProvider();
+            if (provider == null) {
+                return getDefaultBindings();
+            }
+            return provider.getDefaultRenderingTypes(block);
+        }
+        return EMPTY;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
+     */
+    public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
+        if (isBound(block)) {
+            IMemoryRenderingBindingsProvider provider = getProvider();
+            if (provider == null) {
+                String primaryId = getPrimaryId();
+                if (primaryId != null) {
+                    return getManager().getRenderingType(primaryId);
+                }
+            } else {
+                return provider.getPrimaryRenderingType(block);
+            }
+        }
+        return null;
+    }
+    
+    private IMemoryRenderingManager getManager() { 
+        return DebugUITools.getMemoryRenderingManager();
     }
     
 }

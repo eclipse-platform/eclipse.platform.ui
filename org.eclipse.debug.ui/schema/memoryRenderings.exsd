@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="memoryRenderings" name="Memory Renderings"/>
       </appInfo>
       <documentation>
-         Allows plug-ins to contribute arbitrary renderings for memory blocks. For example, a rendering may translate raw bytes of a memory block into ASCII characters.
+         Allows plug-ins to contribute arbitrary renderings for memory blocks and bind memory blocks to renderings. For example, a rendering may translate raw bytes of a memory block into ASCII characters.
       </documentation>
    </annotation>
 
@@ -17,7 +17,6 @@
          <choice>
             <element ref="renderingType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="renderingBindings" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="defaultRenderings" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -93,44 +92,31 @@
          <attribute name="renderingIds" type="string">
             <annotation>
                <documentation>
-                  comma delimited list of memory renderings available for the associated type of memory block. When unspecified a &lt;code&gt;class&lt;/code&gt; must be specified. Only one of &lt;code&gt;renderingIds&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; may be specified.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeProvider&lt;/code&gt;, allowing for dynamic rendering bindings. When unspecified, &lt;code&gt;renderingIds&lt;/code&gt; must be specified. Only one of &lt;code&gt;renderingIds&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; may be specified.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="defaultRenderings">
-      <annotation>
-         <documentation>
-            Specifies the default renderings to create for memory blocks.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="enablement" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="renderingIds" type="string">
-            <annotation>
-               <documentation>
-                  comma delimited list of of memory renderings to be created by default for memory blocks of the associated type.  Memory renderings are specified via their &lt;code&gt;renderingId&lt;/code&gt;. An equivalent rendering binding must exist for a default rendering to be considered. When unspecified, &lt;code&gt;primaryId&lt;/code&gt; must be specified.
+                  comma delimited list of memory rendering type identifiers, specifying available rendering types for memory blocks this binding is enabled for. Must not be specified when &lt;code&gt;class&lt;/code&gt; is provided.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="primaryId" type="string">
             <annotation>
                <documentation>
-                  specifies the id of the rendering to be considered primary. When there is more than one default rendering bound to a memory block, the UI may use the information to determine which rendering should be made visible (i.e the primrary one).
+                  memory rendering type identifier, specifying the default rendering type to be considered primary for memory blocks this binding is enabled for. When there is more than one default rendering type bound to a memory block, the UI may use the information to determine which rendering should be made visible (i.e the primrary one). Must not be specified when &lt;code&gt;class&lt;/code&gt; is provided. Clients should be careful to specify only one primary rendering type per memory block.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider&lt;/code&gt;, allowing for dynamic rendering bindings. When specified, &lt;code&gt;renderingIds&lt;/code&gt;, &lt;code&gt;defaultIds&lt;/code&gt;, and &lt;code&gt;primaryId&lt;/code&gt; must not be specified.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultIds" type="string">
+            <annotation>
+               <documentation>
+                  comma delimited list of memory rendering type identifiers, specifying default rendering types for memory blocks this binding is enabled for. Must not be specified when &lt;code&gt;class&lt;/code&gt; is provided.
                </documentation>
             </annotation>
          </attribute>
