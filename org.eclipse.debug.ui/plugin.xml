@@ -1607,12 +1607,6 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.terminate.description"
             id="org.eclipse.debug.ui.commands.Terminate">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.Terminate"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.terminateAndRelaunch.name"
             categoryId="org.eclipse.debug.ui.category.run"
@@ -1625,48 +1619,24 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.suspend.description"
             id="org.eclipse.debug.ui.commands.Suspend">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.debug.ui.debugging"
-            commandId="org.eclipse.debug.ui.commands.Suspend"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openProfile.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openProfile.description"
             id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openRun.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openRun.description"
             id="org.eclipse.debug.ui.commands.OpenRunConfigurations">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.OpenRunConfigurations"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openDebug.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openDebug.description"
             id="org.eclipse.debug.ui.commands.OpenDebugConfigurations">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.debugLast.name"
             categoryId="org.eclipse.debug.ui.category.run"
@@ -1711,12 +1681,6 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.profileLast.description"
             id="org.eclipse.debug.ui.commands.ProfileLast">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.ProfileLast"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.runToLine.name"
             description="%ActionDefinition.runToLine.description"
@@ -1747,36 +1711,18 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.SkipAllBreakpoints">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.toggleWatchpoint.name"
             description="%ActionDefinition.toggleWatchpoint.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleWatchpoint">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.toggleMethodBreakpoint.name"
             description="%ActionDefinition.toggleMethodBreakpoint.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
 <!-- console -->      
       <command
             name="%ActionDefinition.eof.name"
@@ -1811,12 +1757,6 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.DebugView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.DebugView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ViewCommand.breakpointView.name"
             description="%ViewCommand.breakpointView.description"
@@ -1847,51 +1787,29 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.ExpressionView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.ExpressionView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ViewCommand.registerView.name"
             description="%ViewCommand.registerView.description"
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.RegisterView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.RegisterView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ViewCommand.memoryView.name"
             description="%ViewCommand.memoryView.description"
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.MemoryView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.MemoryView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
 <!-- Perspective -->      
 	<command
       		name="%DebugPerspective.name"
       		description="%command.openDebugPerspective.description"
       		categoryId="org.eclipse.ui.category.perspectives"
       		id="org.eclipse.debug.ui.DebugPerspective" />
- <command
+	 <command
        description="%ActionDefinition.removeAllBreakpoints.description"
        categoryId="org.eclipse.debug.ui.category.run"
        name="%ActionDefinition.removeAllBreakpoints.name"
        id="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"/>
- <keyBinding
-       contextId="org.eclipse.ui.globalScope"
-       commandId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
-       keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

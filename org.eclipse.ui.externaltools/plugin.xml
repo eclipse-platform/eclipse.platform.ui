@@ -76,24 +76,12 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
        <command
             name="%ActionDefinition.openExternalToolsConfigurations.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openExternalToolsConfigurations.description"
             id="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
