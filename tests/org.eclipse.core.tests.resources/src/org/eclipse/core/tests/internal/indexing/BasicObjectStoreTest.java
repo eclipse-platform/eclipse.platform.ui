@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class BasicObjectStoreTest extends TestCase {
 		suite.addTest(new BasicObjectStoreTest("testLarge", env));
 		return suite;
 	}
-	
+
 	/**
 	 * Generates a string of length n from a number i.
 	 */
@@ -48,7 +48,7 @@ public class BasicObjectStoreTest extends TestCase {
 		a.write(suffix);
 		return a.toString();
 	}
-	
+
 	// populate an object store with 256 copies of a particular string
 	public void populate(String string) throws Exception {
 		ObjectStore store = new ObjectStore(new TestObjectPolicy());
@@ -59,13 +59,14 @@ public class BasicObjectStoreTest extends TestCase {
 				TestObject object = new TestObject(string.getBytes());
 				ObjectAddress address = store.insertObject(object);
 				addresses.addElement(address);
-				if (i % 16 == 15) store.commit();
+				if (i % 16 == 15)
+					store.commit();
 			}
 		} finally {
 			store.close();
 		}
 	}
-	
+
 	// test object identity
 	public void testIdentity() throws Exception {
 		ObjectStore.delete(env.getFileName());
@@ -200,7 +201,7 @@ public class BasicObjectStoreTest extends TestCase {
 		store.close();
 		return;
 	}
-	
+
 	// update the objects and check the contents again, object size does not change
 	public void testUpdate() throws Exception {
 		ObjectStore.delete(env.getFileName());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,15 +29,18 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				super(message);
 			}
 		}
+
 		class Event {
 			int type;
 			String name;
 			IPath value;
+
 			Event(int type, String name, IPath value) {
 				this.type = type;
 				this.name = name;
 				this.value = value;
 			}
+
 			public boolean equals(Object obj) {
 				if (obj == null || !(obj instanceof Event))
 					return false;
@@ -49,6 +52,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				else
 					return this.value.equals(that.value);
 			}
+
 			public String toString() {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Event(");
@@ -61,6 +65,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				buffer.append(")");
 				return buffer.toString();
 			}
+
 			String stringForType(int type) {
 				switch (type) {
 					case IPathVariableChangeEvent.VARIABLE_CREATED :
@@ -74,11 +79,14 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				}
 			}
 		}
+
 		List expected = new ArrayList();
 		List actual = new ArrayList();
+
 		void addExpectedEvent(int type, String name, IPath value) {
 			expected.add(new Event(type, name, value));
 		}
+
 		void verify() throws VerificationFailedException {
 			String message;
 			if (expected.size() != actual.size()) {
@@ -95,13 +103,16 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				}
 			}
 		}
+
 		void reset() {
 			expected = new ArrayList();
 			actual = new ArrayList();
 		}
+
 		public void pathVariableChanged(IPathVariableChangeEvent event) {
 			actual.add(new Event(event.getType(), event.getVariableName(), event.getValue()));
 		}
+
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
@@ -119,12 +130,14 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	 */
 	public IPathVariableTest() {
 	}
+
 	/**
 	 * Constructor for the class. 
 	 */
 	public IPathVariableTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Return the tests to run.
 	 *  
@@ -133,6 +146,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(IPathVariableTest.class);
 	}
+
 	/**
 	 * Test IPathVariableManager#getPathVariableNames
 	 */
@@ -182,6 +196,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		names = manager.getPathVariableNames();
 		assertTrue("4.1", names.length == 0);
 	}
+
 	/**
 	 * Test IPathVariableManager#getValue and IPathVariableManager#setValue
 	 */
@@ -240,7 +255,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		} catch (CoreException ce) {
 			// success
 		}
-		
+
 		// set value with relative path
 		try {
 			manager.setValue("one", new Path("foo/bar"));
@@ -248,21 +263,22 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		} catch (CoreException ce) {
 			// success
 		}
-		
+
 		// set invalid value (with invalid segment)
 		String invalidPathString = "/a/\\:/b";
 		IPath invalidPath = new Path(invalidPathString);
-		assertTrue("6.0",invalidPath.isAbsolute());				
-		assertTrue("6.1",!Path.EMPTY.isValidPath(invalidPath.toString()));
+		assertTrue("6.0", invalidPath.isAbsolute());
+		assertTrue("6.1", !Path.EMPTY.isValidPath(invalidPath.toString()));
 		assertTrue("6.2", !manager.validateValue(invalidPath).isOK());
 		try {
 			manager.setValue("one", invalidPath);
 			fail("6.3 Accepted invalid variable value in setValue()");
 		} catch (CoreException ce) {
 			// success
-		}		
+		}
 
 	}
+
 	/**
 	 * Test IPathVariableManager#isDefined
 	 */
@@ -281,6 +297,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		}
 		assertTrue("2.1", !manager.isDefined("one"));
 	}
+
 	/**
 	 * Test IPathVariableManager#resolvePath
 	 */
@@ -343,6 +360,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		assertNull("7.0", manager.resolvePath(path));
 
 	}
+
 	/**
 	 * Test IPathVariableManager#testValidateName
 	 */
@@ -362,6 +380,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		assertTrue("1.4", !manager.validateName("FOO ").isOK());
 
 	}
+
 	/**
 	 * Test IPathVariableManager#addChangeListener and IPathVariableManager#removeChangeListener
 	 */
@@ -427,6 +446,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				return true;
 		return false;
 	}
+
 	/**
 	 * Ensure there are no path variables in the workspace.
 	 */

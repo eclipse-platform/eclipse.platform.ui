@@ -23,15 +23,19 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(IProjectDescriptionTest.class);
 	}
+
 	public IProjectDescriptionTest() {
 		super();
 	}
+
 	public IProjectDescriptionTest(String name) {
 		super(name);
 	}
+
 	public void testDescriptionConstant() {
 		assertEquals("1.0", ".project", IProjectDescription.DESCRIPTION_FILE_NAME);
 	}
+
 	/**
 	 * Tests that the description file is not dirtied if the description has not actually
 	 * changed.
@@ -43,7 +47,7 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(project, true);
 		IFile descriptionFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		assertTrue("1.0", descriptionFile.exists());
-		
+
 		long timestamp = descriptionFile.getLocalTimeStamp();
 		try {
 			//wait a bit to ensure that timestamp granularity does not
@@ -67,17 +71,18 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 		}
 		//the timestamp should be the same
 		assertEquals("2.0", timestamp, descriptionFile.getLocalTimeStamp());
-		
+
 		//adding a dynamic reference should not dirty the file
 		try {
 			IProjectDescription description = project.getDescription();
-			description.setDynamicReferences( new IProject[] {target1, target2});
+			description.setDynamicReferences(new IProject[] {target1, target2});
 			project.setDescription(description, IResource.NONE, null);
 		} catch (CoreException e) {
 			fail("3.99", e);
 		}
 		assertEquals("2.1", timestamp, descriptionFile.getLocalTimeStamp());
 	}
+
 	public void testDynamicProjectReferences() {
 		IProject target1 = getWorkspace().getRoot().getProject("target1");
 		IProject target2 = getWorkspace().getRoot().getProject("target2");
@@ -93,8 +98,8 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		description.setReferencedProjects(new IProject[] { target1 });
-		description.setDynamicReferences(new IProject[] { target2 });
+		description.setReferencedProjects(new IProject[] {target1});
+		description.setDynamicReferences(new IProject[] {target2});
 		try {
 			project.setDescription(description, getMonitor());
 		} catch (CoreException e) {
@@ -120,6 +125,7 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 			//should fail
 		}
 	}
+
 	/**
 	 * Tests IProjectDescription project references
 	 */
@@ -142,7 +148,7 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		description.setReferencedProjects(new IProject[] { target });
+		description.setReferencedProjects(new IProject[] {target});
 		try {
 			project.setDescription(description, getMonitor());
 		} catch (CoreException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,11 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 
 	public ProjectOrderTest() {
 	}
+
 	public ProjectOrderTest(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ProjectOrderTest.class);
 		return suite;
@@ -90,7 +92,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			addProjectReference(p3, p2);
 			addProjectReference(p4, p3);
 
-			IProject[] projects = new IProject[] { p4, p3, p2, p5, p1, p0 };
+			IProject[] projects = new IProject[] {p4, p3, p2, p5, p1, p0};
 			IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
 			assertTrue("0.1", oldOrder[1].length == 0);
 			List x = Arrays.asList(oldOrder[0]);
@@ -123,8 +125,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 		IProject p0 = root.getProject("p0");
 		IProject p1 = root.getProject("p1");
 
-		IProject[] projects = new IProject[] {
-		};
+		IProject[] projects = new IProject[] {};
 		IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
 		List x = Arrays.asList(oldOrder[0]);
 		assertTrue("1.1", oldOrder[1].length == 0);
@@ -142,7 +143,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			// open projects show up
 			p0.create(null);
 			p0.open(null);
-			projects = new IProject[] { p0 };
+			projects = new IProject[] {p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.6.1", oldOrder[1].length == 0);
@@ -158,7 +159,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 
 			// closed projects do not show up
 			p0.close(null);
-			projects = new IProject[] { p0 };
+			projects = new IProject[] {p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.6,8", oldOrder[1].length == 0);
@@ -171,7 +172,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			assertTrue("1.6.12", x.size() == 0);
 
 			// non-existent projects do not show up either
-			projects = new IProject[] { p0, p1 };
+			projects = new IProject[] {p0, p1};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.6.13", oldOrder[1].length == 0);
@@ -196,7 +197,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			p1.create(null);
 			p1.open(null);
 
-			projects = new IProject[] { p1, p0 };
+			projects = new IProject[] {p1, p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.7.1", oldOrder[1].length == 0);
@@ -262,7 +263,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			p1.open(null);
 			addProjectReference(p0, p1);
 
-			projects = new IProject[] { p1, p0 };
+			projects = new IProject[] {p1, p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.8.1", oldOrder[1].length == 0);
@@ -294,7 +295,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			p1.open(null);
 			addProjectReference(p1, p0);
 
-			projects = new IProject[] { p1, p0 };
+			projects = new IProject[] {p1, p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.9.1", oldOrder[1].length == 0);
@@ -328,7 +329,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			addProjectReference(p1, p0);
 			addProjectReference(p0, p1);
 
-			projects = new IProject[] { p1, p0 };
+			projects = new IProject[] {p1, p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			List unordered = Arrays.asList(oldOrder[1]);
@@ -469,7 +470,7 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 			addProjectReference(h, d);
 			addProjectReference(h, g);
 
-			IProject[] projects = new IProject[] { a, b, c, d, e, f, g, h };
+			IProject[] projects = new IProject[] {a, b, c, d, e, f, g, h};
 			IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
 			List x = Arrays.asList(oldOrder[0]);
 			List unordered = Arrays.asList(oldOrder[1]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,12 +31,15 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 	public Bug_32076() {
 		super("");
 	}
+
 	public Bug_32076(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		return new TestSuite(Bug_32076.class);
 	}
+
 	public void testFileBugOnWindows() {
 		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
 			return;
@@ -52,7 +55,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			IFile sourceFile = sourceParent.getFile("file1.txt");
 			IFile destinationFile = destinationParent.getFile(sourceFile.getName());
 
-			ensureExistsInWorkspace(new IResource[] { sourceFile, destinationParent }, true);
+			ensureExistsInWorkspace(new IResource[] {sourceFile, destinationParent}, true);
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -142,7 +145,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			// but not this one
 			IFile file2 = folder.getFile("file2.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2, destinationParent }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file2, destinationParent}, true);
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -219,10 +222,11 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	public void testProjectBugOnWindows() {
 		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
 			return;
-	
+
 		IProject sourceProject = null;
 		IProject destinationProject = null;
 		InputStream input = null;
@@ -234,9 +238,9 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			IFile file1 = sourceProject.getFile("file1.txt");
 			// but not this one
 			IFile file2 = sourceProject.getFile("file2.txt");
-	
-			ensureExistsInWorkspace(new IResource[] { file1, file2 }, true);
-	
+
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
 			String attributeValue = getRandomString();
@@ -249,31 +253,31 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			} catch (CoreException e) {
 				fail("0.1", e);
 			}
-	
+
 			// opens a file so it (and its parent) cannot be removed on Windows			
 			try {
 				input = file1.getContents();
 			} catch (CoreException ce) {
 				fail("1.0", ce);
 			}
-	
+
 			try {
 				sourceProject.move(destinationProject.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
 				// success					
 			}
-	
+
 			// the source does not exist
 			assertTrue("3.0", !sourceProject.exists());
 			// the target exists and is in sync
 			assertTrue("3.1", destinationProject.exists());
 			assertTrue("3.2", destinationProject.isSynchronized(IResource.DEPTH_INFINITE));
-	
+
 			// resources have been copied to destination
 			assertTrue("3.4", destinationProject.getFile(file1.getProjectRelativePath()).exists());
 			assertTrue("3.5", destinationProject.getFile(file2.getProjectRelativePath()).exists());
-	
+
 			// ensure marker info has not been lost
 			try {
 				IMarker marker = destinationProject.getFile(file1.getProjectRelativePath()).findMarker(markerId);
@@ -282,11 +286,11 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			} catch (CoreException e) {
 				fail("3.8", e);
 			}
-	
+
 			assertTrue("4.0", !sourceProject.exists());
-	
+
 			assertTrue("5.0", workspace.getRoot().isSynchronized(IResource.DEPTH_INFINITE));
-	
+
 		} finally {
 			try {
 				if (input != null)
@@ -306,7 +310,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
-		IPath roFolderLocation = null;		
+		IPath roFolderLocation = null;
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
@@ -318,8 +322,8 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			IFile sourceFile = roFolder.getFile("file.txt");
 			IFile destinationFile = destinationParent.getFile("file.txt");
 
-			ensureExistsInWorkspace(new IResource[] { sourceFile, destinationParent }, true);
-			
+			ensureExistsInWorkspace(new IResource[] {sourceFile, destinationParent}, true);
+
 			roFolderLocation = roFolder.getLocation();
 
 			// add a marker to a file to ensure the move operation is not losing anything
@@ -386,7 +390,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
-		IPath roFolderLocation = null;		
+		IPath roFolderLocation = null;
 		IPath destinationROFolderLocation = null;
 		IProject project = null;
 		try {
@@ -398,13 +402,13 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			IFile file1 = roFolder.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			IFolder destinationParent = project.getFolder("destination_parent");
-			IFolder destinationROFolder = destinationParent.getFolder(roFolder.getName());			
+			IFolder destinationROFolder = destinationParent.getFolder(roFolder.getName());
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2, destinationParent }, true);
-			
+			ensureExistsInWorkspace(new IResource[] {file1, file2, destinationParent}, true);
+
 			roFolderLocation = roFolder.getLocation();
 			destinationROFolderLocation = destinationROFolder.getLocation();
-			
+
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
 			String attributeValue = getRandomString();
@@ -437,7 +441,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			IFolder destinationFolder = destinationROFolder.getFolder(folder.getName());
 			IFile destinationFile1 = destinationROFolder.getFile(file1.getName());
 			IFile destinationFile2 = destinationFolder.getFile(file2.getName());
-			assertTrue("3.2", destinationROFolder.exists());								
+			assertTrue("3.2", destinationROFolder.exists());
 			assertTrue("3.4", destinationFolder.exists());
 			assertTrue("3.5", destinationFile1.exists());
 			assertTrue("3.6", destinationFile2.exists());
@@ -455,7 +459,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			assertTrue("4.0", !roFolder.exists());
 			assertTrue("4.1", !folder.exists());
 			assertTrue("4.2", !file1.exists());
-			assertTrue("4.3", !file2.exists());			
+			assertTrue("4.3", !file2.exists());
 
 			// refresh the source parent 
 			try {
@@ -468,17 +472,18 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			assertTrue("4.5", roFolder.exists());
 			assertTrue("4.6", folder.exists());
 			assertTrue("4.7", file1.exists());
-			assertTrue("4.8", !file2.exists());			
+			assertTrue("4.8", !file2.exists());
 
 		} finally {
 			if (roFolderLocation != null)
 				CoreFileSystemLibrary.setReadOnly(roFolderLocation.toOSString(), false);
-			if (destinationROFolderLocation != null) 
-				CoreFileSystemLibrary.setReadOnly(destinationROFolderLocation.toOSString(), false);			
+			if (destinationROFolderLocation != null)
+				CoreFileSystemLibrary.setReadOnly(destinationROFolderLocation.toOSString(), false);
 			if (project != null)
 				ensureDoesNotExistInFileSystem(project);
 		}
 	}
+
 	public void testProjectBugOnLinux() {
 		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
@@ -491,7 +496,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			sourceProject = workspace.getRoot().getProject("SourceProject");
 			IProjectDescription sourceDescription = workspace.newProjectDescription(sourceProject.getName());
 			sourceDescription.setLocation(projectLocationParent.append(sourceProject.getName()));
-			
+
 			destinationProject = workspace.getRoot().getProject("DestinationProject");
 			IProjectDescription destinationDescription = workspace.newProjectDescription(destinationProject.getName());
 
@@ -506,10 +511,10 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			} catch (CoreException e) {
 				fail("0.2", e);
 			}
-			
+
 			IFile file1 = sourceProject.getFile("file1.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1}, true);
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -533,7 +538,7 @@ public class Bug_32076 extends EclipseWorkspaceTest {
 			} catch (CoreException ce) {
 				// success				
 			}
-			
+
 			// the source does not exist
 			assertTrue("3.0", !sourceProject.exists());
 			// the target exists and is in sync

@@ -33,9 +33,11 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	public Bug_26294(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		return new TestSuite(Bug_26294.class);
 	}
+
 	/**
 	 * Tries to delete an open project containing an irremovable file.
 	 * Works only for Windows.
@@ -56,15 +58,15 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file3 = folder.getFile("file3.txt");
 			IFile projectFile = project.getFile(new Path(".project"));
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2, file3 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file2, file3}, true);
 			projectRoot = project.getLocation().toFile();
-			
+
 			assertExistsInFileSystem("0.0", file1);
 			assertExistsInFileSystem("0.1", file2);
 			assertExistsInFileSystem("0.2", file3);
 			assertExistsInFileSystem("0.3", folder);
 			assertExistsInFileSystem("0.4", projectFile);
-			
+
 			// opens a file so it cannot be removed on Windows
 			try {
 				input = file1.getContents();
@@ -81,7 +83,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			} catch (CoreException ce) {
 				// success - a file couldn't be removed
 			}
-			
+
 			// Delete is best-case so check all the files. 
 			// Do a check on disk and in the workspace in case something is out of sync.
 			assertExistsInWorkspace("2.1.1", project);
@@ -94,19 +96,19 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			assertDoesNotExistInWorkspace("2.3.1", file2);
 			assertDoesNotExistInFileSystem("2.3.2", file2);
 			assertTrue("2.3.3", file2.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			assertDoesNotExistInWorkspace("2.4.1", file3);
 			assertDoesNotExistInFileSystem("2.4.2", file3);
 			assertTrue("2.4.3", file3.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			assertExistsInWorkspace("2.5.1", folder);
 			assertExistsInFileSystem("2.5.2", folder);
 			assertTrue("2.5.3", folder.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			assertDoesNotExistInWorkspace("2.6.1", projectFile);
 			assertDoesNotExistInFileSystem("2.6.2", projectFile);
 			assertTrue("2.6.3", projectFile.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			assertTrue("2.7.0", project.isSynchronized(IResource.DEPTH_ZERO));
 			assertTrue("2.7.1", project.isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -141,6 +143,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	/**
 	 * Tries to delete an open project containing an irremovable file.
 	 * Works only for Linux with natives.
@@ -159,7 +162,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 			projectRoot = project.getLocation().toFile();
 
 			// marks folder as read-only so its files cannot be deleted on Linux
@@ -226,7 +229,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file2 = project.getFile("file2.txt");
 			IFile file3 = folder.getFile("file3.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2, file3 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file2, file3}, true);
 
 			projectRoot = project.getLocation().toFile();
 
@@ -283,6 +286,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	/**
 	 * Tries to delete a closed project containing an irremovable file.
 	 * Works only for Linux with natives.
@@ -301,7 +305,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file2 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 
 			projectRoot = project.getLocation().toFile();
 
@@ -362,7 +366,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file3 = folder.getFile("file3.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file3 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file3}, true);
 			projectRoot = project.getLocation().toFile();
 
 			// opens a file so it cannot be removed on Windows
@@ -414,6 +418,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	/**
 	 * Tries to delete a folder containing an irremovable file.
 	 * Works only for Linux with natives.
@@ -433,7 +438,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file1 = subFolder.getFile("file1.txt");
 			IFile file3 = folder.getFile("file3.txt");
 
-			ensureExistsInWorkspace(new IResource[] { file1, file3 }, true);
+			ensureExistsInWorkspace(new IResource[] {file1, file3}, true);
 			projectRoot = project.getLocation().toFile();
 
 			// marks sub-folder as read-only so its files cannot be removed on Linux

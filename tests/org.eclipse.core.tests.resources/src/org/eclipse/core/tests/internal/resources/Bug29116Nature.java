@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class Bug29116Nature extends TestNature {
 	public Bug29116Nature() {
 		super();
 	}
+
 	/**
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
@@ -34,7 +35,7 @@ public class Bug29116Nature extends TestNature {
 		IProject project = getProject();
 		IProjectDescription desc = project.getDescription();
 		ICommand[] oldSpec = desc.getBuildSpec();
-		ICommand[] newSpec = new ICommand[oldSpec.length+1];
+		ICommand[] newSpec = new ICommand[oldSpec.length + 1];
 		System.arraycopy(oldSpec, 0, newSpec, 0, oldSpec.length);
 		ICommand newCommand = desc.newCommand();
 		newCommand.setBuilderName(SortBuilder.BUILDER_NAME);
@@ -43,7 +44,7 @@ public class Bug29116Nature extends TestNature {
 		newSpec[oldSpec.length] = newCommand;
 		desc.setBuildSpec(newSpec);
 		project.setDescription(desc, IResource.FORCE | IResource.KEEP_HISTORY, null);
-		
+
 		//run the builder (this should cause the error)
 		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, args, null);
 	}

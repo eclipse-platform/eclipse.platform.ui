@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
+
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * This class tests public API related to building and to build specifications.
  * Specifically, the following methods are tested:
@@ -27,9 +29,11 @@ public class BuilderTest extends AbstractBuilderTest {
 		TestSuite suite = new TestSuite(BuilderTest.class);
 		return suite;
 	}
+
 	public BuilderTest() {
 		super(null);
 	}
+
 	/**
 	 * BuilderTest constructor comment.
 	 * 
@@ -39,6 +43,7 @@ public class BuilderTest extends AbstractBuilderTest {
 	public BuilderTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Tears down the fixture, for example, close a network connection. This
 	 * method is called after a test is executed.
@@ -53,6 +58,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		if (builder != null)
 			builder.reset();
 	}
+
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
@@ -79,7 +85,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
 			command.getArguments().put(SortBuilder.BUILD_ID, "Project1Build1");
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			project1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -94,6 +100,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("1.99", e);
 		}
 	}
+
 	/**
 	 * Tests installing and running a builder that always fails during
 	 * instantation.
@@ -116,7 +123,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			command1.setBuilderName(BrokenBuilder.BUILDER_NAME);
 			ICommand command2 = desc.newCommand();
 			command2.setBuilderName(SortBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[]{command1, command2});
+			desc.setBuildSpec(new ICommand[] {command1, command2});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -141,6 +148,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("4.0", e);
 		}
 	}
+
 	public void testBuildClean() {
 		// Create some resource handles
 		IProject project = getWorkspace().getRoot().getProject("PROJECT");
@@ -156,7 +164,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build spec for the project
 		try {
 			IProjectDescription desc = project.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2")});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -199,6 +207,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 		assertTrue("3.10", verifier.wasFullBuild());
 	}
+
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
@@ -215,7 +224,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		//set the build order
 		try {
 			IWorkspaceDescription workspaceDesc = workspace.getDescription();
-			workspaceDesc.setBuildOrder(new String[]{project1.getName(), project2.getName()});
+			workspaceDesc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
 			workspace.setDescription(workspaceDesc);
 		} catch (CoreException e) {
 		}
@@ -232,7 +241,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			file2.create(getRandomContents(), true, getMonitor());
 			// Do an initial build to get the builder instance
 			IProjectDescription desc = project1.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Project1Build1")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Project1Build1")});
 			project1.setDescription(desc, getMonitor());
 			project1.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 			verifier = SortBuilder.getInstance();
@@ -246,7 +255,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Build spec with no commands
 		try {
 			IProjectDescription desc = project1.getDescription();
-			desc.setBuildSpec(new ICommand[]{});
+			desc.setBuildSpec(new ICommand[] {});
 			project1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.99", e);
@@ -265,7 +274,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = project1.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			project1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("4.99", e);
@@ -282,7 +291,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build specs for project one
 		try {
 			IProjectDescription desc = project1.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Project1Build1")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Project1Build1")});
 			project1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("6.99", e);
@@ -290,7 +299,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build spec for project two
 		try {
 			IProjectDescription desc = project2.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, SortBuilder.BUILDER_NAME, "Project2Build1"), createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, SortBuilder.BUILDER_NAME, "Project2Build1"), createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2")});
 			project2.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("7.99", e);
@@ -324,7 +333,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Change order of build commands
 		try {
 			IProjectDescription desc = project2.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2"), createCommand(desc, SortBuilder.BUILDER_NAME, "Project2Build1")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, DeltaVerifierBuilder.BUILDER_NAME, "Project2Build2"), createCommand(desc, SortBuilder.BUILDER_NAME, "Project2Build1")});
 			project2.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("10.99", e);
@@ -351,6 +360,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("11.99", e);
 		}
 	}
+
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
@@ -378,7 +388,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build specs for project one
 		try {
 			IProjectDescription desc = proj1.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Build0")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
 			proj1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.99", e);
@@ -386,7 +396,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build spec for project two
 		try {
 			IProjectDescription desc = proj2.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Build1"), createCommand(desc, "Build2")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1"), createCommand(desc, "Build2")});
 			proj2.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("3.99", e);
@@ -442,6 +452,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("7.99");
 		}
 	}
+
 	/**
 	 * Ensure that build order is preserved when project is closed/opened.
 	 */
@@ -458,7 +469,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build spec
 		try {
 			IProjectDescription desc = project.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Build1"), createCommand(desc, "Build2")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1"), createCommand(desc, "Build2")});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.99", e);
@@ -484,6 +495,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("4.99", e);
 		}
 	}
+
 	/**
 	 * Tests an implicit workspace build order created by setting dynamic
 	 * project references.
@@ -504,7 +516,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			//establish a build order by adding a dynamic reference from
 			// proj2->proj1
 			IProjectDescription description = proj2.getDescription();
-			description.setDynamicReferences(new IProject[]{proj1});
+			description.setDynamicReferences(new IProject[] {proj1});
 			proj2.setDescription(description, IResource.NONE, null);
 			IWorkspaceDescription wsDescription = getWorkspace().getDescription();
 			wsDescription.setBuildOrder(null);
@@ -515,7 +527,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build specs for project one
 		try {
 			IProjectDescription desc = proj1.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Build0")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
 			proj1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.99", e);
@@ -523,7 +535,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create and set a build spec for project two
 		try {
 			IProjectDescription desc = proj2.getDescription();
-			desc.setBuildSpec(new ICommand[]{createCommand(desc, "Build1"), createCommand(desc, "Build2")});
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1"), createCommand(desc, "Build2")});
 			proj2.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("3.99", e);
@@ -552,7 +564,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			description.setDynamicReferences(new IProject[0]);
 			proj2.setDescription(description, IResource.NONE, null);
 			description = proj1.getDescription();
-			description.setDynamicReferences(new IProject[]{proj2});
+			description.setDynamicReferences(new IProject[] {proj2});
 			proj1.setDescription(description, IResource.NONE, null);
 			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 			verifier.addExpectedLifecycleEvent("Build1");
@@ -563,6 +575,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.99");
 		}
 	}
+
 	/**
 	 * Tests the method IncrementProjectBuilder.forgetLastBuiltState
 	 */
@@ -583,7 +596,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = project.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -636,6 +649,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("99.99", e);
 		}
 	}
+
 	/**
 	 * Tests the lifecycle of a builder.
 	 */
@@ -656,7 +670,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = project.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -710,6 +724,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.1", e);
 		}
 	}
+
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
@@ -736,7 +751,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
 			command.getArguments().put(SortBuilder.BUILD_ID, "Build0");
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			proj1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -760,6 +775,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.0", e);
 		}
 	}
+
 	/**
 	 * Tests that turning autobuild on will invoke a build in the next
 	 * operation.
@@ -783,7 +799,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = project.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[]{command});
+			desc.setBuildSpec(new ICommand[] {command});
 			project.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,23 +37,25 @@ public class BasicPageStoreTest extends TestCase {
 		suite.addTest(new BasicPageStoreTest("testCacheHitsSequential", env));
 		suite.addTest(new BasicPageStoreTest("testCacheHitsCircular", env));
 		suite.addTest(new BasicPageStoreTest("testCacheHitsRandom", env));
-		suite.addTest(new BasicPageStoreTest("testRandomReadWrite", env)); 
+		suite.addTest(new BasicPageStoreTest("testRandomReadWrite", env));
 		return suite;
 	}
 
 	// check a byte array against a value
 	boolean check(byte[] b, byte i) {
 		for (int j = 0; j < b.length; j++) {
-			if (b[j] != i) return false;
+			if (b[j] != i)
+				return false;
 		}
 		return true;
 	}
-	
+
 	// fill a byte array with a value
 	void fill(byte[] b, byte i) {
-		for (int j = 0; j < b.length; j++) b[j] = i;
+		for (int j = 0; j < b.length; j++)
+			b[j] = i;
 	}
-	
+
 	/**
 	 * Creates an initialized 128 page store.
 	 */
@@ -63,23 +65,23 @@ public class BasicPageStoreTest extends TestCase {
 		store.open(env.getFileName());
 		int n = 128;
 		for (int i = 0; i < n; i++) {
-			TestPage p = (TestPage)store.acquire(i);
-			p.fill((byte)i);
+			TestPage p = (TestPage) store.acquire(i);
+			p.fill((byte) i);
 			p.release();
 		}
 		store.close();
 		return n;
 	}
-	
+
 	void printStats(PageStore store) throws Exception {
 		env.println("Number of pages       = " + store.numberOfPages());
 		env.println("Number of writes      = " + store.numberOfFileWrites());
 		env.println("Number of file reads  = " + store.numberOfFileReads());
 		env.println("Number of cache reads = " + store.numberOfCacheHits());
 		env.println("Number of reads       = " + store.numberOfReads());
-		env.println("Cache hit ratio       = " + (float)store.numberOfCacheHits()/(float)store.numberOfReads());
+		env.println("Cache hit ratio       = " + (float) store.numberOfCacheHits() / (float) store.numberOfReads());
 	}
-	
+
 	/**
 	 * Test cache performance using a circular reference pattern.
 	 */
@@ -91,7 +93,7 @@ public class BasicPageStoreTest extends TestCase {
 		store.open(env.getFileName());
 		for (int j = 0; j < 100; j++) {
 			for (int i = 0; i < 41; i++) {
-				TestPage p = (TestPage)store.acquire(i);
+				TestPage p = (TestPage) store.acquire(i);
 				assertTrue(p.check((byte) i));
 				p.release();
 			}
@@ -102,7 +104,7 @@ public class BasicPageStoreTest extends TestCase {
 		store.open(env.getFileName());
 		for (int j = 0; j < 100; j++) {
 			for (int i = 0; i < 40; i++) {
-				TestPage p = (TestPage)store.acquire(i);
+				TestPage p = (TestPage) store.acquire(i);
 				assertTrue(p.check((byte) i));
 				p.release();
 			}
@@ -110,7 +112,7 @@ public class BasicPageStoreTest extends TestCase {
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Test the effect of increasing cache sizes
 	 */
@@ -118,19 +120,19 @@ public class BasicPageStoreTest extends TestCase {
 		env.printHeading("testCacheHitsRandom");
 		PageStore.delete(env.getFileName());
 		int n = initializeStore();
-		for (int m = 0; m <= n; m+=16) {
+		for (int m = 0; m <= n; m += 16) {
 			PageStore store = new PageStore(new TestPagePolicy());
 			store.open(env.getFileName());
 			Random r = new Random(100);
 			for (int i = 0; i < 1000; i++) {
-				TestPage p = (TestPage)store.acquire(Math.abs(r.nextInt() % n));
+				TestPage p = (TestPage) store.acquire(Math.abs(r.nextInt() % n));
 				p.release();
 			}
 			printStats(store);
 			store.close();
 		}
 	}
-	
+
 	/**
 	 * Checks the performance of sequential access.
 	 */
@@ -140,14 +142,14 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore store = new PageStore(new TestPagePolicy());
 		store.open(env.getFileName());
 		for (int i = 0; i < n; i++) {
-			TestPage p = (TestPage)store.acquire(i);
+			TestPage p = (TestPage) store.acquire(i);
 			assertTrue(p.check((byte) i));
 			p.release();
 		}
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 */
 	public void testCreate() throws Exception {
@@ -155,7 +157,7 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore.create(env.getFileName());
 		assertTrue(PageStore.exists(env.getFileName()));
 	}
-	
+
 	/**
 	 */
 	public void testDelete() throws Exception {
@@ -163,7 +165,7 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore.delete(env.getFileName());
 		assertTrue(!PageStore.exists(env.getFileName()));
 	}
-	
+
 	/**
 	 * Tests the log.
 	 */
@@ -177,7 +179,7 @@ public class BasicPageStoreTest extends TestCase {
 		testLogValidate(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Tests the log.
 	 */
@@ -191,7 +193,7 @@ public class BasicPageStoreTest extends TestCase {
 		testLogValidate(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Tests the log.
 	 */
@@ -205,29 +207,29 @@ public class BasicPageStoreTest extends TestCase {
 		testLogValidate(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Populate the store for the logging tests.
 	 */
 	public void testLogPopulate(PageStore store) throws Exception {
 		for (int i = 0; i < 128; i++) {
-			TestPage p = (TestPage)store.acquire(i);
+			TestPage p = (TestPage) store.acquire(i);
 			p.fill((byte) i);
 			p.release();
 		}
 	}
-	
+
 	/**
 	 * Tests the contents of the store for the logging tests.
 	 */
 	public void testLogValidate(PageStore store) throws Exception {
 		for (int i = 0; i < 128; i++) {
-			TestPage p = (TestPage)store.acquire(i);
+			TestPage p = (TestPage) store.acquire(i);
 			assertTrue("Failed checking page " + i, p.check((byte) i));
 			p.release();
 		}
 	}
-	
+
 	/**
 	 * Tests random reading & writing.
 	 */
@@ -236,13 +238,14 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore.delete(env.getFileName());
 		int n = 128;
 		byte[] value = new byte[n];
-		for (int i = 0; i < n; i++) value[i] = 0;
+		for (int i = 0; i < n; i++)
+			value[i] = 0;
 		PageStore store = new PageStore(new TestPagePolicy());
 		store.open(env.getFileName());
 		Random r = new Random(100);
 		for (int i = 0; i < 2000; i++) {
 			int k = Math.abs(r.nextInt() % n);
-			TestPage p = (TestPage)store.acquire(k);
+			TestPage p = (TestPage) store.acquire(k);
 			assertTrue(p.check(value[k]));
 			value[k] = (byte) r.nextInt();
 			p.fill(value[k]);
@@ -251,7 +254,7 @@ public class BasicPageStoreTest extends TestCase {
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Tests read-only access on the store.
 	 */
@@ -270,7 +273,7 @@ public class BasicPageStoreTest extends TestCase {
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Adds & checks 128 8K pages (1 meg) to the page file.
 	 */
@@ -283,7 +286,7 @@ public class BasicPageStoreTest extends TestCase {
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Adds a 64 meg chunk to the page file.
 	 */
@@ -292,11 +295,12 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore.delete(env.getFileName());
 		PageStore store = new PageStore(new TestPagePolicy());
 		store.open(env.getFileName());
-		for (int i = 0; i < 64; i++) writeBlock(store);
+		for (int i = 0; i < 64; i++)
+			writeBlock(store);
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Adds a 16 meg chunk to the page file.
 	 */
@@ -305,11 +309,12 @@ public class BasicPageStoreTest extends TestCase {
 		PageStore.delete(env.getFileName());
 		PageStore store = new PageStore(new TestPagePolicy());
 		store.open(env.getFileName());
-		for (int i = 0; i < 16; i++) writeBlock(store);
+		for (int i = 0; i < 16; i++)
+			writeBlock(store);
 		printStats(store);
 		store.close();
 	}
-	
+
 	/**
 	 * Adds & checks 128 8K pages (1 meg) to the page file.
 	 */
@@ -319,14 +324,14 @@ public class BasicPageStoreTest extends TestCase {
 		int n1 = store.numberOfPages();
 		int n2 = n1 + m;
 		for (int i = n1; i < n2; i++) {
-			p = (TestPage)store.acquire(i);
+			p = (TestPage) store.acquire(i);
 			p.fill((byte) i);
 			p.release();
 		}
 		store.commit();
 		assertEquals(store.numberOfPages(), n2);
 		for (int i = n1; i < n2; i++) {
-			p = (TestPage)store.acquire(i);
+			p = (TestPage) store.acquire(i);
 			assertTrue("Page " + i + " " + p.value(), p.check((byte) i));
 			p.release();
 		}

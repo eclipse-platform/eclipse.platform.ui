@@ -21,6 +21,7 @@ public class TestWorkspaceJob extends WorkspaceJob {
 	private static final int tickLength = 10;
 	private long duration;
 	private boolean touch = false;
+
 	/**
 	 * Creates a workspace job that will run for the specified duration in milliseconds.
 	 * @param duration
@@ -32,6 +33,7 @@ public class TestWorkspaceJob extends WorkspaceJob {
 		if (duration % tickLength > 0)
 			throw new IllegalArgumentException("Use a job duration that it is a multiple of " + tickLength);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.resources.InternalWorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -63,6 +65,7 @@ public class TestWorkspaceJob extends WorkspaceJob {
 		}
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Indicates whether this job should touch the projects in the workspace. By
 	 * default, this is set to false.

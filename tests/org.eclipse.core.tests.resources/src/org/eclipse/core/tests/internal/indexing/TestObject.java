@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ class TestObject extends StoredObject {
 
 	private static final int TYPE = 99;
 	protected byte[] value;
-	
+
 	/**
 	 * Standard constructor -- constructs an object that will be inserted into a store
 	 */
@@ -88,7 +88,7 @@ class TestObject extends StoredObject {
 	public byte[] getValue() {
 		return new Field(value).get();
 	}
-	
+
 	/**
 	 * Updates the value.
 	 */
@@ -104,7 +104,8 @@ class TestObject extends StoredObject {
 		StringBuffer buf = new StringBuffer();
 		buf.append("TestObject(");
 		for (int i = 0; i < value.length; i++) {
-			if (i > 0) buf.append(" ");
+			if (i > 0)
+				buf.append(" ");
 			if (i > 30) {
 				buf.append("...");
 				break;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import junit.framework.*;
 import org.eclipse.core.internal.indexing.*;
 
 public class BasicIndexedStoreTest extends TestCase {
-	
+
 	TestEnvironment env;
-	
+
 	public BasicIndexedStoreTest(String name, TestEnvironment env) {
 		super(name);
 		this.env = env;
@@ -60,7 +60,8 @@ public class BasicIndexedStoreTest extends TestCase {
 	private String generateString(int n, int i) {
 		StringWriter a = new StringWriter();
 		String suffix = Integer.toString(i);
-		for (int k = 0; k < (n - suffix.length()); k++) a.write("0");
+		for (int k = 0; k < (n - suffix.length()); k++)
+			a.write("0");
 		a.write(suffix);
 		return a.toString();
 	}
@@ -90,7 +91,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.commit();
 		}
 		store.close();
-	
+
 		store.open(env.getFileName());
 		index = store.getIndex("Index");
 		IndexCursor c = index.open();
@@ -103,7 +104,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 		store.close();
 	}
-
 
 	/**
 	 * Test for index store mess up recorded in PR 1GCE9JD
@@ -124,7 +124,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * This tests basic cursor insertion, location, and removal operations.
 	 */
@@ -133,13 +132,13 @@ public class BasicIndexedStoreTest extends TestCase {
 		IndexedStore store = new IndexedStore();
 		store.open(env.getFileName());
 		try {
-	
+
 			/* Create an index */
 			store.createIndex("Index1");
 			Index index = store.getIndex("Index1");
 			String key = null;
 			ObjectID id = null;
-	
+
 			/* populate the index using unique values and duplicate keys */
 			for (int i = 0; i < 10; i++) {
 				index.insert("abaa", new ObjectID(i));
@@ -148,7 +147,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				index.insert("acaa", new ObjectID(i));
 			}
 			store.commit();
-	
+
 			/* run the index from beginning to end, testing the values */
 			IndexCursor c = index.open();
 			int i = 0;
@@ -159,7 +158,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				c.next();
 				i++;
 			}
-	
+
 			/* run the index from the end to the beginning, testing the values */
 			i = 19;
 			c.previous();
@@ -170,7 +169,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				i--;
 			}
 			c.close();
-	
+
 			/* find all entries matching a given prefix */
 			c = index.open();
 			key = "ab";
@@ -184,7 +183,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			}
 			assertTrue("assertion 3.1", i == 10);
 			c.close();
-	
+
 			/* find all entries matching a different prefix */
 			key = "ac";
 			c = index.open();
@@ -197,7 +196,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			}
 			assertTrue("assertion 4.1", i == 20);
 			c.close();
-	
+
 			/* find all entries matching a third prefix */
 			key = "a";
 			c = index.open();
@@ -211,7 +210,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			}
 			assertTrue("assertion 5.1", i == 20);
 			c.close();
-	
+
 			/* remove some entries that match a given prefix */
 			key = "ab";
 			c = index.open();
@@ -223,7 +222,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.commit();
 			i = index.getNumberOfEntries();
 			assertTrue("assertion 5.9 value " + i, i == 10);
-	
+
 			/* rescan the index to find all entries that match the short prefix again */
 			key = "a";
 			c = index.open();
@@ -237,7 +236,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			}
 			assertTrue("assertion 6.1", i == 20);
 			c.close();
-	
+
 			/* get the list of all identifiers in the index */
 			Vector v = index.getObjectIdentifiersMatching("a");
 			Iterator idStream = v.iterator();
@@ -254,14 +253,12 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Insert 1000 entries with a key length 64 and value length 0 into an index.
 	 */
 	public void testIndexInsert() throws Exception {
 		insertAndCompare(64, 1000, 1);
 	}
-
 
 	/**
 	 * Tests the insertion of strings -- makes sure conversion to UTF8 is done correctly and that
@@ -276,7 +273,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.createIndex("Index");
 			Index index = store.getIndex("Index");
 			String key, value;
-	
+
 			/* populate the index */
 			for (int i = 0; i < 10000; i++) {
 				key = (new Integer(i)).toString();
@@ -288,7 +285,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		} finally {
 			store.close();
 		}
-	
+
 		/* run the index, testing the key order */
 		store.open(env.getFileName());
 		try {
@@ -307,7 +304,6 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.close();
 		}
 	}
-
 
 	/**
 	 * Tests removal of items.
@@ -348,7 +344,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/** 
 	 * Tests the replacement of values of items in an index.
 	 */
@@ -362,14 +357,14 @@ public class BasicIndexedStoreTest extends TestCase {
 			Index index = store.createIndex("Index");
 			String key;
 			String value = "---*---*---*---*";
-	
+
 			for (i = 0; i < n; i++) {
 				key = generateString(16, i);
 				index.insert(key, "");
 				if (i % 100 == 99)
 					store.commit();
 			}
-	
+
 			IndexCursor c = index.open();
 			c.findFirstEntry();
 			i = 0;
@@ -381,7 +376,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				i++;
 			}
 			assertTrue(i == n);
-	
+
 			c = index.open();
 			c.findFirstEntry();
 			i = 0;
@@ -395,7 +390,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Store sequential keys in an index, retrieve them by cursor and by individual key.
 	 * Make sure there are enough to force some page splitting behavior.  There are runs of 
@@ -407,16 +401,16 @@ public class BasicIndexedStoreTest extends TestCase {
 		int r = 200; /* number of entries in a run of keys */
 		int i;
 		Vector key = new Vector(n);
-	
+
 		env.println("Generating...");
 		for (i = 0; i < n; i++) {
 			key.addElement(generateString(l, i));
 		}
 		env.println("...Done");
-	
+
 		IndexedStore.delete(env.getFileName());
 		IndexedStore store = new IndexedStore();
-	
+
 		env.println("Inserting...");
 		store.open(env.getFileName());
 		try {
@@ -431,7 +425,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.close();
 		}
 		env.println("...Done");
-	
+
 		env.println("Retrieving by cursor...");
 		store.open(env.getFileName());
 		try {
@@ -450,7 +444,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.close();
 		}
 		env.println("...Done");
-	
+
 		env.println("Retrieving by key...");
 		store.open(env.getFileName());
 		try {
@@ -470,7 +464,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		env.println("...Done");
 	}
 
-
 	/**
 	 * Tests usage of multiple cursors in a single thread.
 	 * This is a removal test to ensure there are no interactions between cursors.
@@ -486,14 +479,14 @@ public class BasicIndexedStoreTest extends TestCase {
 		store.open(env.getFileName());
 		try {
 			Index index = store.createIndex("Index");
-	
+
 			/* create and populate an index */
 			for (int i = 0; i < n; i++) {
 				key = generateString(keySize, i);
 				index.insert(key, "");
 			}
 			store.commit();
-	
+
 			/* get and place n cursors at the n entries */
 			IndexCursor[] c = new IndexCursor[n];
 			for (int i = 0; i < n; i++) {
@@ -501,7 +494,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				c[i] = index.open();
 				c[i].find(key);
 			}
-	
+
 			/* remove the entries at the cursors, this will cause cursor adjustment. */
 			for (int i = 0; i < n; i++) {
 				c[i].remove();
@@ -521,7 +514,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Test usage of multiple cursors in a single thread.
 	 * This is a deletion test to ensure that if two cursors point to the
@@ -534,9 +526,9 @@ public class BasicIndexedStoreTest extends TestCase {
 		int keySize = 10;
 		String key;
 		int n = 10; // number of entries
-	
+
 		store.open(env.getFileName());
-	
+
 		try {
 			/* create and populate an index */
 			Index index = store.createIndex("Index");
@@ -545,14 +537,14 @@ public class BasicIndexedStoreTest extends TestCase {
 				index.insert(key, "");
 			}
 			store.commit();
-	
+
 			/* Place two cursors at the same entry */
 			IndexCursor c1 = index.open().findFirstEntry();
 			IndexCursor c2 = index.open().findFirstEntry();
-	
+
 			/* Remove the entry at the first cursor and test the second cursor for results */
 			c1.remove();
-	
+
 			int id = 0;
 			try {
 				c2.remove();
@@ -560,7 +552,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("remove test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.getKey();
@@ -568,7 +560,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("get key test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.getValue();
@@ -576,7 +568,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("get value test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.updateValue("123");
@@ -584,7 +576,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("update value test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.isAtEnd();
@@ -592,7 +584,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("isAtEnd test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.isAtBeginning();
@@ -600,7 +592,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("isAtBeginning test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.isSet();
@@ -608,7 +600,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("isSet test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.next();
@@ -616,7 +608,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("move next test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.previous();
@@ -624,7 +616,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("move previous test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.keyEquals("");
@@ -632,7 +624,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("key equals test", IndexedStoreException.EntryRemoved, id);
-	
+
 			id = 0;
 			try {
 				c2.keyMatches("");
@@ -640,7 +632,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("key matches test", IndexedStoreException.EntryRemoved, id);
-	
+
 			c2.reset();
 			id = 0;
 			try {
@@ -649,14 +641,13 @@ public class BasicIndexedStoreTest extends TestCase {
 				id = e.id;
 			}
 			assertEquals("reset test", 0, id);
-	
+
 			assertEquals("positioning test", c1.getValueAsString(), c2.getValueAsString());
-	
+
 		} finally {
 			store.close();
 		}
 	}
-
 
 	/**
 	 * Test usage of multiple cursors in a single thread.
@@ -665,13 +656,13 @@ public class BasicIndexedStoreTest extends TestCase {
 	public void testMultiCursorSearch() throws Exception {
 		int keySize = 5;
 		int n = 10; /* number of cursors */
-	
+
 		IndexedStore.delete(env.getFileName());
 		IndexedStore store = new IndexedStore();
 		store.open(env.getFileName());
-	
+
 		try {
-	
+
 			/* create and populate an index, all keys and values are unique */
 			Index index = store.createIndex("Index");
 			for (int i = 0; i < 1000; i++) {
@@ -679,30 +670,30 @@ public class BasicIndexedStoreTest extends TestCase {
 				index.insert(key, "");
 			}
 			store.commit();
-	
+
 			/* get n cursors and position them at the first entry */
 			IndexCursor[] c = new IndexCursor[n];
 			for (int i = 0; i < n; i++) {
 				c[i] = index.open();
 				c[i].findFirstEntry();
 			}
-	
+
 			/* search using the cursors, cursors should never be left in an unset state. */
 			for (int i = 0; i < 100; i++) {
-	
+
 				/* save the keys at each cursor -- gives a snapshot of the state */
 				String[] savedKeys = new String[n];
 				for (int j = 0; j < n; j++) {
 					savedKeys[j] = c[j].getKeyAsString();
 				}
-	
+
 				/* select a random cursor, position in the index, direction, and length to scan */
 				int pos = random(0, 999);
 				int length = random(10, 40);
 				int direction = ((random(0, 1) == 0) ? -1 : 1);
 				int selection = random(0, n - 1);
 				IndexCursor cx = c[selection];
-	
+
 				/* scan starting at the cursor, skipping the begin/end state */
 				String key = generateString(keySize, pos);
 				cx.find(key);
@@ -725,7 +716,7 @@ public class BasicIndexedStoreTest extends TestCase {
 							pos = 0;
 					}
 				}
-	
+
 				/* check the other cursors for any side effects */
 				for (int j = 0; j < n; j++) {
 					if (j == selection)
@@ -740,7 +731,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Test usage of multiple cursors in a single thread.
 	 * This is an update test to ensure there are no interactions between cursors.
@@ -754,7 +744,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		int valueSize2 = 2000;
 		String key, value;
 		int n = 10; /* number of cursors */
-	
+
 		/* create and populate an index, all keys and values are unique */
 		store.open(env.getFileName());
 		try {
@@ -765,7 +755,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				index.insert(key, value);
 			}
 			store.commit();
-	
+
 			/* get n cursors and position them at the n entries */
 			IndexCursor[] c = new IndexCursor[n];
 			for (int i = 0; i < n; i++) {
@@ -773,12 +763,12 @@ public class BasicIndexedStoreTest extends TestCase {
 				key = generateString(keySize, i);
 				c[i].find(key);
 			}
-	
+
 			/* 
-			Update the values at the cursors. 
-			This will cause major splitting. 
-			Test cursor values after each update. 
-			*/
+			 Update the values at the cursors. 
+			 This will cause major splitting. 
+			 Test cursor values after each update. 
+			 */
 			for (int i = 0; i < n; i++) {
 				value = generateString(valueSize2, i);
 				c[i].updateValue(value);
@@ -789,14 +779,13 @@ public class BasicIndexedStoreTest extends TestCase {
 					assertEquals(v1, v2);
 				}
 			}
-	
+
 			for (int i = 0; i < n; i++)
 				c[i].close();
 		} finally {
 			store.close();
 		}
 	}
-
 
 	/** 
 	 * Timed test for creation and retrieval of 100000 simple objects.
@@ -805,7 +794,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		IndexedStore.delete(env.getFileName());
 		IndexedStore store = new IndexedStore();
 		HashSet ids = new HashSet();
-	
+
 		store.open(env.getFileName());
 		try {
 			int n = 100000;
@@ -821,7 +810,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		} finally {
 			store.close();
 		}
-	
+
 		store.open(env.getFileName());
 		try {
 			Iterator idStream = ids.iterator();
@@ -834,9 +823,8 @@ public class BasicIndexedStoreTest extends TestCase {
 		} finally {
 			store.close();
 		}
-	
-	}
 
+	}
 
 	/**
 	 * Tests the creation and updating of objects in the store.
@@ -864,7 +852,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Tests the creating, updating, and deleting of objects in the store.
 	 * This test generates object names and objects, stores the names in an 
@@ -886,7 +873,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				env.print(i, 8);
 				int k = Math.abs(r.nextInt());
 				int k1 = k % 100; // used to gen name
-				int k2 = k % 2;    // used to gen operation
+				int k2 = k % 2; // used to gen operation
 				name = "Object" + generateString(20, k1);
 				value = "Value" + k1;
 				cursor.find(name);
@@ -895,16 +882,18 @@ public class BasicIndexedStoreTest extends TestCase {
 					String foundValue = store.getObjectAsString(id);
 					assertEquals(value, foundValue);
 					switch (k2) {
-						case 0: // delete object named x if it exists
+						case 0 :
+							// delete object named x if it exists
 							env.println(" Deleting  " + name);
 							store.removeObject(id);
 							cursor.remove();
 							break;
-						case 1: 
+						case 1 :
 							env.println(" Updating  " + name);
 							store.updateObject(id, value);
 							break;
-						default: // no operation
+						default :
+							// no operation
 							env.println(" Nothing");
 					}
 				} else {
@@ -921,7 +910,6 @@ public class BasicIndexedStoreTest extends TestCase {
 			store.close();
 		}
 	}
-
 
 	/**
 	 * Tests simple recovery APIs.
@@ -947,7 +935,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Tests simple creation and deletion of an IndexedStore.
 	 */
@@ -957,7 +944,6 @@ public class BasicIndexedStoreTest extends TestCase {
 		store.open(env.getFileName());
 		store.close();
 	}
-
 
 	/**
 	 * Tests simple transaction APIs.

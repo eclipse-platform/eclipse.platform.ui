@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,21 +26,23 @@ import org.eclipse.core.runtime.CoreException;
 public class MarkerAttributeChangeListener extends Assert implements IResourceChangeListener {
 	//Map of (Long(id) -> Map of (String(attribute key) -> Object(attribute value)))
 	private Map attributeMap = new HashMap();
-	
+
 	//cache the exception because it can't be thrown from a listener
 	private AssertionFailedError error;
-	
+
 	public void expectChanges(IMarker marker) throws CoreException {
 		expectChanges(new IMarker[] {marker});
 	}
+
 	public void expectChanges(IMarker[] markers) throws CoreException {
 		error = null;
 		attributeMap.clear();
-		
+
 		for (int i = 0; i < markers.length; i++) {
 			attributeMap.put(new Long(markers[i].getId()), markers[i].getAttributes());
 		}
 	}
+
 	/**
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
@@ -52,13 +54,15 @@ public class MarkerAttributeChangeListener extends Assert implements IResourceCh
 			error = e;
 		}
 	}
+
 	private void checkDelta(IMarkerDelta[] deltas) throws AssertionFailedError {
 		assertEquals("wrong number of changes", attributeMap.size(), deltas.length);
 		for (int i = 0; i < deltas.length; i++) {
-			Map values = (Map)attributeMap.get(new Long(deltas[i].getId()));
+			Map values = (Map) attributeMap.get(new Long(deltas[i].getId()));
 			assertEquals("Changes different from expecations", deltas[i].getAttributes(), values);
 		}
 	}
+
 	/**
 	 * Verifies that the delta was as expected.  Throws an appropriate
 	 * assertion failure if the delta did not meet expectations.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,99 +26,103 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 	private IFolder sorted1, sorted2, unsorted1, unsorted2;
 	private IFile sortedFile1, sortedFile2, unsortedFile1, unsortedFile2;
 
-/**
- * Constructor for TestBuilderDeltaSerialization.
- */
-public TestBuilderDeltaSerialization() {
-	super();
-}
-/**
- * Constructor for TestBuilderDeltaSerialization.
- * @param name
- */
-public TestBuilderDeltaSerialization(String name) {
-	super(name);
-}
-protected void setUp() throws Exception {
-	super.setUp();
-	IWorkspaceRoot root = getWorkspace().getRoot();
-	project1 = root.getProject("Project1");
-	unsorted1 = project1.getFolder(SortBuilder.UNSORTED_FOLDER);
-	sorted1 = project1.getFolder(SortBuilder.SORTED_FOLDER);
-	unsortedFile1 = unsorted1.getFile("File1");
-	sortedFile1 = sorted1.getFile("File1");
-
-	project2 = root.getProject("Project2");
-	unsorted2 = project2.getFolder(SortBuilder.UNSORTED_FOLDER);
-	sorted2 = project2.getFolder(SortBuilder.SORTED_FOLDER);
-	unsortedFile2 = unsorted2.getFile("File2");
-	sortedFile2 = sorted2.getFile("File2");
-}
-/**
- * Create projects, setup a builder, and do an initial build.
- */
-public void test1() {
-	IResource[] resources = {project1, project2, unsorted1, unsorted2, sorted1, sorted2, unsortedFile1, unsortedFile2};
-	ensureExistsInWorkspace(resources, true);
-	
-	try {
-		//give unsorted files some initial content
-		unsortedFile1.setContents(new ByteArrayInputStream(new byte[] {1, 4, 3}), true, true, null);
-		unsortedFile2.setContents(new ByteArrayInputStream(new byte[] {1, 4, 3}), true, true, null);
-		
-		//turn off autobuild
-		IWorkspace workspace = getWorkspace();
-		IWorkspaceDescription desc = workspace.getDescription();
-		desc.setAutoBuilding(false);
-		desc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
-		workspace.setDescription(desc);
-	
-		//configure builder for project1
-		IProjectDescription description = project1.getDescription();
-		ICommand command = description.newCommand();
-		Map args = command.getArguments();
-		args.put(SortBuilder.BUILD_ID, "Project1Build1");
-		args.put(SortBuilder.INTERESTING_PROJECT, project2.getName());
-		command.setBuilderName(SortBuilder.BUILDER_NAME);
-		command.setArguments(args);
-		description.setBuildSpec(new ICommand[] {command});
-		project1.setDescription(description, getMonitor());
-
-		//configure builder for project2
-		description = project1.getDescription();
-		command = description.newCommand();
-		args = command.getArguments();
-		args.put(SortBuilder.BUILD_ID, "Project2Build1");
-		args.put(SortBuilder.INTERESTING_PROJECT, project1.getName());
-		command.setBuilderName(SortBuilder.BUILDER_NAME);
-		command.setArguments(args);
-		description.setBuildSpec(new ICommand[] {command});
-		project2.setDescription(description, getMonitor());
-
-		//initial build -- created sortedFile1 and sortedFile2
-		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-		
-		getWorkspace().save(true, getMonitor());
-	} catch (CoreException e) {
-		fail("2.0", e);
+	/**
+	 * Constructor for TestBuilderDeltaSerialization.
+	 */
+	public TestBuilderDeltaSerialization() {
+		super();
 	}
-}
-/**
- * Do another build immediately after restart.  Builder1 should be invoked because it cares
- * about changes made by Builder2 during the last build phase.
- */
-public void test2() {
-	try {
-		getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-	} catch (CoreException e) {
-		fail("1.99", e);
+
+	/**
+	 * Constructor for TestBuilderDeltaSerialization.
+	 * @param name
+	 */
+	public TestBuilderDeltaSerialization(String name) {
+		super(name);
 	}
-	//Only builder1 should have been built
-	SortBuilder[] builders = SortBuilder.allInstances();
-	assertEquals("1.0", 2, builders.length);
-	assertTrue("1.1", builders[0].wasBuilt());	
-	assertTrue("1.2", builders[0].wasIncrementalBuild());	
-	assertTrue("1.3", !builders[1].wasBuilt());	
-}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		project1 = root.getProject("Project1");
+		unsorted1 = project1.getFolder(SortBuilder.UNSORTED_FOLDER);
+		sorted1 = project1.getFolder(SortBuilder.SORTED_FOLDER);
+		unsortedFile1 = unsorted1.getFile("File1");
+		sortedFile1 = sorted1.getFile("File1");
+
+		project2 = root.getProject("Project2");
+		unsorted2 = project2.getFolder(SortBuilder.UNSORTED_FOLDER);
+		sorted2 = project2.getFolder(SortBuilder.SORTED_FOLDER);
+		unsortedFile2 = unsorted2.getFile("File2");
+		sortedFile2 = sorted2.getFile("File2");
+	}
+
+	/**
+	 * Create projects, setup a builder, and do an initial build.
+	 */
+	public void test1() {
+		IResource[] resources = {project1, project2, unsorted1, unsorted2, sorted1, sorted2, unsortedFile1, unsortedFile2};
+		ensureExistsInWorkspace(resources, true);
+
+		try {
+			//give unsorted files some initial content
+			unsortedFile1.setContents(new ByteArrayInputStream(new byte[] {1, 4, 3}), true, true, null);
+			unsortedFile2.setContents(new ByteArrayInputStream(new byte[] {1, 4, 3}), true, true, null);
+
+			//turn off autobuild
+			IWorkspace workspace = getWorkspace();
+			IWorkspaceDescription desc = workspace.getDescription();
+			desc.setAutoBuilding(false);
+			desc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
+			workspace.setDescription(desc);
+
+			//configure builder for project1
+			IProjectDescription description = project1.getDescription();
+			ICommand command = description.newCommand();
+			Map args = command.getArguments();
+			args.put(SortBuilder.BUILD_ID, "Project1Build1");
+			args.put(SortBuilder.INTERESTING_PROJECT, project2.getName());
+			command.setBuilderName(SortBuilder.BUILDER_NAME);
+			command.setArguments(args);
+			description.setBuildSpec(new ICommand[] {command});
+			project1.setDescription(description, getMonitor());
+
+			//configure builder for project2
+			description = project1.getDescription();
+			command = description.newCommand();
+			args = command.getArguments();
+			args.put(SortBuilder.BUILD_ID, "Project2Build1");
+			args.put(SortBuilder.INTERESTING_PROJECT, project1.getName());
+			command.setBuilderName(SortBuilder.BUILDER_NAME);
+			command.setArguments(args);
+			description.setBuildSpec(new ICommand[] {command});
+			project2.setDescription(description, getMonitor());
+
+			//initial build -- created sortedFile1 and sortedFile2
+			workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+
+			getWorkspace().save(true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+	}
+
+	/**
+	 * Do another build immediately after restart.  Builder1 should be invoked because it cares
+	 * about changes made by Builder2 during the last build phase.
+	 */
+	public void test2() {
+		try {
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//Only builder1 should have been built
+		SortBuilder[] builders = SortBuilder.allInstances();
+		assertEquals("1.0", 2, builders.length);
+		assertTrue("1.1", builders[0].wasBuilt());
+		assertTrue("1.2", builders[0].wasIncrementalBuild());
+		assertTrue("1.3", !builders[1].wasBuilt());
+	}
 
 }

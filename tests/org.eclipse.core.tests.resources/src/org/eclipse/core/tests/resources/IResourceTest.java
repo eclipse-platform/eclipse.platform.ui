@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,9 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	protected static Set unsynchronizedResources = new HashSet();
 	protected static IPath[] interestingPaths;
 
-	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] { Boolean.TRUE, Boolean.FALSE };
-	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] { Boolean.FALSE, Boolean.TRUE };
-	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
+	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
+	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 
 	/* the delta verifier */
 	ResourceDeltaVerifier verifier;
@@ -73,11 +73,14 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	 * in the filesystem.
 	 */
 	protected static final int S_FILE_TO_FOLDER = 6;
+
 	public IResourceTest() {
 	}
+
 	public IResourceTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Returns interesting resources for refresh local / sync tests. */
 	protected IResource[] buildInterestingResources() {
@@ -85,7 +88,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		IProject fullProject = getWorkspace().getRoot().getProject("FullProject");
 		//resource pattern is: empty file, empty folder, full folder, repeat
 		// with full folder
-		IResource[] resources = buildResources(fullProject, new String[] { "1", "2/", "3/", "3/1", "3/2/", "3/3/", "3/3/1", "3/3/2/" });
+		IResource[] resources = buildResources(fullProject, new String[] {"1", "2/", "3/", "3/1", "3/2/", "3/3/", "3/3/1", "3/3/2/"});
 
 		IResource[] result = new IResource[resources.length + 3];
 		result[0] = getWorkspace().getRoot();
@@ -95,51 +98,32 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(result, true);
 		return result;
 	}
+
 	private IResource[] buildSampleResources(IContainer root) throws CoreException {
 		// do not change the example resources unless you change references to
 		// specific indices in setUp()
-		IResource[] result =
-			buildResources(
-				root,
-				new String[] {
-					"1/",
-					"1/1/",
-					"1/1/1/",
-					"1/1/1/1",
-					"1/1/2/",
-					"1/1/2/1/",
-					"1/1/2/2/",
-					"1/1/2/3/",
-					"1/2/",
-					"1/2/1",
-					"1/2/2",
-					"1/2/3/",
-					"1/2/3/1",
-					"1/2/3/2",
-					"1/2/3/3",
-					"1/2/3/4",
-					"2",
-					"2" });
+		IResource[] result = buildResources(root, new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2"});
 		ensureExistsInWorkspace(result, true);
 		result[result.length - 1] = root.getFolder(new Path("2/"));
 		nonExistingResources.add(result[result.length - 1]);
 
-		IResource[] deleted = buildResources(root, new String[] { "1/1/2/1/", "1/2/3/1" });
+		IResource[] deleted = buildResources(root, new String[] {"1/1/2/1/", "1/2/3/1"});
 		ensureDoesNotExistInWorkspace(deleted);
 		for (int i = 0; i < deleted.length; ++i) {
 			nonExistingResources.add(deleted[i]);
 		}
 		//out of sync
-		IResource[] unsynchronized = buildResources(root, new String[] { "1/2/3/3" });
+		IResource[] unsynchronized = buildResources(root, new String[] {"1/2/3/3"});
 		ensureOutOfSync(unsynchronized[0]);
 		unsynchronizedResources.add(unsynchronized[0]);
 
 		//filesystem only
-		unsynchronized = buildResources(root, new String[] { "1/1/2/2/1" });
+		unsynchronized = buildResources(root, new String[] {"1/1/2/2/1"});
 		ensureExistsInFileSystem(unsynchronized);
 		unsynchronizedResources.add(unsynchronized[0]);
 		return result;
 	}
+
 	/**
 	 * Checks that the after state is as expected.
 	 * @param receiver the resource that was the receiver of the refreshLocal
@@ -185,6 +169,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return true;
 	}
+
 	public void cleanUpAfterRefreshTest(Object[] args) {
 		IResource receiver = (IResource) args[0];
 		IResource target = (IResource) args[1];
@@ -203,6 +188,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInWorkspace(changedTarget);
 		ensureExistsInWorkspace(interestingResources, true);
 	}
+
 	/**
 	 * @return Set
 	 * @param File
@@ -221,6 +207,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return result;
 	}
+
 	/**
 	 * @return Set
 	 * @param resource IResource
@@ -252,6 +239,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return result;
 	}
+
 	/**
 	 * @return Set
 	 * @param resource IResource
@@ -271,6 +259,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return result;
 	}
+
 	/**
 	 * Returns an array of all projects in the given resource array. */
 	protected IProject[] getProjects(IResource[] resources) {
@@ -282,6 +271,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return (IProject[]) list.toArray(new IProject[list.size()]);
 	}
+
 	/**
 	 * Returns true if resource1 has parent resource2, in range of the given
 	 * depth. This is basically asking if refreshLocal on resource2 with depth
@@ -302,29 +292,34 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		return false;
 	}
+
 	/**
 	 * Returns interesting resource states. */
 	protected Integer[] interestingDepths() {
-		return new Integer[] { new Integer(IResource.DEPTH_ZERO), new Integer(IResource.DEPTH_ONE), new Integer(IResource.DEPTH_INFINITE)};
+		return new Integer[] {new Integer(IResource.DEPTH_ZERO), new Integer(IResource.DEPTH_ONE), new Integer(IResource.DEPTH_INFINITE)};
 	}
 
 	/**
 	 * Returns interesting resource states. */
 	protected Integer[] interestingStates() {
-		return new Integer[] { new Integer(S_WORKSPACE_ONLY), new Integer(S_FILESYSTEM_ONLY), new Integer(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
-			//		new Integer(S_FOLDER_TO_FILE),
-			//		new Integer(S_FILE_TO_FOLDER),
+		return new Integer[] {new Integer(S_WORKSPACE_ONLY), new Integer(S_FILESYSTEM_ONLY), new Integer(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
+		//		new Integer(S_FOLDER_TO_FILE),
+		//		new Integer(S_FILE_TO_FOLDER),
 		};
 	}
+
 	protected boolean isFile(IResource r) {
 		return r.getType() == IResource.FILE;
 	}
+
 	protected boolean isFolder(IResource r) {
 		return r.getType() == IResource.FOLDER;
 	}
+
 	protected boolean isProject(IResource r) {
 		return r.getType() == IResource.PROJECT;
 	}
+
 	/**
 	 * Returns true if this combination of arguments makes sense. */
 	protected boolean makesSense(IResource receiver, IResource target, int state, int depth) {
@@ -358,6 +353,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		return true;
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		IWorkspaceDescription description = getWorkspace().getDescription();
@@ -407,34 +403,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			interestingResources = new IResource[resources.size()];
 			resources.copyInto(interestingResources);
 
-			String[] interestingPathnames =
-				new String[] {
-					"1/",
-					"1/1/",
-					"1/1/1/",
-					"1/1/1/1",
-					"1/1/2/1/",
-					"1/1/2/2/",
-					"1/1/2/3/",
-					"1/2/",
-					"1/2/1",
-					"1/2/2",
-					"1/2/3/",
-					"1/2/3/1",
-					"1/2/3/2",
-					"1/2/3/3",
-					"1/2/3/4",
-					"2",
-					"2/1",
-					"2/2",
-					"2/3",
-					"2/4",
-					"2/1/",
-					"2/2/",
-					"2/3/",
-					"2/4/",
-					"..",
-					"." };
+			String[] interestingPathnames = new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2/1", "2/2", "2/3", "2/4", "2/1/", "2/2/", "2/3/", "2/4/", "..", "."};
 			interestingPaths = new IPath[interestingPathnames.length];
 			for (int i = 0; i < interestingPathnames.length; i++) {
 				interestingPaths[i] = new Path(interestingPathnames[i]);
@@ -444,6 +413,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			throw ex;
 		}
 	}
+
 	/**
 	 * Sets up the workspace and filesystem for this test. */
 	protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) throws CoreException {
@@ -534,13 +504,15 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				break;
 		}
 	}
+
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
 
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IResourceTest("testSetLocalTimeStamp"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IResourceTest("testSetLocalTimeStamp"));
+		//		return suite;
 	}
+
 	protected void tearDown() throws Exception {
 		if (noSideEffects)
 			return;
@@ -552,6 +524,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		interestingResources = null;
 		super.tearDown();
 	}
+
 	/**
 	 * Performs black box testing of the following method: void
 	 * accept(IResourceVisitor)
@@ -561,12 +534,15 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		class LoggingResourceVisitor implements IResourceVisitor {
 			Vector visitedResources = new Vector();
+
 			void clear() {
 				visitedResources.removeAllElements();
 			}
+
 			void recordVisit(IResource r) {
 				visitedResources.addElement(r);
 			}
+
 			public boolean visit(IResource r) {
 				throw new RuntimeException("this class is abstract");
 			}
@@ -586,8 +562,8 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			}
 		};
 
-		LoggingResourceVisitor[] interestingVisitors = new LoggingResourceVisitor[] { shallowVisitor, deepVisitor };
-		Object[][] inputs = new Object[][] { interestingResources, interestingVisitors, TRUE_AND_FALSE, };
+		LoggingResourceVisitor[] interestingVisitors = new LoggingResourceVisitor[] {shallowVisitor, deepVisitor};
+		Object[][] inputs = new Object[][] {interestingResources, interestingVisitors, TRUE_AND_FALSE,};
 		new TestPerformer("IResourceTest.testAccept2") {
 			public boolean shouldFail(Object[] args, int count) {
 				deepVisitor.clear();
@@ -595,9 +571,11 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				IResource resource = (IResource) args[0];
 				return nonExistingResources.contains(resource);
 			}
+
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IResourceVisitor visitor = (IResourceVisitor) args[1];
@@ -605,6 +583,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				resource.accept(visitor, IResource.DEPTH_INFINITE, includePhantoms.booleanValue());
 				return null;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource resource = (IResource) args[0];
 				LoggingResourceVisitor visitor = (LoggingResourceVisitor) args[1];
@@ -629,9 +608,9 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return false;
 				}
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testAddLocalProject() throws CoreException {
@@ -698,7 +677,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("1.0", e);
 		}
 
-		Object[][] inputs = new Object[][] { interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS };
+		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testCopy") {
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
@@ -708,26 +687,28 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return true;
 				if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK())
 					return true;
-				java.io.File destinationParent =
-					destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
+				java.io.File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
 				java.io.File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
 				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
+
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
 				Boolean force = (Boolean) args[2];
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
+					((FussyProgressMonitor) monitor).prepare();
 				resource.copy(destination, force.booleanValue(), monitor);
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
+					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws CoreException {
 				IResource source = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -745,15 +726,15 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return false;
 				return true;
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * Performs black box testing of the following method: void delete(boolean,
 	 * IProgressMonitor)
 	 */
 	public void testDelete() {
-		Object[][] inputs = new Object[][] { FALSE_AND_TRUE, PROGRESS_MONITORS, interestingResources };
+		Object[][] inputs = new Object[][] {FALSE_AND_TRUE, PROGRESS_MONITORS, interestingResources};
 		new TestPerformer("IResourceTest.testDelete") {
 			public boolean shouldFail(Object[] args, int count) {
 				Boolean force = (Boolean) args[0];
@@ -768,7 +749,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 						IResource[] children = project.members();
 						for (int i = 0; i < children.length; i++) {
 							IResource member = children[i];
-							if (shouldFail(new Object[] { args[0], args[1], member }, count))
+							if (shouldFail(new Object[] {args[0], args[1], member}, count))
 								return true;
 						}
 					} catch (CoreException ex) {
@@ -777,7 +758,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					}
 					return false;
 				}
-				final boolean[] hasUnsynchronizedResources = new boolean[] { false };
+				final boolean[] hasUnsynchronizedResources = new boolean[] {false};
 				try {
 					resource.accept(new IResourceVisitor() {
 						public boolean visit(IResource resource) throws CoreException {
@@ -815,22 +796,25 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				}
 				return hasUnsynchronizedResources[0];
 			}
+
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IResource resource = (IResource) args[2];
-				return new Object[] { new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
+				return new Object[] {new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
 				IResource resource = (IResource) args[2];
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
+					((FussyProgressMonitor) monitor).prepare();
 				resource.delete(force.booleanValue(), monitor);
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
+					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IResource resource = (IResource) args[2];
@@ -864,9 +848,9 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				}
 				return true;
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * Performs black box testing of the following methods: isDerived() and
 	 * setDerived(boolean)
@@ -977,82 +961,92 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			// pass
 		}
-	} /**
-	    * Performs black box testing of the following method: boolean
-	    * equals(Object)
-	    */
+	}
+
+	/**
+	 * Performs black box testing of the following method: boolean
+	 * equals(Object)
+	 */
 	public void testEquals() {
 		noSideEffects = true;
-		Object[][] inputs = new Object[][] { interestingResources, interestingResources };
+		Object[][] inputs = new Object[][] {interestingResources, interestingResources};
 		new TestPerformer("IResourceTest.testEquals") {
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
+
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource0 = (IResource) args[0];
 				IResource resource1 = (IResource) args[1];
 				return resource0.equals(resource1) ? Boolean.TRUE : Boolean.FALSE;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource resource0 = (IResource) args[0];
 				IResource resource1 = (IResource) args[1];
 				boolean booleanResult = ((Boolean) result).booleanValue();
-				boolean expectedResult =
-					resource0.getFullPath().equals(resource1.getFullPath()) && resource0.getType() == resource1.getType() && resource0.getWorkspace().equals(resource1.getWorkspace());
+				boolean expectedResult = resource0.getFullPath().equals(resource1.getFullPath()) && resource0.getType() == resource1.getType() && resource0.getWorkspace().equals(resource1.getWorkspace());
 				if (booleanResult) {
 					assertTrue("hashCode should be equal if equals returns true", resource0.hashCode() == resource1.hashCode());
 				}
 				return booleanResult == expectedResult;
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * Performs black box testing of the following method: boolean exists() */
 	public void testExists() {
 		noSideEffects = true;
 
-		Object[][] inputs = new Object[][] { interestingResources };
+		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testExists") {
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
+
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.exists() ? Boolean.TRUE : Boolean.FALSE;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				boolean booleanResult = ((Boolean) result).booleanValue();
 				IResource resource = (IResource) args[0];
 				return booleanResult != nonExistingResources.contains(resource);
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * Performs black box testing of the following method: IPath getLocation() */
 	public void testGetLocation() {
 		if (true)
 			return;
 		noSideEffects = true;
-		Object[][] inputs = new Object[][] { interestingResources };
+		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testGetLocation") {
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
+
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.getLocation();
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource resource = (IResource) args[0];
 				IPath resultPath = (IPath) result;
@@ -1065,9 +1059,9 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return resultPath == null;
 				return resultPath != null;
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	/**
 	 * Performs black box testing of the following method: IPath
 	 * getRawLocation()
@@ -1077,7 +1071,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		IFolder topFolder = project.getFolder("TopFolder");
 		IFile topFile = project.getFile("TopFile");
 		IFile deepFile = topFolder.getFile("DeepFile");
-		IResource[] allResources = new IResource[] { project, topFolder, topFile, deepFile };
+		IResource[] allResources = new IResource[] {project, topFolder, topFile, deepFile};
 
 		//non existing project
 		assertNull("2.0", project.getRawLocation());
@@ -1202,6 +1196,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			Workspace.clear(variableLocation.toFile());
 		}
 	}
+
 	public void testGetModificationStamp() {
 		// cleanup auto-created resources
 		try {
@@ -1211,7 +1206,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		// setup
-		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] { "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1" });
+		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] {"/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"});
 		final Map table = new HashMap(resources.length);
 
 		for (int i = 0; i < resources.length; i++) {
@@ -1324,8 +1319,8 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
-					//projects and root are always local
-	if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
+				//projects and root are always local
+				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
 					assertTrue("7.2" + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
 				} else {
 					assertEquals("7.3." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
@@ -1430,6 +1425,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("12.2", e);
 		}
 	}
+
 	/**
 	 * This method tests the IResource.isSynchronized() operation */
 	public void testIsSynchronized() {
@@ -1441,7 +1437,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Object[][] args = new Object[][] { interestingResources, interestingResources, interestingStates(), interestingDepths()};
+		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
@@ -1454,6 +1450,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				boolean result = receiver.isSynchronized(depth);
 				return result ? Boolean.TRUE : Boolean.FALSE;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
 					return true; //combination didn't make sense
@@ -1483,21 +1480,23 @@ public class IResourceTest extends EclipseWorkspaceTest {
 						return false;
 				}
 			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
+
 			public void cleanUp(Object[] args, int count) {
 				cleanUpAfterRefreshTest(args);
 			}
-		}
-		.performTest(args);
+		}.performTest(args);
 	}
+
 	/**
 	 * Performs black box testing of the following method: void move(IPath,
 	 * boolean, IProgressMonitor)
 	 */
 	public void testMove() {
-		Object[][] inputs = new Object[][] { interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS };
+		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testMove") {
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
@@ -1510,36 +1509,38 @@ public class IResourceTest extends EclipseWorkspaceTest {
 						return true;
 					return !getWorkspace().validateName(destination.segment(0), IResource.PROJECT).isOK();
 				}
-				File destinationParent =
-					destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
+				File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
 				File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
 				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
+
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
 				Boolean force = (Boolean) args[2];
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
+					((FussyProgressMonitor) monitor).prepare();
 				resource.move(destination, force.booleanValue(), monitor);
 				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
+					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				return true;
 			}
-		}
-		.performTest(inputs);
+		}.performTest(inputs);
 	}
+
 	public void testMultiCreation() {
 
 		final IProject project = getWorkspace().getRoot().getProject("bar");
-		final IResource[] resources = buildResources(project, new String[] { "a/", "a/b" });
+		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
 		// create the project. Have to do this outside the resource operation
 		// to ensure that things are setup properly (e.g., add the delta
 		// listener)
@@ -1557,13 +1558,13 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			try {
 				switch (resource.getType()) {
 					case IResource.FILE :
-						 ((IFile) resource).create(null, false, getMonitor());
+						((IFile) resource).create(null, false, getMonitor());
 						break;
 					case IResource.FOLDER :
-						 ((IFolder) resource).create(false, true, getMonitor());
+						((IFolder) resource).create(false, true, getMonitor());
 						break;
 					case IResource.PROJECT :
-						 ((IProject) resource).create(getMonitor());
+						((IProject) resource).create(getMonitor());
 						break;
 				}
 			} catch (CoreException e) {
@@ -1577,6 +1578,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("2.0", e);
 		}
 	}
+
 	/**
 	 * Test that opening an closing a project does not affect the description
 	 * file.
@@ -1591,6 +1593,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		project.open(null);
 		assertEquals(stamp, file.getModificationStamp());
 	}
+
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
@@ -1627,6 +1630,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("3.0", e);
 		}
 	}
+
 	/**
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testRefreshLocal() {
@@ -1638,7 +1642,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Object[][] args = new Object[][] { interestingResources, interestingResources, interestingStates(), interestingDepths()};
+		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
@@ -1651,6 +1655,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				receiver.refreshLocal(depth, getMonitor());
 				return Boolean.TRUE;
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
 					return true; //permutation didn't make sense
@@ -1660,15 +1665,17 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				int depth = ((Integer) args[3]).intValue();
 				return checkAfterState(receiver, target, state, depth);
 			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
+
 			public void cleanUp(Object[] args, int count) {
 				cleanUpAfterRefreshTest(args);
 			}
-		}
-		.performTest(args);
+		}.performTest(args);
 	}
+
 	public void testRefreshLocalWithDepth() {
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFolder folder = project.getFolder("Folder");
@@ -1680,7 +1687,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("1.0", e);
 		}
 
-		String[] hierarchy = { "Folder/", "Folder/Folder/", "Folder/Folder/Folder/", "Folder/Folder/Folder/Folder/" };
+		String[] hierarchy = {"Folder/", "Folder/Folder/", "Folder/Folder/Folder/", "Folder/Folder/Folder/Folder/"};
 		IResource[] resources = buildResources(folder, hierarchy);
 		ensureExistsInFileSystem(resources);
 		assertDoesNotExistInWorkspace("3.0", resources);
@@ -1694,6 +1701,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		assertExistsInWorkspace("5.0", folder.getFolder("Folder"));
 		assertDoesNotExistInWorkspace("5.1", folder.getFolder("Folder/Folder"));
 	}
+
 	/**
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testRefreshWithMissingParent() throws CoreException {
@@ -1712,6 +1720,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		file.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 	}
+
 	/**
 	 * This method tests the IResource.setLocalTimeStamp() operation */
 	public void testSetLocalTimeStamp() {
@@ -1723,8 +1732,8 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Long[] interestingTimes = new Long[] { new Long(-1), new Long(System.currentTimeMillis()-1000), new Long(System.currentTimeMillis()-100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
-		Object[][] args = new Object[][] { interestingResources, interestingTimes };
+		Long[] interestingTimes = new Long[] {new Long(-1), new Long(System.currentTimeMillis() - 1000), new Long(System.currentTimeMillis() - 100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
+		Object[][] args = new Object[][] {interestingResources, interestingTimes};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
@@ -1732,6 +1741,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				long actual = receiver.setLocalTimeStamp(time);
 				return new Long(actual);
 			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource receiver = (IResource) args[0];
 				if (receiver.getType() == IResource.ROOT)
@@ -1744,14 +1754,15 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return false;
 				return true;
 			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				long time = ((Long) args[1]).longValue();
 				return time < 0;
 			}
+
 			public void cleanUp(Object[] args, int count) {
 			}
-		}
-		.performTest(args);
+		}.performTest(args);
 	}
 
 	/**

@@ -48,12 +48,12 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		ArrayList list = new ArrayList();
 		list.add(null);
 		list.add(new IScopeContext[0]);
-		list.add(new IScopeContext[]{null});
+		list.add(new IScopeContext[] {null});
 		IScopeContext[][] contextsWithoutScope = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
 
 		list = new ArrayList();
-		list.add(new IScopeContext[]{projectContext});
-		list.add(new IScopeContext[]{null, projectContext});
+		list.add(new IScopeContext[] {projectContext});
+		list.add(new IScopeContext[] {null, projectContext});
 		IScopeContext[][] contextsWithScope = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
 
 		// set a preference value in the instance scope

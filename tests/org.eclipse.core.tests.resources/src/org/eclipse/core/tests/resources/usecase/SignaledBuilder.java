@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,15 @@ public class SignaledBuilder extends IncrementalProjectBuilder {
 	 */
 	private static HashMap instances = new HashMap(10);
 	protected boolean wasExecuted;
+
 	public static SignaledBuilder getInstance(IProject project) {
-		return (SignaledBuilder)instances.get(project);
+		return (SignaledBuilder) instances.get(project);
 	}
+
 	public SignaledBuilder() {
 		reset();
 	}
+
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		instances.put(getProject(), this);
 		try {
@@ -44,9 +47,11 @@ public class SignaledBuilder extends IncrementalProjectBuilder {
 			monitor.done();
 		}
 	}
+
 	public void reset() {
 		wasExecuted = false;
 	}
+
 	public boolean wasExecuted() {
 		return wasExecuted;
 	}

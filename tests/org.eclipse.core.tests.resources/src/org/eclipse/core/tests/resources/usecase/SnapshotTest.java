@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
-
 
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
@@ -26,38 +25,45 @@ public class SnapshotTest extends WorkspaceSessionTest {
 	/** activities */
 	static final String COMMENT_1 = "COMMENT ONE";
 	static final String COMMENT_2 = "COMMENT TWO";
-public SnapshotTest() {
-}
-public SnapshotTest(String name) {
-	super(name);
-}
-public void test1() {
-	Snapshot1Test test = new Snapshot1Test();
-	test.testCreateMyProject();
-	test.testCreateProject2();
-	test.testSnapshotWorkspace();
-}
-public void test2() {
-	Snapshot2Test test = new Snapshot2Test();
-	test.testVerifyPreviousSession();
-	test.testChangeMyProject();
-	test.testChangeProject2();
-	test.testSnapshotWorkspace();
-}
-public void test3() {
-	Snapshot3Test test = new Snapshot3Test();
-	test.testVerifyPreviousSession();
-	test.testSaveWorkspace();
-}
-public void test4() {
-	Snapshot4Test test = new Snapshot4Test();
-	test.testVerifyPreviousSession();
-	test.testChangeMyProject();
-	test.testChangeProject2();
-}
-public void test5() {
-	Snapshot5Test test = new Snapshot5Test();
-	test.testVerifyPreviousSession();
-	test.cleanUp();
-}
+
+	public SnapshotTest() {
+	}
+
+	public SnapshotTest(String name) {
+		super(name);
+	}
+
+	public void test1() {
+		Snapshot1Test test = new Snapshot1Test();
+		test.testCreateMyProject();
+		test.testCreateProject2();
+		test.testSnapshotWorkspace();
+	}
+
+	public void test2() {
+		Snapshot2Test test = new Snapshot2Test();
+		test.testVerifyPreviousSession();
+		test.testChangeMyProject();
+		test.testChangeProject2();
+		test.testSnapshotWorkspace();
+	}
+
+	public void test3() {
+		Snapshot3Test test = new Snapshot3Test();
+		test.testVerifyPreviousSession();
+		test.testSaveWorkspace();
+	}
+
+	public void test4() {
+		Snapshot4Test test = new Snapshot4Test();
+		test.testVerifyPreviousSession();
+		test.testChangeMyProject();
+		test.testChangeProject2();
+	}
+
+	public void test5() {
+		Snapshot5Test test = new Snapshot5Test();
+		test.testVerifyPreviousSession();
+		test.cleanUp();
+	}
 }

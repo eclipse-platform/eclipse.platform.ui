@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,21 +19,23 @@ public class WorkspaceSerializationTest extends WorkspaceSessionTest {
 	protected static final String FILE = "CrashFile";
 	protected IWorkspace workspace;
 
-/**
- * Creates a new WorkspaceSerializationTest.
- */
-public WorkspaceSerializationTest() {
-	super("");
-}
-/**
- * Creates a new WorkspaceSerializationTest.
- * @param name the name of the test method to run
- */
-public WorkspaceSerializationTest(String name) {
-	super(name);
-}
-protected void setUp() throws Exception {
-	workspace = getWorkspace();
-}
+	/**
+	 * Creates a new WorkspaceSerializationTest.
+	 */
+	public WorkspaceSerializationTest() {
+		super("");
+	}
+
+	/**
+	 * Creates a new WorkspaceSerializationTest.
+	 * @param name the name of the test method to run
+	 */
+	public WorkspaceSerializationTest(String name) {
+		super(name);
+	}
+
+	protected void setUp() throws Exception {
+		workspace = getWorkspace();
+	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 	public IFolderTest() {
 		super();
 	}
+
 	/**
 	 * Constructor for IFolderTest.
 	 * @param name
@@ -32,6 +33,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 	public IFolderTest(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		return new TestSuite(IFolderTest.class);
 	}
@@ -55,7 +57,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFolder parentFolder = project.getFolder("parentFolder");
-		ensureExistsInWorkspace(new IResource[] { project, parentFolder }, true);
+		ensureExistsInWorkspace(new IResource[] {project, parentFolder}, true);
 		IFolder folder = parentFolder.getFolder("folder");
 
 		try {
@@ -71,6 +73,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 			parentFolder.setReadOnly(false);
 		}
 	}
+
 	/**
 	 * Bug 11510 [resources] Non-local folders do not become local when directory is created. 
 	 */
@@ -81,7 +84,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 		IFile subFile = folder.getFile("f1");
 		IFile file = project.getFile("f2");
 		ensureExistsInWorkspace(project, true);
-		ensureExistsInWorkspace(new IResource[] { folder, file, subFile }, false);
+		ensureExistsInWorkspace(new IResource[] {folder, file, subFile}, false);
 
 		assertTrue("1.0", !folder.isLocal(IResource.DEPTH_ZERO));
 		assertTrue("1.1", !file.isLocal(IResource.DEPTH_ZERO));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class CycleBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.cyclebuilder";
-	
+
 	protected IProject[] beforeProjects = new IProject[0];
 	protected IProject[] afterProjects = new IProject[0];
 	protected int rebuildsToRequest = 0;
@@ -36,10 +36,12 @@ public class CycleBuilder extends TestBuilder {
 	 */
 	public static CycleBuilder getInstance() {
 		return singleton;
-	}	
+	}
+
 	public CycleBuilder() {
 		singleton = this;
 	}
+
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		if (beforeProjects != null) {
 			for (int i = 0; i < beforeProjects.length; i++) {
@@ -79,25 +81,30 @@ public class CycleBuilder extends TestBuilder {
 				if (resource.getType() == IResource.FILE) {
 					if (resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 						return false;
-					 ((IFile) resource).setContents(getRandomContents(), IResource.NONE, null);
+					((IFile) resource).setContents(getRandomContents(), IResource.NONE, null);
 				}
 				return true;
 			}
 		};
 		getProject().accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
 	}
+
 	public int getBuildCount() {
 		return buildCount;
 	}
+
 	public void resetBuildCount() {
 		buildCount = 0;
 	}
+
 	public void setAfterProjects(IProject[] afterProjects) {
 		this.afterProjects = afterProjects;
 	}
+
 	public void setBeforeProjects(IProject[] beforeProjects) {
 		this.beforeProjects = beforeProjects;
 	}
+
 	public void setRebuildsToRequest(int rebuildsToRequest) {
 		this.rebuildsToRequest = rebuildsToRequest;
 	}

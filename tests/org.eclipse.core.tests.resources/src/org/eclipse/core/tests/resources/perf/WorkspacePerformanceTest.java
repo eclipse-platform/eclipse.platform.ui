@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,22 +39,27 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 	}
 
 	private final Random random = new Random();
+
 	public WorkspacePerformanceTest() {
 		super();
 	}
+
 	public WorkspacePerformanceTest(String name) {
 		super(name);
 	}
+
 	private IFolder copyFolder(IFolder source) throws CoreException {
 		IFolder destination = source.getProject().getFolder("CopyDestination");
 		source.copy(destination.getFullPath(), IResource.NONE, getMonitor());
 		return destination;
 	}
+
 	private byte[] createBytes(int length) {
 		byte[] bytes = new byte[length];
 		random.nextBytes(bytes);
 		return bytes;
 	}
+
 	/**
 	 * Creates and returns a folder with lots of contents
 	 */
@@ -66,6 +71,7 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 		recursiveCreateChildren(topFolder, depth - 1);
 		return topFolder;
 	}
+
 	private String createString(int length) {
 		StringBuffer buf = new StringBuffer(length);
 		//fill the string with random characters up to the desired length
@@ -74,6 +80,7 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 		}
 		return buf.toString();
 	}
+
 	public void doTestWorkspaceOperations() throws CoreException {
 		startTimer(OVERALL_TIMER);
 		final IProject project = getWorkspace().getRoot().getProject("Project");
@@ -119,11 +126,13 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 
 		stopTimer(OVERALL_TIMER);
 	}
+
 	private IFolder moveFolder(IFolder source) throws CoreException {
 		IFolder destination = source.getProject().getFolder("MoveDestination");
 		source.move(destination.getFullPath(), IResource.NONE, getMonitor());
 		return destination;
 	}
+
 	/**
 	 * Create children of the given folder, and recurse to the given depth
 	 */
@@ -142,10 +151,11 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 			recursiveCreateChildren(folder, depth - 1);
 		}
 	}
+
 	public void testPerformance() {
-//		String fileName = "c:\\temp\\" + getClassName() + "_" + System.currentTimeMillis() + ".html";
-//		java.io.File logFile = new java.io.File(fileName);
-//		LoggingPerformanceTestResult result = new LoggingPerformanceTestResult(logFile);
-//		new WorkspacePerformanceTest("doTestWorkspaceOperations").run(result);
+		//		String fileName = "c:\\temp\\" + getClassName() + "_" + System.currentTimeMillis() + ".html";
+		//		java.io.File logFile = new java.io.File(fileName);
+		//		LoggingPerformanceTestResult result = new LoggingPerformanceTestResult(logFile);
+		//		new WorkspacePerformanceTest("doTestWorkspaceOperations").run(result);
 	}
 }

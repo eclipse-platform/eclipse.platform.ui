@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,11 @@ public class Bug_29671 extends EclipseWorkspaceTest {
 	public Bug_29671(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		return new TestSuite(Bug_29671.class);
 	}
+
 	public void testBug() {
 		final QualifiedName partner = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		IWorkspace workspace = getWorkspace();
@@ -50,10 +52,10 @@ public class Bug_29671 extends EclipseWorkspaceTest {
 			} catch (CoreException ce) {
 				fail("1.0", ce);
 			}
-		
+
 			IFolder targetFolder = project.getFolder("target");
-			IFile targetFile = targetFolder.getFile(file.getName());		
-	
+			IFile targetFile = targetFolder.getFile(file.getName());
+
 			try {
 				folder.move(targetFolder.getFullPath(), false, false, getMonitor());
 			} catch (CoreException e) {
@@ -61,14 +63,14 @@ public class Bug_29671 extends EclipseWorkspaceTest {
 			}
 			assertTrue("3.0", folder.isPhantom());
 			assertTrue("4.0", file.isPhantom());
-			
+
 			assertExistsInWorkspace("5.0", targetFolder);
 			assertTrue("5.1", !targetFolder.isPhantom());
-			
+
 			assertExistsInWorkspace("6.0", targetFile);
 			assertTrue("6.1", !targetFile.isPhantom());
 		} finally {
 			synchronizer.remove(partner);
-		}		
+		}
 	}
 }

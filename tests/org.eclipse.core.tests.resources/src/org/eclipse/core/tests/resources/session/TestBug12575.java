@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,13 @@ public class TestBug12575 extends WorkspaceSerializationTest {
 	public TestBug12575() {
 		super();
 	}
+
 	public TestBug12575(String name) {
 		super(name);
 	}
+
 	private static final String projectName = "Project";
+
 	/**
 	 * Setup.  Create a simple project, delete the .project file, shutdown
 	 * cleanly.
@@ -50,6 +53,7 @@ public class TestBug12575 extends WorkspaceSerializationTest {
 			fail("1.2", e);
 		}
 	}
+
 	/**
 	 * Infection.  Modify the .project, cause a snapshot, crash
 	 */
@@ -65,9 +69,10 @@ public class TestBug12575 extends WorkspaceSerializationTest {
 		}
 		//creating a project will cause a snapshot
 		ensureExistsInWorkspace(other, true);
-		
+
 		//crash
 	}
+
 	/**
 	 * Impact. Fails to start.
 	 */

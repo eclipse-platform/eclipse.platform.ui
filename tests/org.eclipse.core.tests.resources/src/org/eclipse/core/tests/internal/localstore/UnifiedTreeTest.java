@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,202 +20,213 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
 /**
  * 
  */
 public class UnifiedTreeTest extends LocalStoreTest {
 	protected static int limit = 10;
-public UnifiedTreeTest() {
-	super();
-}
-public UnifiedTreeTest(String name) {
-	super(name);
-}
-protected void createFiles(File folder, Hashtable set) throws CoreException {
-	FileSystemStore store = new FileSystemStore();
-	for (int i = 0; i < limit; i++) {
-		File child = new File(folder, "fsFile" + i);
-		InputStream input = new ByteArrayInputStream("contents".getBytes());
-		store.write(child, input, false, Policy.monitorFor(null));
-		String location = child.getAbsolutePath();
-		set.put(location, "");
+
+	public UnifiedTreeTest() {
+		super();
 	}
-}
-protected void createFiles(final IContainer target, final Hashtable set) throws CoreException {
-	final Workspace workspace = (Workspace) getWorkspace();
-	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-		public void run(IProgressMonitor monitor) throws CoreException {
-			for (int i = 0; i < limit; i++) {
-				IFile child = target.getFile(new Path("wbFile" + i));
-				workspace.createResource(child, false);
-				String location = child.getLocation().toOSString();
-				set.put(location, "");
+
+	public UnifiedTreeTest(String name) {
+		super(name);
+	}
+
+	protected void createFiles(File folder, Hashtable set) throws CoreException {
+		FileSystemStore store = new FileSystemStore();
+		for (int i = 0; i < limit; i++) {
+			File child = new File(folder, "fsFile" + i);
+			InputStream input = new ByteArrayInputStream("contents".getBytes());
+			store.write(child, input, false, Policy.monitorFor(null));
+			String location = child.getAbsolutePath();
+			set.put(location, "");
+		}
+	}
+
+	protected void createFiles(final IContainer target, final Hashtable set) throws CoreException {
+		final Workspace workspace = (Workspace) getWorkspace();
+		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < limit; i++) {
+					IFile child = target.getFile(new Path("wbFile" + i));
+					workspace.createResource(child, false);
+					String location = child.getLocation().toOSString();
+					set.put(location, "");
+				}
 			}
-		}
-	};
-	workspace.run(operation, null);
-}
-protected void createResourcesInFileSystem(File folder, Hashtable set) throws CoreException {
-	createFiles(folder, set);
-	for (int i = 0; i < limit; i++) {
-		File child = new File(folder, "fsFolder" + i);
-		child.mkdirs();
-		String location = child.getAbsolutePath();
-		set.put(location, "");
-		if (i < (limit / 2))
-			createFiles(child, set);
+		};
+		workspace.run(operation, null);
 	}
-}
-protected void createResourcesInWorkspace(IContainer target, Hashtable set) throws CoreException {
-	createFiles(target, set);
-	for (int i = 0; i < limit; i++) {
-		IFolder child = target.getFolder(new Path("wbFolder" + i));
-		child.create(true, true, null);
-		String location = child.getLocation().toOSString();
-		set.put(location, "");
-		if (i < (limit / 2))
-			createFiles(child, set);
+
+	protected void createResourcesInFileSystem(File folder, Hashtable set) throws CoreException {
+		createFiles(folder, set);
+		for (int i = 0; i < limit; i++) {
+			File child = new File(folder, "fsFolder" + i);
+			child.mkdirs();
+			String location = child.getAbsolutePath();
+			set.put(location, "");
+			if (i < (limit / 2))
+				createFiles(child, set);
+		}
 	}
-}
-public static Test suite() {
-	//TestSuite suite = new TestSuite();
-	//suite.addTest(new UnifiedTreeTest("testTraverseMechanismInProjectWithMappings"));
-	//return suite;
-	return new TestSuite(UnifiedTreeTest.class);
-}
-/**
- * Creates some resources in the file system and some in the workspace. After that,
- * makes sure the visitor is going to walk through all of them.
- */
-public void testTraverseMechanismInFolder() throws Throwable {
-	/* create common objects */
-	IProject project = projects[0];
-	IFolder folder = project.getFolder("root");
-	folder.create(true, true, null);
 
-	/* Create a hashtable to hold all resources the tree should visit.
-	   The resources are going to be removed from the hashtable as
-	   the visitor visits it. */
-	final Hashtable set = new Hashtable();
-
-	/* create some workspace structure */
-	createResourcesInWorkspace(folder, set);
-
-	/* create some file system structure */
-	createResourcesInFileSystem(folder.getLocation().toFile(), set);
-
-	/* create a visitor */
-	IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-		public boolean visit(UnifiedTreeNode node) throws CoreException {
-
-			/* test the node.getLocalLocation() method */
-			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
-
-			/* remove from the hashtable the resource we're visiting */
-			set.remove(key);
-			return true;
+	protected void createResourcesInWorkspace(IContainer target, Hashtable set) throws CoreException {
+		createFiles(target, set);
+		for (int i = 0; i < limit; i++) {
+			IFolder child = target.getFolder(new Path("wbFolder" + i));
+			child.create(true, true, null);
+			String location = child.getLocation().toOSString();
+			set.put(location, "");
+			if (i < (limit / 2))
+				createFiles(child, set);
 		}
-	};
+	}
 
-	/* instantiate a unified tree and use the visitor */
-	UnifiedTree tree = new UnifiedTree(folder);
-	tree.accept(visitor);
+	public static Test suite() {
+		//TestSuite suite = new TestSuite();
+		//suite.addTest(new UnifiedTreeTest("testTraverseMechanismInProjectWithMappings"));
+		//return suite;
+		return new TestSuite(UnifiedTreeTest.class);
+	}
 
-	/* if the hashtable is empty, we walked through all resources */
-	assertTrue("2.0", set.isEmpty());
-}
-/**
- * Creates some resources in the file system and some in the workspace. After that,
- * makes sure the visitor is going to walk through some of them.
- */
-public void testTraverseMechanismInFolderSkipingSomeChildren() throws Throwable {
-	/* create common objects */
-	IProject project = projects[0];
-	IFolder folder = project.getFolder("root");
-	folder.create(true, true, null);
+	/**
+	 * Creates some resources in the file system and some in the workspace. After that,
+	 * makes sure the visitor is going to walk through all of them.
+	 */
+	public void testTraverseMechanismInFolder() throws Throwable {
+		/* create common objects */
+		IProject project = projects[0];
+		IFolder folder = project.getFolder("root");
+		folder.create(true, true, null);
 
-	/* Create a hashtable to hold all resources the tree should visit.
-	   The resources are going to be removed from the hashtable as
-	   the visitor visits it. */
-	final Hashtable set = new Hashtable();
+		/* Create a hashtable to hold all resources the tree should visit.
+		 The resources are going to be removed from the hashtable as
+		 the visitor visits it. */
+		final Hashtable set = new Hashtable();
 
-	/* create some workspace structure */
-	createResourcesInWorkspace(folder, set);
+		/* create some workspace structure */
+		createResourcesInWorkspace(folder, set);
 
-	/* create some file system structure */
-	createResourcesInFileSystem(folder.getLocation().toFile(), set);
+		/* create some file system structure */
+		createResourcesInFileSystem(folder.getLocation().toFile(), set);
 
-	/* create a visitor */
-	IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-		public boolean visit(UnifiedTreeNode node) throws CoreException {
+		/* create a visitor */
+		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			public boolean visit(UnifiedTreeNode node) throws CoreException {
 
-			/* test the node.getLocalLocation() method */
-			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);;
+				/* test the node.getLocalLocation() method */
+				String key = node.getLocalLocation();
+				assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
 
-			/* force children to be added to the queue */
-			node.getChildren();
+				/* remove from the hashtable the resource we're visiting */
+				set.remove(key);
+				return true;
+			}
+		};
 
-			/* skip some resources */
-			if (node.getResource().getName().startsWith("fsFolder"))
-				return false;
+		/* instantiate a unified tree and use the visitor */
+		UnifiedTree tree = new UnifiedTree(folder);
+		tree.accept(visitor);
 
-			/* remove from the hashtable the resource we're visiting */
-			set.remove(key);
-			return true;
-		}
-	};
+		/* if the hashtable is empty, we walked through all resources */
+		assertTrue("2.0", set.isEmpty());
+	}
 
+	/**
+	 * Creates some resources in the file system and some in the workspace. After that,
+	 * makes sure the visitor is going to walk through some of them.
+	 */
+	public void testTraverseMechanismInFolderSkipingSomeChildren() throws Throwable {
+		/* create common objects */
+		IProject project = projects[0];
+		IFolder folder = project.getFolder("root");
+		folder.create(true, true, null);
 
-	/**/
-	int initialSize = set.size();
+		/* Create a hashtable to hold all resources the tree should visit.
+		 The resources are going to be removed from the hashtable as
+		 the visitor visits it. */
+		final Hashtable set = new Hashtable();
 
-	/* instantiate a unified tree and use the visitor */
-	UnifiedTree tree = new UnifiedTree(folder);
-	tree.accept(visitor);
+		/* create some workspace structure */
+		createResourcesInWorkspace(folder, set);
 
-	/* if the hashtable is empty, we walked through all resources */
-	assertTrue("2.0", !set.isEmpty());
-	assertTrue("2.1", set.size() != initialSize);
-}
-/**
- * Creates some resources in the file system and some in the workspace. After that,
- * makes sure the visitor is going to walk through all of them.
- */
-public void testTraverseMechanismInProject() throws Throwable {
-	/* create common objects */
-	IProject project = projects[0];
+		/* create some file system structure */
+		createResourcesInFileSystem(folder.getLocation().toFile(), set);
 
-	/* Create a hashtable to hold all resources the tree should visit.
-	   The resources are going to be removed from the hashtable as
-	   the visitor visits it. */
-	final Hashtable set = new Hashtable();
+		/* create a visitor */
+		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			public boolean visit(UnifiedTreeNode node) throws CoreException {
 
-	/* create some workspace structure */
-	createResourcesInWorkspace(project, set);
+				/* test the node.getLocalLocation() method */
+				String key = node.getLocalLocation();
+				assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
+				;
 
-	/* create some file system structure */
-	createResourcesInFileSystem(project.getLocation().toFile(), set);
+				/* force children to be added to the queue */
+				node.getChildren();
 
-	/* create a visitor */
-	IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-		public boolean visit(UnifiedTreeNode node) throws CoreException {
+				/* skip some resources */
+				if (node.getResource().getName().startsWith("fsFolder"))
+					return false;
 
-			/* test the node.getLocalLocation() method */
-			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
-			/* remove from the hashtable the resource we're visiting */
-			set.remove(key);
-			return true;
-		}
-	};
+				/* remove from the hashtable the resource we're visiting */
+				set.remove(key);
+				return true;
+			}
+		};
 
-	/* instantiate a unified tree and use the visitor */
-	UnifiedTree tree = new UnifiedTree(project);
-	tree.accept(visitor);
+		/**/
+		int initialSize = set.size();
 
-	/* if the hashtable is empty, we walked through all resources */
-	assertTrue("2.0", set.isEmpty());
-}
+		/* instantiate a unified tree and use the visitor */
+		UnifiedTree tree = new UnifiedTree(folder);
+		tree.accept(visitor);
+
+		/* if the hashtable is empty, we walked through all resources */
+		assertTrue("2.0", !set.isEmpty());
+		assertTrue("2.1", set.size() != initialSize);
+	}
+
+	/**
+	 * Creates some resources in the file system and some in the workspace. After that,
+	 * makes sure the visitor is going to walk through all of them.
+	 */
+	public void testTraverseMechanismInProject() throws Throwable {
+		/* create common objects */
+		IProject project = projects[0];
+
+		/* Create a hashtable to hold all resources the tree should visit.
+		 The resources are going to be removed from the hashtable as
+		 the visitor visits it. */
+		final Hashtable set = new Hashtable();
+
+		/* create some workspace structure */
+		createResourcesInWorkspace(project, set);
+
+		/* create some file system structure */
+		createResourcesInFileSystem(project.getLocation().toFile(), set);
+
+		/* create a visitor */
+		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			public boolean visit(UnifiedTreeNode node) throws CoreException {
+
+				/* test the node.getLocalLocation() method */
+				String key = node.getLocalLocation();
+				assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
+				/* remove from the hashtable the resource we're visiting */
+				set.remove(key);
+				return true;
+			}
+		};
+
+		/* instantiate a unified tree and use the visitor */
+		UnifiedTree tree = new UnifiedTree(project);
+		tree.accept(visitor);
+
+		/* if the hashtable is empty, we walked through all resources */
+		assertTrue("2.0", set.isEmpty());
+	}
 }

@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
+
 import java.util.ArrayList;
 import java.util.Map;
 import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
+
 /**
  * This classes poses as a builder, and makes sure that the delta supplied to
  * the builder is as expected. Most of the work is forwarded to a
@@ -48,6 +50,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Whether the last build was full or batch
 	 */
 	protected int triggerForLastBuild = 0;
+
 	/**
 	 * Returns the singleton instance
 	 */
@@ -57,6 +60,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		}
 		return fgSingleton;
 	}
+
 	/**
 	 * Captures the builder instantiated through reflection
 	 */
@@ -72,6 +76,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		}
 		fgSingleton = this;
 	}
+
 	/**
 	 * Signals to the comparer that the given resource is expected to change in
 	 * the specified way. The change flags should be set to zero if no change is
@@ -92,6 +97,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags) {
 		verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, null, null);
 	}
+
 	/**
 	 * Signals to the comparer that the given resource is expected to change in
 	 * the specified way. The change flags should be set to zero if no change is
@@ -112,6 +118,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedFromPath, IPath movedToPath) {
 		verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, movedFromPath, movedToPath);
 	}
+
 	/**
 	 * Like a wiley restaurant critic, this method masquerades as a builder, but
 	 * is actually verifying that the provided delta is correct.
@@ -130,15 +137,18 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		}
 		return getRequestedDeltas();
 	}
+
 	/**
 	 * Indicates which projects to check receipt of deltas for.
 	 */
 	public void checkDeltas(IProject[] projects) {
 		checkDeltas = projects;
 	}
+
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		triggerForLastBuild = CLEAN_BUILD;
 	}
+
 	/**
 	 * Asks the platform for the deltas for a set of projects, and notes which
 	 * deltas were actually returned.
@@ -161,6 +171,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 			}
 		}
 	}
+
 	/**
 	 * Signals that an empty build has occurred, so the build method hasn't been
 	 * called but the state should still be considered valid.
@@ -168,12 +179,14 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public void emptyBuild() throws CoreException {
 		build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null, null);
 	}
+
 	/**
 	 * Returns the empty deltas received during the last build.
 	 */
 	public ArrayList getEmptyDeltas() {
 		return emptyDeltas;
 	}
+
 	/**
 	 * Returns a message that describes the result of the resource delta
 	 * verification checks.
@@ -191,6 +204,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		}
 		return msg;
 	}
+
 	/**
 	 * Returns the projects for the deltas that were actually received during
 	 * the last build.
@@ -198,12 +212,14 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public ArrayList getReceivedDeltas() {
 		return receivedDeltas;
 	}
+
 	/**
 	 * Returns the projects to request deltas for next build.
 	 */
 	protected IProject[] getRequestedDeltas() {
 		return requestedDeltas == null ? new IProject[0] : requestedDeltas;
 	}
+
 	/**
 	 * Returns whether the resource delta passed all verification checks. An
 	 * empty delta is valid if no changes were expected.
@@ -211,6 +227,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public boolean isDeltaValid() {
 		return (deltaWasEmpty && !verifier.hasExpectedChanges()) || verifier.isDeltaValid();
 	}
+
 	/**
 	 * Indicates that the builder should request deltas for the given projects.
 	 */
@@ -219,6 +236,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		receivedDeltas.clear();
 		emptyDeltas.clear();
 	}
+
 	/*
 	 * @see TestBuilder#reset()
 	 */
@@ -228,9 +246,11 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		if (verifier != null)
 			verifier.reset();
 	}
+
 	public boolean wasAutoBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.AUTO_BUILD;
 	}
+
 	/**
 	 * Returns true if the builder has been invoked since the last time it was
 	 * reset, and false otherwise.
@@ -238,12 +258,15 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public boolean wasBuilt() {
 		return triggerForLastBuild != 0;
 	}
+
 	public boolean wasCleanBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.CLEAN_BUILD;
 	}
+
 	public boolean wasFullBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.FULL_BUILD;
 	}
+
 	public boolean wasIncrementalBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.INCREMENTAL_BUILD;
 	}

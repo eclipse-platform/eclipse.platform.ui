@@ -19,16 +19,19 @@ import org.eclipse.core.tests.harness.*;
  * Tests concurrency issues when dealing with operations on the worspace
  */
 public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
-	
+
 	public static Test suite() {
 		return new TestSuite(WorkspaceConcurrencyTest.class);
 	}
+
 	public WorkspaceConcurrencyTest() {
-		super ("");
+		super("");
 	}
+
 	public WorkspaceConcurrencyTest(String name) {
-		super (name);
+		super(name);
 	}
+
 	/**
 	 * Tests that it is possible to cancel a workspace operation when it is blocked
 	 * by activity in another thread. This is a regression test for bug 56118.
@@ -59,10 +62,10 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			testJob.setTouch(true);
 			testJob.setRule(getWorkspace().getRoot());
 			testJob.schedule();
-			
+
 			//wait until blocked on the listener
 			TestBarrier.waitForStatus(barrier, TestBarrier.STATUS_START);
-			
+
 			//create a second thread that attempts to modify the workspace, but immediately
 			//cancels itself. This thread should terminate immediately with a cancelation exception
 			final boolean[] canceled = new boolean[] {false};
@@ -89,7 +92,7 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			}
 			//should have canceled
 			assertTrue("2.0", canceled[0]);
-			
+
 			//finally release the listener and ensure the first thread completes
 			barrier[0] = TestBarrier.STATUS_DONE;
 			try {

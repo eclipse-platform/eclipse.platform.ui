@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
+
 import java.util.*;
 import junit.framework.Assert;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
+
 /**
  * An abstract builder that is designed to be extended for testing purposes.
  */
@@ -41,12 +43,14 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 */
 	private static final ArrayList expectedEvents = new ArrayList();
 	private static final ArrayList actualEvents = new ArrayList();
+
 	/**
 	 * Logs the given plug-in lifecycle event for this builder's plugin.
 	 */
 	public void addExpectedLifecycleEvent(String event) {
 		expectedEvents.add(event);
 	}
+
 	/**
 	 * Verifies that the given lifecycle events occurred. Throws an assertion
 	 * failure if expectations are not met. If successful, clears the list of
@@ -56,6 +60,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		Assert.assertEquals(text, expectedEvents, actualEvents);
 		reset();
 	}
+
 	/**
 	 * Implemements the inherited abstract method in
 	 * <code>InternalBuilder</code>.
@@ -67,6 +72,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		logPluginLifecycleEvent(getBuildId());
 		return new IProject[0];
 	}
+
 	/**
 	 * Returns an ID that identifies the current build.
 	 */
@@ -76,6 +82,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 			buildId = DEFAULT_BUILD_ID;
 		return buildId;
 	}
+
 	/**
 	 * Return the configuration element that created this builder.
 	 * 
@@ -84,6 +91,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	public IConfigurationElement getConfigurationElement() {
 		return config;
 	}
+
 	/**
 	 * Return the data, always a <code>Hashtable</code> or <code>String</code>,
 	 * that was set when this builder was initialized.
@@ -93,6 +101,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	public Object getData() {
 		return data;
 	}
+
 	/**
 	 * Return the name of the child configuration element that named this
 	 * builder in its class attribute.
@@ -102,12 +111,14 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	public String getName() {
 		return name;
 	}
+
 	/**
 	 * Logs the given plug-in lifecycle event for this builder's plugin.
 	 */
 	private void logPluginLifecycleEvent(String event) {
 		actualEvents.add(event);
 	}
+
 	/**
 	 * Resets expected and actual lifecycle events for this builder.
 	 */
@@ -115,6 +126,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		expectedEvents.clear();
 		actualEvents.clear();
 	}
+
 	/**
 	 * Part of <code>IExecutableExtensionAdaptor</code> interface.
 	 * 
@@ -127,6 +139,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		this.name = name;
 		this.data = data;
 	}
+
 	/**
 	 * Implemented inherited method from <code>BaseBuilder</code>.
 	 * 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,26 +16,29 @@ import org.eclipse.core.tests.harness.CorePerformanceTest;
 import junit.framework.*;
 
 public class ConcurrencyPerformanceTest extends CorePerformanceTest {
-public ConcurrencyPerformanceTest() {
-	super("");
-}
-public ConcurrencyPerformanceTest(String name) {
-	super(name);
-}
-public static Test suite() {
-	return new TestSuite(ConcurrencyPerformanceTest.class);
-}
-public void testSimpleCalls() throws CoreException {
-
-	IWorkspaceRunnable job = new IWorkspaceRunnable() {
-		public void run(IProgressMonitor monitor) throws CoreException {
-		}
-	};
-	startBench();
-	int repeat = 50;
- 	for (int i = 0; i < repeat; i++) {
-		getWorkspace().run(job, null);
+	public ConcurrencyPerformanceTest() {
+		super("");
 	}
-	stopBench("testSimpleCalls", repeat);
-}
+
+	public ConcurrencyPerformanceTest(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return new TestSuite(ConcurrencyPerformanceTest.class);
+	}
+
+	public void testSimpleCalls() throws CoreException {
+
+		IWorkspaceRunnable job = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+			}
+		};
+		startBench();
+		int repeat = 50;
+		for (int i = 0; i < repeat; i++) {
+			getWorkspace().run(job, null);
+		}
+		stopBench("testSimpleCalls", repeat);
+	}
 }

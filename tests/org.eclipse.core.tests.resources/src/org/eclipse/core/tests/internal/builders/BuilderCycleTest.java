@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,11 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 	public BuilderCycleTest(String name) {
 		super(name);
 	}
+
 	public BuilderCycleTest() {
 		super(null);
 	}
+
 	public static Test suite() {
 		return new TestSuite(BuilderCycleTest.class);
 	}
@@ -38,11 +40,11 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		IProject before2 = root.getProject("Before2");
 		IProject after1 = root.getProject("After1");
 		IProject after2 = root.getProject("After2");
-		ensureExistsInWorkspace(new IResource[] { project, before1, before2, after1, after2 }, true);
+		ensureExistsInWorkspace(new IResource[] {project, before1, before2, after1, after2}, true);
 
 		try {
 			IWorkspaceDescription description = getWorkspace().getDescription();
-			description.setBuildOrder(new String[] { before1.getName(), before2.getName(), project.getName(), after1.getName(), after2.getName()});
+			description.setBuildOrder(new String[] {before1.getName(), before2.getName(), project.getName(), after1.getName(), after2.getName()});
 			description.setAutoBuilding(false);
 			getWorkspace().setDescription(description);
 		} catch (CoreException e) {
@@ -51,7 +53,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		try {
 			IProjectDescription description = project.getDescription();
 			ICommand command1 = createCommand(description, CycleBuilder.BUILDER_NAME, "Build0");
-			description.setBuildSpec(new ICommand[] { command1 });
+			description.setBuildSpec(new ICommand[] {command1});
 			project.setDescription(description, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
@@ -66,7 +68,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		builder.resetBuildCount();
 		builder.setBeforeProjects(new IProject[] {before1, before2});
 		builder.setAfterProjects(new IProject[] {after1, after2});
-		
+
 		try {
 			//create a file to ensure incremental build is called
 			project.getFile("Foo.txt").create(getRandomContents(), IResource.NONE, getMonitor());
@@ -77,6 +79,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			fail("3.0", e);
 		}
 	}
+
 	public void skipTestNeedRebuild() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject project = root.getProject("Project");
@@ -85,7 +88,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		ensureExistsInWorkspace(project, true);
 		ensureExistsInWorkspace(unsorted, true);
 		ensureExistsInWorkspace(unsortedFile, true);
-		
+
 		//setup so that the sortbuilder and cycle builder are both touching files in the project
 		try {
 			setAutoBuilding(true);
@@ -124,7 +127,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			fail("4.2", e);
 		}
 		assertEquals("4.3", 1, builder.getBuildCount());
-		
+
 		//request 1 rebuild and ensure we're called twice
 		builder.setRebuildsToRequest(1);
 		builder.resetBuildCount();
@@ -143,7 +146,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			fail("5.2", e);
 		}
 		assertEquals("5.3", 2, builder.getBuildCount());
-		
+
 		//request 5 rebuilds and ensure we're called six times
 		builder.setRebuildsToRequest(5);
 		builder.resetBuildCount();
@@ -209,7 +212,6 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			fail("8.3", e);
 		}
 		assertEquals("8.4", maxBuilds, builder.getBuildCount());
-
 
 	}
 }

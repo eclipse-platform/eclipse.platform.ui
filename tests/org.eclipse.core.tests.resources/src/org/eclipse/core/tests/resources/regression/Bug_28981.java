@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,15 @@ public class Bug_28981 extends EclipseWorkspaceTest {
 	public Bug_28981(String name) {
 		super(name);
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
+
 	public void testBug() {
 		final QualifiedName partner = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		final IWorkspace workspace = getWorkspace();
@@ -45,7 +48,7 @@ public class Bug_28981 extends EclipseWorkspaceTest {
 		IFile regularFile = project.getFile("regular.txt");
 		IFile projectDescriptionFile = project.getFile(".project");
 
-		ensureExistsInWorkspace(new IResource[] { teamPrivateFile, regularFile }, true);
+		ensureExistsInWorkspace(new IResource[] {teamPrivateFile, regularFile}, true);
 		try {
 			synchronizer.setSyncInfo(partner, phantomFile, getRandomString().getBytes());
 		} catch (CoreException e) {
@@ -111,6 +114,7 @@ public class Bug_28981 extends EclipseWorkspaceTest {
 		}
 		assertTrue("5.1 - " + verifier.getMessage(), verifier.isValid());
 	}
+
 	public static Test suite() {
 		return new TestSuite(Bug_28981.class);
 	}

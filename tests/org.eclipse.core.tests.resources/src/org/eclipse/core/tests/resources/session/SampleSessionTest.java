@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,26 +20,29 @@ import org.eclipse.core.tests.harness.WorkspaceSessionTest;
  * cleaned up after the last test method is run.
  */
 public class SampleSessionTest extends WorkspaceSessionTest {
-public SampleSessionTest() {
-}
-public SampleSessionTest(String name) {
-	super(name);
-}
-public void test1() throws Exception {
-	//create a project, save workspace
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	IProject p1 = workspace.getRoot().getProject("P1");
-	p1.create(null);
-	p1.open(null);
-	IFile file = p1.getFile("foo.txt");
-	file.create(getRandomContents(), true, null);
-	workspace.save(true, null);
-}
-public void test2() {
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	IProject p1 = workspace.getRoot().getProject("P1");
-	IFile file = p1.getFile("foo.txt");
-	assertTrue("1.0", p1.exists());
-	assertTrue("1.1", file.exists());
-}
+	public SampleSessionTest() {
+	}
+
+	public SampleSessionTest(String name) {
+		super(name);
+	}
+
+	public void test1() throws Exception {
+		//create a project, save workspace
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject p1 = workspace.getRoot().getProject("P1");
+		p1.create(null);
+		p1.open(null);
+		IFile file = p1.getFile("foo.txt");
+		file.create(getRandomContents(), true, null);
+		workspace.save(true, null);
+	}
+
+	public void test2() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject p1 = workspace.getRoot().getProject("P1");
+		IFile file = p1.getFile("foo.txt");
+		assertTrue("1.0", p1.exists());
+		assertTrue("1.1", file.exists());
+	}
 }

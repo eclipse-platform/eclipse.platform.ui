@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,16 +39,19 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	private IFile lLinked;
 	private IFile lChildLinked;
 	private IPath linkOverlapLocation;
-	
+
 	public static Test suite() {
 		return new TestSuite(BasicAliasTest.class);
 	}
+
 	public BasicAliasTest() {
 		super();
 	}
+
 	public BasicAliasTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Asserts that the two given resources are duplicates in the file system.
 	 * Asserts that both have same location, and same members.  Also asserts
@@ -74,6 +77,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			assertOverlap(message, children1[i], children2[i]);
 		}
 	}
+
 	/**
 	 * Returns the children of the given resource, sorted in a consistent
 	 * alphabetical order.
@@ -81,14 +85,15 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	private IResource[] getSortedChildren(IResource resource) throws CoreException {
 		if (!(resource instanceof IContainer))
 			return new IResource[0];
-		IResource[] children = ((IContainer)resource).members();
+		IResource[] children = ((IContainer) resource).members();
 		Arrays.sort(children, new Comparator() {
 			public int compare(Object arg0, Object arg1) {
-				return ((IResource)arg0).getFullPath().toString().compareTo(((IResource)arg1).getFullPath().toString());
+				return ((IResource) arg0).getFullPath().toString().compareTo(((IResource) arg1).getFullPath().toString());
 			}
 		});
 		return children;
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		IWorkspaceRoot root = getWorkspace().getRoot();
@@ -98,7 +103,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(buildResources(pNoOverlap, new String[] {"/1/", "/1/1", "/1/2", "/2/", "/2/1"}), true);
 
 		//project with overlap		
-		pOverlap= root.getProject("Overlap");
+		pOverlap = root.getProject("Overlap");
 		ensureExistsInWorkspace(pOverlap, true);
 		fOverlap = pOverlap.getFolder("fOverlap");
 		IFolder f2 = pOverlap.getFolder("F2");
@@ -109,9 +114,9 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(buildResources(pOverlap, new String[] {"/1/", "/1/1", "/1/2"}), true);
 		ensureExistsInWorkspace(buildResources(f2, new String[] {"/1/", "/1/1", "/1/2"}), true);
 		ensureExistsInWorkspace(buildResources(fOverlap, new String[] {"/1/", "/1/1", "/1/2"}), true);
-		
+
 		//create links
-		pLinked= root.getProject("LinkProject");
+		pLinked = root.getProject("LinkProject");
 		ensureExistsInWorkspace(pLinked, true);
 		fLinked = pLinked.getFolder("LinkedFolder");
 		fLinkOverlap1 = pLinked.getFolder("LinkOverlap1");
@@ -123,16 +128,18 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(lChildLinked, true);
 		ensureExistsInWorkspace(buildResources(pLinked, new String[] {"/a/", "/a/a", "/a/b"}), true);
 		ensureExistsInWorkspace(buildResources(fLinked, new String[] {"/a/", "/a/a", "/a/b"}), true);
-		
+
 		linkOverlapLocation = getRandomLocation();
 		linkOverlapLocation.toFile().mkdirs();
 		fLinkOverlap1.createLink(linkOverlapLocation, IResource.NONE, null);
 		fLinkOverlap2.createLink(linkOverlapLocation, IResource.NONE, null);
 	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Workspace.clear(linkOverlapLocation.toFile());
 	}
+
 	/**
 	 * This tests regression of bug 32785.  In this bug, moving a linked folder,
 	 * then copying a linked folder, resulted in the alias table having a stale entry
@@ -160,7 +167,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			assertTrue("3.0", !link.exists());
 			assertTrue("3.1", movedLink.exists());
 			assertEquals("3.2", location, movedLink.getLocation());
-			
+
 			//now copy the moved link
 			IFolder copiedLink = project.getFolder("CopiedLink");
 			try {
@@ -182,18 +189,19 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 
 	public void testCloseOpenProject() {
 	}
+
 	/**
 	 * Tests adding a file to a duplicate region by copying.
 	 */
 	public void testCopyFile() {
 		IFile sourceFile = pNoOverlap.getFile("CopySource");
 		ensureExistsInWorkspace(sourceFile, true);
-		
+
 		//file in linked folder
 		try {
 			IFile linkDest = fLinked.getFile("CopyDestination");
 			IFile overlapDest = fOverlap.getFile(linkDest.getName());
-			
+
 			sourceFile.copy(linkDest.getFullPath(), IResource.NONE, getMonitor());
 			assertTrue("1.1", linkDest.exists());
 			assertTrue("1.2", overlapDest.exists());
@@ -243,15 +251,16 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("3.99", e);
 		}
 	}
+
 	public void testCopyFolder() {
 		IFolder source = pNoOverlap.getFolder("CopyFolder");
 		ensureExistsInWorkspace(source, true);
-		
+
 		IFolder destFolder1 = fLinkOverlap1.getFolder(source.getName());
 		IFolder destFolder2 = fLinkOverlap2.getFolder(source.getName());
 		IResource[] allDest = new IResource[] {destFolder1, destFolder2};
 		assertDoesNotExistInWorkspace("1.0", allDest);
-		
+
 		//copy to dest 1
 		try {
 			source.copy(destFolder1.getFullPath(), IResource.NONE, getMonitor());
@@ -259,7 +268,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("1.1");
 		}
 		assertExistsInWorkspace("1.2", allDest);
-		
+
 		try {
 			destFolder2.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
@@ -273,13 +282,14 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("1.4");
 		}
 		assertExistsInWorkspace("1.5", allDest);
-		
+
 		try {
 			destFolder1.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.6", e);
 		}
 	}
+
 	/**
 	 * Test copying a linked folder into a child of its alias.
 	 */
@@ -299,7 +309,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			//should fail
 		}
-		
+
 		//copy to self should fail
 		IFolder copyDest2 = fLinkOverlap2.getFolder(copyDest.getName());
 		try {
@@ -321,6 +331,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			//should fail
 		}
 	}
+
 	public void testCreateDeleteFile() {
 		//file in linked folder
 		try {
@@ -335,7 +346,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		try {
 			lOverlap.delete(IResource.NONE, getMonitor());
 			assertEquals("2.0", lLinked.getLocation(), lOverlap.getLocation());
-			
+
 			assertTrue("2.1", !lOverlap.exists());
 			assertTrue("2.2", !lOverlap.getLocation().toFile().exists());
 			assertTrue("2.3", lOverlap.isSynchronized(IResource.DEPTH_INFINITE));
@@ -366,6 +377,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("3.0", e);
 		}
 	}
+
 	public void testCreateDeleteFolder() {
 		//folder in overlapping project
 		try {
@@ -385,24 +397,24 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			//deleting a link should not delete file system contents
 			assertTrue("2.0", fOverlap.exists());
 			assertTrue("2.1", fOverlap.getLocation().toFile().exists());
-			
+
 			fLinked.createLink(fOverlap.getLocation(), IResource.NONE, getMonitor());
 			assertOverlap("1.4", fOverlap, fLinked);
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
-		
+
 		//child of linked folders
 		IFolder child1 = fLinkOverlap1.getFolder("LinkChild");
 		IFolder child2 = fLinkOverlap2.getFolder(child1.getName());
-		
+
 		try {
 			child1.create(IResource.NONE, true, getMonitor());
 			assertOverlap("3.0", child1, child2);
 			child1.delete(IResource.NONE, getMonitor());
 			assertTrue("3.1", !child1.exists());
 			assertTrue("3.2", !child2.exists());
-			
+
 			child2.create(IResource.NONE, true, getMonitor());
 			assertOverlap("3.3", child1, child2);
 			child2.delete(IResource.NONE, getMonitor());
@@ -412,14 +424,19 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("3.99", e);
 		}
 	}
+
 	public void testCreateDeleteLink() {
 	}
+
 	public void testCreateOpenProject() {
 	}
+
 	public void testDeepCopyLink() {
 	}
+
 	public void testDeepMoveLink() {
 	}
+
 	public void testDeleteLink() {
 		//test deletion of a link that overlaps a project location
 		IFolder linkOnProject = pLinked.getFolder("LinkOnProject");
@@ -428,20 +445,22 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		
+
 		try {
 			linkOnProject.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		
+
 		//deletion of a link should not delete the project that it overlaps
 		assertTrue("2.1", !linkOnProject.exists());
 		assertTrue("2.2", pOverlap.exists());
 		assertTrue("2.3", fOverlap.exists());
 	}
+
 	public void testDeleteProject() {
 	}
+
 	public void testDeleteProjectContents() {
 		//delete the overlapping project - it should delete the children of the linked folder
 		//but leave the actual links intact in the resource tree
@@ -451,10 +470,10 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("1.0", e);
 		}
 		assertDoesNotExistInWorkspace("1.1", new IResource[] {pOverlap, fOverlap, lOverlap, lChildOverlap, lChildLinked});
-		assertDoesNotExistInFileSystem("1.2", new IResource[] {pOverlap, fOverlap, lOverlap, lChildOverlap, lChildLinked,
-			lLinked, fLinked});
+		assertDoesNotExistInFileSystem("1.2", new IResource[] {pOverlap, fOverlap, lOverlap, lChildOverlap, lChildLinked, lLinked, fLinked});
 		assertExistsInWorkspace("1.3", new IResource[] {pLinked, fLinked, lLinked});
 	}
+
 	public void testFileAppendContents() {
 		//linked file
 		try {
@@ -486,6 +505,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		}
 		assertOverlap("3.1", lChildLinked, lChildOverlap);
 	}
+
 	public void testFileSetContents() {
 		//linked file
 		try {
@@ -494,7 +514,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("1.0", e);
 		}
 		assertOverlap("1.1", lLinked, lOverlap);
-		
+
 		//file in linked folder
 		try {
 			lChildLinked.setContents(getRandomContents(), IResource.NONE, getMonitor());
@@ -517,6 +537,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		}
 		assertOverlap("3.1", lChildLinked, lChildOverlap);
 	}
+
 	/**
 	 * Tests moving a file into and out of an overlapping area (similar to
 	 * creation/deletion).
@@ -575,12 +596,16 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("3.0", e);
 		}
 	}
+
 	public void testMoveFolder() {
 	}
+
 	public void testShallowCopyLink() {
 	}
+
 	public void testShallowMoveLink() {
 	}
+
 	public void testShallowDeleteProject() {
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
-
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -23,23 +22,27 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 	IMarker[] markers;
 	final int NUM_MARKERS = 5000;
 	final int REPEAT = 100;
+
 	/**
 	 * No-arg constructor to satisfy test harness.
 	 */
 	public MarkerPerformanceTest() {
 	}
+
 	/**
 	 * Standard test case constructor
 	 */
 	public MarkerPerformanceTest(String testName) {
 		super(testName);
 	}
-	public static Test suite() { 
-		TestSuite suite= new TestSuite();
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
 		suite.addTest(new MarkerPerformanceTest("benchSetAttributes1"));
 		suite.addTest(new MarkerPerformanceTest("benchSetAttributes2"));
-	 	return suite;
+		return suite;
 	}
+
 	public void benchSetAttributes1() {
 		//benchmark setting many attributes in a single operation
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -59,8 +62,9 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		stopBench("benchSetAttributes1", REPEAT*NUM_MARKERS);
+		stopBench("benchSetAttributes1", REPEAT * NUM_MARKERS);
 	}
+
 	public void benchSetAttributes2() {
 		//benchmark setting many attributes in a single operation
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -73,7 +77,7 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 				}
 			}
 		};
-		
+
 		System.out.println("Starting setAttributes2");
 		startBench();
 		try {
@@ -81,8 +85,9 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		stopBench("benchSetAttributes2", REPEAT*NUM_MARKERS);
+		stopBench("benchSetAttributes2", REPEAT * NUM_MARKERS);
 	}
+
 	/**
 	 * @see EclipseWorkspaceTest#setUp()
 	 */
@@ -112,6 +117,7 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 		}
 		markers = createdMarkers;
 	}
+
 	/**
 	 * @see TestCase#tearDown()
 	 */

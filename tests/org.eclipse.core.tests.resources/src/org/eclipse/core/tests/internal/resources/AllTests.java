@@ -29,12 +29,14 @@ public class AllTests extends TestCase {
 		suite.addTest(WorkspaceConcurrencyTest.suite());
 		return suite;
 	}
+
 	/**
 	 * AllTests constructor comment.
 	 */
 	public AllTests() {
 		super(null);
 	}
+
 	/**
 	 * AllTests constructor comment.
 	 * @param name java.lang.String

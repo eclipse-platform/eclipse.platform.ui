@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,15 @@ public class IProjectTest extends AbstractBuilderTest {
 	public static Test suite() {
 		return new TestSuite(IProjectTest.class);
 	}
+
 	public IProjectTest() {
 		super("");
 	}
+
 	public IProjectTest(String name) {
 		super(name);
 	}
+
 	public void test_1G0XIMA() throws CoreException {
 		/* common objects */
 		IProject project = project = getWorkspace().getRoot().getProject("MyProject");
@@ -46,7 +49,7 @@ public class IProjectTest extends AbstractBuilderTest {
 				resource.move(path, false, null);
 				return true;
 			}
-			
+
 		};
 		/* test */
 		try {
@@ -57,6 +60,7 @@ public class IProjectTest extends AbstractBuilderTest {
 		// cleanup
 		project.delete(true, getMonitor());
 	}
+
 	public void test_1G5I6PV() throws CoreException {
 		/* common objects */
 		IProject project = project = getWorkspace().getRoot().getProject("MyProject");
@@ -73,6 +77,7 @@ public class IProjectTest extends AbstractBuilderTest {
 		// cleanup
 		project.delete(true, getMonitor());
 	}
+
 	/**
 	 * 1GC2FKV: ITPCORE:BuildManager triggers incremental build when doing full builds
 	 */
@@ -92,7 +97,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			IProjectDescription prjDescription = getWorkspace().newProjectDescription("ProjectONE");
 			ICommand command = prjDescription.newCommand();
 			command.setBuilderName(SignaledBuilder.BUILDER_ID);
-			prjDescription.setBuildSpec(new ICommand[] { command });
+			prjDescription.setBuildSpec(new ICommand[] {command});
 			projectONE.create(prjDescription, getMonitor());
 			projectONE.open(getMonitor());
 		} catch (CoreException e) {
@@ -105,7 +110,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			IProjectDescription prjDescription = getWorkspace().newProjectDescription("Project_TWO");
 			ICommand command = prjDescription.newCommand();
 			command.setBuilderName(SignaledBuilder.BUILDER_ID);
-			prjDescription.setBuildSpec(new ICommand[] { command });
+			prjDescription.setBuildSpec(new ICommand[] {command});
 			projectTWO.create(prjDescription, getMonitor());
 			projectTWO.open(getMonitor());
 		} catch (CoreException e) {
@@ -155,6 +160,7 @@ public class IProjectTest extends AbstractBuilderTest {
 		assertTrue("3.1", !projectONEbuilder.wasExecuted());
 		assertTrue("3.2", projectTWObuilder.wasExecuted());
 	}
+
 	/**
 	 * 1G5FYZM: ITPCORE:WIN - Project.deleteWithoutForce does not look for out of sync children
 	 */
@@ -195,6 +201,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			fail("5.0", e);
 		}
 	}
+
 	/**
 	 * 1GDW1RX: ITPCORE:ALL - IResource.delete() without force not working correctly
 	 */
@@ -207,7 +214,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			fail("0.0", e);
 		}
 
-		String[] paths = new String[] { "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1" };
+		String[] paths = new String[] {"/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"};
 		IResource[] resources = buildResources(project, paths);
 		ensureExistsInWorkspace(resources, true);
 

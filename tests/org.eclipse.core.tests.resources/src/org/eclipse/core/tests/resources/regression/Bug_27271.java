@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,15 +32,18 @@ public class Bug_27271 extends EclipseWorkspaceTest {
 	public Bug_27271(String name) {
 		super(name);
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		clearPathVariablesProperties();
 	}
+
 	protected void tearDown() throws Exception {
 		clearPathVariablesProperties();
 		super.tearDown();
 	}
+
 	private void clearPathVariablesProperties() {
 		// ensure we have no preferences related to path variables
 		String[] propertyNames = preferences.propertyNames();
@@ -48,9 +51,11 @@ public class Bug_27271 extends EclipseWorkspaceTest {
 			if (propertyNames[i].startsWith(VARIABLE_PREFIX))
 				preferences.setToDefault(propertyNames[i]);
 	}
+
 	public static Test suite() {
 		return new TestSuite(Bug_27271.class);
 	}
+
 	public void testBug() {
 		IPathVariableManager pvm = getWorkspace().getPathVariableManager();
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();

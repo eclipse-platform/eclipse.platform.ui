@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,14 @@ import org.eclipse.core.internal.indexing.*;
 import junit.framework.*;
 
 public class BasicFieldTest extends TestCase {
-	
+
 	protected TestEnvironment env;
 
 	public BasicFieldTest(String name, TestEnvironment env) {
 		super(name);
 		this.env = env;
 	}
-	
+
 	public static Test suite(TestEnvironment env) {
 		List names = new Vector(10);
 		names.add("testBuffer");
@@ -31,11 +31,11 @@ public class BasicFieldTest extends TestCase {
 		names.add("testFieldArray");
 		TestSuite suite = new TestSuite();
 		for (Iterator z = names.iterator(); z.hasNext();) {
-			suite.addTest(new BasicFieldTest((String)z.next(), env));
+			suite.addTest(new BasicFieldTest((String) z.next(), env));
 		}
 		return suite;
 	}
-	
+
 	public void testBuffer() throws Exception {
 		byte[] b = new byte[256];
 		Buffer buf = new Buffer(b);
@@ -53,15 +53,19 @@ public class BasicFieldTest extends TestCase {
 		assertEquals("t06", 0x00008000, buf.getUInt(0, 2));
 		assertEquals("t07", 0x00800000, buf.getUInt(0, 3));
 		assertEquals("t08", 0x00000000, buf.getUInt(0, 4));
-	
-		for (int i = 0; i < n; i ++) b[i] = 1;
+
+		for (int i = 0; i < n; i++)
+			b[i] = 1;
 		buf.clear(10, 10);
 		for (int i = 0; i < n; i++) {
-			if (i < 10) assertEquals("t31", 1, b[i]);
-			else if (i < 20) assertEquals("t32", 0, b[i]);
-			else assertEquals("t33", 1, b[i]);
+			if (i < 10)
+				assertEquals("t31", 1, b[i]);
+			else if (i < 20)
+				assertEquals("t32", 0, b[i]);
+			else
+				assertEquals("t33", 1, b[i]);
 		}
-	
+
 		n = 16;
 		b = new byte[n];
 		buf = new Buffer(b);
@@ -73,7 +77,7 @@ public class BasicFieldTest extends TestCase {
 		for (int i = 0; i < n; i++) {
 			assertEquals("t21", 1, b[i]);
 		}
-	
+
 		byte[] b1 = new byte[4];
 		byte[] b2 = new byte[2];
 		Buffer buf1 = new Buffer(b1);
@@ -85,16 +89,16 @@ public class BasicFieldTest extends TestCase {
 		assertEquals("t25", -1, Buffer.compare(buf1, buf2));
 		assertEquals("t26", 1, Buffer.compare(buf2, buf1));
 	}
-	
+
 	public void testField() throws Exception {
 	}
-	
+
 	public void testFieldArray() throws Exception {
 	}
-	
+
 	public void testPointer() throws Exception {
 	}
-	
+
 	public void testFieldDef() throws Exception {
 		byte[] b = new byte[256];
 		Field f = new Field(b);
@@ -108,7 +112,7 @@ public class BasicFieldTest extends TestCase {
 		FieldDef d07 = new FieldDef(FieldDef.F_LONG, 2, 7);
 		FieldDef d08 = new FieldDef(FieldDef.F_LONG, 2, 8);
 		FieldDef d99 = new FieldDef(FieldDef.F_BYTES, 2, 99);
-		
+
 		f.clear();
 		f.put(d01, 255);
 		assertEquals("1d01", 255L << 56, buf.getLong(2, 8));
@@ -123,10 +127,10 @@ public class BasicFieldTest extends TestCase {
 		f.put(d06, 255);
 		assertEquals("1d06", 255L << 16, buf.getLong(2, 8));
 		f.put(d07, 255);
-		assertEquals("1d07", 255L <<  8, buf.getLong(2, 8));
+		assertEquals("1d07", 255L << 8, buf.getLong(2, 8));
 		f.put(d08, 255);
-		assertEquals("1d08", 255L <<  0, buf.getLong(2, 8));
-		
+		assertEquals("1d08", 255L << 0, buf.getLong(2, 8));
+
 		f.clear();
 		f.put(d01, 255);
 		assertEquals("2d01", 255, f.getUInt(d01));

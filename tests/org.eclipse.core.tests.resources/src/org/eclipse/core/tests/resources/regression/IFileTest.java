@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,129 +19,134 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class IFileTest extends EclipseWorkspaceTest {
-/**
- * Constructor for IFileTest.
- */
-public IFileTest() {
-	super();
-}
-/**
- * Constructor for IFileTest.
- * @param name
- */
-public IFileTest(String name) {
-	super(name);
-}
-public static Test suite() {
-	return new TestSuite(IFileTest.class);
-}
-/**
- * Bug states that the error code in the CoreException which is thrown when
- * you try to create a file in a read-only folder on Linux should be 
- * FAILED_WRITE_LOCAL.
- */
-public void testBug25658() {
+	/**
+	 * Constructor for IFileTest.
+	 */
+	public IFileTest() {
+		super();
+	}
 
-	// This test is no longer valid since the error code is dependant on whether 
-	// or not the parent folder is marked as read-only. We need to write a different
-	// test to make the file.create fail.	
-	if (true)
-		return;
+	/**
+	 * Constructor for IFileTest.
+	 * @param name
+	 */
+	public IFileTest(String name) {
+		super(name);
+	}
 
-	// We need to know whether or not we can unset the read-only flag
-	// in order to perform this test.
-	if (!CoreFileSystemLibrary.usingNatives())
-		return;
-	
-	// Don't test this on Windows
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
-		return;
-	
-	IProject project = getWorkspace().getRoot().getProject("MyProject");
-	IFolder folder = project.getFolder("folder");
-	ensureExistsInWorkspace(new IResource[] {project, folder}, true);
-	IFile file = folder.getFile("file.txt");
+	public static Test suite() {
+		return new TestSuite(IFileTest.class);
+	}
 
-	try {
-		folder.setReadOnly(true);
-		assertTrue("0.0", folder.isReadOnly());
+	/**
+	 * Bug states that the error code in the CoreException which is thrown when
+	 * you try to create a file in a read-only folder on Linux should be 
+	 * FAILED_WRITE_LOCAL.
+	 */
+	public void testBug25658() {
+
+		// This test is no longer valid since the error code is dependant on whether 
+		// or not the parent folder is marked as read-only. We need to write a different
+		// test to make the file.create fail.	
+		if (true)
+			return;
+
+		// We need to know whether or not we can unset the read-only flag
+		// in order to perform this test.
+		if (!CoreFileSystemLibrary.usingNatives())
+			return;
+
+		// Don't test this on Windows
+		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+			return;
+
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFolder folder = project.getFolder("folder");
+		ensureExistsInWorkspace(new IResource[] {project, folder}, true);
+		IFile file = folder.getFile("file.txt");
+
 		try {
-			file.create(getRandomContents(), true, getMonitor());
-			fail("0.1");
-		} catch (CoreException e) {
-			assertEquals("0.2", IResourceStatus.FAILED_WRITE_LOCAL, e.getStatus().getCode());
+			folder.setReadOnly(true);
+			assertTrue("0.0", folder.isReadOnly());
+			try {
+				file.create(getRandomContents(), true, getMonitor());
+				fail("0.1");
+			} catch (CoreException e) {
+				assertEquals("0.2", IResourceStatus.FAILED_WRITE_LOCAL, e.getStatus().getCode());
+			}
+		} finally {
+			folder.setReadOnly(false);
 		}
-	} finally {
-		folder.setReadOnly(false);
 	}
-}
-/**
- * Bug requests that if a failed file write occurs on Linux that we check the immediate
- * parent to see if it is read-only so we can return a better error code and message
- * to the user.
- */
-public void testBug25662() {
-	
-	// We need to know whether or not we can unset the read-only flag
-	// in order to perform this test.
-	if (!CoreFileSystemLibrary.usingNatives())
-		return;
-	
-	// Only run this test on Linux for now since Windows lets you create
-	// a file within a read-only folder.
-	if (!BootLoader.getOS().equals(BootLoader.OS_LINUX))
-		return;
 
-	IProject project = getWorkspace().getRoot().getProject("MyProject");
-	IFolder folder = project.getFolder("folder");
-	ensureExistsInWorkspace(new IResource[] {project, folder}, true);
-	IFile file = folder.getFile("file.txt");
+	/**
+	 * Bug requests that if a failed file write occurs on Linux that we check the immediate
+	 * parent to see if it is read-only so we can return a better error code and message
+	 * to the user.
+	 */
+	public void testBug25662() {
 
-	try {
-		folder.setReadOnly(true);
-		assertTrue("0.0", folder.isReadOnly());
+		// We need to know whether or not we can unset the read-only flag
+		// in order to perform this test.
+		if (!CoreFileSystemLibrary.usingNatives())
+			return;
+
+		// Only run this test on Linux for now since Windows lets you create
+		// a file within a read-only folder.
+		if (!BootLoader.getOS().equals(BootLoader.OS_LINUX))
+			return;
+
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFolder folder = project.getFolder("folder");
+		ensureExistsInWorkspace(new IResource[] {project, folder}, true);
+		IFile file = folder.getFile("file.txt");
+
 		try {
-			file.create(getRandomContents(), true, getMonitor());
-			fail("0.1");
-		} catch (CoreException e) {
-			assertEquals("0.2", IResourceStatus.PARENT_READ_ONLY, e.getStatus().getCode());
+			folder.setReadOnly(true);
+			assertTrue("0.0", folder.isReadOnly());
+			try {
+				file.create(getRandomContents(), true, getMonitor());
+				fail("0.1");
+			} catch (CoreException e) {
+				assertEquals("0.2", IResourceStatus.PARENT_READ_ONLY, e.getStatus().getCode());
+			}
+		} finally {
+			folder.setReadOnly(false);
 		}
-	} finally {
-		folder.setReadOnly(false);
 	}
-}
-/**
- * Tests setting local timestamp of project description file
- */
-public void testBug43936() {
-	IProject project = getWorkspace().getRoot().getProject("MyProject");
-	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-	ensureExistsInWorkspace(project, true);
-	assertTrue("1.0", descFile.exists());
-	
-	IProjectDescription desc = null;
-	try {
-		desc = project.getDescription();
-	} catch (CoreException e) {
-		fail("1.99", e);
+
+	/**
+	 * Tests setting local timestamp of project description file
+	 */
+	public void testBug43936() {
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		ensureExistsInWorkspace(project, true);
+		assertTrue("1.0", descFile.exists());
+
+		IProjectDescription desc = null;
+		try {
+			desc = project.getDescription();
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//change the local file timestamp
+		long newTime = System.currentTimeMillis() + 10000;
+		long actualTime = 0;
+		try {
+			descFile.setLocalTimeStamp(newTime);
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		assertTrue("2.0", descFile.isSynchronized(IResource.DEPTH_ZERO));
+
+		try {
+			//try setting the description -- shouldn't fail
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e2) {
+			fail("3.99", e2);
+		}
 	}
-	//change the local file timestamp
-	long newTime = System.currentTimeMillis()+10000;
-	long actualTime = 0;
-	try {
-		descFile.setLocalTimeStamp(newTime);
-	} catch (CoreException e1) {
-		fail("2.99", e1);
-	}
-	
-	assertTrue("2.0", descFile.isSynchronized(IResource.DEPTH_ZERO));
-	
-	try {
-		//try setting the description -- shouldn't fail
-		project.setDescription(desc, getMonitor());
-	} catch (CoreException e2) {
-		fail("3.99", e2);
-	}
-}
 }
 

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -23,13 +23,15 @@ import org.eclipse.core.runtime.CoreException;
 public class TestMasterTableCleanup extends WorkspaceSerializationTest {
 	private static final String CLOSE_OPEN = "CloseOpen";
 	private static final String CLOSE_DELETE = "CloseDelete";
-	
+
 	public TestMasterTableCleanup() {
 		super();
 	}
+
 	public TestMasterTableCleanup(String name) {
 		super(name);
 	}
+
 	/**
 	 * Setup.  Two scenarios with stale entries were:
 	 *  1) Project that was closed and then opened
@@ -42,18 +44,19 @@ public class TestMasterTableCleanup extends WorkspaceSerializationTest {
 			closeOpen.open(null);
 			closeOpen.close(null);
 			closeOpen.open(null);
-			
+
 			IProject closeDelete = getWorkspace().getRoot().getProject(CLOSE_DELETE);
 			closeDelete.create(null);
 			closeDelete.open(null);
 			closeDelete.close(null);
 			closeDelete.delete(IResource.NONE, null);
-			
+
 			getWorkspace().save(true, null);
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
 	}
+
 	/**
 	 * Verify. Ensure safe table does not contain stale entries.
 	 */

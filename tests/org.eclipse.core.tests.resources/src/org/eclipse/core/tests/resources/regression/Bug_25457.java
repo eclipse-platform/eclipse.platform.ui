@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,15 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(Bug_25457.class);
 	}
+
 	public Bug_25457() {
 		super();
 	}
+
 	public Bug_25457(String name) {
 		super(name);
 	}
+
 	public void testFile() {
 		//this test only works on windows
 		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
@@ -77,6 +80,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	public void testFolder() {
 		//this test only works on windows
 		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
@@ -124,6 +128,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 			}
 		}
 	}
+
 	public void testProject() {
 		//this test only works on windows
 		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))

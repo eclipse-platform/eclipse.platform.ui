@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,48 +27,54 @@ public class TestElementComparator implements IElementComparator {
 	static final int ADDED = NodeComparison.K_ADDED;
 	static final int REMOVED = NodeComparison.K_REMOVED;
 	static final int CHANGED = NodeComparison.K_CHANGED;
-/**
- * Force clients to use the singleton
- */
-protected TestElementComparator() {
-	super();
-}
-/**
- * Returns the type of change.
- */
-public int compare (Object oldInfo, Object newInfo) {
-	if (oldInfo == null) {
-		if (newInfo == null) {
-			return CHANGED;
-		} else {
-			return ADDED;
-		}
+
+	/**
+	 * Force clients to use the singleton
+	 */
+	protected TestElementComparator() {
+		super();
 	}
-	if (newInfo == null) {
+
+	/**
+	 * Returns the type of change.
+	 */
+	public int compare(Object oldInfo, Object newInfo) {
 		if (oldInfo == null) {
-			return CHANGED;
-		} else {
-			return REMOVED;
+			if (newInfo == null) {
+				return CHANGED;
+			} else {
+				return ADDED;
+			}
 		}
+		if (newInfo == null) {
+			if (oldInfo == null) {
+				return CHANGED;
+			} else {
+				return REMOVED;
+			}
+		}
+		return testEquality(oldInfo, newInfo) ? K_NO_CHANGE : CHANGED;
 	}
-	return testEquality(oldInfo, newInfo) ? K_NO_CHANGE : CHANGED;
-}
-/**
- * Returns the singleton instance
- */
-public static IElementComparator getComparator() {
-	if (fSingleton == null) {
-		fSingleton = new TestElementComparator();
+
+	/**
+	 * Returns the singleton instance
+	 */
+	public static IElementComparator getComparator() {
+		if (fSingleton == null) {
+			fSingleton = new TestElementComparator();
+		}
+		return fSingleton;
 	}
-	return fSingleton;
-}
-/**
- * Makes a comparison based on equality
- */
-protected boolean testEquality(Object oldInfo, Object newInfo) {
-	if (oldInfo == null && newInfo == null) return true;
-	if (oldInfo == null || newInfo == null) return false;
-	
-	return oldInfo.equals(newInfo);
-}
+
+	/**
+	 * Makes a comparison based on equality
+	 */
+	protected boolean testEquality(Object oldInfo, Object newInfo) {
+		if (oldInfo == null && newInfo == null)
+			return true;
+		if (oldInfo == null || newInfo == null)
+			return false;
+
+		return oldInfo.equals(newInfo);
+	}
 }

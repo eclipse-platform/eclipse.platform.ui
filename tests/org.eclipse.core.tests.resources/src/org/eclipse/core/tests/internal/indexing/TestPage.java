@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,10 @@ class TestPage extends Page {
 
 	public boolean check(byte b) {
 		for (int i = 0; i < pageBuffer.length(); i++) {
-			if (pageBuffer.getByte(i) == b) continue;
+			if (pageBuffer.getByte(i) == b)
+				continue;
 			return false;
-		}			
+		}
 		return true;
 	}
 
@@ -42,7 +43,7 @@ class TestPage extends Page {
 	public byte value() {
 		return pageBuffer.getByte(0);
 	}
-	
+
 	public void toBuffer(byte[] buffer) {
 		pageBuffer.copyTo(buffer);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.internal.indexing;
 
 public interface TestEnvironment {
-	
+
 	/**
 	 * Returns the file name which will be used as a target for a
 	 * particular test suite.  This will be the name of an IndexedStore, 
@@ -23,7 +23,7 @@ public interface TestEnvironment {
 	 * Prints a string on an output stream.  All testcase strings are informational only.
 	 */
 	public void print(String s);
-	
+
 	/**
 	 * Prints a string on an output stream.  All testcase strings are informational only.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		assertTrue("2.1", workspace.getDescription().getBuildOrder() != null);
 
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x:y,z:z");
-		List expectedList = Arrays.asList(new String[]{"x", "y,z", "z"});
+		List expectedList = Arrays.asList(new String[] {"x", "y,z", "z"});
 		List actualList = Arrays.asList(workspace.getDescription().getBuildOrder());
 		assertEquals("2.2", expectedList, actualList);
 
@@ -118,7 +118,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		// 1 - PREF_AUTO_BUILDING
 		modified.setAutoBuilding(!original.isAutoBuilding());
 		// 2 - PREF_DEFAULT_BUILD_ORDER and 3 - PREF_BUILD_ORDER
-		modified.setBuildOrder(new String[]{"a", "b", "c"});
+		modified.setBuildOrder(new String[] {"a", "b", "c"});
 		// 4 - PREF_FILE_STATE_LONGEVITY
 		modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
 		// 5 - PREF_MAX_BUILD_ITERATIONS
@@ -181,7 +181,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 			// creates a modified description
 			IWorkspaceDescription modified = workspace.getDescription();
 			modified.setAutoBuilding(!original.isAutoBuilding());
-			modified.setBuildOrder(new String[]{"a", "b", "c"});
+			modified.setBuildOrder(new String[] {"a", "b", "c"});
 			modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
 			modified.setMaxBuildIterations((original.getMaxBuildIterations() + 1) * 2);
 			modified.setMaxFileStates((original.getMaxFileStates() + 1) * 2);
@@ -234,7 +234,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	public void testSetDescription() {
 		IWorkspaceDescription description = workspace.getDescription();
 		description.setAutoBuilding(false);
-		description.setBuildOrder(new String[]{"a", "b,c", "c"});
+		description.setBuildOrder(new String[] {"a", "b,c", "c"});
 		description.setFileStateLongevity(60000 * 5);
 		description.setMaxBuildIterations(35);
 		description.setMaxFileStates(16);
@@ -270,7 +270,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	public void testMigration() {
 		WorkspaceDescription description = new WorkspaceDescription("Legacy workspace");
 		description.setAutoBuilding(false);
-		final String[] buildOrder = new String[]{"g", "r", "e", "p"};
+		final String[] buildOrder = new String[] {"g", "r", "e", "p"};
 		description.setBuildOrder(buildOrder);
 		description.setFileStateLongevity(Math.abs((long) (Math.random() * 100000L)));
 		description.setMaxFileStates(Math.abs((int) (Math.random() * 100000L)));
@@ -318,10 +318,10 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	}
 
 	public static Test suite() {
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new WorkspacePreferencesTest("testImportExport"));
-//		return suite;
-				return new TestSuite(WorkspacePreferencesTest.class);
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new WorkspacePreferencesTest("testImportExport"));
+		//		return suite;
+		return new TestSuite(WorkspacePreferencesTest.class);
 
 	}
 }

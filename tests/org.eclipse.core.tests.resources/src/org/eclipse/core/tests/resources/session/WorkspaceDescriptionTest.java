@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,12 +24,15 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 	private static final int MAX_STATES = 244;
 	private static final long MAX_FILE_SIZE = 1024 * 53;
 	private static final long SNAPSHOT_INTERVAL = 4321;
+
 	public WorkspaceDescriptionTest() {
 		super();
 	}
+
 	public WorkspaceDescriptionTest(String name) {
 		super(name);
 	}
+
 	public void test1() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription desc = workspace.getDescription();
@@ -46,6 +49,7 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 			fail("1.0", e);
 		}
 	}
+
 	public void test2() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription desc = workspace.getDescription();
