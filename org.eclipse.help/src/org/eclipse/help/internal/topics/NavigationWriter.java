@@ -30,10 +30,9 @@ public class NavigationWriter extends XMLGenerator {
 				+ "\" href=\""
 				+ reduceURL(topics.getHref())
 				+ "\">");
-		for (Iterator topicIt = topics.getChildTopics().iterator();
-			topicIt.hasNext();
-			) {
-			generate((ITopic) topicIt.next());
+		ITopic[] subtopics = topics.getTopics();
+		for (int i=0; i<subtopics.length; i++) {
+			generate(subtopics[i]);
 		}
 		println("</topics>");
 		super.close();
@@ -51,11 +50,11 @@ public class NavigationWriter extends XMLGenerator {
 				+ xmlEscape(topic.getLabel())
 				+ "\""
 				+ (href != null ? " href=\"" + reduceURL(href) + "\"" : ""));
-		Collection childTopics = topic.getChildTopics();
-		if (childTopics.size() > 0) {
+		ITopic[] subtopics = topic.getSubtopics();
+		if (subtopics.length > 0) {
 			println(">");
-			for (Iterator topicIt = childTopics.iterator(); topicIt.hasNext();) {
-				generate((ITopic) topicIt.next());
+			for (int i=0 ;i<subtopics.length; i++) {
+				generate(subtopics[i]);
 			}
 			printPad();
 			println("</topic>");

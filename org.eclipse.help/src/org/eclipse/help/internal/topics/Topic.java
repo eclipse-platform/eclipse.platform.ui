@@ -2,7 +2,10 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+ 
 package org.eclipse.help.internal.topics;
+
+import java.util.List;
 import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.topics.ITopic;
 import org.xml.sax.*;
@@ -12,8 +15,10 @@ import org.xml.sax.*;
  * Can also act as a container for other documents.
  */
 class Topic extends NavigationElement implements ITopic {
-	protected String href;
-	protected String label;
+	private String href;
+	private String label;
+	private ITopic[] topicArray;
+	
 	/**
 	 * Contstructor.  
 	 */
@@ -33,10 +38,27 @@ class Topic extends NavigationElement implements ITopic {
 		builder.buildTopic(this);
 	}
 
+	/////////////////
+	//  ITopic
+	/////////////////
+	
 	public String getHref() {
 		return href;
 	}
 	public String getLabel() {
 		return label;
+	}
+	
+	/**
+	 * @return ITopic list
+	 */
+	public ITopic[] getSubtopics() {
+		if (topicArray == null)
+		{
+			List topics = getChildTopics();
+			topicArray = new ITopic[topics.size()];
+			topics.toArray(topicArray);
+		}
+		return topicArray;
 	}
 }

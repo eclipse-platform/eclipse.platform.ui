@@ -10,6 +10,7 @@ import org.eclipse.help.topics.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.help.*;
 /**
  * Label and image provider for topic elements
  */
@@ -42,13 +43,18 @@ public class ElementLabelProvider extends LabelProvider {
 		return instance;
 	}
 	public Image getImage(Object element) {
-		if (element instanceof IDescriptor) {
-			IDescriptor topic = (IDescriptor) element;
+		if (element instanceof IHelpResource) {
+			IHelpResource topic = (IHelpResource) element;
 			if (("".equals(topic.getHref())) || (null == topic.getHref()))
 				return imgRegistry.get(IMAGE_TOPIC_FOLDER);
 			else {
-				Iterator children = ((ITopicNode) topic).getChildTopics().iterator();
-				if (children == null || !children.hasNext())
+				ITopic[] children = null;
+				if (element instanceof ITopic)
+					children = ((ITopic)element).getSubtopics();
+				else if (element instanceof ITopics)
+					children = ((ITopics)element).getTopics();
+
+				if (children == null || children.length == 0)
 					return imgRegistry.get(IMAGE_TOPIC);
 			}
 			return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
@@ -59,8 +65,8 @@ public class ElementLabelProvider extends LabelProvider {
 		return null;
 	}
 	public String getText(Object element) {
-		if (element instanceof IDescriptor)
-			return ((IDescriptor) element).getLabel();
+		if (element instanceof IHelpResource)
+			return ((IHelpResource) element).getLabel();
 		if (element instanceof IHelpTopic)
 			return ((IHelpTopic) element).getLabel();
 		return null;

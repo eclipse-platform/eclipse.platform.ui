@@ -14,10 +14,12 @@ import sun.java2d.pipe.NullPixelPipe;
  * Topics objects.
  */
 class Topics extends NavigationElement implements ITopics {
-	protected String attach_to;
-	protected String href;
-	protected String label;
-	protected TopicsFile topicsFile;
+	private String attach_to;
+	private String href;
+	private String label;
+	private TopicsFile topicsFile;
+	private ITopic[] topicArray;
+	
 	/**
 	 * Contstructor.  Used when parsing help contributions.
 	 */
@@ -55,6 +57,10 @@ class Topics extends NavigationElement implements ITopics {
 		return topicsFile;
 	}
 
+	/////////////////////
+	//  ITopics
+	/////////////////////
+	
 	/**
 	 * Gets the atach_to
 	 * @return Returns a String
@@ -87,7 +93,10 @@ class Topics extends NavigationElement implements ITopics {
 		// by href, but for now let's just traverse the
 		// tree and find the topic.
 		Stack stack = new Stack();
-		stack.addAll(getChildTopics());
+		ITopic[] topics = getTopics();
+		for (int i=0; i<topics.length; i++)
+			stack.push(topics[i]);
+		
 		while(!stack.isEmpty())
 		{
 			ITopic topic = (ITopic)stack.pop();
@@ -95,6 +104,20 @@ class Topics extends NavigationElement implements ITopics {
 				return topic;
 		}
 		return null;
+	}
+			
+	/**
+	 * Note: assumes the topics have been built....
+	 * @return ITopic list
+	 */
+	public ITopic[] getTopics() {
+		if (topicArray == null)
+		{
+			List topics = getChildTopics();
+			topicArray = new ITopic[topics.size()];
+			topics.toArray(topicArray);
+		}
+		return topicArray;
 	}
 	
 	/**

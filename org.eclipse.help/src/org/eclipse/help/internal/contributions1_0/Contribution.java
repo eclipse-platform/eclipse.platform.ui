@@ -9,12 +9,20 @@ package org.eclipse.help.internal.contributions1_0;
 import java.util.*;
 
 import org.eclipse.help.topics.*;
+import org.eclipse.help.*;
 
 
 /**
  * Interface for help contributions (topics, actions,views, etc.)
  */
-public interface Contribution /* 1.0 nav support */extends IDescriptor, ITopicNode/* eo 1.0 nav support */{
+public interface Contribution 
+  /* 1.0 nav support */
+  // We are pushing this a bit, making everything behaving like a topic or topics
+  // in the new syntax. 
+  // This code should be removed with the 1.0 cleanup
+  extends IHelpResource, ITopic, ITopics
+  /* eo 1.0 nav support */
+{
 	// switches indicating how to insert
 	public final static int FIRST = 1;
 	public final static int LAST = -1;

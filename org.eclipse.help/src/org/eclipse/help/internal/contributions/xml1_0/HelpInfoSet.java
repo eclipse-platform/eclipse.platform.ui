@@ -9,6 +9,10 @@ import java.util.*;
 import org.eclipse.help.internal.contributions1_0.*;
 import org.eclipse.help.internal.contributors1_0.*;
 import org.xml.sax.*;
+/* 1.0 nav support */	
+import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.internal.HelpSystem;
+/* eo 1.0 nav support */
 
 /**
  * Views contribution implementation 
@@ -89,4 +93,20 @@ public class HelpInfoSet extends HelpContribution implements InfoSet {
 	public String toString() {
 		return getID();
 	}
+	
+/* 1.0 nav support */	
+	public ITopic getTopic(String href)
+	{
+		Topic[] topics =
+			(Topic[]) HelpSystem
+				.getNavigationManager()
+				.getNavigationModel(getID())
+				.getTopicsWithURL(href);
+				
+		if (topics == null || topics.length == 0)
+			return null;
+		else
+			return topics[0];
+	}
+/* eo 1.0 nav support */
 }

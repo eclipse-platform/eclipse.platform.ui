@@ -3,7 +3,7 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.help.topics.ITopicNode;
+import org.eclipse.help.topics.*;
 import org.eclipse.jface.viewers.*;
 /**
  * A basic tree content provider
@@ -19,9 +19,11 @@ public class TreeContentProvider implements ITreeContentProvider {
 	public void dispose() {
 	}
 	public Object[] getChildren(Object element) {
-		if (element instanceof ITopicNode) {
-			return ((ITopicNode) element).getChildTopics().toArray();
-		} else
+		if (element instanceof ITopic) 
+			return ((ITopic) element).getSubtopics();
+		else if (element instanceof ITopics)
+			return ((ITopics)element).getTopics();
+		else
 			return null;
 	}
 	public static TreeContentProvider getDefault() {
@@ -34,8 +36,10 @@ public class TreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 	public boolean hasChildren(Object element) {
-		if (element instanceof ITopicNode)
-			return ((ITopicNode) element).getChildTopics().size() > 0;
+		if (element instanceof ITopic)
+			return ((ITopic) element).getSubtopics().length > 0;
+		else if (element instanceof ITopics)
+			return ((ITopics)element).getTopics().length > 0;
 		else
 			return false;
 	}

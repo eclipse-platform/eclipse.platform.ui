@@ -11,6 +11,7 @@ import org.xml.sax.*;
 import org.eclipse.help.internal.contributions1_0.Contribution;
 import org.eclipse.help.internal.contributions1_0.Visitor;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.topics.ITopic;
 
 /**
  * Common class for contribution data.
@@ -25,6 +26,8 @@ public class HelpContribution implements Contribution {
 	// counter to track children with FIRST or LAST position preferences
 	protected int firstChildrenNo = 0;
 	protected int lastChildrenNo = 0;
+	
+	protected ITopic[] topicArray;
 
 	/**
 	 */
@@ -175,11 +178,32 @@ public class HelpContribution implements Contribution {
 	}
 
 
+ /* 1.0 nav support */				
 	/**
-	 * @see ITopicNode#getChildTopics()
+	 * Note: assumes the topics have been built....
+	 * @return ITopic list
 	 */
-	public List getChildTopics() {
-		return getChildrenList();
+	public ITopic[] getSubtopics() {
+	if (topicArray == null)
+		{
+			List topics = getChildrenList();
+			topicArray = new ITopic[topics.size()];
+			topics.toArray(topicArray);
+		}
+		return topicArray;
+	}
+	
+	/**
+	 * Note: assumes the topics have been built....
+	 * @return ITopic list
+	 */
+	public ITopic[] getTopics() {
+		return getSubtopics();
+	}
+	
+	public ITopic getTopic(String href)
+	{
+		return null;
 	}
 	// eo 1.0 nav support
 

@@ -39,4 +39,5 @@ public class HelpTopic extends HelpContribution implements Topic, IHelpTopic {
 	public void setHref(String href) {
 		this.href = href;
 	}
+	
 }

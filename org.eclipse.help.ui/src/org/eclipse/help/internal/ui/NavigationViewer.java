@@ -4,9 +4,10 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import java.util.*;
+
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.topics.TopicsNavigationManager;
 import org.eclipse.help.topics.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.topics.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -159,7 +160,7 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 			if (!(selection.getFirstElement() instanceof ITopic))
 				return;
 			ITopic topic = (ITopic) selection.getFirstElement();
-			if (!topic.getChildTopics().isEmpty()) {
+			if (topic.getSubtopics().length >0) {
 				// add print tree action
 				mgr.add(new PrintTopicTreeAction((IStructuredSelection) selection));
 				mgr.add(new Separator());

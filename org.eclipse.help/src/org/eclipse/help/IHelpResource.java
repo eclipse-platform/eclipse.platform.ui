@@ -2,13 +2,16 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.topics;
+package org.eclipse.help;
+import org.eclipse.help.topics.*;
 /**
- * IDescriptor is a descriptor of ITopic or ITopics
- * that can be useful when refering or displaying
- * these objects.
+* A help resource, usually a help topic.
+ * <p>
+ * This interface models a help resource. In general, help resources are either
+ * html help files, or xml navigation/topics files.
+ * </p>
  */
-public interface IDescriptor {
+public interface IHelpResource {
 
 	public final static String HREF = "href";
 	public final static String LABEL = "label";

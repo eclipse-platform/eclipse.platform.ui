@@ -11,7 +11,7 @@ import org.eclipse.help.topics.*;
  * Navigation Element.
  * Common for all objects definable in topics.xml
  */
-abstract class NavigationElement implements ITopicNode, INavigationNode {
+abstract class NavigationElement implements INavigationNode {
 	private final static List emptyList = new ArrayList(0);
 	private List children;
 	private List parents;
@@ -49,25 +49,7 @@ abstract class NavigationElement implements ITopicNode, INavigationNode {
 		getChildren().remove(child);
 	}
 	
-	/**
-	 * @return ITopic list
-	 */
-	public List getChildTopics() {
-		if (children == null)
-			return emptyList;
-		List childTopics = new ArrayList(children.size());
-		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
-			ITopicNode c = (ITopicNode) childrenIt.next();
-			if ((c instanceof ITopic)) {
-				childTopics.add(c);
-			} else {
-				// it is a topics, anchor or include,
-				// which may have children attached to it.
-				childTopics.addAll(c.getChildTopics());
-			}
-		}
-		return childTopics;
-	}
+	
 	/**
 	 * Obtains children
 	 * @return INavigationNode List
@@ -85,5 +67,25 @@ abstract class NavigationElement implements ITopicNode, INavigationNode {
 		if (parents == null)
 			return emptyList;
 		return parents;
+	}
+	
+	/**
+	 * @return ITopic list
+	 */
+	public List getChildTopics() {
+		if (children == null)
+			return emptyList;
+		List childTopics = new ArrayList(children.size());
+		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
+			NavigationElement c = (NavigationElement) childrenIt.next();
+			if ((c instanceof Topic)) {
+				childTopics.add(c);
+			} else {
+				// it is a topics, anchor or include,
+				// which may have children attached to it.
+				childTopics.addAll(c.getChildTopics());
+			}
+		}
+		return childTopics;
 	}
 }

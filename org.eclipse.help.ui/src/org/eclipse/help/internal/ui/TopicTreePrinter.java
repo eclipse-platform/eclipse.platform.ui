@@ -135,8 +135,9 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 	private List buildTopicList(List topicList, ITopic rootTopic){
 		if((rootTopic.getHref()!=null) && (!"".equals(rootTopic.getHref())))
 			topicList.add(rootTopic.getHref());
-		for(Iterator it=rootTopic.getChildTopics().iterator(); it.hasNext();){
-			buildTopicList(topicList, (ITopic)it.next());
+		ITopic topics[] = rootTopic.getSubtopics();
+		for(int i=0; i<topics.length; i++){
+			buildTopicList(topicList, topics[i]);
 		}
 		return topicList;
 	}
@@ -201,8 +202,9 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		writer.println("<ul>");
 		writer.println("<li>");
 		writer.println(topic.getLabel());
-		for (Iterator it = topic.getChildTopics().iterator(); it.hasNext();) {
-			addTopicToTOC(writer, (ITopic) it.next());
+		ITopic topics[] = topic.getSubtopics();
+		for (int i=0; i<topics.length; i++) {
+			addTopicToTOC(writer, topics[i]);
 		}
 		writer.println("</li>");
 		writer.println("</ul>");
