@@ -770,15 +770,12 @@ public final class CommandManager implements ICommandManager {
 
 			if (!keySequenceBindings.isEmpty()) {
 				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-		
-				if (keySequenceBinding != null) {
-					KeySequence keySequence = keySequenceBinding.getKeySequence();
-					List keyStrokes = keySequence.getKeyStrokes();
+				KeySequence keySequence = keySequenceBinding.getKeySequence();
+				List keyStrokes = keySequence.getKeyStrokes();
 	
-					if (keyStrokes.size() == 1) {
-						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-						accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
-					}				
+				if (keyStrokes.size() == 1) {
+					KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+					accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
 				}
 			}
 		}
@@ -796,9 +793,7 @@ public final class CommandManager implements ICommandManager {
 
 			if (!keySequenceBindings.isEmpty()) {
 				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-		
-				if (keySequenceBinding != null)
-					acceleratorText = keySequenceBinding.getKeySequence().format();
+				acceleratorText = keySequenceBinding.getKeySequence().format();
 			}
 		}
 
@@ -808,14 +803,14 @@ public final class CommandManager implements ICommandManager {
 	// TODO move to workbench?
 	public boolean isAcceleratorInUse(int accelerator) {
 		KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-		return getCommandId(keySequence) != null || isPartialMatch(keySequence);
+		return isPerfectMatch(keySequence) || isPartialMatch(keySequence);
 	}	
 
 	
 	
 	
-	String getCommandId(KeySequence keySequence) {
-		Match match = (Match) getMatchesByKeySequence().get(keySequence);
+	private String getPerfectMatch(KeySequence keySequence) {
+		Match match = (Match) keySequenceBindingMachine.getMatchesByKeySequence().get(keySequence);
 		return match != null ? match.getCommandId() : null;
 	}
 
@@ -823,16 +818,25 @@ public final class CommandManager implements ICommandManager {
 		return !keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence).isEmpty();
 	}
 	
+	private boolean isPerfectMatch(KeySequence keySequence) {
+		return getPerfectMatch(keySequence) != null;
+	}
+
 	
 	
 	
+	
+	/*
 	public Map getKeySequenceBindingsByCommandId() {
 		return keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
 	}
+	*/
 	
+	/*
 	public Map getMatchesByKeySequence() {
 		return keySequenceBindingMachine.getMatchesByKeySequence();
 	}
+	*/
 
 	public Map getMatchesByKeySequenceForMode() {
 		return keySequenceBindingMachine.getMatchesByKeySequenceForMode();
