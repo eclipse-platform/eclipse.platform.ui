@@ -131,11 +131,12 @@ protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
  */
 protected IWorkbenchPart getBootstrapPart() {
 	IWorkbenchPage page = getSite().getPage();
-	bootstrapSelection = page.getSelection();
-	if (page != null)
+	if (page != null) {
+		bootstrapSelection = page.getSelection();
 		return page.getActivePart();
-	else
+	} else {
 		return null;
+	}
 }
 /* (non-Javadoc)
  * Method declared on IViewPart.
