@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
@@ -86,7 +87,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * will be broken by future releases.
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, IEditorHelperRegistry,
 					ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 	
@@ -1313,6 +1314,11 @@ public class TextViewer extends Viewer implements
 	 * since 3.0
 	 */
 	protected List fTextPresentationListeners;
+	/**
+	 * The set of registered editor helpers.
+	 * @since 3.1
+	 */
+	private Set fEditorHelpers= new HashSet();
 	
 	
 	
@@ -4931,5 +4937,33 @@ public class TextViewer extends Viewer implements
 			if (fTextPresentationListeners.size() == 0)
 				fTextPresentationListeners= null;
 		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IEditorHelperRegistry#register(org.eclipse.jface.text.IEditorHelper)
+	 * XXX API still in flux, do not rely on this method
+	 * @since 3.1
+	 */
+	public void register(IEditorHelper helper) {
+		Assert.isNotNull(helper);
+		fEditorHelpers.add(helper);		
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IEditorHelperRegistry#deregister(org.eclipse.jface.text.IEditorHelper)
+	 * XXX API still in flux, do not rely on this method
+	 * @since 3.1
+	 */
+	public void deregister(IEditorHelper helper) {
+		fEditorHelpers.remove(helper);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IEditorHelperRegistry#getCurrentHelpers()
+	 * XXX API still in flux, do not rely on this method
+	 * @since 3.1
+	 */
+	public IEditorHelper[] getCurrentHelpers() {
+		return (IEditorHelper[]) fEditorHelpers.toArray(new IEditorHelper[fEditorHelpers.size()]);
 	}
 }

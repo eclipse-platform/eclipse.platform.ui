@@ -25,7 +25,9 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 
 /**
  * A group of positions in multiple documents that are simultaneously modified -
@@ -68,8 +70,10 @@ public class LinkedPositionGroup {
 	 */
 	/** The position including the most recent <code>DocumentEvent</code>. */
 	private LinkedPosition fLastPosition;
-	/** The offset of <code>fLastPosition</code>. */
-	private int fLastPositionOffset;
+	/** The region covered by <code>fLastPosition</code> before the document 
+	 * change.
+	 */
+	private IRegion fLastRegion;
 	
 	/**
 	 * Adds a position to this group. The document region defined by the
@@ -154,24 +158,45 @@ public class LinkedPositionGroup {
 	}
 
 	/**
-	 * Checks whether <code>event</code> fits in any of the positions of this
+	 * Checks whether <code>event</code> is a legal event for this group. An 
+	 * event is legal if it touches at most one position contained within this
 	 * group.
 	 * 
 	 * @param event the document event to check
-	 * @return <code>true</code> if <code>event</code> fits in any position
+	 * @return <code>true</code> if <code>event</code> is legal
 	 */
 	boolean isLegalEvent(DocumentEvent event) {
+		fLastPosition= null;
+		fLastRegion= null;
+		
 		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
 			LinkedPosition pos= (LinkedPosition) it.next();
-			if (pos.includes(event)) {
+			if (overlapsOrTouches(pos, event)) {
+				if (fLastPosition != null) {
+					fLastPosition= null;
+					fLastRegion= null;
+					return false;
+				}
+					
 				fLastPosition= pos;
-				fLastPositionOffset= pos.getOffset();
-				return true;
+				fLastRegion= new Region(pos.getOffset(), pos.getLength());
 			}
 		}
-		fLastPosition= null;
-		fLastPositionOffset= -1;
-		return false;
+		
+		return true;
+	}
+
+	/**
+	 * Checks whether the given event touches the given position. To touch means
+	 * to overlap or come up to the borders of the position.
+	 * 
+	 * @param position the position
+	 * @param event the event
+	 * @return <code>true</code> if <code>position</code> and
+	 *         <code>event</code> are not absolutely disjoint
+	 */
+	private boolean overlapsOrTouches(LinkedPosition position, DocumentEvent event) {
+		return position.getDocument().equals(event.getDocument()) && position.getOffset() <= event.getOffset() + event.getLength() && position.getOffset() + position.getLength() >= event.getOffset();
 	}
 
 	/**
@@ -180,7 +205,8 @@ public class LinkedPositionGroup {
 	 * a map from <code>IDocument</code> to <code>TextEdit</code>.
 	 * 
 	 * @param event the document event to check
-	 * @return a map of edits, grouped by edited document
+	 * @return a map of edits, grouped by edited document, or <code>null</code>
+	 *         if there are no edits
 	 */
 	Map handleEvent(DocumentEvent event) {
 
@@ -188,13 +214,25 @@ public class LinkedPositionGroup {
 
 			Map map= new HashMap();
 
-			int relOffset= event.getOffset() - fLastPositionOffset;
-			int length= event.getLength();
-			String text= event.getText();
+			
+			int relativeOffset= event.getOffset() - fLastRegion.getOffset();
+			if (relativeOffset < 0) {
+				relativeOffset= 0;
+			}
+			
+			int eventEnd= event.getOffset() + event.getLength();
+			int lastEnd= fLastRegion.getOffset() + fLastRegion.getLength();
+			int length;
+			if (eventEnd > lastEnd)
+				length= lastEnd - relativeOffset - fLastRegion.getOffset();
+			else
+				length= eventEnd - relativeOffset - fLastRegion.getOffset();
+						
+			String text= event.getText(); //$NON-NLS-1$
 
-			for (Iterator it2= fPositions.iterator(); it2.hasNext(); ) {
-				LinkedPosition p= (LinkedPosition) it2.next();
-				if (p == fLastPosition)
+			for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
+				LinkedPosition p= (LinkedPosition) it.next();
+				if (p == fLastPosition || p.isDeleted())
 					continue; // don't re-update the origin of the change
 				
 				List edits= (List) map.get(p.getDocument());
@@ -203,11 +241,11 @@ public class LinkedPositionGroup {
 					map.put(p.getDocument(), edits);
 				}
 
-				edits.add(new ReplaceEdit(p.getOffset() + relOffset, length, text));
+				edits.add(new ReplaceEdit(p.getOffset() + relativeOffset, length, text));
 			}
 
-			for (Iterator it2= map.keySet().iterator(); it2.hasNext(); ) {
-				IDocument d= (IDocument) it2.next();
+			for (Iterator it= map.keySet().iterator(); it.hasNext(); ) {
+				IDocument d= (IDocument) it.next();
 				TextEdit edit= new MultiTextEdit(0, d.getLength());
 				edit.addChildren((TextEdit[]) ((List) map.get(d)).toArray(new TextEdit[0]));
 				map.put(d, edit);

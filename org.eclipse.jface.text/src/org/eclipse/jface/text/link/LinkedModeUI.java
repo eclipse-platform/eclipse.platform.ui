@@ -37,9 +37,12 @@ import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IEditorHelper;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -50,6 +53,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.IEditorHelperRegistry;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -311,18 +315,32 @@ public class LinkedModeUI {
 			// focus away.
 			
 			StyledText text;
+			final ITextViewer viewer;
 			Display display;
 
-			if (fAssistant == null || fCurrentTarget == null || (text= fCurrentTarget.fWidget) == null 
-					|| text.isDisposed() || (display= text.getDisplay()) == null || display.isDisposed()) {
+			if (fCurrentTarget == null || (text= fCurrentTarget.fWidget) == null
+					|| text.isDisposed() || (display= text.getDisplay()) == null
+					|| display.isDisposed()
+					|| (viewer= fCurrentTarget.getViewer()) == null) 
+			{
 				leave(ILinkedModeListener.EXIT_ALL);
-			} else {
+			}
+			else
+			{
 				// Post in UI thread since the assistant popup will only get the focus after we lose it.
 				display.asyncExec(new Runnable() {
 					public void run() {
-						if (fIsActive && (fAssistant == null || !fAssistant.hasFocus()))  {
-							leave(ILinkedModeListener.EXIT_ALL);
+						if (fIsActive && viewer instanceof IEditorHelperRegistry) {
+							IEditorHelper[] helpers= ((IEditorHelperRegistry) viewer).getCurrentHelpers();
+							for (int i= 0; i < helpers.length; i++) {
+								if (helpers[i].hasShellFocus())
+									return;
+							}
 						}
+						
+						// else
+						leave(ILinkedModeListener.EXIT_ALL);
+						
 					}
 				});
 			}
@@ -349,6 +367,47 @@ public class LinkedModeUI {
 		}
 
 	}
+	
+	private class DocumentListener implements IDocumentListener {
+		private int fExitFlags;
+		private DocumentEvent fLastEvent;
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			fExitFlags= -1;
+			fLastEvent= event;
+			
+			// default behavior: any document change outside a linked position
+			// causes us to exit
+			int end= event.getOffset() + event.getLength();
+			for (int offset= event.getOffset(); offset < end; offset++) {
+				if (!fModel.anyPositionContains(offset)) {
+					ITextViewer viewer= fCurrentTarget.getViewer();
+					if (fFramePosition != null && viewer instanceof IEditorHelperRegistry) {
+						IEditorHelper[] helpers= ((IEditorHelperRegistry) viewer).getCurrentHelpers();
+						for (int i= 0; i < helpers.length; i++) {
+							if (helpers[i].isValidSubjectRegion(new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+								return;
+						}
+					}
+					
+					fExitFlags= ILinkedModeListener.EXTERNAL_MODIFICATION;
+					return;
+				}
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+			if (event == fLastEvent && fExitFlags != -1) {
+				leave(fExitFlags);
+			}
+			fLastEvent= null;
+		}
+	}
 
 	/**
 	 * Listens for key events, checks the exit policy for custom exit
@@ -368,7 +427,7 @@ public class LinkedModeUI {
 			int length= selection.y;
 
 			// if the custom exit policy returns anything, use that
-			ExitFlags exitFlags= fExitPolicy.doExit(fEnvironment, event, offset, length);
+			ExitFlags exitFlags= fExitPolicy.doExit(fModel, event, offset, length);
 			if (exitFlags != null) {
 				leave(exitFlags.flags);
 				event.doit= exitFlags.doit;
@@ -385,7 +444,7 @@ public class LinkedModeUI {
 			switch (event.character) {
 				// [SHIFT-]TAB = hop between edit boxes
 				case 0x09:
-					if (!(fExitPosition != null && fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
+					if (!(fExitPosition != null && fExitPosition.includes(offset)) && !fModel.anyPositionContains(offset)) {
 						// outside any edit box -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedModeListener.EXIT_ALL);
 						break;
@@ -403,9 +462,9 @@ public class LinkedModeUI {
 				case 0x0A:
 				// Ctrl+Enter on WinXP
 				case 0x0D:
-//					if ((fExitPosition != null && fExitPosition.includes(offset)) || !fEnvironment.anyPositionContains(offset)) {
-					if (!fEnvironment.anyPositionContains(offset)) {
-//					if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
+//					if ((fExitPosition != null && fExitPosition.includes(offset)) || !fModel.anyPositionContains(offset)) {
+					if (!fModel.anyPositionContains(offset)) {
+//					if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fModel.anyPositionContains(offset)) {
 						// outside any edit box or on exit position -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedModeListener.EXIT_ALL);
 						break;
@@ -434,7 +493,7 @@ public class LinkedModeUI {
 		}
 
 		private boolean controlUndoBehavior(int offset, int length) {
-			LinkedPosition position= fEnvironment.findPosition(new LinkedPosition(fCurrentTarget.getViewer().getDocument(), offset, length, LinkedPositionGroup.NO_STOP));
+			LinkedPosition position= fModel.findPosition(new LinkedPosition(fCurrentTarget.getViewer().getDocument(), offset, length, LinkedPositionGroup.NO_STOP));
 			if (position != null) {
 
 				// if the last position is not the same and there is an open change: close it.
@@ -478,7 +537,7 @@ public class LinkedModeUI {
 						int length= textsel.getLength();
 						if (offset >= 0 && length >= 0) {
 							LinkedPosition find= new LinkedPosition(doc, offset, length, LinkedPositionGroup.NO_STOP);
-							LinkedPosition pos= fEnvironment.findPosition(find);
+							LinkedPosition pos= fModel.findPosition(find);
 							if (pos == null && fExitPosition != null && fExitPosition.includes(find))
 								pos= fExitPosition;
 								
@@ -505,7 +564,7 @@ public class LinkedModeUI {
 	/** The current viewer. */
 	private LinkedModeUITarget fCurrentTarget;
 	/** The manager of the linked positions we provide a UI for. */
-	private LinkedModeModel fEnvironment;
+	private LinkedModeModel fModel;
 	/** The set of viewers we manage. */
 	private LinkedModeUITarget[] fTargets;
 	/** The iterator over the tab stop positions. */
@@ -520,6 +579,8 @@ public class LinkedModeUI {
 	private MySelectionListener fSelectionListener= new MySelectionListener();
 	/** The content assist listener. */
 	private ProposalListener fProposalListener= new ProposalListener();
+	/** The document listener. */
+	private IDocumentListener fDocumentListener= new DocumentListener();
 	
 	/** The last caret position, used by fCaretListener. */
 	private final Position fCaretPosition= new Position(0, 0);
@@ -550,7 +611,7 @@ public class LinkedModeUI {
 		 */
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 			// invalidate the change to ensure that the change is performed on the document only.
-			if (fEnvironment.anyPositionContains(command.offset)) {
+			if (fModel.anyPositionContains(command.offset)) {
 				command.doit= false;
 				command.caretOffset= command.offset + command.length;
 			}
@@ -620,12 +681,12 @@ public class LinkedModeUI {
 		Assert.isTrue(targets.length > 0);
 		Assert.isTrue(model.getTabStopSequence().size() > 0);
 
-		fEnvironment= model;
+		fModel= model;
 		fTargets= targets;
 		fCurrentTarget= targets[0];
-		fIterator= new TabStopIterator(fEnvironment.getTabStopSequence());
-		fIterator.setCycling(!fEnvironment.isNested());
-		fEnvironment.addLinkingListener(fLinkedListener);
+		fIterator= new TabStopIterator(fModel.getTabStopSequence());
+		fIterator.setCycling(!fModel.isNested());
+		fModel.addLinkingListener(fLinkedListener);
 
 		fAssistant= new ContentAssistant2();
 		fAssistant.addProposalListener(fProposalListener);
@@ -714,7 +775,7 @@ public class LinkedModeUI {
 		if (mode != CYCLE_ALWAYS && mode != CYCLE_NEVER && mode != CYCLE_WHEN_NO_PARENT)
 			throw new IllegalArgumentException();
 		
-		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fEnvironment.isNested())
+		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fModel.isNested())
 			fIterator.setCycling(true);
 		else
 			fIterator.setCycling(false);
@@ -831,7 +892,7 @@ public class LinkedModeUI {
 			
 			// redraw current document with new position before switching viewer
 			if (fCurrentTarget.fAnnotationModel != null)
-				fCurrentTarget.fAnnotationModel.switchToPosition(fEnvironment, pos);
+				fCurrentTarget.fAnnotationModel.switchToPosition(fModel, pos);
 			
 			LinkedModeUITarget target= null;
 			for (int i= 0; i < fTargets.length; i++) {
@@ -866,7 +927,7 @@ public class LinkedModeUI {
 
 	private void redraw() {
 		if (fCurrentTarget.fAnnotationModel != null)
-			fCurrentTarget.fAnnotationModel.switchToPosition(fEnvironment, fFramePosition);
+			fCurrentTarget.fAnnotationModel.switchToPosition(fModel, fFramePosition);
 	}
 
 	private void connect() {
@@ -899,6 +960,8 @@ public class LinkedModeUI {
 		fAssistant.install(viewer);
 		
 		viewer.addTextInputListener(fCloser);
+		
+		viewer.getDocument().addDocumentListener(fDocumentListener);
 	}
 
 	/**
@@ -986,6 +1049,8 @@ public class LinkedModeUI {
 		Assert.isNotNull(fCurrentTarget);
 		ITextViewer viewer= fCurrentTarget.getViewer();
 		Assert.isNotNull(viewer);
+		
+		viewer.getDocument().removeDocumentListener(fDocumentListener);
 
 		fAssistant.uninstall();
 		fAssistant.removeProposalListener(fProposalListener);
@@ -1087,7 +1152,7 @@ public class LinkedModeUI {
 							// ignore
 						}
 				}
-				fEnvironment.exit(flags);
+				fModel.exit(flags);
 			}
 		};
 

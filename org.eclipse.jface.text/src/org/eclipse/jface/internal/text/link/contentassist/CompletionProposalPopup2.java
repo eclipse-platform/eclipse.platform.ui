@@ -41,6 +41,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IEditorHelper;
+import org.eclipse.jface.text.IEditorHelperRegistry;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
@@ -59,7 +62,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * window.
  *
  * @see org.eclipse.jface.text.contentassist.ICompletionProposal
- * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
+ * @see org.eclipse.jface.internal.text.link.contentassist.AdditionalInfoController2
  */
 class CompletionProposalPopup2 implements IContentAssistListener2 {
 	
@@ -97,6 +100,21 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private String fLineDelimiter;
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
+	private IEditorHelper fEditorHelper= new IEditorHelper() {
+
+		public boolean isValidSubjectRegion(IRegion focus) {
+			if (fViewer != null) {
+				Point selection= fViewer.getSelectedRange();
+				return selection.x <= focus.getOffset() + focus.getLength() && selection.x + selection.y >= focus.getOffset();
+			}
+			return false;
+		}
+
+		public boolean hasShellFocus() {
+			return Helper2.okToUse(fProposalShell) && fProposalShell.isFocusControl();
+		}
+		
+	};
 
 	
 	/**
@@ -321,10 +339,11 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * 
 	 * @param p the completion proposal
 	 * @param trigger the trigger character
+	 * @param stateMask the state mask of the keyboard event triggering the insertion
 	 * @param offset the offset
 	 * @since 2.1
 	 */
-	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, int offset) {
+	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, final int offset) {
 			
 		fInserting= true;
 		IRewriteTarget target= null;
@@ -341,6 +360,11 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (target != null)
 				target.beginCompoundChange();
 			
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.register(fEditorHelper);
+			}
+
 			if (p instanceof ICompletionProposalExtension2) {
 				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
 				e.apply(fViewer, trigger, stateMask, offset);				
@@ -378,6 +402,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		} finally {
 			if (target != null)
 				target.endCompoundChange();
+
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.deregister(fEditorHelper);
+			}
+			
 			fInserting= false;
 		}
 	}
@@ -401,6 +431,11 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		unregister();
 
+		if (fViewer instanceof IEditorHelperRegistry) {
+			IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+			registry.deregister(fEditorHelper);
+		}
+		
 		if (Helper2.okToUse(fProposalShell)) {
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant2.PROPOSAL_SELECTOR);
 			
@@ -597,6 +632,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (document != null)
 				document.addDocumentListener(fDocumentListener);
 			
+			
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.register(fEditorHelper);
+			}
+			
 			fProposalShell.setVisible(true);
 			// see bug 47511: setVisible may run the event loop on GTK
 			// and trigger a rentrant call - have to check whether we are still
@@ -684,8 +725,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 						
 					case '\n': // Ctrl-Enter on w2k
 					case '\r': // Enter
-						e.doit= false;
-						selectProposalWithMask(e.stateMask);
+						if ((e.stateMask & SWT.CTRL) == 0) {
+							e.doit= false;
+							selectProposalWithMask(e.stateMask);
+						}
 						break;
 						
 					// in linked mode: hide popup

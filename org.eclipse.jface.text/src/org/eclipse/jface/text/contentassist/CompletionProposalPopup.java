@@ -39,9 +39,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IEditorHelper;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.IEditorHelperRegistry;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -369,10 +372,25 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param offset the offset
 	 * @since 2.1
 	 */
-	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, int offset) {
+	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, final int offset) {
 			
 		fInserting= true;
 		IRewriteTarget target= null;
+		IEditorHelper helper= new IEditorHelper() {
+			
+			public boolean isSourceOfEvent(Object event) {
+				return true;
+			}
+			
+			public boolean isValidSubjectRegion(IRegion focus) {
+				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() <= offset;
+			}
+			
+			public boolean hasShellFocus() {
+				return false;
+			}
+			
+		};
 		
 		try {
 			
@@ -385,6 +403,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 			if (target != null)
 				target.beginCompoundChange();
+
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.register(helper);
+			}
+
 
 			if (p instanceof ICompletionProposalExtension2 && fViewer != null) {
 				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
@@ -423,6 +447,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} finally {
 			if (target != null)
 				target.endCompoundChange();
+
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.deregister(helper);
+			}
 			fInserting= false;
 		}
 	}
@@ -445,6 +474,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	public void hide() {
 
 		unregister();
+		
+		if (fViewer instanceof IEditorHelperRegistry) {
+			IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+			registry.deregister(null);
+		}
 
 		if (Helper.okToUse(fProposalShell)) {
 			
@@ -590,7 +624,29 @@ class CompletionProposalPopup implements IContentAssistListener {
 			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 			if (document != null)
 				document.addDocumentListener(fDocumentListener);		
+			
+			// let any document listeners know that we have a shell up
+			IEditorHelper helper= new IEditorHelper() {
+
+				public boolean isSourceOfEvent(Object event) {
+					return false;
+				}
+
+				public boolean isValidSubjectRegion(IRegion focus) {
+					Point selection= fViewer.getSelectedRange();
+					return selection.x <= focus.getOffset() + focus.getLength() && selection.x + selection.y >= focus.getOffset();
+				}
+
+				public boolean hasShellFocus() {
+					return true;
+				}
 				
+			};
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.register(helper);
+			}
+			
 			/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
 			 * on GTK, setVisible and such may run the event loop
 			 * (see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=47511)

@@ -45,9 +45,10 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * <em>sealed</em> and no more groups may be added.
  * </p>
  * <p>
- * If the document is changed outside any linked position, the model is
- * torn down and all positions are deleted. The same happens upon calling
- * {@link #exit(int)}.
+ * If a document change occurs that would modify more than one position
+ * group or that would invalidate the disjointness requirement of the positions,
+ * the model is torn down and all positions are deleted. The same happens
+ * upon calling {@link #exit(int)}.
  * </p>
  * <h4>Nesting</h4>
  * <p>
@@ -183,19 +184,11 @@ public class LinkedModeModel {
 
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
-				if (group.isLegalEvent(event))
-					// take the first hit - exlusion is guaranteed by enforcing
-					// disjointness when adding positions
+				if (!group.isLegalEvent(event)) {
+					fExit= true;
 					return;
+				}
 			}
-			
-			// the event describes a change that lies outside of any managed
-			// position -> signal to exit 
-			// don't exit here already, since we want to make sure that the positions
-			// are updated to the document event.
-			// TODO we might not always want to exit, e.g. we want to stay
-			// linked if code completion has inserted import statements
-			fExit= true;
 		}
 
 		/**
@@ -309,12 +302,7 @@ public class LinkedModeModel {
 	 * Causes this model to exit. Called either if a document change
 	 * outside this model is detected, or by the UI.
 	 * 
-	 * <p>
-	 * This method part of the private protocol between
-	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
-	 * </p>
-	 * 
-	 * @param flags the exit flags.
+	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
 	 */
 	public void exit(int flags) {
 		if (!fIsActive)
@@ -408,6 +396,12 @@ public class LinkedModeModel {
 		enforceDisjoint(group);
 		group.seal();
 		fGroups.add(group);
+	}
+	
+	/**
+	 * Creates a new model.
+	 */
+	public LinkedModeModel() {
 	}
 	
 	/**
@@ -589,7 +583,7 @@ public class LinkedModeModel {
 	 * 
 	 * <p>
 	 * This method is part of the private protocol between
-	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
+	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if this model is nested,
@@ -605,7 +599,7 @@ public class LinkedModeModel {
 	 * 
 	 * <p>
 	 * This method is part of the private protocol between
-	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
+	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
 	 * @return the positions in this model that have a tab stop, in the
@@ -644,7 +638,7 @@ public class LinkedModeModel {
 	 * 
 	 * <p>
 	 * This method part of the private protocol between
-	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
+	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
 	 * @param toFind the position to search from
@@ -741,7 +735,7 @@ public class LinkedModeModel {
 	 * 
 	 * <p>
 	 * This method part of the private protocol between
-	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
+	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
 	 * @param position the position the group of which is requested
