@@ -1,0 +1,123 @@
+
+<html>
+   <head>
+      <title>Toolbar </title>
+
+	  <style type="text/css">
+	  
+	  .normal {
+		border-width:0px; 
+		padding:4px;
+		margin:2px 2px 2px 2px;
+		}
+
+	  .hover {
+  		  border-style: outset;
+		  border-width:2px 2px 2px 2px; 
+		  border-color:#ffffff;
+		  padding:4px;
+	      margin: 0px 0px 0px 0px;
+		}
+	  </style>
+	  
+	  
+<script type="text/javascript" language="JavaScript">
+
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
+var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+
+
+// Handle resize events
+window.onresize = resizeContent;
+
+
+/* Handler: resizes the internal frames */
+function resizeContent()
+{
+ var w = 0;
+ var h = 0;
+ if (isIE)
+ {
+  w = document.body.clientWidth;
+  h = document.body.clientHeight;
+ } 
+ else if (isMozilla)
+ {
+  w = window.innerWidth;
+  h = window.innerHeight;
+ }
+ 
+ var titlebar = document.getElementById("titlebar");
+ titlebar.width = w; 
+}
+
+function mouseover(img)
+{
+	img.className="hover";
+	window.event.cancelBubble = true;
+}
+
+function mouseout(img)
+{
+	img.className="normal";
+	window.event.cancelBubble = true;
+}
+
+function search()
+{
+newWindow=open("search.jsp", "searchWindow", "height=400,width=300");
+if(newWindow){
+	newWindow.focus();
+	}
+}
+
+function hidenav()
+{
+	var frameset = parent.document.getElementById("contentFrameset"); 
+	var navFrameSize = frameset.getAttribute("cols");
+	if (navFrameSize == "*,100%")
+	{
+		frameset.setAttribute("cols", parent.oldSize);
+	}
+	else
+	{
+		parent.oldSize = navFrameSize;
+		frameset.setAttribute("cols", "*,100%");
+	}
+}
+
+function resynch()
+{
+alert("resynch");
+}
+
+function setToc(label)
+{
+	var title = document.getElementById("title");
+	var text = title.lastChild;
+	text.nodeValue = label;
+}
+
+
+</script>
+   </head>
+   
+   <body">
+      <img alt="titlebar" id="titlebar" src="images/titlebar.jpg" height="24" 
+	       style="position:absolute; top:0; left:0; z-order:10;"> 
+	  <div id="title" style="position:absolute; top:0; left:0; z-order:20; color:#ffffff; font-size:smaller; font-style: Regular;"><img src="images/view.gif">&nbsp;Bookshelf</div>
+	  
+	  <div style="right:20; position:absolute; z-order:20;">
+	  <!--
+     	<IMG alt="Search" title="Search" onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="search();"  src="images/search_src.gif" class="normal">
+      -->
+     	<IMG alt="Toggle TOC" title="Toggle TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="hidenav();" src="images/hidenav.gif" class="normal">
+        <IMG alt="Resynch" title="Resynch TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="resynch();" src="images/resynch.gif" class="normal">
+	  </div>
+	  
+<script type="text/javascript" language="JavaScript">
+resizeContent()
+</script>
+   </body>
+</html>
+

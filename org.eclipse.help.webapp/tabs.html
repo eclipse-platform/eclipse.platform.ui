@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+   <head>
+      <title>
+         Tabs
+      </title>
+<script type="text/javascript" language="JavaScript">
+ 
+/* Shows the specified internal frame.
+   To be called by the tabs.html frame.
+ */ 
+function showNavFrame(nav)
+{
+ var iframe = parent.NavFrame.document.getElementById(nav);
+ if (!iframe) return;
+ 
+  // show the appropriate frame
+ var iframes = parent.NavFrame.document.body.getElementsByTagName("IFRAME");
+ for (var i=0; i<iframes.length; i++)
+ {
+  if (iframes[i] != iframe)
+   iframes[i].style.display = "none";
+  else
+   iframe.style.display = "block";
+ }
+ 
+ // show the appropriate pressed tab
+  var buttons = document.body.getElementsByTagName("A");
+  for (var i=0; i<buttons.length; i++)
+  {
+  	if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
+		buttons[i].className = "pressed";
+	else
+		buttons[i].className = "tab";
+  }
+  
+  // set the images for borders
+  var tocI = document.getElementById("tocI");
+  var searchI = document.getElementById("searchI");
+  var linksI = document.getElementById("linksI");
+  if (nav == "toc")
+  {
+  	tocI.src = "images/rightBorder.gif";
+	searchI.src = "images/middleBorder.gif";
+	linksI.src = "images/noBorder.gif";
+  }
+  else if (nav == "search")
+  {
+  	tocI.src = "images/leftBorder.gif";
+	searchI.src = "images/rightBorder.gif";
+	linksI.src = "images/noBorder.gif";
+  }
+  else if (nav == "links")
+  {
+  	tocI.src = "images/middleBorder.gif";
+	searchI.src = "images/leftBorder.gif";
+	linksI.src = "images/rightBorder.gif";
+  }
+  
+}
+ 
+</script>
+
+<style>
+BODY {
+	background-color:ActiveBorder;
+	font-size:smaller;
+	font-style: Regular;
+	margin-width:0;
+	margin-left:5px;
+	border-bottom: 2px solid #848284;
+	cursor:default;
+}
+
+.tab {
+	top:0;
+	height:24;
+	margin:0;
+	padding:0px 2px 0px 2px;
+	border:0;
+}
+
+.pressed {
+	top:0;
+	margin:0;
+	padding:0px 2px 0px 2px;
+	height:24;
+	border-bottom:1px solid #ffffff;
+}
+
+
+IMG {
+	margin:0;
+	border:0;
+	padding-left:0;
+}
+
+</style>
+
+   </head>
+   
+   <body>
+	<a class="tab" id="toc" onclick="javascript:showNavFrame('toc')">Content</a><img id="tocI" src="images/rightBorder.gif" width="2" height="24"><a class="tab" id="search" onclick="javascript:showNavFrame('search')">Search</a><img id="searchI" src="images/middleBorder.gif" width="2" height="24"><a class="tab" id="links" onclick="javascript:showNavFrame('links')">Links</a><img id="linksI" src="images/noBorder.gif" width="2" height="24">
+   </body>
+</html>
+

@@ -1,0 +1,67 @@
+
+<html>
+   <head>
+      <title>
+         Navigation
+      </title>
+<style type="text/css">
+#toc {
+  display:block;
+  border:0;
+ }
+ #search {
+  display:none;
+ }
+ #links {
+  display:none;
+ }
+</style>
+<script type="text/javascript" language="JavaScript">
+// listen for clicks
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
+var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+
+
+// Handle resize events
+window.onresize = resizeContent;
+
+
+/* Handler: resizes the internal frames */
+function resizeContent()
+{
+ var w = 0;
+ var h = 0;
+ if (isIE)
+ {
+  w = document.body.clientWidth;
+  h = document.body.clientHeight;
+ } 
+ else if (isMozilla)
+ {
+  w = window.innerWidth;
+  h = window.innerHeight;
+ }
+ 
+ var iframes = document.body.getElementsByTagName("IFRAME");
+ for (var i=0; i<iframes.length; i++)
+ {
+  iframes[i].width = w;
+  iframes[i].height = h;
+ }
+
+}
+</script>
+   </head>
+   
+   <body>
+      <div id="frames" style="top:0;">
+         <iframe src="tocs.jsp" name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
+		 <iframe src="search.jsp" name="search" id="search" class="nav" title="Search"></iframe> 
+		 <iframe src="links.html" name="links" id="links" class="nav" title="Links"></iframe>
+      </div>
+<script type="text/javascript" language="JavaScript">
+resizeContent()
+</script>
+   </body>
+</html>
+
