@@ -100,9 +100,11 @@ public void testFileDiscovery() throws Throwable {
 	
 	assertTrue("1.0", !file.exists());
 	assertTrue("1.1", !folder.exists());
+	assertTrue("1.2", !file.isSynchronized(IResource.DEPTH_ZERO));
+	assertTrue("1.3", !folder.isSynchronized(IResource.DEPTH_INFINITE));
 	file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
-	assertTrue("1.2", file.exists());
-	assertTrue("1.3", folder.exists());
+	assertTrue("1.4", file.exists());
+	assertTrue("1.5", folder.exists());
 	
 	//try again with deleted project
 	project.delete(IResource.FORCE, getMonitor());
@@ -115,8 +117,6 @@ public void testFileDiscovery() throws Throwable {
 	file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
 	assertTrue("2.2", !file.exists());
 	assertTrue("2.3", !folder.exists());
-	
-
 }
 public void testFileToFolder() throws Throwable {
 	/* initialize common objects */
