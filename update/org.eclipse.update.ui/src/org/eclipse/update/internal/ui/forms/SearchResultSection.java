@@ -116,14 +116,20 @@ public class SearchResultSection {
 	public void setFullMode(boolean value) {
 		if (fullMode != value) {
 			this.fullMode = value;
-			if (container != null)
-				reflow();
+			if (container != null) {
+				refresh();
+			}
 		}
 	}
 
 	public void reflow() {
+		container.layout(true);
+	}
+	
+	public void refresh() {
 		reset();
-		searchFinished();
+		initialize();
+		reflow();
 	}
 
 	public void reset() {
@@ -131,6 +137,9 @@ public class SearchResultSection {
 		Control[] children = container.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
+			if (child instanceof FormEngine) {
+				child.setMenu(null);
+			}
 			child.dispose();
 		}
 	}
@@ -138,12 +147,12 @@ public class SearchResultSection {
 	public void searchStarted() {
 		reset();
 		descLabel.setText(UpdateUIPlugin.getResourceString(KEY_STARTDESC));
-		container.layout(true);
+		reflow();
 	}
 
 	public void searchFinished() {
 		initialize();
-		container.layout(true);
+		reflow();
 	}
 
 	public void setSearchObject(SearchObject search) {
@@ -152,7 +161,7 @@ public class SearchResultSection {
 			reset();
 			if (search != null)
 				initialize();
-			container.layout(true);
+			reflow();
 		}
 	}
 

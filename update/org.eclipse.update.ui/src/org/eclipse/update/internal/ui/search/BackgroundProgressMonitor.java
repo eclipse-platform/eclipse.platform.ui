@@ -48,11 +48,12 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 	 * @see IProgressMonitor#beginTask(String, int)
 	 */
 	public void beginTask(final String taskName, final int count) {
-		totalWorked = 0;
+		totalWorked = 0.0;
 		taskCount = count;
 		this.taskName = taskName;
 		subTaskName = null;
 		canceled = false;
+		inProgress = true;
 		display.asyncExec(new Runnable() {
 			public void run() {
 				for (Iterator iter=monitors.iterator(); iter.hasNext();) {
@@ -68,6 +69,9 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
+		if (inProgress==false) return;
+		else inProgress = false;
+		totalWorked = 0.0;
 		final Vector safeMonitors = (Vector)monitors.clone();
 		display.asyncExec(new Runnable() {
 			public void run() {
@@ -75,7 +79,6 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 					IProgressMonitor m = (IProgressMonitor)iter.next();
 					m.done();
 				}
-				inProgress = false;
 			}
 		});
 	}

@@ -4,22 +4,43 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.model.ISiteAdapter;
-import org.eclipse.update.internal.ui.parts.Sorter;
+import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdatesSearchCategory extends SearchCategory {
 	private static final String KEY_CURRENT_SEARCH =
 		"UpdatesSearchCategory.currentSearch";
+	private CheckboxTableViewer tableViewer;
+
+	class FeatureContentProvider
+		extends DefaultContentProvider
+		implements IStructuredContentProvider {
+		public Object[] getElements(Object parent) {
+			if (candidates == null)
+				return new Object[0];
+			return candidates.toArray();
+		}
+	}
+
+	class FeatureLabelProvider extends LabelProvider {
+		public String getText(Object obj) {
+			if (obj instanceof IFeature) {
+				IFeature feature = (IFeature) obj;
+				return feature.getVersionedIdentifier().toString();
+			}
+			return obj.toString();
+		}
+	}
 
 	class Hit {
 		IFeature candidate;
@@ -105,6 +126,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 				} catch (CoreException e) {
 				}
 				monitor.worked(1);
+				if (monitor.isCanceled()) return new IFeature[0];
 			}
 			IFeature[] result;
 			if (hits.size() == 0)
@@ -184,9 +206,10 @@ public class UpdatesSearchCategory extends SearchCategory {
 	}
 	public ISearchQuery[] getQueries() {
 		initialize();
-		ISearchQuery[] queries = new ISearchQuery[candidates.size()];
-		for (int i = 0; i < candidates.size(); i++) {
-			queries[i] = new UpdateQuery((IFeature) candidates.get(i));
+		ArrayList selected = getSelectedCandidates();
+		ISearchQuery[] queries = new ISearchQuery[selected.size()];
+		for (int i = 0; i < selected.size(); i++) {
+			queries[i] = new UpdateQuery((IFeature) selected.get(i));
 		}
 		return queries;
 	}
@@ -216,10 +239,84 @@ public class UpdatesSearchCategory extends SearchCategory {
 
 	public void createControl(Composite parent, FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		//layout.numColumns = 2;
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
+		container.setLayout(layout);
+		tableViewer =
+			CheckboxTableViewer.newCheckList(
+				container,
+				SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		tableViewer.setContentProvider(new FeatureContentProvider());
+		tableViewer.setLabelProvider(new FeatureLabelProvider());
+		tableViewer.setInput(this);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 100;
+		tableViewer.getControl().setLayoutData(gd);
+		factory.paintBordersFor(container);
 		setControl(container);
 	}
 	public void load(Map map, boolean editable) {
+		initialize();
+		tableViewer.refresh();
+		tableViewer.setAllChecked(true);
+		String value = (String) map.get("unchecked");
+		if (value == null)
+			return;
+		StringTokenizer stok = new StringTokenizer(value, ":");
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken();
+			int loc = token.lastIndexOf('_');
+			String id;
+			String version = null;
+			if (loc != -1) {
+				id = token.substring(0, loc);
+				version = token.substring(loc + 1);
+			} else {
+				id = token;
+				version = "0.0.0";
+			}
+			IFeature feature =
+				findCandidate(new VersionedIdentifier(id, version));
+			if (feature != null)
+				tableViewer.setChecked(feature, false);
+		}
+	}
+
+	private IFeature findCandidate(VersionedIdentifier vid) {
+		if (candidates == null)
+			initialize();
+		for (int i = 0; i < candidates.size(); i++) {
+			IFeature candidate = (IFeature) candidates.get(i);
+			if (candidate.getVersionedIdentifier().equals(vid))
+				return candidate;
+		}
+		return null;
 	}
 	public void store(Map map) {
+		if (candidates == null)
+			return;
+		int counter = 0;
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < candidates.size(); i++) {
+			IFeature candidate = (IFeature) candidates.get(i);
+			if (tableViewer.getChecked(candidate) == false) {
+				if (counter > 0)
+					buf.append(":");
+				buf.append(candidate.getVersionedIdentifier().toString());
+			}
+		}
+		map.put("unchecked", buf.toString());
+	}
+	private ArrayList getSelectedCandidates() {
+		if (tableViewer==null || tableViewer.getControl()==null ||
+			tableViewer.getControl().isDisposed()) {
+				return candidates;
+		}
+		ArrayList selected = new ArrayList();
+		Object [] sel = tableViewer.getCheckedElements();
+		for (int i=0; i<sel.length; i++) selected.add(sel[i]);
+		return selected;
 	}
 }
