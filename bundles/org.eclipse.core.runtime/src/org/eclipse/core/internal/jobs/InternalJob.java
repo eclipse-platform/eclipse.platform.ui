@@ -190,6 +190,12 @@ public abstract class InternalJob implements Comparable {
 	protected void setSystem(boolean value) {
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
 	}
+	/* (Non-javadoc)
+	 * @see Job#shouldSchedule
+	 */
+	protected boolean shouldSchedule()  {
+		return true;
+	}
 	protected boolean sleep() {
 		return manager.sleep(this);
 	}

@@ -301,6 +301,9 @@ public class JobManager implements IJobManager {
 	 */
 	protected void schedule(InternalJob job, long delay) {
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
+		//call hook method outside sync block to avoid deadlock
+		if (!job.shouldSchedule())
+			return;
 		synchronized (lock) {
 			//can't schedule a job that is already waiting, sleeping, or running
 			if (job.getState() != Job.NONE)

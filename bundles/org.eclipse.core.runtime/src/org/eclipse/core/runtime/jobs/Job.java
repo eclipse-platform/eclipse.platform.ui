@@ -366,6 +366,22 @@ public abstract class Job extends InternalJob {
 		return true;
 	}
 	/**
+	 * Returns whether this job should be scheduled.
+	 * If <code>false</code> is returned, this job will be discarded by the job manager
+	 * without being added to the queue.
+	 * 
+	 * <p>This method is called immediately prior to adding the job to the waiting job
+	 * queue.,so it can be used for last minute pre-condition checking before
+	 * a job is scheduled.</p>
+	 * 
+	 * <p>Clients may override this method.  This default implementation always returns
+	 * <code>true</code>.
+	 * </p>
+	 */
+	public boolean shouldSchedule() {
+		return true;
+	}
+	/**
 	 * Requests that this job be suspended.  If the job is currently waiting to be run, it 
 	 * will be removed from the queue move into the <code>SLEEPING</code> state.
 	 * The job will remain asleep until either resumed or canceled.  If this job is not
