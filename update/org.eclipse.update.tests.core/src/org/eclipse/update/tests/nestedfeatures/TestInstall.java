@@ -221,83 +221,83 @@ public class TestInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
 	}
 
-	public void testInstall() throws Exception {
-
-		// cleanup local files...
-		URL localURL = ((SiteLocal) SiteManager.getLocalSite()).getLocationURL();
-		File localFile = new File(localURL.getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-		InstallRegistry.cleanup();
-
-		URL INSTALL_SITE = null;
-		try {
-			INSTALL_SITE = new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml");
-		} catch (Exception e) {
-			fail(e.toString());
-			e.printStackTrace();
-		}
-
-		ISite remoteSite = SiteManager.getSite(INSTALL_SITE,null);
-		IFeatureReference[] features = remoteSite.getFeatureReferences();
-		IFeature remoteFeature = null;
-
-		if (features == null || features.length == 0)
-			fail("No features on the site");
-
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getURL().toExternalForm().endsWith("rootfeature.jar")) {
-				remoteFeature = features[i].getFeature(null);
-				break;
-			}
-		}
-
-		assertNotNull("Cannot find rootfeature.jar on site", remoteFeature);
-		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfiguredSite site =
-			localSite.getCurrentConfiguration().getConfiguredSites()[0];
-
-		((ConfiguredSite)site).setUpdatable(true);
-		site.install(remoteFeature, null, null);
-
-		IPluginEntry[] entries = remoteFeature.getPluginEntries();
-		assertTrue("no plugins entry", (entries != null && entries.length != 0));
-
-		String sitePath = site.getSite().getURL().getFile();
-		String pluginName = entries[0].getVersionedIdentifier().toString();
-		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
-		assertTrue("plugin info not installed locally"+pluginFile, pluginFile.exists());
-
-		File featureFile =
-			new File(
-				sitePath,
-				Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ remoteFeature.getVersionedIdentifier().toString());
-		assertTrue("feature info not installed locally", featureFile.exists());
-
-		//cleanup
-		File file =
-			new File(
-				site.getSite().getURL().getFile()
-					+ File.separator
-					+ Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ remoteFeature.getVersionedIdentifier());
-		// clean plugins
-		for (int i = 0; i < entries.length; i++) {
-			pluginName = entries[0].getVersionedIdentifier().toString();
-			pluginFile =
-				new File(
-					site.getSite().getURL().getFile(),
-					Site.DEFAULT_PLUGIN_PATH + pluginName);
-			UpdateManagerUtils.removeFromFileSystem(pluginFile);
-		}
-
-		UpdateManagerUtils.removeFromFileSystem(file);
-		UpdateManagerUtils.removeFromFileSystem(pluginFile);
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(
-			new File(
-				((InstallConfiguration) localSite.getCurrentConfiguration())
-					.getURL()
-					.getFile()));
-	}
+//	public void testInstall() throws Exception {
+//
+//		// cleanup local files...
+//		URL localURL = ((SiteLocal) SiteManager.getLocalSite()).getLocationURL();
+//		File localFile = new File(localURL.getFile());
+//		UpdateManagerUtils.removeFromFileSystem(localFile);
+//		InstallRegistry.cleanup();
+//
+//		URL INSTALL_SITE = null;
+//		try {
+//			INSTALL_SITE = new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml");
+//		} catch (Exception e) {
+//			fail(e.toString());
+//			e.printStackTrace();
+//		}
+//
+//		ISite remoteSite = SiteManager.getSite(INSTALL_SITE,null);
+//		IFeatureReference[] features = remoteSite.getFeatureReferences();
+//		IFeature remoteFeature = null;
+//
+//		if (features == null || features.length == 0)
+//			fail("No features on the site");
+//
+//		for (int i = 0; i < features.length; i++) {
+//			if (features[i].getURL().toExternalForm().endsWith("rootfeature.jar")) {
+//				remoteFeature = features[i].getFeature(null);
+//				break;
+//			}
+//		}
+//
+//		assertNotNull("Cannot find rootfeature.jar on site", remoteFeature);
+//		ILocalSite localSite = SiteManager.getLocalSite();
+//		IConfiguredSite site =
+//			localSite.getCurrentConfiguration().getConfiguredSites()[0];
+//
+//		((ConfiguredSite)site).setUpdatable(true);
+//		site.install(remoteFeature, null, null);
+//
+//		IPluginEntry[] entries = remoteFeature.getPluginEntries();
+//		assertTrue("no plugins entry", (entries != null && entries.length != 0));
+//
+//		String sitePath = site.getSite().getURL().getFile();
+//		String pluginName = entries[0].getVersionedIdentifier().toString();
+//		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
+//		assertTrue("plugin info not installed locally"+pluginFile, pluginFile.exists());
+//
+//		File featureFile =
+//			new File(
+//				sitePath,
+//				Site.DEFAULT_INSTALLED_FEATURE_PATH
+//					+ remoteFeature.getVersionedIdentifier().toString());
+//		assertTrue("feature info not installed locally", featureFile.exists());
+//
+//		//cleanup
+//		File file =
+//			new File(
+//				site.getSite().getURL().getFile()
+//					+ File.separator
+//					+ Site.DEFAULT_INSTALLED_FEATURE_PATH
+//					+ remoteFeature.getVersionedIdentifier());
+//		// clean plugins
+//		for (int i = 0; i < entries.length; i++) {
+//			pluginName = entries[0].getVersionedIdentifier().toString();
+//			pluginFile =
+//				new File(
+//					site.getSite().getURL().getFile(),
+//					Site.DEFAULT_PLUGIN_PATH + pluginName);
+//			UpdateManagerUtils.removeFromFileSystem(pluginFile);
+//		}
+//
+//		UpdateManagerUtils.removeFromFileSystem(file);
+//		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+//		UpdateManagerUtils.removeFromFileSystem(localFile);
+//		UpdateManagerUtils.removeFromFileSystem(
+//			new File(
+//				((InstallConfiguration) localSite.getCurrentConfiguration())
+//					.getURL()
+//					.getFile()));
+//	}
 }

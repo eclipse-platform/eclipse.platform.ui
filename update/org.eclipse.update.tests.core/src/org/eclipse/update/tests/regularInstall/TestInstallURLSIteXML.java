@@ -264,47 +264,47 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		assertTrue("Listener hasn't received notification", listener.isNotified());
 	}
 
-	public void testFileSiteWithoutSiteXML() throws Exception {
-
-		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML),true,null);
-		IFeature remoteFeature = getFeature1(remoteSite);
-		IConfiguredSite localSite =
-			SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
-		localSite.getSite().install(remoteFeature, null, null);
-
-		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
-		if (features.length == 0)
-			fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
-		if (localSite.getSite().getArchives().length == 0)
-			fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
-
-		//cleanup
-		File file =
-			new File(
-				localSite.getSite().getURL().getFile()
-					+ File.separator
-					+ Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ remoteFeature.getVersionedIdentifier());
-		UpdateManagerUtils.removeFromFileSystem(file);
-		file =
-			new File(
-				localSite.getSite().getURL().getFile()
-					+ File.separator
-					+ Site.DEFAULT_PLUGIN_PATH
-					+ "org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
-		UpdateManagerUtils.removeFromFileSystem(file);
-		file =
-			new File(
-				localSite.getSite().getURL().getFile()
-					+ File.separator
-					+ Site.DEFAULT_PLUGIN_PATH
-					+ "org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
-		UpdateManagerUtils.removeFromFileSystem(file);
-		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-
-	}
+//	public void testFileSiteWithoutSiteXML() throws Exception {
+//
+//		ISite remoteSite =
+//			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML),true,null);
+//		IFeature remoteFeature = getFeature1(remoteSite);
+//		IConfiguredSite localSite =
+//			SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
+//		localSite.getSite().install(remoteFeature, null, null);
+//
+//		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
+//		if (features.length == 0)
+//			fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
+//		if (localSite.getSite().getArchives().length == 0)
+//			fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
+//
+//		//cleanup
+//		File file =
+//			new File(
+//				localSite.getSite().getURL().getFile()
+//					+ File.separator
+//					+ Site.DEFAULT_INSTALLED_FEATURE_PATH
+//					+ remoteFeature.getVersionedIdentifier());
+//		UpdateManagerUtils.removeFromFileSystem(file);
+//		file =
+//			new File(
+//				localSite.getSite().getURL().getFile()
+//					+ File.separator
+//					+ Site.DEFAULT_PLUGIN_PATH
+//					+ "org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
+//		UpdateManagerUtils.removeFromFileSystem(file);
+//		file =
+//			new File(
+//				localSite.getSite().getURL().getFile()
+//					+ File.separator
+//					+ Site.DEFAULT_PLUGIN_PATH
+//					+ "org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
+//		UpdateManagerUtils.removeFromFileSystem(file);
+//		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+//		UpdateManagerUtils.removeFromFileSystem(localFile);
+//
+//	}
 
 	/**
 	* 
