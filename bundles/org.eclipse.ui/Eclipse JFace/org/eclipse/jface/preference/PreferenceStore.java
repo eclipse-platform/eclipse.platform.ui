@@ -327,7 +327,11 @@ public String[] preferenceNames() {
  * Method declared on IPreferenceStore.
  */
 public void putValue(String name, String value) {
-	setValue(name, value);
+	String oldValue = getString(name);
+	if (oldValue == null || !oldValue.equals(value)) {
+		setValue(properties, name, value);
+		dirty = true;
+	}
 }
 /* (non-Javadoc)
  * Method declared on IPreferenceStore.
