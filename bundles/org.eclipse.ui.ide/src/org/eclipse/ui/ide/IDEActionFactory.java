@@ -222,6 +222,8 @@ public final class IDEActionFactory {
 	/**
 	 * IDE-specific workbench action: Quick start.
 	 * This action maintains its enablement state.
+     * 
+     * @deprecated the IDE now use the new intro mechanism
 	 */
 	public static final ActionFactory QUICK_START = new ActionFactory("quickStart") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
