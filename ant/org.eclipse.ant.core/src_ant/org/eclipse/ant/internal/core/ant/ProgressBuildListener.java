@@ -11,13 +11,27 @@
 package org.eclipse.ant.internal.core.ant;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Reports progress and checks for cancelation of a script execution.
@@ -107,20 +121,26 @@ public class ProgressBuildListener implements BuildListener {
 	protected int computeWork(List targets) {
 		int result = 0;
 		for (int i = 0; i < targets.size(); i++) {
-			result = result + countTarget((Target)targets.get(i));
+			result = result + countTarget((Target)targets.get(i), new ArrayList());
 		}
 		return result;
 	}
 
-	protected int countTarget(Target target) {
+	protected int countTarget(Target target, List alreadySeen) {
 		int result = 1;
 		Project project = target.getProject();
 		Hashtable targets= project.getTargets();
+        String targetName;
+        Target dependency;
 		for (Enumeration dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
-			String targetName = (String) dependencies.nextElement();
-			Target dependency = (Target)targets.get(targetName);
+			targetName = (String) dependencies.nextElement();
+            if (alreadySeen.contains(targetName)) { //circular dependency or common dependancy
+				return result;
+            }
+            alreadySeen.add(targetName);
+			dependency = (Target)targets.get(targetName);
 			if (dependency != null) {
-				result = result + countTarget(dependency);
+				result = result + countTarget(dependency, alreadySeen);
 			}
 		}
 		// we have to handle antcall tasks as well
