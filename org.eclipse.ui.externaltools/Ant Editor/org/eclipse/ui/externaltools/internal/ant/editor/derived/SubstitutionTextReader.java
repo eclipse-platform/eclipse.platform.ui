@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.internal.ant.editor.copied;
+package org.eclipse.ui.externaltools.internal.ant.editor.derived;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
@@ -20,6 +20,8 @@ import java.io.Reader;
  * Reads the text contents from a reader and computes for each character
  * a potential substitution. The substitution may eat more characters than 
  * only the one passed into the computation routine.
+ * 
+ * @see   org.eclipse.jdt.internal.ui.text.SubstitutionTextReader
  */
 public abstract class SubstitutionTextReader extends SingleCharReader {
 	

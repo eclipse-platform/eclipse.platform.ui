@@ -1,10 +1,11 @@
-package org.eclipse.ui.externaltools.internal.ant.editor.copied;
+package org.eclipse.ui.externaltools.internal.ant.editor.derived;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.IOException;
 import java.io.Reader;
@@ -19,6 +20,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
+/**
+ * * @see org.eclipse.jdt.internal.ui.text.HTMLPresenter
+ */
 public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter {
 	
 	private static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$

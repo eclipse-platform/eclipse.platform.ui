@@ -1,11 +1,11 @@
-package org.eclipse.ui.externaltools.internal.ant.editor.copied;
+package org.eclipse.ui.externaltools.internal.ant.editor.derived;
 
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.IOException;
 import java.io.PushbackReader;
@@ -22,6 +22,8 @@ import org.eclipse.swt.custom.StyleRange;
 /**
  * Reads the text contents from a reader of HTML contents and translates 
  * the tags or cut them out.
+ * 
+ * @see org.eclipse.jdt.internal.ui.text.HTML2TextReader
  */
 public class HTML2TextReader extends SubstitutionTextReader {
 	

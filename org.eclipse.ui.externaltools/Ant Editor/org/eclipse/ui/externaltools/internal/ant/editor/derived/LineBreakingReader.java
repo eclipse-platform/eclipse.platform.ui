@@ -1,9 +1,11 @@
-package org.eclipse.ui.externaltools.internal.ant.editor.copied;
+package org.eclipse.ui.externaltools.internal.ant.editor.derived;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +14,9 @@ import java.text.BreakIterator;
 
 import org.eclipse.swt.graphics.GC;
 
-/*
+/**
  * Not a real reader. Could change if requested
+ * @see   org.eclipse.jdt.internal.ui.text.LineBreakingReader
  */
 public class LineBreakingReader {
 	
