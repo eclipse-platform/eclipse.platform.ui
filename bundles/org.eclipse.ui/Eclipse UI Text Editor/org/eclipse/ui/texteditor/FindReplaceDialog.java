@@ -113,7 +113,7 @@ class FindReplaceDialog extends Dialog {
 			shell.setLocation(fLocation);
 		
 		// set help context
-		WorkbenchHelp.setHelp(shell, new Object[] { IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG });
+		WorkbenchHelp.setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
 
 		// fill in combo contents
 		updateCombo(fFindField, fFindHistory);
