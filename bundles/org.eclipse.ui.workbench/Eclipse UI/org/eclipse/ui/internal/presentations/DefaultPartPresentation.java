@@ -87,7 +87,6 @@ public class DefaultPartPresentation extends StackPresentation {
 	private Listener dragListener;
 	private List activationList = new ArrayList(10);
 	private boolean activationListChange = true;
-	static private String ACTIV_ID = "activationNum"; //$NON-NLS-1$
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab
@@ -157,6 +156,10 @@ public class DefaultPartPresentation extends StackPresentation {
 	
 	private Listener selectionListener = new Listener() {
 		public void handleEvent(Event e) {
+			if (ignoreSelectionChanges) {
+				return;
+			}
+			
 			IPresentablePart item = getPartForTab((CTabItem)e.item);
 			
 			if (item != null) {
@@ -195,6 +198,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	private ToolBar viewToolBar;
 	
 	private boolean shellActive = true;
+	
+	private boolean ignoreSelectionChanges = false;
 	
 	private ShellListener shellListener = new ShellAdapter() {
 
@@ -798,7 +803,12 @@ public class DefaultPartPresentation extends StackPresentation {
 			style |= SWT.CLOSE;
 		}
 		
-		tabItem = tabFolder.createItem(style, tabIndex);
+		ignoreSelectionChanges = true;
+		try {
+			tabItem = tabFolder.createItem(style, tabIndex);			
+		} finally {
+			ignoreSelectionChanges = false;
+		}
 				
 		tabItem.setData(TAB_DATA, part);
 		
@@ -1019,7 +1029,12 @@ public class DefaultPartPresentation extends StackPresentation {
 		if (activationListChange)
 			activationList.remove(oldPart);
 		
-		item.dispose();
+		ignoreSelectionChanges = true;
+		try {
+			item.dispose();
+		} finally {
+			ignoreSelectionChanges = false;
+		}
 	}
 	
 	/* (non-Javadoc)
