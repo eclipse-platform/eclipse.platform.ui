@@ -24,6 +24,7 @@ public interface IHelpContextIds {
 	
 	// Actions
 	public static final String ADD_BOOKMARK_ACTION = PREFIX + "add_bookmark_action_context"; //$NON-NLS-1$
+	public static final String ADD_TASK_ACTION = PREFIX + "add_task_action_context"; //$NON-NLS-1$	
 	public static final String INCREMENTAL_BUILD_ACTION = PREFIX + "incremental_build_action_context"; //$NON-NLS-1$
 	public static final String FULL_BUILD_ACTION = PREFIX + "full_build_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_RESOURCE_ACTION = PREFIX + "close_resource_action_context"; //$NON-NLS-1$

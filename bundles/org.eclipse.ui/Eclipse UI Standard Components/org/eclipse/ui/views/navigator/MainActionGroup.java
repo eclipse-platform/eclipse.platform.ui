@@ -29,6 +29,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 public class MainActionGroup extends ResourceNavigatorActionGroup {
 
 	protected AddBookmarkAction addBookmarkAction;
+	protected AddTaskAction addTaskAction;	
 	protected NewWizardAction newWizardAction;
 	protected PropertyDialogAction propertyDialogAction;
 	protected ImportResourcesAction importAction;
@@ -55,6 +56,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		Shell shell = navigator.getSite().getShell();
 		IWorkbench workbench = navigator.getSite().getWorkbenchWindow().getWorkbench();
 		addBookmarkAction = new AddBookmarkAction(shell);
+		addTaskAction = new AddTaskAction(shell);		
 		newWizardAction = new NewWizardAction();
 		propertyDialogAction =
 			new PropertyDialogAction(shell, navigator.getViewer());
@@ -145,6 +147,9 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.BOOKMARK,
 			addBookmarkAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.ADD_TASK,
+			addTaskAction);
 			
 		gotoGroup.fillActionBars(actionBars);
 		openGroup.fillActionBars(actionBars);
@@ -162,6 +167,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			(IStructuredSelection) getContext().getSelection();
 		propertyDialogAction.setEnabled(selection.size() == 1);
 		addBookmarkAction.selectionChanged(selection);
+		addTaskAction.selectionChanged(selection);		
 		
 		gotoGroup.updateActionBars();
 		openGroup.updateActionBars();
