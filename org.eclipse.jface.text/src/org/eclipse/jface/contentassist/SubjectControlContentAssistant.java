@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.jface.text.Assert;
 
 
 /**
- * The standard implementation of the <code>IControlContentAssistant</code> interface.
+ * The standard implementation of the {@link org.eclipse.jface.contentassist.ISubjectControlContentAssistant} interface.
  * Usually, clients instantiate this class and configure it before using it.
  * 
  * @since 3.0

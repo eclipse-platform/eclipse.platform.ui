@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.contentassist;
 
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ import org.eclipse.jface.text.IEventConsumer;
  * {@linkplain org.eclipse.jface.text.contentassist.ContentAssistant content assistant}
  * to a <code>Control</code>.
  * 
- * A visual affordance can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.
+ * A visual feedback can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.
  * 
  * @since 3.0
  */
@@ -74,7 +73,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	private Set fKeyListeners;
 	/**
 	 * The Listener installed on the control which passes events to
-	 * {@link #fVerifyKeyListeners fVerifyKeyListeners} and {@link #fKeyListeners fKeyListeners}.
+	 * {@link #fVerifyKeyListeners fVerifyKeyListeners} and {@link #fKeyListeners}.
 	 */
 	private Listener fControlListener;
 
@@ -103,8 +102,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		installControlListener();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
@@ -118,15 +117,15 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#supportsVerifyKeyListener()
 	 */
 	public boolean supportsVerifyKeyListener() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
@@ -138,8 +137,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
@@ -151,8 +150,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
@@ -163,8 +162,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
 	 */
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
@@ -172,8 +171,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			System.out.println("AbstractControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getLineDelimiter()
 	 */
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
@@ -181,7 +180,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	
 	/**
 	 * Installs <code>fControlListener</code>, which handles VerifyEvents and KeyEvents by
-	 * passing them to <code>fVerifyKeyListeners</code> and <code>fKeyListeners</code>.
+	 * passing them to {@link #fVerifyKeyListeners} and {@link #fKeyListeners}.
 	 */
 	private void installControlListener() {
 		if (DEBUG)
@@ -214,7 +213,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 							}
 							
 							if (DEBUG)
-								dump("traverse ok", e, verifyEvent); //$NON-NLS-1$
+								dump("traverse OK", e, verifyEvent); //$NON-NLS-1$
 						}
 						break;
 					
@@ -230,7 +229,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						}
 					
 						if (DEBUG)
-							dump("keyDown ok", e, verifyEvent); //$NON-NLS-1$
+							dump("keyDown OK", e, verifyEvent); //$NON-NLS-1$
 						
 						for (Iterator iter= fKeyListeners.iterator(); iter.hasNext();) {
 							((KeyListener) iter.next()).keyPressed(keyEvent);
@@ -246,7 +245,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 * Dump the given events to "standard" output.
 			 * 
 			 * @param who who dump's
-			 * @param e  the event
+			 * @param e the event
 			 * @param ve the verify event
 			 */
 			private void dump(String who, Event e, VerifyEvent ve) {
@@ -300,19 +299,19 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 	
 	/**
-	 * Sets the visual affordance provider for content assist.
+	 * Sets the visual feedback provider for content assist.
 	 * The given {@link ILabelProvider} methods are called with
 	 * {@link #getControl()} as argument.
 	 * 
 	 * <ul>
-	 * <li><code>getImage(Object)</code> provides the visual cue image.
-	 * The image can maximally be 5 pixels wide and 8 pixels high.
-	 * If <code>getImage(Object)</code> returns <code>null</code>, a default image is used.
-	 * </li>
-	 * <li><code>getText(Object)</code> provides the hover info text.
-	 * It is shown when hovering over the cue image or the adapted {@link Control}.
-	 * No info text is shown if <code>getText(Object)</code> returns <code>null</code>.
-	 * </li>
+	 *   <li><code>getImage(Object)</code> provides the visual cue image.
+	 *     The image can maximally be 5 pixels wide and 8 pixels high.
+	 *     If <code>getImage(Object)</code> returns <code>null</code>, a default image is used.
+	 *   </li>
+	 *   <li><code>getText(Object)</code> provides the hover info text.
+	 *     It is shown when hovering over the cue image or the adapted {@link Control}.
+	 *     No info text is shown if <code>getText(Object)</code> returns <code>null</code>.
+	 *   </li>
 	 * </ul>
 	 * <p>
 	 * The given {@link ILabelProvider} becomes owned by the {@link AbstractControlContentAssistSubjectAdapter},
@@ -321,15 +320,15 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * </p>
 	 * 
 	 * @param labelProvider a {@link ILabelProvider}, or <code>null</code>
-	 * 	if the affordance should not be shown
+	 * 	if no visual feedback should be shown
 	 */
 	public void setContentAssistCueProvider(ILabelProvider labelProvider) {
 		SmartFieldController.setSmartCue(getControl(), labelProvider);
 	}
 
 	/**
-	 * The internal controller for cues and error messages on <code>Text</code> and
-	 * <code>Combo</code> <code>Control</code>s.
+	 * The internal controller for cues and error messages on {@link Text} and
+	 * {@link Combo} widgets.
 	 */
 	private static class SmartFieldController {
 			
@@ -672,7 +671,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		private Control fHoverControl;
 		
 		/**
-		 * Installs or deinstalls a visual cue indicating availability of content assist on the given control.
+		 * Installs or de-installs a visual cue indicating availability of content assist on the given control.
 		 * At most one cue and one hover info is shown at any point in time.
 		 * 
 		 * @param control the control on which to install or uninstall the cue
@@ -739,10 +738,12 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				fLabelProvider= null;
 			}
 		}
+	 	
 		/**
-		 * Gets the smart field controller from the <code>control</code>'s Shell.
-		 * @param control that target control
-		 * @return <code>control</code>'s shell
+		 * Gets the smart field controller from the given control's shell.
+		 * 
+		 * @param control the control
+		 * @return the smart field controller
 		 */
 		private static SmartFieldController getSmartFieldController(Control control) {
 			Shell shell= control.getShell();
@@ -782,8 +783,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		}
 		/**
 		 * Show or hide hover.
-		 * @param control target control
-		 * @param text a String to show in hover, or <code>null</code> to hide
+		 * 
+		 * @param control the control
+		 * @param text a {@link String} to show in hover, or <code>null</code> to hide
 		 */
 		private void showHover(Control control, String text) {
 			if (text != null) {

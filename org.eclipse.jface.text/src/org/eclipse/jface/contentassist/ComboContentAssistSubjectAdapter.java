@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.contentassist;
 
 import java.util.HashMap;
@@ -31,8 +30,10 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.jface.util.Assert;
 
+
 /**
- * Adapts a <code>Combo</code> to an <code>IContentAssistSubjectControl</code>.
+ * Adapts a {@link org.eclipse.swt.widgets.Combo} to a {@link org.eclipse.jface.contentassist.IContentAssistSubjectControl}.
+ * 
  * <p>
  *	Known issues:
  *  <ul>
@@ -43,19 +44,17 @@ import org.eclipse.jface.util.Assert;
  *		=> Combo broken on MacOS X</li>
  *  </ul>
  *	</p>
- * 
- * @see org.eclipse.swt.widgets.Combo
- * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
+ *
  * @since 3.0
  */
 public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
 	/**
-	 * The <code>Document</code> of <code>fCombo</code>'s contents.
+	 * The document of {@link #fCombo}'s contents.
 	 */
 	private class InternalDocument extends Document {
 		/**
-		 * Updates this <code>Document</code> with changes in <code>fCombo</code>.
+		 * Updates this document with changes in {@link #fCombo}.
 		 */
 		private ModifyListener fModifyListener;
 		
@@ -84,7 +83,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	}
 	
 	/**
-	 * The combo.
+	 * The combo widget.
 	 */
 	private Combo fCombo;
 	private HashMap fModifyListeners;
@@ -207,5 +206,4 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		if (listener instanceof Listener)
 			fCombo.removeListener(SWT.Modify, (Listener)listener);
 	}
-
 }

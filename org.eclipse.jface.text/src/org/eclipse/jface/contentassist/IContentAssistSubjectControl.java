@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -42,10 +41,10 @@ public interface IContentAssistSubjectControl {
 	 * @return line height in pixel
 	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
+	 *               	<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
+	 *               		disposed</li>
+	 *              	<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the
+	 *              		 thread that created the receiver</li>
 	 *               </ul>
 	 */
 	int getLineHeight();
@@ -58,10 +57,10 @@ public interface IContentAssistSubjectControl {
 	 *         coordinates
 	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
+	 *               	<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
+	 *               		disposed</li>
+	 *               	<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the
+	 *               		thread that created the receiver</li>
 	 *               </ul>
 	 */
 	int getCaretOffset();
@@ -76,17 +75,11 @@ public interface IContentAssistSubjectControl {
 	 * @return x, y location of the upper left corner of the character bounding
 	 *         box at the specified offset in the text
 	 * @exception org.eclipse.swt.SWTException
-	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
-	 *               </ul>
-	 * @exception IllegalArgumentException
-	 *               <ul>
-	 *               <li>ERROR_INVALID_RANGE when the offset is outside the
-	 *               valid range (< 0 or >getCharCount())</li>
-	 *               </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
+	 * @exception IllegalArgumentException when the offset is outside the valid range
 	 */
 	Point getLocationAtOffset(int offset);
 
@@ -97,12 +90,10 @@ public interface IContentAssistSubjectControl {
 	 * @return line delimiter used for entering new lines by key down or paste
 	 *         operation
 	 * @exception org.eclipse.swt.SWTException
-	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
-	 *               </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
 	 */
 	String getLineDelimiter();
 
@@ -111,12 +102,10 @@ public interface IContentAssistSubjectControl {
 	 * 
 	 * @return start and length of the selection, x is the offset of the
 	 * @exception org.eclipse.swt.SWTException
-	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
-	 *               </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
 	 */
 	Point getWidgetSelectionRange();
 
@@ -132,10 +121,8 @@ public interface IContentAssistSubjectControl {
 	 * Sets the selected range. Offset and length based on the subject's
 	 * model (e.g. document).
 	 * 
-	 * @param offset the offset of the selection based on the subject's model
-	 *           (e.g. document)
-	 * @param length the length of the selection based on the subject's model
-	 *           (e.g. document)
+	 * @param offset the offset of the selection based on the subject's model e.g. document
+	 * @param length the length of the selection based on the subject's model e.g. document
 	 */
 	void setSelectedRange(int offset, int length);
 
@@ -143,10 +130,8 @@ public interface IContentAssistSubjectControl {
 	 * Reveals the given region. Offset and length based on the subject's
 	 * model (e.g. document).
 	 * 
-	 * @param offset the offset of the selection based on the subject's model
-	 *           (e.g. document)
-	 * @param length the length of the selection based on the subject's model
-	 *           (e.g. document)
+	 * @param offset the offset of the selection based on the subject's model e.g. document
+	 * @param length the length of the selection based on the subject's model e.g. document
 	 */
 	void revealRange(int offset, int length);
 
@@ -182,7 +167,7 @@ public interface IContentAssistSubjectControl {
 	 * <p>
 	 * Note: This content assist subject control may not support prepending a verify
 	 * listener, in which case <code>false</code> will be returned. However,
-	 * <code>appendVerifyKeyListener</code> might work.
+	 * {@link #appendVerifyKeyListener(VerifyKeyListener)} might work.
 	 * </p>
 	 * 
 	 * @param verifyKeyListener the listener to be inserted
@@ -201,7 +186,7 @@ public interface IContentAssistSubjectControl {
 
 	/**
 	 * Tests whether a verify key listener can be added either using <code>prependVerifyKeyListener</code>
-	 * or <code>appendVerifyKeyListener</code>.
+	 * or {@link #appendVerifyKeyListener(VerifyKeyListener)}.
 	 * 
 	 * @return <code>true</code> if adding verify key listeners is supported
 	 */
@@ -210,21 +195,15 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when keys are pressed and released on the system keyboard, by sending it
-	 * one of the messages defined in the <code>KeyListener</code> interface.
+	 * one of the messages defined in the {@link KeyListener} interface.
 	 * 
 	 * @param keyListener the listener which should be notified
-	 * 
-	 * @exception IllegalArgumentException
-	 *               <ul>
-	 *               <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *               </ul>
+	 * @exception IllegalArgumentException if the listener is <code>null</code>
 	 * @exception org.eclipse.swt.SWTException
-	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
-	 *               </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
 	 * 
 	 * @see KeyListener
 	 * @see #removeKeyListener(KeyListener)
@@ -236,19 +215,12 @@ public interface IContentAssistSubjectControl {
 	 * notified when keys are pressed and released on the system keyboard.
 	 * 
 	 * @param keyListener the listener which should be notified
-	 * 
-	 * @exception IllegalArgumentException
-	 *               <ul>
-	 *               <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *               </ul>
+	 * @exception IllegalArgumentException if the listener is null</li>
 	 * @exception org.eclipse.swt.SWTException
-	 *               <ul>
-	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *               disposed</li>
-	 *               <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *               thread that created the receiver</li>
-	 *               </ul>
-	 * 
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
 	 * @see KeyListener
 	 * @see #addKeyListener(KeyListener)
 	 */
@@ -269,12 +241,11 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @param selectionListener the listener
 	 * @exception org.eclipse.swt.SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT when listener is null</li>
-	 * </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
+	 * @exception IllegalArgumentException if listener is <code>null</code>
 	 */
 	void removeSelectionListener(SelectionListener selectionListener);
 
@@ -285,13 +256,11 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @param selectionListener the listener
 	 * @return <code>true</code> if adding a selection listener is supported
-	 * @exception org.eclipse.swt.SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT when listener is null</li>
-	 * </ul>
+	 *			<ul>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
+	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
+	 *			</ul>
+	 * @exception IllegalArgumentException if listener is <code>null</code>
 	 */
 	boolean addSelectionListener(SelectionListener selectionListener);
 }

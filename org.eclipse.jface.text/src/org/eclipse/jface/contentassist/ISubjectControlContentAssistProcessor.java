@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.contentassist.IContentAssistProcessor}
@@ -23,6 +23,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * @since 3.0
  */
 public interface ISubjectControlContentAssistProcessor extends IContentAssistProcessor {
+	
 	/**
 	 * Returns a list of completion proposals based on the specified location
 	 * within the document that corresponds to the current cursor position

@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.contentassist;
 
-
-
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 
 /**
- * A default implementation of the <code>IContextInfomationValidator</code> interface.
+ * A default implementation of the {@link SubjectControlContextInformationValidator} interface.
  * This implementation determines whether the information is valid by asking the content 
  * assist processor for all  context information objects for the current position. If the 
  * currently displayed information is in the result set, the context information is 
