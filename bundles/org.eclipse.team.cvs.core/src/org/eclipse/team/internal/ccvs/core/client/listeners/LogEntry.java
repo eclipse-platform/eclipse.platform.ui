@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
  * All Rights Reserved.
  */
  
+import java.util.Date;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -15,12 +17,12 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
 	private RemoteFile file;
 	private String author;
-	private String date;
+	private Date date;
 	private String comment;
 	private String state;
 	private CVSTag[] tags;
 
-	public LogEntry(RemoteFile file, String revision, String author, String date, String comment, String state, CVSTag[] tags) {
+	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags) {
 		this.file = file.toRevision(revision);
 		this.author = author;
 		this.date = date;
@@ -46,7 +48,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	/**
 	 * @see ILogEntry#getDate()
 	 */
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 

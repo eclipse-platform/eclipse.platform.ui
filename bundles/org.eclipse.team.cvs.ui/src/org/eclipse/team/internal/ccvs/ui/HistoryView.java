@@ -7,6 +7,8 @@ package org.eclipse.team.internal.ccvs.ui;
  
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -140,7 +142,9 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					}
 					return result.toString();
 				case COL_DATE:
-					return entry.getDate();
+					Date date = entry.getDate();
+					if (date == null) return Policy.bind("notAvailable");
+					return DateFormat.getInstance().format(date);
 				case COL_AUTHOR:
 					return entry.getAuthor();
 				case COL_COMMENT:

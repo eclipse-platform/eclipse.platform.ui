@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.util.Date;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.ccvs.core.CVSTag;
@@ -69,12 +71,10 @@ class HistorySorter extends ViewerSorter {
 					return 1;
 				}
 				return getCollator().compare(tags1[0].getName(), tags2[0].getName());
-			case 2: /* date  */
-				// To do: use dates instead of strings
-				String date1 = e1.getDate();
-				String date2 = e2.getDate();
-				//return date1.compareTo(date2);
-				return getCollator().compare(date1, date2);
+			case 2: /* date */
+				Date date1 = e1.getDate();
+				Date date2 = e2.getDate();
+				return date1.compareTo(date2);
 			case 3: /* author */
 				return getCollator().compare(e1.getAuthor(), e2.getAuthor());
 			case 4: /* comment */

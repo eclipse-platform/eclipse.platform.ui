@@ -5,6 +5,8 @@ package org.eclipse.team.ccvs.core;
  * All Rights Reserved.
  */
 
+import java.util.Date;
+
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -28,7 +30,7 @@ public interface ILogEntry extends IAdaptable {
 	/**
 	 * Get the date the revision was committed
 	 */
-	public String getDate();
+	public Date getDate();
 	
 	/**
 	 * Get the comment for the revision

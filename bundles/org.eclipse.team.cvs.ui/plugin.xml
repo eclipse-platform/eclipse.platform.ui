@@ -388,7 +388,7 @@
        </page>
    </extension>
 	
-	<!-- **************** DECORATOR ******************* -->
+	<!-- **************** Decorator ******************* -->
 	<extension point="org.eclipse.ui.decorators"> 
         <decorator 
              id="org.eclipse.team.cvs.ui.decorator" 
@@ -399,4 +399,21 @@
              adaptable="true"> 
          </decorator> 
 	</extension>    
+	
+	<!-- *************** View Actions **************** -->
+   <extension point="org.eclipse.ui.viewActions"> 
+     <viewContribution 
+         id="org.eclipse.team.cvs.ui.history" 
+         targetID="org.eclipse.team.ccvs.ui.HistoryView"> 
+         <action
+           id="org.eclipse.team.cvs.ui.historyaction"
+           label="%HistoryFilter.label"
+           tooltip="%HistoryFilter.tooltip"
+           toolbarPath="actions"
+           icon="icons/full/clcl16/filter_history.gif"
+           class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction">
+         </action>
+     </viewContribution>
+   </extension> 
+	
 </plugin>

@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.DateUtil;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogListener implements ICommandOutputListener {
@@ -109,7 +111,8 @@ public class LogListener implements ICommandOutputListener {
 					thisRevisionTags.add(new CVSTag(tagName, type));
 				}
 			}
-			LogEntry entry = new LogEntry(file, revision, author, creationDate,
+			Date date = DateUtil.convertFromLogTime(creationDate);
+			LogEntry entry = new LogEntry(file, revision, author, date,
 				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]));
 			entries.add(entry);
 			state = BEGIN;
