@@ -328,6 +328,8 @@ protected void doDock() {
  * Draws the applicable gradient on the view's title area
  */
 /* package */ void drawGradient() {
+	if (titleLabel == null || viewToolBar == null || isvToolBar == null)
+		return;
 	if (showFocus) {
 		if (getShellActivated()) {
 			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
