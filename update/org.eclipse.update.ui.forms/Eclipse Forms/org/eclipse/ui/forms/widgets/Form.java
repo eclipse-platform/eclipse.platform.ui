@@ -222,8 +222,10 @@ public class Form extends ScrolledComposite {
 	 * @param flushCache
 	 */
 	public void reflow(boolean flushCache) {
-		body.layout(flushCache);
-		updateClientSize(flushCache);
+		if (body!=null) {
+			body.layout(flushCache);
+		    updateClientSize(flushCache);
+		}
 	}
 	/**
 	 * Returns the container that occupies the body of the form (the form area

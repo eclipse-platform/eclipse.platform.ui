@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -167,7 +168,11 @@ public class FormToolkit {
 		Button button = new Button(parent, style | SWT.FLAT);
 		if (text != null)
 			button.setText(text);
-		adapt(button, true, true);
+		button.setForeground(colors.getForeground());
+		button.addFocusListener(visibilityHandler);
+		button.addKeyListener(keyboardHandler);
+		if ((style & SWT.PUSH)==0)
+			button.setBackground(colors.getBackground());
 		return button;
 	}
 
@@ -342,7 +347,6 @@ public class FormToolkit {
 			control.addFocusListener(visibilityHandler);
 		if (trackKeyboard)
 			control.addKeyListener(keyboardHandler);
-		control.addKeyListener(keyboardHandler);
 	}
 
 	/**

@@ -232,6 +232,7 @@ public class WidgetTest {
 			td = new TableWrapData();
 			td.align = TableWrapData.FILL;
 			td.grabHorizontal = true;
+			toolkit.paintBordersFor(group);
 			rtext.setLayoutData(td);
 		}
 	}
