@@ -379,6 +379,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
 	 */
 	public void display(IConsole console) {
+	    if (fPinned) {
+            return;
+        }
 	    ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
 	    if (part != null) {
 	        partActivated(part);

@@ -109,11 +109,19 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		List stack = ((ConsoleView)fView).getConsoleStack();
+        ConsoleView consoleView = (ConsoleView) fView;
+        boolean pinned = consoleView.isPinned();
+        if (pinned) {
+            consoleView.pin(false);
+        }
+		List stack = consoleView.getConsoleStack();
 		if (stack.size() > 1) {
 			IConsole console = (IConsole) stack.get(1);
 			fView.display(console);
 		}
+        if (pinned) {
+            consoleView.pin(true);
+        }
 	}
 	
 	/* (non-Javadoc)
