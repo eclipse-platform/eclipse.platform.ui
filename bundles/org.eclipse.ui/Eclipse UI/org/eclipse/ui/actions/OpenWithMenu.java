@@ -114,14 +114,9 @@ private Image createImage(IEditorDescriptor descriptor) {
  */
 private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boolean isPreferredEditor) {
 	MenuItem menuItem;
-	if (isPreferredEditor) {
-		// XXX: Would be better to use bold here, but SWT does not support it.
-		menuItem = new MenuItem(menu, SWT.CHECK);
-		menuItem.setSelection(true);
-	}
-	else {
-		menuItem = new MenuItem(menu, SWT.PUSH);
-	}
+	// XXX: Would be better to use bold here, but SWT does not support it.
+	menuItem = new MenuItem(menu, SWT.RADIO);
+	menuItem.setSelection(isPreferredEditor);
 	menuItem.setText(descriptor.getLabel());
 	final Image image = createImage(descriptor);
 	if (image != null) {
