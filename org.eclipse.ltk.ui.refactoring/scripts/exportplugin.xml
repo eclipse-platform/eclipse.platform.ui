@@ -26,6 +26,9 @@
         <copy todir="${dest}/icons">
             <fileset dir="icons" /> 
         </copy>
+		<copy todir="${dest}/META-INF">
+			<fileset dir="META-INF" />
+		</copy>
 		<zip zipfile="${dest}/refuisrc.zip">
 		    <fileset dir="src" />
   		</zip>		
