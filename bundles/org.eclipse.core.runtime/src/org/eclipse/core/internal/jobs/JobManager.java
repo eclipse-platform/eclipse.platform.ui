@@ -38,7 +38,7 @@ public class JobManager implements IJobManager {
 	static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS));
 	static final boolean DEBUG_BEGIN_END = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_BEGIN_END));
 	static final boolean DEBUG_DEADLOCK = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEADLOCK_ERROR));
-	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+	private static DateFormat DEBUG_FORMAT;
 	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_LOCKS));
 	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS_TIMING));
 	/**
@@ -99,6 +99,9 @@ public class JobManager implements IJobManager {
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
 		if (DEBUG_TIMING) {
+			//lazy init to avoid overhead when not debugging
+			if (DEBUG_FORMAT == null)
+				DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
 			msgBuf.append('-');
 		}
