@@ -203,8 +203,13 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	
 	// Setup window.
 	addMenuBar();
-	addToolBar(SWT.FLAT | SWT.WRAP);
-//	addCoolBar(SWT.FLAT);
+	
+	IPreferenceStore store = workbench.getPreferenceStore();
+	if(store.getBoolean("ENABLE_COOL_BARS"))
+		addCoolBar(SWT.FLAT);
+	else
+		addToolBar(SWT.FLAT | SWT.WRAP);
+		
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 

@@ -403,8 +403,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_WORKING_SETS", false); //$NON-NLS-1$				
 		// Temporary option to enable single click
 		store.setDefault("SINGLE_CLICK_METHOD", OpenStrategy.DOUBLE_CLICK);
+		// Temporary option to enable cool bars
+		store.setDefault("ENABLE_COOL_BARS", false);
 		// Temporary option to enable new menu organization
-		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$		
+		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
+			
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);

@@ -26,6 +26,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
 	// Temporary option to enable working sets
 	private Button workingSetsButton;
+	// Temporary option to enable cool bars
+	private Button coolBarsButton;
 	// Temporary option to enable new menu structure
 	private Button newMenusButton;
 	
@@ -45,7 +47,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	/**
 	 * Creates a temporary option checkbox.
 	 */
-	private Button createTempOption(Composite parent, String text, String prefId, boolean restartNeeded) {
+	private Button createTempOption(Composite parent, String text, String prefId, boolean restartNeeded,String labelText) {
 		// create composite needed to get tab order right
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -58,7 +60,10 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		
 		if (restartNeeded) {
 			Label label = new Label(composite, SWT.NONE);
-			label.setText("Note: This preference will only take effect after restarting.");
+			if(labelText == null)
+				label.setText("Note: This preference will only take effect after restarting.");
+			else
+				label.setText(labelText);
 		}
 		
 		return button;
@@ -81,8 +86,18 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 				composite,
 				"Enable workbench working sets (adds two items to Window menu)",
 				"ENABLE_WORKING_SETS",
-				true);
-			
+				true,
+				null);
+
+		// Temporary option to enable cool bars
+		coolBarsButton =
+			createTempOption(
+				composite,
+				"Enable cool bars",
+				"ENABLE_COOL_BARS",
+				true,
+				"Note: This preference will only take effect on the new windows.");
+							
 /*		// Temporary option to enable the new menu organization
 		newMenusButton = 
 			createTempOption(
@@ -133,8 +148,9 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		singleClickButtons[3].setSelection(true);
 
 		workingSetsButton.setSelection(store.getDefaultBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$				
-		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
-
+		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
+//		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
+		
 	}
 	
 	/**
@@ -144,7 +160,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		IPreferenceStore store = getPreferenceStore();
 
 		store.setValue("ENABLE_WORKING_SETS", workingSetsButton.getSelection()); //$NON-NLS-1$
-		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
+//		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
+		store.setValue("ENABLE_COOL_BARS", coolBarsButton.getSelection()); //$NON-NLS-1$
 		store.setValue("SINGLE_CLICK_METHOD",singleClickMethod);
 		OpenStrategy.setOpenMethod(singleClickMethod);
 		//Call commented out on WorkbenchPreferencePage. 
