@@ -97,6 +97,16 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 */
 	int widgetLineOfWidgetOffset(int widgetOffset);
 	
+	
+	/**
+	 * Returns the maximal subranges of the given model range thus that there is
+	 * no offset inside a subrange for which there is no image offset.
+	 * 
+	 * @param modelRange the model range
+	 * @return the list of subranges
+	 */
+	IRegion[] getCoveredModelRanges(IRegion modelRange);
+	
 	/**
 	 * Exposes the given model range. Returns whether this call caused a change
 	 * of the set of exposed model ranges.

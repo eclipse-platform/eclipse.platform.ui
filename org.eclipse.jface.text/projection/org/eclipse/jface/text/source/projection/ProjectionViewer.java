@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentInformationMappingExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -414,7 +415,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Display display= widget.getDisplay();
 			if (display != null) {
 				// check for dead locks
-				display.syncExec(new Runnable() {
+				display.asyncExec(new Runnable() {
 					public void run() {
 						catchupWithProjectionAnnotationModel(event);
 					}
@@ -655,5 +656,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType() && e.getLength() == 0 && e.getText().length() != 0)
 				fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension5#getCoveredModelRanges(org.eclipse.jface.text.IRegion)
+	 */
+	public IRegion[] getCoveredModelRanges(IRegion modelRange) {
+		if (fInformationMapping == null)
+			return new IRegion[] { new Region(modelRange.getOffset(), modelRange.getLength()) };
+			
+		if (fInformationMapping instanceof IDocumentInformationMappingExtension) {
+			IDocumentInformationMappingExtension extension= (IDocumentInformationMappingExtension) fInformationMapping;
+			try {
+				return extension.getExactCoverage(modelRange);
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		return null;
 	}
 }

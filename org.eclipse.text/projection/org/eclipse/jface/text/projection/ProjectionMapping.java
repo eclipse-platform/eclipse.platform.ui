@@ -237,16 +237,44 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return null;
 	}
 	
-	private IRegion createOriginStartRegion(Segment original, int offsetShift) {
-		return new Region(original.fragment.getOffset() + offsetShift, original.fragment.getLength() - offsetShift);
+	private IRegion createOriginStartRegion(Segment image, int offsetShift) {
+		return new Region(image.fragment.getOffset() + offsetShift, image.fragment.getLength() - offsetShift);
 	}
 	
-	private IRegion createOriginRegion(Segment origin) {
-		return new Region(origin.fragment.getOffset(), origin.fragment.getLength());
+	private IRegion createOriginRegion(Segment image) {
+		return new Region(image.fragment.getOffset(), image.fragment.getLength());
 	}
 	
-	private IRegion createOriginEndRegion(Segment original, int lengthReduction) {
-		return new Region(original.fragment.getOffset(), original.fragment.getLength() - lengthReduction);
+	private IRegion createOriginEndRegion(Segment image, int lengthReduction) {
+		return new Region(image.fragment.getOffset(), image.fragment.getLength() - lengthReduction);
+	}
+	
+	private IRegion createImageStartRegion(Fragment origin, int offsetShift) {
+		int shift= offsetShift > 0 ? offsetShift : 0;
+		return new Region(origin.segment.getOffset() + shift, origin.segment.getLength() - shift);
+	}
+	
+	private IRegion createImageRegion(Fragment origin) {
+		return new Region(origin.segment.getOffset(), origin.segment.getLength());
+	}
+	
+	private IRegion createImageEndRegion(Fragment origin, int lengthReduction) {
+		int reduction= lengthReduction > 0 ? lengthReduction : 0;
+		return new Region(origin.segment.getOffset(), origin.segment.getLength() - reduction);
+	}
+
+	private IRegion createOriginStartRegion(Fragment origin, int offsetShift) {
+		int shift= offsetShift > 0 ? offsetShift : 0;
+		return new Region(origin.getOffset() + shift, origin.getLength() - shift);
+	}
+	
+	private IRegion createOriginRegion(Fragment origin) {
+		return new Region(origin.getOffset(), origin.getLength());
+	}
+	
+	private IRegion createOriginEndRegion(Fragment origin, int lengthReduction) {
+		int reduction= lengthReduction > 0 ? lengthReduction : 0;
+		return new Region(origin.getOffset(), origin.getLength() - reduction);
 	}
 	
 	private IRegion getIntersectingRegion(IRegion left, IRegion right) {
@@ -463,5 +491,90 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		for (int i= 0; i < segments.length; i++)
 			length += segments[i].length;
 		return length;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactImageRegions(org.eclipse.jface.text.IRegion)
+	 */
+	public IRegion[] toExactImageRegions(IRegion originRegion) throws BadLocationException {
+		
+		if (originRegion.getLength() == 0) {
+			int imageOffset= toImageOffset(originRegion.getOffset());
+			return imageOffset > -1 ? new IRegion[] { new Region(imageOffset, 0) } : null;
+		}
+		
+		int endOffset= originRegion.getOffset() + originRegion.getLength();
+		Position[] fragments= getFragments();
+		int firstIndex= findFragmentIndex(originRegion.getOffset(), RIGHT);
+		int lastIndex= findFragmentIndex(endOffset - 1, LEFT);
+		
+		if (firstIndex == -1 || lastIndex == -1 || firstIndex > lastIndex)
+			return null;
+		
+		int resultLength= lastIndex - firstIndex + 1;
+		IRegion[] result= new IRegion[resultLength];
+		
+		// first
+		result[0]= createImageStartRegion((Fragment) fragments[firstIndex], originRegion.getOffset() - fragments[firstIndex].getOffset());
+		// middles
+		for (int i= 1; i < resultLength - 1; i++)
+			result[i]= createImageRegion((Fragment) fragments[firstIndex + i]);
+		// last
+		Fragment last= (Fragment) fragments[lastIndex];
+		int fragmentEndOffset= last.getOffset() + last.getLength(); 
+		IRegion lastRegion= createImageEndRegion(last, fragmentEndOffset - endOffset);
+		if (resultLength > 1) {
+			// first != last
+			result[resultLength - 1]= lastRegion;
+		} else {
+			// merge first and last
+			result[0]= getIntersectingRegion(result[0], lastRegion);
+		}
+		
+		return result;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#getExactCoverage(org.eclipse.jface.text.IRegion)
+	 */
+	public IRegion[] getExactCoverage(IRegion originRegion) throws BadLocationException {
+		
+		int originOffset= originRegion.getOffset();
+		int originLength= originRegion.getLength();
+		
+		if (originLength == 0) {
+			int imageOffset= toImageOffset(originOffset);
+			return imageOffset > -1 ? new IRegion[] { new Region(originOffset, 0) } : null;
+		}
+		
+		int endOffset= originOffset + originLength;
+		Position[] fragments= getFragments();
+		int firstIndex= findFragmentIndex(originOffset, RIGHT);
+		int lastIndex= findFragmentIndex(endOffset - 1, LEFT);
+		
+		if (firstIndex == -1 || lastIndex == -1 || firstIndex > lastIndex)
+			return null;
+		
+		int resultLength= lastIndex - firstIndex + 1;
+		IRegion[] result= new IRegion[resultLength];
+		
+		// first
+		result[0]= createOriginStartRegion((Fragment) fragments[firstIndex], originOffset - fragments[firstIndex].getOffset());
+		// middles
+		for (int i= 1; i < resultLength - 1; i++)
+			result[i]= createOriginRegion((Fragment) fragments[firstIndex + i]);
+		// last
+		Fragment last= (Fragment) fragments[lastIndex];
+		int fragmentEndOffset= last.getOffset() + last.getLength(); 
+		IRegion lastRegion= createOriginEndRegion(last, fragmentEndOffset - endOffset);
+		if (resultLength > 1) {
+			// first != last
+			result[resultLength - 1]= lastRegion;
+		} else {
+			// merge first and last
+			result[0]= getIntersectingRegion(result[0], lastRegion);
+		}
+		
+		return result;
 	}
 }
