@@ -165,15 +165,13 @@ public void checkAccessible(int flags) throws CoreException {
 }
 /**
  * This method reports errors in two different ways. It can throw a
- * CoreException or log a status. CoreExceptions are used according
- * to the specification of the copy method. Programming errors, that
- * would usually be prevented by using an "Assert" code, are reported as
- * an IStatus.
- * We're doing this way because we have two different methods to copy
- * resources: IResource#copy and IWorkspace#copy. The first one gets
- * the error and throws its message in an AssertionFailureException. The
- * second one just throws a CoreException using the status returned
- * by this method.
+ * CoreException or return a status. CoreExceptions are used according to the
+ * specification of the copy method. Programming errors, that would usually be
+ * prevented by using an "Assert" code, are reported as an IStatus. We're doing
+ * this way because we have two different methods to copy resources:
+ * IResource#copy and IWorkspace#copy. The first one gets the error and throws
+ * its message in an AssertionFailureException. The second one just throws a
+ * CoreException using the status returned by this method.
  * 
  * @see IResource#copy
  */
@@ -186,7 +184,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 	}
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination)) {
-		message = Policy.bind("resources.destNotSub"); //$NON-NLS-1$
+		message = Policy.bind("resources.copyDestNotSub", getFullPath().toString()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 	checkValidPath(destination, destinationType);
@@ -202,7 +200,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 	// ensure we aren't trying to copy a file to a project
 	if (getType() == IResource.FILE && destinationType == IResource.PROJECT) {
 		message = Policy.bind("resources.fileToProj"); //$NON-NLS-1$
-		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+		throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 	}
 	
 	// ensure we aren't trying to copy a linked resource into a folder
@@ -210,7 +208,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 	boolean isDeepCopy = (updateFlags & IResource.SHALLOW) == 0;
 	if (isLinked() && !isDeepCopy && (parent == null || parent.getType() != IResource.PROJECT)) {
 		message = Policy.bind("links.copyNotProject", getFullPath().toString(), destination.toString()); //$NON-NLS-1$
-		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+		throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 	}
 
 	// we can't copy into a closed project
@@ -224,8 +222,18 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 			parent.checkExists(getFlags(info), true);
 		}
 	}
+	//make sure location of source is not a prefix of the location of the destination
+	//this can occur if the source or destination is a linked resource
+	if (isUnderLink() || dest.isUnderLink()) {
+		IPath sourceLocation = getLocation();
+		IPath destLocation = dest.getLocation();
+		if (sourceLocation != null && destLocation != null && sourceLocation.isPrefixOf(destLocation)) {
+			message = Policy.bind("resources.copyDestNotSub", getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+		}
+	}
 
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.copyMet")) : (IStatus) status; //$NON-NLS-1$
+	return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
 }
 /**
  * Helper method that considers case insensitive file systems.
@@ -308,7 +316,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 	}
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination)) {
-		message = Policy.bind("resources.destNotSub"); //$NON-NLS-1$
+		message = Policy.bind("resources.moveDestNotSub", getFullPath().toString()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 	checkValidPath(destination, destinationType);
@@ -350,7 +358,15 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.moveMet")) : (IStatus) status; //$NON-NLS-1$
+	
+	//make sure location of source is not a prefix of the location of the destination
+	//this can occur if the source or destination is a linked resource
+	if ((isUnderLink() || dest.isUnderLink()) && getLocation().isPrefixOf(dest.getLocation())) {
+		message = Policy.bind("resources.moveDestNotSub", getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+	}
+
+	return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
 }
 /**
  * Checks that the supplied path is valid according to Workspace.validatePath().
@@ -1288,6 +1304,20 @@ public boolean isTeamPrivateMember() {
  */
 public boolean isTeamPrivateMember(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+}
+/**
+ * Returns true if this resource is a linked resource, or a child of a linked
+ * resource, and false otherwise.
+ */
+public boolean isUnderLink() {
+	int depth = path.segmentCount();
+	if (depth < 2)
+		return false;
+	if (depth == 2)
+		return isLinked();
+	//check if parent at depth two is a link
+	IPath linkParent = path.removeLastSegments(depth-2);
+	return workspace.getResourceInfo(linkParent, false, false).isSet(ICoreConstants.M_LINK);
 }
 /*
  * @see IResource

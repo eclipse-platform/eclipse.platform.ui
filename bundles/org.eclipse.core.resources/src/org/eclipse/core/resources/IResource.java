@@ -535,6 +535,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * <li> The source is a linked resource, and the destination path does not
  * 	specify a project.</li>
+ * <li> The location of the source resource on disk is the same or a prefix of
+ * the location of the destination resource on disk.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
@@ -1518,9 +1520,11 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
+ * <li> The source resource is a file and the destination path specifies a project.</li>
+ * <li> The location of the source resource on disk is the same or a prefix of
+ * the location of the destination resource on disk.</li>
  * <li> Resource changes are disallowed during certain types of resource change
  * event notification. See IResourceChangeEvent for more details.</li>
- * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  * @see #FORCE
