@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -55,6 +57,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private Shell fProposalShell;
 	private Table fProposalTable;
 	private boolean fInserting= false;
+	private KeyListener fKeyListener;
 	
 	private long fInvocationCounter= 0;
 	private ICompletionProposal[] fFilteredProposals;
@@ -88,6 +91,22 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public String showProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
+
+		if (fKeyListener == null && styledText != null && !styledText.isDisposed()) {
+			fKeyListener= new KeyListener() {
+				public void keyPressed(KeyEvent e) {
+					if (e.character == 0 && e.keyCode == SWT.CTRL)
+						selectProposal(fProposalTable.getSelectionIndex(), true);									
+				}
+
+				public void keyReleased(KeyEvent e) {
+					if (e.character == 0 && e.keyCode == SWT.CTRL)
+						selectProposal(fProposalTable.getSelectionIndex(), false);				
+				}
+			};
+		}
+		styledText.addKeyListener(fKeyListener);
+
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
 				
@@ -306,6 +325,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public void hide() {
 
+		StyledText styledText= fViewer.getTextWidget();
+		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
+			styledText.removeKeyListener(fKeyListener);
+
 		if (Helper.okToUse(fProposalTable)) {
 			ICompletionProposal proposal= getSelectedProposal();
 			if (proposal instanceof ICompletionProposalExtension2) {
@@ -364,7 +387,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) 
 				fProposalShell.setLocation(newLocation);
 
-			selectProposal(0);
+			selectProposal(0, false);
 			fProposalTable.setRedraw(true);
 		}
 	}
@@ -406,6 +429,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (key == 0) {
 			int newSelection= fProposalTable.getSelectionIndex();
 			int visibleRows= (fProposalTable.getSize().y / fProposalTable.getItemHeight()) - 1;
+			boolean smartToggle= false;
 			switch (e.keyCode) {
 
 				case SWT.ARROW_LEFT :
@@ -454,7 +478,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					return true;
 			}
 			
-			selectProposal(newSelection);
+			selectProposal(newSelection, smartToggle);
 			
 			e.doit= false;
 			return false;
@@ -502,11 +526,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param index the index in the list
 	 * @since 2.0
 	 */
-	private void selectProposal(int index) {
+	private void selectProposal(int index, boolean smartToggle) {
 
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2)
-			((ICompletionProposalExtension2) proposal).selected(fViewer);
+			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
 		
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();

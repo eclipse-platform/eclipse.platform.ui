@@ -41,12 +41,16 @@ public interface ICompletionProposalExtension2 {
 
 	/**
 	 * Called when the proposal is selected.
+	 * 
+	 * @param viewer the text viewer.
+	 * @param smartToggle the smart toggle key was pressed
 	 */
-	void selected(ITextViewer viewer);
+	void selected(ITextViewer viewer, boolean smartToggle);
 
 	/**
 	 * Called when the proposal is unselected.
+	 * 
+	 * @param viewer the text viewer.
 	 */
 	void unselected(ITextViewer viewer);
-
 }
