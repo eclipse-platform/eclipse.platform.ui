@@ -850,8 +850,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	}
 	
 	/**
-     * Tests the code completion for nested elements that no templates are presented
-     * Bug 76414
+     * Tests the code completion for an empty buildfile
      */
 	public void testEmptyBuildfileProposals() throws PartInitException {
 		try {
