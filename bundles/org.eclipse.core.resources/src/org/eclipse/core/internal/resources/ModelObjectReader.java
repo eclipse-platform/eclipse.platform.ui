@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.EmptyEnumeration;
+import org.eclipse.core.internal.utils.Policy;
+
 import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
@@ -27,6 +29,7 @@ public class ModelObjectReader implements IModelObjectConstants {
 	/** constants */
 	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
+
 public ModelObjectReader() {
 }
 protected Node getFirstChild(Node target, short type) {
@@ -67,6 +70,15 @@ protected String[] getStrings(Node target) {
 			result.add((String) read(node.getChildNodes().item(0)));
 	}
 	return (String[]) result.toArray(new String[result.size()]);
+}
+/**
+ * A value was discovered in the workspace description file that was not a number.
+ * Log the exception.
+ */
+private void logNumberFormatException(String value, NumberFormatException e) {
+	String msg = Policy.bind("resources.readWorkspaceMetaValue", value);//$NON-NLS-1$
+	IStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
+	ResourcesPlugin.getPlugin().getLog().log(status);
 }
 public Object read(InputStream input) {
 	try {
@@ -197,27 +209,56 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	String[] buildOrder = getStrings(searchNode(node, BUILD_ORDER));
 
 	// build instance
+	//invalid values are skipped and defaults are used instead
 	WorkspaceDescription description = new WorkspaceDescription(name);
 	if (autobuild != null)
-		description.setAutoBuilding(autobuild.equals("1")); //$NON-NLS-1$
-	if (operations != null)
-		description.setOperationsPerSnapshot(new Integer(operations).intValue());
+		//if in doubt (value is corrupt) we want autobuild on
+		description.setAutoBuilding(!autobuild.equals(Integer.toString(0)));
+	try {
+		if (operations != null)
+			description.setOperationsPerSnapshot(Integer.parseInt(operations));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(operations, e);
+	}
 	if (snapshots != null)
-		description.setSnapshotEnabled(snapshots.equals("1")); //$NON-NLS-1$
-	if (deltaExpiration != null)
-		description.setDeltaExpiration(new Long(deltaExpiration).longValue());
-	if (fileStateLongevity != null)
-		description.setFileStateLongevity(new Long(fileStateLongevity).longValue());
-	if (maxFileStateSize != null)
-		description.setMaxFileStateSize(new Long(maxFileStateSize).longValue());
-	if (maxFileStates != null)
-		description.setMaxFileStates(new Integer(maxFileStates).intValue());
+		//if in doubt (value is corrupt) we want snapshots on
+		description.setSnapshotEnabled(!snapshots.equals(Integer.toString(0)));
+	try {
+		if (deltaExpiration != null)
+			description.setDeltaExpiration(Long.parseLong(deltaExpiration));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(deltaExpiration, e);
+	}
+	try {
+		if (fileStateLongevity != null)
+			description.setFileStateLongevity(Long.parseLong(fileStateLongevity));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(fileStateLongevity, e);
+	}
+	try {
+		if (maxFileStateSize != null)
+			description.setMaxFileStateSize(Long.parseLong(maxFileStateSize));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(maxFileStateSize, e);
+	}
+	try {
+		if (maxFileStates != null)
+			description.setMaxFileStates(Integer.parseInt(maxFileStates));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(maxFileStates, e);
+	}
 	if (buildOrder != null)
 		description.internalSetBuildOrder(buildOrder);
-	if (snapshotInterval != null) 
-		description.setSnapshotInterval(new Long(snapshotInterval).longValue());
+	try {
+		if (snapshotInterval != null) 
+			description.setSnapshotInterval(Long.parseLong(snapshotInterval));
+	} catch (NumberFormatException e) {
+		logNumberFormatException(snapshotInterval, e);
+	}
 	return description;
 }
+
+
 protected Node searchNode(Node target, String tagName) {
 	NodeList list = target.getChildNodes();
 	for (int i = 0; i < list.getLength(); i++) {
