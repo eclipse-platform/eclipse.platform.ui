@@ -196,7 +196,7 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @param menu The menu to contribute to
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		updateActions();
+		updateObjects();
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
@@ -270,7 +270,7 @@ public class BreakpointsView extends AbstractDebugView {
 					public void run() {
 						if (isAvailable() && breakpoint.getMarker().exists()) {
 							((TableViewer)getViewer()).add(breakpoint);
-							updateActions();
+							updateObjects();
 						}
 					}
 				});
@@ -298,7 +298,7 @@ public class BreakpointsView extends AbstractDebugView {
 								//setting selection on the swt widget
 								viewer.setSelection(viewer.getSelection());
 							}
-							updateActions();
+							updateObjects();
 						}
 					}
 				});
@@ -314,7 +314,7 @@ public class BreakpointsView extends AbstractDebugView {
 					public void run() {
 						if (isAvailable() && breakpoint.getMarker().exists()) {
 							((TableViewer)getViewer()).refresh(breakpoint);
-							updateActions();
+							updateObjects();
 						}
 					}
 				});

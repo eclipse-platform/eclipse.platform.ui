@@ -7,18 +7,17 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.ConsoleView;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.texteditor.IUpdate;
  
 /**
  * Terminate action for the console. Terminates the process
  * currently being displayed in the console.
  */
-public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
+public class ConsoleTerminateActionDelegate extends TerminateActionDelegate implements IUpdate {
 
 	/**
 	 * Returns a selection with the console view's
@@ -42,19 +41,29 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
 	 */
 	public void init(IViewPart view) {
 		super.init(view);
-		//listen to selections in the launch view
-		getWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		IDebugView debugView= (IDebugView)view.getAdapter(IDebugView.class);
+		if (debugView != null) {
+			debugView.add(this);
+		}
 	}
 	
 	/**
 	 * @see AbstractDebugActionDelegate#dispose()
 	 */
 	public void dispose() {
+		IViewPart view= getView();
+		IDebugView debugView= (IDebugView)view.getAdapter(IDebugView.class);
+		if (debugView != null) {
+			debugView.remove(this);
+		}
 		super.dispose();
-		getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);	
 	}
-	
-	protected void update(IAction action, ISelection s) {
-		super.update(action, getSelection());
+	/**
+	 * @see IUpdate#update()
+	 */
+	public void update() {
+		if (getAction() != null) {
+			update(getAction(), getSelection());
+		}
 	}
 }

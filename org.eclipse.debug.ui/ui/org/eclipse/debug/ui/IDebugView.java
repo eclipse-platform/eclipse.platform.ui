@@ -10,6 +10,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Common function for debug views. Provides access to underlying viewer and
@@ -123,11 +124,33 @@ public interface IDebugView extends IViewPart {
 	 * action ids defined by this interface, the action is registered 
 	 * as a global action handler.
 	 *
+	 * If the action is an instance of <code>IUpdate</code> it is added/remove
+	 * from the collection of updateables associated with this view.
+	 * 
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
 	 */
 	public void setAction(String actionID, IAction action);
+	
+	/**
+	 * Adds the given IUpdate to this views collection of updatable
+	 * objects.  Allows the view to periodically update these registered
+	 * objects.  
+	 * Has no effect if an identical IUpdate is already registered.
+	 * 
+	 * @param updatable The IUpdate instance to be added
+	 */
+	public void add(IUpdate updatable);
+	
+	/**
+	 * Removes the given IUpdate from this views collection of updatable
+	 * objects.
+ 	 * Has no effect if an identical IUpdate was not already registered.
+ 	 * 
+	 * @param updatable The IUpdate instance to be removed
+	 */
+	public void remove(IUpdate updatable);
 	
 	/**
 	 * Returns the action installed under the given action id.

@@ -5,8 +5,10 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DebugActionGroupsManager;
@@ -95,6 +97,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	private Map fActionMap = null;
 	
 	/**
+	 * Map of actions. Keys are strings, values
+	 * are <code>IAction</code>.
+	 */
+	private List fUpdateables = null;
+	
+	/**
 	 * The context menu manager for this view
 	 */
 	private IMenuManager fContextMenuManager;
@@ -110,6 +118,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public AbstractDebugView() {
 		fActionMap = new HashMap(5);
+		fUpdateables= new ArrayList(3);
 	}
 	
 	/**
@@ -416,18 +425,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	protected abstract void configureToolBar(IToolBarManager tbm);	
 	
 	/**
-	 * Installs the given action under the given action id.
-	 * If the action has an id that maps to one of the global
-	 * action ids, this action is registered as a global action handler.
-	 * @param actionId the action id
-	 * @param action the action, or <code>null</code> to clear it
-	 * @see #getAction
+	 * @see IDebugView#setAction(String, IAction)
 	 */
 	public void setAction(String actionID, IAction action) {
 		if (action == null) {
-			fActionMap.remove(actionID);
+			Object removedAction= fActionMap.remove(actionID);
+			fUpdateables.remove(removedAction);
 		} else {
 			fActionMap.put(actionID, action);
+			if (action instanceof IUpdate) {
+				fUpdateables.add(action);
+			}
 		}
 		if (actionID.equals(SELECT_ALL_ACTION)) {
 			IActionBars actionBars = getViewSite().getActionBars();	
@@ -448,11 +456,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}	
 	
 	/**
-	 * Returns the action installed under the given action id.
-	 *
-	 * @param actionId the action id
-	 * @return the action, or <code>null</code> if none
-	 * @see #setAction
+	 * @see IDebugView#getAction(String)
 	 */
 	public IAction getAction(String actionID) {
 		return (IAction) fActionMap.get(actionID);
@@ -461,14 +465,20 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Updates all actions that are instances of 
 	 * <code>IUpdate</code>.
+	 *
+	 * @deprecated use updateObjects
 	 */
 	public void updateActions() {
-		Iterator actions = fActionMap.values().iterator();
+		updateObjects();
+	}
+	
+	/**
+	 * Updates all the registered updatables.
+	 */
+	public void updateObjects() {
+		Iterator actions = fUpdateables.iterator();
 		while (actions.hasNext()) {
-			Object object = actions.next();
-			if (object instanceof IUpdate) {
-				((IUpdate)object).update();
-			}
+			((IUpdate)actions.next()).update();
 		}
 	}
 			
@@ -720,6 +730,21 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public boolean isAvailable() {
 		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
 	}	
+	/**
+	 * @see IDebugView#add(IUpdate)
+	 */
+	public void add(IUpdate updatable) {
+		if (!fUpdateables.contains(updatable)) {
+			fUpdateables.add(updatable);
+		}
+	}
+
+	/**
+	 * @see IDebugView#remove(IUpdate)
+	 */
+	public void remove(IUpdate updatable) {
+		fUpdateables.remove(updatable);
+	}
 }	
 
 

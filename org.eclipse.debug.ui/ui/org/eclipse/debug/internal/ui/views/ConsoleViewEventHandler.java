@@ -53,7 +53,7 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 		}
 		
 		if (update) {
-			getView().updateActions();
+			getView().updateObjects();
 			getConsoleView().updateTitle();
 		}
 	}

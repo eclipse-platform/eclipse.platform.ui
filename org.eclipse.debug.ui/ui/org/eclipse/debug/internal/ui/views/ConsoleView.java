@@ -106,7 +106,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			// the console to an empty document
 			if (getConsoleViewer().getDocument() == null) {
 				getConsoleViewer().setDocument(new ConsoleDocument(null));
-				updateActions();
+				updateObjects();
 			}			
 			return;
 		}
@@ -125,7 +125,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				}
 				getConsoleViewer().setDocument(doc);
 				updateTitle();
-				updateActions();
+				updateObjects();
 			}
 		};
 		asyncExec(r);

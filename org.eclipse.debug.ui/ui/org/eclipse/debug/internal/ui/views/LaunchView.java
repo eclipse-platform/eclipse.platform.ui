@@ -250,7 +250,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		updateActions();
+		updateObjects();
 		showMarkerForCurrentSelection();
 	}
 			
@@ -281,7 +281,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void partActivated(IWorkbenchPart part) {
 		super.partActivated(part);
 		if (part == this) {
-			updateActions();
+			updateObjects();
 			showMarkerForCurrentSelection();
 		}		
 	}	
@@ -291,7 +291,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
-		updateActions();
+		updateObjects();
 		showMarkerForCurrentSelection();
 		if (isActive()) {
 			asyncExec(new Runnable() {
@@ -316,7 +316,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void pageActivated(IWorkbenchPage page) {
 		if (getSite().getPage().equals(page)) {
 			setActive(true);
-			updateActions();
+			updateObjects();
 			showMarkerForCurrentSelection();
 			ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
 			if (launches.length > 0) {
