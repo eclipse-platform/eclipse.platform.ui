@@ -168,12 +168,6 @@
       </page>
       <page
             objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
-            name="%properties.supported-platforms.label"
-            class="org.eclipse.update.internal.ui.properties.FeatureEnvironmentPropertyPage"
-            id="org.eclipse.update.ui.featureEnvironmentPropertyPage">
-      </page>
-      <page
-            objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
             name="%properties.general-info.label"
             class="org.eclipse.update.internal.ui.properties.FeatureGeneralPropertyPage"
             id="org.eclipse.update.ui.featureGeneralPropertyPage">
