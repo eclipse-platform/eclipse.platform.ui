@@ -1570,7 +1570,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// look for starting point
 		while (insertIndex < items.length) {
 			IContributionItem item = items[insertIndex];
-			if (item.getId().equals(startId))
+			if (item.getId() != null && item.getId().equals(startId))
 				break;
 			++insertIndex;
 		}
@@ -1583,7 +1583,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			if (item.isGroupMarker())
 				break;
 
-			if (itemId != null) {
+			if (itemId != null && testId != null) {
 				if (itemId.compareTo(testId) < 1)
 					break;
 			}
