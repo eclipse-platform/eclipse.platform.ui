@@ -596,20 +596,12 @@ public class CVSProvider implements ICVSProvider {
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				RepositoryProvider provider = RepositoryProvider.getProvider(projects[i], CVSProviderPlugin.getTypeId());
-				String location = null;
-				if (provider==null) {
-					// Check for old 1.0 sync info
-					// location = getRepositoryLocationFromOneO(projects[i]);
-				} else {
+				if (provider!=null) {
 					ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
 					FolderSyncInfo info = folder.getFolderSyncInfo();
 					if (info != null) {
-						location = info.getRoot();
+						ICVSRepositoryLocation result = getRepository(info.getRoot());
 					}
-				}
-				if (location != null) {
-					// getRepository() will add the repo if it doesn't exist already
-					ICVSRepositoryLocation result = getRepository(location);
 				}
 			}
 			saveState();
@@ -651,24 +643,6 @@ public class CVSProvider implements ICVSProvider {
 			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
 			dos.writeUTF(root.getLocation());
 		}
-	}
-	
-	private String getRepositoryLocationFromOneO(IProject project) throws CVSException {
-		try {
-			byte[] syncBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(
-				new QualifiedName("org.eclipse.vcm.core", "Sharing"), project); //$NON-NLS-1$ //$NON-NLS-2$
-			if (syncBytes != null) {
-				DataInputStream reader = new DataInputStream(new ByteArrayInputStream(syncBytes));
-				String repoType = reader.readUTF();
-				String repoLocation = reader.readUTF();
-				if (repoType.equals("CVS")) return repoLocation; //$NON-NLS-1$
-			}
-		} catch (CoreException ex) {
-			throw CVSException.wrapException(ex);
-		} catch (IOException ex) {
-			throw CVSException.wrapException(ex);
-		}
-		return null;
 	}
 }
 
