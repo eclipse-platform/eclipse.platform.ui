@@ -76,7 +76,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 												{DebugUIMessages.getString("DebugPreferencePage.To_the_right_of_variables_tree_pane_2"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT}, //$NON-NLS-1$
 												{DebugUIMessages.getString("DebugPreferencePage.Underneath_the_variables_tree_pane_3"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH} //$NON-NLS-1$
 											},
-											getFieldEditorParent()));
+											getFieldEditorParent(), true));
 											
 		addField(new ColorFieldEditor(CHANGED_VARIABLE_RGB, DebugUIMessages.getString("DebugPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
 	}
@@ -105,7 +105,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 										new String[][] {{DebugUIMessages.getString("DebugPreferencePage.&Never_5"), IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH}, //$NON-NLS-1$
 														{DebugUIMessages.getString("DebugPreferencePage.&Prompt_6"), IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH}, //$NON-NLS-1$
 														{DebugUIMessages.getString("DebugPreferencePage.Auto-sav&e_7"), IDebugUIConstants.PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH}}, //$NON-NLS-1$
-										parent);
+										parent, true);
 		addField(fSaveRadioFieldEditor);			
 	}	
 	
