@@ -124,8 +124,9 @@ public class CVSPreferencesPage
 			}
 		});
 		
-		createLabel(composite, Policy.bind("CVSPreferencePage.quietness"));
-		quietnessCombo = createCombo(composite);
+		// Quietness preference removed: bug 11036
+		//createLabel(composite, Policy.bind("CVSPreferencePage.quietness"));
+		//quietnessCombo = createCombo(composite);
 		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection"));
 		
@@ -169,10 +170,11 @@ public class CVSPreferencesPage
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet"));
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet"));
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
-		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
+		// Quietness preference removed: bug 11036
+		//quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet"));
+		//quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet"));
+		//quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
+		//quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 	}
 
@@ -196,15 +198,17 @@ public class CVSPreferencesPage
 		
 		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
-		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
+		// Quietness preference removed: bug 11036
+		//store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());	
 		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		CVSProviderPlugin.getPlugin().setTimeout(
 			store.getInt(ICVSUIConstants.PREF_TIMEOUT));
-		CVSProviderPlugin.getPlugin().setQuietness(
-			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
+		// Quietness preference removed: bug 11036
+		//CVSProviderPlugin.getPlugin().setQuietness(
+		//	getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 
 		return true;
 	}
@@ -219,7 +223,8 @@ public class CVSPreferencesPage
 		pruneEmptyDirectoriesField.setSelection(
 			store.getDefaultBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
-		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
+		// Quietness preference removed: bug 11036
+		//quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 	}
 
@@ -234,12 +239,13 @@ public class CVSPreferencesPage
 		return CVSUIPlugin.getPlugin().getPreferenceStore();
 	}
 	
-	protected static QuietOption getQuietnessOptionFor(int option) {
+	// Quietness preference removed: bug 11036
+	/*protected static QuietOption getQuietnessOptionFor(int option) {
 		switch (option) {
 			case 0: return Command.VERBOSE;
 			case 1: return Command.PARTLY_QUIET;
 			case 2: return Command.SILENT;
 		}
 		return null;
-	}
+	}*/
 }
