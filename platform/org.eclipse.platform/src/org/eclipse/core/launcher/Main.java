@@ -637,10 +637,7 @@ protected String[] processCommandLine(String[] args) throws Exception {
 		// look for the feature to run
 		if (args[i - 1].equalsIgnoreCase(FEATURE)) {
 			feature = arg;
-			// we  mark -feature for removal. It will be
-			// reinserted after we determine the actual 
-			// feature we'll use
-			found = true;
+			continue; // pass the arg on [20063]
 		}
 
 		// look for the configuration to use
@@ -773,7 +770,7 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 		
 	// reconstruct command line arguments for configuration elements
 	// (-boot and -application are not passed to BootLoader)
-	if (configURL == null && feature == null && rootLocation == null)
+	if (configURL == null && rootLocation == null)
 		return passThruArgs;
 			
 	ArrayList args = new ArrayList(Arrays.asList(passThruArgs));
@@ -788,8 +785,10 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 	}
 	
 	// pass root location downstream
-	args.add(INSTALL);
-	args.add(rootLocation);
+	if (rootLocation != null) {
+		args.add(INSTALL);
+		args.add(rootLocation);
+	}
 	
 	return (String[])args.toArray(new String[0]);
 }
