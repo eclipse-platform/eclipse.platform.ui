@@ -74,8 +74,7 @@ protected Task[] extractTasks(Preferences prefs, String[] tasks) {
 			task.setLibrary(new URL(values[1]));
 			result.add(task);
 		} catch (MalformedURLException e) {
-			// FIXME: add error code and better message
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -94,8 +93,7 @@ protected Type[] extractTypes(Preferences prefs, String[] types) {
 			type.setLibrary(new URL(values[1]));
 			result.add(type);
 		} catch (MalformedURLException e) {
-			// FIXME: add error code and better message
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -108,8 +106,7 @@ protected URL[] extractURLs(Preferences prefs, String[] urls) {
 		try {
 			result.add(new URL(urls[i]));
 		} catch (MalformedURLException e) {
-			// FIXME: add error code and better message
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -139,9 +136,7 @@ protected List computeDefaultTasks(Map tasks) {
 		task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			String message = "Library not specified for task: " + task.getTaskName(); // FIXME add to message.properties
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, message, null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", task.getTaskName()), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -151,8 +146,7 @@ protected List computeDefaultTasks(Map tasks) {
 			task.setLibrary(url);
 			defaultURLs.add(url);
 		} catch (Exception e) {
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -172,9 +166,7 @@ protected List computeDefaultTypes(Map types) {
 		type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			String message = "Library not specified for type: " + type.getTypeName(); // FIXME add to message.properties
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, message, null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", type.getTypeName()), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -184,8 +176,7 @@ protected List computeDefaultTypes(Map types) {
 			type.setLibrary(url);
 			defaultURLs.add(url);
 		} catch (Exception e) {
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -205,9 +196,7 @@ protected Map computeDefaultObjects(Map objects) {
 		IConfigurationElement element = (IConfigurationElement) entry.getValue();
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			String message = "Library not specified for object: " + entry.getKey(); // FIXME add to message.properties
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, message, null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", (String) entry.getKey()), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -216,8 +205,7 @@ protected Map computeDefaultObjects(Map objects) {
 			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 			defaultURLs.add(url);
 		} catch (Exception e) {
-			// FIXME: add error code
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -241,8 +229,7 @@ protected void addToolsJar(List destination) {
 	try {
 		destination.add(tools.toURL());
 	} catch (MalformedURLException e) {
-		// FIXME: add error code
-		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 		AntCorePlugin.getPlugin().getLog().log(status);
 	}
 }

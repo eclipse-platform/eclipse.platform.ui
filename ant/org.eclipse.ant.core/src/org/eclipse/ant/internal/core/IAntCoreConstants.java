@@ -20,9 +20,10 @@ public interface IAntCoreConstants {
 	public static final String DEFAULT_BUILD_FILENAME = "build.xml";
 	
 	// error codes
-	public static final int ERROR_COULD_NOT_CONFIGURE_PROJECT = 1;
-	public static final int ERROR_RUNNING_SCRIPT = 2;
-	
+	public static final int ERROR_RUNNING_SCRIPT = 1;
+	public static final int ERROR_MALFORMED_URL = 2;
+	public static final int ERROR_LIBRARY_NOT_SPECIFIED = 3;
+
 	// preferences
 	public static final String PREFERENCE_TASKS = "tasks";
 	public static final String PREFERENCE_TYPES = "types";
