@@ -18,6 +18,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -74,6 +77,7 @@ public class FontPreferencePage
 	 * @see PreferencePage#createContents
 	 */
 	public Control createContents(Composite parent) {
+		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IHelpContextIds.FONT_PREFERENCE_PAGE));
 
 		Composite mainColumn = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

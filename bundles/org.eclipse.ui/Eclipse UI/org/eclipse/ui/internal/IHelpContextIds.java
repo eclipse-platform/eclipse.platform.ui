@@ -86,7 +86,7 @@ public interface IHelpContextIds {
 	public static final String LIST_SELECTION_DIALOG = PREFIX + "list_selection_dialog_context"; //$NON-NLS-1$
 	public static final String YES_NO_CANCEL_LIST_SELECTION_DIALOG = PREFIX + "yes_no_cancel_list_selection_dialog_context"; //$NON-NLS-1$
 	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context"; //$NON-NLS-1$
-	
+	public static final String GOTO_LINE_DIALOG = PREFIX + "goto_line_dialog_context"; //$NON-NLS-1$	
 
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$
@@ -98,6 +98,7 @@ public interface IHelpContextIds {
 	public static final String PERSPECTIVES_PREFERENCE_PAGE = PREFIX + "perspectives_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEWS_PREFERENCE_PAGE = PREFIX + "views_preference_page_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX + "workbench_preference_page_context"; //$NON-NLS-1$
+	public static final String FONT_PREFERENCE_PAGE = PREFIX + "font_preference_page_context"; //$NON-NLS-1$
 
 	// Property pages
 	public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX + "project_reference_property_page_context"; //$NON-NLS-1$

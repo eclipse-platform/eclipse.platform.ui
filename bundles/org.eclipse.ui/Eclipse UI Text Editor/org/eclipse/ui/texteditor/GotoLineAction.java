@@ -20,6 +20,8 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
 
 
 /**
@@ -74,6 +76,14 @@ public class GotoLineAction extends TextEditorAction {
 		 */
 		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
 			super(parent, title, message, initialValue, validator);
+		}
+
+		/* (non-Javadoc)
+		 * Method declared in Window.
+		 */
+		protected void configureShell(Shell shell) {
+			super.configureShell(shell);
+			WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.GOTO_LINE_DIALOG});			
 		}
 		
 		/*
