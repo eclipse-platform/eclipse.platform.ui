@@ -60,10 +60,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String PLATFORM_XML = "platform.xml"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML;
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
-	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
+//	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
-	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
+//	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
 
@@ -547,10 +547,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 			// make the saved config the "active" one
 			File cfigBak = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_BAK_SUFFIX);
-			cfigBak.delete(); // may have old .bak due to prior failure
+			if (cfigBak.exists())
+				cfigBak.delete(); // may have old .bak due to prior failure
 
 			if (cfigFile.exists())
-				cfigFile.renameTo(cfigBak);
+				if (!cfigFile.renameTo(cfigBak))
+					Utils.log("Could not rename the backup file");
 
 			// at this point we have old config (if existed) as "bak" and the
 			// new config as "tmp".
@@ -616,11 +618,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	/**
-	 * Create and initialize the current platform configuration
-	 * @param cmdArgs command line arguments (startup and boot arguments are
-	 * already consumed)
-	 * @param r10apps application identifies as passed on the BootLoader.run(...)
-	 * method. Supported for R1.0 compatibility.
+	 * Starts a platform installed at specified installURL using configuration located at platformConfigLocation.
 	 */
 	public static synchronized void startup(URL installURL, Location platformConfigLocation) throws Exception {
 		PlatformConfiguration.installURL = installURL;
@@ -780,17 +778,17 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 //		resetInitializationLocation(initDir);
 //	}
 
-	private void resetInitializationLocation(File dir) {
-		// [20111]
-		if (dir == null || !dir.exists() || !dir.isDirectory())
-			return;
-		File[] list = dir.listFiles();
-		for (int i = 0; i < list.length; i++) {
-			if (list[i].isDirectory())
-				resetInitializationLocation(list[i]);
-			list[i].delete();
-		}
-	}
+//	private void resetInitializationLocation(File dir) {
+//		// [20111]
+//		if (dir == null || !dir.exists() || !dir.isDirectory())
+//			return;
+//		File[] list = dir.listFiles();
+//		for (int i = 0; i < list.length; i++) {
+//			if (list[i].isDirectory())
+//				resetInitializationLocation(list[i]);
+//			list[i].delete();
+//		}
+//	}
 
 	private boolean getConfigurationLock(URL url) {
 
@@ -1007,7 +1005,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	
 	private void linkInitializedState(Configuration sharedConfig, Location sharedConfigLocation, Location newConfigLocation) {
 		try {
-			URL oldConfigIniURL = new URL(sharedConfigLocation.getURL(), CONFIG_INI);
 			URL newConfigIniURL = new URL(newConfigLocation.getURL(), CONFIG_INI);
 			if (!newConfigIniURL.getProtocol().equals("file")) //$NON-NLS-1$
 				return; // need to be able to do write
@@ -1151,15 +1148,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return config;
 	}
 	
-
-	private String loadAttribute(Properties props, String name, String dflt) {
-		String prop = props.getProperty(name);
-		if (prop == null)
-			return dflt;
-		else
-			return prop.trim();
-	}
-
 
 //
 //	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
