@@ -21,7 +21,10 @@ public abstract class AbstractSelectionService implements ISelectionService, IPa
 	 * The list of selection listeners (not per-part).
 	 */
 	private ListenerList listeners = new ListenerList();
-	
+	/** 
+	 * The list of post selection listeners (not per-part).
+	 */
+	private ListenerList postListeners = new ListenerList();	
 	/**
 	 * The currently active part.
 	 */
@@ -47,6 +50,16 @@ public abstract class AbstractSelectionService implements ISelectionService, IPa
 				fireSelection(activePart, event.getSelection());
 			}			
 		};
+		
+	/**
+	 * The JFace post selection listener to hook on the active part's selection provider.
+	 */
+	private ISelectionChangedListener
+		postSelListener = new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				firePostSelection(activePart, event.getSelection());
+			}			
+		};		
 
 /**
  * Creates a new SelectionService.
@@ -67,7 +80,19 @@ public void addSelectionListener(ISelectionListener l) {
 public void addSelectionListener(String partId, ISelectionListener listener) {
 	getPerPartTracker(partId).addSelectionListener(listener);
 }
+/* (non-Javadoc)
+ * Method declared on ISelectionService.
+ */
+public void addPostSelectionListener(ISelectionListener l) {
+	postListeners.add(l);
+}
 
+/* (non-Javadoc)
+ * Method declared on ISelectionService.
+ */
+public void addPostSelectionListener(String partId, ISelectionListener listener) {
+	getPerPartTracker(partId).addPostSelectionListener(listener);
+}
 /* (non-Javadoc)
  * Method declared on ISelectionService.
  */
@@ -79,10 +104,23 @@ public void removeSelectionListener(ISelectionListener l) {
  * (non-Javadoc)
  * Method declared on ISelectionListener.
  */
+public void removePostSelectionListener(String partId, ISelectionListener listener) {
+	getPerPartTracker(partId).removePostSelectionListener(listener);
+}
+/* (non-Javadoc)
+ * Method declared on ISelectionService.
+ */
+public void removePostSelectionListener(ISelectionListener l) {
+	postListeners.remove(l);
+}
+
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
 public void removeSelectionListener(String partId, ISelectionListener listener) {
 	getPerPartTracker(partId).removeSelectionListener(listener);
 }
-
 /**
  * Fires a selection event to the given listeners.
  * 
@@ -108,7 +146,31 @@ protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 		}
 	}
 }
-
+/**
+ * Fires a selection event to the given listeners.
+ * 
+ * @param part the part or <code>null</code> if no active part
+ * @param sel the selection or <code>null</code> if no active selection
+ */
+protected void firePostSelection(final IWorkbenchPart part, final ISelection sel) {
+	Object [] array = postListeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ISelectionListener l = (ISelectionListener)array[i];
+		if ((part != null && sel != null) || l instanceof INullSelectionListener) {
+			Platform.run(new SafeRunnableAdapter() {
+				public void run() {
+					l.selectionChanged(part, sel);
+				}
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					// If an unexpected exception happens, remove the listener
+					// to make sure the workbench keeps running.
+					removePostSelectionListener(l);
+				}
+			});
+		}
+	}
+}
 /**
  * Returns the per-part selection tracker for the given part id.
  * 
@@ -171,8 +233,12 @@ public void partActivated(IWorkbenchPart newPart) {
 		activeProvider = activePart.getSite().getSelectionProvider();
 		if (activeProvider != null) {
 			// Fire an event if there's an active provider
-			activeProvider.addSelectionChangedListener(selListener);
+			activeProvider.addSelectionChangedListener(selListener);			
 			fireSelection(newPart, activeProvider.getSelection());
+			if(activeProvider instanceof StructuredViewer) {
+				((StructuredViewer)activeProvider).addPostSelectionChangedListener(postSelListener);			
+				firePostSelection(newPart, activeProvider.getSelection());
+			}
 		} else {
 			//Reset active part. activeProvider may not be null next time this method is called.
 			activePart = null;
@@ -225,6 +291,10 @@ public void reset() {
 		fireSelection(null, null);
 		if (activeProvider != null) {
 			activeProvider.removeSelectionChangedListener(selListener);
+			if(activeProvider instanceof StructuredViewer) {
+				firePostSelection(null,null);
+				((StructuredViewer)activeProvider).removePostSelectionChangedListener(postSelListener);
+			}
 			activeProvider = null;
 		}
 		activePart = null;

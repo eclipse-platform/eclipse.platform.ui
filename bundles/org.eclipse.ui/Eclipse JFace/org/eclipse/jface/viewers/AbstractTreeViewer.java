@@ -167,8 +167,10 @@ public void add(Object parentElement, Object childElement) {
  *
  * @param control the SWT control
  * @param listener the SWT selection listener
+ * 
+ * @deprecated
  */
-protected abstract void addSelectionListener(Control control, SelectionListener listener);
+protected void addSelectionListener(Control control, SelectionListener listener) {}
 /**
  * Adds a listener for expand and collapse events in this viewer.
  * Has no effect if an identical listener is already registered.
@@ -619,20 +621,6 @@ protected void handleTreeExpand(TreeEvent event) {
  */
 protected void hookControl(Control control) {
 	super.hookControl(control);
-	addSelectionListener(control,new SelectionListener() {
-		public void widgetSelected(SelectionEvent e) {
-			handleSelect(e);
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-			handleDoubleSelect(e);
-		}
-	});
-	OpenStrategy handler = new OpenStrategy(control);
-	handler.addOpenListener(new IOpenEventListener() {
-		public void handleOpen(SelectionEvent e) {
-			AbstractTreeViewer.this.handleOpen(e);
-		}
-	});
 	addTreeListener(control,new TreeListener() {
 		public void treeExpanded(TreeEvent event) {
 			handleTreeExpand(event);

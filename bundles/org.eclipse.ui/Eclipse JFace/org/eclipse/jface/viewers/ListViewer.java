@@ -189,27 +189,6 @@ protected List getSelectionFromWidget() {
 	}
 	return list;
 }
-/* (non-Javadoc)
- * Method declared on Viewer.
- */
-protected void hookControl(Control control) {
-	super.hookControl(control);
-	org.eclipse.swt.widgets.List list = (org.eclipse.swt.widgets.List) control;
-	list.addSelectionListener(new SelectionListener() {
-		public void widgetSelected(SelectionEvent e) {
-			handleSelect(e);
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-			handleDoubleSelect(e);
-		}
-	});
-	OpenStrategy handler = new OpenStrategy(control);
-	handler.addOpenListener(new IOpenEventListener() {
-		public void handleOpen(SelectionEvent e) {
-			ListViewer.this.handleOpen(e);
-		}
-	});	
-}
 /*
  * Returns the index where the item should be inserted.
 */

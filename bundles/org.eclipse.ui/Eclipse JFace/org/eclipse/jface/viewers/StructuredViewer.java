@@ -5,7 +5,9 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -68,10 +70,16 @@ public abstract class StructuredViewer extends ContentViewer {
 	 */
 	private ListenerList doubleClickListeners = new ListenerList(1);
 	/**
-	 * List of selection-activated listeners (element type: <code>ISelectionActivateListener</code>).
-	 * @see #fireDoubleClick
+	 * List of open listeners (element type: <code>ISelectionActivateListener</code>).
+	 * @see #fireOpen
 	 */
 	private ListenerList openListeners = new ListenerList(1);
+	/**
+	 * List of post selection listeners (element type: <code>ISelectionActivateListener</code>).
+	 * @see #firePostSelectionChanged
+	 */
+	private ListenerList postSelectionChangedListeners = new ListenerList(1);	
+	
 /**
  * Creates a structured element viewer. The viewer has no input, 
  * no content provider, a default label provider, no sorter, and no filters.
@@ -88,13 +96,25 @@ public void addDoubleClickListener(IDoubleClickListener listener) {
 	doubleClickListeners.add(listener);
 }
 /**
- * Adds a listener for selection-activate in this viewer.
+ * Adds a listener for selection-open in this viewer.
  * Has no effect if an identical listener is already registered.
  *
  * @param listener a double-click listener
  */
 public void addOpenListener(IOpenListener listener) {
 	openListeners.add(listener);
+}
+/**
+ * Adds a listener for post selection in this viewer.
+ * It is equivalent to selection changed if the selection
+ * was triggered by the mouse but it has a delay if the selection
+ * is triggered by the keyboard arrows.
+ * Has no effect if an identical listener is already registered.
+ *
+ * @param listener a double-click listener
+ */
+public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
+	postSelectionChangedListeners.add(listener);
 }
 /**
  * Adds support for dragging items out of this viewer via
@@ -298,6 +318,20 @@ protected void fireOpen(OpenEvent event) {
 	Object[] listeners = openListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((IOpenListener)listeners[i]).open(event);
+	}
+}
+/**
+ * Notifies any post selection listeners that a post selection event has been received.
+ * Only listeners registered at the time this method is called are notified.
+ *
+ * @param event a selection changed event
+ * 
+ * @see addPostSelectionChangedListener
+ */
+protected void firePostSelectionChanged(SelectionChangedEvent event) {
+	Object[] listeners = postSelectionChangedListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((ISelectionChangedListener)listeners[i]).selectionChanged(event);
 	}
 }
 /**
@@ -511,6 +545,44 @@ protected void handleSelect(SelectionEvent event) {
 	}
 }
 /**
+ * Handles a post select event from the widget.
+ * <p>
+ * This method is internal to the framework; subclassers should not call
+ * this method.
+ * </p>
+ *
+ * @param event the SWT selection event
+ */
+protected void handlePostSelect(SelectionEvent e) {
+	SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+	firePostSelectionChanged(event);
+}
+/* (non-Javadoc)
+ * Method declared on Viewer.
+ */
+protected void hookControl(Control control) {
+	super.hookControl(control);
+	OpenStrategy handler = new OpenStrategy(control);
+	handler.addSelectionListener(new SelectionListener() {
+		public void widgetSelected(SelectionEvent e) {
+			handleSelect(e);
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+			handleDoubleSelect(e);
+		}
+	});
+	handler.addPostSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handlePostSelect(e);
+		}
+	});
+	handler.addOpenListener(new IOpenEventListener() {
+		public void handleOpen(SelectionEvent e) {
+			StructuredViewer.this.handleOpen(e);
+		}
+	});
+}	
+/**
  * Returns whether this viewer has any filters.
  */
 protected boolean hasFilters() {
@@ -713,6 +785,24 @@ public void refresh(final Object element, final boolean updateLabels) {
  */
 protected final void refreshItem(Widget widget, Object element) {
 	doUpdateItem(widget, element, false);
+}
+/**
+ * Removes the given open listener from this viewer.
+ * Has no affect if an identical listener is not registered.
+ *
+ * @param listener a double-click listener
+ */
+public void removeOpenListener(IOpenListener listener) {
+	openListeners.remove(listener);
+}
+/**
+ * Removes the given post selection listener from this viewer.
+ * Has no affect if an identical listener is not registered.
+ *
+ * @param listener a double-click listener
+ */
+public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
+	postSelectionChangedListeners.remove(listener);
 }
 /**
  * Removes the given double-click listener from this viewer.

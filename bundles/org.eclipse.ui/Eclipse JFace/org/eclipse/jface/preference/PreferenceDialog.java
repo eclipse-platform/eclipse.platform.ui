@@ -407,8 +407,8 @@ private void createTree(Composite parent) {
 		tree.dispose();
 
 	tree = new Tree(parent, SWT.BORDER);
-
-	tree.addSelectionListener(new SelectionAdapter() {
+	OpenStrategy eventAdapter = new OpenStrategy(tree);
+	eventAdapter.addPostSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(final SelectionEvent event) {
 			BusyIndicator.showWhile(tree.getDisplay(),new Runnable(){
 				public void run() {
@@ -432,13 +432,17 @@ private void createTree(Composite parent) {
 					}
 				}
 			});
-		}
+		}		
+	});
+	
+	eventAdapter.addSelectionListener(new SelectionAdapter() {
 		public void widgetDefaultSelected(final SelectionEvent event) {
 			TreeItem[] selection = tree.getSelection();
 			if (selection.length > 0) 
 				selection[0].setExpanded(!selection[0].getExpanded());
 		}
 	});
+	
 	IPreferenceNode node = preferenceManager.getRoot();
 	IPreferenceNode[] subnodes = node.getSubNodes();
 	for (int i = 0; i < subnodes.length; i++){

@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
@@ -32,8 +33,18 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 	/**
 	 * The part in this tracker's page, or <code>null</code> if one is not open.
 	 */
-	private IWorkbenchPart fPart;	
-		
+	private IWorkbenchPart fPart;
+	
+	private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			fireSelection(getPart(), event.getSelection());
+		}
+	};
+	private ISelectionChangedListener postSelectionListener = new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			firePostSelection(getPart(), event.getSelection());
+		}
+	};
 	public PagePartSelectionTracker(IWorkbenchPage page, String partId) {
 		super(partId);
 		setPage(page);
@@ -89,7 +100,6 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			setPart(part, true);
 		}
 	}
-
 	/**
 	 * The selection has changed in the part being tracked.
 	 * Forward it to the listeners.
@@ -166,7 +176,10 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			// remove myself as a listener from the existing part
 			ISelectionProvider sp = fPart.getSite().getSelectionProvider();
 			if (sp != null) {
-				sp.removeSelectionChangedListener(this);	
+				sp.removeSelectionChangedListener(selectionListener);
+				if(sp instanceof StructuredViewer) {
+					((StructuredViewer)sp).removePostSelectionChangedListener(postSelectionListener);	
+				}
 			}			
 		}
 		fPart = part;
@@ -174,7 +187,10 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 		if (part != null) {
 			ISelectionProvider sp = part.getSite().getSelectionProvider();
 			if (sp != null) {
-				sp.addSelectionChangedListener(this);
+				sp.addSelectionChangedListener(selectionListener);
+				if(sp instanceof StructuredViewer) {
+					((StructuredViewer)sp).addPostSelectionChangedListener(postSelectionListener);	
+				}
 				if (notify) {
 					// get the selection to send below
 					sel = sp.getSelection();
@@ -183,6 +199,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 		}
 		if (notify) {
 			fireSelection(part, sel);
+			firePostSelection(part, sel);
 		}
 	}
 }
