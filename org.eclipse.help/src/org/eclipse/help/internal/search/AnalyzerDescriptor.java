@@ -111,7 +111,14 @@ public class AnalyzerDescriptor {
 					this.luceneAnalyzer = (Analyzer) analyzer;
 					this.id = pluginId + "#" + pluginVersion;
 					this.lang = locale;
-					return this.luceneAnalyzer;
+					if("org.eclipse.help".equals(pluginId)){
+						// The analyzer is contributed by help plugin.
+						// Continue in case there is another analyzer for the same locale
+						// let another analyzer take precendence over one from help
+					}else{
+						// the analyzer does not come from help
+						return this.luceneAnalyzer;
+					}
 				}
 			} catch (CoreException ce) {
 				Logger.logError(
@@ -120,7 +127,7 @@ public class AnalyzerDescriptor {
 			}
 		}
 
-		return null;
+		return this.luceneAnalyzer;
 	}
 
 }
