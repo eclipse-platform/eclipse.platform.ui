@@ -44,7 +44,7 @@
 	  </consoleLineTracker>
   </extension>
 
-<!--  EclipseCon demo action set
+<!--  EclipseCon demo action set-->
 <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -69,5 +69,5 @@
          </action>
       </actionSet>
    </extension> 
-   -->
+
 </plugin>

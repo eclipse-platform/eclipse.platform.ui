@@ -61,9 +61,9 @@ public class CreateProjectAction implements IWorkbenchWindowActionDelegate {
 		
 		fAntModel= getAntModel(buildFile);
 		AntProjectNode projectNode= getProjectNode();
-		String projectName= projectNode.getName();
+		String projectName= projectNode.getLabel();
 		if (projectName == null) {
-			projectName= "Ant Demo";
+			projectName= "Ant Project";
 		}
 		List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
