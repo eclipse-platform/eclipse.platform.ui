@@ -9,7 +9,7 @@ import org.eclipse.ui.*;
  * This interface is used to identify workbench views which
  * allow other parts (typically the active part) to supply
  * their contents.
- * The interface allows access tho the part which contributed the current
+ * The interface allows access to the part which contributed the current
  * contents.
  */
 public interface IContributedContentsView {
