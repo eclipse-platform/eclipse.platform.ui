@@ -34,7 +34,13 @@ public abstract class InternalJob implements Comparable {
 	 */
 	private long startTime;
 	private int state = Job.NONE;
+	/**
+	 * The job ahead of me in a queue or list.
+	 */
 	private InternalJob next;
+	/**
+	 * The job behind me in a queue or list.
+	 */
 	private InternalJob previous;
 	/* (non-Javadoc)
 	 * @see Job#addJobListener(IJobChangeListener)
@@ -48,7 +54,7 @@ public abstract class InternalJob implements Comparable {
 		return manager.cancel((Job) this);
 	}
 	public final int compareTo(Object otherJob) {
-		return (int) (startTime - ((InternalJob) otherJob).startTime);
+		return (int) (((InternalJob) otherJob).startTime - startTime);
 	}
 	protected void done(IStatus result) {
 		//ignore if not registered for asynchronous finish
