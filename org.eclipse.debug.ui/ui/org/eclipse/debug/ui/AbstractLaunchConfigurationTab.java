@@ -8,6 +8,10 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
@@ -161,6 +165,21 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 			return control.getShell();
 		}
 		return null;
-	}	
+	}
+	
+	/**
+	 * Creates and returns a new push button with the given
+	 * label and/or image.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param image image of <code>null</code>
+	 * 
+	 * @return a new push button
+	 */
+	protected Button createPushButton(Composite parent, String label, Image image) {
+		return SWTUtil.createPushButton(parent, label, image);	
+	}
+	
 }
 

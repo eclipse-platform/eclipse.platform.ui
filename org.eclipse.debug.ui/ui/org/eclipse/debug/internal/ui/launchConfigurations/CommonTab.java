@@ -113,7 +113,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		radioComp.setLayout(radioLayout);
 		
 		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
-		getLocalSharedLabel().setText("Type of launch configuration:");
+		getLocalSharedLabel().setText("Type of Launch Configuration:");
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
 		getLocalRadioButton().setText("L&ocal");
@@ -135,7 +135,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText("Location of shared confi&guration:");
+		getSharedLocationLabel().setText("Location of Shared Confi&guration:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
@@ -149,8 +149,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		setSharedLocationButton(new Button(locationComp, SWT.PUSH));
-		getSharedLocationButton().setText("&Browse...");	
+		setSharedLocationButton(createPushButton(locationComp, "&Browse...", null));	
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -164,7 +163,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
-		getSwitchToLabel().setText("Switch to/Open perspective when launched:");
+		getSwitchToLabel().setText("Switch/Open Perspective when Launched:");
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;

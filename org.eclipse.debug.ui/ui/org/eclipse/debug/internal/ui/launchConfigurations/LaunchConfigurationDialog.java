@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -690,7 +691,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridData gd;
 		
 		TreeViewer tree = new TreeViewer(c);
-		gd = new GridData(GridData.FILL_VERTICAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
 		gd.heightHint = 375;
@@ -704,13 +705,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.expandAll();
 		tree.addDoubleClickListener(this);
 		
-		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		newButton.setText("Ne&w");
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 1;
-		newButton.setLayoutData(gd);
+		Button newButton = SWTUtil.createPushButton(c, "Ne&w", null);
 		setNewButton(newButton);
-		
 		newButton.addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
@@ -719,13 +715,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);				
 		
-		Button deleteButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		deleteButton.setText("Dele&te");
-		gd = new GridData(GridData.CENTER);
-		gd.horizontalSpan = 1;
-		deleteButton.setLayoutData(gd);
+		Button deleteButton = SWTUtil.createPushButton(c, "Dele&te", null);
 		setDeleteButton(deleteButton);
-		
 		deleteButton.addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
@@ -734,13 +725,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);			
 		
-		Button copyButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		copyButton.setText("Cop&y");
-		gd = new GridData(GridData.END);
-		gd.horizontalSpan = 1;
-		copyButton.setLayoutData(gd);
-		setCopyButton(copyButton);
-		
+		Button copyButton = SWTUtil.createPushButton(c, "Cop&y", null);
+		setCopyButton(copyButton);		
 		copyButton.addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
@@ -809,12 +795,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		});
 		
-		Button saveButton = new Button(c, SWT.PUSH | SWT.CENTER);
+		Button saveButton = new Button(c, SWT.PUSH);
 		saveButton.setText("&Apply");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
 		saveButton.setLayoutData(gd);
 		setSaveButton(saveButton);
+		SWTUtil.setButtonDimensionHint(saveButton);
 		getSaveButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSavePressed();
