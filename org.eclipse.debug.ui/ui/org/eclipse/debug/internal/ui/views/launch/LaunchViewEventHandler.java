@@ -50,11 +50,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	private IStackFrame fLastStackFrame = null;
 	
 	/**
-	 * Cache of the last stack depth
-	 */
-	private int fLastStackDepth = -1;
-	
-	/**
 	 * Constructs an event handler for the given launch view.
 	 * 
 	 * @param view launch view
@@ -216,7 +211,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		// the frame to display source
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
-			if (frame != null && frame.equals(fLastStackFrame) && thread.getStackFrames().length == fLastStackDepth) {
+			if (frame != null && frame.equals(fLastStackFrame)) {
 				Object[] objectsToUpdate= new Object[]{thread, frame};
 				if (wasTimedOut) {
 					getLaunchViewer().updateStackFrameIcons(thread);
@@ -237,10 +232,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		
 		try {
 			fLastStackFrame = thread.getTopStackFrame();
-			fLastStackDepth = thread.getStackFrames().length;
 		} catch (DebugException e) {
 			fLastStackFrame = null;
-			fLastStackDepth = -1;
 		}
 	}
 	
