@@ -172,22 +172,19 @@ private Font createFont(FontData[] fonts) {
 			break;
 
 		FontData[] fixedFonts = display.getFontList(fd.getName(), false);
-		if (isFixedFont(fixedFonts, fd)) {
-			return new Font(display, fd);
+		FontData fixedFont = getMatchingFont(fixedFonts,fd);
+		if (fixedFont != null) {
+			return new Font(display, fixedFont);
 		}
 
 		FontData[] scalableFonts = display.getFontList(fd.getName(), true);
-		if (scalableFonts.length > 0) {
-			return new Font(display, fd);
+		FontData scalableFont = getMatchingFont(scalableFonts,fd);
+		if (scalableFont != null) {
+			return new Font(display, scalableFont);
 		}
 	}
 	//unable to find a valid font.
-	if (fonts.length > 0) {
-		return new Font(display, fonts[0]);
-	} else {
-		//Failed to find any reasonable font. 
-		return null;
-	}
+	return null;
 }
 /**
  * Returns the default font.  Creates it if necessary.
@@ -301,19 +298,19 @@ private void hookDisplayDispose(Display display) {
 	});
 }
 /**
- * Checks whether the given font is in the list of fixed fonts.
+ * Returns the matching  font from the list. Return null if it is not found.
  */
-private boolean isFixedFont(FontData[] fixedFonts, FontData fd) {
+private FontData getMatchingFont(FontData[] fonts, FontData fd) {
 	// Can't use FontData.equals() since some values aren't
 	// set if a fontdata isn't used.
 	int height = fd.getHeight();
 	String name = fd.getName();
-	for (int i = 0; i < fixedFonts.length; i++) {
-		FontData fixed = fixedFonts[i];
-		if (fixed.getHeight() == height && fixed.getName().toLowerCase().equals(name))
-			return true;
+	for (int i = 0; i < fonts.length; i++) {
+		FontData font = fonts[i];
+		if (font.getHeight() == height && font.getName().equals(name))
+			return font;
 	}
-	return false;
+	return null;
 }
 /**
  * Converts a String into a FontData object.
