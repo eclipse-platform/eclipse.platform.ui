@@ -24,10 +24,9 @@ public interface ILazyContentProvider extends IContentProvider {
 	 * at this row, it should respond by calling 
 	 * TableViewer#replace(Object, int)
 	 * 
-	 * @param start The beginning index to invalidate.
-	 * @param length The number of items to invalidate.
-	 * @see #prioritizeRange(int, int)
+	 * @param index The index that is being updateed in the
+	 * table.
 	 */
-	public void updateElement(int element);
+	public void updateElement(int index);
 	
 }
