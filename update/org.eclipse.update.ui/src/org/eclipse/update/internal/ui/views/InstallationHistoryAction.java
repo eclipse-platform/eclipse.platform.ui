@@ -152,6 +152,7 @@ public class InstallationHistoryAction extends Action {
 			htmlLog.println("</table>"); //$NON-NLS-1$
 			htmlLog.println("</body>"); //$NON-NLS-1$
 			htmlLog.println("</html>"); //$NON-NLS-1$
+			htmlLog.flush();
 
 		} catch (Exception e) {
 			throwCoreException(e);
