@@ -68,7 +68,7 @@ public class PageChangedEvent extends EventObject {
 	 * 
 	 * @return the originating page change provider
 	 */
-	public IPageChangeProvider getSelectionProvider() {
+	public IPageChangeProvider getPageChangeProvider() {
 		return (IPageChangeProvider) getSource();
 	}
 }
