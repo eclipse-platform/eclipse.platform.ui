@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IProductConstants;
 
@@ -39,6 +45,49 @@ public class ProductProperties extends BrandingProperties implements
     private String productName;
     private String productId;
 
+    private static final String ABOUT_MAPPINGS = "$nl$/about.mappings"; //$NON-NLS-1$
+    private static String[] mappings = loadMappings();
+
+    private static String[] loadMappings() {
+		IProduct product = Platform.getProduct();
+		if (product == null)
+			return new String[0];
+		URL location = Platform.find(product.getDefiningBundle(), new Path(ABOUT_MAPPINGS));
+		PropertyResourceBundle bundle = null;
+		InputStream is;
+		if (location != null) {
+			is = null;
+			try {
+				is = location.openStream();
+				bundle = new PropertyResourceBundle(is);
+			} catch (IOException e) {
+				bundle = null;
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (IOException e) {
+					// do nothing if we fail to close
+				}
+			}
+		}
+
+		ArrayList mappingsList = new ArrayList();
+		if (bundle != null) {
+			boolean found = true;
+			int i = 0;
+			while (found) {
+				try {
+					mappingsList.add(bundle.getString(Integer.toString(i)));
+				} catch (MissingResourceException e) {
+					found = false;
+				}
+				i++;
+			}
+		}
+		return (String[])mappingsList.toArray(new String[mappingsList.size()]);
+	 }
+	 
     /**
      * This instance will return properties from the given product.  The properties are
      * retrieved in a lazy fashion and cached for later retrieval.
@@ -148,21 +197,37 @@ public class ProductProperties extends BrandingProperties implements
 	 * E.g., On motif, this can be used to set the name used for
 	 * resource lookup.
 	 * </p>
+	 * <p>
+	 * The returned value will have {n} values substituted based on the
+	 * current product's mappings regardless of the given product argument.
+	 * </p>
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public static String getAppName(IProduct product) {
 	    String property = product.getProperty(APP_NAME);
-	    return property == null ? "" : property; //$NON-NLS-1$
+	    if (property == null) 
+	    	return ""; //$NON-NLS-1$
+	    if (property.indexOf('{') == -1)
+	    	return property;
+		return MessageFormat.format(property, mappings);
 	}
 
 	/**
 	 * The text to show in an "about" dialog for this product.
 	 * Products designed to run "headless" typically would not
 	 * have such text.
+	 * <p>
+	 * The returned value will have {n} values substituted based on the
+	 * current product's mappings regardless of the given product argument.
+	 * </p>
 	 */
 	public static String getAboutText(IProduct product) {
 	    String property = product.getProperty(ABOUT_TEXT);
-	    return property == null ? "" : property; //$NON-NLS-1$
+	    if (property == null) 
+	    	return ""; //$NON-NLS-1$
+	    if (property.indexOf('{') == -1)
+	    	return property;
+		return MessageFormat.format(property, mappings);
 	}
 
 	/**
@@ -206,7 +271,7 @@ public class ProductProperties extends BrandingProperties implements
      * org.eclipse.ui.intro extension point should be used instead.
      */
     public static URL getWelcomePageUrl(IProduct product) {
-        return getUrl(product.getProperty(WELCOME_PAGE), null);
+        return getUrl(product.getProperty(WELCOME_PAGE), product.getDefiningBundle());
     }
 
     /**
