@@ -603,7 +603,13 @@ public Control[] getTabList() {
 		return new Control[] { visibleEditor.getControl(), tabFolder };
 	}
 }
-
+/**
+ * Makes sure the visible editor's tab is visible.
+ */
+public void showVisibleEditor() {
+	if(tabFolder != null)
+		tabFolder.showSelection();
+}
 /**
  * Returns the visible child.
  */

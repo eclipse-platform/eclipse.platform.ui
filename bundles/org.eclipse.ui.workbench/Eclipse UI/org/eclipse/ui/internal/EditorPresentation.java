@@ -379,6 +379,14 @@ public void setActiveEditorWorkbookFromID(String id) {
 	editorArea.setActiveWorkbookFromID(id);
 }
 /**
+ * Makes sure the visible editor's tab is visible.
+ */
+public void showVisibleEditor() {
+	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+	if(activeWorkbook != null)
+		activeWorkbook.showVisibleEditor();
+}
+/**
  * Brings an editor to the front and gives it focus.
  *
  * @param part the editor to make visible
