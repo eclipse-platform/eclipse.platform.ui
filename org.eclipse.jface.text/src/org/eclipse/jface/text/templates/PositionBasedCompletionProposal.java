@@ -28,6 +28,8 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * An enhanced implementation of the <code>ICompletionProposal</code> interface implementing all the extension interfaces.
+ *
+ * @since 3.0
  */
 final class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
 	
