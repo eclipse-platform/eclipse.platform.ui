@@ -597,6 +597,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		fgAntModel= antModel;
 		((ProjectHelper.ElementHandler)elementHandler).reset();
 		fu= null;
+		fgAntContext= null;
 	}
 
 	public static AntModel getAntModel() {
