@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.*;
  */
 public class CreateLinkedResourceGroup {	
 	private Listener listener;
-	private String linkTarget = "";
+	private String linkTarget = "";	//$NON-NLS-1$
 	private int type;
 	private boolean createLink = false;
 
