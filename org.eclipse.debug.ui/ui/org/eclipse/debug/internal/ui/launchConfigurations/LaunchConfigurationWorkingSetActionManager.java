@@ -31,6 +31,10 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * Manage the enablement of the standard working set actions (Select & Clear) and manage
+ * 'shortcut' actions for recently used working sets.
+ */
 public class LaunchConfigurationWorkingSetActionManager {
 
 	private static final String TAG_WORKING_SET_NAME= "launchConfigurationWorkingSetName"; //$NON-NLS-1$
@@ -47,14 +51,16 @@ public class LaunchConfigurationWorkingSetActionManager {
 
 	private int fLRUMenuCount;
 	private IPropertyChangeListener fPropertyChangeListener;
+	private IPropertyChangeListener fTitleUpdater;
 	private IMenuManager fMenuManager;
 	private IMenuListener fMenuListener;
 
-	public LaunchConfigurationWorkingSetActionManager(StructuredViewer viewer, Shell shell) {
+	public LaunchConfigurationWorkingSetActionManager(StructuredViewer viewer, Shell shell, IPropertyChangeListener titleUpdater) {
 		setViewer(viewer);
 		setShell(shell);
 		setClearAction(new LaunchConfigurationClearWorkingSetAction(this));
 		setSelectAction(new LaunchConfigurationSelectWorkingSetAction(this, getShell()));
+		setTitleUpdater(titleUpdater);
 		addWorkingSetChangeSupport();
 	}	
 
@@ -85,6 +91,10 @@ public class LaunchConfigurationWorkingSetActionManager {
 			fViewer.getControl().setRedraw(false);
 			if (refreshViewer) {
 				fViewer.refresh();
+			}
+			IPropertyChangeListener titleUpdater = getTitleUpdater();
+			if (titleUpdater != null) {
+				titleUpdater.propertyChange(new PropertyChangeEvent(this, IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null, workingSet));
 			}
 			fViewer.getControl().setRedraw(true);
 		}
@@ -204,7 +214,16 @@ public class LaunchConfigurationWorkingSetActionManager {
 
 					fViewer.getControl().setRedraw(false);
 					fViewer.refresh();
+					IPropertyChangeListener titleUpdater = getTitleUpdater();
+					if (titleUpdater != null) {
+						titleUpdater.propertyChange(new PropertyChangeEvent(this, IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null, newWorkingSet));
+					}
 					fViewer.getControl().setRedraw(true);
+				} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
+					IPropertyChangeListener titleUpdater = getTitleUpdater();
+					if (titleUpdater != null) {
+						titleUpdater.propertyChange(event);										
+					}
 				} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
 					fViewer.getControl().setRedraw(false);
 					fViewer.refresh();
@@ -251,6 +270,14 @@ public class LaunchConfigurationWorkingSetActionManager {
 
 	private LaunchConfigurationSelectWorkingSetAction getSelectAction() {
 		return fSelectWorkingSetAction;
+	}
+
+	private void setTitleUpdater(IPropertyChangeListener titleUpdater) {
+		fTitleUpdater = titleUpdater;
+	}
+
+	private IPropertyChangeListener getTitleUpdater() {
+		return fTitleUpdater;
 	}
 	
 }

@@ -53,6 +53,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -107,6 +109,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The tree of launch configurations
 	 */
 	private TreeViewer fConfigTree;
+	
+	/**
+	 * The label appearing above tree of configs & config types.
+	 */
+	private Label fTreeLabel;
 	
 	/**
 	 * The workbench context present when this dialog is opened.
@@ -964,11 +971,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		
-		Label treeLabel = new Label(comp, SWT.NONE);
-		treeLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
+		setTreeLabel(new Label(comp, SWT.NONE));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
-		treeLabel.setLayoutData(gd);
+		getTreeLabel().setLayoutData(gd);
+		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$		
+		updateTreeLabelTooltip();
 		
 		TreeViewer tree = new TreeViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -999,7 +1007,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		setButtonActionDuplicate(new ButtonActionDuplicate(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Duplicate_1"), null)); //$NON-NLS-1$
 		
-		setWorkingSetActionManager(new LaunchConfigurationWorkingSetActionManager(tree, getShell()));
+		IPropertyChangeListener titleUpdater= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				String property= event.getProperty();
+				if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property))
+					updateTreeLabelTooltip();
+			}
+		};
+		setWorkingSetActionManager(new LaunchConfigurationWorkingSetActionManager(tree, getShell(), titleUpdater));
 		
 		return comp;
 	}	
@@ -2701,6 +2716,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
+	 * Set the tooltip of the config tree label based on the current working set in effect.
+	 */
+	private void updateTreeLabelTooltip() {
+		LaunchConfigurationWorkingSetActionManager mgr = getWorkingSetActionManager();
+		if (mgr != null) {
+			IWorkingSet workingSet = mgr.getWorkingSet();
+			if (workingSet != null) {
+				String newTooltip = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Working_Set__{0}_1"), new String[] {workingSet.getName()} ); //$NON-NLS-1$
+				getTreeLabel().setToolTipText(newTooltip);
+				return;
+			}
+		}
+		
+		// No working set, so don't show a tooltip
+		getTreeLabel().setToolTipText(null);
+	}
+	
+	/**
 	 * Force the tab to update it's error state and return any error message.
 	 */
 	private String checkTabForError(ILaunchConfigurationTab tab) {
@@ -2932,6 +2965,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 
 	private LaunchConfigurationWorkingSetActionManager getWorkingSetActionManager() {
 		return fWorkingSetActionManager;
+	}
+
+	private void setTreeLabel(Label treeLabel) {
+		fTreeLabel = treeLabel;
+	}
+
+	private Label getTreeLabel() {
+		return fTreeLabel;
 	}
 
 	/**
