@@ -147,7 +147,8 @@ public void activate(IWorkbenchPart part);
 public void addPropertyChangeListener(IPropertyChangeListener listener);
 /**
  * Moves the given part forward in the Z order of this page so as to make
- * it visible. The part must belong to this page.
+ * it visible, without changing which part has focus.
+ * The part must belong to this page.
  *
  * @param part the part to bring forward
  */
