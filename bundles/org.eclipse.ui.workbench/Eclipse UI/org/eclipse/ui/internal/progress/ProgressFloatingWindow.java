@@ -32,12 +32,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
@@ -256,35 +254,8 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			create();
 		}
 		constrainShellSize();
-		animateVertical();
 		getShell().setVisible(true);
 		return getReturnCode();
-	}
-	/**
-	 * Animate the shell vertically.
-	 */
-	private void animateVertical() {
-		if (getShell() == null || getShell().isDisposed())
-			return;
-		final int initShellSize = getShell().getSize().y;
-		final int time = 10;
-		if (getShell() == null || getShell().isDisposed())
-			return;
-		getShell().setSize(getShell().getSize().x, 0);
-		final Runnable timer = new Runnable() {
-			public void run() {
-				if (getShell() == null || getShell().isDisposed())
-					return;
-				if (getShell().getSize().y == initShellSize)
-					return;
-				getShell().setSize(getShell().getSize().x,
-						getShell().getSize().y + 1);
-				getShell().getDisplay().timerExec(time, this);
-			}
-		};
-		if (getShell() == null || getShell().isDisposed())
-			return;
-		getShell().getDisplay().timerExec(time, timer);
 	}
 	/**
 	 * Set the background color of the control to the info background.
