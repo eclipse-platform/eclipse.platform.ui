@@ -55,7 +55,7 @@ public class TextAttribute {
 	}
 	
 	/*
-	 * @see Object#equals
+	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object object) {
 		
@@ -84,7 +84,7 @@ public class TextAttribute {
 	}
 	
 	/*
-	 * @see Object#hashCode
+	 * @see Object#hashCode()
 	 */
 	 public int hashCode() {
 	 	int foregroundHash= foreground == null ? 0 : foreground.hashCode();

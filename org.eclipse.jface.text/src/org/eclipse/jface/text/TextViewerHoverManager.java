@@ -243,9 +243,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/**
-	 * Method modelRange2WidgetRange.
-	 * @param region
-	 * @return IRegion
+	 * Translates a given region of the text viewer's document into
+	 * the corresponding region of the viewer's widget.
+	 * 
+	 * @param region the document region
+	 * @return the corresponding widget region
+	 * @since 2.1
 	 */
 	private IRegion modelRange2WidgetRange(IRegion region) {
 		if (fTextViewer instanceof ITextViewerExtension3) {
@@ -305,8 +308,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/**
-	 * Returns the currently shown text hover, <code>null</code> if no text
+	 * Returns the currently shown text hover or <code>null</code> if no text
 	 * hover is shown.
+	 * 
+	 * @return the currently shown text hover or <code>null</code>
 	 */
 	protected ITextHover getCurrentTextHover() {
 		return fTextHover;

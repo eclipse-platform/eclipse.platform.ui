@@ -15,17 +15,20 @@ package org.eclipse.jface.text;
 
 /**
  * Standard implementation of <code>ITextSelection</code>.
- * Makes atvantage of the weak contract of correctness of its
+ * Makes advantage of the weak contract of correctness of its
  * interface. If generated from a selection provider, it only
  * remembers its offset and length and computes the remaining
  * information on request.
  */
 public class TextSelection implements ITextSelection {
 	
+	/** Internal empty text selection */
 	private final static ITextSelection NULL= new TextSelection();
 	
 	/**
 	 * Returns a shared instance of an empty text selection.
+	 * 
+	 * @return a shared instance of an empty text selection
 	 */
 	public static ITextSelection emptySelection() {
 		return NULL;
@@ -80,28 +83,28 @@ public class TextSelection implements ITextSelection {
 	 * describes, e.g., the cursor position in a viewer.
 	 */
 	/*
-	 * @see ISelection#isEmpty
+	 * @see ISelection#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return fOffset < 0 || fLength < 0;
 	}
 	
 	/*
-	 * @see ITextSelection#getOffset
+	 * @see ITextSelection#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
 	
 	/*
-	 * @see ITextSelection#getLength
+	 * @see ITextSelection#getLength()
 	 */
 	public int getLength() {
 		return fLength;
 	}
 	
 	/*
-	 * @see ITextSelection#getStartLine
+	 * @see ITextSelection#getStartLine()
 	 */
 	public int getStartLine() {
 		
@@ -115,7 +118,7 @@ public class TextSelection implements ITextSelection {
 	}
 	
 	/*
-	 * @see ITextSelection#getEndLine
+	 * @see ITextSelection#getEndLine()
 	 */
 	public int getEndLine() {
 		try {
@@ -128,7 +131,7 @@ public class TextSelection implements ITextSelection {
 	}
 	
 	/*
-	 * @see ITextSelection#getText
+	 * @see ITextSelection#getText()
 	 */
 	public String getText() {
 		try {

@@ -909,14 +909,24 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Value object used as key in the text hover configuration table. It is
-	 * modifiable only for efficiency reasons only inside this compilation unit
-	 * to allow the reuse of created objects.
+	 * modifiable only inside this compilation unit to allow the reuse of created
+	 * objects for efficiency reasons 
+	 * 
+	 * @since 2.1
 	 */
 	protected class TextHoverKey {
 
+		/** The content type this key belongs to */
 		private String fContentType;
+		/** The state mask */
 		private int fStateMask;
 
+		/**
+		 * Creates a new text hover key for the given content type and state mask.
+		 * 
+		 * @param contentType the content type
+		 * @param stateMask the state mask
+		 */
 		protected TextHoverKey(String contentType, int stateMask) {
 			Assert.isNotNull(contentType);
 			fContentType= contentType;
@@ -940,15 +950,31 @@ public class TextViewer extends Viewer implements
 	 		return fStateMask << 16 | fContentType.hashCode();
 		}
 
+		/**
+		 * Sets the state mask of this text hover key. 
+		 * 
+		 * @param stateMask the state mask
+		 */
 		private void setStateMask(int stateMask) {
 			fStateMask= stateMask;
 		}
 	};
 	
+	/**
+	 * A position reflecting a viewer selecting and its achor, i.e. the caret location.
+	 * 
+	 * @since 2.1
+	 */
 	static class SelectionPosition extends Position {
 		
+		/** The flag indicating the anchor of this selection */
 		private boolean reverse;
 		
+		/** 
+		 * Creates a new selection position for the specified selection.
+		 * 
+		 * @param point the specified selection
+		 */
 		public SelectionPosition(Point point) {
 			super();
 			reverse= point.y < 0;
@@ -961,21 +987,49 @@ public class TextViewer extends Viewer implements
 			}
 		}
 		
+		/**
+		 * Returns the selection in a format where the selection length
+		 * is always non-negative.
+		 * 
+		 * @return the normalized selection
+		 */
 		public Point getNormalizedSelection() {
 			return new Point(offset, length);
 		}
 		
+		/**
+		 * Returns the selection reflecting its anchor.
+		 * 
+		 * @return the selection reflecting the selection achor.
+		 */
 		public Point getSelection() {
 			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
 		}
 	};
 		
-	/** ID for originators of view port changes */
-	protected static final int SCROLLER=		1;
-	protected static final int MOUSE=			2;
+	/** 
+	 * Identifies the scrollbars as originators of a view port change.
+	 */
+	protected static final int SCROLLER=	1;
+	/** 
+	 * Identifies  mouse moves as originators of a view port change.
+	 */
+	protected static final int MOUSE=		2;
+	/** 
+	 * Identifies mouse button up as originator of a view port change.
+	 */
 	protected static final int MOUSE_END=	3;
-	protected static final int KEY=				4;
-	protected static final int RESIZE=			5;
+	/** 
+	 * Identifies key strokes as originators of a view port change.
+	 */
+	protected static final int KEY=			4;
+	/** 
+	 * Identifies window resizing as originator of a view port change.
+	 */
+	protected static final int RESIZE=		5;
+	/** 
+	 * Identifies internal reasons as originators of a view port change.
+	 */
 	protected static final int INTERNAL=		6;
 		
 	/** Internal name of the position category used selection preservation during shift */
@@ -1191,14 +1245,14 @@ public class TextViewer extends Viewer implements
 	}
 		
 	/*
-	 * @see Viewer#getControl
+	 * @see Viewer#getControl()
 	 */
 	public Control getControl() {
 		return fTextWidget;
 	}
 	
 	/*
-	 * @see ITextViewer#activatePlugin
+	 * @see ITextViewer#activatePlugins()
 	 */
 	public void activatePlugins() {
 		
@@ -1215,6 +1269,9 @@ public class TextViewer extends Viewer implements
 		}
 	}
 
+	/**
+	 * After this method has been executed the caller knows that any installed text hover has been installed.
+	 */
 	private void ensureHoverControlManagerInstalled() {
 		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {	
 			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
@@ -1314,7 +1371,7 @@ public class TextViewer extends Viewer implements
 	}
 			
 	/*
-	 * @see ITextViewer#setAutoIndentStrategy
+	 * @see ITextViewer#setAutoIndentStrategy(IAutoIndentStrategy, String)
 	 */
 	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
 
@@ -1342,6 +1399,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension2#prependAutoEditStrategy(org.eclipse.jface.text.IAutoEditStrategy, java.lang.String)
+	 * @since 2.1
 	 */
 	public void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
 
@@ -1362,6 +1420,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension2#removeAutoEditStrategy(org.eclipse.jface.text.IAutoEditStrategy, java.lang.String)
+	 * @since 2.1
 	 */
 	public void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
 		if (fAutoIndentStrategies == null)
@@ -1383,14 +1442,14 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
-	 * @see ITextViewer#setEventConsumer
+	 * @see ITextViewer#setEventConsumer(IEventConsumer)
 	 */
 	public void setEventConsumer(IEventConsumer consumer) {
 		fEventConsumer= consumer;
 	}
 		
 	/*
-	 * @see ITextViewer#setIndentPrefixes 
+	 * @see ITextViewer#setIndentPrefixes(String[], String)
 	 */
 	public void setIndentPrefixes(String[] indentPrefixes, String contentType) {
 					
@@ -1411,14 +1470,14 @@ public class TextViewer extends Viewer implements
 	}
 				
 	/*
-	 * @see ITextViewer#getTopInset
+	 * @see ITextViewer#getTopInset()
 	 */
 	public int getTopInset() {
 		return fTopInset;
 	}
 	
 	/*
-	 * @see ITextViewer#isEditable
+	 * @see ITextViewer#isEditable()
 	 */
 	public boolean isEditable() {
 		if (fTextWidget == null)
@@ -1427,7 +1486,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setEditable
+	 * @see ITextViewer#setEditable(boolean)
 	 */
 	public void setEditable(boolean editable) {
 		if (fTextWidget != null)
@@ -1449,21 +1508,22 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setUndoManager
+	 * @see ITextViewer#setUndoManager(IUndoManager)
 	 */
 	public void setUndoManager(IUndoManager undoManager) {
 		fUndoManager= undoManager;
 	}
 
 	/*
-	 * @see ITextViewer#setTextHover
+	 * @see ITextViewer#setTextHover(ITextHover, String)
 	 */
 	public void setTextHover(ITextHover hover, String contentType) {
 		setTextHover(hover, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 	}
 
 	/*
-	 * @see ITextViewerExtension2#setTextHover
+	 * @see ITextViewerExtension2#setTextHover(ITextHover, String, int)
+	 * @since 2.1
 	 */
 	public void setTextHover(ITextHover hover, String contentType, int stateMask) {
 		TextHoverKey key= new TextHoverKey(contentType, stateMask);
@@ -1480,6 +1540,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see ITextViewerExtension2#removeTextHovers(String)
+	 * @since 2.1
 	 */
 	public void removeTextHovers(String contentType) {
 		if (fTextHovers == null)
@@ -1504,11 +1565,12 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Returns the text hover for a given offset.
+	 * Returns the text hover for a given offset and a given state mask.
 	 * 
 	 * @param offset the offset for which to return the text hover
 	 * @param stateMask the SWT event state mask
-	 * @return the text hover for the given offset
+	 * @return the text hover for the given offset and state mask
+	 * @since 2.1
 	 */
 	protected ITextHover getTextHover(int offset, int stateMask) {
 		if (fTextHovers == null)
@@ -1584,7 +1646,7 @@ public class TextViewer extends Viewer implements
 	//---- Selection
 	
 	/*
-	 * @see ITextViewer#getSelectedRange
+	 * @see ITextViewer#getSelectedRange()
 	 */
 	public Point getSelectedRange() {
 		
@@ -1600,7 +1662,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setSelectedRange
+	 * @see ITextViewer#setSelectedRange(int, int)
 	 */
 	public void setSelectedRange(int selectionOffset, int selectionLength) {
 		
@@ -1734,7 +1796,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#getSelectionProvider
+	 * @see ITextViewer#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
 		return this;
@@ -1781,7 +1843,7 @@ public class TextViewer extends Viewer implements
 	//---- Text listeners
 	
 	/*
-	 * @see ITextViewer#addTextListener
+	 * @see ITextViewer#addTextListener(ITextListener)
 	 */
 	public void addTextListener(ITextListener listener) {
 		if (fTextListeners == null)
@@ -1792,7 +1854,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#removeTextListener
+	 * @see ITextViewer#removeTextListener(ITextListener)
 	 */
 	public void removeTextListener(ITextListener listener) {
 		if (fTextListeners != null) {
@@ -1827,7 +1889,7 @@ public class TextViewer extends Viewer implements
 	//---- Text input listeners
 	
 	/*
-	 * @see ITextViewer#addTextInputListener
+	 * @see ITextViewer#addTextInputListener(ITextInputListener)
 	 */
 	public void addTextInputListener(ITextInputListener listener) {
 		if (fTextInputListeners == null)
@@ -1838,7 +1900,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#removeTextInputListener
+	 * @see ITextViewer#removeTextInputListener(ITextInputListener)
 	 */
 	public void removeTextInputListener(ITextInputListener listener) {
 		if (fTextInputListeners != null) {
@@ -1883,21 +1945,21 @@ public class TextViewer extends Viewer implements
 	//---- Document
 	
 	/*
-	 * @see Viewer#getInput
+	 * @see Viewer#getInput()
 	 */
 	public Object getInput() {
 		return getDocument();
 	}
 	
 	/*
-	 * @see ITextViewer#getDocument
+	 * @see ITextViewer#getDocument()
 	 */
 	public IDocument getDocument() {
 		return fDocument;
 	}
 	
 	/*
-	 * @see Viewer#setInput
+	 * @see Viewer#setInput(Object)
 	 */
 	public void setInput(Object input) {
 		
@@ -1928,7 +1990,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setDocument(IDocument, int int)
+	 * @see ITextViewer#setDocument(IDocument, int, int)
 	 */
 	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
 		
@@ -1954,6 +2016,14 @@ public class TextViewer extends Viewer implements
 		fReplaceTextPresentation= false;
 	}
 	
+	/**
+	 * Creates a slave document for the given document if there is a slave document manager
+	 * associated with this viewer.
+	 * 
+	 * @param document the master document
+	 * @return the newly created slave document
+	 * @since 2.1
+	 */
 	protected IDocument createSlaveDocument(IDocument document) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
 		if (manager != null) {
@@ -1964,6 +2034,16 @@ public class TextViewer extends Viewer implements
 		return document;
 	}
 	
+	/**
+	 * Sets the given slave document to the specified range of its master document.
+	 * 
+	 * @param visibleDocument the slave document
+	 * @param visibleRegionOffset the offset of the master document range
+	 * @param visibleRegionLength the length of the master document range
+	 * @return <code>true</code> if the slave has been adapted successfully
+	 * @throws BadLocationException in case the specified range is not valid in the master document
+	 * @since 2.1
+	 */
 	protected boolean  updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
 		if (visibleDocument instanceof ChildDocument) {
 			ChildDocument childDocument= (ChildDocument) visibleDocument;
@@ -2027,7 +2107,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#addViewportListener
+	 * @see ITextViewer#addViewportListener(IViewportListener)
 	 */
 	public void addViewportListener(IViewportListener listener) {
 		
@@ -2041,7 +2121,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#removeViewportListener
+	 * @see ITextViewer#removeViewportListener(IVewportListener)
 	 */
 	public void removeViewportListener(IViewportListener listener) {
 		if (fViewportListeners != null)
@@ -2075,7 +2155,7 @@ public class TextViewer extends Viewer implements
 	//---- scrolling and revealing
 	
 	/*
-	 * @see ITextViewer#getTopIndex
+	 * @see ITextViewer#getTopIndex()
 	 */
 	public int getTopIndex() {
 		
@@ -2089,7 +2169,7 @@ public class TextViewer extends Viewer implements
 	}
 		
 	/*
-	 * @see ITextViewer#setTopIndex
+	 * @see ITextViewer#setTopIndex(int)
 	 */
 	public void setTopIndex(int index) {
 		
@@ -2122,7 +2202,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#getBottomIndex
+	 * @see ITextViewer#getBottomIndex()
 	 */
 	public int getBottomIndex() {
 		
@@ -2155,7 +2235,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#getTopIndexStartOffset
+	 * @see ITextViewer#getTopIndexStartOffset()
 	 */
 	public int getTopIndexStartOffset() {
 		
@@ -2174,7 +2254,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#getBottomIndexEndOffset
+	 * @see ITextViewer#getBottomIndexEndOffset()
 	 */
 	public int getBottomIndexEndOffset() {
 		try {
@@ -2194,7 +2274,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#revealRange
+	 * @see ITextViewer#revealRange(int, int)
 	 */
 	public void revealRange(int start, int length) {
 		
@@ -2402,7 +2482,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see Viewer#refresh
+	 * @see Viewer#refresh()
 	 */
 	public void refresh() {
 		setDocument(getDocument());
@@ -2414,6 +2494,7 @@ public class TextViewer extends Viewer implements
 	 * Returns the slave document manager
 	 *
 	 * @return the slave document manager
+	 * @since 2.1
 	 */
 	protected ISlaveDocumentManager getSlaveDocumentManager() {
 		if (fSlaveDocumentManager == null)
@@ -2422,8 +2503,11 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Creates a new slave document manager.
+	 * Creates a new slave document manager. This implementation always
+	 * returns a <code>ChildDocumentManager</code>.
+	 * 
 	 * @return ISlaveDocumentManager
+	 * @since 2.1
 	 */
 	protected ISlaveDocumentManager createSlaveDocumentManager() {
 		return new ChildDocumentManager();
@@ -2442,6 +2526,13 @@ public class TextViewer extends Viewer implements
 		}
 	}
 	
+	/**
+	 * Invalidates the given range of the text presentation.
+	 * 
+	 * @param offset the offset of the range to be invalidated
+	 * @param length the length of the range to be invalidated
+	 * @since 2.1
+	 */
 	public final void invalidateTextPresentation(int offset, int length) {
 		if (fVisibleDocument != null) {
 			
@@ -2503,6 +2594,13 @@ public class TextViewer extends Viewer implements
 			fVisibleDocument.addDocumentListener(fDocumentListener);
 	}
 	
+	/**
+	 * Initializes the document information mapping between the given slave document and
+	 * its master document.
+	 * 
+	 * @param visibleDocument the slave document
+	 * @since 2.1
+	 */
 	protected void initializeDocumentInformationMapping(IDocument visibleDocument) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
 		fInformationMapping= manager == null ? null : manager.createMasterSlaveMapping(visibleDocument);
@@ -2534,7 +2632,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#getVisibleRegion
+	 * @see ITextViewer#getVisibleRegion()
 	 */
 	public IRegion getVisibleRegion() {
 		
@@ -2548,7 +2646,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#overlapsWithVisibleRegion
+	 * @see ITextViewer#overlapsWithVisibleRegion(int, int)
 	 */
 	public boolean overlapsWithVisibleRegion(int start, int length) {
 		IDocument document= getVisibleDocument();
@@ -2563,7 +2661,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setVisibleRegion
+	 * @see ITextViewer#setVisibleRegion(int, int)
 	 */
 	public void setVisibleRegion(int start, int length) {
 		
@@ -2583,7 +2681,7 @@ public class TextViewer extends Viewer implements
 	}
 				
 	/*
-	 * @see ITextViewer#resetVisibleRegion
+	 * @see ITextViewer#resetVisibleRegion()
 	 */
 	public void resetVisibleRegion() {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
@@ -2601,7 +2699,7 @@ public class TextViewer extends Viewer implements
 	//--------------------------------------
 	
 	/*
-	 * @see ITextViewer#setTextDoubleClickStrategy
+	 * @see ITextViewer#setTextDoubleClickStrategy(ITextDoubleClickStrategy, String)
 	 */
 	public void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType) {		
 		
@@ -2634,6 +2732,9 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Selects from the given <code>plugins</code> this one which is registered for
 	 * the given content <code>type</code>.
+	 * 
+	 * @param type the type to be used as lookup key
+	 * @param plugins the table to be searched
 	 */
 	private Object selectContentTypePlugin(String type, Map plugins) {
 		
@@ -2681,7 +2782,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see VerifyListener#verifyText
+	 * @see VerifyListener#verifyText(VerifyEvent)
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 				
@@ -2762,6 +2863,7 @@ public class TextViewer extends Viewer implements
 	 * Returns whether the marked region of this viewer is empty.
 	 * 
 	 * @return <code>true</code> if the marked region of this viewer is empty, otherwise <code>false</code>
+	 * @since 2.0
 	 */
 	private boolean isMarkedRegionEmpty() {
 		return
@@ -2772,7 +2874,7 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
-	 * @see ITextViewer#canDoOperation
+	 * @see ITextViewer#canDoOperation(int)
 	 */
 	public boolean canDoOperation(int operation) {
 		
@@ -2807,7 +2909,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#doOperation
+	 * @see ITextViewer#doOperation(int)
 	 */
 	public void doOperation(int operation) {
 		
@@ -2874,9 +2976,10 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Tells this viewer whether the registered auto edit strategies should be
-	 * ignored.
+	 * Tells this viewer whether the registered auto edit strategies should be ignored.
+	 * 
 	 * @param ignore <code>true</code> if the strategies should be ignored.
+	 * @since 2.1
 	 */
 	protected void ignoreAutoEditStrategies(boolean ignore) {
 		
@@ -2894,7 +2997,9 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Returns whether this viewer ignores the registered auto edit strategies.
+	 * 
 	 * @return <code>true</code> if the strategies are ignored
+	 * @since 2.1
 	 */
 	protected boolean isIgnoringAutoEditStrategies() {
 		return fIgnoreAutoIndent;
@@ -3273,8 +3378,6 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Brings up a print dialog and calls <code>printContents(Printer)</code> which 
 	 * performs the actual print.
-	 *
-	 * Subclasses may override.
 	 */
 	protected void print() {
 		
@@ -3395,7 +3498,7 @@ public class TextViewer extends Viewer implements
 	//---------- text presentation support
 	
 	/*
-	 * @see ITextViewer#setTextColor
+	 * @see ITextViewer#setTextColor(Color)
 	 */
 	public void setTextColor(Color color) {
 		if (color != null)
@@ -3403,7 +3506,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#setTextColor 	 
+	 * @see ITextViewer#setTextColor(Color, start, length, boolean)
 	 */
 	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {	
 		
@@ -3515,7 +3618,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/*
-	 * @see ITextViewer#changeTextPresentation
+	 * @see ITextViewer#changeTextPresentation(TextPresentation, boolean)
 	 */
 	public void changeTextPresentation(TextPresentation presentation, boolean controlRedraw) {
 				
@@ -3678,6 +3781,14 @@ public class TextViewer extends Viewer implements
 		updateTextListeners(fWidgetCommand);
 	}
 	
+	/**
+	 * Forgets the previously remembered  selection position.  After that
+	 * call the selection position can no longer be queried and is longer updated
+	 * in responds to content changes of the viewer.
+	 * 
+	 * @return the remembered and updated  selection position or <code>null</code> if no selection position has been remembered
+	 * @since 2.1
+	 */
 	private Point forgetDocumentSelection() {
 		if (fDocumentSelection == null)
 			return null;
@@ -3692,7 +3803,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Enables the redrawing of this text viewer. Subclasses may extend.
+	 * Enables the redrawing of this text viewer.
 	 * @since 2.0
 	 */
 	protected void enabledRedrawing() {
@@ -3724,6 +3835,11 @@ public class TextViewer extends Viewer implements
 		fireRedrawChanged();
 	}
 	
+	/**
+	 * Remembers the current selection in a <code>SelectionPosition</code>	. The selection
+	 * position can be queried and is updated to changes made to the viewer's contents.
+	 * @since 2.1
+	 */
 	private void rememberDocumentSelection() {
 		Point selection= getSelectedRange();
 		if (selection != null) {
@@ -3784,6 +3900,8 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Starts  the sequential rewrite mode of the viewer's document.
+	 * 
+	 * @param normalized <code>true</code> if the rewrite is performed from the start to the end of the document
 	 * @since 2.0
 	 */
 	protected final void startSequentialRewriteMode(boolean normalized) {
@@ -3834,24 +3952,45 @@ public class TextViewer extends Viewer implements
 		return fTextHoverManager.getHoverEventLocation();
 	}
 	
+	/**
+	 * Returns the paint manager of this viewer.
+	 * 
+	 * @return the paint manager of this viewer
+	 * @since 2.1
+	 */
 	protected PaintManager getPaintManager() {
 		if (fPaintManager == null)
 			fPaintManager= new PaintManager(this);
 		return fPaintManager;
 	}
 	
+	/**
+	 * Adds the given  painter to this viewer. If the painter is already registered
+	 * this method is without effect.
+	 * 
+	 * @param painter the painter to be added
+	 * @since 2.1
+	 */
 	public void addPainter(IPainter painter) {
 		getPaintManager().addPainter(painter);
 	}
 	
+	/**
+	 * Removes the given painter from this viewer. If the painter has previously not been
+	 * added to this viewer this method is without effect.
+	 * 
+	 * @param painter the painter to be removed
+	 * @since 2.1 
+	 */
 	public void removePainter(IPainter painter) {
 		getPaintManager().removePainter(painter);
 	}
 
 	// ----------------------------------- conversions -------------------------------------------------------			
 		
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelLine2WidgetLine(int)
+	 * @since 2.1
 	 */
 	public int modelLine2WidgetLine(int modelLine) {
 		if (fInformationMapping == null)
@@ -3865,8 +4004,9 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelOffset2WidgetOffset(int)
+	 * @since 2.1
 	 */
 	public int modelOffset2WidgetOffset(int modelOffset) {
 		if (fInformationMapping == null)
@@ -3880,8 +4020,9 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelRange2WidgetRange(org.eclipse.jface.text.IRegion)
+	 * @since 2.1
 	 */
 	public IRegion modelRange2WidgetRange(IRegion modelRange) {
 		if (fInformationMapping == null)
@@ -3903,8 +4044,9 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetlLine2ModelLine(int)
+	 * @since 2.1
 	 */
 	public int widgetlLine2ModelLine(int widgetLine) {
 		if (fInformationMapping == null)
@@ -3918,8 +4060,9 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetOffset2ModelOffset(int)
+	 * @since 2.1
 	 */
 	public int widgetOffset2ModelOffset(int widgetOffset) {
 		if (fInformationMapping == null)
@@ -3937,8 +4080,9 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetRange2ModelRange(org.eclipse.jface.text.IRegion)
+	 * @since 2.1
 	 */
 	public IRegion widgetRange2ModelRange(IRegion widgetRange) {
 		if (fInformationMapping == null)
@@ -3966,8 +4110,9 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#getModelCoverage()
+	 * @since 2.1
 	 */
 	public IRegion getModelCoverage() {
 		if (fInformationMapping == null) {
@@ -3980,6 +4125,14 @@ public class TextViewer extends Viewer implements
 		return fInformationMapping.getCoverage();
 	}
 
+	/**
+	 * Returns the line of the widget whose corresponding line in the viewer's document
+	 * is closest to the given line in the viewer's document.
+	 * 
+	 * @param modelLine the line in the viewer's document
+	 * @return the line in the widget that corresponds best to the given line in the viewer's document
+	 * @since 2.1
+	 */
 	protected int getClosestWidgetLineForModelLine(int modelLine) {
 		if (fInformationMapping == null)
 			return modelLine;
@@ -3992,6 +4145,14 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
+	/**
+	 * Translates a style range given relative to the viewer's document into style
+	 * ranges relative to the viewer's widget.
+	 * 
+	 * @param range the style range in the coordinates of the viewer's document
+	 * @return the style range in the coordinates of the viewer's widget
+	 * @since 2.1
+	 */
 	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
 		IRegion region= modelRange2WidgetRange(new Region(range.start, range.length));
 		if (region != null) {
@@ -4003,10 +4164,25 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
+	/**
+	 * @see #modelRange2WidgetRange(IRegion)
+	 * 
+	 * @param modelPosition the position describing a range in the viewer's document
+	 * @return a region describing a range in the viewer's widget
+	 * @since 2.1
+	 */
 	protected IRegion modelRange2WidgetRange(Position modelPosition) {
 		return modelRange2WidgetRange(new Region(modelPosition.getOffset(), modelPosition.getLength()));
 	}
 	
+	/**
+	 * Translates the widget region of the given verify event into
+	 * the corresponding region of the viewer's document.
+	 * 
+	 * @param event the verify event
+	 * @return the region of the viewer's document corresponding to the verify event
+	 * @since 2.1
+	 */
 	protected IRegion event2ModelRange(VerifyEvent event) {
 
 		Region region= null;
@@ -4018,12 +4194,28 @@ public class TextViewer extends Viewer implements
 		return widgetRange2ModelRange(region);
 	}
 	
+	/**
+	 * Translates the given widget selection into the corresponding region
+	 * of the viewer's document.
+	 * 
+	 * @param widgetSelection the widget selection
+	 * @return the region of the viewer's document corresponding to the widget selection
+	 * @since 2.1
+	 */
 	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
 		IRegion region= new Region(widgetSelection.x, widgetSelection.y);
 		region= widgetRange2ModelRange(region);
 		return region == null ? null : new Point(region.getOffset(), region.getLength());
 	}
-		
+	
+	/**
+	 * Translates the given selection range of the viewer's document into
+	 * the corresponding widget range.
+	 * 
+	 * @param modelSelection the selection range of the viewer's document
+	 * @return the widget range corresponding to the selection range
+	 * @since 2.1
+	 */
 	protected Point modelSelection2WidgetSelection(Point modelSelection) {
 		if (fInformationMapping == null)
 			return modelSelection;
@@ -4038,7 +4230,7 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetLineOfWidgetOffset(int)
 	 */
 	public int widgetLineOfWidgetOffset(int widgetOffset) {

@@ -28,7 +28,7 @@ import org.eclipse.swt.custom.StyledText;
  * result window. All methods are result window aware, i.e. ranges outside
  * the result window are always ignored.<p>
  * All iterators provided by a text presentation assume that they enumerate
- * non overlapping, consequtive ranges inside the default range. Thus, all
+ * non overlapping, consecutive ranges inside the default range. Thus, all
  * these iterators do not include the default range. The default style range
  * must be explicitly asked for using <code>getDefaultStyleRange</code>.
  */
@@ -61,14 +61,20 @@ public class TextPresentation {
 	 */
 	class FilterIterator implements Iterator {
 		
+		/** The index of the next style range to be enumerated */
 		protected int fIndex;
+		/** The upper bound of the indices of style ranges to be enumerated */
 		protected int fLength;
+		/** Indicates whether ranges similar to the default range should be enumerated */
 		protected boolean fSkipDefaults;
+		/** The result window */
 		protected IRegion fWindow;
 		
 		/**
 		 * <code>skipDefaults</code> tells the enumeration to skip all those style ranges
 		 * which define the same style as the presentation's default style range.
+		 * 
+		 * @param skipDefaults <code>false</code> if ranges similar to the default range should be enumerated
 		 */
 		protected FilterIterator(boolean skipDefaults) {
 			
@@ -83,7 +89,7 @@ public class TextPresentation {
 		}
 		
 		/*
-		 * @see Iterator#next
+		 * @see Iterator#next()
 		 */
 		public Object next() {
 			try {
@@ -98,14 +104,14 @@ public class TextPresentation {
 		}
 		
 		/*
-		 * @see Iterator#hasNext
+		 * @see Iterator#hasNext()
 		 */
 		public boolean hasNext() {
 			return fIndex < fLength;
 		}
 		
 		/*
-		 * @see Iterator#remove
+		 * @see Iterator#remove()
 		 */
 		public void remove() {
 			throw new UnsupportedOperationException();
@@ -114,7 +120,8 @@ public class TextPresentation {
 		/**
 		 * Returns whether the given object should be skipped.
 		 * 
-		 * @return <code>true</code> if teh object should be skipped by the iterator
+		 * @param o the object to be checked
+		 * @return <code>true</code> if the object should be skipped by the iterator
 		 */
 		protected boolean skip(Object o) {
 			StyleRange r= (StyleRange) o;
@@ -149,7 +156,7 @@ public class TextPresentation {
 	 * Creates a new empty text presentation. <code>sizeHint</code>  tells the 
 	 * expected size of this presentation.
 	 * 
-	 * @param sizeHint teh expected size of this presentation
+	 * @param sizeHint the expected size of this presentation
 	 */
 	public TextPresentation(int sizeHint) {
 		Assert.isTrue(sizeHint > 0);
