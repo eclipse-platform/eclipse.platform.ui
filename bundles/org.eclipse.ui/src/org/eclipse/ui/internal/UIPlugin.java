@@ -98,63 +98,16 @@ public class UIPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		
 		JFacePreferences.setPreferenceStore(store);
-		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
-		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
-		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
-		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
-		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
-		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
-		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
-		store.setDefault(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, false);
-		store.setDefault(IPreferenceConstants.SELECT_ON_HOVER, false);
-		store.setDefault(IPreferenceConstants.OPEN_AFTER_DELAY, false);
-		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
-		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
-		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
-		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
-		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		store.setDefault(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, IWorkbenchConstants.DEFAULT_LAYOUT_ID); 
-		
-		//Set the default error colour to red
-		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
-		//Set the default hyperlink line colour to dark blue
-		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 153));
-		//Set the default active hyperlink line colour to blue
-		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
-		
-		
-		// Temporary option to enable wizard for project capability
-		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
-		// Temporary option to enable single click
-		store.setDefault("SINGLE_CLICK_METHOD", OpenStrategy.DOUBLE_CLICK); //$NON-NLS-1$
-		// Temporary option to enable cool bars
-		store.setDefault("ENABLE_COOL_BARS", true); //$NON-NLS-1$
-		// Temporary option to enable new menu organization
-		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
-			
-
-		FontRegistry registry = JFaceResources.getFontRegistry();
-		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
-		initializeFont(JFaceResources.BANNER_FONT, registry, store);
-		initializeFont(JFaceResources.HEADER_FONT, registry, store);
-		initializeFont(JFaceResources.TEXT_FONT, registry, store);
-		
-		// deprecated constants - keep to be backward compatible
 		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+
+		//Deprecated but kept for backwards compatibility
 		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
-	}
-
-	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
-	
-		FontData[] fontData = registry.getFontData(fontKey);
-		PreferenceConverter.setDefault(store, fontKey, fontData);
 	}
 
 	}

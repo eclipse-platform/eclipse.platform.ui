@@ -352,9 +352,12 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	if (configElement == null)
 		return;
 		
+	AbstractUIPlugin uiPlugin =
+		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		
 	// Retrieve the new project open perspective preference setting
 	String perspSetting =
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+		uiPlugin.getPreferenceStore().getString(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 
 	// Return if do not switch perspective setting

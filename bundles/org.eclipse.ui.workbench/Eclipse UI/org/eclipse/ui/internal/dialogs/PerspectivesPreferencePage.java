@@ -11,6 +11,7 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,6 +28,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PerspectivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
@@ -358,10 +360,24 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		this.workbench = aWorkbench;
 		this.perspectiveRegistry = (PerspectiveRegistry) workbench.getPerspectiveRegistry();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		switchOnNewProject = !IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
-			store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
+		
+		switchOnNewProject = 
+			!IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
+			getUIPublicPreferenceStore().getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+	}
+	
+	/**
+	 * Get the preference store for the API constants (those in
+	 * IWorkbenchPreferenceConstants).
+	 * @return IPreferenceStore
+	 */
+
+	private IPreferenceStore getUIPublicPreferenceStore() {
+		AbstractUIPlugin uiPlugin =
+			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		return uiPlugin.getPreferenceStore();
 	}
 	
 	/**
@@ -370,8 +386,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	protected void performDefaults() {
 		//Project perspective preferences
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				
 		switchOnNewProject = !IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
-			store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
+			getUIPublicPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
 		switchOnNewProjectButton.setSelection(switchOnNewProject);
 
 		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
@@ -444,7 +461,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		else
 			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
 		
-		store.setValue(
+		getUIPublicPreferenceStore().setValue(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 			newProjectPerspectiveSetting);
 

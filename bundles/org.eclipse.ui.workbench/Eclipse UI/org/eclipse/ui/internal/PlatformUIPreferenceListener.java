@@ -7,10 +7,11 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The PlatformUIPreferenceListener is a class that listens to 
@@ -36,9 +37,11 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 			.DEFAULT_PERSPECTIVE_ID
 			.equals(event.getProperty())) {
 			IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+			AbstractUIPlugin uiPlugin =
+				(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 
 			String newValue =
-				workbench.getPreferenceStore().getString(
+				uiPlugin.getPreferenceStore().getString(
 					IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 
 			workbench.getPerspectiveRegistry().setDefaultPerspective(newValue);

@@ -5,11 +5,13 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A menu for window creation in the workbench.  
@@ -91,7 +93,10 @@ private boolean canRun() {
  * @return String
  */
 private String openPerspectiveSetting() {
-	return WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+	
+	AbstractUIPlugin uiPlugin =
+			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+	return uiPlugin.getPreferenceStore().getString(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 }
 /**

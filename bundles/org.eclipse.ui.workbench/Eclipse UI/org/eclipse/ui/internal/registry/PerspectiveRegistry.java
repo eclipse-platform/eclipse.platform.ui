@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Perspective registry.
@@ -128,9 +129,9 @@ public void load() {
 	loadCustom();
 
 	// Get default perspective.
-	
+	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	defPerspID = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		plugin.getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	verifyDefaultPerspective();
 }
 /**
@@ -174,8 +175,11 @@ public void setDefaultPerspective(String id) {
 	IPerspectiveDescriptor desc = findPerspectiveWithId(id);
 	if (desc != null) {
 		defPerspID = id;
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		store.setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
+		AbstractUIPlugin uiPlugin =
+			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+
+		uiPlugin.getPreferenceStore().
+			setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
 	}
 }
 /**
@@ -200,8 +204,10 @@ private void verifyDefaultPerspective() {
 		return;
 
 	// Step 2. Read default value.
+	AbstractUIPlugin uiPlugin =
+		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	defPerspID = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		uiPlugin.getPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	if (defPerspID != null)
 		desc = findPerspectiveWithId(defPerspID);
 	if (desc != null)

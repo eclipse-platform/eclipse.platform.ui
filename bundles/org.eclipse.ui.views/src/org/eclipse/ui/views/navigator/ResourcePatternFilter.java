@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -64,9 +65,8 @@ public String[] getPatterns() {
  * Initializes the filters from the preference store.
  */
 private void initializeFromPreferences() {
-	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	// get the filters that were saved by ResourceNavigator.setFiltersPreference
-	String storedPatterns = plugin.getPreferenceStore().getString(FILTERS_TAG);
+	String storedPatterns = WorkbenchPlugin.getDefault().getPreferenceStore().getString(FILTERS_TAG);
 
 	if (storedPatterns.length() == 0) {
 		// revert to all filter extensions with selected == "true"
