@@ -1,9 +1,12 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
@@ -781,8 +784,14 @@ public RootLayoutContainer getLayout() {
 }
 /**
  * Returns the zoomed part.
+ * <p>
+ * If the zoomed part is an editor, it will be the 
+ * editor which caused the workbook it is in to be zoomed. It may not be the
+ * visible editor. The zoomed part will always be an editor in the zoomed
+ * workbench.
+ * </p>
  */
-public LayoutPart getZoomPart() {
+/*package*/ LayoutPart getZoomPart() {
 	return zoomPart;
 }
 /**
