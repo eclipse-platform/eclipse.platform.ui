@@ -25,4 +25,8 @@
 	<fileModificationValidator class="org.eclipse.team.core.internal.FileModificationValidator"/>
 </extension>
 
+<extension point="org.eclipse.core.resources.moveDeleteHook">
+	<fileModificationValidator class="org.eclipse.team.core.internal.MoveDeleteManager"/>
+</extension>
+
 </plugin>
