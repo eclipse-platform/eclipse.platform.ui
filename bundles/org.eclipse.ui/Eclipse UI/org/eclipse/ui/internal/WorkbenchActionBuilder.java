@@ -302,6 +302,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (usingMenuReorg) {
 			menu.add(revertAction);
 			menu.add(new Separator());
+			menu.add(moveAction);
+			menu.add(renameAction);
+			menu.add(new Separator());
 			menu.add(refreshAction);
 		}
 		
@@ -333,27 +336,27 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private MenuManager createEditMenu() {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
+		
 		menu.add(undoAction);
 		menu.add(redoAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
 		menu.add(new Separator());
+		
 		menu.add(cutAction);
 		menu.add(copyAction);
 		menu.add(pasteAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.CUT_EXT));
 		menu.add(new Separator());
+		
 		menu.add(deleteAction);
-		
-		if (usingMenuReorg) {
-			menu.add(moveAction);
-			menu.add(renameAction);
-		}
-		
 		menu.add(selectAllAction);
 		menu.add(new Separator());
+		
 		menu.add(findAction);
 		menu.add(new Separator());
+		
 		menu.add(addBookmarkAction);
+		
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		return menu;
