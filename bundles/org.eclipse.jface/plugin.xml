@@ -14,7 +14,8 @@
    <requires>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.swt" export="true"/>
-      <import plugin="org.eclipse.core.runtime"/>      
+      <import plugin="org.eclipse.core.runtime"/> 
+      <import plugin="org.eclipse.core.jobs"/>           
    </requires>
 
 </plugin>
