@@ -1,8 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
@@ -19,9 +17,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 
 
@@ -36,171 +32,17 @@ public class JobView extends ViewPart {
 	/* an property of type IAction that is run when link is activated. */
 	static final String PROPERTY_GOTO= "goto"; //$NON-NLS-1$
 
-	/*
-	 * JobsModel change types.
-	 */
-	static final int ADD= 1;
-	static final int REMOVE= 2;
-	static final int REFRESH= 3;
-
-	/*
-	 * Listener for JobsModel changes.
-	 */
-	interface IJobsModelListener {
-		void refresh(int changeType, JobModel jm);
-	}
-	
-	/*
-	 * The model of all Jobs.
-	 * Tracks the ProgressManager.
-	 * Supports "sticky" jobs.
-	 */
-	static class JobsModel {
-	
-		static JobsModel fgJobsModel;
-
-		private ArrayList fJobModels= new ArrayList();
-		private HashMap fJobInfoToJobModel= new HashMap();
-		private ListenerList fListeners= new ListenerList();
-
-		static synchronized JobsModel getJobsModel() {
-			if (fgJobsModel == null)
-				fgJobsModel= new JobsModel();
-			return fgJobsModel;
-		}
-		
-		private JobsModel() {
-			
-			ProgressManager pm= ProgressManager.getInstance();
-			
-			Object[] o= pm.getRootElements(true);
-			for (int i= 0; i < o.length; i++) {
-				JobTreeElement jte= (JobTreeElement) o[i];
-				JobModel jm= new JobModel(jte);
-				fJobModels.add(jm);
-				fJobInfoToJobModel.put(jte, jm);
-			}
-
-			pm.addListener(new IJobProgressManagerListener() {
-				public void addJob(JobInfo info) {
-					add(info);
-				}
-				public void refreshJobInfo(JobInfo info) {
-					refresh(info);
-				}
-				public void removeJob(JobInfo info) {
-					remove(info);
-				}
-				
-				public void addGroup(GroupInfo group) {
-					add(group);
-				}
-				public void refreshGroup(GroupInfo group) {
-					refresh(group);
-				}
-				public void removeGroup(GroupInfo group) {
-					remove(group);
-				}
-				
-				public void refreshAll() {
-					fire(REFRESH, null);
-				}
-				public boolean showsDebug() {
-					return false;
-				}
-			});
-		}
-
-		public void addListener(IJobsModelListener listener) {
-			fListeners.add(listener);
-		}
-		
-		public void removeListener(IJobsModelListener listener) {
-			fListeners.remove(listener);
-		}
-		
-		void fire(int changeType, JobModel jm) {
-			Object[] ls= fListeners.getListeners();
-			for (int i= 0; i < ls.length; i++)
-				((IJobsModelListener)ls[i]).refresh(changeType, jm);
-		}
-		
-		void add(JobTreeElement jte) {
-			JobModel jm= new JobModel(jte);
-			synchronized (fJobModels) {
-				fJobModels.add(jm);
-				fJobInfoToJobModel.put(jte, jm);
-			}
-			fire(ADD, null);
-		}
-
-		void refresh(JobTreeElement jte) {
-			JobModel jm= null;
-			synchronized (fJobModels) {
-				jm= (JobModel) fJobInfoToJobModel.get(jte);
-			}
-			fire(REFRESH, jm);
-		}
-
-		void remove(JobTreeElement jte) {
-			JobModel jm= null;
-			synchronized (fJobModels) {
-				jm= (JobModel) fJobInfoToJobModel.get(jte);
-				if (jm != null) {
-					jm.setTerminated();
-					if (!jm.fKeep) {
-						fJobModels.remove(jm);
-						fJobInfoToJobModel.remove(jte);
-					}
-				}
-			}
-			if (jm != null)
-				fire(jm.fKeep ? REFRESH : REMOVE, jm);
-		}
-		
-		public HashSet getSet() {
-			HashSet set= new HashSet();
-			synchronized (fJobModels) {
-				Object[] os= fJobModels.toArray();
-				for (int i= 0; i < os.length; i++)
-					set.add(os[i]);
-			}
-			return set;
-		}
-
-		public void remove(JobModel model) {
-			synchronized (fJobModels) {
-				fJobModels.remove(model);
-				fJobInfoToJobModel.remove(model.fInfo);
-			}
-			fire(REMOVE, model);
-		}
-
-		public void clearAll() {
-			synchronized (fJobModels) {
-				JobModel[] jms= (JobModel[]) fJobModels.toArray(new JobModel[fJobModels.size()]);
-				for (int i= 0; i < jms.length; i++) {
-					JobModel jm= jms[i];
-					if (jm.fKeep && jm.fTerminated) {
-						fJobModels.remove(jm);
-						fJobInfoToJobModel.remove(jm.fInfo);
-					}
-				}
-			}
-			fire(REMOVE, null);
-		}
-	}
 	
 	/*
 	 * Label with hyperlink capability.
 	 */
 	class Hyperlink extends Canvas implements Listener {
+		final static int MARGINWIDTH = 1;
+		final static int MARGINHEIGHT = 1;
 		boolean hasFocus;
-		String fText;
-		boolean fUnderlined;
-		int marginWidth= 1;
-		int marginHeight= 1;
-		IAction fAction;
+		String text;
+		boolean underlined;
+		IAction gotoAction;
 		
 		Hyperlink(Composite parent, int flags) {
 			super(parent, SWT.NO_BACKGROUND | flags);
@@ -224,7 +66,7 @@ public class JobView extends ViewPart {
 			case SWT.FocusIn :
 				hasFocus = true;
 			case SWT.MouseEnter :
-				if (fUnderlined) {
+				if (underlined) {
 					setForeground(fLink2Color);
 					redraw();
 				}
@@ -232,7 +74,7 @@ public class JobView extends ViewPart {
 			case SWT.FocusOut :
 				hasFocus = false;
 			case SWT.MouseExit :
-				if (fUnderlined) {
+				if (underlined) {
 					setForeground(fLinkColor);
 					redraw();
 				}
@@ -248,15 +90,15 @@ public class JobView extends ViewPart {
 				break;
 			}
 		}
-		void setText(String text) {
-			fText= text != null ? text : ""; //$NON-NLS-1$
+		void setText(String t) {
+			text= t != null ? t : ""; //$NON-NLS-1$
 			redraw();
 		}
 		void setAction(IAction action) {
-			fAction= action;
-			fUnderlined= action != null;
-			setForeground(fUnderlined ? fLinkColor : fTaskColor);
-			if (fUnderlined)
+			gotoAction= action;
+			underlined= action != null;
+			setForeground(underlined ? fLinkColor : fTaskColor);
+			if (underlined)
 				setCursor(fHandCursor);
 			redraw();
 		}
@@ -264,12 +106,12 @@ public class JobView extends ViewPart {
 			checkWidget();
 			int innerWidth= wHint;
 			if (innerWidth != SWT.DEFAULT)
-				innerWidth -= marginWidth * 2;
+				innerWidth -= MARGINWIDTH * 2;
 			GC gc= new GC(this);
 			gc.setFont(getFont());
-			Point extent= gc.textExtent(fText);
+			Point extent= gc.textExtent(text);
 			gc.dispose();
-			return new Point(extent.x + 2 * marginWidth, extent.y + 2 * marginHeight);
+			return new Point(extent.x + 2 * MARGINWIDTH, extent.y + 2 * MARGINHEIGHT);
 		}
 		protected void paint(GC gc) {
 			Rectangle clientArea= getClientArea();
@@ -280,12 +122,12 @@ public class JobView extends ViewPart {
 			bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
 			bufferGC.setFont(getFont());
 			bufferGC.setForeground(getForeground());
-			bufferGC.drawText(fText, marginWidth, marginHeight, true);
-			int sw= bufferGC.stringExtent(fText).x;
-			if (fUnderlined) {
+			bufferGC.drawText(text, MARGINWIDTH, MARGINHEIGHT, true);
+			int sw= bufferGC.stringExtent(text).x;
+			if (underlined) {
 				FontMetrics fm= bufferGC.getFontMetrics();
-				int lineY= clientArea.height - marginHeight - fm.getDescent() + 1;
-				bufferGC.drawLine(marginWidth, lineY, marginWidth + sw, lineY);
+				int lineY= clientArea.height - MARGINHEIGHT - fm.getDescent() + 1;
+				bufferGC.drawLine(MARGINWIDTH, lineY, MARGINWIDTH + sw, lineY);
 			}
 			if (hasFocus)
 				bufferGC.drawFocus(0, 0, sw, clientArea.height);
@@ -294,66 +136,42 @@ public class JobView extends ViewPart {
 			buffer.dispose();
 		}
 		protected void handleActivate() {
-			if (fUnderlined && fAction != null && fAction.isEnabled())
-				fAction.run();
+			if (underlined && gotoAction != null && gotoAction.isEnabled())
+				gotoAction.run();
 		}
 	}
-	
+		
 	/*
-	 * Represents a Job in the JobsModel.
+	 * An SWT widget representing a JobModel
 	 */
-	static class JobModel {
+	class JobItem extends Composite {
+		
+		static final int MARGIN= 2;
+		static final int HGAP= 7;
+		static final int VGAP= 2;
+		static final int MAX_PROGRESS_HEIGHT= 12;
+		static final int MIN_ICON_SIZE= 16;
+
 		private JobTreeElement fInfo;
 		boolean fKeep;
 		boolean fTerminated;
+		boolean fSelected;
+		boolean fProgressIsShown;
+		boolean fTaskIsShown;
 
-		public JobModel(JobTreeElement info) {
-			Assert.isNotNull(info);
-			fInfo= info;
-			Job job= getJob();
-			if (job != null) {
-				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP));
-				if (property instanceof Boolean)
-					fKeep= ((Boolean)property).booleanValue();
-			}			
-			//fKeep= "Synchronizing".equals(getName());
-		}
+		int fCachedWidth= -1;
+		int fCachedHeight= -1;
+		Label fIcon;
+		Label fName;
+		ProgressBar fProgressBar;
+		Hyperlink fTask;
+		ToolBar fActionBar;
+		ToolItem fActionButton;
+		ToolItem fGotoButton;
 		
-		Image getImage(Display display) {
-			Job job= getJob();
-			if (job != null) {
-				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_ICON));
-				if (property instanceof URL) {
-					URL url= (URL) property;
-					ImageDescriptor id= ImageDescriptor.createFromURL(url);
-					return id.createImage(display);
-				}
-			}
-			return null;
-		}
+		/////////////////////////////////////////////////
 		
-		String getName() {
-			if (fInfo instanceof JobInfo) {
-				Job job= ((JobInfo)fInfo).getJob();
-				if (job != null)
-					return job.getName();
-			}
-			return "G" + fInfo.getCondensedDisplayString();
-		}
-		
-		boolean isTerminated() {
-			return fKeep && fTerminated;
-		}
-		
-		boolean isStale() {
-			return fTerminated && !fKeep;
-		}
-		
-		boolean setTerminated() {
-			fTerminated= true;
-			return fKeep && fTerminated;
-		}
-		
+
 		Job getJob() {
 			if (fInfo instanceof JobInfo)
 				return ((JobInfo)fInfo).getJob();
@@ -405,70 +223,37 @@ public class JobView extends ViewPart {
 			return fInfo.getDisplayString();
 		}
 		
-		int getPercentDone() {
-			if (fInfo instanceof JobInfo) {
-				TaskInfo ti= ((JobInfo)fInfo).getTaskInfo();
-				if (ti != null)
-					return ti.getPercentDone();
-			}
-			return -1;
-		}
+		/////////////////////////////////////////////////
 
-		void cancel() {
-			fInfo.cancel();
-		}
-		
-		boolean isCancellable() {
-			return fInfo.isCancellable();
-		}
 
-		public IAction getGotoAction() {
-			Job job= getJob();
-			if (job != null) {
-				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO));
-				if (property instanceof IAction)
-					return (IAction) property;
-			}
-			return null;
-		}
-	}
-	
-	/*
-	 * An SWT widget representing a JobModel
-	 */
-	class JobItem extends Composite {
-		
-		static final int MARGIN= 2;
-		static final int HGAP= 7;
-		static final int VGAP= 2;
-		static final int MAX_PROGRESS_HEIGHT= 12;
-		static final int MIN_ICON_SIZE= 16;
-
-		JobModel fModel;
-		boolean fSelected;
-		boolean fFinished;
-		boolean fInitialized;
-		boolean fProgressIsShown;
-		boolean fTaskIsShown;
-
-		int fLastWorkDone;
-		int fCachedWidth= -1;
-		int fCachedHeight= -1;
-		Label fIcon;
-		Label fName;
-		ProgressIndicator fProgressBar;
-		Hyperlink fTask;
-		ToolBar fActionBar;
-		ToolItem fActionButton;
-		ToolItem fGotoButton;
-		
-		JobItem(Composite parent, JobModel model) {
+		JobItem(Composite parent, JobTreeElement info) {
 			super(parent, SWT.NONE);
 			
-			fModel= model;
+			Assert.isNotNull(info);
+			fInfo= info;
 			
 			Display display= getDisplay();
 
+			Job job= getJob();
+			String jobName= null;
+			IAction gotoAction= null;	
+			Image image= null;
+			if (job != null) {
+				jobName= job.getName();
+				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP));
+				if (property instanceof Boolean)
+					fKeep= ((Boolean)property).booleanValue();
+				property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO));
+				if (property instanceof IAction)
+					gotoAction= (IAction) property;
+				property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_ICON));
+				if (property instanceof URL) {
+					URL url= (URL) property;
+					ImageDescriptor id= ImageDescriptor.createFromURL(url);
+					image= id.createImage(display);
+				}
+			}
+			
 			MouseListener ml= new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
 //					select(JobItem.this);
@@ -478,30 +263,31 @@ public class JobView extends ViewPart {
 			setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			fIcon= new Label(this, SWT.NONE);
-			Image im= fModel.getImage(display);
-			if (im != null)
-				fIcon.setImage(im);				
+			if (image != null)
+				fIcon.setImage(image);				
 			fIcon.addMouseListener(ml);
 			
+			if (jobName == null)
+				jobName= "???" + fInfo.getCondensedDisplayString();
 			fName= new Label(this, SWT.NONE);
 			fName.setFont(fFont);
-			fName.setText(fModel.getName());
+			fName.setText(jobName);
 			fName.addMouseListener(ml);
 			
 			fActionBar= new ToolBar(this, SWT.FLAT);
-			
-			final IAction gotoAction= fModel.getGotoAction();
+						
 			if (false && gotoAction != null) {
+				final IAction gotoAction2= gotoAction;
 				fGotoButton= new ToolItem(fActionBar, SWT.NONE);
 				fGotoButton.setImage(getImage(parent.getDisplay(), "newprogress_goto.gif")); //$NON-NLS-1$
 				fGotoButton.setToolTipText("Show Results");
 				fGotoButton.setEnabled(gotoAction.isEnabled());
 				fGotoButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						if (gotoAction.isEnabled()) {
-							gotoAction.run();
-							if (fFinished)
-								JobsModel.getJobsModel().remove(fModel);
+						if (gotoAction2.isEnabled()) {
+							gotoAction2.run();
+							if (fTerminated)
+								kill(true);
 						}
 					}
 				});
@@ -510,13 +296,14 @@ public class JobView extends ViewPart {
 			fActionButton= new ToolItem(fActionBar, SWT.NONE);
 			fActionButton.setImage(getImage(parent.getDisplay(), "newprogress_cancel.gif")); //$NON-NLS-1$
 			fActionButton.setToolTipText("Cancel Job");
-			fActionButton.setEnabled(true | fModel.isCancellable());
+			fActionButton.setEnabled(true | fInfo.isCancellable());
 			fActionButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (fFinished) {
-						JobsModel.getJobsModel().remove(fModel);
+					if (fTerminated) {
+						kill(true);
 					} else {
-						fModel.cancel();
+						fActionButton.setEnabled(false);
+						fInfo.cancel();
 						setTask("cancelled");
 					}
 				}
@@ -524,11 +311,12 @@ public class JobView extends ViewPart {
 			
 			fActionBar.pack();
 
-			fProgressBar= new ProgressIndicator(this);
-			//fProgressBar.beginAnimatedTask();
-			fProgressBar.beginTask(100);
-			fProgressBar.addMouseListener(ml);
 			fProgressIsShown= true;
+			if (false) {
+				fProgressBar= new ProgressBar(this, SWT.HORIZONTAL);
+				fProgressBar.setMaximum(100);
+				fProgressBar.addMouseListener(ml);
+			}
 			
  			fTask= new Hyperlink(this, SWT.NONE);
  			if (gotoAction != null) {
@@ -536,7 +324,7 @@ public class JobView extends ViewPart {
  				fTask.setAction(gotoAction);
  			}
 			fTask.setFont(fSmallFont);
-			fTask.setText(fModel.getTaskName());
+			fTask.setText(getTaskName());
 			fTaskIsShown= true;
 			//fTask.addMouseListener(ml);
 			
@@ -547,15 +335,43 @@ public class JobView extends ViewPart {
 					handleResize();
 				}
 			});
-
-			redraw();
+		}
+		
+		boolean remove() {
+			fTerminated= true;
+			if (fKeep) {
+				if (fProgressBar != null && !fProgressBar.isDisposed()) {
+					fProgressIsShown= false;
+					fProgressBar.setVisible(false);
+				}
+				if (!fActionButton.isDisposed()) {
+					fActionButton.setImage(getImage(fActionBar.getDisplay(), "newprogress_clear.gif")); //$NON-NLS-1$
+					fActionButton.setToolTipText("Remove Job");
+					fActionButton.setEnabled(true);
+				}
+				return false;
+			} else {
+				dispose();
+				return true;				
+			}
+		}
+		
+		boolean kill(boolean refresh) {
+			if (fTerminated) {
+				dispose();
+				if (refresh) {
+					relayout();
+					refreshBackgrounds();
+				}
+				return true;
+			}
+			return false;
 		}
 		
 		void handleResize() {
 			Point e= getSize();
 			Point e1= fIcon.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
 			Point e2= fName.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point e3= fProgressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 			Point e4= fTask.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point e5= fActionBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			
@@ -567,7 +383,8 @@ public class JobView extends ViewPart {
 			fIcon.setBounds(MARGIN, y+(h-e1.y)/2, e1.x, e1.y);
 			fName.setBounds(MARGIN+e1.x+HGAP, y+(h-e2.y)/2, iw-e1.x-HGAP, e2.y);
 			y+= h;
-			if (fProgressIsShown /* fProgressBar.isVisible() */) {
+			if (fProgressIsShown && fProgressBar != null /* fProgressBar.isVisible() */) {
+				Point e3= fProgressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 				y+= VGAP;
 				fProgressBar.setBounds(MARGIN+indent, y, iw-indent, e3.y);
 				y+= e3.y;
@@ -588,15 +405,16 @@ public class JobView extends ViewPart {
 			if (changed || fCachedHeight <= 0 || fCachedWidth <= 0) {
 				Point e1= fIcon.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
 				Point e2= fName.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point e3= fProgressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 				Point e4= fTask.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 //				Point e5= fActionBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				
 				fCachedWidth= MARGIN + e1.x + HGAP + 100 + MARGIN;
 					
 				fCachedHeight= MARGIN + Math.max(e1.y, e2.y);
-				if (fProgressIsShown /* fProgressBar.isVisible() */)
+				if (fProgressIsShown && fProgressBar != null/* fProgressBar.isVisible() */) {
+					Point e3= fProgressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 					fCachedHeight+= VGAP + e3.y;
+				}
 				if (fTaskIsShown /* fTask.isVisible() */)
 					fCachedHeight+= VGAP + e4.y;
 				fCachedHeight+= MARGIN;
@@ -622,26 +440,20 @@ public class JobView extends ViewPart {
 			fName.setBackground(c);
 			fTask.setBackground(c);
 			fActionBar.setBackground(c);
-			fProgressBar.setBackground(c);
 		}
 		
 		/*
 		 * Sets the progress.
 		 */
-		void worked(int percentDone) {
-			if (!fProgressBar.isDisposed()) {
-				if (! fInitialized) {
-					if (percentDone < 0)
-						fProgressBar.beginAnimatedTask();
-					else
-						fProgressBar.beginTask(100);
-					fInitialized= true;
-				}
-				if (percentDone >= 0 && percentDone < 100) {
-					int delta= percentDone-fLastWorkDone;
-					fLastWorkDone= percentDone;
-					fProgressBar.worked(delta);
-				}
+		void setPercentDone(int percentDone) {
+			if (percentDone >= 0 && percentDone < 100) {
+				if (fProgressBar == null) {
+					fProgressBar= new ProgressBar(this, SWT.HORIZONTAL);
+					fProgressBar.setMaximum(100);
+					fProgressBar.setSelection(percentDone);
+					relayout();
+				} else
+					fProgressBar.setSelection(percentDone);
 			}
 		}
 		
@@ -654,35 +466,13 @@ public class JobView extends ViewPart {
 		}
 
 		/*
-		 * Sets the terminated status.
-		 */
-		void setTerminatedStatus(String message) {
-			fFinished= true;
-			if (!fTask.isDisposed()) {
-				if (message != null && message.trim().length() > 0)
-					fTask.setText(message);
-				else
-					fTaskIsShown= false;
-			}
-			if (!fProgressBar.isDisposed()) {
-				fProgressIsShown= false;
-				fProgressBar.setVisible(false);
-			}
-			if (!fActionButton.isDisposed()) {
-				fActionButton.setImage(getImage(fActionBar.getDisplay(), "newprogress_clear.gif")); //$NON-NLS-1$
-				fActionButton.setToolTipText("Remove Job");
-			}
-			relayout();
-		}
-
-		/*
 		 * Update the visual item from the model.
 		 */
 		void refresh() {
 			
-			if (fModel.isTerminated()) {
+			if (fKeep && fTerminated) {
 				String message= null;
-				Job job= fModel.getJob();
+				Job job= getJob();
 				if (job != null) {
 					IStatus result= job.getResult();
 					if (result != null) {
@@ -691,14 +481,17 @@ public class JobView extends ViewPart {
 							message= m;
 					}
 				}
-				setTerminatedStatus(message);
+				setTask(message);
 				return;
 			}
 			
-			int pd= fModel.getPercentDone();
-			if (pd > 0)
-				worked(pd);
-			setTask(fModel.getTaskName());
+			if (fInfo instanceof JobInfo) {
+				TaskInfo ti= ((JobInfo)fInfo).getTaskInfo();
+				if (ti != null)
+					setPercentDone(ti.getPercentDone());
+			}
+			
+			setTask(getTaskName());
 		}
 	}
 	
@@ -715,8 +508,8 @@ public class JobView extends ViewPart {
 
 	private Composite fContent;
 	private ScrolledComposite fScrolledComposite;
-	private IAction fClearAllAction;
-	private IAction fVerboseAction;
+	private IAction clearAllAction;
+	private IAction verboseAction;
 	
 
 	/**
@@ -731,27 +524,27 @@ public class JobView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		
-//		ProgressViewUpdater pvu= ProgressViewUpdater.getSingleton();
-//		pvu.addCollector(new IProgressUpdateCollector() {
-//			public void refresh() {
-//				System.out.println("refreshAll");
-//			}
-//			public void refresh(Object[] elements) {
-//				System.out.println("refresh2");
-//				for (int i= 0; i < elements.length; i++)
-//					System.out.println("  " + elements[i]);
-//			}
-//			public void add(Object[] elements) {
-//				System.out.println("add");
-//				for (int i= 0; i < elements.length; i++)
-//					System.out.println("  " + elements[i]);
-//			}
-//			public void remove(Object[] elements) {
-//				System.out.println("remove");
-//				for (int i= 0; i < elements.length; i++)
-//					System.out.println("  " + elements[i]);
-//			}
-//		});
+		final IProgressUpdateCollector puc= new IProgressUpdateCollector() {
+			public void refresh(Object[] elements) {
+				for (int i= 0; i < elements.length; i++) {
+					JobItem ji= find(((JobTreeElement) elements[i]));
+					if (ji != null)
+						ji.refresh();
+				}
+			}
+			public void add(Object[] elements) {
+				add2(elements);
+			}
+			public void remove(Object[] elements) {
+				remove2(elements);
+			}
+			public void refresh() {
+				refreshAll2();
+			}
+		};
+		
+		final ProgressViewUpdater pvu= ProgressViewUpdater.getSingleton();
+		pvu.addCollector(puc);
 		
 		Display display= parent.getDisplay();
 		fHandCursor= new Cursor(display, SWT.CURSOR_HAND);
@@ -790,36 +583,27 @@ public class JobView extends ViewPart {
 		layout.numColumns= 1;
 		layout.marginHeight= layout.marginWidth= layout.verticalSpacing= 0;
 		fContent.setLayout(layout);
-
-		// register with model
-		JobsModel jobsmodel= JobsModel.getJobsModel();
-		jobsmodel.addListener(new IJobsModelListener() {
-			public void refresh(final int changeType, final JobModel jm) {
-				if (fContent != null && !fContent.isDisposed()) {
-					fContent.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							intRefresh(changeType, jm);
-						}
-					});
-				}				
+		
+		fContent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				pvu.removeCollector(puc);				
 			}
 		});
-
-		// initially sync view with model
-		intRefresh(REFRESH, null);
+		
+		refreshAll2();
 
 		// build the actions
-		fClearAllAction= new Action() {
+		clearAllAction= new Action() {
 			public void run() {
-				JobsModel.getJobsModel().clearAll();
+				clearAll();
 			}
 		};
-		fClearAllAction.setText(ProgressMessages.getString("ProgressView.ClearAllAction")); //$NON-NLS-1$
-		ImageDescriptor id= getImageDescriptor("newprogress_clearall.gif"); //$NON-NLS-1$
+		clearAllAction.setText(ProgressMessages.getString("ProgressView.ClearAllAction")); //$NON-NLS-1$	
+		ImageDescriptor id= ImageDescriptor.createFromFile(JobView.class, "newprogress_clearall.gif"); //$NON-NLS-1$
 		if (id != null)
-			fClearAllAction.setImageDescriptor(id);
+			clearAllAction.setImageDescriptor(id);
 		
-		fVerboseAction= new Action(ProgressMessages.getString("ProgressView.VerboseAction"), //$NON-NLS-1$
+		verboseAction= new Action(ProgressMessages.getString("ProgressView.VerboseAction"), //$NON-NLS-1$
 							IAction.AS_CHECK_BOX) {
 			public void run() {
 				/*
@@ -833,57 +617,71 @@ public class JobView extends ViewPart {
 
 		IActionBars bars= getViewSite().getActionBars();
 		IMenuManager mm= bars.getMenuManager();
-		mm.add(fClearAllAction);
-		mm.add(fVerboseAction);
+		mm.add(clearAllAction);
+		mm.add(verboseAction);
 		
 		IToolBarManager tm= bars.getToolBarManager();
-		tm.add(fClearAllAction);
+		tm.add(clearAllAction);
 	}
 	
-	private void intRefresh(int changeType, JobModel jobModel) {
-		
-		if (jobModel != null) {
-			JobItem ji;
-			switch (changeType) {
-			case REFRESH:
-				ji= find(jobModel);
-				if (ji != null)
-					ji.refresh();
-				return;
-			case ADD:
-				new JobItem(fContent, jobModel);
-				relayout();
-				refreshBackgrounds();		
-				return;
-			case REMOVE:
-				ji= find(jobModel);
-				if (ji != null)
-					ji.dispose();
-				relayout();
-				refreshBackgrounds();		
-				return;
-			}
+	void clearAll() {
+		Control[] children= fContent.getChildren();
+		boolean changed= false;
+		for (int i= 0; i < children.length; i++)
+			changed |= ((JobItem)children[i]).kill(false);
+		if (changed) {
+			relayout();
+			refreshBackgrounds();
 		}
+	}
+	
+	private void add2(Object[] elements) {
+		for (int i= 0; i < elements.length; i++) {
+			JobTreeElement jte= (JobTreeElement) elements[i];
+			new JobItem(fContent, jte);
+		}
+		relayout();
+		refreshBackgrounds();		
+	}
+	
+	private void remove2(Object[] elements) {
+		boolean changed= false;
+		for (int i= 0; i < elements.length; i++) {
+			JobTreeElement jte= (JobTreeElement) elements[i];
+			JobItem ji= find(jte);
+			if (ji != null)
+				changed |= ji.remove();
+		}
+		if (changed) {
+			relayout();
+			refreshBackgrounds();
+		}
+	}
+	
+	private void refreshAll2() {
+		JobTreeElement[] roots= ProgressManager.getInstance().getRootElements(ProgressViewUpdater.getSingleton().debug);
 		
-		JobsModel jobsmodel= JobsModel.getJobsModel();
-		HashSet modelJobs= jobsmodel.getSet();
+		HashSet modelJobs= new HashSet();
+		for (int z= 0; z < roots.length; z++)
+			modelJobs.add(roots[z]);
+		
 		HashSet shownJobs= new HashSet();
 		
 		// find all removed
 		Control[] children= fContent.getChildren();
 		for (int i= 0; i < children.length; i++) {
-			JobModel jm= ((JobItem)children[i]).fModel;
-			shownJobs.add(jm);
-			if (!modelJobs.contains(jm))
-				children[i].dispose();
+			JobItem ji= (JobItem)children[i];
+			JobTreeElement jte= ji.fInfo;
+			shownJobs.add(jte);
+			if (!modelJobs.contains(jte))
+				ji.remove();
 		}
 		
 		// find all added
-		JobModel[] jobs= (JobModel[]) modelJobs.toArray(new JobModel[modelJobs.size()]);
-		for (int i= 0; i < jobs.length; i++) {
-			JobModel jm= jobs[i];
-			if (!shownJobs.contains(jm) && !jm.isStale())
-				new JobItem(fContent, jm);
+		for (int i= 0; i < roots.length; i++) {
+			JobTreeElement jte= roots[i];
+			if (!shownJobs.contains(jte))
+				new JobItem(fContent, jte);
 		}
 		
 		// refresh
@@ -891,11 +689,11 @@ public class JobView extends ViewPart {
 		refreshBackgrounds();
 	}
 	
-	private JobItem find(JobModel jobModel) {
+	private JobItem find(JobTreeElement jte) {
 		Control[] children= fContent.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			JobItem ji= (JobItem) children[i];
-			if (jobModel == ji.fModel)
+			if (jte == ji.fInfo)
 				return ji;
 		}
 		return null;
@@ -951,9 +749,5 @@ public class JobView extends ViewPart {
 		Point size= fContent.computeSize(fContent.getClientArea().x, SWT.DEFAULT);
 		fContent.setSize(size);
 		fScrolledComposite.setMinSize(size);		
-	}
-
-	protected ImageDescriptor getImageDescriptor(String name) {
-		return ImageDescriptor.createFromFile(JobView.class, name);
 	}
 }
