@@ -111,12 +111,13 @@ A.book {
     
 <base target="MainFrame">
 <script language="JavaScript" src="toc.js"></script>
- <script language="JavaScript">
+ 
+<script language="JavaScript"> 
  var extraStyle = "";
  if (isMozilla)
   	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} </style>";
  else if (isIE50)
- 	 extraStyle = "<style type='text/css'>A{ height:10px;} </style>";
+ 	 extraStyle = "<style type='text/css'>A, A:visited, A:hover, A:link{ height:10px;} </style>";
  
  document.write(extraStyle);
 </script>
