@@ -12,15 +12,18 @@ package org.eclipse.ui.externaltools.internal.variable;
 
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -76,7 +79,18 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(PlatformUI.getWorkbench());
 		GridData data = new GridData(GridData.FILL_BOTH);
-		viewer.getTable().setLayoutData(data);
+		Table table= viewer.getTable();
+		table.setLayoutData(data);
+		
+		if (table.getItemCount() > 0) {
+			table.setSelection(new TableItem[]{table.getItems()[0]});
+		}
+					
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				validate();
+			}
+		});
 	}
 
 	/**
@@ -117,5 +131,11 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		setIsValid(isValid);
 		getPage().updateValidState();
 	}
-
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.externaltools.internal.variable.IVariableComponent#dispose()
+	 */
+	public void dispose() {
+		labelProvider.dispose();
+	}
 }

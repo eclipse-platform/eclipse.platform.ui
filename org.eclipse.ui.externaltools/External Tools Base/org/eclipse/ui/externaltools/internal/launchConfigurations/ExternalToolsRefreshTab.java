@@ -236,6 +236,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		}
 		return IMessageProvider.NONE;
 	}
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
@@ -245,5 +246,13 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return getErrorMessage() == null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		variableForm.dispose();
+		super.dispose();
 	}
 }

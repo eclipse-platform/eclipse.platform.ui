@@ -75,4 +75,11 @@ public interface IVariableComponent {
 	 * user and updates it's valid state if needed
 	 */
 	public void validate();
+	
+	/**
+	 * Notifies this variable component that it has
+	 * been disposed. Marks the end of this component's lifecycle,
+	 * allowing this component to perform any cleanup required.
+	 */
+	public void dispose();
 }

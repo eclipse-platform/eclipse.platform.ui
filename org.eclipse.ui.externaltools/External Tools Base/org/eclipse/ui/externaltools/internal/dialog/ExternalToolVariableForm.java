@@ -220,4 +220,11 @@ public class ExternalToolVariableForm {
 			components[activeComponentIndex].validate();
 		}
 	}
+	
+	public void dispose() {
+		for (int i = 0; i < components.length; i++) {
+			IVariableComponent varComponent = components[i];
+			varComponent.dispose();
+		}
+	}
 }

@@ -100,4 +100,10 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	public void validate() {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.variable.IVariableComponent#dispose()
+	 */
+	public void dispose() {
+		//by default do nothing
+	}
 }
