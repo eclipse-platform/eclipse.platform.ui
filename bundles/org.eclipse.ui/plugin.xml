@@ -585,6 +585,11 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.edit.delete"
+            keySequence="DEL"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.edit.selectAll"
             keySequence="Ctrl+A"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
