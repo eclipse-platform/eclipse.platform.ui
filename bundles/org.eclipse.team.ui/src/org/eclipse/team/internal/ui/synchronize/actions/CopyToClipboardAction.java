@@ -34,6 +34,8 @@ import org.eclipse.ui.part.ResourceTransfer;
  */
 class CopyToClipboardAction extends SelectionListenerAction {
     
+    private static final String EOL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+    
     private final static String ID= TeamUIPlugin.PLUGIN_ID + ".synchronize.action.copy";  //$NON-NLS-1$
     
     private final Shell fShell;
@@ -48,47 +50,41 @@ class CopyToClipboardAction extends SelectionListenerAction {
         setId(ID);
     }
     
-    
     public void run() {
-		List selectedResources = getSelectedResources();
-		List selectedNonResources = getSelectedNonResources();
-		if (selectedResources.size() > 0) {
-			copyResources(selectedResources);
-		} else if (selectedNonResources.size() > 0) {
-			copyObjects(selectedNonResources);
-		}
+		copyResources(getSelectedResources(), getTextualClipboardContents());
 	}
     
-    private void copyObjects(List selectedNonResources) {
+    /*
+     * Return a text representation of all selected elements.
+     * Use the name from the tree node so what is copied
+     * matches what appears in the tree.
+     */
+    private String getTextualClipboardContents() {
 		StringBuffer buf = new StringBuffer();
 		int i = 0;
-		for (Iterator it = selectedNonResources.iterator(); it.hasNext();) {
-			Object element = (Object) it.next();
+		for (Iterator it = getStructuredSelection().iterator(); it.hasNext();) {
+			Object element = it.next();
 			if (element instanceof ITypedElement) {
 				if (i > 0)
-					buf.append("\n"); //$NON-NLS-1$
+					buf.append(EOL);
 				buf.append(((ITypedElement)element).getName());
 				i++;
 			}
 		}
-		setClipboard(new IResource[0], null, buf.toString());
+		return buf.toString();
 	}
 
-	private void copyResources(List selectedResources) {
+	private void copyResources(List selectedResources, String text) {
 		IResource[] resources = (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
 		// Get the file names and a string representation
 		final int length = resources.length;
 		int actualLength = 0;
 		String[] fileNames = new String[length];
-		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < length; i++) {
 			final IPath location = resources[i].getLocation();
 			// location may be null. See bug 29491.
 			if (location != null)
 				fileNames[actualLength++] = location.toOSString();
-			if (i > 0)
-				buf.append("\n"); //$NON-NLS-1$
-			buf.append(resources[i].getName());
 		}
 		// was one or more of the locations null?
 		if (actualLength < length) {
@@ -97,7 +93,7 @@ class CopyToClipboardAction extends SelectionListenerAction {
 			for (int i = 0; i < actualLength; i++)
 				fileNames[i] = tempFileNames[i];
 		}
-		setClipboard(resources, fileNames, buf.toString());
+		setClipboard(resources, fileNames, text);
 	}
 
 	/**
