@@ -500,9 +500,6 @@ private void busyResetPerspective() {
 	SetPagePerspectiveAction action = (SetPagePerspectiveAction) ((ActionContributionItem)item).getAction();
 	action.setPerspective(newPersp.getDesc());
 
-	// Reset the coolbar layout for the reset perspective.
-	newPersp.setToolBarLayout(null);
-
 	// Install new persp.
 	setPerspective(newPersp);
 
@@ -2076,6 +2073,7 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 	if (isZoomed())
 		zoomOut();
 
+	saveToolBarLayout();
 	persp.saveDescAs(newDesc);
 	window.updatePerspectiveShortcut(oldDesc, newDesc, this);
 	

@@ -966,11 +966,7 @@ public IStatus saveState(IMemento memento) {
 		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
 		
 	result.merge(saveState(memento, descriptor, true));
-	// Save the toolbar layout.
-	if (toolBarLayout != null) {
-		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		result.add(toolBarLayout.saveState(childMem));
-	}
+
 	return result;
 }
 /**
@@ -1084,6 +1080,12 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	// Save the layout.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
 	result.add(presentation.saveState(childMem));
+
+	// Save the toolbar layout.
+	if (toolBarLayout != null) {
+		childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		result.add(toolBarLayout.saveState(childMem));
+	}
 
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
