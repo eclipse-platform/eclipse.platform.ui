@@ -30,7 +30,7 @@ public class SearchManager {
 	public SearchManager() {
 		super();
 	}
-	private SearchIndex getIndex(String locale) {
+	public SearchIndex getIndex(String locale) {
 		synchronized (indexes) {
 			Object index = indexes.get(locale);
 			if (index == null) {
@@ -163,7 +163,7 @@ public class SearchManager {
 	 * @throws OperationCanceledException if indexing was cancelled
 	 * @throws Exception if error occured
 	 */
-	private void updateIndex(IProgressMonitor pm, SearchIndex index)
+	public void updateIndex(IProgressMonitor pm, SearchIndex index)
 		throws OperationCanceledException, IndexingOperation.IndexingException {
 		ProgressDistributor progressDistrib = getProgressDistributor(index);
 		progressDistrib.addMonitor(pm);

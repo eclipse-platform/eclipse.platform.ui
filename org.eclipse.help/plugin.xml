@@ -68,6 +68,16 @@
          </run>
       </application>
    </extension>
+<!-- Pre-indexing tool -->
+   <extension
+         id="indexTool"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.help.internal.IndexToolApplication">
+         </run>
+      </application>
+   </extension>
 <!-- Text Analyzers for search -->
    <extension
          id="org.eclipse.help.Analyzer_en"
