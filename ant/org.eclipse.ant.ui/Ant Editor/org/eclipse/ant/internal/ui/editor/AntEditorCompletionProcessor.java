@@ -748,7 +748,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
        List proposals = new ArrayList(250);
        ICompletionProposal proposal;
-       if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
+       if (areTasksOrTypesValidChildren(parentName)) {
         	//use the definitions in the project as that includes more than what is defined in the DTD
 			Project project= antModel.getProjectNode().getProject();
 			Map tasksAndTypes= ComponentHelper.getComponentHelper(project).getAntTypeTable();
@@ -792,17 +792,15 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         	proposals.add(proposal);
         }
         
-        // TODO Templates may define something other than tasks / types
-        // Here we assume that all templates are for tasks / types. I can't 
-        // think of a usecase for templates other than tasks at the moment, but
-        // since users can add templates via the preferences we may need to 
-        // rethink this.
-        // proposals.addAll(getTemplateProposals(document, prefix));
-        
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
     
-    /** 
+    private boolean areTasksOrTypesValidChildren(String parentName) {
+		return parentName == "project" || parentName == "target" || parentName == "sequential" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			|| parentName == "presetdef" || parentName == "parallel" || parentName == "daemons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	/** 
     * Returns all possible proposals that define the structure of a buildfile.
     * 
     * @param document the entire document 
@@ -823,8 +821,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
 		Iterator keys= tasks.keySet().iterator();
 		ICompletionProposal proposal;
+		String key;
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
+			key= (String) keys.next();
 			if (prefix.length() == 0 || key.toLowerCase().startsWith(prefix)) {
 				proposal = newCompletionProposal(document, prefix, key);
 				proposals.add(proposal);
@@ -1218,7 +1217,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	AntProjectNode node= antModel.getProjectNode();
     	if (node != null) {
     		Project antProject= node.getProject();
-    		return (Class)antProject.getTaskDefinitions().get(taskName);
+    		Map tasksAndTypes= ComponentHelper.getComponentHelper(antProject).getAntTypeTable();
+    		return (Class)tasksAndTypes.get(taskName);
     	}
     	return null;
     }
