@@ -12,7 +12,9 @@ package org.eclipse.jface.preference;
 public final class JFacePreferences {
 	
 	//Identifier for the Error Colour
-	public static final String ERROR_COLOUR = "ERROR_COLOUR"; //$NON-NLS-1$
+	public static final String ERROR_COLOR = "ERROR_COLOR"; //$NON-NLS-1$
+	//Identifier for the Hyperlink Colour
+	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
 
 	
 	private static IPreferenceStore preferenceStore;
