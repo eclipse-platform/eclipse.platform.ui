@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
@@ -52,80 +52,69 @@ class MarkerUtil implements IMarkerConstants {
     }
 
     /**
-     * Creates an image descriptor for the image file referred to by the
-     * given relative path (relative to the icons directory for the plug-in).
-     */
-    static ImageDescriptor createImageDescriptor(String relativePath) {
-       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
-       
-    }
-
-    /**
      * Creates the map of image descriptors.
      */
     static void createImageDescriptors() {
-        String LOCAL = "elcl16/";//$NON-NLS-1$
-        String LOCAL_DISABLED = "dlcl16/";//$NON-NLS-1$
-        String OBJ = "obj16/";//$NON-NLS-1$
+    
 
         imageDescriptors = new HashMap(51);
         imageDescriptors
                 .put(
-                        "header_complete", createImageDescriptor("obj16/header_complete.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "header_complete", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/header_complete.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "header_priority", createImageDescriptor("obj16/header_priority.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "header_priority", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/header_priority.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "task", createImageDescriptor(OBJ + "taskmrk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "task", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/taskmrk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "error", createImageDescriptor(OBJ + "error_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "error", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/error_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "warn", createImageDescriptor(OBJ + "warn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "warn", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/warn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "info", createImageDescriptor(OBJ + "info_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "info", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/info_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "hprio", createImageDescriptor(OBJ + "hprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "hprio", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/hprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "lprio", createImageDescriptor(OBJ + "lprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "lprio", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/lprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "complete_tsk", createImageDescriptor(OBJ + "complete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "complete_tsk", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/complete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "incomplete_tsk", createImageDescriptor(OBJ + "incomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "incomplete_tsk", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/incomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "gotoobj", createImageDescriptor(LOCAL + "gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "gotoobj", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "addtsk", createImageDescriptor(LOCAL + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "addtsk", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "addtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "addtsk_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showcomplete", createImageDescriptor(LOCAL + "showcomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showcomplete", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/showcomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "selected_mode", createImageDescriptor(LOCAL + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "selected_mode", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "selected_mode_disabled", createImageDescriptor(LOCAL_DISABLED + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "selected_mode_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showchild_mode", createImageDescriptor(LOCAL + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showchild_mode", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showchild_mode_disabled", createImageDescriptor(LOCAL_DISABLED + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showchild_mode_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showerr_disabled", createImageDescriptor(LOCAL_DISABLED + "showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showerr_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showwarn_disabled", createImageDescriptor(LOCAL_DISABLED + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showwarn_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors
                 .put(
-                        "showtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                        "showtsk_disabled", IDEWorkbenchPlugin.getIDEImageDescriptor("dlcl16/showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
         imageDescriptors.put(
-                "filter", createImageDescriptor(LOCAL + "filter_ps.gif"));//$NON-NLS-2$//$NON-NLS-1$
+                "filter", IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.gif"));//$NON-NLS-2$//$NON-NLS-1$
     }
 
     /**

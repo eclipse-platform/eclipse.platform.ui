@@ -69,7 +69,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -221,7 +221,7 @@ public class BookmarkNavigator extends ViewPart {
         // Create the actions.
         openAction = new OpenBookmarkAction(this);
         openAction
-                .setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
+                .setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 
         copyAction = new CopyBookmarkAction(this);
         copyAction.setImageDescriptor(sharedImages

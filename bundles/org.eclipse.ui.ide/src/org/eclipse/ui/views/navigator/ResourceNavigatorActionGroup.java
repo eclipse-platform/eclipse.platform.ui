@@ -15,7 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This is the action group for all the resource navigator actions.
@@ -50,7 +50,7 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
      * Returns the image descriptor with the given relative path.
      */
     protected ImageDescriptor getImageDescriptor(String relativePath) {
-       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
+       return IDEWorkbenchPlugin.getIDEImageDescriptor(relativePath);
      
     }
 

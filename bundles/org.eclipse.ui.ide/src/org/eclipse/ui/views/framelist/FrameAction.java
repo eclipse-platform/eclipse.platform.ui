@@ -11,10 +11,8 @@
 package org.eclipse.ui.views.framelist;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Abstract superclass for actions dealing with frames or a frame list.
@@ -54,13 +52,6 @@ public abstract class FrameAction extends Action {
      */
     public FrameList getFrameList() {
         return frameList;
-    }
-
-    /**
-     * Returns the image descriptor with the given relative path.
-     */
-    static ImageDescriptor getImageDescriptor(String relativePath) {
-		return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
     }
 
     /**
