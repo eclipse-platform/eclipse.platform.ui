@@ -379,7 +379,7 @@ public final class DebugEvent extends EventObject {
 				buf.append("EVALUATION"); //$NON-NLS-1$
 				break;
 			case EVALUATION_IMPLICIT:
-				buf.append("EVALUATION_READ_ONLY"); //$NON-NLS-1$
+				buf.append("EVALUATION_IMPLICIT"); //$NON-NLS-1$
 				break;								
 			case STATE:
 				buf.append("STATE"); //$NON-NLS-1$
