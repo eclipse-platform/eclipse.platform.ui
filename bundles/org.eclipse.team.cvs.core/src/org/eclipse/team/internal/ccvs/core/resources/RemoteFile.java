@@ -112,7 +112,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	public RemoteFile toRevision(String revision) {
-		return new RemoteFile(parent, getName(), revision, new CVSTag());
+		return new RemoteFile(parent, getName(), revision, CVSTag.DEFAULT);
 	}
 	
 		/**

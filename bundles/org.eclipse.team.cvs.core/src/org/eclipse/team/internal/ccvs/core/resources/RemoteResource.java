@@ -100,7 +100,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	/*
 	 * @see ICVSResource#isManaged()
 	 */
-	public boolean isManaged() throws CVSException {
+	public boolean isManaged() {
 		return true;
 	}
 

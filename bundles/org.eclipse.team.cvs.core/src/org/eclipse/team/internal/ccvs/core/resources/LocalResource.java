@@ -14,21 +14,28 @@ import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
- * Implements the ICVSResource interface on top of an 
- * instance of the ICVSResource interface
+ * Represents handles to CVS resource on the local file system. Synchronization
+ * information is taken from the CVS subdirectories. 
  * 
- * @see ICVSResource
+ * @see LocalFolder
+ * @see LocalFile
  */
 public abstract class LocalResource implements ICVSResource {
 
-	static final String PLATFORM_NEWLINE = FileUtil.PLATFORM_NEWLINE;
-	static final String SERVER_NEWLINE = "\n";
+	/**
+	 * The seperator that must be used when creating CVS resource paths. Never use
+	 * the platform default seperator since it is not compatible with CVS resources.
+	 */
+	protected static final String SEPARATOR = "/";
 	
-	static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();
-	static final byte[] SERVER_NEWBYTE = SERVER_NEWLINE.getBytes();
-	
+	/**
+	 * The local file represented by this handle.
+	 */
 	File ioResource;
 	
+	/**
+	 * A local handle 
+	 */
 	public LocalResource(File ioResource) {
 		this.ioResource = ioResource;
 	}
@@ -95,8 +102,12 @@ public abstract class LocalResource implements ICVSResource {
 	/**
 	 * @see ICVSResource#isManaged()
 	 */
-	public boolean isManaged() throws CVSException {
-		return getSyncInfo() != null;
+	public boolean isManaged() {
+		try {
+			return getSyncInfo() != null;
+		} catch(CVSException e) {
+			return false;
+		}
 	}
 			
 	/**
@@ -112,29 +123,14 @@ public abstract class LocalResource implements ICVSResource {
 		}
 	}
 			
-	/**
-	 * Implement the hashcode on the underlying strings, like it
-	 * is done in the equals.
-	 */
-	public int hashCode() {
-		return getPath().hashCode();
-	}	
-	
-	/**
+	/*
 	 * @see ICVSResource#getPath()
 	 */
 	public String getPath() {
 		return ioResource.getAbsolutePath();
 	}	
 	
-	/**
-	 * Give the pathname back
-	 */
-	public String toString() {
-		return getPath();
-	}
-
-	/**
+	/*
 	 * @see ICVSResource#isFolder()
 	 */
 	public boolean isFolder() {
@@ -155,10 +151,24 @@ public abstract class LocalResource implements ICVSResource {
 		Synchronizer.getInstance().setSyncInfo(ioResource, info);		
 	}
 	
-	/**
+	/*
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
 		Synchronizer.getInstance().flushSyncInfo(ioResource, IResource.DEPTH_INFINITE);
 	}			
+	
+	/*
+	 * Implement the hashcode on the underlying strings, like it is done in the equals.
+	 */
+	public int hashCode() {
+		return getPath().hashCode();
+	}	
+	
+	/*
+	 * Give the pathname back
+	 */
+	public String toString() {
+		return getPath();
+	}
 }

@@ -28,30 +28,35 @@ import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
- * Implements the IManagedFile interface on top of an 
- * instance of the ICVSFile interface
+ * Represents handles to CVS resource on the local file system. Synchronization
+ * information is taken from the CVS subdirectories. 
  * 
- * @see IManagedFile
+ * @see LocalFolder
+ * @see LocalFile
  */
 public class LocalFile extends LocalResource implements ICVSFile {
+
+	/**
+	 * Constants for file transfer transformations to the CVS server.
+	 */
+	protected static final String PLATFORM_NEWLINE = FileUtil.PLATFORM_NEWLINE;
+	protected static final String SERVER_NEWLINE = "\n";
+	
+	protected static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();
+	protected static final byte[] SERVER_NEWBYTE = SERVER_NEWLINE.getBytes();
+
 	
 	/**
-	 *
+	 * Create a handle based on the given local resource.
 	 */
 	public LocalFile(File file) {
 		super(file);
 	}
 
-	/**
-	 * @see IManagedFile#getSize()
-	 */
 	public long getSize() {
 		return ioResource.length();
 	}
 
-	/**
-	 * @see IManagedFile#reciveFrom(OutputStream, IProgressMonitor)
-	 */
 	public void receiveFrom(InputStream in, 
 							 IProgressMonitor monitor, 
 							 long size, 
@@ -89,9 +94,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		}
 	}
 
-	/**
-	 * @see IManagedFile#sendTo(InputStream, IProgressMonitor, long)
-	 */
 	public void sendTo(
 		OutputStream out,
 		IProgressMonitor monitor,
@@ -113,16 +115,11 @@ public class LocalFile extends LocalResource implements ICVSFile {
 				out.write(("" + getSize()).getBytes());
 				out.write(SERVER_NEWLINE.getBytes());
 				transferWithProgress(in,out,size,monitor,title);
-				
-				// System.out.println("BinarySending: " + getName() + "(" + size + ")");
-				
 			} else {
 				
 				// In this case the size has to be computed.
 				// Therefore we do send the size in transferText
 				transferText(in,out,getSize(),monitor,title,true);
-
-				// System.out.println("TextSending: " + getName() + "(" + size + ")");
 			}
 			
 			in.close();
@@ -131,9 +128,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 			throw CVSException.wrapException(e);
 		}	
 	}	
-	/**
-	 * @see IManagedFile#getTimeStamp()
-	 */
+
 	public String getTimeStamp() throws CVSFileNotFoundException {
 						
 		FileDateFormat df = new FileDateFormat();
@@ -141,9 +136,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		return df.formatMill(ioResource.lastModified());
 	}
  
-	/**
-	 * @see IManagedFile#setTimeStamp(long)
-	 */
 	public void setTimeStamp(String date) throws CVSException {
 		
 		long millSec;
@@ -165,18 +157,10 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		ioResource.setLastModified(millSec);
 	}
 
-	/**
-	 * @see ICVSResource#isFolder()
-	 */
 	public boolean isFolder() {
 		return false;
 	}
 	
-	/**
-	 * Send/Recive a textFile from/to the server. It does the conversion
-	 * of the newlines and sends the filesize to the server (only on a 
-	 * send)
-	 */
 	protected static void transferText(InputStream in,
 											OutputStream out,
 											long size,
@@ -226,13 +210,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		out.write(buffer);	
 	}
 		
-	/**
-	 * Transfer an InputStream to an OutputStream
-	 * and update the monitor in between.
-	 * 
-	 * Used for saving files from server
-	 * on disc, etc.
-	 */
 	protected static void transferWithProgress(
 		InputStream in,
 		OutputStream out,
@@ -267,9 +244,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		}
 	}
 	
-	/**
-	 * @see IManagedFile#isDirty()
-	 */
 	public boolean isDirty() throws CVSException {
 		if (!exists() || !isManaged()) {
 			return true;
@@ -279,16 +253,10 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		}
 	}
 
-	/**
-	 * @see ICVSResource#accept(ICVSResourceVisitor)
-	 */
 	public void accept(ICVSResourceVisitor visitor) throws CVSException {
 		visitor.visitFile(this);
 	}
 
-	/**
-	 * @see IManagedFile#moveTo(IManagedFile)
-	 */
 	public void moveTo(ICVSFile mFile) throws CVSException {
 		
 		LocalFile file;
@@ -307,17 +275,10 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		}
 	}
 
-	public File getFile() {
+	File getFile() {
 		return ioResource;
 	}
-	
-	/**
-	 * @see IManagedFile#getContent()
-	 */
-	public String[] getContent() throws CVSException {
-		return FileUtil.readLines(ioResource);
-	}
-	
+
 	/**
 	 * @see ICVSResource#getRemoteLocation()
 	 */

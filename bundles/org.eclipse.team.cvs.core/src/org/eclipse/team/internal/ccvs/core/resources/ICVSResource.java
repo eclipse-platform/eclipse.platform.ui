@@ -14,73 +14,86 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
  * free to manipulate handles for CVS resources that do not exist but be aware
  * that some methods require that an actual resource be available.
  * <p>
- * The CVS client has been designed work on these handles uniquely. As such, the
+ * The CVS client has been designed to work on these handles uniquely. As such, the
  * handle could be to a remote resource or a local resource and the client could
  * perform CVS operations ignoring the actual location of the resources.</p>
  * 
- * @see 
+ * @see ICVSFolder
+ * @see ICVSFile
  */
 public interface ICVSResource {
 	
 	/**
-	 * The CVS separator that is used in the client/server protocol for
-	 * building paths. This is independant of the system separator
-	 */
-	public static final String SEPARATOR = "/";
-	
-	/**
 	 * Answers the name of the resource.
+	 * 
+	 * @return the name of the resource this handle represents. It can never
+	 * be <code>null</code>.
 	 */
 	public String getName();
 	
 	/**
-	 * Answer whether the resource is managed by it's parent. In general CVS terms, 
-	 * this means that the parent folder has an entry for the given resource in 
-	 * its CVS/Entries file.
+	 * Answers if this resource has CVS synchronization information associated
+	 * with it.
+	 * 
+	 * @return <code>true</code> if the resource is
 	 */
-	public boolean isManaged() throws CVSException;
+	public boolean isManaged();
 
 	/**
-	 * Unmanage the given resource by purging any CVS information  associated with the 
+	 * Unmanage the given resource by purging any CVS synchronization associated with the 
 	 * resource. The only way a resource can become managed is by running the 
 	 * appropriate CVS commands (e.g. add/commit/update).
 	 */
 	public void unmanage() throws CVSException;
 
 	/**
-	 * Answer whether the resource is to be ignored or not.
+	 * Answer whether the resource could be ignored because it is in the one of the 
+	 * ignore lists maintained by CVS. Even if a resource is ignored, it can still be
+	 * added to a repository, at which time it should never be ignored by the CVS
+	 * client.
+	 * 
+	 * @return <code>true</code> if this resource is listed in one of the ignore
+	 * files maintained by CVS and <code>false</code> otherwise.
 	 */
 	public boolean isIgnored() throws CVSException;
 	
 	/**
 	 * Answers if the handle is a file or a folder handle.
+	 * 
+	 * @return <code>true</code> if this is a folder handle and <code>false</code> if
+	 * it is a file handle.
 	 */
-	boolean isFolder();
+	public boolean isFolder();
 	
 	/**
 	 * Answers if the resource identified by this handle exists.
+	 * 
+	 * @return <code>true</code> if the resource represented by this handle
+	 * exists and <code>false</code> false otherwise.
 	 */
-	boolean exists();	
+	public boolean exists() throws CVSException;	
 
 	/**
-	 * Gives the path from the root folder to this folder.
+	 * Answers a relative path to the given ancestor.
+	 * 
+	 * @return the ancestor relative path for this resource.
 	 */
-	String getRelativePath(ICVSFolder ancestor) throws CVSException;
+	public String getRelativePath(ICVSFolder ancestor) throws CVSException;
 
 	/**
-	 * Get the remote location of a file either by reading it out of the
-	 * file-info or by asking the parent-directory for it and appending the
-	 * own name (recursivly).It stops recuring when it hits stopSearching.
-	 * If you want to get the remoteLocation of the currentFolder only then
-	 * use it with getRemoteLocation(this).
+	 * Get the remote location of a resource.
+	 * 
+	 * @return the remote location.
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException;
 	
 	/**
-	 * Answers the workspace synchronization information for this resource or
-	 * <code>null</code> if the resource does not have any. This would typically
-	 * include information from the <b>Entries</b> file that is used to track
-	 * the base revision of a local CVS resource.
+	 * Answers the workspace synchronization information for this resource. This would 
+	 * typically include information from the <b>Entries</b> file that is used to track
+	 * the base revisions of local CVS resources.
+	 * 
+	 * @return the synchronization information for this resource, or <code>null</code>
+	 * if the resource does not have synchronization information available.
 	 */
 	public ResourceSyncInfo getSyncInfo() throws CVSException;
 	
@@ -88,19 +101,23 @@ public interface ICVSResource {
 	 * Called to set the workspace synchronization information for a resource. To
 	 * clear sync information call <code>unmanage</code>. The sync info will
 	 * become the persisted between workbench sessions.
+	 * 
+	 * @param info the resource synchronization to associate with this resource.
 	 */	
 	public void setSyncInfo(ResourceSyncInfo info) throws CVSException;
 
 	/** 
-	 * Delete the resource deep.
+	 * Deletes the resource represented by the handle.
 	 */
-	void delete();
+	public void delete() throws CVSException;
 	
 	/**
 	 * Give the folder that contains this resource. If the resource is not managed 
 	 * then the result of the operation is not specified.
+	 * 
+	 * @return a handle to the parent of this resource.
 	 */
-	ICVSFolder getParent();
+	public ICVSFolder getParent();
 
 	/**
 	 * Accept a vistor to this resource.

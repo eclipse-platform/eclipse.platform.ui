@@ -34,7 +34,7 @@ public class CVSRepositoryRootElement extends CVSModelElement {
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof ICVSRepositoryLocation)) return null;
 		return new Object[] {
-			new BranchTag(new CVSTag(), (ICVSRepositoryLocation)o),
+			new BranchTag(CVSTag.DEFAULT, (ICVSRepositoryLocation)o),
 			new BranchCategory((ICVSRepositoryLocation)o),
 			new VersionCategory((ICVSRepositoryLocation)o)
 		};

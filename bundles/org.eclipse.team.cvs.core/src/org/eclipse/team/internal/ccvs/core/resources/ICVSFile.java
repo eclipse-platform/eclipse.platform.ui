@@ -12,81 +12,62 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
- * The managedFile gives you an FileProperties-Object, that
- * conains CVS-specific information about a file.
- * 
- * It also provides sending and reciving contend to/from an
- * OutputStream/InputStrem.
+ * The CVS analog of a file. CVS files have access to synchronization information
+ * that describes their association with the CVS repository. CVS files also provide 
+ * mechanisms for sending and receiving content.
  * 
  * @see ICVSResource
  */
 public interface ICVSFile extends ICVSResource {
 	
 	/**
-	 * Get the size of a file
-	 * 
-	 * @return 0 if exists() = false
+	 * Answers the size of the file. 
 	 */
 	long getSize();
 	
 	/**
-	 * Send the fileContend to an InputStream.
-	 * A progressmonitor monitors this process.
-	 * 
-	 * If not exists() the file is created.
-	 * 
-	 * @throws CVSException if file is contained by an non-existing folder
-	 * @throws CVSException if it is not possible to write the file
+	 * Transfer the contents of the file to the given output stream. If the file is
+	 * not binary the line-endings may be converted.
 	 */
 	void sendTo(OutputStream outputStream, IProgressMonitor monitor, boolean binary) throws CVSException;
 	
 	/**
-	 * Get the fileContend from a stream and put
-	 * it into this file.
-	 * 
-	 * @throws CVSFileNotFoundException if not exists()
+	 * Transfer the contents of an input stream to this file. If the file is
+	 * not binary the line-endings may be converted.
 	 */
 	void receiveFrom(InputStream inputStream, IProgressMonitor monitor, long size, boolean binary, boolean readOnly) throws CVSException;	
 
 	/**
-	 * Get the timpstamp of the file as a date
-	 * the format is going to be like: Thu Oct 18 20:21:13 2001
+	 * Move the resource to another location. Does overwrite without
+	 * promting.
+	 */
+	void moveTo(ICVSFile mFile) throws CVSException, ClassCastException;
+	
+	/**
+	 * Answers the current timestamp for this file. The returned format must be in the
+	 * following format:
+	 *
+	 * E MMM dd HH:mm:ss yyyy
 	 * 
 	 * @throws CVSFileNotFoundException if exists() = false
 	 */
 	String getTimeStamp() throws CVSFileNotFoundException;
 
 	/**
-	 * Set the timpstamp of the file as a date
-	 * the format needs to be like: Thu Oct 18 20:21:13 2001
-	 * 
-	 * if the date==null then the current time is used as 
-	 * timestamp
-	 * 
-	 * @throws CVSFileNotFoundException if exists() = false
-	 * @throws CVSException if the format of the date is not correct
+	 * Sets the current timestamp for this file. The supplied date must be in the
+	 * following format:
+	 *
+	 * E MMM dd HH:mm:ss yyyy
+	 *
+	 * If the date is <code>null</code> then the current time is used as 
+	 * the timestamp.
 	 */
 	void setTimeStamp(String date) throws CVSException;
-
-	/**
-	 * Move the resource to another location. Does overwrite without
-	 * promting.
-	 * 
-	 * @throws CVSException if the move was not successful
-	 * @throws ClassCastException if getClass != mFile.getClass
-	 */
-	void moveTo(ICVSFile mFile) throws CVSException, ClassCastException;
 	
 	/**
-	 * Get if the file has been modified since the last time
-	 * saved in the fileEntry. This is the exact but slow 
-	 * operation that acctually reads the dirty-state from 
-	 * disk.
-	 * 
-	 * @return true if !isManaged()
-	 * @throws CVSFileNotFoundException if exists() = false
+	 * Answers <code>true</code> if the file has changed since it was last updated
+	 * from the repository, if the file does not exist, or is not managed. And <code>false</code> 
+	 * if it has not changed.
 	 */
 	boolean isDirty() throws CVSException;
 }
-
-

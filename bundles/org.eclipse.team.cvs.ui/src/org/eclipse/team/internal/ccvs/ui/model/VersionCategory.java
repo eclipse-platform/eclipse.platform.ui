@@ -46,7 +46,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		try {
-			ICVSRemoteResource[] resources = repository.members(new CVSTag(), new NullProgressMonitor());
+			ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT, new NullProgressMonitor());
 			Object[] result = new Object[resources.length];
 			for (int i = 0; i < resources.length; i++) {
 				result[i] = new RemoteModule((ICVSRemoteFolder)resources[i], this);
