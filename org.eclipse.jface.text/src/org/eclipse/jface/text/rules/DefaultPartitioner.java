@@ -541,7 +541,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				
 				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
 				gap= new Position(gapOffset, current.getOffset() - gapOffset);
-				if ((includeZeroLengthPartitions && overlapsWith(gap, offset, length)) || 
+				if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) || 
 						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
 					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
@@ -560,7 +560,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			if (previous != null) {
 				gapOffset= previous.getOffset() + previous.getLength();
 				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
-				if ((includeZeroLengthPartitions && overlapsWith(gap, offset, length)) ||
+				if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) ||
 						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
 					end= Math.min(endOffset, fDocument.getLength());
@@ -579,7 +579,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return result;
 	}
 
-	private boolean overlapsWith(Position gap, int offset, int length) {
+	private boolean overlapsOrTouches(Position gap, int offset, int length) {
 		return gap.getOffset() <= offset + length && offset <= gap.getOffset() + gap.getLength();
 	}
 }
