@@ -343,13 +343,13 @@ public Map getBuildersPersistentInfo(IProject project) throws CoreException {
 protected IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
 		if (Policy.DEBUG_BUILD_FAILURE) 
-			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug(true, "Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 	//check if this builder has indicated it cares about this project
 	if (!isInterestingProject(project)) {
 		if (Policy.DEBUG_BUILD_FAILURE) 
-			System.out.println("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug(true, "Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 	//check if this project has changed
@@ -365,14 +365,14 @@ protected IResourceDelta getDelta(IProject project) {
 	long startTime = 0L;
 	if (Policy.DEBUG_BUILD_DELTA) {
 		startTime = System.currentTimeMillis();
-		System.out.println("Computing delta for project: " + project.getName()); //$NON-NLS-1$
+		Policy.debug(true, "Computing delta for project: " + project.getName()); //$NON-NLS-1$
 	}
 	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), false);
 	deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
 	if (Policy.DEBUG_BUILD_FAILURE && result == null) 
-		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Policy.debug(true, "Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	if (Policy.DEBUG_BUILD_DELTA)
-		System.out.println("Finished computing delta, time: " + (System.currentTimeMillis()-startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		Policy.debug(true, "Finished computing delta, time: " + (System.currentTimeMillis()-startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	return result;
 }
 /**
@@ -422,7 +422,7 @@ private void hookStartBuild(IncrementalProjectBuilder builder) {
 		EventStats.startBuild(builder);
 	if (Policy.DEBUG_BUILD_INVOKING) {
 		timeStamp = System.currentTimeMillis();
-		System.out.println("Invoking builder: " + toString(builder)); //$NON-NLS-1$
+		Policy.debug(true, "Invoking builder: " + toString(builder)); //$NON-NLS-1$
 	}
 }
 /**
@@ -433,7 +433,7 @@ private void hookEndBuild(IncrementalProjectBuilder builder) {
 		EventStats.endBuild();
 	if (!Policy.DEBUG_BUILD_INVOKING || timeStamp == -1)
 		return;		//builder wasn't called or we are not debugging
-	System.out.println("Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	Policy.debug(true, "Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	timeStamp = -1;
 }
 /**
@@ -528,12 +528,20 @@ protected boolean needsBuild(InternalBuilder builder) {
 	//compute the delta since the last built state
 	ElementTree oldTree = builder.getLastBuiltTree();
 	ElementTree newTree = workspace.getElementTree();
+	long start = System.currentTimeMillis();
+	if (Policy.DEBUG_NEEDS_BUILD) {
+		Policy.debug(true, "Checking if need to build. Starting delta computation...");  //$NON-NLS-1$
+		Policy.debug(false, "\told tree: " + oldTree.toString()); //$NON-NLS-1$
+		Policy.debug(false, "\tnew tree: " + newTree.toString()); //$NON-NLS-1$
+	}
 	currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
+	if (Policy.DEBUG_NEEDS_BUILD)
+		Policy.debug(true, "End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	//search for the builder's project
 	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
 		if (Policy.DEBUG_NEEDS_BUILD)
-			System.out.println(toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
+			Policy.debug(true, toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
 		return true;
 	}
 	
@@ -542,7 +550,7 @@ protected boolean needsBuild(InternalBuilder builder) {
 	for (int i = 0; i < projects.length; i++) {
 		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
 			if (Policy.DEBUG_NEEDS_BUILD)
-				System.out.println(toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
+				Policy.debug(true, toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
 			return true;
 		}
 	}
