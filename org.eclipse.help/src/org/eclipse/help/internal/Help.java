@@ -66,16 +66,16 @@ public final class Help {
 			helpSupport.displayHelp(contexts, x, y);
 	}
 	/**
-	 * Displays help content for the information set with the given id.
+	 * Displays help content for the specified Table of Contents.
 	 * Does nothing if no help system UI is available.
 	 *
-	 * @param infoSet the information set id
+	 * @param tocURL URL of Table of Contents
 	 * @see IHelp#displayHelp(java.lang.String)
 	 */
-	public static void displayHelp(String topicsURL) {
+	public static void displayHelp(String tocURL) {
 		// delegate to pluggable viewer
 		if (helpSupport != null)
-			helpSupport.displayHelp(topicsURL);
+			helpSupport.displayHelp(tocURL);
 	}
 	/**
 	 * Computes and returns context information for the given context id.

@@ -107,8 +107,8 @@ public class DefaultHelp implements IHelp {
 	/**
 	 * Display help.
 	 */
-	public void displayHelp(String topicsFileHref) {
-		displayHelp(topicsFileHref, null);
+	public void displayHelp(String tocFileHref) {
+		displayHelp(tocFileHref, null);
 	}
 	/**
 	 * Display help and selected specified topic.
@@ -135,8 +135,8 @@ public class DefaultHelp implements IHelp {
 			}
 		}
 		// eo 1.0 nav support
-		ITopic topics = HelpSystem.getTocManager().getToc(tocFileHref);
-		if (topics == null) {
+		ITopic toc = HelpSystem.getTocManager().getToc(tocFileHref);
+		if (toc == null) {
 			// if toc href specified, but not found, log it
 			if (tocFileHref != null && tocFileHref.trim().length() != 0)
 				Logger.logWarning(WorkbenchResources.getString("WE008", tocFileHref));
@@ -147,7 +147,7 @@ public class DefaultHelp implements IHelp {
 			return; // could not open any help view
 		activateHelpPerspective();
 		// switch to specified toc and topic
-		helpView.displayHelp(topics, topicHref);
+		helpView.displayHelp(toc, topicHref);
 	}
 	/**
 	 * Computes context information for a given context ID.
