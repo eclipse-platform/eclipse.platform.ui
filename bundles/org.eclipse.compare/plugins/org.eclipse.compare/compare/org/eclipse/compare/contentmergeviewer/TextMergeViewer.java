@@ -2548,19 +2548,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					Diff d= (Diff) e.next();
 					if (d.isIncoming()) {
 						hasIncoming= true;
-						if (!d.fResolved)
+						if (!d.fResolved) {
 							unresolved= true;
-						break;
+							break;
+						}
 					}
 				}
 			}
-			//if (hasIncoming) {
+			if (hasIncoming) {
 				Display d= fSummaryLabel.getDisplay();
 				if (unresolved)
 					c= d.getSystemColor(SWT.COLOR_RED);
 				else
 					c= d.getSystemColor(SWT.COLOR_GREEN);
-			//}
+			}
 		}
 		fSummaryLabel.setBackground(c);
 	}
