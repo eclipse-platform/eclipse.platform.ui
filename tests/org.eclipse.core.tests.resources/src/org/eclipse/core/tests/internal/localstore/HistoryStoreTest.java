@@ -111,7 +111,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testAccept"));
+//	suite.addTest(new HistoryStoreTest("testBug28603"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -2008,6 +2008,76 @@ public void testBug28238() {
 	
 	states = store.getStates(destinationFile);
 	assertEquals("3.0", 1, states.length);
+}
+public void testBug28603() {
+	// paths to mimic files in the workspace
+	IProject project = getWorkspace().getRoot().getProject("myproject");
+	IFolder folder1 = project.getFolder("myfolder1");
+	IFolder folder2 = project.getFolder("myfolder2");
+	IFile file1 = folder1.getFile("myfile.txt");
+	IFile file2 = folder2.getFile(file1.getName());
+	
+	ensureExistsInWorkspace(new IResource[] {project, folder1, folder2}, true);
+	try {
+		file1.create(getRandomContents(), IResource.FORCE, getMonitor());	
+		file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+		file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+		file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+	System.out.println("Maximum number of file states = " + ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates());
+	
+	IFileState[] states = null;
+	try {
+		states = file1.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+	assertEquals("1.1", 3, states.length);
+
+	HistoryStore store = ((Resource)ResourcesPlugin.getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+
+	for (int i=0; i<10; i++) {
+		long start = System.currentTimeMillis();	
+		
+		try {
+			states = file1.getHistory(getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		System.out.println("file1 states: " + states.length);
+		try {
+			file1.move(file2.getFullPath(), true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.1", e);
+		}
+		long stop = System.currentTimeMillis();
+		System.out.println("\nmove: " + file1.getFullPath() + " to " + file2.getFullPath() + " took: " + (stop - start) + "ms");
+		
+		try {
+			states = file2.getHistory(getMonitor());
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+		System.out.println("file2 states: " + states.length);
+		start = System.currentTimeMillis();	
+		try {
+			file2.move(file1.getFullPath(), true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.3", e);
+		}
+		try {
+			states = file1.getHistory(getMonitor());
+		} catch (CoreException e) {
+			fail("2.4", e);
+		}
+		System.out.println("file1 states: " + states.length);
+
+		stop = System.currentTimeMillis();
+		System.out.println("move: " + file2.getFullPath() + " to " + file1.getFullPath() + " took: " + (stop - start) + "ms");
+	}
+		
 }
 protected void addToHistory(String message, HistoryStore store, IPath path, InputStream input) {
 	IPath localLocation = getRandomLocation();

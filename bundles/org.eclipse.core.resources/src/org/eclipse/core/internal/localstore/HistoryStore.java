@@ -211,7 +211,6 @@ public void copyHistory(final IPath source, final IPath destination) {
 	// for source, the local history for destination will appear 
 	// as an older state than the one for source.
 	
-	
 	// return early if either of the paths are null or if the source and
 	// destination are the same.
 	if (source == null || destination == null) {
@@ -226,6 +225,10 @@ public void copyHistory(final IPath source, final IPath destination) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
 	}
+	// matches will be a list of all the places we add local history (without
+	// any duplicates).
+	final Set matches = new HashSet();
+	
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 			IPath path = entry.getPath();
@@ -239,6 +242,7 @@ public void copyHistory(final IPath source, final IPath destination) {
 				return false;
 			}
 			path = destination.append(path.removeFirstSegments(prefixSegments));
+			matches.add(path);
 			addState(path, entry.getUUID(), entry.getLastModified());
 			return true;
 		}
@@ -247,6 +251,38 @@ public void copyHistory(final IPath source, final IPath destination) {
 	// Visit all the entries. Visit partial matches too since this is a depth infinity operation
 	// and we want to copy history for children.
 	accept(source, visitor, true);
+
+	// For each match, make sure we haven't exceeded the maximum number of
+	// states allowed.
+	IWorkspaceDescription description = workspace.internalGetDescription();
+	int maxFileStates = description.getMaxFileStates();
+	try {
+		for (Iterator i = matches.iterator(); i.hasNext();) {
+			List removeEntries = new LinkedList();
+			IndexCursor cursor = store.getCursor();
+			IPath path = (IPath)i.next();
+			byte key[] = Convert.toUTF8(path.toString());
+			cursor.find(key);
+			// If this key is a match, grab the history store entry for it.
+			// Don't need to worry about whether or not this is a full path
+			// match as we know we used this path to add new state information
+			// to the local history.
+			while (cursor.keyMatches(key)) {
+				removeEntries.add(HistoryStoreEntry.create(store, cursor));
+				cursor.next();
+			}
+			cursor.close();			
+			removeOldestEntries(removeEntries, maxFileStates);
+		}
+	} catch (IndexedStoreException e) {
+		String message = Policy.bind("history.problemsPurging", source.toString(), destination.toString()); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	} catch (CoreException e) {
+		String message = Policy.bind("history.problemsPurging", source.toString(), destination.toString()); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
 
 	// We need to do a commit here.  The addState method we are
 	// using won't commit store.  The public ones will.
