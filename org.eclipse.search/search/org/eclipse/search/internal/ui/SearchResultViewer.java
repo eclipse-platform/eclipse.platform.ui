@@ -223,10 +223,8 @@ public class SearchResultViewer extends TableViewer {
 		fCurrentMatchRemoved= false;
 		updateTitle();
 		enableActions();
-		if (getItemCount() > 0) {
+		if (getItemCount() > 0)
 			selectResult(getTable(), 0);
-			fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
-		}
 	}
 
 	protected int getSelectedEntriesCount() {
