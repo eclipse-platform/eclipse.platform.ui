@@ -9,14 +9,18 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.apache.tools.ant.BuildListener;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -161,7 +165,7 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 	/**
 	 * Runs the specified tool
 	 */
-	private void runTool(ExternalTool tool) {
+	private void runTool(final ExternalTool tool) {
 		if (tool == null)
 			return;
 			
@@ -171,9 +175,32 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 			ToolUtil.showLogConsole(window);
 			ToolUtil.clearLogDocument();
 		}
-			
-		DefaultRunnerContext context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
-		context.run(null, window.getShell());
+		
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					DefaultRunnerContext context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
+					context.run(monitor, window.getShell());
+				} catch (BuildCanceledException e) {
+					throw new InterruptedException();
+				} catch (Exception e) {
+					throw new InvocationTargetException(e, e.getMessage());
+				}
+			};
+		};
+		try {
+			new ProgressMonitorDialog(window.getShell()).run(true, true, runnable);		
+		} catch (InterruptedException e) {
+			return;
+		} catch (InvocationTargetException e) {
+			IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ToolMessages.getString("ExternalToolsAction.internalError"), e); //$NON-NLS-1$;
+			ErrorDialog.openError(
+				window.getShell(), 
+				ToolMessages.getString("ExternalToolsAction.runErrorTitle"), //$NON-NLS-1$;
+				ToolMessages.getString("ExternalToolsAction.runAntProblem"), //$NON-NLS-1$;
+				status);
+			return;
+		}
 	}
 	
 	/**
