@@ -237,42 +237,7 @@ private void processAccelerator(IAction action, String acceleratorText){
 		}
 	}
 	else
-		action.setAccelerator(convertAccelerator(acceleratorText));
+		action.setAccelerator(Action.convertAccelerator(acceleratorText));
 }
 		
-/**
- * Parses the given accelerator text, and converts it to an accelerator key code.
- *
- * @param acceleratorText the accelerator text
- * @result the SWT key code, or 0 if there is no accelerator
- */
-private int convertAccelerator(String acceleratorText) {
-	int accelerator = 0;
-	StringTokenizer stok = new StringTokenizer(acceleratorText, "+");    //$NON-NLS-1$
-
-	int keyCode = -1;
-
-	boolean hasMoreTokens = stok.hasMoreTokens();
-	while (hasMoreTokens) {
-		System.out.println(getClass().getName());
-		String token = stok.nextToken();
-		hasMoreTokens = stok.hasMoreTokens();
-		// Every token except the last must be one of the modifiers
-		// Ctrl, Shift, or Alt.
-		if (hasMoreTokens) {
-			int modifier = Action.findModifier(token);
-			if (modifier != 0) {
-				accelerator |= modifier;
-			} else {//Leave if there are none
-				return 0;
-			}
-		} else {
-			keyCode = Action.findKeyCode(token);
-		}
-	}
-	if (keyCode != -1) {
-		accelerator |= keyCode;
-	}
-	return accelerator;
-}
 }
