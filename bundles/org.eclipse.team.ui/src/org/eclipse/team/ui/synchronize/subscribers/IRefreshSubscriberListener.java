@@ -13,6 +13,7 @@ package org.eclipse.team.ui.synchronize.subscribers;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Callback interface for clients interested in being notified about the lifecycle of 
@@ -39,5 +40,5 @@ public interface IRefreshSubscriberListener {
 	 * 
 	 * @param event the event describing the result of the refresh.
 	 */
-	public Runnable refreshDone(IRefreshEvent event);
+	public ActionFactory.IWorkbenchAction refreshDone(IRefreshEvent event);
 }

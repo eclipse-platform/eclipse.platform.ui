@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.subscribers.*;
+import org.eclipse.ui.actions.ActionFactory;
 
 public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubscriberListener {
 
@@ -44,7 +45,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 	public void refreshStarted(IRefreshEvent event) {
 	}
 
-	public Runnable refreshDone(final IRefreshEvent event) {
+	public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
 		//	Ensure that this event was generated for this participant
 		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
 			return null;
@@ -53,23 +54,19 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 		if(severity == Status.CANCEL || severity == Status.ERROR) 
 			return null;
 		
-		return new Runnable() {
-			public void run() {
-				try {
+		return new WorkbenchAction() {
+			public void run() {		
 					// If there are no changes
 					if (!areChanges()) {
 						MessageDialog.openInformation(shell, Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 						return;
 					}
-					//if (isSingleFileCompare(event.getResources())) {
-					//	compareAndOpenEditors(event, participant);
-					//} else {
-						compareAndOpenDialog(event, participant);
-					//}
-				} finally {
-					if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null) {
-						participant.dispose();
-					}
+					compareAndOpenDialog(event, participant);
+					setEnabled(false);
+			}
+			public void dispose() {
+				if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null) {
+					participant.dispose();
 				}
 			}
 		};

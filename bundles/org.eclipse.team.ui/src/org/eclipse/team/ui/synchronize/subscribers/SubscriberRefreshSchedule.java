@@ -10,6 +10,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Schedule to refresh a subscriber at a specified interval. The schedule can be disabled or enabled
@@ -41,7 +42,7 @@ public class SubscriberRefreshSchedule {
 	private IRefreshSubscriberListener refreshSubscriberListener = new IRefreshSubscriberListener() {
 		public void refreshStarted(IRefreshEvent event) {
 		}
-		public Runnable refreshDone(final IRefreshEvent event) {
+		public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
 			if (event.getSubscriber() == participant.getSubscriber()) {
 				lastRefreshEvent = event;
 				if(enabled && event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH) {

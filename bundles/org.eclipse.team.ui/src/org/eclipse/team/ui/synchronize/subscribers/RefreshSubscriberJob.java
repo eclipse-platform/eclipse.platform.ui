@@ -62,7 +62,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 */
 	private IResource[] resources;
 	private Subscriber subscriber;
-	//private SubscriberSyncInfoCollector collector;
 	
 	/**
 	 * Refresh started/completed listener for every refresh
@@ -134,14 +133,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 */
 	public boolean shouldRun() {
 		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
-		boolean shouldRun = getSubscriber() != null;
-		if(shouldRun && getCollector() != null) {
-			IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-			group.beginTask(getName(), 100); //$NON-NLS-1$
-			setProgressGroup(group, 80);
-			collector.setProgressGroup(group, 20);
-		}
-		return shouldRun; 
+		return getSubscriber() != null;
 	}
 
 	public boolean belongsTo(Object family) {		

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -27,7 +28,7 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.UIJob;
@@ -167,19 +168,26 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	private void internalRefresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
-		final Runnable[] gotoAction = new Runnable[] {null};
+		final IAction[] gotoAction = new IAction[] {null};
 		final RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		group.beginTask(taskName + " " + getName(), 100);
+		job.setProgressGroup(group, 80);
+		collector.setProgressGroup(group, 20);
 		job.setUser(true);
 		job.setSubscriberCollector(collector);
 		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), getImageDescriptor());
-		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new Action() {
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new WorkbenchAction() {
 			public void run() {
 				if(gotoAction[0] != null) {
 					gotoAction[0].run();
 				}
 			}
 			public boolean isEnabled() {
-				return gotoAction[0] != null;
+				if(gotoAction[0] != null) {
+					return gotoAction[0].isEnabled();
+				}
+				return false;
 			}
 		});
 		// Listener delagate
@@ -189,7 +197,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 					listener.refreshStarted(event);
 				}
 			}
-			public Runnable refreshDone(IRefreshEvent event) {
+			public ActionFactory.IWorkbenchAction refreshDone(IRefreshEvent event) {
 				if(listener != null) {
 					// Update the progress properties. Only keep the synchronize if the operation is non-modal.
 					Boolean modelProperty = (Boolean)job.getProperty(ProgressManager.PROPERTY_IN_DIALOG);
@@ -198,12 +206,11 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 						isModal = modelProperty.booleanValue();
 					}
 
-					Runnable runnable = listener.refreshDone(event);
+					ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
 					// If the job is being run modally then simply prompt the user immediatly
-					boolean newProgressSupport = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS");
-					if(isModal || ! newProgressSupport) {
+					if(isModal) {
 						if(runnable != null) {
-							final Runnable[] r = new Runnable[] {runnable};
+							final IAction[] r = new IAction[] {runnable};
 							Job update = new UIJob("") {
 								public IStatus runInUIThread(IProgressMonitor monitor) {
 									r[0].run();
@@ -217,6 +224,15 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 					// to perform the results.
 					} else {
 						gotoAction[0] = runnable;
+						gotoAction[0].setEnabled(runnable.isEnabled());
+						runnable.addPropertyChangeListener(new IPropertyChangeListener() {
+							public void propertyChange(PropertyChangeEvent event) {
+								if(event.getProperty().equals(IAction.ENABLED)) {
+									Boolean bool = (Boolean) event.getNewValue();
+									gotoAction[0].setEnabled(bool.booleanValue());
+								}
+							}
+						});
 					}
 					RefreshSubscriberJob.removeRefreshListener(this);
 				}
