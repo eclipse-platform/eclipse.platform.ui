@@ -131,11 +131,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		workingSetButton.setSelection(buildScope != null);
 		
-		updateWorkingSetComponent();
 		if (buildScope != null) {
 			VariableUtil.VariableDefinition variable= VariableUtil.extractVariableTag(buildScope, 0);
 			workingSetComponent.setVariableValue(variable.argument);
 		}
+		
+		updateWorkingSetComponent();
 		
 		int buildTypes[]= ExternalToolBuilder.buildTypesToArray(buildKindString);
 		for (int i = 0; i < buildTypes.length; i++) {

@@ -98,6 +98,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	 * @see IVariableComponent#validate()
 	 */
 	public void validate() {
+		container.setErrorMessage(null);
 	}
 
 	/**

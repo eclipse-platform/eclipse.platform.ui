@@ -229,4 +229,11 @@
 			expanderClass="org.eclipse.debug.ui.variables.WorkingSetExpander">
 		</variable>
 	</extension>
+	
+	<extension point = "org.eclipse.debug.core.launchConfigurationComparators">
+		<launchConfigurationComparator
+			id = "org.eclipse.ui.externaltools.workingSetComparator"
+			class = "org.eclipse.ui.externaltools.internal.launchConfigurations.WorkingSetComparator"
+			attribute = "org.eclipse.ui.externaltools.ATTR_REFRESH_SCOPE"/>
+	</extension>
 </plugin>

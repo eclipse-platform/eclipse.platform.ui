@@ -80,5 +80,13 @@ public interface IVariableConstants {
 	 * (value<code>launchConfigurationVariables</code>).
 	 */
 	public static final String EXTENSION_POINT_CONFIGURATION_VARIABLES = "launchConfigurationVariables"; //$NON-NLS-1$
-	
+	/**
+	 * XML tag used to designate the root of the persisted IWorkingSet
+	 */
+	public static final String TAG_LAUNCH_CONFIGURATION_WORKING_SET= "launchConfigurationWorkingSet"; //$NON-NLS-1$
+	/**
+	 * XML tag used for setting / getting the factory ID of the persisted IWorkingSet
+	 * Bug 37143
+	 */	
+	public static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 }

@@ -209,9 +209,13 @@ public class LaunchConfigurationVariableForm {
 		}
 		activeComponentIndex = variableList.getSelectionIndex();
 		setComponentVisible(activeComponentIndex);
-		if (activeComponentIndex != -1 && setValue) {
-			components[activeComponentIndex].setVariableValue(value);
+		if (activeComponentIndex != -1) {
+			if (setValue) {
+				components[activeComponentIndex].setVariableValue(value);
+			}
+			components[activeComponentIndex].validate();
 		}
+		
 		dialogPage.updateValidState();
 	}
 

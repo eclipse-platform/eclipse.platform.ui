@@ -134,12 +134,13 @@ public class LaunchConfigurationVariable {
 		 * Method declared on IVariableComponent.
 		 */
 		public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
+			container= page;
 			if (showError) {
 				message = new Label(parent, SWT.NONE);
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 				message.setLayoutData(data);
 				message.setFont(parent.getFont());
-				message.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationVariable.Problem_displaying_UI_component_of_selected_variable._1")); //$NON-NLS-1$
+				message.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationVariable.Problem_displaying_UI")); //$NON-NLS-1$
 				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 			}
 		}

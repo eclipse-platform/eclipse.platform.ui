@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.variables;
 
-
+import java.io.StringReader;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Expands a working set type variable into the desired
@@ -27,6 +31,47 @@ import org.eclipse.ui.PlatformUI;
  */
 public class WorkingSetExpander extends DefaultVariableExpander {
 
+	/**
+	 * Restores a working set based on the XMLMemento represented within
+	 * the varValue.
+	 * 
+	 * see bug 37143.
+	 * @param mementoString The string memento of the working set
+	 * @return the restored working set or <code>null</code> if problems occurred restoring the
+	 * working set.
+	 */
+	public static IWorkingSet restoreWorkingSet(String mementoString) {
+		StringReader reader= new StringReader(mementoString);
+		XMLMemento memento= null;
+		try {
+			memento = XMLMemento.createReadRoot(reader);
+		} catch (WorkbenchException e) {
+			DebugUIPlugin.log(e);
+			return null;
+		}
+
+		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
+
+		if (factoryID == null) {
+			DebugUIPlugin.logErrorMessage("Unable to restore working set - no factory ID.");
+			return null;
+		}
+		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+		if (factory == null) {
+			DebugUIPlugin.logErrorMessage("Unable to restore working set - cannot instantiate factory: " + factoryID);
+			return null;
+		}
+		IAdaptable adaptable = factory.createElement(memento);
+		if (adaptable == null) {
+			DebugUIPlugin.logErrorMessage("Unable to restore working set - cannot instantiate working set: " + factoryID);
+		}
+		if ((adaptable instanceof IWorkingSet) == false) {
+			DebugUIPlugin.logErrorMessage("Unable to restore working set - element is not an IWorkingSet: " + factoryID);
+			return null;
+		}
+			
+		return (IWorkingSet) adaptable;
+	}
 	/**
 	 * Create an instance
 	 */
@@ -43,9 +88,9 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 			return null;
 		}
 
-		IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(varValue);
+		IWorkingSet set = restoreWorkingSet(varValue);
 		if (set == null) {
-			throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("WorkingSetExpander.No_working_set_found_with_the_name_{0}._2"), new String[] {varValue})); //$NON-NLS-1$
+			throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("WorkingSetExpander.No_working_set"), new String[] {varValue})); //$NON-NLS-1$
 			return null;
 		}
 			
