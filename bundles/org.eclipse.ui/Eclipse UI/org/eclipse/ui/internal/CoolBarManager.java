@@ -668,7 +668,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					if (!coolItemIds.contains(cbItem.getId())) {
 						if (cbItem.isVisible()) {
 							ToolBar toolBar = cbItem.getControl();
-							if ((toolBar != null) && (!toolBar.isDisposed()) && cbItem.hasDisplayableItems()) {
+							if ((toolBar != null) && (!toolBar.isDisposed()) && (toolBar.getItemCount() > 0) && cbItem.hasDisplayableItems()) {
 								if (!changed) {
 									// workaround for 14330
 									changed = true;
