@@ -263,7 +263,7 @@ public class EditorAreaHelper {
 		// Show the editor.
 		editorArea.addEditor(pane);
 		if (setVisible)
-			setVisibleEditor(ref, true);
+			setVisibleEditor(ref, false);
 	}
 	private EditorPane initPane(EditorPane pane, IEditorReference ref) {
 		((WorkbenchPartReference) ref).setPane(pane);
