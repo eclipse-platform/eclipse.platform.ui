@@ -68,6 +68,18 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	public BigInteger getMemoryBlockEndAddress() throws DebugException;
 	
 	/**
+	 * Returns the length of this memory block, or -1 if unbounded.
+	 * Returns "end address - start address"  for a memory block with a fixed
+	 * length (i.e. when both start and end address are known).
+	 * Returns -1 for an unbounded memory block (i.e. when start or end address is
+	 * <code>null</code>).
+	 * 
+	 * @return length of this memory block or -1 if unbounded
+	 * @throws DebugException if unable to retrieve the length of this memory block.
+	 */
+	public BigInteger getBigLength() throws DebugException;
+	
+	/**
 	 * Returns the address size of this memory block in number of bytes. The address
 	 * size indicates the number of bytes used to construct an address.
 	 *  
