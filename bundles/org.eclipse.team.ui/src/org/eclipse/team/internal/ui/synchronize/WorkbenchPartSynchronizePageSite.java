@@ -24,6 +24,7 @@ public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	private IWorkbenchPart part;
 	private IDialogSettings settings;
 	private IPageSite site;
+	private IActionBars actionBars;
 
 	public WorkbenchPartSynchronizePageSite(IWorkbenchPart part, IPageSite site, IDialogSettings settings) {
 		this.part = part;
@@ -85,5 +86,12 @@ public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	 */
 	public IDialogSettings getPageSettings() {
 		return settings;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#getActionBars()
+	 */
+	public IActionBars getActionBars() {
+		return site.getActionBars();
 	}
 }

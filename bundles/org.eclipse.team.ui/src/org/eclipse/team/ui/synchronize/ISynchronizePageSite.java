@@ -90,5 +90,11 @@ public interface ISynchronizePageSite {
 	 * @return a settings node or <code>null</code>
 	 */
 	IDialogSettings getPageSettings();
-
+	
+	/**
+	 * Returns the action bars for this synchronize page site.
+	 *
+	 * @return the action bars
+	 */
+	IActionBars getActionBars();
 }

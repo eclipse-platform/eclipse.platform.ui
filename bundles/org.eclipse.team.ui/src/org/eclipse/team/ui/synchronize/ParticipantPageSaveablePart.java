@@ -8,7 +8,9 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -33,6 +35,9 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
 import org.eclipse.ui.*;
+import org.eclipse.ui.commands.*;
+import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -51,6 +56,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private IPageBookViewPage page;
 	private Image titleImage;
 	private Shell shell;
+	private Shell dialogShell;
 	
 	// Tracking of dirty state
 	private boolean fDirty= false;
@@ -63,6 +69,11 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private CompareViewerSwitchingPane fStructuredComparePane;
 	private Viewer viewer;
 	private Control control;
+	
+	// Keybindings enabled in the dialog, these should be removed
+	// when the dialog is closed.
+	private IActionBars actionBars;
+	private List actionHandlers = new ArrayList(2);
 
 	/*
 	 * Page site that allows hosting the participant page in a dialog.
@@ -78,7 +89,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			return viewer;
 		}
 		public Shell getShell() {
-			return shell;
+			return dialogShell;
 		}
 		public IWorkbenchWindow getWorkbenchWindow() {
 			return null;
@@ -102,6 +113,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		}
 		public IDialogSettings getPageSettings() {
 			return null;
+		}
+		public IActionBars getActionBars() {
+			return ParticipantPageSaveablePart.this.getActionBars();
 		}	
 	}
 	
@@ -143,6 +157,11 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	public void dispose() {
 		if(titleImage != null) {
 			titleImage.dispose();
+		}
+		IWorkbenchCommandSupport cm = PlatformUI.getWorkbench().getCommandSupport();
+		for (Iterator it = actionHandlers.iterator(); it.hasNext();) {
+			HandlerSubmission handler = (HandlerSubmission) it.next();
+			cm.removeHandlerSubmission(handler);
 		}
 		super.dispose();
 	}
@@ -218,6 +237,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		parent.setLayout(layout);
 		parent.setLayoutData(data);
 		
+		dialogShell = parent2.getShell();
+		
 		Splitter vsplitter = new Splitter(parent, SWT.VERTICAL);
 		vsplitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 		// we need two panes: the left for the elements, the right one for the structured diff
@@ -239,6 +260,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		
 		IPageBookViewPage page = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
+		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
+		createActionBars(tbm);
 		try {
 			((ISynchronizePage)page).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
@@ -260,8 +283,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			initializeDiffViewer(((ISynchronizePage)page).getViewer());
 		}
 		
-		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
-		page.setActionBars(getActionBars(tbm));
+		page.setActionBars(getActionBars());
 		fEditionPane.setContent(page.getControl());
 		tbm.update(true);
 		if(page instanceof ISynchronizePage) {
@@ -445,28 +467,41 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		boolean newDirty= fDirtyViewers.size() > 0;
 	}	
 	
-	private IActionBars getActionBars(final IToolBarManager toolbar) {
-		return new IActionBars() {
-			public void clearGlobalActionHandlers() {
-			}
-			public IAction getGlobalActionHandler(String actionId) {
-				return null;
-			}
-			public IMenuManager getMenuManager() {
-				return null;
-			}
-			public IStatusLineManager getStatusLineManager() {
-				return null;
-			}
-			public IToolBarManager getToolBarManager() {
-				return toolbar;
-			}
-			public void setGlobalActionHandler(String actionId, IAction handler) {
-			}
-			public void updateActionBars() {
-			}
-		};
+	private void createActionBars(final IToolBarManager toolbar) {
+		if (actionBars == null) {
+			actionBars = new IActionBars() {
+				public void clearGlobalActionHandlers() {
+				}
+				public IAction getGlobalActionHandler(String actionId) {
+					return null;
+				}
+				public IMenuManager getMenuManager() {
+					return null;
+				}
+				public IStatusLineManager getStatusLineManager() {
+					return null;
+				}
+				public IToolBarManager getToolBarManager() {
+					return toolbar;
+				}
+				public void setGlobalActionHandler(String actionId, IAction action) {
+					IHandler handler = new ActionHandler(action);
+		            HandlerSubmission handlerSubmission = new HandlerSubmission(null,
+		                    dialogShell, null, actionId, handler, Priority.MEDIUM);	
+					PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+					actionHandlers.add(handlerSubmission);
+				}
+
+				public void updateActionBars() {
+				}
+			};
+		}
 	}
+	
+	private IActionBars getActionBars() {
+		return actionBars;
+	}
+	
 	
 	/**
 	 * Return the synchronize page configiration for this part

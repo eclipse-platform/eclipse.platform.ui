@@ -74,6 +74,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 				
 				ISynchronizeParticipant participant = configuration.getParticipant();
 				ISynchronizePageSite site = configuration.getSite();
+
 				gotoNext = new NavigateAction(site, participant.getName(), configuration, true /*next*/);		
 				gotoPrevious = new NavigateAction(site, participant.getName(), configuration, false /*previous*/);
 			}
@@ -230,7 +231,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		super(configuration);	
 		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 		if (nav == null) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, this);
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, getAdapter(INavigatable.class));
 		}
 		configuration.addActionContribution(new NavigationActionGroup());
 		StructuredViewer viewer = TreeViewerAdvisor.createViewer(parent, configuration);
