@@ -98,8 +98,6 @@ public class JarContentReference extends ContentReference {
 		return jarFile;
 	}
 
-	
-
 	/**
 	 * Unpacks the referenced jar archive.
 	 * Returns content references to the unpacked file entries

@@ -283,7 +283,7 @@ public class UpdateManagerUtils {
 	/**
 	 * @since 2.0
 	 */
-	protected static synchronized byte[] getBuffer() {
+	private static synchronized byte[] getBuffer() {
 		if (bufferPool == null) {
 			return new byte[BUFFER_SIZE];
 		}
@@ -299,7 +299,7 @@ public class UpdateManagerUtils {
 	/**
 	 * @since 2.0
 	 */
-	protected static synchronized void freeBuffer(byte[] buf) {
+	private static synchronized void freeBuffer(byte[] buf) {
 		if (bufferPool == null)
 			bufferPool = new Stack();
 		bufferPool.push(buf);
