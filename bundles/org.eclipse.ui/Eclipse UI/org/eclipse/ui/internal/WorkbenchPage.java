@@ -573,6 +573,10 @@ private IViewPart busyShowView(String viewID, boolean activate)
  * Returns whether a part exists in the current page.
  */
 private boolean certifyPart(IWorkbenchPart part) {
+	//Workaround for bug 22325
+	if (!(part.getSite() instanceof PartSite))
+		return false;
+		
 	if (part instanceof IEditorPart) {
 		IEditorReference ref = (IEditorReference)getReference(part);
 		return getEditorManager().containsEditor(ref);
