@@ -52,7 +52,7 @@ public class JobManager implements IJobManager {
 	 * starts out active, and becomes inactive if it has been shutdown
 	 * and not restarted.
 	 */
-	private volatile boolean active = false;
+	private volatile boolean active = true;
 
 	/**
 	 * True if this manager has been suspended, and false otherwise.  A job manager
@@ -114,7 +114,7 @@ public class JobManager implements IJobManager {
 	 */
 	public static synchronized JobManager getInstance() {
 		if (instance == null)
-			new JobManager().startup();
+			new JobManager();
 		return instance;
 	}
 
@@ -544,7 +544,6 @@ public class JobManager implements IJobManager {
 	 * job.
 	 */
 	protected boolean isBlocking(InternalJob running) {
-		//TODO This method is experimental
 		synchronized (lock) {
 			//if this job isn't running, it can't be blocking anyone
 			if (running.getState() != Job.RUNNING)
@@ -603,7 +602,6 @@ public class JobManager implements IJobManager {
 		}
 		//spin until all jobs are completed
 		try {
-			//TODO: report blockage before starting
 			monitor.beginTask(Policy.bind("jobs.blocked0"), jobCount); //$NON-NLS-1$
 			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
 			reportBlocked(monitor, blocking);
@@ -986,20 +984,6 @@ public class JobManager implements IJobManager {
 		jobListeners.running(job);
 		return job;
 
-	}
-
-	/**
-	 * Starts up the job manager. Jobs can be scheduled once again.
-	 * (Note that this method previously implemented IJobManager.startup,
-	 * which was removed due to problems with starting too late).
-	 */
-	private void startup() {
-		synchronized (lock) {
-			if (!active) {
-				active = true;
-				pool.startup();
-			}
-		}
 	}
 
 	/* non-Javadoc)

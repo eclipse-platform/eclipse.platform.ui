@@ -10,12 +10,8 @@
 package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * Maintains a pool of worker threads. Threads are constructed lazily as
@@ -32,7 +28,6 @@ class WorkerPool {
 	 * Threads not used by their best before timestamp are destroyed. 
 	 */
 	private static final int BEST_BEFORE = 60000;
-	private static final int DEFAULT_MAX_THREADS = 25;
 	/**
 	 * There will always be at least MIN_THREADS workers in the pool.
 	 */
@@ -44,7 +39,6 @@ class WorkerPool {
 	private int busyThreads = 0;
 
 	private JobManager manager;
-	private int MAX_THREADS = DEFAULT_MAX_THREADS;
 	/**
 	 * The number of workers in the threads array
 	 */
@@ -60,15 +54,6 @@ class WorkerPool {
 
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
-		computeMaxThreads();
-		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME);
-		IEclipsePreferences eclipseNode = (IEclipsePreferences) node;
-		eclipseNode.addPreferenceChangeListener(new IEclipsePreferences.IPreferenceChangeListener() {
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (event.getKey().equalsIgnoreCase(Platform.PREF_PLATFORM_PERFORMANCE))
-					computeMaxThreads();
-			}
-		});
 	}
 
 	/**
@@ -82,31 +67,6 @@ class WorkerPool {
 			threads = newThreads;
 		}
 		threads[numThreads++] = worker;
-	}
-
-	/**
-	 * Computes the maximum number of threads based on the machine speed
-	 * preference.
-	 */
-	protected void computeMaxThreads() {
-		int speed = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME).getInt(Platform.PREF_PLATFORM_PERFORMANCE, 3);
-		switch (speed) {
-			case 1 :
-				MAX_THREADS = DEFAULT_MAX_THREADS / 5;
-				break;
-			case 2 :
-				MAX_THREADS = DEFAULT_MAX_THREADS / 2;
-				break;
-			case 4 :
-				MAX_THREADS = DEFAULT_MAX_THREADS * 2;
-				break;
-			case 5 :
-				MAX_THREADS = DEFAULT_MAX_THREADS * 5;
-				break;
-			case 3 :
-			default :
-				MAX_THREADS = DEFAULT_MAX_THREADS;
-		}
 	}
 
 	private synchronized void decrementBusyThreads() {
@@ -173,9 +133,6 @@ class WorkerPool {
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			return;
-		} else if (JobManager.DEBUG && threadCount >= MAX_THREADS) {
-			//this is a potential problem, but we don't want to flood the user with these messages
-			JobManager.debug("Stopped allocating worker threads. Thread count: " + threadCount); //$NON-NLS-1$
 		}
 	}
 
@@ -258,9 +215,5 @@ class WorkerPool {
 				jobQueued(null);
 		}
 		return job;
-	}
-
-	protected synchronized void startup() {
-		computeMaxThreads();
 	}
 }
