@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.ui.*;
+import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
