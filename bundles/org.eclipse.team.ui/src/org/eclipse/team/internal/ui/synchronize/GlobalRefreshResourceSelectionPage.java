@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -25,8 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -62,6 +62,17 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	private Text workingSetLabel;
 	private IWorkingSet[] workingSets;
 	private List resources;
+	private IDialogSettings settings;
+	
+	// dialog settings
+	/** 
+	 * Settings constant for section name (value <code>SynchronizeResourceSelectionDialog</code>).
+	 */
+	private static final String STORE_SECTION = "SynchronizeResourceSelectionDialog"; //$NON-NLS-1$
+	/** 
+	 * Settings constant for working sets (value <code>SynchronizeResourceSelectionDialog.STORE_WORKING_SET</code>).
+	 */
+	private static final String STORE_WORKING_SETS = "SynchronizeResourceSelectionDialog.STORE_WORKING_SETS"; //$NON-NLS-1$
 	
 	/**
 	 * Content provider that accepts a <code>SubscriberParticipant</code> as input and
@@ -107,6 +118,11 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		this.resources = Arrays.asList(resources);
 		setDescription(Policy.bind("GlobalRefreshResourceSelectionPage.2")); //$NON-NLS-1$
 		setTitle(Policy.bind("GlobalRefreshResourceSelectionPage.3")); //$NON-NLS-1$
+		IDialogSettings s = TeamUIPlugin.getPlugin().getDialogSettings();
+		this.settings = s.getSection(STORE_SECTION);
+		if(settings == null) {
+			settings = s.addNewSection(STORE_SECTION);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -240,8 +256,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			selectWorkingSetButton.setLayoutData(data);
 			Dialog.applyDialogFont(selectWorkingSetButton);
 			
-			//workingSet = participant.getWorkingSet();
-			//updateWorkingSetLabel();
 			initializeScopingHint();
 		}
 		Dialog.applyDialogFont(top);
@@ -309,11 +323,44 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	}
 	
 	private void initializeScopingHint() {
-		participantScope.setSelection(true);
-		updateParticipantScope();
+		String working_sets = settings.get(STORE_WORKING_SETS);
+		if (working_sets == null) {
+			participantScope.setSelection(true);
+			updateParticipantScope();
+		} else {
+			StringTokenizer st = new StringTokenizer(working_sets, " ,"); //$NON-NLS-1$
+			ArrayList ws = new ArrayList();
+			while (st.hasMoreTokens()) {
+				String workingSetName = st.nextToken();
+				if (workingSetName != null && workingSetName.equals("") == false) { //$NON-NLS-1$
+					IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+					IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+					if (workingSet != null) {
+						ws.add(workingSet);
+					}
+				}
+			}
+			if(! ws.isEmpty()) {
+				this.workingSets = (IWorkingSet[]) ws.toArray(new IWorkingSet[ws.size()]);
+				updateWorkingSetScope();
+				updateWorkingSetLabel();			
+				participantScope.setSelection(false);
+				selectedResourcesScope.setSelection(false);
+				workingSetScope.setSelection(true);
+			}
+		}
 	}
 	
-	private void intializeSelectionInViewer(IResource[] resources) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		if(workingSets != null && workingSetScope.getSelection()) {
+			String concatsWorkingSets = makeWorkingSetLabel();
+			settings.put(STORE_WORKING_SETS, concatsWorkingSets);
+		} else {
+			settings.put(STORE_WORKING_SETS, (String)null);
+		}
 	}
 	
 	private void updateParticipantScope() {
@@ -350,17 +397,14 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	
 	private void updateWorkingSetScope() {
 		if(workingSets != null) {
+			List allWorkingSetResources = new ArrayList();
 			for (int i = 0; i < workingSets.length; i++) {
 				IWorkingSet set = workingSets[i];
-				List resources = IDE.computeSelectedResources(new StructuredSelection(set.getElements()));
-				if(! resources.isEmpty()) {
-					IResource[] resources2 = (IResource[])resources.toArray(new IResource[resources.size()]);
-					scopeCheckingElement = true;
-					fViewer.setCheckedElements(resources2);
-					scopeCheckingElement = false;
-					intializeSelectionInViewer(resources2);
-				}
+				allWorkingSetResources.addAll(IDE.computeSelectedResources(new StructuredSelection(set.getElements())));
 			}
+			scopeCheckingElement = true;
+			fViewer.setCheckedElements((IResource[]) allWorkingSetResources.toArray(new IResource[allWorkingSetResources.size()]));
+			scopeCheckingElement = false;
 			setPageComplete(true);
 		} else {
 			scopeCheckingElement = true;
@@ -403,13 +447,20 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		if (workingSets == null) {
 			workingSetLabel.setText(Policy.bind("StatisticsPanel.noWorkingSet")); //$NON-NLS-1$
 		} else {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < workingSets.length; i++) {
-				IWorkingSet set = workingSets[i];
-				if(i != 0) buffer.append(" ,"); //$NON-NLS-1$
-				buffer.append(set.getName());
-			}
-			workingSetLabel.setText(buffer.toString());
+			workingSetLabel.setText(makeWorkingSetLabel());
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private String makeWorkingSetLabel() {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < workingSets.length; i++) {
+			IWorkingSet set = workingSets[i];
+			if(i != 0) buffer.append(" ,"); //$NON-NLS-1$
+			buffer.append(set.getName());
+		}
+		return buffer.toString();
 	}
 }
