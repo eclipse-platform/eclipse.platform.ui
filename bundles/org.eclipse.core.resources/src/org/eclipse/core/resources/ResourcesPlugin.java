@@ -87,6 +87,12 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
+	/**
+	 * Constant identifying the job family identifier for a background build job.
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(Object, IProgressMonitor)
+	 * @since 3.0
+	 */
+	public static final Object FAMILY_MANUAL_BUILD = new Object();
 
 	/**
 	 * Name of a preference indicating the encoding to use when reading text 
