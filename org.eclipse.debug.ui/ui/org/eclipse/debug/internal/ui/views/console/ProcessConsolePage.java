@@ -40,7 +40,9 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -73,7 +75,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener {
+public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener, ITextListener {
 
 	//page site
 	private IPageSite fSite = null;
@@ -158,6 +160,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		fViewer.getSelectionProvider().addSelectionChangedListener(fTextListener);
+		fViewer.addTextListener(this);
 	}
 
 	/**
@@ -199,6 +202,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		fViewer.getSelectionProvider().removeSelectionChangedListener(fTextListener);
+		fViewer.removeTextListener(this);
 		
 		if (fRemoveTerminated != null) {
 			fRemoveTerminated.dispose();
@@ -466,4 +470,15 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		return getControl() != null;
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
+	 */
+	public void textChanged(TextEvent event) {
+		// update the find replace action if the document length is > 0
+		IUpdate findReplace = (IUpdate)fGlobalActions.get(IWorkbenchActionConstants.FIND);
+		if (findReplace != null) {
+			findReplace.update();
+		}
+	}
+
 }

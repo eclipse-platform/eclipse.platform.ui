@@ -177,13 +177,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	}
 	
 	/**
-	 * @see IFindReplaceTarget#canPerformFind()
-	 */
-	protected boolean canPerformFind() {
-		return (getTextWidget() != null && getVisibleDocument() != null && getVisibleDocument().getLength() > 0);
-	}	
-	
-	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
