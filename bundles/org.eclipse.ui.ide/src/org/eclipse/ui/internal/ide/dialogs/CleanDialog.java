@@ -87,12 +87,19 @@ public class CleanDialog extends MessageDialog {
 		if (buttonId == IDialogConstants.OK_ID) {
 			try {
 				//batching changes ensures that autobuild runs after cleaning
+				final boolean cleanAll = allButton.getSelection();
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
 					new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws CoreException {
-							doClean();
+							doClean(cleanAll);
 						}
 					});
+				//see if a build was requested
+				if (buildNowButton != null && buildNowButton.getSelection()) {
+					//start an immediate workspace build
+					GlobalBuildAction build = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					build.run();
+				}
 			} catch (InvocationTargetException e) {
 				//we only throw CoreException above
 				Throwable target = e.getTargetException();
@@ -169,18 +176,12 @@ public class CleanDialog extends MessageDialog {
 	/**
 	 * Performs the actual clean operation
 	 */
-	protected void doClean() throws CoreException {
-		if (allButton.getSelection())
+	protected void doClean(boolean cleanAll) throws CoreException {
+		if (cleanAll)
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 		else
 			for (int i = 0; i < selection.length; i++)
 				((IProject)selection[i]).build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-		//see if a build was requested
-		if (buildNowButton != null && buildNowButton.getSelection()) {
-			//start an immediate workspace build
-			GlobalBuildAction build = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-			build.run();
-		}
 	}
 	/**
 	 * Fills in the name of the project in the text area.
