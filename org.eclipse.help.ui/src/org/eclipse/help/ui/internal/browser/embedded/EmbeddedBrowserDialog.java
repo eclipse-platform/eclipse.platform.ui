@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class EmbeddedBrowserDialog {
 	private String windowTitle;
-	private Image shellImg;
+	private Image[] shellImgs;
 	Shell shell;
 	Browser webBrowser;
 	/**
@@ -31,9 +31,9 @@ public class EmbeddedBrowserDialog {
 	public EmbeddedBrowserDialog(
 		Shell parent,
 		String windowTitle,
-		Image shellImage) {
+		Image[] shellImages) {
 		this.windowTitle = windowTitle;
-		this.shellImg = shellImage;
+		this.shellImgs = shellImages;
 		createShell(parent);
 	}
 	/**
@@ -41,8 +41,8 @@ public class EmbeddedBrowserDialog {
 	 */
 	private void createShell(Shell parent) {
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
-		if (shellImg != null)
-			shell.setImage(shellImg);
+		if (shellImgs != null)
+			shell.setImages(shellImgs);
 		shell.setText(windowTitle);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -88,7 +88,7 @@ public class EmbeddedBrowserDialog {
 					new EmbeddedBrowserDialog(
 						shell,
 						windowTitle,
-						shellImg);
+						shellImgs);
 				event.browser = workingSetDialog.getBrowser();
 			}
 
