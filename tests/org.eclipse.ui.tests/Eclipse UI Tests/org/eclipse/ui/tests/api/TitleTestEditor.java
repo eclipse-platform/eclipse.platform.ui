@@ -10,26 +10,81 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.EditorPart;
 
 /**
  * @since 3.0
  */
-public class TitleTestView extends ViewPart {
+public class TitleTestEditor extends EditorPart {
 
 	Composite composite;
 	Text title;
 	Text name;
 	Text contentDescription;
 	
+	
+	/**
+	 * 
+	 */
+	public TitleTestEditor() {
+		super();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		
+ 		if (!(input instanceof IFileEditorInput))
+ 	 			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+ 	 	setSite(site);
+ 	 	setInput(input);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -69,13 +124,14 @@ public class TitleTestView extends ViewPart {
 			public void modifyText(ModifyEvent e) {
 				setContentDescription(contentDescription.getText());
 			}
-		});
+		});	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
+		composite.setFocus();
 
 	}
 

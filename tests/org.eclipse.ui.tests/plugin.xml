@@ -310,6 +310,13 @@
             class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.TitleTestEditor"
+            icon="icons/anything.gif"
+            default="true"
+            name="Title Test Editor"
+            id="org.eclipse.ui.tests.TitleTestEditor"
+            extensions="titletest"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
