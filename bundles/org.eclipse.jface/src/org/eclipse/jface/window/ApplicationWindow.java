@@ -607,7 +607,14 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 			if (coolbarControl != null && !coolbarControl.isDisposed())
 				coolbarControl.setEnabled(coolbarWasEnabled);
 			mgr.setCancelEnabled(cancelWasEnabled);
-			if (currentFocus != null && !currentFocus.isDisposed()) currentFocus.setFocus();
+			if (currentFocus != null && !currentFocus.isDisposed()) {
+			    // It's necessary to restore focus after reenabling the controls
+			    // because disabling them causes focus to jump elsewhere.
+			    // Use forceFocus rather than setFocus to avoid SWT's
+			    // search for children which can take focus, so focus
+			    // ends up back on the actual control that previously had it.
+			    currentFocus.forceFocus();
+			}
 		}
 	} finally {
 		operationInProgress = false;
