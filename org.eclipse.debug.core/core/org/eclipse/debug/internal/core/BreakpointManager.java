@@ -33,7 +33,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.debug.core.model.IBreakpoint;
 
@@ -120,7 +119,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @param resource the resource which contains the breakpoints
 	 */
 	private void loadBreakpoints(IResource resource) throws CoreException {
-		IMarker[] markers= resource.findMarkers(IDebugConstants.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
@@ -143,10 +142,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * breakpoints from markers.
 	 */
 	private void initBreakpointExtensions() {
-		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(IDebugConstants.EXTENSION_POINT_BREAKPOINTS);
+		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			fBreakpointExtensions.put(elements[i].getAttribute(IDebugConstants.MARKER_TYPE), elements[i]);
+			fBreakpointExtensions.put(elements[i].getAttribute(IBreakpoint.MARKER_TYPE), elements[i]);
 		}
 		
 	}
@@ -341,7 +340,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
 			for (int i= 0; i < markerDeltas.length; i++) {
 				IMarkerDelta markerDelta= markerDeltas[i];
-				if (markerDelta.isSubtypeOf(IDebugConstants.BREAKPOINT_MARKER)) {
+				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 					switch (markerDelta.getKind()) {
 						case IResourceDelta.ADDED :
 							handleAddBreakpoint(delta, markerDelta.getMarker(), markerDelta);

@@ -30,6 +30,24 @@ import org.eclipse.debug.internal.core.*;
  * </p>
  */
 public class DebugPlugin extends Plugin {
+	
+	/**
+	 * Debug plug-in identifier
+	 * (value <code>"org.eclipse.debug.core"</code>).
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.debug.core";
+	
+	/**
+	 * Launcher extension point identifier
+	 * (value <code>"launchers"</code>).
+	 */
+	public static final String EXTENSION_POINT_LAUNCHER= "launchers";
+	
+	/**
+	 * Breakpoint extension point identifier
+	 * (value <code>"breakpoints"</code>).
+	 */
+	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	
 
 	/**
 	 * The singleton debug plug-in instance.
@@ -150,7 +168,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	protected void loadLaunchers() throws CoreException {
 		IPluginDescriptor descriptor= getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugConstants.EXTENSION_POINT_LAUNCHER);
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_LAUNCHER);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fLaunchers= new Launcher[infos.length];
 		for (int i= 0; i < infos.length; i++) {

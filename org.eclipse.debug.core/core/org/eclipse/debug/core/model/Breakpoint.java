@@ -8,7 +8,6 @@ package org.eclipse.debug.core.model;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.IDebugConstants;
 
 /**
  * Abstract implementation of a breakpoint. This class is
@@ -49,7 +48,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled != isEnabled()) {
-			fMarker.setAttribute(IDebugConstants.ENABLED, enabled);
+			fMarker.setAttribute(ENABLED, enabled);
 		}
 	}
 	
@@ -57,7 +56,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	 * Returns whether the breakpoint is enabled
 	 */
 	public boolean isEnabled() throws CoreException {
-		return fMarker.getAttribute(IDebugConstants.ENABLED, false);
+		return fMarker.getAttribute(ENABLED, false);
 	}
 
 	/**

@@ -5,12 +5,23 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import java.util.*;
 
 /**
  * Manages registered launches.
@@ -132,7 +143,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager  {
 	public ILauncher getDefaultLauncher(IProject project) throws CoreException {
 		ILauncher launcher= null;
 		if ((project != null) && project.isOpen()) {
-			String launcherID = project.getPersistentProperty(new QualifiedName(IDebugConstants.PLUGIN_ID, DEFAULT_LAUNCHER));
+			String launcherID = project.getPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCHER));
 			if (launcherID != null) {
 				launcher= getLauncher(launcherID);
 			}
@@ -221,7 +232,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager  {
 		if (launcher != null) {
 			id = launcher.getIdentifier();
 		}
-		resource.setPersistentProperty(new QualifiedName(IDebugConstants.PLUGIN_ID, DEFAULT_LAUNCHER), id);
+		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCHER), id);
 	}
 
 	/**

@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.BreakpointPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -31,7 +30,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 		IExtensionPoint ep= DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint("breakpointPropertyAdapters"); //$NON-NLS-1$
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			fAdapterExtensions.put(elements[i].getAttribute(IDebugConstants.MARKER_TYPE), elements[i]);
+			fAdapterExtensions.put(elements[i].getAttribute(IBreakpoint.MARKER_TYPE), elements[i]);
 		}
 	}
 

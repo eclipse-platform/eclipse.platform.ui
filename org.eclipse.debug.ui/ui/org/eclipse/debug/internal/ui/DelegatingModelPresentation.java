@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
@@ -213,7 +212,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			if (element instanceof IMarker) {
 				IMarker m= (IMarker) element;
 				try {
-					if (m.exists() && m.isSubtypeOf(IDebugConstants.BREAKPOINT_MARKER)) {
+					if (m.exists() && m.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 						return DebugUIMessages.getString("DelegatingModelPresentation.Breakpoint_3"); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
