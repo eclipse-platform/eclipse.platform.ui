@@ -10,21 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The DecorationScheduler is the class that handles the
  * decoration of elements using a background thread.
  */
-public class DecorationScheduler implements IResourceChangeListener {
+public class DecorationScheduler {
 
 	// When decorations are computed they are added to this cache via decorated() method
 	private Map resultCache = new HashMap();
@@ -52,8 +53,6 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 */
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
-
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	/**
@@ -203,47 +202,6 @@ public class DecorationScheduler implements IResourceChangeListener {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta = event.getDelta();
-		if (delta != null) {
-			try {
-				final List changedObjects = new ArrayList();
-				delta.accept(new IResourceDeltaVisitor() {
-					public boolean visit(IResourceDelta delta)
-						throws CoreException {
-						IResource resource = delta.getResource();
-
-						if (resource.getType() == IResource.ROOT) {
-							// continue with the delta
-							return true;
-						}
-
-						switch (delta.getKind()) {
-							case IResourceDelta.REMOVED :
-								// remove the cached decoration for any removed resource
-								resultCache.remove(resource);
-								break;
-							case IResourceDelta.CHANGED :
-								// for changed resources remove the result as it will need to 
-								//be recalculated.
-								resultCache.remove(resource);
-						}
-
-						return true;
-					}
-				});
-
-				changedObjects.clear();
-			} catch (CoreException exception) {
-				WorkbenchPlugin.getDefault().getLog().log(
-					exception.getStatus());
-			}
-		}
-	}
-
-	/**
 	 * Get the next resource to be decorated.
 	 * @return IResource
 	 */
@@ -287,66 +245,84 @@ public class DecorationScheduler implements IResourceChangeListener {
 						return;
 					}
 
+					//Don't decorate if there is already a pending result
+					Object element = reference.getElement();
+					Object adapted = reference.getAdaptedElement();
+					boolean elementIsCached = true;
+					DecorationResult adaptedResult = null;
+
 					//Synchronize on the result lock as we want to
 					//be sure that we do not try and decorate during
 					//label update servicing.
 					synchronized (resultLock) {
-						//Don't decorate if there is already a pending result
-						if (resultCache.containsKey(reference.getElement())) {
-							//The result may be due to calculating an adaptable.
-							//Be sure the update is sent regardless.
-							pendingUpdate.add(reference.getElement());
-						} else {
-
-							//Just build for the resource first
-							Object adapted = reference.getAdaptedElement();
-
-							if (adapted != null) {
-								if (resultCache.containsKey(adapted)) {
-									//If we already calculated the adapted one reuse the result
-									cacheResult.applyResult(
-										(DecorationResult) resultCache.get(
-											adapted));
-								} else {
-									decoratorManager
-										.getLightweightManager()
-										.getDecorations(
-										adapted,
-										cacheResult);
-									if (cacheResult.hasValue()) {
-										resultCache.put(
-											adapted,
-											cacheResult.createResult());
-									}
+						elementIsCached = resultCache.containsKey(element);
+						if (elementIsCached) {
+							pendingUpdate.add(element);
+						}
+						if (adapted != null) {
+							adaptedResult =
+								(DecorationResult) resultCache.get(adapted);
+						}
+					}
+					if (!elementIsCached) {
+						//Just build for the resource first
+						if (adapted != null) {
+							if (adaptedResult == null) {
+								decoratorManager
+									.getLightweightManager()
+									.getDecorations(
+									adapted,
+									cacheResult);
+								if (cacheResult.hasValue()) {
+									adaptedResult = cacheResult.createResult();
 								}
+							} else {
+								// If we already calculated the decoration 
+								// for the adapted element, reuse the result.
+								cacheResult.applyResult(adaptedResult);
+								// Set adaptedResult to null to indicate that
+								// we do not need to cache the result again.
+								adaptedResult = null;
 							}
+						}
 
-							//Now add in the results for the main object
+						//Now add in the results for the main object
 
-							decoratorManager
-								.getLightweightManager()
-								.getDecorations(
-								reference.getElement(),
-								cacheResult);
+						decoratorManager
+							.getLightweightManager()
+							.getDecorations(
+							element,
+							cacheResult);
 
-							//If we should update regardless then put a result anyways
-							if (cacheResult.hasValue()
-								|| reference.shouldForceUpdate()) {
+						//If we should update regardless then put a result anyways
+						if (cacheResult.hasValue()
+							|| reference.shouldForceUpdate()) {
 
+							//Synchronize on the result lock as we want to
+							//be sure that we do not try and decorate during
+							//label update servicing.
+							//Note: resultCache and pendingUpdate modifications
+							//must be done atomically.  
+							synchronized (resultLock) {
+								if (adaptedResult != null) {
+									resultCache.put(adapted, adaptedResult);
+								}
 								//Only add something to look up if it is interesting
 								if (cacheResult.hasValue()) {
 									resultCache.put(
-										reference.getElement(),
+										element,
 										cacheResult.createResult());
 								}
 
 								//Add an update for only the original element to 
 								//prevent multiple updates and clear the cache.
-								pendingUpdate.add(reference.getElement());
-							};
-						}
+								pendingUpdate.add(element);
+							}
+						};
 					}
-					//	notify that decoration is ready
+
+					// Only notify listeners when we have exhausted the
+					// queue of decoration requests.
 					if (awaitingDecoration.isEmpty()) {
 						decorated();
 					}
@@ -365,9 +341,9 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 * they are likely obsolete now.
 	 */
 	void clearResults() {
-		synchronized(resultLock){
+		synchronized (resultLock) {
 			resultCache.clear();
 		}
-		
+
 	}
 }
