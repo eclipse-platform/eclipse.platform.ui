@@ -15,8 +15,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager.WrappedActionDelegate;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
 import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscribers.DirectionFilterActionGroup;
@@ -28,7 +27,7 @@ public class MergeSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 
 	private RemoveSynchronizeParticipantAction removeAction;
 	private DirectionFilterActionGroup modes;
-	private WrappedActionDelegate updateAdapter;
+	private ActionDelegateWrapper updateAdapter;
 	
 	public MergeSynchronizeAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(view, participant);		
@@ -44,9 +43,7 @@ public class MergeSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 		modes = new DirectionFilterActionGroup(getParticipant(), SubscriberParticipant.INCOMING_MODE | SubscriberParticipant.CONFLICTING_MODE);
 		MergeUpdateAction action = new MergeUpdateAction();
 		action.setPromptBeforeUpdate(true);
-		updateAdapter = new ActionDelegateManager.WrappedActionDelegate(action, getSynchronizeView(), treeViewer);
-		getDelegateManager().addDelegate(updateAdapter);
-		
+		updateAdapter = new ActionDelegateWrapper(action, getSynchronizeView());
 		Utils.initAction(updateAdapter, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
 		getParticipant().setMode(SubscriberParticipant.INCOMING_MODE);
 	}
@@ -66,5 +63,13 @@ public class MergeSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 				toolbar.add(removeAction);
 			}
 		}		
-	}	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSynchronizeViewerAdvisor#getActionDelegates()
+	 */
+	protected ActionDelegateWrapper[] getActionDelegates() {
+		// Returned so that the superclass will forward model changes
+		return new ActionDelegateWrapper[] { updateAdapter };
+	}
 }

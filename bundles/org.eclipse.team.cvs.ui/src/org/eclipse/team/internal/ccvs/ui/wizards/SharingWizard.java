@@ -97,10 +97,12 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			}
 			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription")); //$NON-NLS-1$
+			createLocationPage.setCVSWizard(this);
 			addPage(createLocationPage);
 			createLocationPage.setDialogSettings(getDialogSettings());
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
+			modulePage.setCVSWizard(this);
 			addPage(modulePage);
 			
 			addTagPage(sharingImage);
@@ -112,6 +114,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		tagPage = new SharingWizardTagPage("tagPage",  //$NON-NLS-1$
 			Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
 			sharingImage);
+		tagPage.setCVSWizard(this);
 		addPage(tagPage);
 	}
 	
@@ -121,6 +124,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			sharingImage,
 			Policy.bind("SharingWizard.24")); //$NON-NLS-1$
 		syncPage.setProject(project);
+		syncPage.setCVSWizard(this);
 		addPage(syncPage);
 	}
 	

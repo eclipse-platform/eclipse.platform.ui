@@ -143,7 +143,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 			}
 		});
 		collector.start(new NullProgressMonitor());
-		TreeViewerAdvisor advisor = new TreeViewerAdvisor(participant.getId(), null, infos);
+		TreeViewerAdvisor advisor = new SharingWizardTreeAdviser(participant.getId(), null, infos);
 		CompareConfiguration cc = new CompareConfiguration();
 		SynchronizeCompareInput input = new SynchronizeCompareInput(cc, advisor) {
 			public String getTitle() {
@@ -201,6 +201,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	private void updatePage() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
+				if (pageBook.isDisposed()) return;
 				if (infos.getErrors().length > 0) {
 					pageBook.showPage(errorPage);
 				} else if (infos.isEmpty()) {

@@ -15,8 +15,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager.WrappedActionDelegate;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscribers.DirectionFilterActionGroup;
 import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
@@ -25,8 +24,8 @@ import org.eclipse.ui.IActionBars;
 public class WorkspaceSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 
 	private DirectionFilterActionGroup modes;
-	private WrappedActionDelegate commitToolbar;
-	private WrappedActionDelegate updateToolbar;
+	private ActionDelegateWrapper commitToolbar;
+	private ActionDelegateWrapper updateToolbar;
 	
 	public WorkspaceSynchronizeAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(view, participant);
@@ -41,12 +40,10 @@ public class WorkspaceSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 		
 		modes = new DirectionFilterActionGroup(getParticipant(), SubscriberParticipant.ALL_MODES);
 
-		commitToolbar = new ActionDelegateManager.WrappedActionDelegate(new SubscriberCommitAction(), getSynchronizeView(), treeViewer);
+		commitToolbar = new ActionDelegateWrapper(new SubscriberCommitAction(), getSynchronizeView());
 		WorkspaceUpdateAction action = new WorkspaceUpdateAction();
 		action.setPromptBeforeUpdate(true);
-		updateToolbar = new ActionDelegateManager.WrappedActionDelegate(action, getSynchronizeView(), treeViewer);
-		getDelegateManager().addDelegate(commitToolbar);
-		getDelegateManager().addDelegate(updateToolbar);
+		updateToolbar = new ActionDelegateWrapper(action, getSynchronizeView());
 
 		Utils.initAction(commitToolbar, "action.SynchronizeViewCommit.", Policy.getBundle()); //$NON-NLS-1$
 		Utils.initAction(updateToolbar, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
@@ -64,5 +61,13 @@ public class WorkspaceSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 			toolbar.add(updateToolbar);
 			toolbar.add(commitToolbar);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSynchronizeViewerAdvisor#getActionDelegates()
+	 */
+	protected ActionDelegateWrapper[] getActionDelegates() {
+		// Returned so that the superclass will forward model changes
+		return new ActionDelegateWrapper[]  { commitToolbar, updateToolbar };
 	}
 }

@@ -54,6 +54,8 @@ public abstract class CVSWizardPage extends WizardPage {
 	protected static final int LIST_HEIGHT_HINT = 100;
 	protected static final int SPACER_HEIGHT = 8;
 
+	private ICVSWizard wizard;
+	
 	/**
 	 * CVSWizardPage constructor comment.
 	 * @param pageName  the name of the page
@@ -61,6 +63,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	public CVSWizardPage(String pageName) {
 		super(pageName);
 	}
+	
 	/**
 	 * CVSWizardPage constructor comment.
 	 * @param pageName  the name of the page
@@ -343,15 +346,32 @@ public abstract class CVSWizardPage extends WizardPage {
 		return CVSUIPlugin.getPlugin().getRepositoryManager();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
-	public IWizardPage getNextPage() {
+	protected ICVSWizard getCVSWizard() {
+		if (wizard != null) {
+			return wizard;
+		}
 		IWizard wizard = getWizard();
 		if (wizard instanceof ICVSWizard) {
 			// This is the method that is invoked when the next button is pressed
 			// Hence, assume that the page s about to be shown
-			return ((ICVSWizard)wizard).getNextPage(this, true /* about to show */);
+			return ((ICVSWizard)wizard);
+		}
+		return null;
+	}
+	
+	public void setCVSWizard(ICVSWizard wizard) {
+		this.wizard = wizard;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+	 */
+	public IWizardPage getNextPage() {
+		ICVSWizard w = getCVSWizard();
+		if (w != null) {
+			// This is the method that is invoked when the next button is pressed
+			// Hence, assume that the page s about to be shown
+			return w.getNextPage(this, true /* about to show */);
 		}
 		return super.getNextPage();
 	}
@@ -360,10 +380,10 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
-		IWizard wizard = getWizard();
-		if (wizard instanceof ICVSWizard) {
+		ICVSWizard w = getCVSWizard();
+		if (w != null) {
 			return isPageComplete() && 
-				((ICVSWizard)wizard).getNextPage(this, false /* about to show */) != null;
+				w.getNextPage(this, false /* about to show */) != null;
 		}
 		return super.canFlipToNextPage();
 	}

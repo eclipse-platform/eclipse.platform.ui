@@ -72,8 +72,8 @@ public class ShareProjectOperation extends CVSOperation {
 	}
 
 	private void waitForCollector(IProgressMonitor sub) {
-		sub.beginTask("Waiting for synchronization state updates", IProgressMonitor.UNKNOWN);
-		sub.subTask("Waiting for synchronization state updates");
+		sub.beginTask("Calculating synchronization states", IProgressMonitor.UNKNOWN);
+		sub.subTask("Calculating synchronization states");
 		CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant().getSubscriberSyncInfoCollector().waitForCollector(sub);
 	}
 

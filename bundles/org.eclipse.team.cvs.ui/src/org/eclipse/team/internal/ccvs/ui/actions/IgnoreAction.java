@@ -16,7 +16,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -65,6 +66,26 @@ public class IgnoreAction extends WorkspaceAction {
 	 */
 	protected boolean isEnabledForUnmanagedResources() {
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		if (super.isEnabledForCVSResource(cvsResource)) {
+			// Perform an extra check against the subscriberto ensue there is no conflict
+			CVSWorkspaceSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+			IResource resource = cvsResource.getIResource();
+			if (resource == null) return false;
+			try {
+				SyncInfo info = subscriber.getSyncInfo(resource);
+				return ((info.getKind() & SyncInfo.DIRECTION_MASK) == SyncInfo.OUTGOING);
+			} catch (TeamException e) {
+				// Let the enablement happen
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

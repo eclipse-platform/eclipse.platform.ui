@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateManager;
+import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.subscribers.SynchronizeViewerAdvisor;
@@ -28,11 +24,6 @@ import org.eclipse.team.ui.synchronize.subscribers.SynchronizeViewerAdvisor;
 public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implements ISynchronizeModelChangeListener {
 
 	private boolean isGroupIncomingByComment = false;
-	
-	private List delegates = new ArrayList(2);
-	private CVSSynchronizeViewerAdvisor config;
-	private Action groupByComment;
-	private ActionDelegateManager delegateManager;
 
 	private static class CVSLabelDecorator extends LabelProvider implements ILabelDecorator  {
 		public String decorateText(String input, Object element) {
@@ -69,7 +60,6 @@ public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implem
 		
 		// Listen for decorator changed to refresh the viewer's labels.
 		CVSUIPlugin.addPropertyChangeListener(this);
-		this.delegateManager = new ActionDelegateManager();
 	}
 	
 	/* (non-Javadoc)
@@ -107,7 +97,7 @@ public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implem
 			}
 		}
 		if(property.equals(CVSUIPlugin.P_DECORATORS_CHANGED) && getViewer() != null && getSyncInfoSet() != null) {
-			((StructuredViewer)getViewer()).refresh(true /* update labels */);
+			getViewer().refresh(true /* update labels */);
 		}
 		super.propertyChange(event);
 	}	
@@ -124,13 +114,23 @@ public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor implem
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.presentation.ISynchronizeModelChangeListener#inputChanged(org.eclipse.team.ui.synchronize.presentation.SynchronizeModelProvider)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeModelChangeListener#modelChanged(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
 	 */
 	public void modelChanged(ISynchronizeModelElement root) {
-		delegateManager.updateActionEnablement(root);
+		ActionDelegateWrapper[] actions = getActionDelegates();
+		for (int i = 0; i < actions.length; i++) {
+			ActionDelegateWrapper wrapper = actions[i];
+			wrapper.setSelection(root);
+		}
 	}
-	
-	protected ActionDelegateManager getDelegateManager() {
-		return delegateManager;
+
+	/**
+	 * Return the non-null list of action delegates whose selection must
+	 * be updated when the model changes. 
+	 * By default, an empty list is returned.
+	 * @return the array of action delegates
+	 */
+	protected ActionDelegateWrapper[] getActionDelegates() {
+		return new ActionDelegateWrapper[0];
 	}
 }
