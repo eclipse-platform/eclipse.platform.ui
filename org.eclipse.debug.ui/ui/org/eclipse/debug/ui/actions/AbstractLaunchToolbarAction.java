@@ -59,8 +59,8 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 			addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
 		} else {
 			addToMenu(menu, new LaunchAsAction(getLaunchGroupIdentifier()), -1);
-			addToMenu(menu, new OpenLaunchDialogAction(getLaunchGroupIdentifier()), -1);
 		}
+		addToMenu(menu, new OpenLaunchDialogAction(getLaunchGroupIdentifier()), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
 	

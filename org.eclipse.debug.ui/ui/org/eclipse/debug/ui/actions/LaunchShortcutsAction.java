@@ -22,6 +22,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -66,6 +67,11 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * Launch group
 	 */
 	private ILaunchGroup fGroup;
+	
+	/**
+	 * Whether this actions enablement has been initialized
+	 */
+	private boolean fInitialized = false;
 		
 	/**
 	 * Creates a cascading menu action to populate with shortcuts in the given
@@ -78,6 +84,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
 		setText(DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode()).getLabel());
 		setMenuCreator(this);
+		setEnabled(existsConfigTypesForMode());
 	}
 	
 	/**
@@ -279,9 +286,6 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-//		if (window instanceof WorkbenchWindow) {
-//			fKeyBindingService= ((WorkbenchWindow)window).getKeyBindingService();
-//		}
 	}
 
 	/**
@@ -295,8 +299,28 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-	    // nothing to do
+	    if (!fInitialized) {
+	        action.setEnabled(existsConfigTypesForMode());
+	        fInitialized = true;
+	    }
 	}
 
+	/**
+	 * Return whether there are any registered launch configuration types for
+	 * the mode of this action.
+	 * 
+	 * @return whether there are any registered launch configuration types for
+	 * the mode of this action
+	 */
+	private boolean existsConfigTypesForMode() {
+		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
+		for (int i = 0; i < configTypes.length; i++) {
+			ILaunchConfigurationType configType = configTypes[i];
+			if (configType.supportsMode(getMode())) {
+				return true;
+			}
+		}		
+		return false;
+	}
 }
 
