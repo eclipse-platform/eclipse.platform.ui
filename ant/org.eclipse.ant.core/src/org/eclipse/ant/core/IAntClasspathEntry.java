@@ -32,4 +32,12 @@ public interface IAntClasspathEntry {
 	 * @return the url for this classpath entry.
 	 */
 	public URL getEntryURL();
+	
+	/**
+	 * Returns whether this classpath entry requires the Eclipse runtime to be 
+	 * relevant. Defaults value is <code>true</code>
+	 * 
+	 * @return whether this classpath entry requires the Eclipse runtime
+	 */
+	public boolean isEclipseRuntimeRequired();
 }

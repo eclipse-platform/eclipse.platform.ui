@@ -66,7 +66,7 @@ public abstract class AntObject {
 		if (fLibraryEntry != null) {
 			return fLibraryEntry;
 		} else {
-			fLibraryEntry= new AntClasspathEntry(fLibrary.getFile());
+			fLibraryEntry= new AntClasspathEntry(fLibrary);
 			return fLibraryEntry;
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 public class AntClasspathEntry implements IAntClasspathEntry {
 
 	private String entryString;
+	private boolean eclipseRequired= true;
+	private URL url= null;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
 	 */
@@ -34,7 +37,9 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
 	 */
 	public URL getEntryURL() {
-		
+		if (url != null) {
+			return url;
+		}
 		try {
 			String expanded = StringVariableManager.getDefault().performStringSubstitution(entryString);
 			return new URL("file:" + expanded); //$NON-NLS-1$
@@ -48,6 +53,11 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 
 	public AntClasspathEntry(String entryString) {
 		this.entryString= entryString;
+	}
+	
+	public AntClasspathEntry(URL url) {
+		this.url= url;
+		this.entryString= url.getFile();
 	}
 	
 	/* (non-Javadoc)
@@ -76,4 +86,14 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 		return getLabel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
+	 */
+	public boolean isEclipseRuntimeRequired() {
+		return eclipseRequired;
+	}
+	
+	public void setEclipseRuntimeRequired(boolean eclipseRequired) {
+		this.eclipseRequired = eclipseRequired;
+	}
 }
