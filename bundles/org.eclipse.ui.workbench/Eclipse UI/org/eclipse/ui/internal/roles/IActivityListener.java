@@ -22,7 +22,7 @@ public interface IActivityListener extends EventListener {
     /**
      * Notify the listener of the given Event.
      * 
-     * @param roleRegistryEvent
+     * @param event ActivityEvent
      */
     void activityChanged(ActivityEvent event);
 }

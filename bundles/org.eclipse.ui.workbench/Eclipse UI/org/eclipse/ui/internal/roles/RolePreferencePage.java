@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,12 +35,12 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class RolePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /**
-     * Whether the role system is currently enabled.
+     * The button which indicates if the role system is currently enabled.
      */
     Button roleEnablement;
 
     /**
-     * List of known roles.
+     * Viewer to show the list of known roles.
      */
 	CheckboxTableViewer viewer;
 
@@ -53,7 +53,7 @@ public class RolePreferencePage extends PreferencePage implements IWorkbenchPref
         composite.setLayout(new GridLayout(1, true));	
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         roleEnablement = new Button(composite, SWT.CHECK);
-        roleEnablement.setText("&Enable role-based filtering.");
+        roleEnablement.setText(RoleMessages.getString("RolePreferencePage.RoleBasedFilteringLabel")); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.verticalSpan = 2;					
 		viewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);

@@ -19,14 +19,18 @@ import java.util.EventObject;
 public class ActivityEvent extends EventObject {
 
 	/**
+	 * Create a new instance of the receiver with the supplied activity.
 	 * @param activity
+	 * @since 3.0
 	 */
 	public ActivityEvent(Activity activity) {
         super(activity);
 	}
     
     /**
+     * Return the activity.
      * @return the source Activity
+     * @since 3.0
      */
     public Activity getActivity() {
         return (Activity) getSource();

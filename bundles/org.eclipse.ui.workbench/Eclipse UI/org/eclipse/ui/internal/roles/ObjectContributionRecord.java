@@ -25,13 +25,13 @@ package org.eclipse.ui.internal.roles;
  * 
  * This class is immutible for efficiency.  
  * 
- * TBD: Is this class entirely necessary?  Could there not be a static key 
+ * TODO: Is this class entirely necessary?  Could there not be a static key 
  * construction method on ObjectActivityManager that would construct suitable
  * keys for use within the manager?
  */
 public class ObjectContributionRecord {
     
-    private String fPluginId, fLocalId, fToString;
+    private String pluginId, localId;
     
     /**
      * Create an ObjectContributionRecord with the given plugin and local IDs.
@@ -42,46 +42,48 @@ public class ObjectContributionRecord {
     public ObjectContributionRecord(String pluginId, String localId) {
         setPluginId(pluginId);
         setLocalId(localId);    
-        fToString = getPluginId() + '/' + getLocalId();
     }
 
 	/**
-	 * @return the local id of this object contribution
+	 * Return the local id of this object contribution
+	 * @return String
 	 */
 	public String getLocalId() {
-		return fLocalId;
+		return localId;
 	}
 
 	/**
-	 * @param localId the local id of this object contribution
+	 * Set the local id of this object contribution
+	 * @param newLocalId the local id of this object contribution
 	 */
-	private void setLocalId(String localId) {
-        if (localId == null) {
+	private void setLocalId(String newLocalId) {
+        if (newLocalId == null) {
             throw new IllegalArgumentException();
         }
-		fLocalId = localId;
+		localId = newLocalId;
 	}
 
 	/**
 	 * @return the plugin id of this object contribution
 	 */
 	public String getPluginId() {
-		return fPluginId;
+		return pluginId;
 	}
 
 	/**
-	 * @param pluginId the plugin id of this object contribution
+	 * Set the plugin id of the record.
+	 * @param newPluginId the plugin id of this object contribution
 	 */
-	private void setPluginId(String pluginId) {
-        if (pluginId == null) {
+	private void setPluginId(String newPluginId) {
+        if (newPluginId == null) {
             throw new IllegalArgumentException();
         }
         
-		fPluginId = pluginId;
+		pluginId = newPluginId;
 	}    
 
 	/**
-     * True if arg0 is an ObjectContributionRecord and its toString() value 
+     * Return true if arg0 is an ObjectContributionRecord and its toString() value 
      * matches the toString() value of the reciever.
      * 
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -95,21 +97,4 @@ public class ObjectContributionRecord {
         }		
 	}
 
-	/**
-     * The hash of the toString() value.
-     * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return toString().hashCode();
-	}
-
-	/** 
-     * A composite String of the form {pluginId}/{localId}
-     * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-        return fToString;
-	}
 }

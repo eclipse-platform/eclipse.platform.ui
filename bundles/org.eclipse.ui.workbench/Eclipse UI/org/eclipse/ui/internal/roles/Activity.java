@@ -54,8 +54,11 @@ public class Activity {
 	}
 
 	/**
+	 * Add a new listener to the receiver.
 	 * 
-	 * @param listener */
+	 * @param listener
+	 * @since 3.0
+	 */
 	public void addListener(IActivityListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
@@ -63,8 +66,11 @@ public class Activity {
 	}
 
 	/**
+	 * Remove the listener from the receiver.
 	 * 
-	 * @param listener */
+	 * @param listener
+	 * @since 3.0
+	 */
 	public void removeListener(IActivityListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
@@ -75,6 +81,7 @@ public class Activity {
 	 * Return the id of the receiver.
 	 * 
 	 * @return String
+	 * @since 3.0
 	 */
 	public String getId() {
 		return id;
@@ -84,6 +91,7 @@ public class Activity {
 	 * Return the name of the receiver.
 	 * 
 	 * @return String
+	 * @since 3.0
 	 */
 	public String getName() {
 		return name;
@@ -93,6 +101,7 @@ public class Activity {
 	 * Return the id of the parent of the receiver.
 	 * 
 	 * @return String
+	 * @since 3.0
 	 */
 	public String getParent() {
 		return parent;
@@ -101,7 +110,8 @@ public class Activity {
 	/**
 	 * Return whether or not this activity is enabled.
 	 * 
-	 * @return
+	 * @return boolean
+	 * @since 3.0
 	 */
 	public boolean isEnabled() {
 		return enabled;
@@ -109,11 +119,12 @@ public class Activity {
 
 	/**
 	 * Set the enabled state of this activity. If this activity has a parent
-	 * and the enabled state is true then the parent is also activated. TBD:
+	 * and the enabled state is true then the parent is also activated. TODO:
 	 * how should we do this? Turning off enablement of a child shouldn't
 	 * effect the parent so this behaviour is lopsided.
 	 * 
 	 * @param enabled
+	 * @since 3.0
 	 */
 	public void setEnabled(boolean enabled) {
 		boolean fireEvent = false;
@@ -122,8 +133,7 @@ public class Activity {
 		}
 		this.enabled = enabled;
 		if (enabled && parent != null) {
-			Activity parentActivity =
-				RoleManager.getInstance().getActivity(parent);
+			Activity parentActivity = RoleManager.getInstance().getActivity(parent);
 			if (parentActivity != null) {
 				parentActivity.setEnabled(enabled);
 			}
@@ -150,8 +160,12 @@ public class Activity {
 		}
 	}
 
-	/* (non-Javadoc) @see java.lang.Object#toString() */
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return getId();
 	}
+
 }

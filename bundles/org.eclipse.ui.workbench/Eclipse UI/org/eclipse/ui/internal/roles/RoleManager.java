@@ -64,7 +64,7 @@ public class RoleManager implements IActivityListener {
 	 */
 	private final ThreadLocal deltaCalcs = new ThreadLocal() {
 		protected synchronized Object initialValue() {
-			return new ActivityDeltaCalculator(RoleManager.this);
+			return new ActivityDeltaCalculator();
 		}
 	};
 
@@ -88,7 +88,7 @@ public class RoleManager implements IActivityListener {
 	 */
 	public static void setManager(RoleManager manager){
 		if(singleton != null)
-			throw new IllegalArgumentException("Role Manager is already set");
+			throw new IllegalArgumentException(RoleMessages.getString("RoleManager.alreadySet")); //$NON-NLS-1$
 		singleton = manager;
 		
 	}
@@ -286,7 +286,7 @@ public class RoleManager implements IActivityListener {
 	protected RoleManager() {
 		if (readRoles()) {
 			// recent activities expire after an hour - create this irre
-			recentActivities = new RecentActivityManager(this, 3600000L);
+			recentActivities = new RecentActivityManager( 3600000L);
 			loadEnabledStates();
 			connectToPlatform();
 		}
