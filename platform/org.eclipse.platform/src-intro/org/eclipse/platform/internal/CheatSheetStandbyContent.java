@@ -18,7 +18,7 @@ import org.eclipse.ui.intro.config.*;
 
 public final class CheatSheetStandbyContent implements IStandbyContentPart {
 
-    private static String MEMENTO_CHEATSHEET_ID_ATT = "cheatsheetId";
+    private static String MEMENTO_CHEATSHEET_ID_ATT = "cheatsheetId"; //$NON-NLS-1$
 
     private IIntroPart introPart;
     private ICheatSheetViewer viewer;
