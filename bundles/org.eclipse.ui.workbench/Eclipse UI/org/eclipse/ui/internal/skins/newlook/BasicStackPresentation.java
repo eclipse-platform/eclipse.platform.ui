@@ -23,7 +23,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -363,12 +362,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	protected void initTab(CTabItem tabItem, IPresentablePart part) {
 		tabItem.setText(part.getName());
-		//tabItem.setToolTipText(part.getTitleToolTip());
 		
-		Image tabImage = part.getTitleImage();
-		if (tabImage != null) {
-			tabItem.setImage(tabImage);
-		}
+		tabItem.setImage(part.getTitleImage());
 	}
 	
 	/* (non-Javadoc)
