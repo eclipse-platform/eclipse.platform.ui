@@ -5,12 +5,12 @@ package org.eclipse.update.internal.ui.security;
  * All Rights Reserved.
  */
 
-
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -45,7 +45,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			Platform.addAuthorizationInfo(serverUrl, realm, scheme, info);
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn("",e);
+			UpdateManagerPlugin.warn("", e);
 		}
 	}
 
@@ -59,29 +59,30 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	/**
 	 * 
 	 */
-	public Map requestAuthenticationInfo(URL resourceUrl,String realm,String scheme) {
-		if (!equalsPreviousRequest(resourceUrl,realm,scheme)) {
+	public Map requestAuthenticationInfo(URL resourceUrl, String realm, String scheme) {
+		// already called by retrieve
+		//if (!equalsPreviousRequest(resourceUrl, realm, scheme)) {
 			// save state
 			InetAddress ip = null;
 			try {
 				ip = InetAddress.getByName(resourceUrl.getHost());
-			} catch (UnknownHostException e){
-				UpdateManagerPlugin.warn("",e);
+			} catch (UnknownHostException e) {
+				UpdateManagerPlugin.warn("", e);
 			}
-			
+
 			this.requestingPort = resourceUrl.getPort();
 			this.requestingPrompt = realm;
 			this.requestingProtocol = resourceUrl.getProtocol();
 			this.requestingScheme = scheme;
 			this.requestingSite = ip;
-			
+
 			// try to get the password info from the in-memory database first
 			Map map = Platform.getAuthorizationInfo(resourceUrl, requestingPrompt, requestingScheme);
 			if (map == null) {
 				map = retrievePasswordAuthentication(resourceUrl, requestingPrompt, requestingScheme);
 			}
-			savedPasswordAuthentication =  map;			
-		} 
+			savedPasswordAuthentication = map;
+		//}
 
 		// we must return a valid Map while we internally manage Cancel dialog (map==null -> dialog cancelled)
 		return savedPasswordAuthentication;
@@ -93,9 +94,8 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	public void addProtectionSpace(URL resourceUrl, String realm) {
 		try {
 			Platform.addProtectionSpace(resourceUrl, realm);
-		}
-		catch (CoreException e) {
-			UpdateManagerPlugin.warn("",e);
+		} catch (CoreException e) {
+			UpdateManagerPlugin.warn("", e);
 		}
 	}
 
@@ -106,16 +106,15 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		return Platform.getProtectionSpace(resourceUrl);
 	}
 
-
 	/*
 	 * forces a refresh
 	 */
-	public void reset(){
-			requestingPort = 0;
-			requestingPrompt = null;
-			requestingProtocol = null;
-			requestingScheme = null;
-			requestingSite = null;
+	public void reset() {
+		requestingPort = 0;
+		requestingPrompt = null;
+		requestingProtocol = null;
+		requestingScheme = null;
+		requestingSite = null;
 	}
 
 	/*
@@ -143,7 +142,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	 * returns true if this request is the same as the saved one
 	 * used to prevent double dialog if user cancelled or entered wrong userid/password
 	 */
-	private boolean equalsPreviousRequest(URL url,String realm,String scheme) {
+	private boolean equalsPreviousRequest(URL url, String realm, String scheme) {
 
 		if (requestingPort != url.getPort())
 			return false;
@@ -166,8 +165,8 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		InetAddress ip = null;
 		try {
 			ip = InetAddress.getByName(url.getHost());
-		} catch (UnknownHostException e){
-			UpdateManagerPlugin.warn("",e);
+		} catch (UnknownHostException e) {
+			UpdateManagerPlugin.warn("", e);
 		}
 
 		if (requestingSite != null && !requestingSite.equals(ip))
@@ -192,13 +191,70 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		ui.open();
 
 		boolean isCancelled = ui.getReturnCode() == UserValidationDialog.CANCEL;
-		if (!isCancelled){
-			result= new HashMap();
+		if (!isCancelled) {
+			result = new HashMap();
 			result.put(INFO_USERNAME, ui.getUserid());
 			result.put(INFO_PASSWORD, ui.getPassword());
 		}
 		shell.dispose();
-		
+
 		return result;
 	}
+
+	/*
+	 * @see Authenticator#getPasswordAuthentication()
+	 */
+	protected PasswordAuthentication getPasswordAuthentication() {
+
+		try {
+			URL url = new URL(getRequestingProtocol(), getRequestingSite().getHostName(), getRequestingPort(), ""); //$NON-NLS-1$
+			Map map = retrievePasswordAuthentication(url);
+
+			String username = null;
+			String password = null;
+
+			if (map != null) {
+				username = (String) map.get(INFO_USERNAME);
+				password = (String) map.get(INFO_PASSWORD);
+			}
+
+			if (username != null && password != null) {
+				return new PasswordAuthentication(username, password.toCharArray());
+			} else {
+				return null;
+			}
+
+		} catch (MalformedURLException e) {
+			IStatus status = Utilities.newCoreException("", e).getStatus();
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+		}
+		return new PasswordAuthentication("", new char[] { ' ' }); //$NON-NLS-1$
+	}
+
+	/*
+	 * 
+	 */
+	private Map retrievePasswordAuthentication(URL url) {
+
+		if (equalsPreviousRequest(url,getRequestingPrompt(),getRequestingScheme())) {
+			// same request, the userid/password was wrong
+			// or user cancelled. force a refresh
+			if (savedPasswordAuthentication != null)
+				// only prompt if the user didn't cancel
+				savedPasswordAuthentication = requestAuthenticationInfo(url, requestingPrompt, requestingScheme);
+		} else {
+			// save state
+			requestingPort = getRequestingPort();
+			requestingPrompt = getRequestingPrompt();
+			requestingProtocol = getRequestingProtocol();
+			requestingScheme = getRequestingScheme();
+			requestingSite = getRequestingSite();
+			savedPasswordAuthentication = Platform.getAuthorizationInfo(url, requestingPrompt, requestingScheme);
+			if (savedPasswordAuthentication == null) {
+				savedPasswordAuthentication = requestAuthenticationInfo(url, requestingPrompt, requestingScheme);
+			}
+		}
+		return savedPasswordAuthentication;
+	}
+
 }
