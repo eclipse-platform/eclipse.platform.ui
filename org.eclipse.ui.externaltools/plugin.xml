@@ -79,6 +79,7 @@
 			adaptable="true"
 			name="%PropertyPage.externalToolsBuilders"
 			class="org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage">
+			<filter name="open" value="true"/> 
 		</page>
 	</extension>
 
