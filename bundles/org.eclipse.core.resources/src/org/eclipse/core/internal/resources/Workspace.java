@@ -1224,8 +1224,9 @@ protected void initializeTeamHook() {
 		}
 	} finally {
 		// default to use Core's implementation
+		//create anonymous subclass because TeamHook is abstract
 		if (teamHook == null)
-			teamHook = new TeamHook();
+			teamHook = new TeamHook() {};
 	}
 }
 public WorkspaceDescription internalGetDescription() {

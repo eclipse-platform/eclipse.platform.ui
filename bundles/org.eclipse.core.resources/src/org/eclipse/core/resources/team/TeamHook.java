@@ -26,17 +26,17 @@ import org.eclipse.core.runtime.IStatus;
  * standard extension point. Individual team providers may also subclass this
  * class. It is not intended to be subclassed by other clients. The methods
  * defined on this class are called from within the implementations of
- * workspace API methods.
+ * workspace API methods and must not be invoked directly by clients.
  * </p>
- * <b>Clients must never explicitly instantiate or invoke methods on this class.</b>
  * 
  * @since 2.1
  */
-public class TeamHook {
+public abstract class TeamHook {
 /**
- * Default constructor for use by subclasses and the resources plugin only.
+ * Creates a new team hook.  Default constructor for use by subclasses and the 
+ * resources plugin only.
  */
-public TeamHook() {
+protected TeamHook() {
 }	
 /**
  * Validates whether a particular attempt at link creation is allowed.  This gives
