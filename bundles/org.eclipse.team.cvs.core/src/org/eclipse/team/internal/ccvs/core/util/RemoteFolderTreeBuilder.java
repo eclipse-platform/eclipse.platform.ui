@@ -160,6 +160,9 @@ public class RemoteFolderTreeBuilder {
 			// There is no remote if the file was added
 			if (info.isAdded())
 				continue;
+			// If the file was deleted locally, we need to generate a new sync info without the delete flag
+			if (info.isDeleted())
+				info = new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 			children.add(new RemoteFile(remote, info));
 		}
 
