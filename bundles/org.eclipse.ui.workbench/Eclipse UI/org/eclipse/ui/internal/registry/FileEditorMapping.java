@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.roles.RoleManager;
-import org.eclipse.ui.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.*;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
+import org.eclipse.ui.internal.roles.ObjectContributionRecord;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /* (non-Javadoc)
  * Implementation of IFileEditorMapping.
@@ -45,13 +54,11 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	public FileEditorMapping(String name, String extension) {
 		super();
 		if (name == null || name.length() < 1)
-			setName("*");
-		//$NON-NLS-1$
+			setName("*");//$NON-NLS-1$
 		else
 			setName(name);
 		if (extension == null)
-			setExtension("");
-		//$NON-NLS-1$
+			setExtension("");//$NON-NLS-1$
 		else
 			setExtension(extension);
 	}
@@ -61,8 +68,37 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	public void addEditor(EditorDescriptor editor) {
 		editors.add(editor);
 		deletedEditors.remove(editor);
+        addToObjectActivityManager(editor);
 	}
-	/**
+    
+    /**
+     * Adds the given editor to the ObjectActivityManager registered for 
+     * editors with the given name+extension.
+     * 
+     * @param editor
+     * @since 3.0
+     */
+	private void addToObjectActivityManager(EditorDescriptor editor) {
+        ObjectActivityManager objectManager = getObjectActivityManager();
+        String pluginId = editor.getPluginID();
+        if (pluginId == null) {
+            return;
+        }
+        ObjectContributionRecord contributionRecord = objectManager.addObject(pluginId, editor.getId(), editor);
+        RoleManager.getInstance().applyPatternBindings(objectManager, contributionRecord);
+    }
+    
+    /**
+     * Gets the ObjectActivityManager registered for editors with the given 
+     * name+extension.
+     * 
+     * @return the manager
+     * @since 3.0
+     */
+    private ObjectActivityManager getObjectActivityManager() {
+        return ObjectActivityManager.getManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
+    }
+    /**
 	 * Clone the receiver.
 	 */
 	public Object clone() {
@@ -193,7 +229,11 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * (hence the clear indication of list in the method name)
 	 */
 	public void setEditorsList(List newEditors) {
-		editors = newEditors;
+		editors = newEditors;  
+        for (Iterator u = newEditors.iterator(); u.hasNext();) {
+            EditorDescriptor descriptor = (EditorDescriptor) u.next();
+            addToObjectActivityManager(descriptor);
+        }    
 	}
 	/**
 	 * Set the collection of all editors (EditorDescriptor)
@@ -203,7 +243,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * (hence the clear indication of list in the method name)
 	 */
 	public void setDeletedEditorsList(List newDeletedEditors) {
-		deletedEditors = newDeletedEditors;
+		deletedEditors = newDeletedEditors;  
 	}
 	/**
 	 * Set the file's extension.
@@ -223,20 +263,10 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * @return List
 	 */
 	private List filteredEditors() {
-		if(!RoleManager.getInstance().isFiltering())
-			return editors;
-			
-		ArrayList filtered = new ArrayList();
-		RoleManager manager = RoleManager.getInstance();
-		Iterator editorsIterator = editors.iterator();
-
-		while (editorsIterator.hasNext()) {
-			IEditorDescriptor next = (IEditorDescriptor) editorsIterator.next();
-			if (manager.isEnabledId(next.getId()))
-				filtered.add(next);
-		}
-
-		return filtered;
+        ObjectActivityManager objectManager = getObjectActivityManager();
+        ArrayList filtered = new ArrayList(editors);
+        filtered.retainAll(objectManager.getActiveObjects());
+        return filtered;
 	}
 
 }

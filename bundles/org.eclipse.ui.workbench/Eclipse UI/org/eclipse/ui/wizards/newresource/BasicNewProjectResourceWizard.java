@@ -28,8 +28,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -357,18 +359,18 @@ public class BasicNewProjectResourceWizard
 		// Map perspective id to descriptor.
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
-		if (finalPersp == null) {
+		if (finalPersp != null) {
 			//Enable the role if required.
-			if (RoleManager.getInstance().isFiltering()) {
-				RoleManager.getInstance().enableActivities(finalPerspId);
-				finalPersp = reg.findPerspectiveWithId(finalPerspId);
-			}
-			if (finalPersp == null) {
-				WorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$
-				+finalPerspId + " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
-				return;
-			}
+            ObjectActivityManager activityManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+            if (activityManager != null) {
+                activityManager.setEnablementFor(finalPerspId, true);
+            }
 		}
+        else {
+            WorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$
+            +finalPerspId + " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
+            return;
+        }
 
 		// gather the preferred perspectives
 		// always consider the final perspective to be preferred

@@ -25,9 +25,9 @@ package org.eclipse.ui.internal.roles;
  * 
  * This class is immutible for efficiency.  
  */
-class ObjectContributionRecord {
+public class ObjectContributionRecord {
     
-    private String pluginId, localId;
+    private String pluginId, localId, toString;
     
     /**
      * Create an ObjectContributionRecord with the given plugin and local IDs.
@@ -37,7 +37,8 @@ class ObjectContributionRecord {
      */
     public ObjectContributionRecord(String pluginId, String localId) {
         setPluginId(pluginId);
-        setLocalId(localId);    
+        setLocalId(localId);   
+        toString = getPluginId() + '/' + getLocalId(); 
     }
 
 	/**
@@ -93,4 +94,21 @@ class ObjectContributionRecord {
         }		
 	}
 
+    /**
+     * The hash of the toString() value.
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    /** 
+     * A composite String of the form {pluginId}/{localId}
+     * 
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return toString;
+    }
 }

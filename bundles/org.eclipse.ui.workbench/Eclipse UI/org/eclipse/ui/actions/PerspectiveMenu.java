@@ -37,12 +37,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 /**
  * A menu for perspective selection.  
@@ -209,15 +210,18 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (page == null)
 			return list;
 
-		ArrayList ids = ((WorkbenchPage) page).getPerspectiveActionIds();
+		ArrayList ids = new ArrayList(((WorkbenchPage) page).getPerspectiveActionIds());
 		if (ids == null)
 			return list;
 
-		RoleManager manager = RoleManager.getInstance();
+        ObjectActivityManager activityManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        if (activityManager != null) {
+            // prune all non-active contributions.
+            ids.retainAll(activityManager.getActiveObjects());
+        }
+
 		for (int i = 0; i < ids.size(); i++) {
 			String perspID = (String) ids.get(i);
-			if(manager.isFiltering() && !manager.isEnabledId(perspID))
-				continue;
 			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
 			if (desc != null && !list.contains(desc))
 				list.add(desc);

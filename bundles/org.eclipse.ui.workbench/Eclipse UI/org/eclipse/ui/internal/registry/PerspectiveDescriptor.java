@@ -215,4 +215,12 @@ public IStatus saveState(IMemento memento) {
 		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
 	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
+
+    /**
+     * @return the configuration element used to create this perspective, if one was used.
+     * @since 3.0
+     */
+    public IConfigurationElement getConfigElement() {
+        return configElement;
+    }
 }

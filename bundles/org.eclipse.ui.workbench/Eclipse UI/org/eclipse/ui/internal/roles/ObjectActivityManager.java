@@ -29,10 +29,9 @@ import java.util.Map.Entry;
  * system (one in which activities of interest are not enabling and disabling 
  * themselves with any great rate and in which new objects and bindings are not 
  * being added often) then this calculation should need to be performed 
- * infrequently.
+ * infrequently. 
  * 
- * TBD: It'd be possible for us to calculate the up-to-date list in a background
- * Job... is it worth the effort?
+ * @since 3.0
  */
 public class ObjectActivityManager implements IActivityListener{
 
@@ -48,6 +47,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @param id
      * @param create
      * @return
+     * @since 3.0
      */
     public static ObjectActivityManager getManager(String id, boolean create) {
         ObjectActivityManager manager = (ObjectActivityManager) managersMap.get(id);
@@ -56,6 +56,16 @@ public class ObjectActivityManager implements IActivityListener{
             managersMap.put(id, manager);
         }
         return manager;
+    }
+    
+    /**
+     * @param id
+     * @return whether an ObjectActivityManager with the given ID has been 
+     * created.
+     * @since 3.0
+     */
+    public static boolean managerExists(String id) {
+        return managersMap.containsKey(id); 
     }
     
     /**
@@ -143,9 +153,11 @@ public class ObjectActivityManager implements IActivityListener{
      * @param pluginId The plugin id
      * @param localId The local id
      * @param object The object being added
+     * @return the ObjectContributionRecord that was used as a key to store the 
+     * provided object.
      * @since 3.0
      */
-    public void addObject(String pluginId, String localId, Object object ) {
+    public ObjectContributionRecord addObject(String pluginId, String localId, Object object ) {
     	
         if (pluginId == null || localId == null || object == null) {
             throw new IllegalArgumentException();
@@ -157,7 +169,8 @@ public class ObjectActivityManager implements IActivityListener{
         if (!object.equals(oldObject)) {
             // dirty the cache if the old entry is not the same as the new one.
             invalidateCache();
-        }            
+        }  
+        return record;          
     }
     
     /**
@@ -170,7 +183,7 @@ public class ObjectActivityManager implements IActivityListener{
     private ObjectContributionRecord findObjectContributionRecord(Object objectOfInterest) {
         for (Iterator i = objectMap.entrySet().iterator(); i.hasNext(); ) {    
             Map.Entry entry = (Entry) i.next();
-            if (entry.getValue() == objectOfInterest) {
+            if (entry.getValue().equals(objectOfInterest)) {
                 return (ObjectContributionRecord) entry.getKey();
             }
         }
@@ -182,6 +195,7 @@ public class ObjectActivityManager implements IActivityListener{
      * activities, or all objects if role filtering is currently disabled.  
      * 
      * @return Collection
+     * @since 3.0
      */
     public Collection getActiveObjects() {
         synchronized (activeObjects) {
@@ -207,7 +221,7 @@ public class ObjectActivityManager implements IActivityListener{
                     
                     dirty = false;
                 }
-                return activeObjects;
+                return Collections.unmodifiableCollection(activeObjects);
             }
             else {
                 // TBD: this logic can probably be moved into the caching logic.  
@@ -252,7 +266,8 @@ public class ObjectActivityManager implements IActivityListener{
     /**
      * Get the unique identifier for this manager.
      * 
-     * @return
+     * @return the unique identifier for this manager.
+     * @since 3.0
      */
     public String getId() {
         return managerId;
@@ -283,14 +298,17 @@ public class ObjectActivityManager implements IActivityListener{
      * 
      * TBD: should remove be supported?
      * 
-     * @param id the id of the object to remove bindings for.  
+     * @param id the id of the object to remove bindings for.
+     * @since 3.0  
      */
-    public void removeActivityBinding(String id) {
+    public void removeActivityBinding(ObjectContributionRecord id) {
         activityMap.remove(id);
     }
     
 	/**
-     * Clear both the id-&gt;object and id-&gt;list&lt;activity&gt; mappings. 
+     * Clear both the id-&gt;object and id-&gt;list&lt;activity&gt; mappings.
+     * 
+     * @since 3.0 
      */
     public void removeAll() {
         removeAllObjectMap();
@@ -300,6 +318,8 @@ public class ObjectActivityManager implements IActivityListener{
     /**
      * Clear the id-&gt;list&lt;activity&gt; map and deregister our 
      * ActivityListeners
+     * 
+     * @since 3.0
      */
     public void removeAllActivityMap() {
         for (Iterator i = activityMap.values().iterator(); i.hasNext(); ) {
@@ -319,6 +339,7 @@ public class ObjectActivityManager implements IActivityListener{
 	/**
      * Clear the id-&gt;object map.
      * 
+     * @since 3.0
      */
     public void removeAllObjectMap() {
         objectMap.clear();
@@ -331,9 +352,10 @@ public class ObjectActivityManager implements IActivityListener{
      * Remove the object with the given id.  This does not impact the 
      * id-&gt;list&lt;activity&gt; mappings.
      * 
-     * @param id the id of the object to remove.  
+     * @param id the id of the object to remove.
+     * @since 3.0  
      */
-    public void removeObject(String id) {
+    public void removeObject(ObjectContributionRecord id) {
         synchronized (activeObjects) {
             if (activeObjects.contains(objectMap.remove(id))) {
                 // the cache contained the given object so invalidate it
@@ -354,13 +376,10 @@ public class ObjectActivityManager implements IActivityListener{
     public void setEnablementFor(Object objectOfInterest, boolean enablement) {
         ObjectContributionRecord record = findObjectContributionRecord(objectOfInterest);
         if (record != null) {
-			Collection activities = getActivityIdsFor(record, false);
-            for(Iterator i = activities.iterator(); i.hasNext(); ) {
-                Activity activity = RoleManager.getInstance().getActivity((String) i.next());
-                if (activity != null) {
-                    activity.setEnabled(enablement);
-                }
-            }            
+			Collection activities = getActivityIdsFor(record, false); 
+            if (activities != null && activities.size() > 0) {           
+                RoleManager.getInstance().setEnabled(RoleManager.getInstance().toActivityArray((String []) activities.toArray(new String [activities.size()])), enablement);
+            }
         }
     }
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -34,6 +36,9 @@ public class RoleContentProvider implements IStructuredContentProvider {
 		if (inputElement instanceof RoleManager) {
 			roles = ((RoleManager)inputElement).getRoles();
 		}
+        else if (inputElement instanceof Collection) {
+            roles = ((Collection)inputElement).toArray();
+        }        
 		return roles;
 	}
 

@@ -23,6 +23,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.internal.actions.RoleConfigurationAction;
+import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -154,6 +156,7 @@ public class WorkbenchActionBuilder {
 
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
+    private RoleConfigurationAction roleManagerAction;
 
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -605,6 +608,11 @@ public class WorkbenchActionBuilder {
 		// See if a welcome page is specified
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
+         
+		//Only add it if role filtering is on
+        if(roleManagerAction != null)
+        	menu.add(roleManagerAction);
+        
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
@@ -1061,6 +1069,11 @@ public class WorkbenchActionBuilder {
 		partService.addPartListener(projectPropertyDialogAction);
 		getWindow().registerGlobalAction(projectPropertyDialogAction);
 				
+		//Only add the role manager action if we are using role support
+        if(RoleManager.getInstance().isFiltering()){
+        	roleManagerAction = new RoleConfigurationAction();
+        	getWindow().registerGlobalAction(roleManagerAction);
+        }
 	}
 
 	/**

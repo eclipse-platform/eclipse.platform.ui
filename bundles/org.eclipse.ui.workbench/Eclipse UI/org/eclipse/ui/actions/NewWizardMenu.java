@@ -18,6 +18,8 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
+
 import java.util.*;
 import java.util.List;
 
@@ -85,9 +87,16 @@ public class NewWizardMenu extends ContributionItem {
 			// Get visible actions.
 			List actions = null;
 			IWorkbenchPage page = window.getActivePage();
-			if (page != null)
-				actions = ((WorkbenchPage) page).getNewWizardActionIds();
+			if (page != null) // get a copy of the list, not the list (as we're going to muck about with it)
+				actions = new ArrayList(((WorkbenchPage) page).getNewWizardActionIds());
+                                
 			if (actions != null) {
+                ObjectActivityManager manager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_NEW, false);
+                if (manager != null) {
+                    // prune away all IDs that arent active based on the managers opinion.
+                    actions.retainAll(manager.getActiveObjects());
+                }
+                
 				if(actions.size() > 0)
 					innerMgr.add(new Separator());
 				for (Iterator i = actions.iterator(); i.hasNext();) {

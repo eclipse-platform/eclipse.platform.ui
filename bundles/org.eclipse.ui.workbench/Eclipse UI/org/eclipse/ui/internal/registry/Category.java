@@ -36,6 +36,7 @@ public class Category extends WorkbenchAdapter implements ICategory {
 	private String[] parentPath;
 	private String unparsedPath;
 	private ArrayList elements;
+    private IConfigurationElement configurationElement;
 	
 	/**
 	 * Creates an instance of <code>Category</code> as a
@@ -70,7 +71,7 @@ public class Category extends WorkbenchAdapter implements ICategory {
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
 		unparsedPath = configElement.getAttribute(ATT_PARENT);
-		
+		configurationElement = configElement;
 		if (id == null || name == null)
 			throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
 	}
@@ -90,6 +91,8 @@ public class Category extends WorkbenchAdapter implements ICategory {
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) 
 			return this;
+        else if (adapter == IConfigurationElement.class) 
+            return configurationElement;
 		else
 			return null;
 	}

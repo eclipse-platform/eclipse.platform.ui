@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -39,10 +40,14 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * RoleManager is the type that defines and filters based on role. */
+ * RoleManager is the type that defines and filters based on role.
+ * 
+ * @since 3.0
+ */
 public class RoleManager implements IActivityListener {
 
 	private static RoleManager singleton;
@@ -60,7 +65,8 @@ public class RoleManager implements IActivityListener {
 	private RecentActivityManager recentActivities;
 
 	/**
-	 * Set of IActivityManagerListeners */
+	 * Set of IActivityManagerListeners
+     */
 	private Set listeners = new HashSet();
 
 	/**
@@ -102,7 +108,8 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Shutdown the current manager if it exists. */
+	 * Shutdown the current manager if it exists.
+     */
 	public static void shutdown() {
 		if (singleton == null)
 			return;
@@ -111,22 +118,27 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Shutdown the receiver. */
+	 * Shutdown the receiver.
+     */
 	public void shutdownManager() {
 
 		if (getRecentActivityManager() != null)
 			getRecentActivityManager().shutdown();
+            
+        saveEnabledStates();
 	}
 
 	/**
-	 * @return the recent activities manager */
+	 * @return the recent activities manager
+     */
 	public RecentActivityManager getRecentActivityManager() {
 		return recentActivities;
 	}
 
 	/**
 	 * 
-	 * @param listener */
+	 * @param listener the listener to remove from the listener collection
+     */
 	public void addActivityManagerListener(IActivityManagerListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
@@ -154,8 +166,8 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * 
-	 * @param listener */
+     * @param listener the listener to remove from the listener collection
+     */
 	public void removeActivityManagerListener(IActivityManagerListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
@@ -178,13 +190,14 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Apply default pattern bindings to the objects governed by the given
-	 * manager.
+	 * Apply default pattern bindings to a subset of keys governed by the given 
+     * manager.
 	 * 
 	 * @param manager
+     * @param keys a Collection of ObjectContributionRecords on which to apply patterns.
+     * @since 3.0
 	 */
-	public void applyPatternBindings(ObjectActivityManager manager) {
-		Set keys = manager.getObjectIds();
+	public void applyPatternBindings(ObjectActivityManager manager, Collection keys) {
 		for (Iterator i = keys.iterator(); i.hasNext();) {
 			ObjectContributionRecord record = (ObjectContributionRecord) i.next();
 			String objectKey = record.toString();
@@ -202,6 +215,29 @@ public class RoleManager implements IActivityListener {
 			}
 		}
 	}
+    
+    /**
+     * Apply default pattern bindings to all of the objects governed by the 
+     * given manager.
+     * 
+     * @param manager
+     * @since 3.0
+     */
+    public void applyPatternBindings(ObjectActivityManager manager) {
+        applyPatternBindings(manager, manager.getObjectIds());
+    }
+    
+    /**
+     * Apply default pattern bindings based on the provided 
+     * ObjectContributionRecord that is governed by the given manager.
+     * 
+     * @param manager
+     * @param record 
+     * @since 3.0
+     */
+    public void applyPatternBindings(ObjectActivityManager manager, ObjectContributionRecord record) {
+        applyPatternBindings(manager, Collections.singleton(record));
+    }            
 
 	/**
 	 * Read the roles from the primary feature. If there is no roles file then
@@ -287,14 +323,41 @@ public class RoleManager implements IActivityListener {
 		}
 
 	}
+    
+    /**
+     * Utility method for going from id->activity given a batch of ids.
+     * 
+     * @param activityIds the ids to look up.
+     * @return an array of Activity Objects that correspond to the supplied 
+     * activityIds.  Any id which does not correspond to an Activity 
+     * Object is discarded.  As a result, the returned array may be smaller than
+     * the supplied array.  
+     * @throws IllegalArgumentException if the supplied array is null.
+     * @since 3.0
+     */
+    public Activity [] toActivityArray(String [] activityIds) {
+        if (activityIds == null) {
+            throw new IllegalArgumentException();
+        }
+        Collection activityBatch = new ArrayList(activityIds.length); 
+        for (int i = 0; i < activityIds.length; i++) {
+            Activity activity = getActivity(activityIds[i]);
+            if (activity != null) {
+                activityBatch.add(activity);
+            }
+        }
+        return (Activity []) activityBatch.toArray(new Activity [activityBatch.size()]);        
+    }
 
 	/**
-	 * Do any operations specific to the platform being hooked. */
+	 * Do any operations specific to the platform being hooked.
+     */
 	protected void connectToPlatform() {
 	}
 
 	/**
-	 * Loads the enabled states from the preference store. */
+	 * Loads the enabled states from the preference store. 
+     */
 	void loadEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
@@ -311,7 +374,8 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Save the enabled states in he preference store. */
+	 * Save the enabled states in he preference store. 
+     */
 	void saveEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
@@ -336,8 +400,9 @@ public class RoleManager implements IActivityListener {
 	/**
 	 * Return whether or not the id is enabled. If there is a role whose
 	 * pattern matches the id return whether or not the role is enabled. If
-	 * there is no match return true; TODO: replace with usage of
-	 * ObjectActivityManager.getActiveObjects()
+	 * there is no match return true; 
+     * 
+     * TODO: replace with usage of ObjectActivityManager.getActiveObjects()
 	 * 
 	 * @param id
 	 * @return boolean.
@@ -452,13 +517,15 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * @return the set of Activity objects. */
-	Collection getActivities() {
+	 * @return the set of Activity objects. 
+     */
+	public Collection getActivities() {
 		return activities.values();
 	}
 
 	/**
-	 * @return a delta calculator usable by the calling thread. */
+	 * @return a delta calculator usable by the calling thread. 
+     */
 	private ActivityDeltaCalculator getDeltaCalculator() {
 		return (ActivityDeltaCalculator) deltaCalcs.get();
 	}
@@ -467,24 +534,27 @@ public class RoleManager implements IActivityListener {
 	 * Return the list of perspective descriptors in the supplied registry
 	 * filtered for roles if appropriate.
 	 * 
+     * TODO: Find a better home for this guy.  He doesn't belong here.
+     * 
 	 * @param registry
 	 * @return IPerspectiveDescriptor[]
 	 */
 	public IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
-		if (isFiltering()) {
-			ArrayList filtered = new ArrayList();
-			IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
-			for (int i = 0; i < descriptors.length; i++) {
-				if (isEnabledId(descriptors[i].getId()))
-					filtered.add(descriptors[i]);
-			}
-
-			IPerspectiveDescriptor[] returnValue = new IPerspectiveDescriptor[filtered.size()];
-			filtered.toArray(returnValue);
-			return returnValue;
-		}
-
-		return registry.getPerspectives();
+        ObjectActivityManager manager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+        if (manager == null) {
+            return descriptors;
+        }
+        Collection activePerspectives = manager.getActiveObjects();
+        
+        Collection filtered = new ArrayList();
+        for (int i = 0; i < descriptors.length; i++) {
+            if (activePerspectives.contains(descriptors[i].getId())) {
+                filtered.add(descriptors[i]);
+            }
+        }
+        
+        return (IPerspectiveDescriptor []) filtered.toArray(new IPerspectiveDescriptor [filtered.size()]);        
 	}
 	
 	/**
