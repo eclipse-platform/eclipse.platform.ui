@@ -330,9 +330,9 @@ public class CVSProviderTest extends EclipseTest {
 		addResources(project, new String[] { "added.xbin", "added.xtxt" }, false);
 		assertHasKSubstOption(project, "binary.xbin", Command.KSUBST_BINARY);
 		assertHasKSubstOption(project, "added.xbin", Command.KSUBST_BINARY);
-		assertHasKSubstOption(project, "text.xtxt", Command.KSUBST_TEXT);
-		assertHasKSubstOption(project, "folder1/a.xtxt", Command.KSUBST_TEXT);
-		assertHasKSubstOption(project, "added.xtxt", Command.KSUBST_TEXT);
+		assertHasKSubstOption(project, "text.xtxt", CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION);
+		assertHasKSubstOption(project, "folder1/a.xtxt", CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION);
+		assertHasKSubstOption(project, "added.xtxt", CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION);
 		
 		// change keyword substitution
 		Map map = new HashMap();
