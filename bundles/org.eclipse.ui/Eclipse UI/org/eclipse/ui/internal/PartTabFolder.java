@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -672,6 +673,11 @@ public void restoreState(IMemento memento)
 			IMemento childMem = children[i];
 			String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 			String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
+
+			IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
+				getViewRegistry().find(partID);
+			if(descriptor != null)
+				tabText = descriptor.getLabel();
 
 			// Create the part.
 			LayoutPart part = new PartPlaceholder(partID);
