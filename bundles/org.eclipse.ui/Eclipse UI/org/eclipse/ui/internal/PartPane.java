@@ -255,12 +255,6 @@ public int getMinimumHeight() {
 	
 	int topHeight = Math.max(leftHeight, Math.max(centerHeight, rightHeight));
 	
-	/* add BORDER_BOTTOM+BORDER_TOP=+4 as a workaround for bug# 11516, 
-	 * until ViewForm.computeTrim is overridden.
-	 */
-	if ((getStyle() & SWT.BORDER) != 0) {
-		topHeight += 4;
-	}
 	/* add +1 for highlight line. ViewForm adds this *inside* client area
 	 * even though it's arguably an inset; see ViewForm.layout for details.
 	 */
