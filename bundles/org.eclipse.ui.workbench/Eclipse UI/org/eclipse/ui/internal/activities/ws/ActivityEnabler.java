@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -156,11 +158,22 @@ public class ActivityEnabler {
 	 */
 	public Control createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
-		mainComposite.setLayout(new GridLayout(2, false));
+		{
+			GridLayout gridLayout = new GridLayout(1, false);
+			gridLayout.marginHeight = 0;
+			gridLayout.marginWidth = 0;
+	        mainComposite.setLayout(gridLayout);
+		}
 
 		Composite c = new Composite(mainComposite, SWT.NONE);
-		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		c.setLayout(new GridLayout(1, true));
+		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		{
+		    GridLayout gridLayout = new GridLayout(1, true);
+		    gridLayout.marginHeight = 0;
+		    gridLayout.marginWidth = 0;
+	        c.setLayout(gridLayout);
+		}
 		
 		Label label = new Label(c, SWT.NONE);
 		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
@@ -178,7 +191,13 @@ public class ActivityEnabler {
 
 		c = new Composite(mainComposite, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-		c.setLayout(new GridLayout(1, true));
+		
+		{
+		    GridLayout gridLayout = new GridLayout(1, true);
+		    gridLayout.marginHeight = 0;
+		    gridLayout.marginWidth = 0;
+	        c.setLayout(gridLayout);
+		}
 		
 		label = new Label(c, SWT.NONE);
 		label.setText(ActivityMessages.getString("ActivityEnabler.description")); //$NON-NLS-1$
@@ -220,6 +239,10 @@ public class ActivityEnabler {
 	 */
 	private void setInitialStates() {
 		Set enabledActivities = activitySupport.getActivityManager().getEnabledActivityIds();
+		setEnabledStates(enabledActivities);
+	}
+	
+	private void setEnabledStates(Set enabledActivities) {
 		Set categories = activitySupport.getActivityManager().getDefinedCategoryIds();
 		List checked = new ArrayList(10), grayed = new ArrayList(10);
 		for (Iterator i = categories.iterator(); i.hasNext();) {
@@ -258,7 +281,7 @@ public class ActivityEnabler {
 		}
 
 		dualViewer.setCheckedElements(checked.toArray());
-		dualViewer.setGrayedElements(grayed.toArray());
+		dualViewer.setGrayedElements(grayed.toArray());	    
 	}
 
 	/**
@@ -283,4 +306,26 @@ public class ActivityEnabler {
 
 		activitySupport.setEnabledActivityIds(enabledActivities);
 	}
+
+    /**
+     * Restore the default activity states. 
+     */
+    public void restoreDefaults() {
+        // we have to read the platform registry because we do not have access
+        // to the activity registry.  This illustrates a shortcoming in the 
+        // API that should be addressed post 3.0.  See bug 61905
+        Set defaultEnabled = new HashSet();
+        IConfigurationElement[] configurationElements =
+			Platform.getExtensionRegistry().getConfigurationElementsFor(
+				"org.eclipse.ui.activities"); //$NON-NLS-1$
+        for (int i = 0; i < configurationElements.length; i++) {
+            if (configurationElements[i].getName().equals("defaultEnablement")) { //$NON-NLS-1$
+                String id = configurationElements[i].getAttribute("id"); //$NON-NLS-1$
+                if (id != null) {
+                    defaultEnabled.add(id);
+                }
+            }
+        }
+        setEnabledStates(defaultEnabled);
+    }
 }

@@ -243,18 +243,6 @@
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
       </actionSet>
-      <actionSet
-            label="%ActivitiesActionSet.label"
-            description="%ActivitiesActionSet.description"
-            visible="true"
-            id="org.eclipse.ui.Activities">
-         <action
-               label="%ConfigureActivities.label"
-               class="org.eclipse.ui.internal.actions.ActivityEnablerAction"
-               menubarPath="window/additionsend"
-               id="org.eclipse.ui.configureActivities">
-         </action>
-      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
@@ -348,6 +336,11 @@
             class="org.eclipse.ui.internal.commands.KeysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
+      <page
+            class="org.eclipse.ui.internal.dialogs.ActivitiesPreferencePage"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            name="%PreferencePages.Activities"
+            id="org.eclipse.ui.ide.page1"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
