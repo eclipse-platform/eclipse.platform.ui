@@ -2,7 +2,7 @@
 <fragment
    id="org.eclipse.ui.win32"
    name="%fragmentName"
-   provider-name="Object Technology International, Inc."
+   provider-name="%providerName"
    version="2.0.0"
    plugin-id="org.eclipse.ui"
    plugin-version="2.0.0">

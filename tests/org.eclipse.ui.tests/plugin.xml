@@ -4,7 +4,7 @@
    id="org.eclipse.ui.tests"
    name="Eclipse UI Tests"
    version="2.0.0"
-   provider-name="Object Technology International"
+   provider-name="Eclipse.org"
    class="org.eclipse.ui.tests.TestPlugin">
    
 <requires>

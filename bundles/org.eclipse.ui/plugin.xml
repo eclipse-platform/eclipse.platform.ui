@@ -3,7 +3,7 @@
    id="org.eclipse.ui"
    name="%Plugin.name"
    version="2.0.0"
-   provider-name="Object Technology International, Inc."
+   provider-name="%Plugin.providerName"
    class="org.eclipse.ui.internal.WorkbenchPlugin">
 
    <runtime>
