@@ -155,7 +155,7 @@ public class ResourceSyncInfo {
 	 * <code>false</code> for folders and for files that have not been merged.
 	 */
 	public boolean isNeedsMerge(Date otherTimestamp) {
-		return syncType == TYPE_MERGED_WITH_CONFLICTS && timeStamp.equals(otherTimestamp);
+		return syncType == TYPE_MERGED_WITH_CONFLICTS && timeStamp != null && timeStamp.equals(otherTimestamp);
 	}
 	
 	/**
