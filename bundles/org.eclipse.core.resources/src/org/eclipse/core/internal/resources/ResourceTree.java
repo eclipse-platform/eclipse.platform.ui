@@ -761,12 +761,12 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 			moveInFileSystem(srcLocation.toFile(), destinationFile, updateFlags, monitor);
 		} catch (CoreException ce) {
 			// did the fail occur after copying to the destination?
-			boolean failedDeletingSource = ce instanceof ResourceException && status.getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destinationFile.exists();				
-			IStatus status = ce.getStatus();
-			failed(status);
-			// if so, we should proceed
+			boolean failedDeletingSource = ce instanceof ResourceException && ce.getStatus().getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destinationFile.exists();				
+			// if not, then rethrow the exception to abort the move operation
 			if (!failedDeletingSource)
-				return;
+				throw ce;
+			// if so, we should log the failure and proceed with moving the tree
+			failed(ce.getStatus());
 		}
 		monitor.worked(9);
 		
@@ -780,15 +780,10 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 					java.io.File sourceFile = children[i].getLocation().toFile();
 					java.io.File destFile = destLocation.append(children[i].getName()).toFile();
 					try {
-					moveInFileSystem(sourceFile, destFile, updateFlags, Policy.monitorFor(null));
+						moveInFileSystem(sourceFile, destFile, updateFlags, Policy.monitorFor(null));
 					} catch (CoreException ce) {
-						// did the fail occur after copying to the destination?						
-						boolean failedDeletingSource = ce instanceof ResourceException && status.getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destFile.exists();						
-						IStatus status = ce.getStatus();
-						failed(status);
-						// if so, we should proceed
-						if (!failedDeletingSource)
-							return;
+						//log the failure, but keep trying on remaining links
+						failed(ce.getStatus());
 				}
 			}
 		}
@@ -843,11 +838,9 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		try {
 			moveInFileSystem(sourceFile, destFile, updateFlags, monitor);
 		} catch (CoreException e) {
+			failed(e.getStatus());
 			// did the fail occur after copying to the destination?									
-			boolean failedDeletingSource = e instanceof ResourceException && e.getStatus().getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destFile.exists();			
-			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString()); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message, e);
-			failed(status);
+			boolean failedDeletingSource = e instanceof ResourceException && e.getStatus().getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destFile.exists();
 			// if so, we should proceed
 			if (!failedDeletingSource)
 				return;
@@ -903,11 +896,9 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		try {
 			moveInFileSystem(sourceFile, destinationFile, updateFlags, monitor);
 		} catch (CoreException e) {
-			// did the fail occur after copying to the destination?									
-			boolean failedDeletingSource = e instanceof ResourceException && e.getStatus().getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destinationFile.exists();			
-			message = Policy.bind("resources.errorMove"); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, e);
-			failed(status);
+			failed(e.getStatus());
+			// did the fail occur after copying to the destination?
+			boolean failedDeletingSource = e instanceof ResourceException && e.getStatus().getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destinationFile.exists();
 			// if so, we should proceed
 			if (!failedDeletingSource)
 				return;

@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -16,7 +16,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
-import java.io.*; 
+import java.io.*;
 
 public class FileSystemStore implements ILocalStoreConstants {
 	/**
@@ -207,18 +207,24 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("localstore.moving", source.getAbsolutePath()), 2); //$NON-NLS-1$
-		// are we renaming the case only?
-		boolean caseRenaming = false;
-		if (!CoreFileSystemLibrary.isCaseSensitive())
-			caseRenaming = source.getAbsolutePath().equalsIgnoreCase(destination.getAbsolutePath());
-		if (!caseRenaming && !force && destination.exists()) {
+		//this flag captures case renaming on a case-insensitive OS, or moving
+		//two equivalent files in an environment that supports symbolic links.
+		//in these cases we NEVER want to delete anything
+		boolean sourceEqualsDest = false;
+		try {
+			sourceEqualsDest = source.getCanonicalFile().equals(destination.getCanonicalFile());
+		} catch (IOException e) {
+			String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
+			throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, e));
+		}
+		if (!sourceEqualsDest && !force && destination.exists()) {
 			String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
 		}
 		if (source.renameTo(destination)) {
 			// double-check to ensure we really did move
 			// since java.io.File#renameTo sometimes lies
-			if (!caseRenaming && source.exists()) {
+			if (!sourceEqualsDest && source.exists()) {
 				// XXX: document when this occurs
 				if (destination.exists()) {
 					// couldn't delete the source so remove the destination
@@ -243,7 +249,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 		} 
 		// for some reason we couldn't move - workaround: copy and delete the source
 		// but if just case-renaming on a case-insensitive FS, there is no workaround 
-		if (caseRenaming) {
+		if (sourceEqualsDest) {
 			String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 		}
@@ -258,7 +264,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 		} finally {
 			if (success) {
 				// fail if source cannot be successfully deleted
-				String message =  Policy.bind("localstore.couldnotDelete", source.getAbsolutePath()); //$NON-NLS-1$ 
+				String message =  Policy.bind("localstore.deleteProblemDuringMove"); //$NON-NLS-1$ 
 				MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
 				if (!delete(source, result))
 					throw new ResourceException(result);
