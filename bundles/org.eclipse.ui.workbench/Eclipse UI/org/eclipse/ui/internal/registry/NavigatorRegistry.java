@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.INavigatorTreeContentProvider;
+import org.eclipse.ui.internal.ActionExpression;
 
 /**
  */
@@ -31,84 +28,42 @@ public NavigatorRegistry() {
 
 /**
  */
-public void add(NavigatorDescriptor descriptor) {
+protected void add(NavigatorDescriptor descriptor) {
 	NavigatorRootContentDescriptor rootContentDescriptor = descriptor.getRootContentDescriptor();
 	NavigatorContentDescriptor contentDescriptor = descriptor.getContentDescriptor();
 	String viewTargetId = descriptor.getTargetId();
 	
 	if (rootContentDescriptor != null)
 		rootContentDescriptors.put(viewTargetId, rootContentDescriptor);	
-
+	else 
+		rootContentDescriptor = getRootContentDescriptor(viewTargetId);
+		
 	if (contentDescriptor != null) {
-		String contentTargetId = contentDescriptor.getContentTargetId();
-		NavigatorAbstractContentDescriptor parentDescriptor = findContentDescriptor(viewTargetId, contentTargetId);
-		if (parentDescriptor != null) parentDescriptor.addSubContentDescriptor(contentDescriptor);
+		rootContentDescriptor.addSubContentDescriptor(contentDescriptor);
 	}
 }
-private NavigatorAbstractContentDescriptor findContentDescriptor(String viewTargetId, String contentProviderId) {
-	NavigatorRootContentDescriptor rootDescriptor = (NavigatorRootContentDescriptor) rootContentDescriptors.get(viewTargetId);
-	if (rootDescriptor != null) return rootDescriptor.findContentDescriptor(contentProviderId);
-	return null;
+public NavigatorContentDescriptor getContentProviderDescriptor(NavigatorRootContentDescriptor root, Object element) {
+	ArrayList descriptors = getChildContentDescriptors(root);
+	NavigatorContentDescriptor contentDescriptor = null;
+	int priority = -1;
+	
+	for (int i = 0; i < descriptors.size(); i++) {
+		NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)descriptors.get(i);
+		ActionExpression enablement = descriptor.getEnableExpression(); 	
+		if (enablement == null) {
+			if (descriptor.getPriority() > priority) contentDescriptor = descriptor;
+		} else if (enablement.isEnabledFor(element) && descriptor.getPriority() > priority) {
+			priority = descriptor.getPriority();
+			contentDescriptor = descriptor;
+		}
+	}
+	return contentDescriptor;	
+}
+public ArrayList getChildContentDescriptors(NavigatorRootContentDescriptor root) {
+	return root.getChildContentDescriptors();
 }
 public NavigatorRootContentDescriptor getRootContentDescriptor(String partId) {
 	return (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
 }
-public INavigatorTreeContentProvider getRootContentProvider(String partId) {
-	NavigatorRootContentDescriptor rootDescriptor = (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
-	if (rootDescriptor != null)
-		return rootDescriptor.createContentProvider();
-		
-	return null;
-}
-public INavigatorTreeContentProvider[] getSubContentProviders(String viewTargetId, String contentProviderId) {
-	NavigatorAbstractContentDescriptor contentDescriptor = findContentDescriptor(viewTargetId, contentProviderId);
-	return getSubContentProviders(contentDescriptor);
-}
-public INavigatorTreeContentProvider[] getSubContentProviders(String viewTargetId) {
-	NavigatorAbstractContentDescriptor rootContentDescriptor = (NavigatorAbstractContentDescriptor)rootContentDescriptors.get(viewTargetId);
-	return getSubContentProviders(rootContentDescriptor);
-}
-protected INavigatorTreeContentProvider[] getSubContentProviders(NavigatorAbstractContentDescriptor contentDescriptor) {
-	ArrayList list = contentDescriptor.getSubContentDescriptors();
-	INavigatorTreeContentProvider[] providers = new INavigatorTreeContentProvider[list.size()];
-	for (int i=0; i<list.size(); i++) {
-		NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)list.get(i);
-		INavigatorTreeContentProvider provider = descriptor.createContentProvider();
-		providers[i] = provider;
-	}
-	return providers;
-}
-public NavigatorContentDescriptor[] getDescriptors(String partId) {
-	NavigatorRootContentDescriptor rootDescriptor = (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
-	ArrayList descriptors = rootDescriptor.getSubContentDescriptors();
-	NavigatorContentDescriptor[] descriptorsArray = new NavigatorContentDescriptor[descriptors.size()];
-	for (int i=0; i<descriptors.size(); i++) {
-		descriptorsArray[i] = (NavigatorContentDescriptor)descriptors.get(i);
-	}
-	return descriptorsArray;
-}
 
-/*
-public ITreeContentProvider getContentProvider(String targetId, Object element) {
-	List descriptors = find(targetId);
-	Iterator iterator = descriptors.iterator();
-	IStructuredContentProvider contentProvider = null;
-	
-	
-	if (project != null)  {
-		String[] natures = project.getDescription().getNatureIds();
-		while (iterator.hasNext() && contentProvider == null)  {
-			NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-			contentProvider = descriptor.getContentProvider(natures);
-		}
-		
-	}
-	while (iterator.hasNext() && contentProvider == null)  {
-		NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-		contentProvider = descriptor.getContentProvider(null);
-	}
-	if (contentProvider != null)
-		return contentProvider;
-	return new WorkbenchContentProvider();
-}*/
 }

@@ -10,22 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.core.internal.resources.WorkspaceRoot;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.INavigatorTreeContentProvider;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.NavigatorContentDescriptor;
-import org.eclipse.ui.internal.registry.NavigatorRegistry;
+import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
- * Provides tree contents for objects that have the IWorkbenchAdapter
- * adapter registered. 
  */
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 	private Navigator navigator;
@@ -42,70 +37,46 @@ protected IWorkbenchAdapter getAdapter(Object o) {
 	}
 	return (IWorkbenchAdapter)((IAdaptable)o).getAdapter(IWorkbenchAdapter.class);
 }
-protected INavigatorTreeContentProvider getContentProvider(Object element) {
-	NavigatorContentDescriptor[] descriptors = registry.getDescriptors(partId);
-	for (int i = 0; i < descriptors.length; i++) {
-		NavigatorContentDescriptor descriptor = descriptors[i];
-		ActionExpression enablement = descriptor.getEnableExpression(); 
-		if (enablement != null) {
-			if (enablement.isEnabledFor(element)) {
-				NavigatorContentDescriptor contentDescriptor = descriptor;
-				return contentDescriptor.createContentProvider();
-			}
+public INavigatorTreeContentProvider getContentProvider(Object element) {
+	NavigatorContentDescriptor descriptor = getContentProviderDescriptor(element);
+	if (descriptor != null) return descriptor.createContentProvider();
+	else return null;	
+}
+protected NavigatorContentDescriptor getContentProviderDescriptor(Object element) {
+	NavigatorRootContentDescriptor root = registry.getRootContentDescriptor(partId);
+	ArrayList descriptors = registry.getChildContentDescriptors(root);
+	for (int i = 0; i < descriptors.size(); i++) {
+		NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)descriptors.get(i);
+		INavigatorTreeContentProvider contentProvider = descriptor.createContentProvider();
+		Object contentProviderElement = getContentProviderElement(contentProvider, element, getElements(navigator.getViewer().getInput()));
+		if (contentProviderElement != null) {
+			return registry.getContentProviderDescriptor(root, contentProviderElement);
 		}
 	}
-	Object parentElement = getParent(element);
-	if (parentElement instanceof WorkspaceRoot) {
-		return new ProjectContentProvider();
-	} else {
-		return getContentProvider(parentElement);
+	return null;
+}
+public Object getContentProviderElement(INavigatorTreeContentProvider provider, Object element, Object[] elements) {
+	if (element == null) return element;
+	for (int i=0; i<elements.length; i++) {
+		if (elements[i].equals(element)) return element;
 	}
+	return getContentProviderElement(provider, provider.getParent(element), elements);
 }
 public Object[] getChildren(Object element) {
-	INavigatorTreeContentProvider contentProvider = getContentProvider(element);
-	return contentProvider.getChildren(element);
-}
-private IResource getResource(Object element) {
-	IResource resource = null;
-	if (element instanceof IResource) {
-		resource = (IResource) element;
+	Object[] elements = null;
+	NavigatorContentDescriptor contentDescriptor = getContentProviderDescriptor(element);
+	if (contentDescriptor != null) {
+		elements = contentDescriptor.createContentProvider().getChildren(element);
 	}
-	else 
-	if (element instanceof IAdaptable) {
-		resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
-	}	
-	return resource;
+	return elements;	
 }
-/* (non-Javadoc)
- * Method declared on IStructuredContentProvider.
- */
 public Object[] getElements(Object element) {
-	INavigatorTreeContentProvider contentProvider = registry.getRootContentProvider(partId);
-	Object[] elements = contentProvider.getElements(element);
-
-	Object[] newElements = new Object[elements.length];
-	NavigatorContentDescriptor[] descriptors = registry.getDescriptors(partId);
-	for (int i=0; i<elements.length; i++) {
-		Object childElement = elements[i];
-		setContentName(childElement, registry.getRootContentDescriptor(partId).getName());
-		newElements[i] = childElement;
-		for (int j = 0; j < descriptors.length; j++) {
-			NavigatorContentDescriptor descriptor = descriptors[j];
-			ActionExpression enablement = descriptor.getEnableExpression(); 
-			if (enablement != null) {
-				if (enablement.isEnabledFor(childElement)) {
-					NavigatorContentDescriptor contentDescriptor = descriptor;
-					Object replacementElement = contentDescriptor.createContentProvider().getReplacementElement(element, childElement);
-					if (replacementElement != null) {
-						setContentName(replacementElement, contentDescriptor.getName());
-						newElements[i]=replacementElement;
-					}
-				}
-			}
-		}
-	}
-
-	return newElements;
+	NavigatorRootContentDescriptor rootDescriptor = registry.getRootContentDescriptor(partId);
+	if (rootDescriptor != null) {
+		INavigatorTreeContentProvider contentProvider = rootDescriptor.createContentProvider();
+		return contentProvider.getElements(element);	
+	}	
+	return null;
 }
 public Object getParent(Object element) {
 	IWorkbenchAdapter adapter = getAdapter(element);
@@ -115,7 +86,14 @@ public Object getParent(Object element) {
 	return null;
 }
 private void setContentName(Object element, String name) {
-	IResource resource = getResource(element);
+	IResource resource = null;
+	if (element instanceof IResource) {
+		resource = (IResource) element;
+	}
+	else 
+	if (element instanceof IAdaptable) {
+		resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+	}	
 	if (resource != null) {
 		try {
 			resource.setSessionProperty(new QualifiedName(null, "contentProvider"), name); //$NON-NLS-1$

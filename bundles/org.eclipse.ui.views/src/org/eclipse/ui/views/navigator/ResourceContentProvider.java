@@ -16,5 +16,5 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  */
-public class ProjectContentProvider extends WorkbenchContentProvider implements INavigatorTreeContentProvider {
+public class ResourceContentProvider extends WorkbenchContentProvider implements INavigatorTreeContentProvider {
 }

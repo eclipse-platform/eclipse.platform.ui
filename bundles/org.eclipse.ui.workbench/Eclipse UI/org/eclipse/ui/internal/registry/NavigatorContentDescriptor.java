@@ -23,7 +23,7 @@ public class NavigatorContentDescriptor extends NavigatorAbstractContentDescript
 	private static final String ATT_PRIORITY = "priority"; //$NON-NLS-1$
 	private static final String ATT_CONTENT_TARGET_ID = "contentTargetId"; //$NON-NLS-1$
 
-	private int priority;
+	private int priority = 0;
 	private String contentTargetId;
 	private ActionExpression enablement;
 	/**
@@ -33,6 +33,7 @@ public class NavigatorContentDescriptor extends NavigatorAbstractContentDescript
 	 */
 	public NavigatorContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super(configElement);
+		readConfigElement();
 	}
 	public String getContentTargetId() {
 		return contentTargetId;
@@ -48,9 +49,8 @@ public class NavigatorContentDescriptor extends NavigatorAbstractContentDescript
 		return enablement;
 	}
 	protected void readConfigElement() throws WorkbenchException {
+		super.readConfigElement();
 		IConfigurationElement configElement = getConfigurationElement();
-		
-		super.readConfigElement();		
 		String priorityString = configElement.getAttribute(ATT_PRIORITY);
 		if (priorityString != null) {
 			try {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.WorkbenchException;
 
@@ -18,6 +20,7 @@ import org.eclipse.ui.WorkbenchException;
  * @since 3.0
  */
 public class NavigatorRootContentDescriptor extends NavigatorAbstractContentDescriptor {
+	private ArrayList childContentDescriptors = new ArrayList();
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
@@ -25,5 +28,21 @@ public class NavigatorRootContentDescriptor extends NavigatorAbstractContentDesc
 	 */
 	public NavigatorRootContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super(configElement);
+		readConfigElement();
+	}
+	protected void addSubContentDescriptor(NavigatorContentDescriptor descriptor) {
+		childContentDescriptors.add(descriptor);
+	}
+	/**
+	 */
+	protected NavigatorAbstractContentDescriptor findContentDescriptor(String contentProviderId) {
+		for (int i=0; i<childContentDescriptors.size(); i++) {
+			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)childContentDescriptors.get(i);
+			if (descriptor.getId().equals(contentProviderId)) return descriptor;
+		}
+		return null;
+	}
+	protected ArrayList getChildContentDescriptors() {
+		return childContentDescriptors;
 	}
 }

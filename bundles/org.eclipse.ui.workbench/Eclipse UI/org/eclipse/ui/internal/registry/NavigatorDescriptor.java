@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.WorkbenchException;
 
 /**
@@ -46,61 +45,9 @@ public NavigatorContentDescriptor getContentDescriptor() {
 public NavigatorRootContentDescriptor getRootContentDescriptor() {
 	return rootContentDescriptor;
 }
-public INavigatorTreeContentProvider getContentProvider() {
-	return contentDescriptor.createContentProvider();
-}
-/**
- */
 public String getTargetId() {
 	return targetId;
 }
-
-/*
-	 * Performance: Should create a lookup table indexed by nature.
-	 */
-	/*public IStructuredContentProvider getContentProvider(IProjectNature[] natures) {
-		Iterator iterator = contentDescriptors.iterator();
-		ContentDescriptor bestDescriptor = null;
-		int bestAvailableNatureCount = 0;
-		int bestExtraNatureCount = Integer.MAX_VALUE;
-		
-		while (iterator.hasNext()) {
-			ContentDescriptor descriptor = (ContentDescriptor) iterator.next();
-			List targetNatures = descriptor.getNatures();
-			if (natures == null) {
-				if (targetNatures.isEmpty()) {
-					bestDescriptor = descriptor;
-					break;
-				}
-			} 
-			else {
-				int availableNatureCount = 0;
-				for (int i = 0; i < natures.length; i++) {
-					if (targetNatures.contains(natures[i]))
-						availableNatureCount++;
-				}
-				if (availableNatureCount > bestAvailableNatureCount) {
-					bestDescriptor = descriptor;
-					bestAvailableNatureCount = availableNatureCount;
-					bestExtraNatureCount = targetNatures.size() - availableNatureCount;
-				}
-				else 
-				if (availableNatureCount > 0 && 
-						availableNatureCount == bestAvailableNatureCount &&
-						targetNatures.size() - availableNatureCount < bestExtraNatureCount) {
-					//content descriptor supports same number of natures as current best descriptor
-					//but has fewer extra natures that are not requested. Prefer this one.
-					bestDescriptor = descriptor;
-					bestAvailableNatureCount = availableNatureCount;
-					bestExtraNatureCount = targetNatures.size() - availableNatureCount;
-				}					
-			}
-		}
-		if (bestDescriptor != null)
-			return bestDescriptor.createContentProvider();
-		return null;
-	}
-	*/
 private void readConfigElement() throws WorkbenchException {
 	targetId = configElement.getAttribute(ATT_TARGET_ID);
 			

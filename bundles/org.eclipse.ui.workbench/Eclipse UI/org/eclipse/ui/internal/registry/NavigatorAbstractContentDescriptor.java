@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.INavigatorTreeContentProvider;
@@ -31,7 +29,6 @@ public class NavigatorAbstractContentDescriptor {
 	private String name;
 	private String className;
 	private IConfigurationElement configElement;
-	private ArrayList subContentDescriptors = new ArrayList();
 	private INavigatorTreeContentProvider contentProvider = null;
 	
 	/**
@@ -42,10 +39,6 @@ public class NavigatorAbstractContentDescriptor {
 	public NavigatorAbstractContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super();
 		this.configElement = configElement;
-		readConfigElement();
-	}
-	protected void addSubContentDescriptor(NavigatorContentDescriptor descriptor) {
-		subContentDescriptors.add(descriptor);
 	}
 	public INavigatorTreeContentProvider createContentProvider() {
 		if  (contentProvider != null) return contentProvider;
@@ -63,17 +56,6 @@ public class NavigatorAbstractContentDescriptor {
 	public String getId() {
 		return id;
 	}
-	/**
-	 */
-	protected NavigatorAbstractContentDescriptor findContentDescriptor(String contentProviderId) {
-		if (getId().equals(contentProviderId)) return this;
-		for (int i=0; i<subContentDescriptors.size(); i++) {
-			NavigatorAbstractContentDescriptor descriptor = (NavigatorContentDescriptor)subContentDescriptors.get(i);
-			NavigatorAbstractContentDescriptor foundDescriptor = descriptor.findContentDescriptor(contentProviderId);
-			if (foundDescriptor != null) return foundDescriptor;
-		}
-		return null;
-	}
 	public String getClassName() {
 		return className;
 	}
@@ -84,9 +66,6 @@ public class NavigatorAbstractContentDescriptor {
 	 */
 	public String getName() {
 		return name;
-	}
-	protected ArrayList getSubContentDescriptors() {
-		return subContentDescriptors;
 	}
 	protected void readConfigElement() throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);

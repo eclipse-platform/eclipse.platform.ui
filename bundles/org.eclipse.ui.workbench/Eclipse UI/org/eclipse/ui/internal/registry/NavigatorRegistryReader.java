@@ -36,8 +36,10 @@ protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_VIEW)) {
 		try {
 			NavigatorDescriptor desc = new NavigatorDescriptor(element);
-			if (desc.getRootContentDescriptor() != null) registry.add(desc);
-			else descriptors.add(desc);
+			if (desc.getRootContentDescriptor() != null) 
+				registry.add(desc);
+			else 
+				descriptors.add(desc);
 		} catch (WorkbenchException e) {
 			// log an error since its not safe to open a dialog here
 			WorkbenchPlugin.log("Unable to create navigator descriptor.",e.getStatus());//$NON-NLS-1$

@@ -15,5 +15,4 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 /**
  */
 public interface INavigatorTreeContentProvider extends ITreeContentProvider {
-	public Object getReplacementElement(Object parentElement, Object element);
 }
