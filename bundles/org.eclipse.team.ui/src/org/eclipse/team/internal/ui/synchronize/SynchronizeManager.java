@@ -140,6 +140,10 @@ public class SynchronizeManager implements ISynchronizeManager {
 			return participant != null;
 		}
 		
+		public IMemento getSavedState() {
+			return savedState;
+		}
+		
 		public boolean equals(Object other) {
 			try {
 				if(other == this) return true;
@@ -412,8 +416,12 @@ public class SynchronizeManager implements ISynchronizeManager {
 			List participants = (List) synchronizeParticipants.get(id);
 			for (Iterator it2 = participants.iterator(); it2.hasNext(); ) {
 				ParticipantInstance instance = (ParticipantInstance) it2.next();
-				// An un-instantiated participant can't have any state to save, also
-				// we don't want to trigger class creation when saving state.
+				
+				// create the state placeholder for a participant 
+				IMemento participantNode = xmlMemento.createChild(CTX_PARTICIPANT);
+				participantNode.putString(CTX_ID, instance.getId());				
+				IMemento participantData = participantNode.createChild(CTX_PARTICIPANT_DATA);
+				
 				if(instance.isParticipantInitialized()) {
 					ISynchronizeParticipant participant;
 					try {
@@ -422,9 +430,12 @@ public class SynchronizeManager implements ISynchronizeManager {
 						// Continue with the next participant instance.
 						continue;
 					}
-					IMemento participantNode = xmlMemento.createChild(CTX_PARTICIPANT);
-					participantNode.putString(CTX_ID, participant.getId());
-					participant.saveState(participantNode.createChild(CTX_PARTICIPANT_DATA));
+					participant.saveState(participantData);
+				} else {
+					IMemento savedState = instance.getSavedState();
+					if(savedState != null) {
+						participantData.putMemento(savedState);
+					}
 				}
 			}
 		}
