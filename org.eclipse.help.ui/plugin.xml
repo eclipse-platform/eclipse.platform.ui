@@ -50,24 +50,6 @@
             file="contexts.xml">
       </contexts>
    </extension>
-<!-- Action Sets -->
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%help"
-            visible="true"
-            id="org.eclipse.help.internal.ui.HelpActionSet">
-         <action
-               label="%helpcontents"
-               icon="icons/view.gif"
-               helpContextId="org.eclipse.ui.help_contents_action_context"
-               class="org.eclipse.help.ui.internal.HelpContentsAction"
-               tooltip="%openhelpcontents"
-               menubarPath="help/helpEnd"
-               id="org.eclipse.help.internal.ui.HelpAction">
-         </action>
-      </actionSet>
-   </extension>
 <!-- Web Browsers -->
    <extension
          point="org.eclipse.help.base.browser">
