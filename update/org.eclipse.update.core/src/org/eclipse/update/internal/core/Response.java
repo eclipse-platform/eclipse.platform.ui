@@ -16,31 +16,6 @@ public class Response {
 	private InputStream in;
 	private URLConnection connection;
 
-	public class CancelConnection implements Runnable {
-
-		private URL url;
-
-		public CancelConnection(URL url) {
-			this.url = url;
-		}
-
-		/**
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			try {
-				connection = url.openConnection();
-			} catch (IOException e) {
-				throw new RuntimeException(e.toString());
-			}
-		}
-
-		public synchronized URLConnection getConnection() {
-			return connection;
-		}
-
-	}
-
 	/**
 	 * 
 	 */
@@ -63,20 +38,7 @@ public class Response {
 	 */
 	public InputStream getInputStream() throws IOException {
 		if (in == null && url != null) {
-			CancelConnection cancel = new CancelConnection(url);
-			Thread t = new Thread(cancel, "cancellable url connection");
-
-			try {
-				t.start();
-				while (connection == null) {
-					connection = cancel.getConnection();
-					Thread.sleep(2000);
-				}
-				t.interrupt();
-			} catch (InterruptedException e){
-				UpdateManagerPlugin.warn("Interrupted", e);
-				throw new IOException();				
-			} 
+			connection = url.openConnection();
 			this.in = connection.getInputStream();
 		}
 
