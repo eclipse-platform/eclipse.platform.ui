@@ -82,7 +82,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			if (fTextViewer != null && e.getViewerRedrawState())
 				redraw();
 		}
-	};
+	}
 	
 	/** The vertical ruler's text viewer */
 	private ITextViewer fTextViewer;

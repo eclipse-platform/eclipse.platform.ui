@@ -200,7 +200,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				fIsActive= false;
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Internal document listener and text input listener.
@@ -271,7 +271,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			startReconciling();
 		}			
-	};
+	}
 	
 	/** Queue to manage the changes applied to the text viewer */
 	private DirtyRegionQueue fDirtyRegionQueue;

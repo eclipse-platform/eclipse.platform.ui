@@ -135,7 +135,7 @@ public class TextPresentation {
 			while (fIndex < fLength && skip(fRanges.get(fIndex)))
 				++ fIndex;
 		}
-	};
+	}
 	
 	/** The syle information for the range covered by the whole presentation */
 	private StyleRange fDefaultRange;

@@ -216,7 +216,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 			IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
 			return region;
 		}
-	};
+	}
 	
 	/** The map of presentation damagers. */
 	private Map fDamagers;

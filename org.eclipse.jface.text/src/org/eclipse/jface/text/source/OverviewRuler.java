@@ -85,7 +85,7 @@ public class OverviewRuler implements IOverviewRuler {
 		public void modelChanged(IAnnotationModel model) {
 			update();
 		}
-	};
+	}
 	
 	/**
 	 * Enumerates the annotations of a specified type and characteristics
@@ -164,7 +164,7 @@ public class OverviewRuler implements IOverviewRuler {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-	};
+	}
 	
 	/**
 	 * The painter of the overview ruler's header.
@@ -209,7 +209,7 @@ public class OverviewRuler implements IOverviewRuler {
 			e.gc.setLineWidth(1);
 			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
 		}
-	};
+	}
 		
 	private static final int INSET= 2;
 	private static final int ANNOTATION_HEIGHT= 4;

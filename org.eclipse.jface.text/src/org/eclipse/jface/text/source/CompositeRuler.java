@@ -107,7 +107,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 				x += (columnWidth + fGap);
 			}
 		}
-	};
+	}
 	
 	/**
 	 * A canvas that adds listeners to all its children. Used by the implementation of the
@@ -121,7 +121,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		static class ListenerInfo {
 			Class fClass;
 			SWTEventListener fListener;
-		};
+		}
 		
 		/** The list of listeners added to this canvas. */
 		private List fCachedListeners= new ArrayList();
@@ -494,7 +494,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 			super.addDisposeListener(listener);
 			addListener(DisposeListener.class, listener);
 		}
-	};
+	}
 	
 	/** The ruler's viewer */
 	private ITextViewer fTextViewer;

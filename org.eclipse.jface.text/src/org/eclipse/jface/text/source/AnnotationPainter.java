@@ -59,7 +59,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		Color fColor;
 		/** Indicates whether this decoration might span multiple lines */
 		boolean fMultiLine;
-	};
+	}
 	
 	/** Indicates whether this painter is active */
 	private boolean fIsActive= false;

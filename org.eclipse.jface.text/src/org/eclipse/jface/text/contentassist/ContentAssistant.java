@@ -188,7 +188,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 		public void viewportChanged(int topIndex) {
 			hide();
 		}
-	};
+	}
 	
 	/**
 	 * An implementation of <code>IContentAssistListener</code>, this class is
@@ -303,7 +303,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 				}
 			}
 		}
-	};
+	}
 	
 	/**
 	 * The laypout manager layouts the various
@@ -577,7 +577,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 					break;
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Internal key listener and event consumer.
@@ -620,7 +620,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 				}
 			}
 		}
-	};
+	}
 	
 	
 	// Content-Assist Listener types

@@ -176,7 +176,7 @@ public class ContentFormatter implements IContentFormatter {
 			
 			throw new ClassCastException();
 		}
-	};
+	}
 	
 	/**
 	 * The position updater used to update the remembered partitions.
@@ -201,7 +201,7 @@ public class ContentFormatter implements IContentFormatter {
 		protected boolean notDeleted() {
 			return true;
 		}
-	};
+	}
 	
 	/**
 	 * The position updater which runs as first updater on the document's positions.
@@ -217,7 +217,7 @@ public class ContentFormatter implements IContentFormatter {
 		public void update(DocumentEvent event) {
 			removeAffectedPositions(event.getDocument());
 		}	
-	};
+	}
 	
 	/**
 	 * The position updater which runs as last updater on the document's positions.
@@ -250,7 +250,7 @@ public class ContentFormatter implements IContentFormatter {
 		public void update(DocumentEvent event) {
 			updateAffectedPositions(event.getDocument(), fPositions, fOffset);
 		}	
-	};
+	}
 	
 	
 	/** Internal position category used for the formatter partitioning */
@@ -580,7 +580,7 @@ public class ContentFormatter implements IContentFormatter {
 					
 					for (int j= 0; j < positions.length; j++) {
 						
-						Position p= (Position) positions[j];
+						Position p= positions[j];
 						if (p.overlapsWith(offset, length)) {
 
 							if (offset < p.getOffset())

@@ -183,7 +183,7 @@ public class DefaultUndoManager implements IUndoManager {
 			
 			fCurrent= createCurrent();
 		}
-	};
+	}
 	
 	/**
 	 * Represents an undoable edit command consisting of several
@@ -311,7 +311,7 @@ public class DefaultUndoManager implements IUndoManager {
 			}
 			super.commit();
 		}
-	};
+	}
 	
 	/**
 	 * Represents pretended <code>UndoManager</code> state.
@@ -321,7 +321,7 @@ public class DefaultUndoManager implements IUndoManager {
 		protected int cmdCounter= -1;
 		/** The size of the undo stack */
 		protected int stackSize= -1;
-	};
+	}
 	
 	/**
 	 * Internal listener to mouse and key events.
@@ -369,7 +369,7 @@ public class DefaultUndoManager implements IUndoManager {
 					break;
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Internal listener to text changes.
@@ -383,7 +383,7 @@ public class DefaultUndoManager implements IUndoManager {
 			if (e.getDocumentEvent() != null)
 				processTextEvent(e);
 		}
-	};
+	}
 	 
 	/** Text buffer to collect text which is inserted into the viewer */
 	private StringBuffer fTextBuffer= new StringBuffer();

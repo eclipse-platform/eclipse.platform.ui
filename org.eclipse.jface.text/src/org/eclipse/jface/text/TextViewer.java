@@ -120,7 +120,7 @@ public class TextViewer extends Viewer implements
 			} else
 				preservedText= null;
 		}
-	};
+	}
 		
 	/**
 	 * Connects a text double click strategy to this viewer's text widget. 
@@ -153,7 +153,7 @@ public class TextViewer extends Viewer implements
 					s.doubleClicked(TextViewer.this);
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Monitors the area of the viewer's document that is visible in the viewer. 
@@ -222,7 +222,7 @@ public class TextViewer extends Viewer implements
 		 * @see SelectionListener#widgetDefaultSelected
 		 */
 		public void widgetDefaultSelected(SelectionEvent e) {}
-	};
+	}
 		
 	/**
 	 * This position updater is used to keep the selection during text shift operations.
@@ -263,7 +263,7 @@ public class TextViewer extends Viewer implements
 			if (myStart > yoursStart)
 				fPosition.offset += fReplaceLength;		
 		}
-	};
+	}
 	
 	/**
 	 * Internal document listener.
@@ -286,7 +286,7 @@ public class TextViewer extends Viewer implements
 				updateTextListeners(fWidgetCommand);
 			fLastSentSelectionChange= null;
 		}
-	};
+	}
 	
 	
 	/**
@@ -317,7 +317,7 @@ public class TextViewer extends Viewer implements
 			if (fForward)
 				handleVerifyEvent(e);
 		}	
-	};
+	}
 	
 	/**
 	 * The viewer's manager reponsible for registered verify key listeners.
@@ -346,7 +346,7 @@ public class TextViewer extends Viewer implements
 				listener= l;
 				index= i;
 			}
-		};
+		}
 		
 		/** List of registed verify key listeners. */
 		private List fListeners= new ArrayList();
@@ -487,7 +487,7 @@ public class TextViewer extends Viewer implements
 			if (textWidget != null && !textWidget.isDisposed())
 				textWidget.removeVerifyKeyListener(this);
 		}
-	};
+	}
 	
 	
 	/**
@@ -655,7 +655,7 @@ public class TextViewer extends Viewer implements
 			else if (offset < fPosition.getOffset() + fPosition.getLength())
 				fPosition.setLength(fPosition.getLength() + delta);
 		}
-	};
+	}
 	
 	/**
 	 * This viewer's find/replace target.
@@ -867,7 +867,7 @@ public class TextViewer extends Viewer implements
 				}
 			}
 		}
-	};
+	}
 	
 	
 	/**
@@ -905,7 +905,7 @@ public class TextViewer extends Viewer implements
 		public void setRedraw(boolean redraw) {
 			TextViewer.this.setRedraw(redraw);
 		}
-	};
+	}
 	
 	/**
 	 * Value object used as key in the text hover configuration table. It is
@@ -958,7 +958,7 @@ public class TextViewer extends Viewer implements
 		private void setStateMask(int stateMask) {
 			fStateMask= stateMask;
 		}
-	};
+	}
 	
 	/**
 	 * A position reflecting a viewer selection and the selection anchor.
@@ -1006,7 +1006,7 @@ public class TextViewer extends Viewer implements
 		public Point getSelection() {
 			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
 		}
-	};
+	}
 
 	/**
 	 * Internal cursor listener i.e. aggregation of mouse and key listener.
@@ -2660,7 +2660,7 @@ public class TextViewer extends Viewer implements
 					
 				} else {
 					IRegion extent= getExtent(start, end);
-					startPixel= extent.getOffset() + fTextWidget.getHorizontalPixel();;
+					startPixel= extent.getOffset() + fTextWidget.getHorizontalPixel();
 					endPixel= startPixel + extent.getLength();
 				}
 				

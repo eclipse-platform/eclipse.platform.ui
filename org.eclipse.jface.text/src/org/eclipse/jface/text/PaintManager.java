@@ -75,7 +75,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			else
 				fPosition.offset += fReplaceLength;
 		}
-	};
+	}
 
 	/**
 	 * The paint position manager used by this paint manager. The paint position
@@ -163,7 +163,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 				// should not happen
 			}
 		}
-	};
+	}
 	
 	
 	/** The painters managed by this paint manager. */

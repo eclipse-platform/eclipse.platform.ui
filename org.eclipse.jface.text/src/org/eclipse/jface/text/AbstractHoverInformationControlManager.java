@@ -188,7 +188,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public void keyPressed(KeyEvent event) {
 			stop(true);
 		}
-	};
+	}
 	
 	
 	/**
@@ -382,7 +382,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			
 			return false;
 		}
-	};
+	}
 		
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();

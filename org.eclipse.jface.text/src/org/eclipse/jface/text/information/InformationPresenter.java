@@ -213,7 +213,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 */
 		public void keyReleased(KeyEvent e) {
 		}
-	};	
+	}
 	
 	
 	/** The text viewer this information presenter works on */

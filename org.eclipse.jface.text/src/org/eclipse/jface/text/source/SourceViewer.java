@@ -100,7 +100,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			} else
 				getTextWidget().setBounds(0, 0, clArea.width, clArea.height);
 		}
-	};
+	}
 	
 	
 	/** The viewer's content assistant */

@@ -207,7 +207,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		if (model == null)
 			return null;
 		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModel diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+			IAnnotationModel diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 			if (diffModel != null)
 				model= diffModel;
 		}

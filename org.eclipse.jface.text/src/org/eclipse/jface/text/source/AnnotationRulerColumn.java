@@ -78,7 +78,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			if (e.getViewerRedrawState())
 				postRedraw();
 		}
-	};
+	}
 	
 	
 	/** This column's parent ruler */

@@ -51,7 +51,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		 */
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
-	};
+	}
 	
 	
 	/** The proposal table */

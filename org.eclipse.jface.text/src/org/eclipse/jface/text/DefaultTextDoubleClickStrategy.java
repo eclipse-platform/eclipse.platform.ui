@@ -155,7 +155,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			i.fEndOffset= fEndOffset;
 			return i;
 		}
-	};
+	}
 	
 	
 	/** 

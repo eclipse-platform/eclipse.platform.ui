@@ -78,7 +78,7 @@ abstract public class AbstractInformationControlManager {
 		 * Tells this closer to stop monitoring the subject and the information control.
 		 */
 		public void stop();
-	};
+	}
 	
 	
 	
@@ -87,8 +87,8 @@ abstract public class AbstractInformationControlManager {
 	 */
 	public static final class Anchor {
 		private Anchor() {
-		};
-	};
+		}
+	}
 	
 	/** Internal anchor list. */
 	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };

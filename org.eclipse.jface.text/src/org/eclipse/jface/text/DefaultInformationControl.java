@@ -61,7 +61,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 * @return the manipulated information
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
-	};
+	}
 
 	/**
 	 * Layout used to achive the "tool tip" look, i.e., flat with a thin boarder.

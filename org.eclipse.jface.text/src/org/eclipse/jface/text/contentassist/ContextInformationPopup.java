@@ -63,7 +63,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		public IContextInformation fInformation;
 		public IContextInformationValidator fValidator;
 		public IContextInformationPresenter fPresenter;
-	};
+	}
 
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
