@@ -356,11 +356,15 @@ public class JobManager implements IJobManager {
 	private List select(Object family, int stateMask) {
 		List members = new ArrayList();
 		synchronized (lock) {
-			for (Iterator it = running.iterator(); it.hasNext();) {
-				select(members, family, (InternalJob)it.next(), stateMask);
+			if ((stateMask & Job.RUNNING) != 0) {
+				for (Iterator it = running.iterator(); it.hasNext();) {
+					select(members, family, (InternalJob) it.next(), stateMask);
+				}
 			}
-			select(members, family, (InternalJob)waiting.peek(), stateMask);
-			select(members, family, (InternalJob)sleeping.peek(), stateMask);
+			if ((stateMask & Job.WAITING) != 0)
+				select(members, family, (InternalJob) waiting.peek(), stateMask);
+			if ((stateMask & Job.SLEEPING) != 0)
+				select(members, family, (InternalJob) sleeping.peek(), stateMask);
 		}
 		return members;
 	}
@@ -478,7 +482,7 @@ public class JobManager implements IJobManager {
 		final Semaphore barrier;
 		synchronized (lock) {
 			int state = job.getState();
-			if (state == Job.NONE || state == Job.SLEEPING)
+			if (state == Job.NONE)
 				return;
 			//the semaphore will be released when the job is done
 			barrier = new Semaphore(null);
@@ -508,7 +512,7 @@ public class JobManager implements IJobManager {
 		final int jobCount;
 		synchronized (lock) {
 			//we never want to join sleeping jobs
-			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING));
+			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING | Job.SLEEPING));
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;
@@ -535,7 +539,7 @@ public class JobManager implements IJobManager {
 				}
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				Thread.sleep(200);
+				Thread.sleep(100);
 			}
 		} finally {
 			monitor.done();

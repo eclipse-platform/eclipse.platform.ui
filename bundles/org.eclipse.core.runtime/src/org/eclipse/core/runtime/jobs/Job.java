@@ -245,7 +245,7 @@ public abstract class Job extends InternalJob {
 	}
 	/**
 	 * Waits until this job is finished.  This method will block the calling thread until the 
-	 * job has finished executing.  If the job is not currently waiting or running, this 
+	 * job has finished executing.  If the job has not been scheduled, this 
 	 * method returns immediately.
 	 * 
 	 * <p>
@@ -255,7 +255,6 @@ public abstract class Job extends InternalJob {
 	 * upon entering the join.
 	 * </p>
 	 * 
-	 * @param job the job to wait for
 	 * @exception InterruptedException if this thread is interrupted while waiting
 	 * @see ILock
 	 */
