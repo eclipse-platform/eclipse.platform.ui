@@ -504,7 +504,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @return the active workbench page or <code>null</code>
 	 */
 	public IWorkbenchPage getActiveWorkbenchPage() {
-		IWorkbenchWindow window = launchView.getViewSite().getWorkbenchWindow();;
+		IWorkbenchWindow window = launchView.getViewSite().getWorkbenchWindow();
 		IWorkbenchPage page= null;
 		if (window != null) {
 			page= window.getActivePage();
