@@ -478,6 +478,29 @@
             textPreferenceKey="deletionIndication"
             overviewRulerPreferenceKey="deletionIndicationInOverviewRuler">
       </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
+            label="%spelling.label"
+            symbolicIcon="warning"
+            presentationLayer="5"
+            contributesToHeader="true"
+            colorPreferenceKey="spellingIndicationColor"
+            colorPreferenceValue="244,200,45"
+            textPreferenceKey="spellingIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="spellingIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="spellingIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            isGoToPreviousNavigationTargetKey="isSpellingGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isSpellingGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            showInNextPrevDropdownToolbarActionKey="showSpellingInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            highlightPreferenceKey="spellingIndicationHighlighting"
+            highlightPreferenceValue="false">
+      </specification>
    </extension>
    
    <extension point="org.eclipse.ui.editors.annotationTypes">
