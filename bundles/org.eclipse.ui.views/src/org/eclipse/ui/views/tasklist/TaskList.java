@@ -1375,8 +1375,8 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
 	sortByResourceAction.setChecked(curColumn == ((SortByAction)sortByResourceAction).getColumnNumber());
 	
 	boolean curDirection = ((TaskSorter)viewer.getSorter()).isReversed();
-	sortAscendingAction.setChecked(!curDirection);
-	sortDescendingAction.setChecked(curDirection);
+	sortAscendingAction.setChecked(curDirection);
+	sortDescendingAction.setChecked(!curDirection);
 	
 }
 }
