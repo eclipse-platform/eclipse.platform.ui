@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.configurator;
+package org.eclipse.update.internal.configurator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configurator.*;
 
 public class Utils {
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$

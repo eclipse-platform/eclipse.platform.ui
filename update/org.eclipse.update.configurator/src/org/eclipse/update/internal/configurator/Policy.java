@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.configurator;
+package org.eclipse.update.internal.configurator;
 
 import java.text.MessageFormat;
 import java.util.*;
