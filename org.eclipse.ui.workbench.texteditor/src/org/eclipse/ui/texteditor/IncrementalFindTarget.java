@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Felix Pahl (fpahl@web.de) - fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=51820
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -108,6 +109,11 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @since 2.1
 	 */
 	private String fPrevFindString= ""; //$NON-NLS-1$
+	/**
+	 * The previous position of the first upper case character, -1 if none
+	 * @since 3.0
+	 */
+	private int fPrevCasePosition= -1;
 	/**
 	 * The find status field.
 	 * @since 3.0
@@ -494,8 +500,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @since 2.1
 	 */
 	private boolean repeatSearch(boolean forward) {
-		if (fFindString.length() == 0)
+		if (fFindString.length() == 0) {
 			fFindString= new StringBuffer(fPrevFindString);
+			fCasePosition= fPrevCasePosition;
+		}
 
 		String string= fFindString.toString();
 		if (string.length() == 0) {
@@ -585,8 +593,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * Leaves this incremental search session.
 	 */
 	private void leave() {
-		if (fFindString.length() != 0) 
+		if (fFindString.length() != 0) { 
 			fPrevFindString= fFindString.toString();
+			fPrevCasePosition= fCasePosition;
+		}
 		statusClear();
 		uninstall();				
 		fSessionStack = null;
