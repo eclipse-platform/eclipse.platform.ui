@@ -111,8 +111,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      * @param list the list to add items to
      */
     protected void addItems(List list) {
-        addShortcuts(list);
-        list.add(new Separator());
+        if (addShortcuts(list)) {
+            list.add(new Separator());
+        }
         list.add(new ActionContributionItem(getShowDialogAction()));
     }
 
@@ -120,19 +121,24 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      * Adds the new wizard shortcuts for the current perspective to the given list.
      * 
      * @param list the list to add items to
+     * @return <code>true</code> if any items were added, <code>false</code> if none were added
      */
-    protected void addShortcuts(List list) {
+    protected boolean addShortcuts(List list) {
+        boolean added = false;
         IWorkbenchPage page = workbenchWindow.getActivePage();
         if (page != null) {
             String[] wizardIds = page.getNewWizardShortcuts();
             for (int i = 0; i < wizardIds.length; i++) {
                 IAction action = getAction(wizardIds[i]);
                 if (action != null) {
-                    if (!WorkbenchActivityHelper.filterItem(action))
+                    if (!WorkbenchActivityHelper.filterItem(action)) {
                         list.add(new ActionContributionItem(action));
+                        added = true;
+                    }
                 }
             }
         }
+        return added;
     }
 
     /*
