@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRunnableWithProgress {
 
-	private ISelection selection;
+	private IFile selection;
 
 	/*
 	 * @see IWorkbenchWindowActionDelegate
@@ -43,21 +43,14 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		String buildFileName= null;
-		IFile buildFile= null;
-		if (selection instanceof IStructuredSelection) {
-			Object first= ((IStructuredSelection) selection).getFirstElement();
-			if (first instanceof IFile) {
-				buildFile= (IFile) first;
-				buildFileName= buildFile.getLocation().toOSString();
-			}
-		}
+		buildFileName= selection.getLocation().toOSString();
 
 		String[] args= {"-buildfile", buildFileName};
 		monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);
 
 		try {
 			//TBD: should remove the build listener somehow
-			new AntRunner().run(args, new UIBuildListener(monitor, buildFile));
+			new AntRunner().run(args, new UIBuildListener(monitor, selection));
 		} 
 		catch (BuildCanceledException e) {
 			// build was canceled don't propagate exception
@@ -74,8 +67,12 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 	 * @see IActionDelegate
 	 */
 	public void run(IAction action) {
-		Shell shell= getShell();
-		try {
+		Shell shell = getShell();
+		new AntLaunchDialog(shell,selection).open();
+		
+		System.out.println("HIT");
+		
+/*		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);
 			dialog.run(true, true, this);
 		} catch (InvocationTargetException e) {
@@ -86,11 +83,20 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 			// do nothing on cancel
 			return;
 		}
+*/
 	}
 	/*
 	 * @see IWorkbenchActionDelegate
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection= selection;
+		this.selection = null;
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			if (structuredSelection.size() == 1) {
+				Object selectedResource = structuredSelection.getFirstElement();
+				if (selectedResource instanceof IFile)
+					this.selection = (IFile)selectedResource;
+			}
+		}
 	}
 }
