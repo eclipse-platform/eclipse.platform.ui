@@ -79,38 +79,7 @@ public interface IDebugPreferenceConstants {
 	 * Serialized list of the disabled debug action groups
 	 */	
 	public static final String PREF_DISABLED_DEBUG_ACTION_GROUPS = IDebugUIConstants.PLUGIN_ID + "disabledDebugActionGroups"; //$NON-NLS-1$
-	
-	/**
-	 * Serialized X,Y coordinates of the last location of the launch configuration dialog.
-	 * 
-	 * @deprecated use dialog settings <code>DIALOG_ORIGIN_X</code>,
-	 * <code>DIALOG_ORIGIN_Y</code>.
-	 */
-	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogLocation"; //$NON-NLS-1$
-	
-	/**
-	 * Serialized width,height values of the launch configuration dialog.
-	 * 
-	 * @deprecated use dialog settings <code>DIALOG_WIDTH</code>,
-	 * <code>DIALOG_HEIGHT</code>.
-	 */
-	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSize"; //$NON-NLS-1$
-	
-	/**
-	 * Serialized relative weights of the sashed elements of the launch configuration dialog.
-	 * 
-	 * @deprecated use dialog settings <code>SASH_WEIGHTS_1</code>,
-	 * <code>SASH_WEIGHTS_2</code>.
-	 */
-	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSashWeights"; //$NON-NLS-1$
-	
-	/**
-	 * The name of the working set applied to the tree viewer in the launch configuration dialog.
-	 * 
-	 * @deprecated use dialog settings <code>DIALOG_WORKING_SET</code>
-	 */
-	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogWorkingSetName"; //$NON-NLS-1$
-	
+		
 	/**
 	 * The maximum size of the launch history list
 	 */
