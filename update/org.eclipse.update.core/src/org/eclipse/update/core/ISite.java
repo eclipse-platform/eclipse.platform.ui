@@ -12,4 +12,6 @@ public interface ISite extends IPluginContainer {
 	IFeature createExecutableFeature(IFeature feature);
 	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	void addSiteChangedListener(ISiteChangedListener listener);
+	void removeSiteChangedListener(ISiteChangedListener listener);
 }

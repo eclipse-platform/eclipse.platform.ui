@@ -8,6 +8,5 @@ package org.eclipse.update.core;
 public interface ILocalSite extends ISite {
 	IInstallConfiguration getCurrentConfiguration();
 	IInstallConfiguration [] getConfigurationHistory();
-
 }
 
