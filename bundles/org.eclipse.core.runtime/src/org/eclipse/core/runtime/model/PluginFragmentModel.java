@@ -121,11 +121,6 @@ public void setPlugin(String value) {
  */
 public void setPluginVersion(String value) {
 	assertIsWriteable();
-	// XXX workaround because some people still do not use the correct 
-	// version format.
-	int i = value.indexOf(' ');
-	if (i > -1)
-		value = value.substring(0, i);
 	pluginVersion = new PluginVersionIdentifier(value).toString();
 }
 }

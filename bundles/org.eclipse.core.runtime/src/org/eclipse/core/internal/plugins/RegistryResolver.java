@@ -75,7 +75,6 @@ public class RegistryResolver {
 			if (prq == null)
 				return "(null)";
 			String s = parent.toString() + "->" + prq.getPlugin();
-			String v = prq.getVersion();
 			switch (prq.getMatchByte()) {
 				case PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED:
 					s += "(any)";
@@ -641,28 +640,47 @@ public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String ex
 	return null;
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginDescriptorModel descriptor) {
-	String version = descriptor.getVersion();
-	if (version == null)
-		return new PluginVersionIdentifier("1.0.0");
 	try {
-		return new PluginVersionIdentifier(version);
+		return new PluginVersionIdentifier(descriptor.getVersion());
 	} catch (Throwable e) {
-		return new PluginVersionIdentifier("1.0.0");
+		// Hopefully, we will never get here.  The version number
+		// has already been successfully converted from a string to
+		// a PluginVersionIdentifier and back to a string.  But keep
+		// this catch around in case something does go wrong.
+		return new PluginVersionIdentifier("0.0.0");
 	}
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginFragmentModel fragment) {
-	String version = fragment.getVersion();
-	if (version == null)
-		return new PluginVersionIdentifier("1.0.0");
 	try {
-		return new PluginVersionIdentifier(version);
+		return new PluginVersionIdentifier(fragment.getVersion());
 	} catch (Throwable e) {
-		return new PluginVersionIdentifier("1.0.0");
+		// Hopefully, we will never get here.  The version number
+		// has already been successfully converted from a string to
+		// a PluginVersionIdentifier and back to a string.  But keep
+		// this catch around in case something does go wrong.
+		return new PluginVersionIdentifier("0.0.0");
 	}
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel prereq) {
 	String version = prereq.getVersion();
 	return version == null ? null : new PluginVersionIdentifier(version);
+}
+private boolean fragmentHasPrerequisites (PluginFragmentModel fragment) {
+	PluginPrerequisiteModel[] requires = fragment.getRequires();
+	if (requires == null || requires.length == 0)
+		return true;
+	for (int i = 0; i < requires.length; i++) {
+		// Use the idmap to determine if a plugin exists.  We know
+		// that all plugins in this registry already have an entry
+		// in the idmap.  If the right idmap entry doesn't exist,
+		// this plugin is not in the registry.
+		if (idmap.get(requires[i].getPlugin()) == null) {
+			// We know this plugin doesn't exist
+			error(Policy.bind("parse.badPrereqOnFrag", fragment.getName(), requires[i].getPlugin()));
+			return false;
+		}
+	}
+	return true;
 }
 private void linkFragments() {
 	/* For each fragment, find out which plugin descriptor it belongs
@@ -681,6 +699,11 @@ private void linkFragments() {
 				error (Policy.bind("parse.fragmentMissingAttr", name));
 			else
 				error (Policy.bind("parse.fragmentMissingIdName"));
+			continue;
+		}
+		if (!fragmentHasPrerequisites(fragment)) {
+			// This fragment requires a plugin that does not 
+			// exist.  Ignore the fragment.
 			continue;
 		}
 		
@@ -755,9 +778,26 @@ private void resolve() {
 	PluginDescriptorModel[] pluginList = reg.getPlugins();
 	idmap = new HashMap();
 	for (int i = 0; i < pluginList.length; i++) {
+		// Check to see if all the required fields exist now.
+		// For example, if we have a null plugin version identifier,
+		// the add(pluginList[i]) will give a null pointer
+		// exception.
+		if (!requiredPluginDescriptor(pluginList[i])) {
+			pluginList[i].setEnabled(false);
+			String id, name;
+			if ((id = pluginList[i].getId()) != null)
+				error (Policy.bind("parse.pluginMissingAttr", id));
+			else if ((name = pluginList[i].getName()) != null)
+				error (Policy.bind("parse.pluginMissingAttr", name));
+			else
+				error (Policy.bind("parse.pluginMissingIdName"));
+			continue;
+		}
 		add(pluginList[i]);
 	}
-	// Add all the fragments to their associated plugin
+	// Add all the fragments to their associated plugin.
+	// Note that this will check for all the required fields in
+	// the fragment.
 	linkFragments();
 	// Now we have to cycle through the plugin list again
 	// to assimilate all the fragment information and 
@@ -768,25 +808,6 @@ private void resolve() {
 			// embed it in the plugin descriptor
 			resolvePluginFragments(pluginList[i]);
 		}
-		// Now ensure that all structures below this plugin
-		// have all their 'required' fields.  Do this now as
-		// the resolve assumes required field exist.  
-		if (pluginList[i].getEnabled()) {
-			if (!requiredPluginDescriptor(pluginList[i])) {
-				pluginList[i].setEnabled(false);
-				String id, name;
-				if ((id = pluginList[i].getId()) != null)
-					error (Policy.bind("parse.pluginMissingAttr", id));
-				else if ((name = pluginList[i].getName()) != null)
-					error (Policy.bind("parse.pluginMissingAttr", name));
-				else
-					error (Policy.bind("parse.pluginMissingIdName"));
-			}
-		}
-		// Now add this plugin to the id map. Each plugin id will
-		// have an idmap entry.  Multiple versions will have only
-		// one entry but will be sorted in version order (largest
-		// to smallest).
 	}
 	
 	// resolve root descriptors
@@ -919,7 +940,6 @@ private void resolveFragments() {
 		if (plugin == null)
 			// XXX log something here?
 			continue;
-		PluginFragmentModel[] list = reg.getFragments(fragment.getId());
 		resolvePluginFragments(plugin);
 	}
 }
@@ -1082,46 +1102,46 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 	 * if there are multiple versions of a given fragment id, all but the
 	 * latest version will be discarded.
 	 */
+
+	// The boolean 'dirty' will remain false if there is only one
+	// version of every fragment id associated with this plugin
+	boolean dirty = false;
+	
 	PluginFragmentModel[] fragmentList = plugin.getFragments();
-	HashMap sortedFragments = new HashMap(30);
+	HashMap latestFragments = new HashMap(30);
 	for (int i = 0; i < fragmentList.length; i++) {
 		String fragmentId = fragmentList[i].getId();
-		LinkedList versions = (LinkedList)sortedFragments.get(fragmentId);
-		if (versions == null) {
+		PluginFragmentModel  latestVersion = (PluginFragmentModel)latestFragments.get(fragmentId);
+		if (latestVersion == null) {
 			// We don't have any fragments with this id yet
-			LinkedList versionList = new LinkedList();
-			versionList.add(fragmentList[i]);
-			sortedFragments.put(fragmentId, versionList);
+			latestFragments.put(fragmentId, fragmentList[i]);
 		} else {
-			boolean placed = false;
-			int j;
-			for (j = 0; j < versions.size() && !placed; j++) {
-				PluginFragmentModel fragment = (PluginFragmentModel) versions.get(j);
-				if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(fragment)))
-					// ignore duplicates
-					error (Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion()));
-				if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(fragment))) {
-					versions.add(j, fragmentList[i]);
-					placed = true;
-				}
-			}
-			if (!placed) {
-				// just add this one to the end
-				versions.add(fragmentList[i]);
+			dirty = true;
+			if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(latestVersion)))
+				// ignore duplicates
+				error (Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion()));
+			if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(latestVersion))) {
+				latestFragments.put(fragmentId, fragmentList[i]);
 			}
 		}
 	}
 	
-	// sortedFragments now contains linked lists of fragments with
-	// the same id sorted in descending order (the biggest version
-	// number is the first element in the linked list
+	// latestFragments now contains the latest version of each fragment
+	// id for this plugin
 	
 	// Now add the latest version of each fragment to the plugin
-	for (Iterator list = sortedFragments.keySet().iterator(); list.hasNext();) {
-		String fragmentId = (String)list.next();
-		PluginFragmentModel latestFragment = (PluginFragmentModel)((LinkedList)sortedFragments.get(fragmentId)).getFirst();
+	Set latestOnly = new HashSet();
+	for (Iterator list = latestFragments.values().iterator(); list.hasNext();) {
+		PluginFragmentModel latestFragment = (PluginFragmentModel)list.next();
+		if (dirty)
+			latestOnly.add(latestFragment);
 		resolvePluginFragment(latestFragment, plugin);
 	}
+	// Currently the fragments on the plugin include all fragment 
+	// versions.  Now strip off all but the latest version of each
+	// fragment id (only if necessary).
+	if (dirty)
+		plugin.setFragments((PluginFragmentModel[]) latestOnly.toArray(new PluginFragmentModel[latestOnly.size()]));
 	
 }
 private void resolvePluginRegistry() {

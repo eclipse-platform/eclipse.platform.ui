@@ -143,7 +143,7 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 		}
 		//skip duplicate entries
 		if (registry.getPlugin(entry.getId(), entry.getVersion()) != null) {
-			return parseProblem(Policy.bind("parse.duplicatePlugin", entry.getId()));
+			return parseProblem(Policy.bind("parse.duplicatePlugin", entry.getId(), location.toString()));
 		}
 		registry.addPlugin((PluginDescriptorModel) entry);
 	} else {
