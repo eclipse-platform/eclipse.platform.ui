@@ -26,6 +26,7 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -81,8 +82,10 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				ILaunchConfiguration configuration = findExistingLaunchConfiguration(file);
 				if (configuration == null) {
 					configuration = createDefaultLaunchConfiguration(file);
-				}
-				if (configuration != null) {
+					if (configuration != null) {
+						DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+					}
+				} else {
 					DebugUITools.launch(configuration, mode);
 				}
 			}			
@@ -119,8 +122,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true); 
-			ILaunchConfiguration configuration = workingCopy.doSave();
-			return configuration;
+			return workingCopy.doSave();
 		} catch (CoreException e) {
 			reportError(MessageFormat.format("An exception occurred while creating a default Ant launch configuration for {0}", new String[]{file.toString()}), e);
 		}
