@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.text.Collator;
-
 import org.eclipse.swt.graphics.Image;
 
 public class FieldMessage implements IField {
@@ -77,7 +75,11 @@ public class FieldMessage implements IField {
 		if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker) || !(obj2 instanceof ConcreteMarker)) {
 			return 0;
 		}
-		return Collator.getInstance().compare(getValue(obj1), getValue(obj2));
+		
+		ConcreteMarker marker1 = (ConcreteMarker) obj1;
+		ConcreteMarker marker2 = (ConcreteMarker) obj2;
+		
+		return marker1.getDescriptionKey().compareTo(marker2.getDescriptionKey());
 	}
 
 }

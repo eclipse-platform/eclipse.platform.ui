@@ -50,7 +50,7 @@ public class MarkerFilter {
 	static final int ON_ANY_RESOURCE_OF_SAME_PROJECT = 3;
 	static final int ON_WORKING_SET = 4;
 
-	static final int DEFAULT_MARKER_LIMIT = 300;
+	static final int DEFAULT_MARKER_LIMIT = 100;
 	static final boolean DEFAULT_FILTER_ON_MARKER_LIMIT = true;
 	static final int DEFAULT_ON_RESOURCE = ON_ANY_RESOURCE;
 	static final boolean DEFAULT_ACTIVATION_STATUS = true;

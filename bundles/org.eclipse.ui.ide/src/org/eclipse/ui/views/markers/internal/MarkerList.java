@@ -60,6 +60,20 @@ public class MarkerList {
 	}
 	
 	/**
+	 * Clears any cached collation keys. Use to free up some memory if the markers in this
+	 * list won't be sorted for awhile. 
+	 */
+	public void clearCache() {
+		for (int i = 0; i < markers.length; i++) {
+			ConcreteMarker marker = (ConcreteMarker) markers[i];
+			
+			marker.clearCache();
+		}
+		
+		markerTable = null;
+	}
+	
+	/**
 	 * Returns the marker table or lazily creates it if it doesn't exist yet
 	 * 
 	 * @return a map of IMarker onto ConcreteMarker, containing all the ConcreteMarkers in the list

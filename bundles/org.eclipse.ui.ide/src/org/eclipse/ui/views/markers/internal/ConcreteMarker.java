@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
+import java.text.CollationKey;
+import java.text.Collator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +29,9 @@ public class ConcreteMarker {
 	private String description;
 	private String resourceName;
 	private String inFolder;
+	private CollationKey descriptionKey;
+	private CollationKey resourceNameKey;
+	private CollationKey inFolderKey;
 	private int line;
 	private long creationTime;
 	private String type;
@@ -37,11 +43,23 @@ public class ConcreteMarker {
 		refresh();
 	}
 	
+	/**
+	 * Clears any cached information. This frees up some memory, but will slow down
+	 * the next comparison operation. It is a good idea to call this on a set of markers
+	 * after sorting them, in order to reduce their memory cost. 
+	 */
+	public void clearCache() {
+		resourceNameKey = null;
+		descriptionKey = null;
+		inFolderKey = null;		
+	}
 	
 	/**
 	 * Refresh the properties of this marker from the underlying IMarker instance
 	 */
 	public void refresh() {
+		clearCache();
+		
 		description = Util.getProperty(IMarker.MESSAGE, marker);
 		resourceName = marker.getResource().getName();
 		inFolder = Util.getContainerName(marker);
@@ -70,9 +88,24 @@ public class ConcreteMarker {
 	public String getDescription() {
 		return description;
 	}
+		
+	public CollationKey getDescriptionKey() {
+		if (descriptionKey == null) {
+			descriptionKey = Collator.getInstance().getCollationKey(description);
+		}
+		
+		return descriptionKey;
+	}
 	
 	public String getResourceName() {
 		return resourceName;
+	}
+		
+	public CollationKey getResourceNameKey() {
+		if (resourceNameKey == null) {
+			resourceNameKey = Collator.getInstance().getCollationKey(resourceName);
+		}
+		return resourceNameKey;
 	}
 	
 	public int getLine() {
@@ -81,6 +114,13 @@ public class ConcreteMarker {
 	
 	public String getFolder() {
 		return inFolder;
+	}
+	
+	public CollationKey getFolderKey() {
+		if (inFolderKey == null) {
+			inFolderKey = Collator.getInstance().getCollationKey(inFolder);
+		}
+		return inFolderKey;
 	}
 	
 	public long getCreationTime() {
