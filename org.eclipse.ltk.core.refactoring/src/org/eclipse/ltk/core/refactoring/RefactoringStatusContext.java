@@ -37,4 +37,12 @@ public abstract class RefactoringStatusContext {
 	 * @return the corresponding element
 	 */
 	public abstract Object getCorrespondingElement();
+	
+	/*
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		Object element= getCorrespondingElement();
+		return element == null ? null : element.toString();
+	}
 }
