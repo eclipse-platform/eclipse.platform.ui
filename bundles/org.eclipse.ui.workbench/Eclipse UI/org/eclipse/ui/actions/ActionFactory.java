@@ -87,8 +87,6 @@ public abstract class ActionFactory {
     /**
      * Workbench action: Displays the About dialog. This action maintains its
      * enablement state.
-     * 
-     * @since 3.0
      */
     public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
