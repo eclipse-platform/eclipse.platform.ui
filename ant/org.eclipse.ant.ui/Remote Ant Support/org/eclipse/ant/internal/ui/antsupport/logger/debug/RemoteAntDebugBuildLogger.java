@@ -46,7 +46,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	protected boolean fClientSuspend= false;
 	
-	protected boolean fShouldSuspend= false;
+	protected boolean fBuildStartedSuspend= false;
 	
 	private Stack fTasks= new Stack();
 	private Task fCurrentTask;
@@ -185,7 +185,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		} else {
 			shutDown();
 		}
-		fShouldSuspend= true;
+		fBuildStartedSuspend= true;
 		waitIfSuspended();
 	}
 	
@@ -242,9 +242,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	            } catch (InterruptedException e) {
 	            }
 	        }
-	    } else if (fShouldSuspend) {
+	    } else if (fBuildStartedSuspend) {
 	        try {
-	            fShouldSuspend= false;
+	            fBuildStartedSuspend= false;
 	            wait();
 	        } catch (InterruptedException e) {
 	        }
