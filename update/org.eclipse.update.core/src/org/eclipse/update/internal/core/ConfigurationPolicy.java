@@ -21,6 +21,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 public class ConfigurationPolicy extends ConfigurationPolicyModel implements IConfigurationPolicy {
 
 
+	
 	/**
 	 * Constructor for ConfigurationPolicyModel.
 	 */
@@ -28,6 +29,17 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 		super();
 		setPolicy(policy);
 	}
+
+	/**
+	 * Copy Constructor for ConfigurationPolicyModel.
+	 */
+	public ConfigurationPolicy(IConfigurationPolicy configPolicy) {
+		super();
+		setPolicy(configPolicy.getPolicy());
+		setConfiguredFeatureReferences(configPolicy.getConfiguredFeatures());
+		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
+	}
+
 
 	/**
 	 * @since 2.0
@@ -173,14 +185,18 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	 * @since 2.0
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		return (IFeatureReference[])getConfiguredFeatures();
+		if (getConfiguredFeaturesModel().length==0)
+			return new IFeatureReference[0];		
+		return (IFeatureReference[])getConfiguredFeaturesModel();
 	}
 
 	/**
 	 * @since 2.0
 	 */
 	public IFeatureReference[] getUnconfiguredFeatures() {
-		return (IFeatureReference[])getUnconfiguredFeatures();
+		if (getUnconfiguredFeaturesModel().length==0)
+			return new IFeatureReference[0];
+		return (IFeatureReference[])getUnconfiguredFeaturesModel();
 	}
 
 }

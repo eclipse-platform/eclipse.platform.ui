@@ -13,6 +13,9 @@ import org.eclipse.update.core.model.InstallConfigurationParser;
 public class ConfigurationActivity extends ConfigurationActivityModel implements IActivity, IWritable {
 	
 
+	public ConfigurationActivity(){
+	}
+
 	/**
 	 * Constructor for ConfigurationActivityModel.
 	 */

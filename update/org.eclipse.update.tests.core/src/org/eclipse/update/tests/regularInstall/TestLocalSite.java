@@ -23,17 +23,19 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testCreationConfigFile() throws Exception {
 
 		//clean up
-		URL newURL = new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE);
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = UpdateManagerUtils.decodeFile(newURL);
-		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
 		InternalSiteManager.localSite=null;	
 
 
 		ILocalSite site = SiteManager.getLocalSite();
 		// FIXME should check for any name
-		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
+		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocalModel.DEFAULT_CONFIG_LABEL));
 		site.save();
-		URL location = ((SiteLocal)site).getLocation();
+		URL location = ((SiteLocal)site).getLocationURL();
 		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(SiteLocal.DEFAULT_CONFIG_FILE, site.getCurrentConfiguration().getCreationDate());
 		String filePath = UpdateManagerUtils.decode(new URL(location,fileName));
 		File file = new File(filePath);
@@ -50,13 +52,16 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testDefaultConfigFile() throws Exception {
 
 		//clean up
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
+		File localFile = UpdateManagerUtils.decodeFile(newURL);
+		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
 		InternalSiteManager.localSite=null;
 
 		ILocalSite site = SiteManager.getLocalSite();
 		// FIXME shoudl check for any name
-		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
+		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocalModel.DEFAULT_CONFIG_LABEL));
 		assertTrue("The local site does not contain an history of install configuration",site.getConfigurationHistory().length!=0);
 		assertTrue("The local site does not contain an current install configuration",site.getCurrentConfiguration()!=null);
 		assertTrue("The local site does not contain a default configuration site for the current install config",site.getCurrentConfiguration().getConfigurationSites().length!=0);
@@ -64,7 +69,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getURL().toExternalForm());
 		
 		// cleanup
-		URL location = ((SiteLocal)site).getLocation();		
+		URL location = ((SiteLocal)site).getLocationURL();		
 		String filePath = new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile();
 		File file = new File(filePath);
 		UpdateManagerUtils.removeFromFileSystem(file);		
@@ -75,9 +80,12 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	
 	public void testInstallFeatureSaveConfig() throws Exception {
 
-		// cleanup
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		//clean up
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
+		File localFile = UpdateManagerUtils.decodeFile(newURL);
+		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -126,29 +134,32 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// check
 		// there are 2 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"Config"+time+".xml").getFile());
+		URL location = ((SiteLocal)site).getLocationURL();
+		File file = new File(new URL(location,"Config"+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature2.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature2.getVersionIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-
 	}
 	
 	public void testRetriveConfig() throws Exception {
 
-		// cleanup
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		//clean up
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
+		File localFile = UpdateManagerUtils.decodeFile(newURL);
+		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -173,7 +184,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// check
 		// there are 2 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"Config"+time+".xml").getFile());
+		URL location = ((SiteLocal)site).getLocationURL();		
+		File file = new File(new URL(location,"Config"+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		// teh current one points to a real fature
@@ -199,21 +211,24 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);			
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-			
+		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));				
 		UpdateManagerUtils.removeFromFileSystem(file);		
 	}
 
 	public void testRetriveConfigHTTPInstall() throws Exception {
 
-		// cleanup
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		//clean up
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
+		File localFile = UpdateManagerUtils.decodeFile(newURL);
+		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -237,7 +252,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// check
 		// there are 2 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"Config"+time+".xml").getFile());
+		URL location = ((SiteLocal)site).getLocationURL();		
+		File file = new File(new URL(location,"Config"+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		// teh current one points to a real fature
@@ -263,13 +279,13 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-					
+		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));						
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);

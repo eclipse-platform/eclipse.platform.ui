@@ -186,7 +186,7 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
 		// local
-		resolveURL(base,bundle,getLocationURLString());
+		location = resolveURL(base,bundle,getLocationURLString());
 		
 		// delegate
 		resolveListReference(getConfigurationHistoryModel(),base,bundle);

@@ -27,8 +27,10 @@ public class TestRevert extends UpdateManagerTestCase {
 	public void testSimpleRevertInstall() throws Exception {
 
 		// cleanup
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
+		File localFile = new File(new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -60,7 +62,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		// check
 		// there are 4 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"Config"+time+".xml").getFile());
+		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"Config"+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		
@@ -75,16 +77,16 @@ public class TestRevert extends UpdateManagerTestCase {
 		assertTrue("wrong number of unconfigured features",site.getCurrentConfiguration().getConfigurationSites()[0].getConfigurationPolicy().getUnconfiguredFeatures().length==2);
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
 		UpdateManagerUtils.removeFromFileSystem(file);	
 		time = ""+newConfig.getCreationDate().getTime();
-		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());	
+		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
 		UpdateManagerUtils.removeFromFileSystem(file);	
 		time = ""+newConfig2.getCreationDate().getTime();
-		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());	
+		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
 		UpdateManagerUtils.removeFromFileSystem(file);	
 	}
 

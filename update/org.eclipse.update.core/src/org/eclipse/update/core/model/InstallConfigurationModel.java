@@ -60,29 +60,7 @@ public class InstallConfigurationModel extends ModelObject {
 	 */
 	public InstallConfigurationModel(){
 	}
-	/*
-	 * copy constructor
-	 */
-	public InstallConfigurationModel(InstallConfigurationModel config, String newLocation, String label) {
-		setLocationURLString(newLocation);
-		setLabel(label);
-		// do not copy list of listeners nor activities
-		// ake a copy of the siteConfiguration object
-		if (config != null) {
-			configurationSites = new ArrayList();
-			ConfigurationSiteModel[] sites = config.getConfigurationSitesModel();
-			if (sites != null) {
-				for (int i = 0; i < sites.length; i++) {
-					addConfigurationSiteModel(new ConfigurationSiteModel(sites[i]));
-				}
-			}
-		}
-		// set dummy date as caller can call set date if the
-		// date on the URL string has to be the same 
-		date = new Date();
-		this.isCurrent = false;
-	}
-
+	
 	/**
 	 * @since 2.0
 	 */
@@ -106,6 +84,15 @@ public class InstallConfigurationModel extends ModelObject {
 		if (!configurationSites.contains(site))
 			configurationSites.add(site);
 	}
+	
+
+	public void setConfigurationSiteModel(ConfigurationSiteModel[] sites) {
+		configurationSites=null;
+		for (int i = 0; i < sites.length; i++) {
+			addConfigurationSiteModel(sites[i]);
+		}
+	}
+	
 	/**
 	 * @since 2.0
 	 */
@@ -218,7 +205,7 @@ public class InstallConfigurationModel extends ModelObject {
 	public void resolve(URL base, ResourceBundle bundle)
 		throws MalformedURLException {
 		// local
-		resolveURL(base,bundle,locationURLString);
+		locationURL = resolveURL(base,bundle,locationURLString);
 		
 		// delagate
 		resolveListReference(getActivityModel(),base,bundle);

@@ -65,7 +65,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public FeatureReferenceModel[] getConfiguredFeaturesModel() {
-		if (configuredFeatureReferences==null)
+		if (configuredFeatureReferences==null || configuredFeatureReferences.isEmpty())
 			return new FeatureReferenceModel[0];
 		return (FeatureReferenceModel[]) configuredFeatureReferences.toArray(arrayTypeFor(configuredFeatureReferences));
 	}
@@ -74,7 +74,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public FeatureReferenceModel[] getUnconfiguredFeaturesModel() {
-	if (configuredFeatureReferences==null)
+	if (unconfiguredFeatureReferences==null || unconfiguredFeatureReferences.isEmpty())
 			return new FeatureReferenceModel[0];			
 		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.toArray(arrayTypeFor(unconfiguredFeatureReferences));		
 	}
@@ -167,7 +167,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		assertIsWriteable();
 		if (unconfiguredFeatureReferences == null)
 			this.unconfiguredFeatureReferences = new ArrayList();
-		if (unconfiguredFeatureReferences.contains(feature))
+		if (!unconfiguredFeatureReferences.contains(feature))
 			this.add(feature, unconfiguredFeatureReferences);	
 
 		// an unconfigured feature is always from a configured one no ?
@@ -178,4 +178,25 @@ public class ConfigurationPolicyModel extends ModelObject {
 	}
 
 	
+	
+	/**
+	 * Sets the configuredFeatureReferences.
+	 * @param configuredFeatureReferences The configuredFeatureReferences to set
+	 */
+	protected void setConfiguredFeatureReferences(IFeatureReference[] featureReferences) {
+		configuredFeatureReferences = new ArrayList();
+		configuredFeatureReferences.addAll(Arrays.asList(featureReferences));
+
+	}
+
+	
+	/**
+	 * Sets the unconfiguredFeatureReferences.
+	 * @param unconfiguredFeatureReferences The unconfiguredFeatureReferences to set
+	 */
+	protected void setUnconfiguredFeatureReferences(IFeatureReference[] featureReferences) {
+		unconfiguredFeatureReferences = new ArrayList();
+		unconfiguredFeatureReferences.addAll(Arrays.asList(featureReferences));
+	}
+
 }

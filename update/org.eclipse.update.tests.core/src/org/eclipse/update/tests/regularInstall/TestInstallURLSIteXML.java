@@ -148,7 +148,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	public void testInstall() throws Exception {
 		
 		// cleanup local files...
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 
@@ -198,7 +198,8 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getCurrentConfiguration().getURL().getFile()));				
 
 		site.getSite().removeSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification",listener.isNotified());
@@ -223,7 +224,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
 		UpdateManagerUtils.removeFromFileSystem(file);
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 		try {

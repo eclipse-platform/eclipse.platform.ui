@@ -11,11 +11,13 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.core.model.InstallConfigurationParser;
+import org.eclipse.update.core.model.SiteMapModel;
 import org.xml.sax.SAXException;
 
 /**
@@ -28,6 +30,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	
 	private ListenersList listeners = new ListenersList();
 
+	public InstallConfiguration(){
+	}
+
 	/**
 	 * default constructor. Create
 	 */
@@ -38,21 +43,41 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		resolve(newLocation,null);
 	}
 	
-	/**
+	
+	/*
 	 * copy constructor
 	 */
 	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
-		super((InstallConfigurationModel)config,newLocation.toExternalForm(),label);
+		setLocationURLString(newLocation.toExternalForm());
+		setLabel(label);
+		// do not copy list of listeners nor activities
+		// ake a copy of the siteConfiguration object
+		if (config != null) {
+			IConfigurationSite[] sites = config.getConfigurationSites();
+			if (sites != null) {
+				for (int i = 0; i < sites.length; i++) {
+					ConfigurationSite configSite = new ConfigurationSite(sites[i]);
+					addConfigurationSiteModel(configSite);
+				}
+			}
+		}
+		// set dummy date as caller can call set date if the
+		// date on the URL string has to be the same 
+		setCreationDate(new Date());
+		setCurrent(false);
 		resolve(newLocation,null);
 	}
+	
 
 	/**
 	 * 
 	 */
 	public IConfigurationSite[] getConfigurationSites() {
-		if (getConfigurationSitesModel().length==0)
+		ConfigurationSiteModel[] result = getConfigurationSitesModel();
+		if (result.length == 0)
 			return new IConfigurationSite[0];
-		return (IConfigurationSite[])getConfigurationSitesModel();
+		else
+			return (IConfigurationSite[]) result;
 	}
 
 	
@@ -217,7 +242,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * 
 	 */
 	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
+		
+		
 		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
+		IConfigurationSite[] nowConfigSites = this.getConfigurationSites();
+				
 		// create a hashtable of the *old* sites
 		Map oldSitesMap = new Hashtable(0);
 		for (int i = 0; i < oldConfigSites.length; i++) {
@@ -225,26 +254,26 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			oldSitesMap.put(element.getSite().getURL().toExternalForm(), element);
 		}
 		// create list of all the sites that map the *old* sites
-		// we want the intersection between teh old sites and teh current sites
-		if (getConfigurationSitesModel() != null) {
+		// we want the intersection between the old sites and the current sites
+		if (nowConfigSites != null) {
 			// for each current site, ask the old site
 			// to calculate the delta 
-			ConfigurationSiteModel[] currentSites = getConfigurationSitesModel();
 			String key = null;
-			for (int i = 0; i < currentSites.length; i++) {
-				IConfigurationSite element = (IConfigurationSite) currentSites[i];
-				key = element.getSite().getURL().toExternalForm();
+			for (int i = 0; i < nowConfigSites.length; i++) {
+				key = nowConfigSites[i].getSite().getURL().toExternalForm();
 				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
 				if (oldSite != null) {
-					((ConfigurationSite) oldSite).deltaWith(element, monitor, handler);
+					((ConfigurationSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
 				}
 			}
 			// the new configuration has the exact same sites as the old configuration
+			// the old configuration in the Map are either as-is because they don't exist
+			// in the current one, or they are the delta from the current one to the old one
 			Collection sites = oldSitesMap.values();
-			Iterator iter = sites.iterator();
-			while (iter.hasNext()) {
-				ConfigurationSiteModel element = (ConfigurationSiteModel) iter.next();
-				addConfigurationSiteModel(element);
+			if (sites!=null && !sites.isEmpty()){
+				ConfigurationSiteModel[] sitesModel = new ConfigurationSiteModel[sites.size()];
+				sites.toArray(sitesModel);
+				setConfigurationSiteModel(sitesModel);
 			}
 		}
 	}

@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.ILocalSite;
 import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.BaseSiteLocalFactory;
+import org.eclipse.update.internal.core.InstallConfiguration;
+import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.Attributes;
@@ -153,29 +156,25 @@ public class SiteLocalParser extends DefaultHandler {
 	 * process the Config info
 	 */
 	private void processConfig(Attributes attributes) throws MalformedURLException, IOException, CoreException {
-
 		// url
 		URL url = UpdateManagerUtils.getURL(site.getLocationURL(), attributes.getValue("url"), null);
 		String label = attributes.getValue("label");
 		label = UpdateManagerUtils.getResourceString(label, bundle);
-		InstallConfigurationModel config = new InstallConfigurationModel();
+		InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
 		config.resolve(url,getResourceBundle());
 		config.initialize();
-
 		// add the config
 		if (preserved) {
 			site.addPreservedInstallConfigurationModel(config);
 		} else {
 			site.addConfigurationModel(config);
 		}
-
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: url:" + url.toExternalForm());
 		}
-
 	}
 
 	/*

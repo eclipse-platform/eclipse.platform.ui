@@ -22,6 +22,7 @@ import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.BaseSiteLocalFactory;
 import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -207,7 +208,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		int action = Integer.parseInt(actionString);
 
 		// create
-		ConfigurationActivityModel activity = new ConfigurationActivityModel();
+		ConfigurationActivityModel activity = new BaseSiteLocalFactory().createConfigurationAcivityModel();
 		activity.setAction(action);
 
 		// label

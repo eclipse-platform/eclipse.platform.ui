@@ -31,15 +31,6 @@ public class ConfigurationSiteModel extends ModelObject {
 	}
 
 	/**
-	 * Copy Constructor
-	 */
-	public ConfigurationSiteModel(ConfigurationSiteModel configSite) {
-		this.site = configSite.getSiteModel();
-		this.policy = new ConfigurationPolicyModel(configSite.getConfigurationPolicyModel());
-		this.installable = configSite.isInstallSite();
-	}
-
-	/**
 	 * returns the site
 	 * @return The ISite 
 	 * @since 2.0

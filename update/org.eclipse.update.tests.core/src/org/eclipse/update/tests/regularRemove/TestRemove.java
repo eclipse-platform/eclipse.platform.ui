@@ -86,7 +86,6 @@ public class TestRemove extends UpdateManagerTestCase {
 		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH +featureRef);
 		assertTrue("feature info installed locally:"+featureFile, !featureFile.exists());
 
-
 	}
 
 

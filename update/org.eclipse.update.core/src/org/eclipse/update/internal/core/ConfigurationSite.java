@@ -37,7 +37,8 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	 * Copy Constructor
 	 */
 	public ConfigurationSite(IConfigurationSite configSite) {
-		this(configSite.getSite(),configSite.getConfigurationPolicy());
+		setSiteModel((SiteMapModel)configSite.getSite());
+		setConfigurationPolicyModel(new ConfigurationPolicy(configSite.getConfigurationPolicy()));
 		setInstallSite(configSite.isInstallSite());
 	}
 
@@ -200,9 +201,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	 * @see IConfigurationSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		FeatureReferenceModel[] ref = getConfigurationPolicyModel().getConfiguredFeaturesModel();
-		if (ref.length==0) return new IFeatureReference[0];
-		return (IFeatureReference[])ref;
+		return ((ConfigurationPolicy) getConfigurationPolicyModel()).getConfiguredFeatures();
 	}
 
 	/**

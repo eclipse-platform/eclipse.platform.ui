@@ -1,7 +1,7 @@
 package org.eclipse.update.internal.core;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * All Rights Reserved. 
  */
 import java.io.*;
 import java.net.MalformedURLException;
@@ -34,18 +34,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		URL configXml = null;
+		URL configXML = null;
 		SiteLocal site = null;
 
 		try {
 			site = new SiteLocal();
 			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
 			URL location = Platform.resolve(platformConfig.getConfigurationLocation());
-			site.setLocationURLString(location.toExternalForm());
-			site.resolve(location, null);
-	 		configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+	 		configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+			site.setLocationURLString(configXML.toExternalForm());
+			site.resolve(configXML, null);	 		
 			//if the file exists, parse it			
-			new SiteLocalParser(configXml.openStream(), site);
+			new SiteLocalParser(configXML.openStream(), site);
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
@@ -65,7 +65,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			throw new CoreException(status);
 		} catch (IOException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot read xml file: " + configXml, exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot read xml file: " + configXML, exception);
 			throw new CoreException(status);
 		}
 
@@ -86,7 +86,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				//FIXME: the plugin site may not be read-write
 				//the default is USER_EXCLUDE 
 				ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-				configSite.setInstallSite(true);
+				configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
 				localSite.getCurrentConfiguration().addConfigurationSite(configSite);
 
 			}
@@ -271,7 +271,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// pass the date onto teh name
 			if (name == null)
 				name = currentDate.toString();
-			result = new InstallConfiguration((IInstallConfiguration) getCurrentConfigurationModel(), newFile, name);
+			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
 		} catch (MalformedURLException e) {
@@ -429,9 +429,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * @see ILocalSite#getCurrentConfiguration()
 	 */
 	public IInstallConfiguration getCurrentConfiguration() {
-		if (getCurrentConfigurationModel() == null)
-			return null;
-		return (IInstallConfiguration) getCurrentConfiguration();
+		if (getCurrentConfigurationModel() == null){
+			int index = 0;
+			if ((index = getConfigurationHistoryModel().length)==0) return null;
+			setCurrentConfigurationModel(getConfigurationHistoryModel()[index-1]);
+		}
+		return (IInstallConfiguration) getCurrentConfigurationModel();
 	}
 
 	/*

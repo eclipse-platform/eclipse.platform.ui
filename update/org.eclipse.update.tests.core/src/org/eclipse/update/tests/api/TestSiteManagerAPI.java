@@ -56,8 +56,9 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
 		UpdateManagerUtils.removeFromFileSystem(file);		
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));				
 		
 
 	}
