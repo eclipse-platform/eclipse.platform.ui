@@ -1027,7 +1027,7 @@ public class InternalAntRunner {
 			targets = new Vector(commands.size());
 		}
 		for (Iterator iter = commands.iterator(); iter.hasNext();) {
-			targets.add((String) iter.next());
+			targets.add(iter.next());
 		}
 	}
 

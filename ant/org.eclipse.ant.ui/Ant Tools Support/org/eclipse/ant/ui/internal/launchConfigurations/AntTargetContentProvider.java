@@ -41,7 +41,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		if (elements.isEmpty()) {
 			return new Object[0];
 		} else {
-			return (Object[]) elements.toArray(new Object[elements.size()]);
+			return elements.toArray(new Object[elements.size()]);
 		}
 	}
 

@@ -283,7 +283,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		}
 		ILabelProvider labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getDefault().getActiveShell(), labelProvider);
-		dialog.setElements((ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]));
+		dialog.setElements(configs.toArray(new ILaunchConfiguration[configs.size()]));
 		dialog.setTitle(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_Configuration_Selection_4")); //$NON-NLS-1$
 		dialog.setMessage(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Choose_an_ant_configuration_to_run_5")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);

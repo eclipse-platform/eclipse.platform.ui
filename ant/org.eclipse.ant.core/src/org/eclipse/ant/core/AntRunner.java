@@ -428,7 +428,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * Runs the build file.
 	 */
 	public void run() throws CoreException {
-		run((IProgressMonitor) null);
+		run(/*IProgressMonitor*/null);
 	}
 
 	/**
