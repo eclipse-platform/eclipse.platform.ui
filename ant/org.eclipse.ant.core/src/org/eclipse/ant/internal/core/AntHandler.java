@@ -12,9 +12,6 @@ package org.eclipse.ant.internal.core;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -71,11 +68,7 @@ public final class AntHandler extends DefaultHandler {
     private SAXParserFactory fFactory;
 
     private boolean fDefaultAttributeFound= false;
-
-    private List fSubElements= new ArrayList();
-
-    public AntHandler() {
-    }
+    private boolean fTargetFound = false;
 
     /**
      * Creates a new SAX parser for use within this instance.
@@ -90,7 +83,6 @@ public final class AntHandler extends DefaultHandler {
         // Initialize the parser.
         final SAXParser parser = parserFactory.newSAXParser();
         final XMLReader reader = parser.getXMLReader();
-       // reader.setProperty("http://xml.org/sax/properties/lexical-handler", this); //$NON-NLS-1$
         // disable DTD validation (bug 63625)
         try {
             //  be sure validation is "off" or the feature to ignore DTD's will not apply
@@ -165,7 +157,10 @@ public final class AntHandler extends DefaultHandler {
                 }
             }
         }
-        fSubElements.add(elementName);
+        if (TARGET.equals(elementName)) {
+            fTargetFound= true;
+            throw new StopParsingException();
+        }
     }
 
     protected boolean hasProjectDefaultAttribute() {
@@ -177,13 +172,6 @@ public final class AntHandler extends DefaultHandler {
     }
     
     protected boolean hasTargetElement() {
-        Iterator iter= fSubElements.iterator();
-        while (iter.hasNext()) {
-            String elementName = (String) iter.next();
-            if (TARGET.equals(elementName)) {
-                return true;
-            }
-        }
-        return false;
+       return fTargetFound;
     }
 }
