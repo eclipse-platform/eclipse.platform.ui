@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
+import java.io.*;
+import java.net.*;
+import java.nio.channels.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -20,9 +23,9 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 /**
- *
+ *  
  */
-public class OperationValidator implements IOperationValidator{
+public class OperationValidator implements IOperationValidator {
 	private static final String KEY_ROOT_MESSAGE =
 		"ActivityConstraints.rootMessage";
 	private static final String KEY_ROOT_MESSAGE_INIT =
@@ -66,13 +69,13 @@ public class OperationValidator implements IOperationValidator{
 		"ActivityConstraints.noLicense";
 
 	/**
-	 * The feature status provide info about the broken features and 
-	 * what is wrong.
+	 * The feature status provide info about the broken features and what is
+	 * wrong.
 	 */
 	private static class FeatureStatus implements IStatus {
 		IStatus status;
 		IFeature feature;
-		
+
 		public FeatureStatus(IFeature feature, IStatus status) {
 			this.status = status;
 			this.feature = feature;
@@ -110,7 +113,7 @@ public class OperationValidator implements IOperationValidator{
 		public boolean equals(Object obj) {
 			if (!(obj instanceof FeatureStatus))
 				return false;
-			FeatureStatus fs = (FeatureStatus)obj;
+			FeatureStatus fs = (FeatureStatus) obj;
 			// only check for feature, regardless of status type
 			if (fs.getFeature() == feature)
 				return true;
@@ -127,14 +130,16 @@ public class OperationValidator implements IOperationValidator{
 		}
 
 	}
-	
+
 	/*
-	 * Called by UI before performing operation.
-	 * Returns null if no errors, a status with IStatus.WARNING code when
-	 * the initial configuration is broken, or a status with IStatus.ERROR
-	 * when there the operation introduces new errors
+	 * Called by UI before performing operation. Returns null if no errors, a
+	 * status with IStatus.WARNING code when the initial configuration is
+	 * broken, or a status with IStatus.ERROR when there the operation
+	 * introduces new errors
 	 */
-	public IStatus validatePendingInstall(IFeature oldFeature, IFeature newFeature) {
+	public IStatus validatePendingInstall(
+		IFeature oldFeature,
+		IFeature newFeature) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
@@ -146,7 +151,7 @@ public class OperationValidator implements IOperationValidator{
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
 	}
-	
+
 	/*
 	 * Called by UI before performing operation
 	 */
@@ -162,7 +167,7 @@ public class OperationValidator implements IOperationValidator{
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
 	}
-	
+
 	/*
 	 * Called by UI before performing operation
 	 */
@@ -174,7 +179,7 @@ public class OperationValidator implements IOperationValidator{
 		// check proposed change
 		ArrayList status = new ArrayList();
 		validateConfigure(feature, status);
-		
+
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
 	}
@@ -182,7 +187,9 @@ public class OperationValidator implements IOperationValidator{
 	/**
 	 * Called before performing operation.
 	 */
-	public IStatus validatePendingReplaceVersion(IFeature feature, IFeature anotherFeature) {
+	public IStatus validatePendingReplaceVersion(
+		IFeature feature,
+		IFeature anotherFeature) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
@@ -194,7 +201,7 @@ public class OperationValidator implements IOperationValidator{
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
 	}
-	
+
 	/*
 	 * Called by UI before processing a delta
 	 */
@@ -234,8 +241,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Called by the UI before doing a batched processing of
-	 * several pending changes.
+	 * Called by the UI before doing a batched processing of several pending
+	 * changes.
 	 */
 	public IStatus validatePendingChanges(IInstallFeatureOperation[] jobs) {
 		// check initial state
@@ -260,7 +267,7 @@ public class OperationValidator implements IOperationValidator{
 
 		// report status
 		if (status.size() > 0)
-			return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR);
+			return createMultiStatus(KEY_ROOT_MESSAGE, status, IStatus.ERROR);
 		return null;
 	}
 
@@ -270,6 +277,8 @@ public class OperationValidator implements IOperationValidator{
 	private static void validateInitialState(ArrayList status) {
 		try {
 			ArrayList features = computeFeatures();
+			// uncomment this when patch released in boot
+			//checkConfigurationLock(status);
 			checkConstraints(features, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
@@ -328,7 +337,7 @@ public class OperationValidator implements IOperationValidator{
 			status.add(e.getStatus());
 		}
 	}
-	
+
 	/*
 	 * handle replace version
 	 */
@@ -338,13 +347,16 @@ public class OperationValidator implements IOperationValidator{
 		ArrayList status) {
 		try {
 			ArrayList features = computeFeatures();
-			features = computeFeaturesAfterOperation(features, anotherFeature, feature);
+			features =
+				computeFeaturesAfterOperation(
+					features,
+					anotherFeature,
+					feature);
 			checkConstraints(features, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
 	}
-
 
 	/*
 	 * handle install and update
@@ -454,9 +466,10 @@ public class OperationValidator implements IOperationValidator{
 						features,
 						newFeature,
 						oldFeature);
-					
+
 				checkConstraints(features, status);
-				if (status.size() > 0 && !isBetterStatus(beforeStatus, status)) {
+				if (status.size() > 0
+					&& !isBetterStatus(beforeStatus, status)) {
 					IStatus conflict =
 						createStatus(
 							newFeature,
@@ -506,7 +519,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Compute the nested feature subtree starting at the specified base feature
+	 * Compute the nested feature subtree starting at the specified base
+	 * feature
 	 */
 	private static ArrayList computeFeatureSubtree(
 		IFeature top,
@@ -523,7 +537,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Compute the nested feature subtree starting at the specified base feature
+	 * Compute the nested feature subtree starting at the specified base
+	 * feature
 	 */
 	private static ArrayList computeFeatureSubtree(
 		IFeature top,
@@ -543,7 +558,8 @@ public class OperationValidator implements IOperationValidator{
 
 		// check for <includes> cycle
 		if (features.contains(feature)) {
-			IStatus status = createStatus(top, UpdateUtils.getString(KEY_CYCLE));
+			IStatus status =
+				createStatus(top, UpdateUtils.getString(KEY_CYCLE));
 			throw new CoreException(status);
 		}
 
@@ -572,18 +588,14 @@ public class OperationValidator implements IOperationValidator{
 		return features;
 	}
 	/*
-	 * This method fixes the defect 34241. Included feature reference
-	 * of the feature from the remote server always returns 
-	 * a perfect match. However, the actual install behaviour is
-	 * different if that feature already exists (as disabled) 
-	 * while a better one is enabled. This typically happens
-	 * through branch updates or patches.
-	 * 
-	 * To avoid this problem, we need to check if a better feature
-	 * that still matches the reference is enabled in the current
-	 * configuration. If it is, it will be used instead of the
-	 * 'perfect' match. If not, we should default to the old
-	 * behaviour.
+	 * This method fixes the defect 34241. Included feature reference of the
+	 * feature from the remote server always returns a perfect match. However,
+	 * the actual install behaviour is different if that feature already exists
+	 * (as disabled) while a better one is enabled. This typically happens
+	 * through branch updates or patches.  To avoid this problem, we need to
+	 * check if a better feature that still matches the reference is enabled in
+	 * the current configuration. If it is, it will be used instead of the
+	 * 'perfect' match. If not, we should default to the old behaviour.
 	 */
 
 	private static IFeature getBestMatch(
@@ -646,7 +658,8 @@ public class OperationValidator implements IOperationValidator{
 			if (license != null && license.trim().length() > 0)
 				return;
 		}
-		status.add(createStatus(feature, UpdateUtils.getString(KEY_NO_LICENSE)));
+		status.add(
+			createStatus(feature, UpdateUtils.getString(KEY_NO_LICENSE)));
 	}
 
 	/*
@@ -658,12 +671,7 @@ public class OperationValidator implements IOperationValidator{
 		IFeature remove)
 		throws CoreException {
 
-		ArrayList addTree =
-			computeFeatureSubtree(
-				add,
-				null,
-				null,
-				false,
+		ArrayList addTree = computeFeatureSubtree(add, null, null, false,
 		/* do not tolerate missing children */
 		features);
 		ArrayList removeTree =
@@ -716,7 +724,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Compute a list of features that will be configured after performing the revert
+	 * Compute a list of features that will be configured after performing the
+	 * revert
 	 */
 	private static ArrayList computeFeaturesAfterRevert(IInstallConfiguration config)
 		throws CoreException {
@@ -765,7 +774,7 @@ public class OperationValidator implements IOperationValidator{
 				siteFeatures.add(cfeature);
 			}
 
-			// add deltas for the site			
+			// add deltas for the site
 			for (int j = 0; j < deltaRefs.length; j++) {
 				ISite deltaSite = deltaRefs[j].getSite();
 				if (deltaSite.equals(csite.getSite())) {
@@ -775,7 +784,7 @@ public class OperationValidator implements IOperationValidator{
 				}
 			}
 
-			// reduce the list if needed	
+			// reduce the list if needed
 			IFeature[] array =
 				(IFeature[]) siteFeatures.toArray(
 					new IFeature[siteFeatures.size()]);
@@ -795,7 +804,7 @@ public class OperationValidator implements IOperationValidator{
 					}
 				}
 			}
-			// Compute patches that will need to be removed together with 
+			// Compute patches that will need to be removed together with
 			// the removed features
 			ArrayList patchesTree = new ArrayList();
 			contributePatchesFor(removeTree, siteFeatures, patchesTree);
@@ -842,7 +851,7 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * 
+	 *  
 	 */
 	private static void checkUnique(
 		IFeature feature,
@@ -928,7 +937,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Verify all features are either portable, or match the current environment
+	 * Verify all features are either portable, or match the current
+	 * environment
 	 */
 	private static void checkEnvironment(
 		ArrayList features,
@@ -946,7 +956,8 @@ public class OperationValidator implements IOperationValidator{
 
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
-					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_OS));
+					IStatus s =
+						createStatus(feature, UpdateUtils.getString(KEY_OS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -955,7 +966,8 @@ public class OperationValidator implements IOperationValidator{
 
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
-					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_WS));
+					IStatus s =
+						createStatus(feature, UpdateUtils.getString(KEY_WS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -964,7 +976,8 @@ public class OperationValidator implements IOperationValidator{
 
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
-					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_ARCH));
+					IStatus s =
+						createStatus(feature, UpdateUtils.getString(KEY_ARCH));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -997,10 +1010,11 @@ public class OperationValidator implements IOperationValidator{
 				}
 			}
 			if (!found) {
-				IStatus s = createStatus(null, UpdateUtils.getString(KEY_PLATFORM));
+				IStatus s =
+					createStatus(null, UpdateUtils.getString(KEY_PLATFORM));
 				if (!status.contains(s))
 					status.add(s);
-	
+
 				return;
 			}
 		}
@@ -1044,7 +1058,8 @@ public class OperationValidator implements IOperationValidator{
 
 			for (int j = 0; j < imports.length; j++) {
 				IImport iimport = imports[j];
-				// for each import determine plugin or feature, version, match we need
+				// for each import determine plugin or feature, version, match
+				// we need
 				VersionedIdentifier iid = iimport.getVersionedIdentifier();
 				String id = iid.getIdentifier();
 				PluginVersionIdentifier version = iid.getVersion();
@@ -1182,8 +1197,8 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Verify that a parent of an optional child is configured
-	 * before we allow the child to be configured as well
+	 * Verify that a parent of an optional child is configured before we allow
+	 * the child to be configured as well
 	 */
 
 	private static void checkOptionalChildConfiguring(
@@ -1207,9 +1222,9 @@ public class OperationValidator implements IOperationValidator{
 				} catch (CoreException e) {
 					//FIXME: cannot ask 'isOptional' here
 					// Ignore missing optional feature.
-					/* if (cref.isOptional())
-						continue;
-					else */
+					/*
+					 * if (cref.isOptional()) continue;
+					 */
 					throw e;
 				}
 				if (isParent(cfeature, feature, true)) {
@@ -1231,6 +1246,60 @@ public class OperationValidator implements IOperationValidator{
 			status.add(createStatus(feature, msg));
 		} else {
 			//feature is root - can be configured
+		}
+	}
+
+	/**
+	 * Checks if the configuration is locked by other instances
+	 * 
+	 * @param status
+	 */
+	private static void checkConfigurationLock(ArrayList status) {
+		IPlatformConfiguration config =
+			BootLoader.getCurrentPlatformConfiguration();
+		URL configURL = config.getConfigurationLocation();
+		if (!"file".equals(configURL.getProtocol())) {
+			status.add(
+				createStatus(
+					null,
+					"Configuration location is not writable:" + configURL));
+			return;
+		}
+		String locationString = configURL.getFile();
+		File configDir = new File(locationString);
+		if (!configDir.isDirectory())
+			configDir = configDir.getParentFile();
+		if (!configDir.exists()) {
+			status.add(
+				createStatus(null, "Configuration location does not exist"));
+			return;
+		}
+		File locksDir = new File(configDir, "locks");
+		// check all the possible lock files
+		File[] lockFiles = locksDir.listFiles();
+		File configLock = BootLoader.getCurrentPlatformConfiguration().getLockFile();
+		for (int i = 0; i < lockFiles.length; i++) {
+			if (lockFiles[i].equals(configLock))
+				continue;
+			try {
+				RandomAccessFile raf = new RandomAccessFile(lockFiles[i], "rw");
+				FileChannel channel = raf.getChannel();
+				System.out.println(channel.isOpen());
+				FileLock lock = channel.tryLock();
+				if (lock == null){
+					// there is another eclipse instance running
+					raf.close();
+					status.add(
+						createStatus(
+							null,
+							"Another instance is running, please close it before performing any configuration operations"));
+					return;
+				}
+
+			} catch (Exception e) {
+				status.add(createStatus(null, "Failed to create lock:"+lockFiles[i]));
+				return;
+			} 
 		}
 	}
 
@@ -1274,7 +1343,7 @@ public class OperationValidator implements IOperationValidator{
 
 			}
 			if (matched) {
-				// included and matched; return true if optionality is not 
+				// included and matched; return true if optionality is not
 				// important or it is and the inclusion is optional
 				return optionalOnly == false || child.isOptional();
 			}
@@ -1305,7 +1374,7 @@ public class OperationValidator implements IOperationValidator{
 
 	private static IStatus createMultiStatus(
 		String rootKey,
-		ArrayList children, 
+		ArrayList children,
 		int code) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
@@ -1335,49 +1404,73 @@ public class OperationValidator implements IOperationValidator{
 						message });
 		}
 
-		IStatus status = new Status(
-			IStatus.ERROR,
-			UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
-			IStatus.OK,
-			fullMessage,
-			null);
+		IStatus status =
+			new Status(
+				IStatus.ERROR,
+				UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
+				IStatus.OK,
+				fullMessage,
+				null);
 		return new FeatureStatus(feature, status);
 	}
-	
-//	private static IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
-//		// report status
-//		if (status.size() > 0) {
-//			if (beforeStatus.size() > 0)
-//				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus,IStatus.ERROR);
-//			else
-//				return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR);
-//		}
-//		return null;
-//	}
-	
-	private static IStatus createCombinedReportStatus(ArrayList beforeStatus, ArrayList status ) {
+
+	//	private static IStatus createReportStatus(ArrayList beforeStatus,
+	// ArrayList status) {
+	//		// report status
+	//		if (status.size() > 0) {
+	//			if (beforeStatus.size() > 0)
+	//				return createMultiStatus(KEY_ROOT_MESSAGE_INIT,
+	// beforeStatus,IStatus.ERROR);
+	//			else
+	//				return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR);
+	//		}
+	//		return null;
+	//	}
+
+	private static IStatus createCombinedReportStatus(
+		ArrayList beforeStatus,
+		ArrayList status) {
 		if (beforeStatus.size() == 0) { // good initial config
 			if (status.size() == 0) {
 				return null; // all fine
 			} else {
-				return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR); // error after operation
+				return createMultiStatus(
+					KEY_ROOT_MESSAGE,
+					status,
+					IStatus.ERROR);
+				// error after operation
 			}
-		} else { // beforeStatus.size() > 0  : initial config errors
+		} else { // beforeStatus.size() > 0 : initial config errors
 			if (status.size() == 0) {
 				return null; // errors will be fixed
 			} else {
 				if (isBetterStatus(beforeStatus, status)) {
-					return createMultiStatus("ActivityConstraints.warning", beforeStatus, IStatus.WARNING); // errors may be fixed
+					return createMultiStatus(
+						"ActivityConstraints.warning",
+						beforeStatus,
+						IStatus.WARNING);
+					// errors may be fixed
 				} else {
 					ArrayList combined = new ArrayList();
-					combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus,IStatus.ERROR));
-					combined.add(createMultiStatus("ActivityConstraints.afterMessage", status, IStatus.ERROR));
-					return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined,IStatus.ERROR);
+					combined.add(
+						createMultiStatus(
+							"ActivityConstraints.beforeMessage",
+							beforeStatus,
+							IStatus.ERROR));
+					combined.add(
+						createMultiStatus(
+							"ActivityConstraints.afterMessage",
+							status,
+							IStatus.ERROR));
+					return createMultiStatus(
+						KEY_ROOT_MESSAGE_INIT,
+						combined,
+						IStatus.ERROR);
 				}
 			}
-		} 
+		}
 	}
-	
+
 	private static ArrayList createList(String commaSeparatedList) {
 		ArrayList list = new ArrayList();
 		if (commaSeparatedList != null) {
@@ -1391,34 +1484,39 @@ public class OperationValidator implements IOperationValidator{
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Returns true if status is a subset of beforeStatus
+	 * 
 	 * @param beforeStatus
 	 * @param status
 	 * @return
 	 */
-	private static boolean isBetterStatus(ArrayList beforeStatus, ArrayList status) {
+	private static boolean isBetterStatus(
+		ArrayList beforeStatus,
+		ArrayList status) {
 		// if no status at all, then it's a subset
 		if (status == null || status.size() == 0)
 			return true;
-		// there is some status, so if there is no initial status, then it's not a subset
+		// there is some status, so if there is no initial status, then it's
+		// not a subset
 		if (beforeStatus == null || beforeStatus.size() == 0)
 			return false;
 		// quick check
 		if (beforeStatus.size() < status.size())
 			return false;
-		
+
 		// check if all the status elements appear in the original status
-		for (int i=0; i<status.size(); i++) {
-			IStatus s = (IStatus)status.get(i);
-			// if this is not a feature status, something is wrong, so return false
+		for (int i = 0; i < status.size(); i++) {
+			IStatus s = (IStatus) status.get(i);
+			// if this is not a feature status, something is wrong, so return
+			// false
 			if (!(s instanceof FeatureStatus))
 				return false;
-			FeatureStatus fs = (FeatureStatus)s;
+			FeatureStatus fs = (FeatureStatus) s;
 			// check against all status elements
 			boolean found = false;
-			for (int j=0; !found && j<beforeStatus.size(); j++) {
+			for (int j = 0; !found && j < beforeStatus.size(); j++) {
 				if (fs.equals(beforeStatus.get(j)))
 					found = true;
 			}
@@ -1427,4 +1525,5 @@ public class OperationValidator implements IOperationValidator{
 		}
 		return true;
 	}
+
 }
