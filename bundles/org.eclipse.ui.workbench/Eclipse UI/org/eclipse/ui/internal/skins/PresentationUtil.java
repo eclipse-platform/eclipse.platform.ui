@@ -69,7 +69,6 @@ public class PresentationUtil {
 		public void handleEvent(Event event) {
 			dragControl = (Control)event.widget;
 			anchor = getEventLoc(event);	
-			dragControl.setCapture(true);
 		}
 	};
 	
@@ -79,20 +78,18 @@ public class PresentationUtil {
 	
 	private static void handleMouseMove(Event e) {
 		if (dragControl != null && dragEvent != null && hasMovedEnough(e)) {
+			cancelDrag();
 			Listener l = (Listener)dragControl.getData(LISTENER_ID);
 			if (l != null) {
+				dragControl.setCapture(true);
 				l.handleEvent(dragEvent);
+				dragControl.setCapture(false);
 			}
-		
-			cancelDrag();
 		}
 	}	
 	
 	private static void cancelDrag() {
 		if (dragControl != null) {
-			if (!dragControl.isDisposed()) {
-				dragControl.setCapture(false);
-			}
 			dragControl = null;
 		}
 		
