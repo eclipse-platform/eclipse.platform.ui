@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -504,7 +505,7 @@ public final class WorkbenchKeyboard {
                 Widget widget = event.widget;
                 if ((event.character == SWT.DEL)
                         && ((event.stateMask & SWT.MODIFIER_MASK) == 0)
-                        && (widget instanceof Text)) {
+                        && ((widget instanceof Text) || (widget instanceof Combo))) {
                     /*
                      * KLUDGE. Bug 54654. The text widget relies on no listener
                      * doing any work before dispatching the native delete
