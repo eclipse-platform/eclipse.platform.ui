@@ -550,13 +550,20 @@ public class DefaultOperationHistory implements IOperationHistory {
 				operation.removeContext(context);
 			}
 		}
-		// there may be an open composite. Notify listeners that it did not
-		// complete.
-		// Since we did not add it, there's no need to notify of its removal.
+		/*
+		 * There may be an open composite. If it has this context, then the
+		 * context must be removed.  If it has only this context or we are flushing
+		 * all operations, then null it out and notify that we are ending it.  
+		 * We don't remove it since it was never added.
+		 */ 
 		if (openComposite != null) {
 			if (openComposite.hasContext(context)) {
-				notifyNotOK(openComposite);
-				openComposite = null;
+				if (context == GLOBAL_UNDO_CONTEXT || openComposite.getContexts().length == 1) {
+					notifyNotOK(openComposite);
+					openComposite = null;
+				} else {
+					openComposite.removeContext(context);
+				}
 			}
 		}
 	}
