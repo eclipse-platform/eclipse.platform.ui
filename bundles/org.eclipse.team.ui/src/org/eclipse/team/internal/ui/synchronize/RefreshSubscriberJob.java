@@ -15,18 +15,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
@@ -35,13 +27,10 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.UIJob;
 
@@ -60,6 +49,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public final class RefreshSubscriberJob extends Job {
 	
+    private final static boolean TEST_PROGRESS_VIEW = false;
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
 	 */
@@ -113,7 +103,74 @@ public final class RefreshSubscriberJob extends Job {
 	 */
 	private static final IStatus POSTPONED = new Status(IStatus.CANCEL, TeamUIPlugin.ID, 0, "Scheduled refresh postponed due to conflicting operation", null); //$NON-NLS-1$
 	
-	/**
+	/*
+	 * Action wrapper which allows the goto action
+	 * to be set later. It also handles errors 
+	 * that have occurred during the refresh
+	 */
+	private final class GotoActionWrapper extends WorkbenchAction {
+        private ActionFactory.IWorkbenchAction gotoAction;
+        private IStatus status;
+        public void run() {
+            if (status != null && !status.isOK()) {
+                ErrorDialog.openError(Utils.getShell(null), null, Policy.bind("RefreshSubscriberJob.3"), status); //$NON-NLS-1$
+            } else if(gotoAction != null) {
+        		gotoAction.run();
+        	}
+        }
+        public boolean isEnabled() {
+        	if(gotoAction != null) {
+        		return gotoAction.isEnabled();
+        	}
+        	return true;
+        }
+        public String getText() {
+            String text = null;
+        	if(gotoAction != null) {
+        		text = gotoAction.getText();
+        	}
+        	if (text == null || text.length() == 0) {
+        	    text = getText();
+	        	if (text == null || text.length() == 0) {
+	        	    text = getToolTipText();
+	        	}
+        	}
+        	return text;
+        }
+        public String getToolTipText() {
+            if (status != null && !status.isOK()) {
+                return status.getMessage();
+            }
+        	if(gotoAction != null) {
+        		return gotoAction.getToolTipText();
+        	}
+        	return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, RefreshSubscriberJob.this.getName());
+        }
+        public void dispose() {
+        	super.dispose();
+        	if(gotoAction != null) {
+        		gotoAction.dispose();
+        	}
+        }
+        public void setGotoAction(ActionFactory.IWorkbenchAction gotoAction) {
+            this.gotoAction = gotoAction;
+			setEnabled(isEnabled());
+			setToolTipText(getToolTipText());
+			gotoAction.addPropertyChangeListener(new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if(event.getProperty().equals(IAction.ENABLED)) {
+						Boolean bool = (Boolean) event.getNewValue();
+						GotoActionWrapper.this.setEnabled(bool.booleanValue());
+					}
+				}
+			});
+        }
+        public void setStatus(IStatus status) {
+            this.status = status;
+        }
+    }
+
+    /**
 	 * Notification for safely notifying listeners of refresh lifecycle.
 	 */
 	private abstract class Notification implements ISafeRunnable {
@@ -303,7 +360,24 @@ public final class RefreshSubscriberJob extends Job {
 					}
 				}
 			} catch(TeamException e) {
-				status = e.getStatus();
+			    // Determine the status to be returned and the GOTO action
+			    status = e.getStatus();
+			    if (!isUser()) {
+			        if (!TEST_PROGRESS_VIEW) {
+			            // Use the GOTO action to show the error and return OK
+			            Object prop = getProperty(IProgressConstants.ACTION_PROPERTY);
+			            if (prop instanceof GotoActionWrapper) {
+			                GotoActionWrapper wrapper = (GotoActionWrapper)prop;
+			                wrapper.setStatus(e.getStatus());
+			                status = new Status(IStatus.OK, TeamUIPlugin.ID, IStatus.OK, e.getStatus().getMessage(), e);
+			            }
+			        }
+			    }
+// TODO: Code that can be added when new error handling gets released (see bug 76726)
+//		        if (!isUser() && status.getSeverity() == IStatus.ERROR) {
+//		            // Never prompt for errors on non-user jobs
+//		            setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+//		        }
 			} finally {
 				event.setStopTime(System.currentTimeMillis());
 				subscriber.removeListener(changeListener);
@@ -389,34 +463,7 @@ public final class RefreshSubscriberJob extends Job {
 	}
 	
 	private void initialize(final IRefreshSubscriberListener listener) {
-		final IWorkbenchAction[] gotoAction = new IWorkbenchAction[] {null};
-		final IWorkbenchAction actionWrapper = new WorkbenchAction() {
-			public void run() {
-				if(gotoAction[0] != null) {
-					gotoAction[0].run();
-				}
-			}
-			public boolean isEnabled() {
-				if(gotoAction[0] != null) {
-					return gotoAction[0].isEnabled();
-				}
-				return true;
-			}
-			
-			public String getToolTipText() {
-				if(gotoAction[0] != null) {
-					return gotoAction[0].getToolTipText();
-				}
-				return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getName());
-			}
-			
-			public void dispose() {
-				super.dispose();
-				if(gotoAction[0] != null) {
-					gotoAction[0].dispose();
-				}
-			}
-		};
+		final GotoActionWrapper actionWrapper = new GotoActionWrapper();
 		
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 		group.beginTask(taskName, 100);
@@ -435,36 +482,25 @@ public final class RefreshSubscriberJob extends Job {
 			public ActionFactory.IWorkbenchAction refreshDone(IRefreshEvent event) {
 				if(listener != null) {
 					boolean isModal = isJobModal();
-					ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
+					final ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
 					if(runnable != null) {
-					// If the job is being run modally then simply prompt the user immediatly
-					if(isModal) {
-						if(runnable != null) {
-							final IAction[] r = new IAction[] {runnable};
-							Job update = new UIJob("") { //$NON-NLS-1$
-								public IStatus runInUIThread(IProgressMonitor monitor) {
-									r[0].run();
-									return Status.OK_STATUS;
-								}
-							};
-							update.setSystem(true);
-							update.schedule();
-						}
-					// If the job is being run in the background, don't interrupt the user and simply update the goto action
-					// to perform the results.
-					} else {
-						gotoAction[0] = runnable;
-						actionWrapper.setEnabled(runnable.isEnabled());
-						actionWrapper.setToolTipText(runnable.getToolTipText());
-						runnable.addPropertyChangeListener(new IPropertyChangeListener() {
-							public void propertyChange(PropertyChangeEvent event) {
-								if(event.getProperty().equals(IAction.ENABLED)) {
-									Boolean bool = (Boolean) event.getNewValue();
-									actionWrapper.setEnabled(bool.booleanValue());
-								}
+						// If the job is being run modally then simply prompt the user immediatly
+						if(isModal) {
+							if(runnable != null) {
+								Job update = new UIJob("") { //$NON-NLS-1$
+									public IStatus runInUIThread(IProgressMonitor monitor) {
+									    runnable.run();
+										return Status.OK_STATUS;
+									}
+								};
+								update.setSystem(true);
+								update.schedule();
 							}
-						});
-					}
+						} else {
+							// If the job is being run in the background, don't interrupt the user and simply update the goto action
+							// to perform the results.
+							actionWrapper.setGotoAction(runnable);
+						}
 					}
 					RefreshSubscriberJob.removeRefreshListener(this);
 				}
