@@ -4,24 +4,18 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Standard action for launching the create project selection
@@ -46,6 +40,13 @@ public class NewProjectAction extends Action {
 	 * The workbench window this action will run in
 	 */
 	private IWorkbenchWindow window;
+
+/**
+ * This default constructor allows the the action to be called from the welcome page.
+ */
+public NewProjectAction() {
+	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+}
 
 /**
  * Creates a new action for launching the new project
