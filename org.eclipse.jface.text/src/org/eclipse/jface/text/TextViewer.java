@@ -2285,14 +2285,20 @@ public class TextViewer extends Viewer implements
 					bufferZone= 10;
 					
 					int newOffset= visibleStart;
+
+					int visibleWidth= visibleEnd - visibleStart;
+					int selectionPixelWidth= endPixel - startPixel;
+
 					if (startPixel < visibleStart)
 						newOffset= startPixel;
-					else if (endPixel - startPixel  + bufferZone < visibleEnd - visibleStart)
-						newOffset= visibleStart + (endPixel - visibleEnd + bufferZone);
+					else if (selectionPixelWidth  + bufferZone < visibleWidth)
+						newOffset= endPixel + bufferZone - visibleWidth;
 					else
 						newOffset= startPixel;
-						
-					fTextWidget.setHorizontalIndex(newOffset / getAverageCharWidth());
+
+					float index= ((float)newOffset) / ((float)getAverageCharWidth()); 
+				
+					fTextWidget.setHorizontalIndex(Math.round(index));
 				}
 				
 			}
