@@ -55,6 +55,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	private IRegion fSelectedRegion; // initialized by apply()
 	private String fDisplayString;
 	private InclusivePositionUpdater fUpdater;
+	private IInformationControlCreator fInformationControlCreator;
 		
 	/**
 	 * Creates a template proposal with a template and its context.
@@ -91,7 +92,37 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		
 		fRelevance= relevance;			
 	}
-
+	
+	/**
+	 * Sets the information control creator for this completion proposal.
+	 * 
+	 * @param informationControlCreator the information control creator
+	 * @since 3.1
+	 */
+	public final void setInformationControlCreator(IInformationControlCreator informationControlCreator) {
+		fInformationControlCreator= informationControlCreator;
+	}
+	
+	/**
+	 * Returns the template of this proposal.
+	 * 
+	 * @return the template of this proposal
+	 * @since 3.1
+	 */
+	protected final Template getTemplate() {
+		return fTemplate;
+	}
+	
+	/**
+	 * Returns the context in which the template was requested.
+	 * 
+	 * @return the context in which the template was requested
+	 * @since 3.1
+	 */
+	protected final TemplateContext getContext() {
+		return fContext;
+	}
+	
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
@@ -242,7 +273,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @return the offset of the range in the document that will be replaced by
 	 *         applying this template
 	 */
-	private int getReplaceOffset() {
+	protected final int getReplaceOffset() {
 		int start;
 		if (fContext instanceof DocumentTemplateContext) {
 			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
@@ -260,7 +291,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @return the end offset of the range in the document that will be replaced
 	 *         by applying this template
 	 */
-	private int getReplaceEndOffset() {
+	protected final int getReplaceEndOffset() {
 		int end;
 		if (fContext instanceof DocumentTemplateContext) {
 			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
@@ -339,8 +370,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
 	 */
 	public IInformationControlCreator getInformationControlCreator() {
-//		return new TemplateInformationControlCreator();
-		return null;
+		return fInformationControlCreator;
 	}
 
 	/*
@@ -372,14 +402,14 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementString()
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionText(org.eclipse.jface.text.IDocument, int)
 	 */
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return fTemplate.getName();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementOffset()
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionStart(org.eclipse.jface.text.IDocument, int)
 	 */
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplaceOffset();
