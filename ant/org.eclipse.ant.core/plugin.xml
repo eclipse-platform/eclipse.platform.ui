@@ -2,22 +2,17 @@
 <plugin
    id="org.eclipse.ant.core"
    name="%pluginName"
-   version="2.1.1"
+   version="2.2.0"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.ant.core.AntPlugin">
 <requires>
-   <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.apache.xerces"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.apache.ant" export="true"/>
 </requires>
 
 <runtime>
-   <library name="ant.jar">
-      <export name="*"/>
-   </library>
    <library name="antsupport.jar">
-      <export name="*"/>
-   </library>
-   <library name="jakarta-ant-1.4.1-optional.jar">
       <export name="*"/>
    </library>
 </runtime>
