@@ -59,7 +59,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private IActionBars actionBars;
 	private ViewFactory viewFactory;
 	private PerspectiveList perspList = new PerspectiveList();
-	private Listener mouseDownListener;
 	private PerspectiveDescriptor deferredActivePersp;
 	private NavigationHistory navigationHistory = new NavigationHistory(this);	
 	private IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
@@ -729,13 +728,15 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	activationList.remove(ref);
 	boolean partWasActive = (editor == activePart);
 
-	// Deactivate part.
-	if (partWasActive)
-		setActivePart(null);
-	if (lastActiveEditor == editor) {
-		actionSwitcher.updateTopEditor(null);
-		lastActiveEditor = null;
-	}
+// Removing following lines to fix:
+// http://dev.eclipse.org/bugs/show_bug.cgi?id=28031
+//	// Deactivate part.
+//	if (partWasActive)
+//		setActivePart(null);
+//	if (lastActiveEditor == editor) {
+//		actionSwitcher.updateTopEditor(null);
+//		lastActiveEditor = null;
+//	}
 
 	// Close the part.
 	getEditorManager().closeEditor(ref);
@@ -1273,13 +1274,6 @@ public String getLabel() {
 	return label;
 }
 /**
- * Mouse down listener to hide fast view when
- * user clicks on empty editor area or sashes.
- */
-protected Listener getMouseDownListener() {
-	return mouseDownListener;
-}
-/**
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
@@ -1502,19 +1496,10 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 	// Save args.
 	this.window = w;
 	this.input = input;
-
-	// Mouse down listener to hide fast view when
-	// user clicks on empty editor area or sashes.
-	mouseDownListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.MouseDown)
-				toggleFastView(null);
-		}
-	};
 	
 	// Create presentation.
 	createClientComposite();
-	editorPresentation = new EditorPresentation(this, mouseDownListener) ;
+	editorPresentation = new EditorPresentation(this) ;
 	editorMgr = new EditorManager(window, this, editorPresentation);
 	
 	// Get perspective descriptor.
