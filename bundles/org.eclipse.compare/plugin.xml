@@ -106,6 +106,41 @@
 			name= "%ActionDefinition.addFromHistory.name"
 			description="%ActionDefinition.addFromHistory.description"
 		/>
+				
+		<actionDefinition
+			id="org.eclipse.compare.copyRightToLeft"
+			name= "%ActionDefinition.copyRightToLeft.name"
+			description="%ActionDefinition.copyRightToLeft.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.copyLeftToRight"
+			name= "%ActionDefinition.copyLeftToRight.name"
+			description="%ActionDefinition.copyLeftToRight.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.copyAllRightToLeft"
+			name= "%ActionDefinition.copyAllRightToLeft.name"
+			description="%ActionDefinition.copyAllRightToLeft.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.copyAllLeftToRight"
+			name= "%ActionDefinition.copyAllLeftToRight.name"
+			description="%ActionDefinition.copyAllLeftToRight.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.selectNextChange"
+			name= "%ActionDefinition.selectNextChange.name"
+			description="%ActionDefinition.selectNextChange.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.selectPreviousChange"
+			name= "%ActionDefinition.selectPreviousChange.name"
+			description="%ActionDefinition.selectPreviousChange.description"
+		/>
+		
+		selectNextChange
+		
+		
 	</extension>
 
 

@@ -45,7 +45,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.compare.*;
@@ -234,6 +236,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private ActionContributionItem fPreviousItem;	// goto previous difference
 	private ActionContributionItem fCopyDiffLeftToRightItem;
 	private ActionContributionItem fCopyDiffRightToLeftItem;
+	
+	private IKeyBindingService fKeyBindingService;
 	
 	private boolean fSynchronizedScrolling= true;
 	private boolean fShowMoreInfo= false;
@@ -816,6 +820,31 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Clients may extend if they have to do additional cleanup.
 	 */
 	protected void handleDispose(DisposeEvent event) {
+		
+		if (fKeyBindingService != null) {
+			IAction a;
+			if (fNextItem != null) {
+				a= fNextItem.getAction();
+				if (a != null)
+					fKeyBindingService.unregisterAction(a);
+			}
+			if (fPreviousItem != null) {
+				a= fPreviousItem.getAction();
+				if (a != null)
+					fKeyBindingService.unregisterAction(a);
+			}
+			if (fCopyDiffLeftToRightItem != null) {
+				a= fCopyDiffLeftToRightItem.getAction();
+				if (a != null)
+					fKeyBindingService.unregisterAction(a);
+			}
+			if (fCopyDiffRightToLeftItem != null) {
+				a= fCopyDiffRightToLeftItem.getAction();
+				if (a != null)
+					fKeyBindingService.unregisterAction(a);
+			}
+			fKeyBindingService= null;
+		}
 		
 		Object input= getInput();
 		DocumentManager.remove(getDocument2('A', input));
@@ -2779,6 +2808,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * and adds them to the given toolbar manager.
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
+
+		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
+		fKeyBindingService= ps != null ? ps.getKeyBindingService() : null;
 		
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {
@@ -2805,6 +2837,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Utilities.initAction(a, getResourceBundle(), "action.NextDiff."); //$NON-NLS-1$
 		fNextItem= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fNextItem); //$NON-NLS-1$
+		Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.selectNextChange");	//$NON-NLS-1$
 		
 		a= new Action() {
 			public void run() {
@@ -2814,6 +2847,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff."); //$NON-NLS-1$
 		fPreviousItem= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fPreviousItem); //$NON-NLS-1$
+		Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.selectPreviousChange");	//$NON-NLS-1$
 
 		
 		CompareConfiguration cc= getCompareConfiguration();
@@ -2828,6 +2862,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCopyDiffLeftToRightItem= new ActionContributionItem(a);
 			fCopyDiffLeftToRightItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem); //$NON-NLS-1$
+			Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.copyLeftToRight");	//$NON-NLS-1$
 		}
 		
 		if (cc.isLeftEditable()) {
@@ -2840,6 +2875,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCopyDiffRightToLeftItem= new ActionContributionItem(a);
 			fCopyDiffRightToLeftItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
+			Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.copyRightToLeft");	//$NON-NLS-1$
 		}
 	}
 	

@@ -30,6 +30,23 @@ import org.eclipse.compare.CompareConfiguration;
  * Convenience and utility methods.
  */
 public class Utilities {
+	
+	public static void registerAction(IKeyBindingService kbs, IAction a, String id) {
+		if (kbs != null) {
+			a.setActionDefinitionId(id);
+			kbs.registerAction(a);
+		}
+	}
+	
+	public static IWorkbenchPartSite findSite(Control c) {
+		while (c != null && !c.isDisposed()) {
+			Object data= c.getData();
+			if (data instanceof IWorkbenchPart)
+				return ((IWorkbenchPart)data).getSite();
+			c= c.getParent();
+		}
+		return null;
+	}
 
 	public static IActionBars findActionBars(Control c) {
 		while (c != null && !c.isDisposed()) {

@@ -13,6 +13,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
@@ -248,6 +250,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 	MergeViewerAction fLeftSaveAction;
 	MergeViewerAction fRightSaveAction;
+	
+	private IKeyBindingService fKeyBindingService;
 
 	// SWT widgets
 	/* package */ Composite fComposite;
@@ -653,6 +657,9 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fCenter= createCenter(fComposite);
 				
 		createControls(fComposite);
+		
+		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
+		fKeyBindingService= ps != null ? ps.getKeyBindingService() : null;
 						
 		ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(parent);
 		if (tbm != null) {
@@ -674,6 +681,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyLeftToRightAction, getResourceBundle(), "action.CopyLeftToRight."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyLeftToRightAction); //$NON-NLS-1$
+				Utilities.registerAction(fKeyBindingService, fCopyLeftToRightAction, "org.eclipse.compare.copyAllLeftToRight");	//$NON-NLS-1$
 			}
 			
 			if (cc.isLeftEditable()) {
@@ -685,6 +693,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyRightToLeftAction, getResourceBundle(), "action.CopyRightToLeft."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyRightToLeftAction); //$NON-NLS-1$
+				Utilities.registerAction(fKeyBindingService, fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft");	//$NON-NLS-1$
 			}
 			
 			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
@@ -737,6 +746,14 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * Clients may extend if they have to do additional cleanup.
 	 */
 	protected void handleDispose(DisposeEvent event) {
+		
+		if (fKeyBindingService != null) {
+			if (fCopyLeftToRightAction != null)
+				fKeyBindingService.unregisterAction(fCopyLeftToRightAction);
+			if (fCopyRightToLeftAction != null)
+				fKeyBindingService.unregisterAction(fCopyRightToLeftAction);
+			fKeyBindingService= null;
+		}
 		
 		Object input= getInput();	
 		if (input instanceof ICompareInput)

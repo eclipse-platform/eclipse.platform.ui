@@ -433,89 +433,21 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 		
-		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-		// setup the wiring for second pane
-		/*
-		fStructurePane1.addOpenListener(
-			new IOpenListener() {
-				public void open(OpenEvent oe) {
-					feed2(oe.getSelection());
-				}
-			}
-		);
-		*/
-		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972		
 		fStructurePane1.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
-					ISelection s= e.getSelection();
-					// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-					// if (s == null || s.isEmpty())
-					// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-					feed2(s);
+					feed2(e.getSelection());
 				}
 			}
 		);
 
-		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-		// setup the wiring for third pane
-		/*
-		fStructurePane2.addOpenListener(
-			new IOpenListener() {
-				public void open(OpenEvent oe) {
-					feed3(oe.getSelection());
-				}
-			}
-		);
-		*/
-		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972		
 		fStructurePane2.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
-					ISelection s= e.getSelection();
-					// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-					// if (s == null || s.isEmpty())
-					// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-					feed3(s);
+					feed3(e.getSelection());
 				}
 			}
-		);
-		
-		
-		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-		// now deal with activation/deactivation
-		/*
-		Listener activationListener= new Listener() {
-			int fOldOpenStrategy;
-			
-			public void handleEvent(Event event) {
-				if (event.widget instanceof CompareViewerSwitchingPane) {
-					
-					switch (event.type) {
-					case SWT.Activate:
-						fFocusPane= (CompareViewerSwitchingPane) event.widget;
-						fOldOpenStrategy= OpenStrategy.getOpenMethod();
-						OpenStrategy.setOpenMethod(OpenStrategy.SINGLE_CLICK | OpenStrategy.ARROW_KEYS_OPEN);
-						break;
-					case SWT.Deactivate:
-						OpenStrategy.setOpenMethod(fOldOpenStrategy);
-						break;
-					}
-				}
-			}
-		};
-		fStructureInputPane.addListener(SWT.Activate, activationListener);
-		fStructurePane1.addListener(SWT.Activate, activationListener);
-		fStructurePane2.addListener(SWT.Activate, activationListener);
-		fContentInputPane.addListener(SWT.Activate, activationListener);
-		
-		fStructureInputPane.addListener(SWT.Deactivate, activationListener);
-		fStructurePane1.addListener(SWT.Deactivate, activationListener);
-		fStructurePane2.addListener(SWT.Deactivate, activationListener);
-		fContentInputPane.addListener(SWT.Deactivate, activationListener);
-		*/
-		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
-		
+		);		
 
 		if (fInput instanceof ICompareInput) {
 			fStructureInputPane.setInput((ICompareInput) fInput);
