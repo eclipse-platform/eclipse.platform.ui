@@ -17,6 +17,25 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
@@ -36,33 +55,20 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -620,6 +626,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
 
+		parentFolder.setSimple(
+				PrefUtil.getAPIPreferenceStore().
+				getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		tab = new CTabItem(parentFolder, SWT.BORDER);
 
 		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(
@@ -637,7 +646,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
-		parentFolder.setSimple(false);
 
 		Composite result = new Composite(parentFolder, SWT.NULL);
 		result.setLayout(getPageLayout());
