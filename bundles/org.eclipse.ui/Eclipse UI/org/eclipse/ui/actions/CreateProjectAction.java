@@ -4,6 +4,8 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -103,7 +105,18 @@ public class CreateProjectAction extends Action {
 			initialSelectedCategories = null;
 		else {
 			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
-			initialSelectedCategories = reg.findCategories(ids);
+			ArrayList results = new ArrayList(ids.length);
+			for (int i = 0; i < ids.length; i++) {
+				ICategory cat = reg.findCategory(ids[i]);
+				if (cat != null)
+					results.add(cat);
+			}
+			if (results.isEmpty())
+				initialSelectedCategories = null;
+			else {
+				initialSelectedCategories = new ICategory[results.size()];
+				results.toArray(initialSelectedCategories);
+			}
 		}
 	}
 	
@@ -118,7 +131,18 @@ public class CreateProjectAction extends Action {
 			initialProjectCapabilities = null;
 		else {
 			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
-			initialProjectCapabilities = reg.findCapabilities(ids);
+			ArrayList results = new ArrayList(ids.length);
+			for (int i = 0; i < ids.length; i++) {
+				Capability cap = reg.findCapability(ids[i]);
+				if (cap != null)
+					results.add(cap);
+			}
+			if (results.isEmpty())
+				initialProjectCapabilities = null;
+			else {
+				initialProjectCapabilities = new Capability[results.size()];
+				results.toArray(initialProjectCapabilities);
+			}
 		}
 	}
 	

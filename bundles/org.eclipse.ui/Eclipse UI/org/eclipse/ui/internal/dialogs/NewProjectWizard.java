@@ -10,6 +10,7 @@ import java.net.URL;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -80,9 +81,12 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 
 	/**
 	 * Builds the collection of steps to create and install
-	 * the chosen capabilities
+	 * the chosen capabilities.
+	 * 
+	 * @return <code>true</code> if successful, <code>false</code>
+	 * 		if a problem was detected.
 	 */
-	private void buildSteps() {
+	private boolean buildSteps() {
 		Capability[] caps = capabilityPage.getSelectedCapabilities();
 		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 		IStatus status = reg.validateCapabilities(caps);
@@ -93,7 +97,14 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 			for (int i = 0; i < results.length; i++)
 				steps[i+1] = new InstallCapabilityStep(i+2, results[i], workbench, this);
 			setSteps(steps);
+			return true;
 		} else {
+			ErrorDialog.openError(
+				getShell(), 
+				WorkbenchMessages.getString("NewProjectWizard.errorTitle"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("NewProjectWizard.invalidCapabilities"),  //$NON-NLS-1$
+		 		status);
+			return false;
 		}
 	}
 	
@@ -146,8 +157,10 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 	 * Method declared on IWizard.
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
-		if (page == capabilityPage)
-			buildSteps();
+		if (page == capabilityPage) {
+			if (!buildSteps())
+				return capabilityPage;
+		}
 		return super.getNextPage(page);
 	}
 

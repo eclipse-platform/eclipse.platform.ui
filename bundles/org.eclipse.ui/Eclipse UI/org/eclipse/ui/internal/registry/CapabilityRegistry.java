@@ -59,6 +59,21 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
+	 * Finds the capability for the given identifier, or
+	 * <code>null</code> if none.
+	 */
+	public Capability findCapability(String id) {
+		Iterator enum = capabilities.iterator();
+		while (enum.hasNext()) {
+			Capability cap = (Capability) enum.next();
+			if (id.equals(cap.getId())) {
+				return cap;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Finds the category for the given identifier, or
 	 * <code>null</code> if none.
 	 */
