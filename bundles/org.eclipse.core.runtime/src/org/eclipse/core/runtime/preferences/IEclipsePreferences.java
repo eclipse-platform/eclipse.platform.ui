@@ -91,8 +91,8 @@ public interface IEclipsePreferences extends Preferences {
 		 * 
 		 * @param event an event specifying the details about the new node
 		 * @see NodeChangeEvent
-		 * @see IEclipsePreferences#addNodeChangeListener(INodeChangeListener)
-		 * @see IEclipsePreferences#removeNodeChangeListener(INodeChangeListener)
+		 * @see IEclipsePreferences#addNodeChangeListener(IEclipsePreferences.INodeChangeListener)
+		 * @see IEclipsePreferences#removeNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 */
 		public void added(NodeChangeEvent event);
 
@@ -102,8 +102,8 @@ public interface IEclipsePreferences extends Preferences {
 		 * 
 		 * @param event an event specifying the details about the removed node
 		 * @see NodeChangeEvent
-		 * @see IEclipsePreferences#addNodeChangeListener(INodeChangeListener)
-		 * @see IEclipsePreferences#removeNodeChangeListener(INodeChangeListener)
+		 * @see IEclipsePreferences#addNodeChangeListener(IEclipsePreferences.INodeChangeListener)
+		 * @see IEclipsePreferences#removeNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 */
 		public void removed(NodeChangeEvent event);
 	}
@@ -194,9 +194,9 @@ public interface IEclipsePreferences extends Preferences {
 		 * be <code>null</code>.
 		 * 
 		 * @param event the event details
-		 * @see PreferenceChangeEvent
-		 * @see IEclipsePreferences#addPreferenceChangeListener(IPreferenceChangeListener)
-		 * @see IEclipsePreferences#removePreferenceChangeListener(IPreferenceChangeListener)
+		 * @see IEclipsePreferences.PreferenceChangeEvent
+		 * @see IEclipsePreferences#addPreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
+		 * @see IEclipsePreferences#removePreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
 		 */
 		public void preferenceChange(PreferenceChangeEvent event);
 	}
@@ -208,8 +208,8 @@ public interface IEclipsePreferences extends Preferences {
 	 *  
 	 * @param listener the node change listener to add
 	 * @throws IllegalStateException if this node or an ancestor has been removed
-	 * @see #removeNodeChangeListener(INodeChangeListener)
-	 * @see INodeChangeListener
+	 * @see #removeNodeChangeListener(IEclipsePreferences.INodeChangeListener)
+	 * @see IEclipsePreferences.INodeChangeListener
 	 */
 	public void addNodeChangeListener(INodeChangeListener listener);
 
@@ -220,8 +220,8 @@ public interface IEclipsePreferences extends Preferences {
 	 * 
 	 * @param listener the node change listener to remove
 	 * @throws IllegalStateException if this node or an ancestor has been removed
-	 * @see #addNodeChangeListener(INodeChangeListener)
-	 * @see INodeChangeListener
+	 * @see #addNodeChangeListener(IEclipsePreferences.INodeChangeListener)
+	 * @see IEclipsePreferences.INodeChangeListener
 	 */
 	public void removeNodeChangeListener(INodeChangeListener listener);
 
@@ -232,8 +232,8 @@ public interface IEclipsePreferences extends Preferences {
 	 * 
 	 * @param listener the preference change listener to register
 	 * @throws IllegalStateException if this node or an ancestor has been removed
-	 * @see #removePreferenceChangeListener(IPreferenceChangeListener)
-	 * @see IPreferenceChangeListener
+	 * @see #removePreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
+	 * @see IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener);
 
@@ -244,8 +244,8 @@ public interface IEclipsePreferences extends Preferences {
 	 * 
 	 * @param listener the preference change listener to remove
 	 * @throws IllegalStateException if this node or an ancestor has been removed
-	 * @see #addPreferenceChangeListener(IPreferenceChangeListener)
-	 * @see IPreferenceChangeListener
+	 * @see #addPreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
+	 * @see IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener);
 
