@@ -148,7 +148,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 					widget.showSelection();
 				}
 				int lineEndOffset = lineStartOffset + doc.getLineLength(lines - 1);
-				widget.setCaretOffset(lineEndOffset);
+				if (lineEndOffset > 0) {
+					widget.setCaretOffset(lineEndOffset);
+				}
 			} catch (BadLocationException e) {
 			}
 		}
