@@ -976,7 +976,12 @@ public class Session {
 			}
 		}
 		// if not binary, translate line delimiters on the fly
-		if (! isBinary && IS_CRLF_PLATFORM) in = new LFtoCRLFInputStream(in);
+		if (! isBinary) {
+			// always auto-correct for CRLF line-ends that come from the server
+			in = new CRLFtoLFInputStream(in);
+			// switch from LF to CRLF if appropriate
+			if (IS_CRLF_PLATFORM) in = new LFtoCRLFInputStream(in);
+		}
 		// write the file locally
 		file.setContents(in, responseType, true, new NullProgressMonitor());
 	}
