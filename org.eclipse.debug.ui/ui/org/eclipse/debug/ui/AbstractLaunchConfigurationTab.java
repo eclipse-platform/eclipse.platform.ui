@@ -10,10 +10,13 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -202,5 +205,14 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		return true;
 	}
 
+	/**
+	 * Create some empty space.
+	 */
+	protected void createVerticalSpacer(Composite comp, int colSpan) {
+		Label label = new Label(comp, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = colSpan;
+		label.setLayoutData(gd);
+	}	
 }
 

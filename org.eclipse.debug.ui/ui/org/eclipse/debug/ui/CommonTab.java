@@ -109,9 +109,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
-		GridData gd;
 
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 		
 		Composite radioComp = new Composite(comp, SWT.NONE);
 		GridLayout radioLayout = new GridLayout();
@@ -138,7 +137,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		locationLayout.marginHeight = 0;
 		locationLayout.marginWidth = 0;
 		locationComp.setLayout(locationLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
@@ -166,7 +165,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getLocalRadioButton().setSelection(true);
 		setSharedEnabled(false);
 
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
 		getSwitchToLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Switch_to/Open_perspective_when_launched_in__7")); //$NON-NLS-1$
@@ -198,7 +197,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getDebugPerspectiveCombo().setLayoutData(gd);		
 		fillWithPerspectives(getDebugPerspectiveCombo());				
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 		
 		Composite favComp = new Composite(comp, SWT.NONE);
 		GridLayout favLayout = new GridLayout();
@@ -217,13 +216,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getDebugFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.Debu&g_12")); //$NON-NLS-1$
 	}
 
-	/**
-	 * Create some empty space 
-	 */
-	private void createVerticalSpacer(Composite comp) {
-		new Label(comp, SWT.NONE);
-	}
-
+	
 	private void setSharedLocationButton(Button sharedLocationButton) {
 		this.fSharedLocationButton = sharedLocationButton;
 	}

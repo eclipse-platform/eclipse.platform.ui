@@ -2443,10 +2443,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return true;
 	}
 
-	/**
-	 * @see ILaunchConfigurationDialog#getLaunchConfiguration()
-	 */
-	public ILaunchConfigurationWorkingCopy getLaunchConfiguration() {
+	protected ILaunchConfigurationWorkingCopy getLaunchConfiguration() {
 		return fWorkingCopy;
 	}
 
