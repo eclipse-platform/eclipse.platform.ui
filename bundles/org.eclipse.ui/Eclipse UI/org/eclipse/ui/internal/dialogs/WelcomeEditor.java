@@ -540,7 +540,8 @@ public void setFocus() {
  * Sets the styled text's link (blue) ranges
  */
 private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
-	Color fg = styledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
+	//Color fg = styledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
+	Color fg = JFaceColors.getHyperlinkText(styledText.getShell().getDisplay());
 	for (int i = 0; i < linkRanges.length; i++) {
 		StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
 		styledText.setStyleRange(r);
