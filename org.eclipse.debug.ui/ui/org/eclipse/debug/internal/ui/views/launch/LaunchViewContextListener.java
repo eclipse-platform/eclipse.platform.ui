@@ -409,12 +409,14 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			if (stackedViews == null) {
 				continue;
 			}
-			int viewIndex= stackedViews.length; // Assume view is at the bottom of the stack until we find it
+			// For each applicable view, iterate through the view stack.
+			// If we find that view before any other applicable views,
+			// show it. Otherwise, don't.
 			for (int i = 0; i < stackedViews.length; i++) {
 				IViewPart stackedView= stackedViews[i];
 				if (view == stackedView) {
-					viewIndex= i;
-				} else if (viewsToShow.contains(stackedView) && i < viewIndex) {
+					break;
+				} else if (viewsToShow.contains(stackedView)) {
 					// If this view is below an appropriate view, don't show it
 					activate= false;
 					break;
