@@ -187,7 +187,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		try {
 			url = new URL("http://www.oti.com");
 		} catch (MalformedURLException e){/*pretty impossible*/}
-		String desc = "pretty long description as a string with \r\n and \t and";
+		String desc = "pretty long description as a string with \r\n and \t and \n";
 		IURLEntry info = new MyURLEntry(desc,url);
 		DefaultFeature feature = getFeature();
 		feature.setDescription(info);

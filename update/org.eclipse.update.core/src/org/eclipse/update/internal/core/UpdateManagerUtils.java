@@ -100,49 +100,8 @@ public class UpdateManagerUtils {
 		return result;
 	};
 
-	/**
-	 * Resolve a URL as a local file URL
-	 * if the URL is not a file URL, transfer the stream to teh temp directory 
-	 * and return the new URL
-	 */
-	public static URL resolveAsLocal(URL remoteURL) throws MalformedURLException, IOException, CoreException {
-		return resolveAsLocal(remoteURL, null,null);
-	}
-
-	/**
-	 * Resolve a URL as a local file URL
-	 * if the URL is not a file URL, transfer the stream to teh temp directory 
-	 * and return the new URL
-	 */
-	public static URL resolveAsLocal(URL remoteURL, String localName, IProgressMonitor monitor) throws MalformedURLException, IOException, CoreException {
-		URL result = remoteURL;
-
-		if (!(remoteURL == null || remoteURL.getProtocol().equals("file"))) {
-			InputStream sourceContentReferenceStream = remoteURL.openStream();
-			if (sourceContentReferenceStream != null) {
-
-				Site tempSite = (Site) SiteManager.getTempSite();
-				String newFile = UpdateManagerUtils.getPath(tempSite.getURL());							
-				if (localName == null || localName.trim().equals("")) {
-					newFile = newFile + getLocalRandomIdentifier("");
-				} else {
-					newFile = newFile + localName;
-
-				}
-
-				result = copyToLocal(sourceContentReferenceStream, newFile,monitor);
-			} else {
-				throw new IOException("Couldn\'t find the file: " + remoteURL.toExternalForm());
-			}
-			
-			// DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-				UpdateManagerPlugin.getPlugin().debug("Transfered URL:" + remoteURL.toExternalForm() + " to:" + result.toExternalForm());
-			}
-		}
-		return result;
-	}
-
+	
+	
 	/**
 	 * 
 	 */

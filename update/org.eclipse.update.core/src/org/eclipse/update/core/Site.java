@@ -136,10 +136,22 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		//finds the contentReferences for this IPluginEntry
 		for (int i = 0; i < pluginsToRemove.length; i++) {
-			remove(pluginsToRemove[i], monitor);
+			remove(feature,pluginsToRemove[i], monitor);
 		}
 
-		// remove feature reference
+		// remove the feature content
+		ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences();
+		for (int i = 0; i < references.length; i++) {
+			try {
+				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+			} catch (IOException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot remove feature:"+feature.getVersionIdentifier().getIdentifier(),e);
+				throw new CoreException(status);					
+			}
+		}
+
+		// remove feature reference from the site
 		IFeatureReference[] featureReferences = getFeatureReferences();
 		if (featureReferences != null) {
 			for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
@@ -160,8 +172,21 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 	}
 	
-	private void remove(IPluginEntry p, IProgressMonitor m) {
-		// DUMMY METHOD
+	private void remove(IFeature feature,IPluginEntry pluginEntry, IProgressMonitor monitor)  throws CoreException{
+		
+		if (pluginEntry==null)
+			return;
+		
+		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry);
+		for (int i = 0; i < references.length; i++) {
+			try {
+				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+			} catch (IOException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot remove plugin:"+pluginEntry.getIdentifier(),e);
+				throw new CoreException(status);					
+			}
+		}
 	}
 
 	/**
@@ -305,6 +330,67 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
+
+		String gap = "";
+		for (int i = 0; i < indent; i++)
+			gap += " ";
+		String increment = "";
+		for (int i = 0; i < IWritable.INDENT; i++)
+			increment += " ";
+
+		w.print(gap + "<" + SiteParser.SITE + " ");
+		// FIXME: site type to implement
+		// 
+		// Site URL
+		String URLInfoString = null;
+		if (getInfoURL() != null) {
+			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), getInfoURL());
+			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+		}
+		w.println(">");
+		w.println("");
+
+		IFeatureReference[] refs = getFeatureReferences();
+		for (int index = 0; index < refs.length; index++) {
+			FeatureReference element = (FeatureReference) refs[index];
+			element.write(indent, w);
+		}
+		w.println("");
+
+		IArchiveEntry[] archives = getArchives();
+		for (int index = 0; index < archives.length; index++) {
+			IArchiveEntry element = (IArchiveEntry) archives[index];
+			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
+			w.println(gap + "<" + SiteParser.ARCHIVE + " id=\"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
+		}
+		w.println("");
+
+		ICategory[] categories = getCategories();
+		for (int index = 0; index < categories.length; index++) {
+			Category element = (Category) categories[index];
+			w.println(gap + "<" + SiteParser.CATEGORY_DEF + " label=\"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">");
+
+			IURLEntry info = element.getDescription();
+			if (info != null) {
+				w.print(gap + increment + "<" + SiteParser.DESCRIPTION + " ");
+				URLInfoString = null;
+				if (info.getURL() != null) {
+					URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), info.getURL());
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+				}
+				w.println(">");
+				if (info.getAnnotation() != null) {
+					w.println(gap + increment + increment + Writer.xmlSafe(info.getAnnotation()));
+				}
+				w.print(gap + increment + "</" + SiteParser.DESCRIPTION + ">");
+			}
+			w.println(gap + "</" + SiteParser.CATEGORY_DEF + ">");
+
+		}
+		w.println("");
+		// end
+		w.println("</" + SiteParser.SITE + ">");
+		
 	}
 
 	/*

@@ -192,7 +192,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 */
 	public ContentReference[] getFeatureEntryArchiveReferences() throws CoreException {
 		ContentReference[] contentReferences = new ContentReference[1];
-		contentReferences[1] = new ContentReference(null,getURL());
+		contentReferences[0] = new ContentReference(null,getURL());
 		return contentReferences;
 	}
 

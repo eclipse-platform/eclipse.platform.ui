@@ -16,7 +16,7 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.setName("Regular Remove Tests");
 	
-	//suite.addTest(new TestSuite(TestRemove.class));
+	suite.addTest(new TestSuite(TestRemove.class));
 	
 	return suite;
 }

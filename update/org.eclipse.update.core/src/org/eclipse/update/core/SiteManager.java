@@ -73,26 +73,7 @@ public class SiteManager {
 	}
 	
 
-	/** 
-	 * Resolves a URL to the local file System.
-	 * If the URL is already accessible through the file system 
-	 * (i.e the protocol is file) it returns itself
-	 * Otherwise, it copies the file of the URL to the TEMP
-	 * directory and return a file URL pointing to the file
-	 * in the TEMP directory
-	 * 
-	 * @param url teh URL to be resolve
-	 * @return the locally resolved URL
-	 * @throws IOException if the remote URL canot be found
-	 * @throws MalformedURLException if the local URL cannot be created
-	 * @throws CoreException	 if we cannot access the local TEMP directory
-	 * @since 2.0 
-	 */
-
-	public static URL resolveAsLocal(URL url) throws IOException, MalformedURLException, CoreException {
-		return UpdateManagerUtils.resolveAsLocal(url);
-	}
-	
+		
 	/**
 	 * Creates a new site on the file system
 	 * This is the only Site we can create.
