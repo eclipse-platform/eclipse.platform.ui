@@ -12,9 +12,6 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IJobManager;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.widgets.Shell;
@@ -101,23 +98,25 @@ public class RefactoringWizardOpenOperation {
 		Assert.isNotNull(dialogTitle);
 		Refactoring refactoring= fWizard.getRefactoring();
 		
-		IJobManager manager= Platform.getJobManager();
+		// IJobManager manager= Platform.getJobManager();
 		try {
-			manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
+			// manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
+			// manager.suspend();
+			// manager.join(null, new NullProgressMonitor());
+			fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
+			if (fInitialConditions.hasFatalError()) {
+				String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
+				MessageDialog.openInformation(parent, dialogTitle, message);
+				return INITIAL_CONDITION_CHECKING_FAILED;
+			} else {
+				fWizard.setInitialConditionCheckingStatus(fInitialConditions);
+				Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
+				return dialog.open();
+			} 
 		} finally {
-			manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
-		}
-		
-		fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
-		if (fInitialConditions.hasFatalError()) {
-			String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
-			MessageDialog.openInformation(parent, dialogTitle, message);
-			return INITIAL_CONDITION_CHECKING_FAILED;
-		} else {
-			fWizard.setInitialConditionCheckingStatus(fInitialConditions);
-			Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
-			return dialog.open();
-		} 
+			// manager.resume();
+			// manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
+		}		
 	}
 	
 	//---- private helper methods -----------------------------------------------------------------
