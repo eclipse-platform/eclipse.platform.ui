@@ -245,7 +245,8 @@ public static URL getInstallURL() {
 }
 /**
  * Initialize the BOOTDIR variable. This code is copied from the getInstallURL() code and
- * should be merged. */
+ * should be merged.
+ */
 static void initializeBootDir() {
 	URL url = InternalBootLoader.class.getProtectionDomain().getCodeSource().getLocation();
 	BOOTDIR = decode(url.getFile());
@@ -592,12 +593,14 @@ public static boolean isStarting() {
 }
 /**
  * Return a boolean value indicating whether or not the user requested
- * to read the classloader properties file for performance enhancement. */
+ * to read the classloader properties file for performance enhancement.
+ */
 static boolean useClassLoaderProperties() {
 	return useClassLoaderProperties;
 }
 /**
- * Return the name of the file to be used for the class loader properties.  */
+ * Return the name of the file to be used for the class loader properties. 
+ */
 static String getClassLoaderPropertiesFilename() {
 	return classLoaderPropertiesFilename;
 }
@@ -627,7 +630,7 @@ private static void loadOptions() {
 		debugOptionsFilename = "file:" + userDir + OPTIONS; //$NON-NLS-1$
 	}
 	try {
-		optionsFile = new URL(debugOptionsFilename);
+		optionsFile = getURL(debugOptionsFilename);
 	} catch (MalformedURLException e) {
 		System.out.println("Unable to construct URL for options file: " + debugOptionsFilename); //$NON-NLS-1$
 		e.printStackTrace(System.out);
@@ -959,6 +962,7 @@ public static void shutdown() throws Exception {
 		loader = null;
 	}
 }
+
 /**
  * @see BootLoader
  * Retained for compatibility with R1.0 launchers
@@ -995,5 +999,23 @@ public  static String getBootDir()  {
 	if (BOOTDIR == null) 
 		initializeBootDir();
 	return BOOTDIR;
+}
+/**
+ * Helper method that creates an URL object from the given string
+ * representation. The string must correspond to a valid URL or file system
+ * path.
+ */
+private static URL getURL(String urlString) throws MalformedURLException {
+	try {
+		return new URL(urlString);
+	} catch (MalformedURLException e) {
+		// if it is not a well formed URL, tries to create a "file:" URL
+		try {
+			return new File(urlString).toURL();
+		} catch (MalformedURLException ex) {
+			// re-throw the original exception if nothing works
+			throw e;
+		}
+	}
 }
 }
