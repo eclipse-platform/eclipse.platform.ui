@@ -56,6 +56,8 @@ public abstract class UIJob extends Job {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 * Note: this message is marked final. Implementors should use
+	 * runInUIThread() instead.
 	 */
 	public final IStatus run(final IProgressMonitor monitor) {
 
@@ -89,17 +91,24 @@ public abstract class UIJob extends Job {
 		});
 		return Job.ASYNC_FINISH;
 	}
+	
 	/**
 	 * Run the job in the UI Thread.
+	 * @param monitor
+	 * @return IStatus
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
+	/**
+	 * Set the display to execute the asyncExec in.
+	 * @param runDisplay
+	 */
 	public void setDisplay(Display runDisplay) {
 		display = runDisplay;
 	}
 	/**
 	 * Get the display for use by the receiver.
-	 * @return
+	 * @return Display
 	 */
 	public Display getDisplay() {
 		return display;
