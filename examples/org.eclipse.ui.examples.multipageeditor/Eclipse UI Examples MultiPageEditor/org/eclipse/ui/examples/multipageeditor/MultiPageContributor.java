@@ -54,6 +54,7 @@ public void setActivePage(IEditorPart part) {
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, getAction(editor, ITextEditorActionConstants.SELECT_ALL));
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.FIND, getAction(editor, ITextEditorActionConstants.FIND));
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BOOKMARK, getAction(editor, ITextEditorActionConstants.BOOKMARK));
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.ADD_TASK, getAction(editor, ITextEditorActionConstants.ADD_TASK));
 		actionBars.updateActionBars();
 	}
 }
