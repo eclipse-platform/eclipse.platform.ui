@@ -1080,13 +1080,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#validateEdit(IFile[], Object)
 	 */
 	public IStatus validateEdit(IFile[] files, Object context) {
-		return new CVSStatus(IStatus.OK, "");
+		return new CVSStatus(IStatus.OK, "OK");
 	}
 
 	/*
 	 * @see ITeamProvider#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		return new CVSStatus(IStatus.OK, "");
+		return new CVSStatus(IStatus.OK, "OK");
 	}
 }
