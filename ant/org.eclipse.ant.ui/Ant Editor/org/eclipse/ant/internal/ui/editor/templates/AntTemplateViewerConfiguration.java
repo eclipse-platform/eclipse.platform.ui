@@ -11,11 +11,11 @@
 
 package org.eclipse.ant.internal.ui.editor.templates;
 
-import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-public class AntTemplateViewerConfiguration extends AbstractAntSourceViewerConfiguration {
+public class AntTemplateViewerConfiguration extends AntSourceViewerConfiguration {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
