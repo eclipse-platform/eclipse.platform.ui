@@ -233,7 +233,13 @@ public interface IExternalToolConstants {
 	/**
 	 * Options tab image.
 	 */ 
-	public static final String IMG_TAB_OPTIONS = PLUGIN_ID + ".IMG_TAB_OPTIONS"; //$NON-NLS-1$	
+	public static final String IMG_TAB_OPTIONS = PLUGIN_ID + ".IMG_TAB_OPTIONS"; //$NON-NLS-1$
+	
+	/**
+	 * Ant Targets tab image.
+	 */ 
+	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
+		
 	
 	// ------- Common External Tool Launch Configuration Attributes -------
 	/**
@@ -300,6 +306,7 @@ public interface IExternalToolConstants {
 	 */
 	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
 	
+	// ------- Common Ant Launch Configuration Attributes -------
 	/**
 	 * String attribute indicating the Ant targets to execute. Default value is
 	 * <code>null</code> which indicates that the default target is to be
