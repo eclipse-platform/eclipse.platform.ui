@@ -10,8 +10,10 @@ import java.util.Iterator;
 
 import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.NavigationAction;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffElement;
@@ -149,6 +151,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			return property.equals(PROP_KIND);
 		}
 	}
+	
 	class FilterAction extends Action {
 		/** 
 		 * Must subclass constructor to make it accessible to container class
@@ -218,6 +221,9 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private Action ignoreWhiteSpace;
 	private Action toggleGranularity;
 	
+	private NavigationAction showPrevious;
+	private NavigationAction showNext;
+	
 	// Property constant for diff mode kind
 	static final String PROP_KIND = "team.ui.PropKind"; //$NON-NLS-1$
 
@@ -243,6 +249,10 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		toolBar.add(new Separator());
 		toolBar.add(showOnlyConflicts);
 	
+		toolBar.add(new Separator());
+		toolBar.add(showNext);
+		toolBar.add(showPrevious);
+		
 		// Drop down menu
 		IMenuManager menu = actionBars.getMenuManager();
 		if (syncMode == SyncView.SYNC_BOTH) {
@@ -402,6 +412,12 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		ignoreWhiteSpace.setId("team.ignoreWhiteSpace"); //$NON-NLS-1$
 		boolean ignore = CompareUIPlugin.getDefault().getPreferenceStore().getBoolean(CompareConfiguration.IGNORE_WHITESPACE);
 		ignoreWhiteSpace.setChecked(ignore);
+		
+		// Show next and previous change
+		showNext = new NavigationAction(true);
+		showPrevious = new NavigationAction(false);
+		showNext.setCompareEditorInput(diffModel);
+		showPrevious.setCompareEditorInput(diffModel);
 		
 		// Add a selection listener to set the left label
 		addSelectionChangedListener(this);
