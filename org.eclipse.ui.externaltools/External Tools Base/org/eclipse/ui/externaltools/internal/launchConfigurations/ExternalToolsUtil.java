@@ -79,13 +79,13 @@ public class ExternalToolsUtil {
 	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		Map envMap = configuration.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		if (envMap != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_environment._1"), null); //$NON-NLS-1$
 			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, context, status);
 			if (status.isOK()) {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
 				} else {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Invalid_environment_specified_for_the_launch_configuration_named_{0}._2"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					abort(msg, null, 0);
 				}
 			} else {
@@ -125,18 +125,18 @@ public class ExternalToolsUtil {
 		if (location == null) {
 			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Location_not_specified_by_{0}_1"), new String[] { configuration.getName()}), null, 0); //$NON-NLS-1$
 		} else {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_location._3"), null); //$NON-NLS-1$
 			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation_{0}"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					abort(msg, null, 0);
 				} else {
 					File file = new File(expandedLocation);
 					if (file.isFile()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation_{0}"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
@@ -180,7 +180,7 @@ public class ExternalToolsUtil {
 	public static IPath getWorkingDirectory(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) null);
 		if (location != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_working_directory._4"), null); //$NON-NLS-1$
 			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation != null && expandedLocation.length() > 0) {
@@ -188,7 +188,7 @@ public class ExternalToolsUtil {
 					if (path.isDirectory()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory_{0}"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
