@@ -574,10 +574,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 					switch (markerDelta.getKind()) {
 						case IResourceDelta.ADDED :
-							handleAddBreakpoint(delta, markerDelta.getMarker(), markerDelta);
+							handleAddBreakpoint(delta, markerDelta.getMarker());
 							break;
 						case IResourceDelta.REMOVED :
-							handleRemoveBreakpoint(markerDelta.getMarker(), markerDelta);
+							handleRemoveBreakpoint(markerDelta.getMarker());
 							break;
 						case IResourceDelta.CHANGED :
 							handleChangeBreakpoint(markerDelta.getMarker(), markerDelta);
@@ -592,7 +592,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		/**
 		 * Wrapper for handling adds
 		 */
-		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
+		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// This breakpoint has actually been moved - already removed
 				// from the Breakpoint manager during the remove callback.
@@ -606,7 +606,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		/**
 		 * Wrapper for handling removes
 		 */
-		protected void handleRemoveBreakpoint(IMarker marker, IMarkerDelta delta) {
+		protected void handleRemoveBreakpoint(IMarker marker) {
 			IBreakpoint breakpoint= getBreakpoint(marker);
 			if (breakpoint != null) {
 				fRemoved.add(breakpoint);
