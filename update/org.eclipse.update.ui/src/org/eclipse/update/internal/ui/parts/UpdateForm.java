@@ -1,7 +1,7 @@
-package org.eclipse.update.ui.internal.parts;
-
+package org.eclipse.update.internal.ui.parts;
+
 import org.eclipse.update.ui.forms.ScrollableForm;
-
+
 public class UpdateForm extends ScrollableForm {
 	private UpdateFormPage page;
 	
@@ -13,4 +13,4 @@ public class UpdateForm extends ScrollableForm {
 		return page;
 	}
 }
-
+

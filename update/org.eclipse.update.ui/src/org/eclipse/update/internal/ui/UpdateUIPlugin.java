@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal;
+package org.eclipse.update.internal.ui;
 
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.*;

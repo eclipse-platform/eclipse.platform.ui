@@ -1,8 +1,8 @@
-package org.eclipse.update.ui.internal.parts;
-
+package org.eclipse.update.internal.ui.parts;
+
 import org.eclipse.jface.action.*;
 import org.eclipse.update.ui.forms.IFormPage;
-
+
 public interface IUpdateFormPage extends IFormPage {
 	boolean contextMenuAboutToShow(IMenuManager manager);
 	IAction getAction(String id);
@@ -11,4 +11,4 @@ public interface IUpdateFormPage extends IFormPage {
 	void init(Object model);
 	void update();
 }
-
+

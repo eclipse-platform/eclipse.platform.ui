@@ -5,7 +5,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
  
-public interface ILocalSite {
+public interface ILocalSite extends ISite {
 	IInstallConfiguration getCurrentConfiguration();
 	IInstallConfiguration [] getConfigurationHistory();
 

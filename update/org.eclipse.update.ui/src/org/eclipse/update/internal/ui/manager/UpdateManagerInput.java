@@ -1,11 +1,11 @@
-package org.eclipse.update.ui.internal.manager;
-
+package org.eclipse.update.internal.ui.manager;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-
+
 public class UpdateManagerInput implements IEditorInput {
 	private static final String FACTORY_ID = "org.eclipse.update.ui.internal.manager.UpdateManagerInputFactory";
-
+
 	/**
 	 * @see IEditorInput#exists()
 	 */
@@ -55,4 +55,4 @@ public class UpdateManagerInput implements IEditorInput {
 		return null;
 	}
 }
-
+

@@ -1,8 +1,8 @@
-package org.eclipse.update.ui.internal.manager;
-
+package org.eclipse.update.internal.ui.manager;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
-
+
 /**
  * A simple factory for the update manager
  */
@@ -32,4 +32,4 @@ public IAdaptable createElement(IMemento memento) {
 	return new UpdateManagerInput();
 }
 }
-
+

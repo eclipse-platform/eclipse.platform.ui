@@ -5,7 +5,7 @@
    name="%name"
    version="2.0.0"
    provider-name="%provider-name"
-   class="org.eclipse.update.ui.internal.UpdateUIPlugin">
+   class="org.eclipse.update.internal.ui.UpdateUIPlugin">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.ui"/>
@@ -25,7 +25,7 @@
    <editor
          name="%editors.updateManager.name"
          icon="icons/basic/obj16/comp_mf_obj.gif"
-         class="org.eclipse.update.ui.internal.manager.UpdateManager"
+         class="org.eclipse.update.internal.ui.manager.UpdateManager"
          id="org.eclipse.update.ui.updateManager">
    </editor>
 </extension>
@@ -37,7 +37,7 @@
          id="org.eclipse.update.ui.softwareUpdates">
       <action
             label="%actionSets.updateManager.label"
-            class="org.eclipse.update.ui.internal.manager.UpdateManagerAction"
+            class="org.eclipse.update.internal.ui.manager.UpdateManagerAction"
             menubarPath="help/helpEnd"
             id="org.eclipse.update.ui.updateManager">
       </action>
@@ -46,8 +46,8 @@
 <extension
       point="org.eclipse.ui.elementFactories">
    <factory
-         class="org.eclipse.update.ui.internal.manager.UpdateManagerInputFactory"
-         id="org.eclipse.update.ui.internal.manager.UpdateManagerInputFactory">
+         class="org.eclipse.update.internal.ui.manager.UpdateManagerInputFactory"
+         id="org.eclipse.update.internal.ui.manager.UpdateManagerInputFactory">
    </factory>
 </extension>
 </plugin>

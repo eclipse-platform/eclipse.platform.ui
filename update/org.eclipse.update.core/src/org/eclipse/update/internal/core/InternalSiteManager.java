@@ -1,5 +1,5 @@
-package org.eclipse.update.core.internal;
-
+package org.eclipse.update.internal.core;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -7,7 +7,7 @@ package org.eclipse.update.core.internal;
  
 import org.eclipse.update.core.*;
 import java.net.URL;
-
+
 public class InternalSiteManager {
 	
 	private InternalSiteManager() {

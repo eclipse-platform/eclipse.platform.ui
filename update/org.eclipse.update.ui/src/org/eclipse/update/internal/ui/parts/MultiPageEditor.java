@@ -1,9 +1,9 @@
-package org.eclipse.update.ui.internal.parts;
+package org.eclipse.update.internal.ui.parts;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.*;
@@ -12,7 +12,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.update.ui.forms.*;
 import java.util.*;
 import org.eclipse.jface.action.*;
-
+
 
 public abstract class MultiPageEditor extends EditorPart {
 	protected IFormWorkbook formWorkbook;
@@ -39,7 +39,7 @@ public abstract class MultiPageEditor extends EditorPart {
 	}
 	
 	public abstract void createPages();
-
+
 	/**
 	 * @see WorkbenchPart#setFocus()
 	 */
@@ -66,7 +66,7 @@ public void createPartControl(Composite parent) {
 	manager.setRemoveAllWhenShown(true);
 	manager.addMenuListener(listener);
 	contextMenu = manager.createContextMenu(formWorkbook.getControl());
-
+
 	for (Iterator iter = pages.iterator(); iter.hasNext();) {
 		IFormPage page = (IFormPage) iter.next();
 		formWorkbook.addPage(page);
@@ -74,7 +74,7 @@ public void createPartControl(Composite parent) {
     if (firstPageId != null)
 	    showPage(firstPageId);
 }
-
+
 public void editorContextMenuAboutToShow(IMenuManager menu) {
 /*
 	PDEEditorContributor contributor = getContributor();
@@ -82,34 +82,34 @@ public void editorContextMenuAboutToShow(IMenuManager menu) {
 	if (contributor!=null) contributor.contextMenuAboutToShow(menu);
 */
 }
-
+
 public IFormPage getPage(String pageId) {
 	return (IFormPage)table.get(pageId);
 }
-
+
 public IFormPage getCurrentPage() {
 	return formWorkbook.getCurrentPage();
 }
-
+
 public Menu getContextMenu() {
 	return contextMenu;
 }
-
+
 public IAction getAction(String id) {
 	//return getContributor().getGlobalAction(id);
 	return null;
 }
-
+
 public IFormPage showPage(String id) {
 	return showPage(getPage(id));
 }
-
+
 public void showPage(String id, Object openToObject) {
 	IFormPage page = showPage(getPage(id));
 	//if (page != null)
 	//	page.openTo(openToObject);
 }
-
+
 public IFormPage showPage(final IFormPage page) {
 	IFormPage oldPage = getCurrentPage();
 	formWorkbook.selectPage(page);
@@ -142,8 +142,9 @@ public IFormPage showPage(final IFormPage page) {
 			page.init(null);
 		}
 	}
-
 
+
+
 	/**
 	 * @see EditorPart#gotoMarker(IMarker)
 	 */
@@ -163,4 +164,4 @@ public IFormPage showPage(final IFormPage page) {
 	}
 
 }
-
+

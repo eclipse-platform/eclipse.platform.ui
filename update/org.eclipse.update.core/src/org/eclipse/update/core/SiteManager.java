@@ -6,7 +6,7 @@ package org.eclipse.update.core;
  */
  
 import java.net.URL;
-import org.eclipse.update.core.internal.*;
+import org.eclipse.update.internal.core.*;
 
 public class SiteManager {
 	

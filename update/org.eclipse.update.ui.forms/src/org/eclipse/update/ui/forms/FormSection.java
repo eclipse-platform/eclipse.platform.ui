@@ -89,8 +89,16 @@ class SectionLayout extends Layout {
 		int height = parent.getClientArea().height;
 		int y = 0;
 		if (headerPainted && header!=null) {
-			Point hsize = header.computeSize(width, SWT.DEFAULT, flush);
-			header.setBounds(0, y, width, hsize.y);
+			Point hsize;
+			
+			if (titleAsHyperlink) {
+				hsize = header.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				header.setBounds(0, y, hsize.x, hsize.y);
+			}
+			else {
+				hsize = header.computeSize(width, SWT.DEFAULT, flush);
+			   	header.setBounds(0, y, width, hsize.y);
+			}
 			y += hsize.y + vspacing;
 		}
 		if (addSeparator && separator!=null) {
@@ -275,7 +283,7 @@ public void setReadOnly(boolean newReadOnly) {
 	readOnly = newReadOnly;
 }
 public void setTitleAsHyperlink(boolean newTitleAsHyperlink) {
-	//titleAsHyperlink = newTitleAsHyperlink;
+	titleAsHyperlink = newTitleAsHyperlink;
 }
 public void setWidthHint(int newWidthHint) {
 	widthHint = newWidthHint;
