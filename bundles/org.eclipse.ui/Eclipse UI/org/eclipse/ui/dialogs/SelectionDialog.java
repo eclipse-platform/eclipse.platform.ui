@@ -80,11 +80,22 @@ protected Label createMessageArea(Composite composite) {
 /**
  * Returns the initial selection in this selection dialog.
  *
- * @return the list of initial selected elements 
+ * @deprecated use getInitialElementSelections() instead
+ * @return the list of initial selected elements or null 
  */
 protected List getInitialSelections() {
+	if(initialSelections.isEmpty())
+		return null;
+	else
+		return getInitialElementSelections();
+}
+
+/**
+ * Returns the list of initial element selections. * @return List */
+protected List getInitialElementSelections(){
 	return initialSelections;
 }
+
 /**
  * Returns the message for this dialog.
  *
@@ -122,6 +133,16 @@ public void setInitialSelections(Object[] selectedElements) {
 	for (int i = 0; i < selectedElements.length; i++) 
 		initialSelections.add(selectedElements[i]);
 }
+
+/**
+ * Sets the initial selection in this selection dialog to the given elements.
+ *
+ * @param selectedElements the List of elements to select
+ */
+public void setInitialElementSelections(List selectedElements) {
+	initialSelections = selectedElements;
+}
+
 /**
  * Sets the message for this dialog.
  *
