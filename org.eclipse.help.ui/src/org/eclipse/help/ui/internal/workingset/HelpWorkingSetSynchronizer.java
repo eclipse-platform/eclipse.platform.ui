@@ -5,7 +5,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
 
