@@ -121,6 +121,10 @@
     <test id="regression.PR_1GHOM0N_Test">
       <run class="org.eclipse.core.tests.resources.regression.PR_1GHOM0N_Test"/>
     </test>
+
+	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
+		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
@@ -274,6 +278,9 @@
     </test>
     <test id="internal.ResourceInfoTest">
       <run class="org.eclipse.core.tests.internal.resources.ResourceInfoTest"/>
+    </test>
+    <test id="internal.WorkspaceSerializationTest">
+      <run class="org.eclipse.core.tests.internal.resources.WorkspaceSerializationTest"/>
     </test>
 
     <test id="utils.AllTests">
