@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.ide.IDEApplication;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
 
 /**
  * A simple factory for the welcome editor
@@ -43,24 +44,13 @@ public WelcomeEditorInputFactory() {
 public IAdaptable createElement(IMemento memento) {
 	// Get the feature id.
 	String featureId = memento.getString(WelcomeEditorInput.FEATURE_ID);
-	if (featureId == null) 
+	if (featureId == null) {
 		return null;
-
-	AboutInfo info = null;
-	try {
-		AboutInfo [] infos = IDEApplication.getFeatureInfos(); 
-		for (int i = 0; i < infos.length; i++) {
-			if (featureId.equals(infos[i].getFeatureId())) {
-				info = infos[i];
-				break;
-			}
-		}
-	} catch(WorkbenchException e) {
-		IDEWorkbenchPlugin.log("Fail to read about infos in welcome editor input factory.", e.getStatus()); //$NON-NLS-1$
 	}	
-	if (info == null)
+	AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+	if (info == null) {
 		return null;
-
+	}
 	return new WelcomeEditorInput(info);
 }
 }

@@ -29,7 +29,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;

@@ -31,7 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -97,9 +98,13 @@ public class AboutDialog extends ProductInfoDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String name = primaryInfo.getProductName();
-		if (name != null)
+		String name = null;
+		if (primaryInfo != null) {
+			name = primaryInfo.getProductName();
+		}
+		if (name != null) {
 			newShell.setText(IDEWorkbenchMessages.format("AboutDialog.shellTitle", new Object[] { name })); //$NON-NLS-1$
+		}
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
 	}
 	/**
@@ -146,12 +151,19 @@ public class AboutDialog extends ProductInfoDialog {
 			}
 		});
 
-		ImageDescriptor imageDescriptor = primaryInfo.getAboutImage(); // may be null
-		if (imageDescriptor != null)
+		ImageDescriptor imageDescriptor = null;
+		if (primaryInfo != null) {
+			imageDescriptor = primaryInfo.getAboutImage(); // may be null
+		}
+		if (imageDescriptor != null) {
 			image = imageDescriptor.createImage();
+		}
 		if (image == null || image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
 			// show text
-			String aboutText = primaryInfo.getAboutText();
+			String aboutText = null;
+			if (primaryInfo != null) {
+				aboutText = primaryInfo.getAboutText(); // may be null
+			}
 			if (aboutText != null) {
 				// get an about item
 				setItem(scan(aboutText));

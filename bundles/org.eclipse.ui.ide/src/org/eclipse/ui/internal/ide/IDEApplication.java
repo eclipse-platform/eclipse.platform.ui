@@ -11,13 +11,15 @@
 
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 
 /**
  * The "main program" for the Eclipse IDE.
@@ -60,16 +62,31 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	}
 	
 	/**
-	 * Returns the about information of the primary feature
+	 * Returns the about information of the primary feature.
+	 * 
+	 * @return info about the primary feature, or <code>null</code> if there 
+	 * is no primary feature or if this information is unavailable
 	 */
-	public static AboutInfo getPrimaryInfo() throws WorkbenchException {
-		return IDEWorkbenchAdviser.getAdviser().getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+	public static AboutInfo getPrimaryInfo() {
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String id = conf.getPrimaryFeatureIdentifier();
+		if (id == null) {
+			return null;
+		}
+		return AboutInfo.readFeatureInfo(id);
 	}
 	
 	/**
-	 * Returns the about information of all features
+	 * Returns the about information of all features.
+	 * @issue should cull features with no missing info
 	 */
-	public static AboutInfo[] getFeatureInfos() throws WorkbenchException {
-		return IDEWorkbenchAdviser.getAdviser().getWorkbenchConfigurer().getAllFeaturesAboutInfo();
+	public static AboutInfo[] getFeatureInfos() {
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] entries = conf.getConfiguredFeatureEntries();
+		AboutInfo[] result = new AboutInfo[entries.length];
+		for (int i = 0; i < entries.length; i++) {
+			result[i] = AboutInfo.readFeatureInfo(entries[i].getFeatureIdentifier());
+		}
+		return result;
 	}
 }

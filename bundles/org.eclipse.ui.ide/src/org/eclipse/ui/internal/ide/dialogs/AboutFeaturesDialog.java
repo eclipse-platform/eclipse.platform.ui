@@ -53,7 +53,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;

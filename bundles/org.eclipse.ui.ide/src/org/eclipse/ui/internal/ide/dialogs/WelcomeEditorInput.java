@@ -12,7 +12,8 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * A simple editor input for the welcome editor

@@ -12,9 +12,9 @@ package org.eclipse.ui.internal.ide.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ui.AboutInfo;
+// @issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEApplication;
@@ -45,12 +45,7 @@ public AboutAction(IWorkbenchWindow window) {
 	this.workbenchWindow = window;
 	
 	// use message with no fill-in
-	AboutInfo primaryInfo = null;
-	try {
-		primaryInfo = IDEApplication.getPrimaryInfo();
-	} catch (WorkbenchException e) {
-		// do nothing
-	}
+	AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
 	String productName = null;
 	if (primaryInfo != null) {
 		productName = primaryInfo.getProductName();
@@ -73,17 +68,18 @@ public void run() {
 		// action has been disposed
 		return;
 	}
-	try {
-		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
-		AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
-		new AboutDialog(workbenchWindow, primaryInfo, featureInfos).open();
-	} catch (WorkbenchException e) {
-		ErrorDialog.openError(
-			workbenchWindow.getShell(), 
-			IDEWorkbenchMessages.format("AboutAction.errorDialogTitle", new Object[] {getText()}),  //$NON-NLS-1$
-			IDEWorkbenchMessages.getString("AboutInfo.infoReadError"),  //$NON-NLS-1$
-			e.getStatus());
-	}
+	AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+	AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
+//	if (primaryInfo == null) {
+//		// @issue illegal to pass null status to openError
+//		ErrorDialog.openError(
+//				workbenchWindow.getShell(), 
+//				IDEWorkbenchMessages.format("AboutAction.errorDialogTitle", new Object[] {getText()}),  //$NON-NLS-1$
+//				IDEWorkbenchMessages.getString("AboutInfo.infoReadError"),  //$NON-NLS-1$
+//				null);
+//		return;
+//	}
+	new AboutDialog(workbenchWindow, primaryInfo, featureInfos).open();
 }
 
 /* (non-Javadoc)

@@ -20,9 +20,9 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -63,18 +63,7 @@ public class TipsAndTricksAction
 			return;
 		}
 		// Ask the user to select a feature
-		AboutInfo[] featureInfos = null;
-		try {
-			featureInfos = IDEApplication.getFeatureInfos();
-		} catch (WorkbenchException e) {
-			ErrorDialog.openError(
-				workbenchWindow.getShell(), 
-				IDEWorkbenchMessages.getString("TipsAndTricks.errorDialogTitle"),  //$NON-NLS-1$
-				IDEWorkbenchMessages.getString("TipsAndTricks.infoReadError"),  //$NON-NLS-1$
-				e.getStatus());
-			return;
-		}
-		
+		AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
 		ArrayList tipsAndTricksFeatures = new ArrayList(featureInfos.length);
 		for (int i = 0; i < featureInfos.length; i++) {
 			if (featureInfos[i].getTipsAndTricksHref() != null)
@@ -94,15 +83,14 @@ public class TipsAndTricksAction
 		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
 
-		AboutInfo primaryInfo = null;
-		try {
-			primaryInfo = IDEApplication.getPrimaryInfo();
-		} catch (WorkbenchException e) {
+		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+		if (primaryInfo == null) {
+			// @issue illegal to pass null status
 			ErrorDialog.openError(
 				workbenchWindow.getShell(), 
 				IDEWorkbenchMessages.getString("TipsAndTricks.errorDialogTitle"),  //$NON-NLS-1$
 				IDEWorkbenchMessages.getString("TipsAndTricks.infoReadError"),  //$NON-NLS-1$
-				e.getStatus());
+				null);
 			return;
 		}
 		

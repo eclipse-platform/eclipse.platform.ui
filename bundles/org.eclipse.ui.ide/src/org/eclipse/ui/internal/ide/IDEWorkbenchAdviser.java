@@ -14,7 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -32,16 +40,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
@@ -91,6 +103,12 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	
+	/**
+	 * The dialog setting key to access the known installed features
+	 * since the last time the workbench was run.
+	 */
+	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
+	
 	private static IDEWorkbenchAdviser workbenchAdviser = null;
 
 	/**
@@ -114,6 +132,24 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private String workspaceLocation = null;
 
+	/**
+	 * Set of versioned feature ids from previous session; <code>null</code>
+	 * if uninitialized. Element type: <code>String</code>
+	 */
+	private Set previousFeatures = null;
+	
+	/**
+	 * Set of versioned feature ids from currrent session; <code>null</code>
+	 * if uninitialized. Element type: <code>String</code>
+	 */
+	private Set currentFeatures = null;
+	
+	/**
+	 * Ordered set of versioned feature ids new for this session; <code>null</code>
+	 * if uninitialized. Element type: <code>String</code>
+	 */
+	private Set newlyAddedFeatures = null;
+	
 	/**
 	 * List of <code>AboutInfo</code> for all new installed
 	 * features that specify a welcome perspective.
@@ -192,18 +228,16 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		disableAutoBuild();
 		
 		// collect the welcome perspectives of the new installed features
-		try {
-			AboutInfo[] infos = configurer.getNewFeaturesAboutInfo();
-			if (infos != null) {
-				welcomePerspectiveInfos = new ArrayList(infos.length);
-				for (int i = 0; i < infos.length; i++) {
-					if (infos[i].getWelcomePerspectiveId() != null && infos[i].getWelcomePageURL() != null) {
-						welcomePerspectiveInfos.add(infos[i]);
-					}
-				}
+		initializeFeatureSets();
+		Set s = getNewlyAddedFeatures();;
+		welcomePerspectiveInfos = new ArrayList(s.size());
+		for (Iterator it = s.iterator(); it.hasNext(); ) {
+			String versionedId = (String) it.next();
+			String featureId = versionedId.substring(0, versionedId.indexOf(':'));
+			AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+			if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
+				welcomePerspectiveInfos.add(info);
 			}
-		} catch (WorkbenchException e) {
-			IDEWorkbenchPlugin.log("Failed to load new installed features about info.", e.getStatus()); //$NON-NLS-1$
 		}
 	}
 
@@ -267,10 +301,10 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (promptOnExit) {
 			String message;
 			String productName = null;
-			try {
-				productName = configurer.getPrimaryFeatureAboutInfo().getProductName();
-			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("Failed to access primary feature product name.", e.getStatus()); //$NON-NLS-1$
+			AboutInfo about = IDEApplication.getPrimaryInfo();
+			// @issue performance - reading about info on window close 
+			if (about != null) {
+				productName = about.getProductName();
 			}
 			if (productName == null) {
 				message = IDEWorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
@@ -646,14 +680,12 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		return perspectiveId;
 	}
 
-
 	/*
-	 * Open the welcome editor for the primary feature or for a new installed features
+	 * Open the welcome editor for the primary feature and
+	 * for any newly installed features.
 	 */
 	private void openWelcomeEditors() throws WorkbenchException {
-		AboutInfo primaryInfo = configurer.getPrimaryFeatureAboutInfo();
-		AboutInfo[] newFeaturesInfo = configurer.getNewFeaturesAboutInfo();
-		
+		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
 		IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
@@ -673,20 +705,22 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			openWelcomeEditor(window, new WelcomeEditorInput(primaryInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features
-			ArrayList welcomeFeatures = new ArrayList();
-			for (int i = 0; i < newFeaturesInfo.length; i++) {
-				if (newFeaturesInfo[i].getWelcomePageURL() != null) {
-					if (newFeaturesInfo[i].getFeatureId() != null && newFeaturesInfo[i].getWelcomePerspectiveId() != null) {
-						IPluginDescriptor desc = newFeaturesInfo[i].getPluginDescriptor();
+			List welcomeFeatures = new ArrayList();
+			for (Iterator it = getNewlyAddedFeatures().iterator(); it.hasNext(); ) {
+				String versionedId = (String) it.next();
+				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
+				AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+				if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
+					IPluginDescriptor desc = info.getPluginDescriptor();
+					// activate the feature plugin so it can run some install code.
+					if (desc != null) {
 						try {
-							// activate the feature plugin so it can run some install code.
-							if(desc != null) {
-								desc.getPlugin();
-							}
+							desc.getPlugin();
 						} catch (CoreException e) {
+							// do nothing
 						}
 					}
-					welcomeFeatures.add(newFeaturesInfo[i]);
+					welcomeFeatures.add(info);
 				}
 			}
 	
@@ -702,6 +736,98 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 	}
 	
+	/**
+	 * Returns the set of versioned feature ids of all installed features.
+	 * The format of the ids are featureId + ":" + versionId.
+	 * The feature set excludes features that do not have their own
+	 * feature plug-in.
+	 * 
+	 * @return set of versioned feature ids (element type: <code>String</code>)
+	 * @since 3.0
+	 */
+	private Set computeFeatureSet() {
+		IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] features = platformConfiguration.getConfiguredFeatureEntries();
+		Set ids = new HashSet(features.length);
+		for (int i = 0; i < features.length; i++) {
+			IPlatformConfiguration.IFeatureEntry feature = features[i];
+			// exclude features for which there is no corresponding plug-in
+			String pluginId = feature.getFeaturePluginIdentifier();
+			if (pluginId == null) {
+				continue;
+			}
+			String id = feature.getFeatureIdentifier();
+			String version = feature.getFeatureVersion();
+			String normalizedVersion = "0.0.0"; //$NON-NLS-1$
+			if (version != null) {
+				// normalize the version id
+				PluginVersionIdentifier vid = new PluginVersionIdentifier(version);
+				normalizedVersion = vid.toString();
+			}
+			String versionedId = id + ":" + normalizedVersion; //$NON-NLS-1$
+			ids.add(versionedId);
+		}
+		return ids;
+	}
+	
+	/**
+	 * Returns the set of versioned feature ids from previous session.
+	 * 
+	 * @return set of versioned feature ids (element type: <code>String</code>)
+	 */
+	private Set getPreviousFeatures() {
+		Assert.isNotNull(previousFeatures);
+		return previousFeatures;
+	}
+	
+	/**
+	 * Returns the set of versioned feature ids from current session.
+	 * 
+	 * @return set of versioned feature ids (element type: <code>String</code>)
+	 */
+	private Set getCurrentFeatures() {
+		Assert.isNotNull(currentFeatures);
+		return currentFeatures;
+	}
+	
+	/**
+	 * Returns the ordered set of versioned feature ids new for this session.
+	 * 
+	 * @return ordered set of versioned feature ids (element type: <code>String</code>)
+	 */
+	private Set getNewlyAddedFeatures() {
+		Assert.isNotNull(newlyAddedFeatures);
+		return newlyAddedFeatures;
+	}
+	
+	/**
+	 * Initializes the old, current, and newly added features.
+	 */
+	private void initializeFeatureSets() {
+		Assert.isTrue(currentFeatures == null);
+		
+		// retrieve list of installed feature from last session	
+		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+		String[] previousFeaturesArray = settings.getArray(INSTALLED_FEATURES);
+		previousFeatures = null;
+		if (previousFeaturesArray != null) {
+			previousFeatures = new HashSet(Arrays.asList(previousFeaturesArray));
+		} else {
+			previousFeatures = new HashSet(0);
+		}
+
+		// store list of installed features for next session
+		currentFeatures = computeFeatureSet();
+		String[] currentFeaturesArray = new String[currentFeatures.size()];
+		currentFeatures.toArray(currentFeaturesArray);
+		settings.put(INSTALLED_FEATURES, currentFeaturesArray);
+		
+		// compute recently installed features - use TreeSet to get predictable order
+		newlyAddedFeatures = new TreeSet(currentFeatures);
+		newlyAddedFeatures.removeAll(previousFeatures);
+		
+	}
+
 	/*
 	 * Open a welcome editor for the given input
 	 */
@@ -791,10 +917,10 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
 		
 		String title = null;
-		try {
-			title = windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo().getProductName();
-		} catch (WorkbenchException e) {
-			// do nothing
+		AboutInfo about = IDEApplication.getPrimaryInfo();
+		// @issue performance - reading about info
+		if (about != null) {
+			title = about.getProductName();
 		}
 		if (title == null) {
 			title = ""; //$NON-NLS-1$

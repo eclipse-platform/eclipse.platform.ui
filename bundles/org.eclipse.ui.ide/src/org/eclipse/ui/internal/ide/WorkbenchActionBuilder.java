@@ -19,14 +19,14 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.AboutInfo;
+//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
@@ -627,22 +627,22 @@ public final class WorkbenchActionBuilder {
 		closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
 		registerGlobalAction(closeAllSavedAction);
 
-		try {
-			aboutAction = IDEActionFactory.ABOUT.create(getWindow());
-			AboutInfo aboutInfo = workbenchConfigurer.getPrimaryFeatureAboutInfo();
-			String productName = aboutInfo.getProductName();
-			if (productName == null) {
-				productName = ""; //$NON-NLS-1$
-			}
-			aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
-			aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
-			aboutAction.setImageDescriptor(
-				IDEInternalWorkbenchImages.getImageDescriptor(
-					IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
-			registerGlobalAction(aboutAction);
-		} catch (WorkbenchException e) {
-			// do nothing
+		aboutAction = IDEActionFactory.ABOUT.create(getWindow());
+		AboutInfo aboutInfo = IDEApplication.getPrimaryInfo();
+		// @issue performance - reading about info
+		String productName = null;
+		if (aboutInfo != null) {
+			productName = aboutInfo.getProductName();
 		}
+		if (productName == null) {
+			productName = ""; //$NON-NLS-1$
+		}
+		aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
+		aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
+		aboutAction.setImageDescriptor(
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
+		registerGlobalAction(aboutAction);
 
 		openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());
 		registerGlobalAction(openPreferencesAction);
@@ -659,27 +659,22 @@ public final class WorkbenchActionBuilder {
 		// events.
 		// registerGlobalAction(deleteAction);
 
-		try {
-			AboutInfo[] infos = workbenchConfigurer.getAllFeaturesAboutInfo();
-			// See if a welcome page is specified
-			for (int i = 0; i < infos.length; i++) {
-				if (infos[i].getWelcomePageURL() != null) {
-					quickStartAction = IDEActionFactory.QUICK_START.create(getWindow());
-					registerGlobalAction(quickStartAction);
-					break;
-				}
+		AboutInfo[] infos = IDEApplication.getFeatureInfos();
+		// See if a welcome page is specified
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].getWelcomePageURL() != null) {
+				quickStartAction = IDEActionFactory.QUICK_START.create(getWindow());
+				registerGlobalAction(quickStartAction);
+				break;
 			}
-			// See if a tips and tricks page is specified
-			for (int i = 0; i < infos.length; i++) {
-				if (infos[i].getTipsAndTricksHref() != null) {
-					tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS.create(getWindow());
-					registerGlobalAction(tipsAndTricksAction);
-					break;
-				}
+		}
+		// See if a tips and tricks page is specified
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].getTipsAndTricksHref() != null) {
+				tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS.create(getWindow());
+				registerGlobalAction(tipsAndTricksAction);
+				break;
 			}
-			
-		} catch (WorkbenchException e) {
-			IDEWorkbenchPlugin.log("Failed to read about info for all installed features.", e.getStatus()); //$NON-NLS-1$
 		}
 
 		// Actions for invisible accelerators
