@@ -155,7 +155,6 @@ public class LocalSystemInfo {
 	 * of Kbyte), or an indication the size is not known 
 	 * @see LocalSystemInfo#SIZE_UNKNOWN
 	 * @since 2.0
-	 * @deprecated use getVolumes().getFreeSpace() instead
 	 */
 	public static long getFreeSpace(File path) {
 		if (hasNatives) {

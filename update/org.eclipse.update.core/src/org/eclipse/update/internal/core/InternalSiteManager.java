@@ -33,9 +33,6 @@ public class InternalSiteManager {
 		SiteFileContentProvider.SITE_TYPE;
 	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
 	//$NON-NLS-1$
-	private static final String INSTALL_DELTA_HANDLER =
-		"org.eclipse.update.core.deltaHandler.display";
-	//$NON-NLS-1$		
 
 	// cache found sites
 	private static Map sites = new HashMap();
@@ -311,17 +308,16 @@ public class InternalSiteManager {
 				.getPlugin()
 				.getDescriptor()
 				.getUniqueIdentifier();
+				    
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements =
-			pluginRegistry.getConfigurationElementsFor(
-				pluginID,
-				SIMPLE_EXTENSION_ID,
-				INSTALL_DELTA_HANDLER);
+		
+		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,	SIMPLE_EXTENSION_ID);
+				
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(
 				Policy.bind(
 					"SiteReconciler.UnableToFindInstallDeltaFactory",
-					INSTALL_DELTA_HANDLER),
+					pluginID+"."+SIMPLE_EXTENSION_ID),
 				null);
 			//$NON-NLS-1$
 		} else {
@@ -334,7 +330,8 @@ public class InternalSiteManager {
 
 		// instanciate and open
 		if (handler != null) {
-			handler.init(getSessionDeltas());
+			ISessionDelta[] deltas = getSessionDeltas();
+			handler.init(deltas);
 			handler.open();
 		}
 	}

@@ -5,6 +5,7 @@ package org.eclipse.update.tests.nativeTests;
  */
 import java.io.File;
 
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.configuration.LocalSystemInfo;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -22,16 +23,16 @@ public class TestLocalSystemInfo extends UpdateManagerTestCase {
 		LocalSystemInfo system = new LocalSystemInfo();
 	
 		// mount point
-        String[] a = system.listMountPoints();
+       IVolume[] a = system.getVolumes();
         if (a==null) throw new Exception("cannot find native library");
 		System.out.println("Found "+a.length+" mount points.");
 		for (int i =0; i<a.length;i++){
 			System.out.print("#"+i+" - "+a[i]);
 			
-			File root = new File(a[i]);
-			String label = system.getLabel(root);
+			File root = a[i].getFile();
+			String label = a[i].getLabel();
 			if (label==null) label="NO LABEL";
-			int type = system.getType(root);
+			int type = a[i].getType();
 			long size = system.getFreeSpace(root);
 			System.out.println(" ->:"+label+":"+getType(type)+":"+getSize(size));
 		}

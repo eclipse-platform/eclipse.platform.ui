@@ -147,8 +147,6 @@ public class InstallChangeParser extends DefaultHandler {
 			FeatureReference ref = new FeatureReference();
 			ref.setSite(currentSite);
 			ref.setURL(featureURL);
-
-			change = new SessionDelta();
 			change.addReference(ref);
 
 			// DEBUG:		
@@ -187,14 +185,11 @@ public class InstallChangeParser extends DefaultHandler {
 	 */
 	private void processChange(Attributes attributes) {
 
+		change = new SessionDelta();
+			
 		// date
 		long date = Long.parseLong(attributes.getValue("date")); //$NON-NLS-1$
-		if (change != null)
-			change.setCreationDate(new Date(date));
-
-		// set the file
-		if (change != null)
-			change.setFile(file);
+		change.setCreationDate(new Date(date));
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG
