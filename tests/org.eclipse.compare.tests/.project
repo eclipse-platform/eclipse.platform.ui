@@ -3,6 +3,9 @@
 	<name>org.eclipse.compare.tests</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.compare</project>
+		<project>org.eclipse.jface.text</project>
+		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

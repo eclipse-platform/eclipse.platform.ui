@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.compare.tests"
+   name="%pluginName"
+   provider-name="%providerName"
+   version="2.1.0">
+
+<requires>
+   <import plugin="org.junit"/>
+   <import plugin="org.eclipse.compare"/>
+</requires>
+
+<runtime>
+    <library name="comparetests.jar">
+      <export name="*"/>
+      <packages prefixes="org.eclipse.compare.tests"/>
+    </library>
+  </runtime>
+</plugin>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path=""/>
+    <classpathentry kind="src" path="JUnit Tests"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="output" path=""/>
+    <classpathentry kind="src" path="/org.junit"/>
+    <classpathentry kind="src" path="/org.eclipse.compare"/>
+    <classpathentry kind="src" path="/org.eclipse.jface.text"/>
+    <classpathentry kind="output" path="bin"/>
 </classpath>
