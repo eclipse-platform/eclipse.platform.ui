@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 
 class SearchAgainAction extends Action {
 	private SearchView fView;
@@ -37,8 +43,12 @@ class SearchAgainAction extends Action {
 				if (query.canRunInBackground())
 					NewSearchUI.runQueryInBackground(query);
 				else {
-					ProgressMonitorDialog pmd= new ProgressMonitorDialog(fView.getSite().getShell());
-					NewSearchUI.runQueryInForeground(pmd, query);
+					Shell shell= fView.getSite().getShell();
+					ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);
+					IStatus status= NewSearchUI.runQueryInForeground(pmd, query);
+					if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
+						ErrorDialog.openError(shell, SearchMessages.getString("SearchAgainAction.Error.title"), SearchMessages.getString("SearchAgainAction.Error.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 			}
 		}
