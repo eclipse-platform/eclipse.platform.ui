@@ -13,10 +13,10 @@
       </library>
    </runtime>   
    <requires>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.ui.cheatsheets"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.intro" optional="true"/>
+      <import plugin="org.eclipse.ui.cheatsheets" optional="true"/>
+      <import plugin="org.eclipse.ui.forms" optional="true"/>
+      <import plugin="org.eclipse.ui" optional="true"/>
    </requires>
    
 
