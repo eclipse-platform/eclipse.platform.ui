@@ -112,7 +112,8 @@ public interface IJobManager {
 	public Job[] find(Object family);
 	/**
 	 * Waits until all jobs of the given family are finished.  This method will block the 
-	 * calling thread until all such jobs have finished executing.   If there are no jobs in 
+	 * calling thread until all such jobs have finished executing, or until this thread is
+	 * interrupted.   If there are no jobs in 
 	 * the family that are currently waiting, running, or sleeping, this method returns 
 	 * immediately.  Feedback on how the join is progressing is provided to a  progress 
 	 * monitor.

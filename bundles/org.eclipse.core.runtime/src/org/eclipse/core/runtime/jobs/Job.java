@@ -269,8 +269,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 	/**
 	 * Waits until this job is finished.  This method will block the calling thread until the 
-	 * job has finished executing.  If the job has not been scheduled, this 
-	 * method returns immediately.
+	 * job has finished executing, or until this thread has been interrupted.  If the job 
+	 * has not been scheduled, this method returns immediately.
 	 * 
 	 * <p>
 	 * If the calling thread owns any locks, the locks may be released during the
