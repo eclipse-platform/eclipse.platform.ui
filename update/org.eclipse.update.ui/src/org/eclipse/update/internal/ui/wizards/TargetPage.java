@@ -203,10 +203,9 @@ public class TargetPage extends WizardPage {
 		if (path != null) {
 			try {
 				File file = new File(path);
-				ISite site = SiteManager.createSite(file);
 				IConfigurationSite csite =
 					SiteManager.createConfigurationSite(
-						site,
+						file,
 						IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 				if (csite.isInstallSite())
 					config.addConfigurationSite(csite);

@@ -29,7 +29,7 @@ public class BuildZipConverter {
 
 	public static void main(String[] args) {
 		if (args.length <=0) {
-			System.out.println("usage: BuildZipConverter <url>");
+			System.out.println("Usage:     BuildZipConverter <path to the zip file>.\r\nExample: BuildZipConverter d:/download/integration-eclipse-SDK-20020109-win32.zip");
 			return;
 		}
 		try {

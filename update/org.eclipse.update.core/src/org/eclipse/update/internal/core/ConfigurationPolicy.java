@@ -21,15 +21,13 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 public class ConfigurationPolicy extends ConfigurationPolicyModel implements IConfigurationPolicy {
 
 
-	
 	/**
 	 * Constructor for ConfigurationPolicyModel.
 	 */
-	public ConfigurationPolicy(int policy) {
-		super();
-		setPolicy(policy);
+	public ConfigurationPolicy() {
 	}
-
+	
+	
 	/**
 	 * Copy Constructor for ConfigurationPolicyModel.
 	 */

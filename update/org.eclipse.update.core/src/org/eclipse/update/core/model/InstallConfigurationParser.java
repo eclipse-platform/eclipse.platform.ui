@@ -14,6 +14,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -144,8 +145,13 @@ public class InstallConfigurationParser extends DefaultHandler {
 		String policyString = attributes.getValue("policy");
 		int policy = Integer.parseInt(policyString);
 
-		// confguration site
-		configSite = (ConfigurationSiteModel) SiteManager.createConfigurationSite(site, policy);
+		// configuration site
+		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+		configSite =factory.createConfigurationSiteModel((SiteMapModel)site,policy);
+
+		//platform url
+		String platformURLString = attributes.getValue("platformURL");
+		configSite.setPlatformURLString(platformURLString);
 
 		// install
 		String installString = attributes.getValue("install");

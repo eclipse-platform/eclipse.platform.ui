@@ -20,6 +20,7 @@ import org.eclipse.update.core.IFeatureReference;
 public class ConfigurationSiteModel extends ModelObject {
 
 	private SiteMapModel site;
+	private String platformURLString;
 	private ConfigurationPolicyModel policy;
 	private InstallConfigurationModel installConfiguration;
 	private boolean installable = false;
@@ -97,6 +98,22 @@ public class ConfigurationSiteModel extends ModelObject {
 	public void setInstallConfigurationModel(InstallConfigurationModel installConfiguration) {
 		assertIsWriteable();
 		this.installConfiguration = installConfiguration;
+	}
+
+	/**
+	 * Gets the platformURLString.
+	 * @return Returns a String
+	 */
+	public String getPlatformURLString() {
+		return platformURLString;
+	}
+
+	/**
+	 * Sets the platformURLString.
+	 * @param platformURLString The platformURLString to set
+	 */
+	public void setPlatformURLString(String platformURLString) {
+		this.platformURLString = platformURLString;
 	}
 
 }

@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Date;
 
 import java.util.*;
@@ -26,16 +27,12 @@ import org.eclipse.update.core.model.SiteMapModel;
 public class ConfigurationSite extends ConfigurationSiteModel implements IConfigurationSite, IWritable {
 
 	/**
-	 * Constructor
-	 */
-	public ConfigurationSite(ISite site, IConfigurationPolicy policy) {
-		setSiteModel((SiteMapModel)site);
-		setConfigurationPolicyModel((ConfigurationPolicyModel)policy);
-		// check if it is installable
-		//FIXME 
-		setInstallSite(true);
+ 	 * 
+ 	 */
+	public ConfigurationSite() {
 	}
 
+	
 	/**
 	 * Copy Constructor
 	 */
@@ -43,6 +40,13 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 		setSiteModel((SiteMapModel)configSite.getSite());
 		setConfigurationPolicyModel(new ConfigurationPolicy(configSite.getConfigurationPolicy()));
 		setInstallSite(configSite.isInstallSite());
+		//
+		if (configSite instanceof ConfigurationSiteModel){
+			ConfigurationSiteModel siteModel = (ConfigurationSiteModel)configSite;
+			setPlatformURLString(siteModel.getPlatformURLString());
+		} else {
+			setPlatformURLString(configSite.getSite().getURL().toExternalForm());
+		}
 	}
 
 	/*
@@ -58,7 +62,8 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 			increment += " ";
 
 		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
-		w.println(gap + increment + "url=\"" + ((ISite)getSite()).getURL().toExternalForm() + "\"");
+		w.println(gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\"");
+		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");		
 		w.println(gap + increment + "policy=\"" + getConfigurationPolicyModel().getPolicy() + "\" ");
 		String install = isInstallSite() ? "true" : "false";
 		w.print(gap + increment + "install=\"" + install + "\" ");
@@ -427,4 +432,6 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 		return (IInstallConfiguration)getInstallConfigurationModel();
 	}
 
+	
+	
 }

@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.ConfigurationPolicyModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -97,7 +98,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		//IInstallConfiguration newConfig = site.getCurrentConfiguration();
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
-		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
+		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
+		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 
@@ -171,7 +174,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
-		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
+		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
+		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 		site.save();
@@ -240,7 +245,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
-		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
+		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
+		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 		site.save();

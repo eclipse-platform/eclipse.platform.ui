@@ -61,40 +61,15 @@ public class SiteManager {
 	public static ISite getSite(URL siteURL) throws CoreException {
 		return InternalSiteManager.getSite(siteURL,true);
 	}
-	
-	
+		
 	/**
-	 * Creates a new site on the file system
-	 * This is the only Site we can create.
-	 * 
-	 * Does not add the Site to the LocalSite
-	 * 
-	 * @param siteLocation
-	 * @throws CoreException
-	 * @since 2.0 
-	 */
-
-	public static ISite createSite(File siteLocation) throws CoreException {
-		return InternalSiteManager.createSite(siteLocation);	
-	}
-	
-	/**
-	 * Creates a Configuration Site for an  ISite
+	 * Creates a Configuration Site and an ISite on the file system
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 * @since 2.0 
 	 */
 
-	public static IConfigurationSite createConfigurationSite(ISite site,int policy){
-		return InternalSiteManager.createConfigurationSite(site,policy);
+	public static IConfigurationSite createConfigurationSite(File file,int policy) throws CoreException{
+		return InternalSiteManager.createConfigurationSite(file,policy);
 	}
 	
-	/**
-	 * Creates a Configuration policy
-	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
-	 * @since 2.0 
-	 */
-
-	public static IConfigurationPolicy createConfigurationPolicy(int policy){
-		return InternalSiteManager.createConfigurationPolicy(policy);
-	}
 }

@@ -10,6 +10,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.*;
@@ -77,10 +78,39 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 				tempDir += File.separator;
 			String fileAsURL = (tempDir+TEMP_NAME).replace(File.separatorChar,'/');
 				File file = new File(fileAsURL);
-				TEMP_SITE = InternalSiteManager.createSite(file);
+				TEMP_SITE = createSite(file);
 		}
 		return TEMP_SITE;
 	}
 	
+	/**
+	 * Creates a new site on the file system
+	 * This is the only Site we can create.
+	 * 
+	 * @param siteLocation
+	 * @throws CoreException
+	 */
+	 private static ISite createSite(File siteLocation) throws CoreException {
+		Site site = null;
+		if (siteLocation != null) {
+			try {
+				siteLocation.mkdirs();
+				URL siteURL = siteLocation.toURL();
+				site = (Site) InternalSiteManager.getSite(siteURL, true);
+				// FIXME, when creating a site, should we manage site.xml ?
+				//site.save();
+			} catch (MalformedURLException e) {
+				throw newCoreException("Cannot create a URL from:" + siteLocation.getAbsolutePath(), e);
+			}
+		}
+		return site;
+	}	
+	
+	/**
+	 * returns a Core Exception
+	 */
+	private static CoreException newCoreException(String s, Throwable e) throws CoreException {
+		return new CoreException(new Status(IStatus.ERROR, "org.eclipse.update.core", 0, s, e));
+	}	
 	}
 

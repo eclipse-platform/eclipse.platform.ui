@@ -178,27 +178,45 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * Saves the configuration into its URL/location
 	 */
 	public void save() throws CoreException {
-		// save the file
+	
+		// save the configuration.xml file
 		saveConfigurationFile();
 
-		// Write info for the next runtime
+		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
+		
 		for (int i = 0; i < configurationSites.length; i++) {
 			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
+			
+			// obtain the list of plugins
 			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
-			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(element.getSite().getURL());
-			if (siteEntry == null) {
-				siteEntry = runtimeConfiguration.createSiteEntry(element.getSite().getURL(), sitePolicy);
+			
+			// determine the URL to check 
+			URL urlToCheck = null;
+			ConfigurationSiteModel configSiteModel = null;
+			try {
+				configSiteModel = (ConfigurationSiteModel)element;
+				urlToCheck = new URL(configSiteModel.getPlatformURLString());
+			} catch (MalformedURLException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from:"+configSiteModel.getPlatformURLString(), e);
+				throw new CoreException(status);
+			} catch (ClassCastException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Internal Error: The configurationSite object is not a subclass of ConfigurationSiteModel.", e);
+				throw new CoreException(status);
 			}
-
+			
+			// if the URL already exist, set the policy
+			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry != null) {
 				siteEntry.setSitePolicy(sitePolicy);
 			} else {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform configuration not found :" + element.getSite().getURL().toExternalForm(), null);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform site not found :" + urlToCheck.toExternalForm(), null);
 				throw new CoreException(status);
 			}
 		}

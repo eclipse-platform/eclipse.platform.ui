@@ -36,6 +36,7 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.IProblemHandler;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
@@ -114,40 +115,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		return site;
 	}
 
-	private static void createDefaultConfiguration(ILocalSite localSite) throws CoreException {
-
-		try {
-			IPlatformConfiguration.ISiteEntry[] siteEntries = BootLoader.getCurrentPlatformConfiguration().getConfiguredSites();
-
-			// create first InstallConfiguration
-			IInstallConfiguration newDefaultConfiguration = localSite.cloneCurrentConfiguration(null, null);
-			localSite.addConfiguration(newDefaultConfiguration);
-
-			IConfigurationSite[] configSites = new IConfigurationSite[siteEntries.length];
-			// add each site to the configuration
-			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
-
-				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
-				ISite site = SiteManager.getSite(resolvedURL);
-
-				//site policy
-				IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
-				ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, sitePolicy.getType());
-
-				//the site may not be read-write
-				configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
-				configSites[siteIndex] = configSite;
-			}
-
-			InstallConfiguration currentConfig = (InstallConfiguration) localSite.getCurrentConfiguration();
-			((InstallConfiguration) currentConfig).setConfigurationSites(configSites);
-
-		} catch (Exception e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site: " + e.getMessage(), e);
-			throw new CoreException(status);
-		}
-	}
 
 	private SiteLocal() {
 	}
@@ -579,7 +546,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					ISite site = SiteManager.getSite(resolvedURL);
 					//site policy
 					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
-					ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, sitePolicy.getType());
+					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel)site, sitePolicy.getType());
+					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
@@ -617,7 +585,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private IConfigurationSite reconcile(IConfigurationSite toReconcile) throws CoreException {
 
-		IConfigurationSite newSite = SiteManager.createConfigurationSite(toReconcile.getSite(), toReconcile.getConfigurationPolicy().getPolicy());
+	int policy = toReconcile.getConfigurationPolicy().getPolicy();
+	SiteMapModel siteModel = (SiteMapModel)toReconcile.getSite();
+	ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel,policy );
+	newSiteModel.setInstallSite(toReconcile.isInstallSite());
+	IConfigurationSite newSite = (IConfigurationSite)newSiteModel;
 
 		// check the Features that are still here
 		List toCheck = new ArrayList();

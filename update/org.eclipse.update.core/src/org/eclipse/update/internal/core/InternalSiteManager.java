@@ -12,8 +12,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.ParsingException;
 
@@ -271,7 +274,7 @@ public class InternalSiteManager {
 	 * @param siteLocation
 	 * @throws CoreException
 	 */
-	public static ISite createSite(File siteLocation) throws CoreException {
+	 private static ISite createSite(File siteLocation) throws CoreException {
 		Site site = null;
 		if (siteLocation != null) {
 			try {
@@ -288,20 +291,31 @@ public class InternalSiteManager {
 	}
 
 	/**
-	 * Creates a Configuration Site for an  ISite
+	 * Creates a Configuration Site and a new Site
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
-	public static IConfigurationSite createConfigurationSite(ISite site, int policy) {
-		return new ConfigurationSite(site, createConfigurationPolicy(policy));
+	public static IConfigurationSite createConfigurationSite(File file, int policy) throws CoreException {
+	
+		ISite site = createSite(file);
+
+		//create config site
+		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+		ConfigurationSite configSite = (ConfigurationSite)factory.createConfigurationSiteModel((SiteMapModel)site,policy);
+		configSite.setPlatformURLString(site.getURL().toExternalForm());
+		
+		// obtain the list of plugins
+		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();		
+		ConfigurationPolicy configurationPolicy = (ConfigurationPolicy)configSite.getConfigurationPolicy();
+		String[] pluginPath = configurationPolicy.getPluginPath(site);
+		IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
+		
+		// change runtime					
+		IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
+		runtimeConfiguration.configureSite(siteEntry);
+		
+		return configSite;
 	}
 
-	/**
-	 * Creates a Configuration policy
-	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
-	 */
-	public static IConfigurationPolicy createConfigurationPolicy(int policy) {
-		return new ConfigurationPolicy(policy);
-	}
 
 	/**
 	 * returns a Core Exception
