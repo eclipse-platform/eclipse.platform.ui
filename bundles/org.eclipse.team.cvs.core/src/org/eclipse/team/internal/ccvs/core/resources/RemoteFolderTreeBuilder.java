@@ -776,6 +776,6 @@ public class RemoteFolderTreeBuilder {
 	 * @return an array of differing files
 	 */
 	public String[] getFileDiffs() {
-		return (String[]) changedFiles.toArray(new String[changedFiles.size()]);;
+		return (String[]) changedFiles.toArray(new String[changedFiles.size()]);
 	}
 }
