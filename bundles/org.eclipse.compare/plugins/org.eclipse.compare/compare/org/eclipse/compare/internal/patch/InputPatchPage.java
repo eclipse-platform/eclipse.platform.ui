@@ -311,7 +311,6 @@ import org.eclipse.core.runtime.*;
 				}
 			}
 		);
-		//fPatchFileNameField.setFocus();
 	}
 		
 	/**

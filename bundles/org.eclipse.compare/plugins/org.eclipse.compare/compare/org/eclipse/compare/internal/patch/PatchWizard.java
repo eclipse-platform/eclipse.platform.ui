@@ -72,7 +72,7 @@ import org.eclipse.compare.internal.*;
 			return (IResource[]) list.toArray(new IResource[list.size()]);
 		return null;
 	}
-		
+	
 	Patcher getPatcher() {
 		return fPatcher;
 	}
@@ -82,7 +82,8 @@ import org.eclipse.compare.internal.*;
 	}
 	
 	void setTargets(IResource[] targets) {
-		fTarget= targets[0];	// right now we can only deal with a single selection
+		if (targets != null)
+			fTarget= targets[0];	// right now we can only deal with a single selection
 	}
 	
 	/* (non-Javadoc)
