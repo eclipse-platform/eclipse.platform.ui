@@ -355,12 +355,22 @@ public void write(File target, InputStream content, boolean append, IProgressMon
 		}
 	}
 }
+
 public void writeFolder(File target) throws CoreException {
 	if (!target.exists())
 		target.mkdirs();
 	if (!target.isDirectory()) {
-		String message = Policy.bind("localstore.couldNotCreateFolder", target.getAbsolutePath()); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
+		String path = target.getAbsolutePath();
+		int code = IResourceStatus.FAILED_WRITE_LOCAL;
+		String message = Policy.bind("localstore.couldNotCreateFolder", path); //$NON-NLS-1$		
+		// Check to see if the parent is a read-only folder and if so then
+		// throw an exception with a more specific message and error code.
+		String parent = target.getParent(); 
+		if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
+			message = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
+			code = IResourceStatus.PARENT_READ_ONLY;
+		}		    
+		throw new ResourceException(code, new Path(path), message, null);
 	}
 }
 
