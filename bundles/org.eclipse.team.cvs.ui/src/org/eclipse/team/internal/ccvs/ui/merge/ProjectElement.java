@@ -52,7 +52,8 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 			if (e1 instanceof TagRootElement && e2 instanceof TagRootElement) {
 				return ((TagRootElement)e1).getTypeOfTagRoot() == CVSTag.BRANCH ? -1 : 1;
 			}
-			return super.compare(viewer, e1, e2);
+			// Sort in reverse order so larger numbered versions are at the top
+			return -1 * super.compare(viewer, e1, e2);
 		}
 	}
 		

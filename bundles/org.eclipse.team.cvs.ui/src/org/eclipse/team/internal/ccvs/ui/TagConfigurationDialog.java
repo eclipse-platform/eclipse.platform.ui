@@ -60,6 +60,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
@@ -115,6 +116,17 @@ public class TagConfigurationDialog extends Dialog {
 	
 	// dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
+	
+	class FileSorter extends ViewerSorter {
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			boolean oneIsFile = e1 instanceof CVSFileElement;
+			boolean twoIsFile = e2 instanceof CVSFileElement;
+			if (oneIsFile != twoIsFile) {
+				return oneIsFile ? 1 : -1;
+			}
+			return super.compare(viewer, e1, e2);
+		}
+	}
 	
 	public TagConfigurationDialog(Shell shell, ICVSFolder[] roots) {
 		super(shell);
@@ -188,7 +200,7 @@ public class TagConfigurationDialog extends Dialog {
 		} else {
 			cvsResourceTree.setInput(new CVSRootFolderElement(roots));
 		}
-		
+		cvsResourceTree.setSorter(new FileSorter());
 		cvsResourceTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateShownTags();
@@ -223,8 +235,9 @@ public class TagConfigurationDialog extends Dialog {
 				int type1 = tag1.getType();
 				int type2 = tag2.getType();
 				if (type1 != type2) {
-					return type2 - type1;
+					return  type1 - type2;
 				}
+				// Sort in reverse order so larger numbered versions are at the top
 				return -tag1.compareTo(tag2);
 			}
 		});
@@ -263,15 +276,7 @@ public class TagConfigurationDialog extends Dialog {
 				updateEnablements();
 			}
 		});
-		cvsDefinedTagsTree.setSorter(new ViewerSorter() {
-			public int compare(Viewer v, Object o1, Object o2) {
-				int result = super.compare(v, o1, o2);
-				if (o1 instanceof TagElement && o2 instanceof TagElement) {
-					return -result;
-				}
-				return result;
-			}
-		});
+		cvsDefinedTagsTree.setSorter(new ProjectElementSorter());
 
 		Composite buttonComposite = new Composite(rememberedTags, SWT.NONE);
 		data = new GridData ();
