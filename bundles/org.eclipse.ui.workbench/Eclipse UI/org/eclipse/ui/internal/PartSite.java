@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dan Rubel (dan_rubel@instantiations.com) - accessor to get context menu ids
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -181,6 +183,19 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
 		registerContextMenu(getId(), menuMgr, selProvider);
+	}
+	// getContextMenuIds() added by Dan Rubel (dan_rubel@instantiations.com)
+	/**
+	 * Get the registered popup menu identifiers
+	 */
+	public String[] getContextMenuIds() {
+		if (menuExtenders == null)
+			return new String[0];
+		String[] menuIds = new String[menuExtenders.size()];
+		int index = 0;
+		for (Iterator iter = menuExtenders.iterator(); iter.hasNext();)
+			menuIds[index++] = ((PopupMenuExtender) iter.next()).getMenuId();
+		return menuIds;
 	}
 	/**
 	 * Sets the action bars for the part.

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dan Rubel (dan_rubel@instantiations.com) - accessor to get menu id
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -47,6 +48,13 @@ public class PopupMenuExtender implements IMenuListener {
 			menuWrapper.setVisible(true);
 		}
 		readStaticActions();
+	}
+	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
+	/**
+	 * Return the menu identifier
+	 */
+	public String getMenuId() {
+		return menuID;
 	}
 	/**
 	 * Contributes items registered for the object type(s) in
