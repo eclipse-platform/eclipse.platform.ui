@@ -37,6 +37,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class CVSOperation implements IRunnableWithProgress {
 
+	private int statusCount;
+
 	private boolean involvesMultipleResources = false;
 
 	private List errors = new ArrayList(); // of IStatus
@@ -118,6 +120,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	protected void startOperation() {
+		statusCount = 0;
 		resetErrors();
 		confirmOverwrite = true;
 	}
@@ -197,7 +200,13 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @param status
 	 */
 	protected void addError(IStatus status) {
+		if (status.isOK()) return;
 		errors.add(status);
+	}
+	
+	protected void collectStatus(IStatus status)  {
+		statusCount++;
+		if (!status.isOK()) addError(status);
 	}
 	
 	/**
@@ -210,11 +219,14 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	/**
 	 * @param statuses
 	 */
-	protected void handleErrors(IStatus[] status) throws CVSException {
-		if (status.length == 0) return;
-		MultiStatus result = new MultiStatus(CVSUIPlugin.ID, 0, getErrorTitle(), null);
-		for (int i = 0; i < status.length; i++) {
-			IStatus s = status[i];
+	protected void handleErrors(IStatus[] errors) throws CVSException {
+		if (errors.length == 0) return;
+		if (errors.length == 1 && statusCount == 1)  {
+			throw new CVSException(errors[0]);
+		}
+		MultiStatus result = new MultiStatus(CVSUIPlugin.ID, 0, getErrorMessage(errors, statusCount), null);
+		for (int i = 0; i < errors.length; i++) {
+			IStatus s = errors[i];
 			if (s.isMultiStatus()) {
 				result.add(new CVSStatus(s.getSeverity(), s.getMessage(), s.getException()));
 				result.addAll(s);
@@ -225,12 +237,8 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		throw new CVSException(result);
 	}
 
-	/**
-	 * Provide the message used in the error status if an error occurs.
-	 * Should be overriden by subclasses.
-	 */
-	protected String getErrorTitle() {
-		return "Errors occured during this operation";
+	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
+		return "Errors occured in " + failures.length + " of " + totalOperations + " operations.";
 	}
 
 	/**

@@ -18,26 +18,15 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public abstract class CheckoutOperation extends CVSOperation {
+public abstract class CheckoutOperation extends RemoteOperation {
 
-	private ICVSRemoteFolder[] remoteFolders;
-	
 	/**
 	 * @param shell
 	 */
 	public CheckoutOperation(Shell shell, ICVSRemoteFolder[] remoteFolders) {
-		super(shell);
-		this.remoteFolders =remoteFolders;
+		super(shell, remoteFolders);
 	}
 
-	/**
-	 * @return
-	 */
-	protected ICVSRemoteFolder[] getRemoteFolders() {
-		return remoteFolders;
-	}
-	
-	
 	/**
 	 * Return the string that is to be used as the task name for the operation
 	 * 
@@ -56,6 +45,13 @@ public abstract class CheckoutOperation extends CVSOperation {
 		checkout(getRemoteFolders(), Policy.subMonitorFor(monitor, 100));
 	}
 
+	/**
+	 * @return
+	 */
+	protected ICVSRemoteFolder[] getRemoteFolders() {
+		return (ICVSRemoteFolder[])getRemoteResources();
+	}
+	
 	/**
 	 * Checkout the selected remote folders in a form appropriate for the operation subclass.
 	 * @param folders

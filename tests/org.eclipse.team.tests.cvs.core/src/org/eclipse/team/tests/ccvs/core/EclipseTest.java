@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,6 +56,10 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
 
 public class EclipseTest extends EclipseWorkspaceTest {
 
@@ -233,13 +238,32 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	/**
 	 * Commit the resources from an existing container to the CVS repository
 	 */
-	public void tagProject(IProject project, CVSTag tag) throws TeamException {
-		IStatus status = getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, tag, DEFAULT_MONITOR);
-		if (status.getCode() != CVSStatus.OK) {
-			throw new CVSException(status);
-		}
+	public void tagProject(IProject project, CVSTag tag, boolean force) throws TeamException {
+		ITagOperation op = new TagOperation(null, new IResource[] {project});
+		runTag(op, tag, force);
 	}
 	
+	public void tagRemoteResource(ICVSRemoteResource resource, CVSTag tag, boolean force) throws TeamException  {
+		ITagOperation op = new TagInRepositoryOperation(null, new ICVSRemoteResource[] {resource});
+		runTag(op, tag, force);
+	
+	}
+	private void runTag(ITagOperation op, CVSTag tag, boolean force) throws TeamException {
+		if (force) op.moveTag();
+		op.setTag(tag);
+		try {
+			((CVSOperation)op).run(DEFAULT_MONITOR);
+		} catch (InterruptedException e) {
+			fail("Tag interrupted.");
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof TeamException)  {
+				throw (TeamException) e.getTargetException();
+			} else  {
+				e.printStackTrace();
+				fail("Unexpected error while tagging");
+			}
+		}
+	}
 	/**
 	 * Return a collection of resources defined by hierarchy. The resources
 	 * are added to the workspace and to the file system. If the manage flag is true, the

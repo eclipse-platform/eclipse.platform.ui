@@ -23,8 +23,11 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -33,31 +36,45 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagRootElement;
-import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.dialogs.*;
+import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
+import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class TagAsVersionDialog extends DetailsDialog {
 
+	private ITagOperation operation;
+
 	private ICVSFolder folder;
 	
 	private Text tagText;
+	private Button moveTagButton;
 	
 	private String tagName = ""; //$NON-NLS-1$
+	private boolean moveTag = false;
 	
 	private static final int TABLE_HEIGHT_HINT = 150;
 	
 	private TableViewer existingVersionTable;
 	
-	public TagAsVersionDialog(Shell parentShell, String title, ICVSFolder folder) {
+	public TagAsVersionDialog(Shell parentShell, String title, ITagOperation operation) {
 		super(parentShell, title);
-		this.folder = folder;
+		this.folder = getFirstFolder(operation.getCVSResources());
+		this.operation = operation;
 	}	
 
+	private ICVSFolder getFirstFolder(ICVSResource[] resources) {
+		if (resources[0].isFolder()) {
+			return (ICVSFolder)resources[0];
+		} else {
+			return resources[0].getParent();
+		}
+	}
+	
 	/**
 	 * @see DetailsDialog#createMainDialogArea(Composite)
 	 */
@@ -86,10 +103,29 @@ public class TagAsVersionDialog extends DetailsDialog {
 				}
 			}
 		);
+		
+		moveTagButton = new Button(parent, SWT.CHECK);
+		moveTagButton.setText(Policy.bind("TagAction.moveTag"));
+		moveTagButton.setLayoutData(new GridData(
+			GridData.GRAB_HORIZONTAL |
+			GridData.GRAB_VERTICAL |
+			GridData.HORIZONTAL_ALIGN_FILL |
+			GridData.VERTICAL_ALIGN_CENTER));
+		
+		moveTagButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				moveTag = moveTagButton.getSelection();
+			}
+		});
+		
 		// Add F1 help
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.TAG_AS_VERSION_DIALOG);
 	}
 
+	public boolean shouldMoveTag()  {
+		return moveTag;
+	}
+	
 	protected TableViewer createTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -207,4 +243,16 @@ public class TagAsVersionDialog extends DetailsDialog {
 	public String getTagName() {
 		return tagName;
 	}
+	
+	/**
+	 * @return
+	 */
+	public ITagOperation getOperation() {
+		operation.setTag(new CVSTag(tagName, CVSTag.VERSION));
+		if (moveTag) {
+			operation.moveTag();
+		}
+		return operation;
+	}
+
 }

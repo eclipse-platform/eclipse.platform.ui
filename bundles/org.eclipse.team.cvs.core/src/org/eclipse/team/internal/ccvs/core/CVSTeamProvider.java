@@ -57,7 +57,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -876,47 +875,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 				}
 			}
 		}, monitor);
-	}
-	
-	/** 
-	 * Tag the resources in the CVS repository with the given tag.
-	 * 
-	 * The returned IStatus will be a status containing any errors or warnings.
-	 * If the returned IStatus is a multi-status, the code indicates the severity.
-	 * Possible codes are:
-	 *    CVSStatus.OK - Nothing to report
-	 *    CVSStatus.SERVER_ERROR - The server reported an error
-	 *    any other code - warning messages received from the server
-	 */
-	public IStatus tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws CVSException {
-						
-		// Build the local options
-		List localOptions = new ArrayList();
-		// If the depth is not infinite, we want the -l option
-		if (depth != IResource.DEPTH_INFINITE)
-			localOptions.add(Tag.DO_NOT_RECURSE);
-		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-				
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, commandOptions);
-
-		// Execute the command
-		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-		progress.beginTask(null, 100);
-		try {
-			// Opening the session takes 20% of the time
-			s.open(Policy.subMonitorFor(progress, 20));
-			return Command.TAG.execute(s,
-				Command.NO_GLOBAL_OPTIONS,
-				commandOptions,
-				tag,
-				arguments,
-				null,
-				Policy.subMonitorFor(progress, 80));
-		} finally {
-			s.close();
-			progress.done();
-		}
 	}
 	
 	/**

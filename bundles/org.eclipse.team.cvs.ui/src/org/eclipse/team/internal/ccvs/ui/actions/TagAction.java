@@ -11,158 +11,111 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.MessageDialogWithToggle;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagAsVersionDialog;
+import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class TagAction extends WorkspaceAction {
+public abstract class TagAction extends WorkspaceAction {
 	
 	// remember if the execute action was cancelled
 	private boolean wasCancelled = false;
 
 	// The previously remembered tag
 	protected static String previousTag = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		
-		// Prompt for any uncommitted changes
-		PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-			getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
-		final IResource[] resources;
-		try {
-			 resources = prompt.promptForMultiple();
-		} catch(InterruptedException e) {
+		setWasCancelled(false);
+		if (!performPrompting()) {
+			setWasCancelled(true);
 			return;
-		}
-		if(resources.length == 0) {
-			// nothing to do
-			return;						
 		}
 		
 		// Prompt for the tag name
-		final String[] result = new String[1];
+		final ITagOperation[] result = new ITagOperation[1];
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resources[0].getProject());
-				result[0] = promptForTag(folder);
-			}
-		});
-		if (result[0] == null) {
+				result[0] = configureOperation();
+				if (result[0] == null)  {
+					return;
+				}
+			}});
+		
+		if (result[0] == null)  {
 			setWasCancelled(true);
 			return;
-		} 
+		}
 		
-		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		try {
+			result[0].executeWithProgress();
+		} catch (CVSException e1) {
+			throw new InvocationTargetException(e1);
+		}
 		
-		// Tag the local resources, divided by project/provider
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				Hashtable table = getProviderMapping(resources);
-				Set keySet = table.keySet();
-				monitor.beginTask(null, keySet.size() * 1000);
-				Iterator iterator = keySet.iterator();
-				
-				while (iterator.hasNext()) {
-					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-					CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-					List list = (List)table.get(provider);
-					IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-					CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
-					try {
-						addStatus(provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor));
-					} catch (CVSException e) {
-						throw new InvocationTargetException(e);
-					}
-					// Cache the new tag creation even if the tag may have had warnings.
-					try {
-						manager.addTags(
-							CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
-							new CVSTag[] {tag});
-					} catch (CVSException e) {
-						addStatus(e.getStatus());
-					}
-
-				}	
-				previousTag = result[0];				
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
+		broadcastTagChange(result[0]);
+		
+		previousTag = result[0].getTag().getName();
 	}
 	
-	/**
-	 * Override to dislay the number of tag operations that succeeded
-	 */
-	protected IStatus getStatusToDisplay(IStatus[] problems) {
-		// We accumulated 1 status per resource above.
-		IStatus[] status = getAccumulatedStatus();
-		int resourceCount = status.length;
-		
-		MultiStatus combinedStatus;
-		if(resourceCount == 1) {
-			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
-		} else {
-			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", //$NON-NLS-1$
-											  Integer.toString(resourceCount - problems.length), Integer.toString(problems.length)), null); //$NON-NLS-1$
-		}
-		for (int i = 0; i < problems.length; i++) {
-			combinedStatus.merge(problems[i]);
-		}
-		return combinedStatus;
+	protected boolean performPrompting()  {
+		return true;
 	}
-
+	
 	/**
 	 * Prompts the user for a tag name.
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return the tag, or null to cancel
 	 */
-	protected String promptForTag(ICVSFolder folder) {
+	protected ITagOperation configureOperation() {
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		ITagOperation operation = getTagOperation();
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
 											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
-											folder);
+											operation);
 		if (dialog.open() != InputDialog.OK) return null;
-		return dialog.getTagName();
-	}
-	/**
-	 * Note: This method is designed to be overridden by test cases.
-	 */
-	protected IPromptCondition getPromptCondition() {
-		return new IPromptCondition() {
-			public boolean needsPrompt(IResource resource) {
-				return CVSLightweightDecorator.isDirty(resource);
+
+		// The user has indicated they want to force a move.  Make sure they really do.		
+		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
+			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openQuestion(getShell(), 
+				Policy.bind("TagAction.moveTagConfirmTitle"),  //$NON-NLS-1$
+				Policy.bind("TagAction.moveTagConfirmMessage", dialog.getTagName()),
+				null,
+				false);
+			
+			if (confirmDialog.getReturnCode() == IDialogConstants.OK_ID)  {
+				store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, !confirmDialog.getToggleState());
+			} else  {
+				return null;
 			}
-			public String promptMessage(IResource resource) {
-				return Policy.bind("TagAction.uncommittedChanges", resource.getName());//$NON-NLS-1$
-			}
-		};
+		}
+		
+		// The user is a cowboy and wants to do it.
+		return dialog.getOperation();
 	}
 	
+	protected abstract ITagOperation getTagOperation();
+
 	protected String getErrorTitle() {
 		return Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
 	}
@@ -184,6 +137,33 @@ public class TagAction extends WorkspaceAction {
 
 	public void setWasCancelled(boolean b) {
 		wasCancelled = b;
+	}
+
+	protected void broadcastTagChange(final ITagOperation operation) throws InvocationTargetException, InterruptedException {
+		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		manager.run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				ICVSResource[] resources = operation.getCVSResources();
+				for (int i = 0; i < resources.length; i++) {
+					ICVSResource resource = resources[i];
+					// Cache the new tag creation even if the tag may have had warnings.
+					try {
+						manager.addTags(getRootParent(resource), new CVSTag[] {operation.getTag()});
+					} catch (CVSException e) {
+						CVSUIPlugin.log(e);
+					}
+				}
+			}
+		}, new NullProgressMonitor());
+	}
+
+	private ICVSResource getRootParent(ICVSResource resource) throws CVSException {
+		if (!resource.isManaged()) return resource;
+		ICVSFolder parent = resource.getParent();
+		if (parent == null) return resource;
+		// Special check for a parent which is the repository itself
+		if (parent.getName().length() == 0) return resource;
+		return getRootParent(parent);
 	}
 }
 

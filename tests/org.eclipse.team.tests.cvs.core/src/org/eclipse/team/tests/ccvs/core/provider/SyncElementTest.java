@@ -714,8 +714,8 @@ public class SyncElementTest extends EclipseTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		copy.refreshLocal(IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		
-		tagProject(project, new CVSTag("v1", CVSTag.VERSION));
-		tagProject(project, new CVSTag("branch1", CVSTag.BRANCH));
+		tagProject(project, new CVSTag("v1", CVSTag.VERSION), false);
+		tagProject(project, new CVSTag("branch1", CVSTag.BRANCH), false);
 		
 		getProvider(copy).update(new IResource[] {copy}, Command.NO_LOCAL_OPTIONS,
 			new CVSTag("branch1", CVSTag.BRANCH), true /*createBackups*/, DEFAULT_MONITOR);
@@ -751,7 +751,7 @@ public class SyncElementTest extends EclipseTest {
 	 	// Create a test project and a branch
 		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-		tagProject(project, branch);
+		tagProject(project, branch, false);
 		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, branch, true /*createBackups*/, DEFAULT_MONITOR);
 
 		// Checkout and modify a copy

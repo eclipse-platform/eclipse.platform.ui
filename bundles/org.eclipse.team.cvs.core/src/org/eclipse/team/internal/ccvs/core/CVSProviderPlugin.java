@@ -74,6 +74,8 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String DEFAULT_CVS_SERVER = "cvs"; //$NON-NLS-1$
 	// determines if empty directories received from the server should be pruned.
 	public static final boolean DEFAULT_PRUNE = true;
+	// determines if the user is prompted for confirmation before moving tags during a tag operation.
+	public static final boolean DEFAULT_CONFIRM_MOVE_TAG = true;
 	// determines if new directories should be discovered during update.
 	public static final boolean DEFAULT_FETCH = true;
 	// communication timeout with the server
@@ -116,6 +118,7 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
 	private boolean determineVersionEnabled = true;
+	private boolean confirmMoveTagEnabled = true;
 	
 	private static volatile CVSProviderPlugin instance;
 	
@@ -142,6 +145,20 @@ public class CVSProviderPlugin extends Plugin {
 	 * @see org.eclipse.core.resources.IProject#hasNature
 	 */
 	private static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
+
+	/**
+	 * @return
+	 */
+	public boolean isConfirmMoveTagEnabled() {
+		return confirmMoveTagEnabled;
+	}
+
+	/**
+	 * @param confirmMoveTag
+	 */
+	public void setConfirmMoveTagEnabled(boolean confirmMoveTag) {
+		this.confirmMoveTagEnabled = confirmMoveTag;
+	}
 
 	/**
 	 * Constructor for CVSProviderPlugin.

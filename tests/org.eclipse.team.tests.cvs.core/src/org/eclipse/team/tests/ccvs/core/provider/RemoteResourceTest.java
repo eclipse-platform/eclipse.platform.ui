@@ -33,7 +33,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
@@ -52,9 +51,13 @@ public class RemoteResourceTest extends EclipseTest {
 	}
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite(RemoteResourceTest.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testBuildRemoteTree"));
+		String testName = System.getProperty("eclipse.cvs.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(RemoteResourceTest.class);
+			return new CVSTestSetup(suite);
+		} else {
+			return new CVSTestSetup(new RemoteResourceTest(testName));
+		}
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
@@ -184,7 +187,7 @@ public class RemoteResourceTest extends EclipseTest {
 		// Create a test project and version it
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);
 		IProject project = createProject("testVersionTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/folder3/c.txt"});
-		tagProject(project, v1Tag);
+		tagProject(project, v1Tag, false);
 
 		// Make some changes, additions (including folders) and deletions and commit
 		IFile file = project.getFile("folder1/a.txt");
@@ -266,15 +269,32 @@ public class RemoteResourceTest extends EclipseTest {
 	 
 	 public void testTag() throws TeamException, CoreException, IOException {
 	 	IProject project = createProject("testTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+	 	
 		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
-		remote.tag(tag, Command.NO_LOCAL_OPTIONS, DEFAULT_MONITOR);
+		tagRemoteResource(remote, tag, false);
 		ICVSRemoteFolder v1 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v1, false);
+		
 		CVSTag tag2 = new CVSTag("v2", CVSTag.VERSION);
-		v1.tag(tag2, Command.NO_LOCAL_OPTIONS, DEFAULT_MONITOR);
+		tagRemoteResource(v1, tag2, false);
 		ICVSRemoteFolder v2 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag2, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v2, false);
+		
+		// Test tag with existing
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		commitProject(project);
+		remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
+		tagRemoteResource(remote, tag, true /* force */);
+		v1 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, remote, v1, false);
+		
+		// Test local tag with existing.
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		commitProject(project);
+		tagProject(project, tag2, true);
+		IProject copy = checkoutCopy(project, tag2);
+		assertEquals(project, copy, false, false);
 	 }
 	 
 	 public void testExists() throws TeamException, CoreException, IOException, InterruptedException {

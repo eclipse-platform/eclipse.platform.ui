@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
@@ -26,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
@@ -121,4 +123,27 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		return cvsResources;
 	}
 	
+	/*
+	 * Get the arguments to be passed to a commit or update
+	 */
+	protected String[] getStringArguments(IResource[] resources) throws CVSException {
+		List arguments = new ArrayList(resources.length);
+		for (int i=0;i<resources.length;i++) {
+			IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
+			if (cvsPath.segmentCount() == 0) {
+				arguments.add(Session.CURRENT_LOCAL_FOLDER);
+			} else {
+				arguments.add(cvsPath.toString());
+			}
+		}
+		return (String[])arguments.toArray(new String[arguments.size()]);
+	}
+	
+	public ICVSResource[] getCVSResources() {
+		ICVSResource[] cvsResources = new ICVSResource[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+		}
+		return cvsResources;
+	}
 }

@@ -46,6 +46,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ccvs.ui.actions.SyncAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
+import org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -494,7 +495,7 @@ public class MenuEnablementTest extends EclipseTest {
 	}
 	
 	public void testTagAction() throws CoreException, TeamException {
-		IActionDelegate action = new TagAction();
+		IActionDelegate action = new TagLocalAction();
 		IProject project = createTestProject(action);
 		assertDisabledForCommonReasons(action, project);
 		assertEnabledForFolderOnlyOverlap(action, project);

@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.TagListener;
 public class Tag extends Command {
 	/*** Local options: specific to tag ***/
 	public static final LocalOption CREATE_BRANCH = new LocalOption("-b", null);	 //$NON-NLS-1$	
+	public static final LocalOption FORCE_REASSIGNMENT = new LocalOption("-F", null); //$NON-NLS-1$	
 
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new TagListener();

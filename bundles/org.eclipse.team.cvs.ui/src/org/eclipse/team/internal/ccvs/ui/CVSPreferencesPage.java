@@ -69,6 +69,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button replaceUnmanaged;
 	private Button repositoriesAreBinary;
 	private Button determineVersionEnabled;
+	private Button confirmMoveTag;
 	
 	private Button never;
 	private Button prompt;
@@ -179,6 +180,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
 		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
+		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -246,6 +248,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
+		WorkbenchHelp.setHelp(confirmMoveTag, IHelpContextIds.PREF_CONFIRM_MOVE_TAG);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
@@ -302,6 +305,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
+		confirmMoveTag.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
+	
 		
 		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
@@ -343,6 +348,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
+		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -359,6 +365,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
+		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
@@ -384,6 +391,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
+		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 	}
 
    private void createSaveCombo(Composite composite) {

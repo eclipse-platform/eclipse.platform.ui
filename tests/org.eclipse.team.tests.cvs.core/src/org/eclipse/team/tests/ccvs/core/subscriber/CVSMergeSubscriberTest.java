@@ -56,8 +56,8 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 
 	private IProject branchProject(IProject project, CVSTag root, CVSTag branch) throws TeamException {
 		IProject copy = checkoutCopy(project, "-copy");
-		tagProject(project, root);
-		tagProject(project, branch);
+		tagProject(project, root, false);
+		tagProject(project, branch, false);
 		getProvider(copy).update(new IResource[] {copy}, Command.NO_LOCAL_OPTIONS,
 			branch, false /*createBackups*/, DEFAULT_MONITOR);
 		return copy;
