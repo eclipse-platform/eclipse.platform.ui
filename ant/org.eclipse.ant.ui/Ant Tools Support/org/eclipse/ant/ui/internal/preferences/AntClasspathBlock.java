@@ -616,6 +616,8 @@ public class AntClasspathBlock {
 				List userURLs= getUserURLs();
 				if (!JARPresent(userURLs, TOOLS)) {
 					valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				} else {
+					valid= true;
 				}
 			}
 			if (!valid) {
@@ -633,11 +635,12 @@ public class AntClasspathBlock {
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
 			List antURLs= getAntURLs();
-			boolean present= JARPresent(antURLs, XERCES);
-			if (present) {
+			if (JARPresent(antURLs, XERCES)) {
 				List userURLs= getUserURLs();
 				if (!JARPresent(userURLs, XERCES)) {
 					valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), AntPreferencesMessages.getString("AntClasspathBlock.36"), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.37"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				} else {
+					valid= true;
 				}
 			}
 			if (!valid) {
