@@ -38,12 +38,10 @@ import org.eclipse.ui.progress.UIJob;
  * a dialog by calling {@link CompareUI#openCompareDialog()}.
  * <p>
  * Supports saving the local resource that is changed in the editor.
+ * </p><p>
+ * This class cannot be subclassed by clients.
  * </p>
- * <p>
- * Use {@link SynchronizeCompareInput} to display more than one <code>SyncInfo</code>
- * in an compare viewer. 
- * </p>
- * @see SyncInfoModelElement
+ * @see SyncInfo
  * @since 3.0
  */
 public final class SyncInfoCompareInput extends CompareEditorInput implements IResourceChangeListener {
@@ -54,6 +52,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private IEditorPart editor;
 	private Image inputImage;
 
+	/*
+	 * This class exists so that we can force the text merge viewers to update by
+	 * calling #fireChange when we save the compare input to disk. The side
+	 * effect is that the compare viewers will be updated to reflect the new changes
+	 * that have been made. Compare doesn't do this by default.
+	 */
 	private static class MyDiffNode extends SyncInfoModelElement {
 		public MyDiffNode(IDiffContainer parent, SyncInfo info) {
 			super(parent, info);

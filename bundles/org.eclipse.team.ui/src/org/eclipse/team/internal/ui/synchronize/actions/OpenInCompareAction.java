@@ -53,7 +53,7 @@ public class OpenInCompareAction extends Action {
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
-					openCompareEditor(site, name, info, true);
+					openCompareEditor(site, name, info, false /* don't keep focus */);
 				}
 			}
 		}
