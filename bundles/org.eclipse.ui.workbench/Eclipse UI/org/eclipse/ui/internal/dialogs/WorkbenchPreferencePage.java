@@ -323,8 +323,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// inform the workbench of whether it should do autobuilds or not
 		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
-		boolean oldAutoBuildSetting = description.isAutoBuilding();
+		boolean coreAutoBuildSetting = description.isAutoBuilding();
+		boolean preferenceStoreCurrentSetting = store.getBoolean(IPreferenceConstants.AUTO_BUILD);
 		boolean newAutoBuildSetting = autoBuildButton.getSelection();
+		
+		//As older versions of Eclipse did not use the preference store for this
+		//setting it is possible that the setting in Core will be false 
+		//and the preference store will have the default value of true.
+		//Do a second setValue if required here to synch them up
+		if(preferenceStoreCurrentSetting && !coreAutoBuildSetting)		
+			store.setValue(IPreferenceConstants.AUTO_BUILD, coreAutoBuildSetting);
 		
 		// store the auto build in the preference store so that we can enable import and export
 		store.setValue(IPreferenceConstants.AUTO_BUILD, newAutoBuildSetting);
