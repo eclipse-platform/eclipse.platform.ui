@@ -61,12 +61,11 @@ public void testCopy() throws Throwable {
 
 	assertNotNull("1.7", manager.getProperty(destination, propName));
 	assertTrue("1.8", manager.getProperty(destination, propName).equals(propValue));
-	// FIXME: will fail because of bug 11169.
-	// http://bugs.eclipse.org/bugs/show_bug.cgi?id=11169
-//	assertNotNull("1.9", manager.getProperty(destFolder, propName));
-//	assertTrue("1.10", manager.getProperty(destFolder, propName).equals(propValue));
-//	assertNotNull("1.11", manager.getProperty(destFile, propName));
-//	assertTrue("1.12", manager.getProperty(destFile, propName).equals(propValue));
+
+	assertNotNull("1.9", manager.getProperty(destFolder, propName));
+	assertTrue("1.10", manager.getProperty(destFolder, propName).equals(propValue));
+	assertNotNull("1.11", manager.getProperty(destFile, propName));
+	assertTrue("1.12", manager.getProperty(destFile, propName).equals(propValue));
 
 	// do the same thing but copy at the folder level
 	manager.deleteProperties(source);
@@ -111,6 +110,34 @@ public void testDeleteProperties() throws Throwable {
 	/* delete */
 	manager.deleteProperties((Resource) target);
 	assertTrue("1.3", manager.getProperty(target, propName) == null);
+
+	//test deep deletion of project properties	
+	IProject source = projects[0];
+	IFolder sourceFolder = source.getFolder("myfolder");
+	IResource sourceFile = sourceFolder.getFile("myfile.txt");
+	propName = new QualifiedName("test", "prop");
+	propValue = "this is the property value";
+
+	/* 
+	 * persistent properties 
+	 */ 
+	manager.setProperty(source, propName, propValue);
+	manager.setProperty(sourceFolder, propName, propValue);
+	manager.setProperty(sourceFile, propName, propValue);
+
+	assertNotNull("2.1", manager.getProperty(source, propName));
+	assertTrue("2.2", manager.getProperty(source, propName).equals(propValue));
+	assertNotNull("2.3", manager.getProperty(sourceFolder, propName));
+	assertTrue("2.4", manager.getProperty(sourceFolder, propName).equals(propValue));
+	assertNotNull("2.5", manager.getProperty(sourceFile, propName));
+	assertTrue("2.6", manager.getProperty(sourceFile, propName).equals(propValue));
+	
+	//delete properties
+	manager.deleteProperties(source, IResource.DEPTH_INFINITE);
+	assertNull("3.1", manager.getProperty(source, propName));
+	assertNull("3.2", manager.getProperty(sourceFolder, propName));
+	assertNull("3.3", manager.getProperty(sourceFile, propName));
+
 }
 public void testProperties() throws Throwable {
 	IProgressMonitor monitor = null;
