@@ -13,47 +13,66 @@ package org.eclipse.debug.ui.memory;
 
 
 /**
- * A memory rendering container is the actual container within
- * a memory rendering site for hosting a memory rendering.  
+ * A memory rendering container is a container within a memory rendering site
+ * for hosting a memory renderings.
+ * <p>
+ * Clients hosting memory renderings may implement this interface.
+ * </p>  
  * @since 3.1
  */
 public interface IMemoryRenderingContainer {
 	/**
+	 * Returns the rendering site hosting this container.
+	 * 
 	 * @return the rendering site hosting this container
 	 */
 	public IMemoryRenderingSite getMemoryRenderingSite();
 	
 	/**
-	 * @return the id of this container
+	 * Reutrns the identifier of this container. Identifiers
+	 * are unique within a container.
+	 * 
+	 * @return the identifier of this container
 	 */
 	public String getId();
 	
 	/**
-	 * Add the given rendering to the container
-	 * When this method is called, the rendering should have been
-	 * initialized.
-	 * @param rendering to add
+	 * Adds the given rendering to this container. A rendering must be
+	 * initialized before it is added to a container. This causes
+	 * the rendering's control to be created.
+	 * 
+	 * @param rendering the rendering to add
 	 */
 	public void addMemoryRendering(IMemoryRendering rendering);
 	
 	/**
-	 * Remove the given rendering from container
-	 * @param rendering rendering to remove
+	 * Removes the given rendering from this container. This 
+	 * causes the rendering to be disposed.
+	 * 
+	 * @param rendering the rendering to remove
 	 */
 	public void removeMemoryRendering(IMemoryRendering rendering);
 	
 	/**
+	 * Returns all renderings currently hosted by this container.
+	 *  
 	 * @return all renderings currently hosted by this container
 	 */
 	public IMemoryRendering[] getRenderings();
 	
 	/**
-	 * @return the active rendering from this container.
+	 * Returns the active rendering in this container, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the active rendering in this container, or <code>null</code>
+	 * if none
 	 */
 	public IMemoryRendering getActiveRendering();
 	
 	/**
-	 * @return the label for this memory rendering container
+	 * Returns the label for this container.
+	 * 
+	 * @return the label for this container
 	 */
 	public String getLabel();
 }
