@@ -497,13 +497,13 @@ public final class WorkbenchActionBuilder {
 			String openText = IDEWorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
 			MenuManager changePerspMenuMgr = new MenuManager(openText);
 			IContributionItem changePerspMenuItem = 
-				ContributionItemFactory.PERSPECTIVES.create(getWindow());
+				ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
 		}
 		{
 			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			IContributionItem showViewMenu = ContributionItemFactory.OPEN_VIEWS.create(getWindow());
+			IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
 		}
