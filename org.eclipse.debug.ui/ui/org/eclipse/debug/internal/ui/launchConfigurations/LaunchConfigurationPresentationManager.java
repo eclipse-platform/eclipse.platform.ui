@@ -249,12 +249,11 @@ public class LaunchConfigurationPresentationManager {
 				if (object instanceof ITreeContentProvider) {
 					ITreeContentProvider provider = (ITreeContentProvider) object;
 					return provider;
-				} else {
-					IExtension extension = element.getDeclaringExtension();
-					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-						MessageFormat.format("'class' attribute for extension {0} must specify an instance of ITreeContentProvider",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
-					DebugUIPlugin.log(status);
-				}
+				} 
+				IExtension extension = element.getDeclaringExtension();
+				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
+					MessageFormat.format("'class' attribute for extension {0} must specify an instance of ITreeContentProvider",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
+				DebugUIPlugin.log(status);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
