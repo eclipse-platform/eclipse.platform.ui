@@ -172,12 +172,8 @@ public class RefreshCompleteDialog extends DetailsDialog {
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = 200;
+		data.heightHint = 125;
 		table.setLayoutData(data);
-		/*TableLayout layout = new TableLayout();
-		 layout.addColumnData(new ColumnWeightData(100, true));
-		 table.setLayout(layout);
-		 TableColumn col = new TableColumn(table, SWT.NONE);
-		 col.setResizable(true);	*/
 		TableViewer resourceList = new TableViewer(table);
 		resourceList.setContentProvider(new ArrayContentProvider());
 		resourceList.setLabelProvider(new WorkbenchLabelProvider());
