@@ -6,6 +6,8 @@ package org.eclipse.search.internal.ui;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspace;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -29,16 +31,17 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.help.WorkbenchHelp;
 
-import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 
 class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
 	
@@ -156,8 +159,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			layout.marginWidth= 7;
 			layout.marginHeight= 7;
 			border.setLayout(layout);
-		
-			CTabFolder folder= new CTabFolder(border, SWT.NONE);	
+			
+			CTabFolder folder= new CTabFolder(border, SWT.BORDER | SWT.FLAT);
+//			folder.setBackground(folder.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 			folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 			folder.setLayout(new TabFolderLayout());
 
@@ -191,12 +195,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			folder.setSelection(pageIndex);
 			
 			// Search scope
-			Composite spacer= new Composite(border, SWT.NONE);
-			GridLayout spacerLayout= new GridLayout();
-			spacer.setLayout(spacerLayout);
-			spacer.setLayoutData(new GridData(GridData.FILL_BOTH));
 			fScopePart= new ScopePart();
-			fScopePart.createPart(spacer);
+			fScopePart.createPart(border);
 			
 			return border;
 		}	
