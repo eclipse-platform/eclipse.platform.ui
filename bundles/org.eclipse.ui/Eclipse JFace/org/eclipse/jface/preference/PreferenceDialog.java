@@ -33,7 +33,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * Title area fields
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
-	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
+	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;//$NON-NLS-1$
 	
 	//The id of the last page that was selected
 	private static String lastPreferenceId = null;
@@ -41,21 +41,21 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
-		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/title_error.gif"));//$NON-NLS-1$
 	}
 	 
-	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
-
 	private Composite titleArea;
 	private CLabel messageLabel;
 	private Label titleImage;
 	private Color titleAreaColor;
 
-	private String message;
+	private String message = ""; //$NON-NLS-1$
+	private String errorMessage;
 	private Color normalMsgAreaBackground;
 	private Color errorMsgAreaBackground;
+	private Image messageImage;
 	private Image errorMsgImage;
-
+	private boolean showingError = false;
+	
 	/**
 	 * Preference store, initially <code>null</code> meaning none.
 	 *
@@ -680,27 +680,38 @@ private void setSelectedNode(){
  *
  * @param errorMessage the errorMessage to display or <code>null</code>
  */
-public void setErrorMessage(String errorMessage) {
+public void setErrorMessage(String newErrorMessage) {
+	// Any change?
+	if (errorMessage == null ? newErrorMessage == null : errorMessage.equals(newErrorMessage))
+		return;
+	
+	errorMessage = newErrorMessage;
 	if (errorMessage == null) {
-		if (messageLabel.getImage() != null) {
+		if (showingError) {
 			// we were previously showing an error
+			showingError = false;
 			messageLabel.setBackground(normalMsgAreaBackground);
 			messageLabel.setImage(null);
 			titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
-			titleArea.layout(true);
 		}
 
-		// show the message
-		setMessage(message);
-
+		// avoid calling setMessage in case it is overridden to call setErrorMessage, 
+		// which would result in a recursive infinite loop
+		if (message == null)	//this should probably never happen since setMessage does this conversion....
+			message = "";		//$NON-NLS-1$
+		messageLabel.setText(message);
+		messageLabel.setImage(messageImage);
+		messageLabel.setToolTipText(message);
 	} else {
 		messageLabel.setText(errorMessage);
-		if (messageLabel.getImage() == null) {
+		messageLabel.setToolTipText(errorMessage);
+		if (!showingError) {
 			// we were not previously showing an error
+			showingError = true;
 						
 			// lazy initialize the error background color and image
 			if (errorMsgAreaBackground == null) {
-				errorMsgAreaBackground = new Color(messageLabel.getDisplay(), ERROR_BACKGROUND_RGB);
+				errorMsgAreaBackground = JFaceColors.getErrorBackground(messageLabel.getDisplay());
 				errorMsgImage = JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
 			}
 
@@ -709,9 +720,9 @@ public void setErrorMessage(String errorMessage) {
 			messageLabel.setBackground(errorMsgAreaBackground);
 			messageLabel.setImage(errorMsgImage);
 			titleImage.setImage(null);
-			titleArea.layout(true);
 		}
 	}
+	titleArea.layout(true);
 }
 /**
  * Sets whether a Help button is available for this dialog.
@@ -729,14 +740,56 @@ public void setHelpAvailable(boolean b) {
 /**
  * Set the message text. If the message line currently displays an error,
  * the message is stored and will be shown after a call to clearErrorMessage
+ * <p>
+ * Shortcut for <code>setMessage(newMessage, NONE)</code>
+ * </p> 
+ * 
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
  */
 public void setMessage(String newMessage) {
-	message = newMessage;
-	if (message == null)
-		message = "";//$NON-NLS-1$
-	if (messageLabel.getImage() == null) 
-		// we are not showing an error
-		messageLabel.setText(message);
+	setMessage(newMessage, IMessageProvider.NONE);
+}
+/**
+ * Sets the message for this dialog with an indication of what type
+ * of message it is.
+ * <p>
+ * The valid message types are one of <code>NONE</code>, 
+ * <code>INFORMATION</code>, <code>WARNING</code>, or <code>ERROR</code>.
+ * </p>
+ * <p>
+ * Note that for backward compatibility, a message of type <code>ERROR</code> 
+ * is different than an error message (set using <code>setErrorMessage</code>). 
+ * An error message overrides the current message until the error message is 
+ * cleared. This method replaces the current message and does not affect the 
+ * error message.
+ * </p>
+ *
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
+ * @param newType the message type
+ * @since 2.0
+ */
+public void setMessage(String newMessage, int newType) {
+	Image newImage = null;
+	
+	if (newMessage != null) {
+		switch (newType) {
+			case IMessageProvider.NONE :
+				break;
+			case IMessageProvider.INFORMATION :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_INFO);
+				break;
+			case IMessageProvider.WARNING :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING);
+				break;
+			case IMessageProvider.ERROR :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_ERROR);
+				break;
+		}
+	}
+	
+	showMessage(newMessage, newImage);
 }
 /**
  * Sets the minimum page size.
@@ -780,6 +833,26 @@ public void setPreferenceStore(IPreferenceStore store) {
 private void setShellSize(int width, int height) {
 	Rectangle bounds = getShell().getDisplay().getBounds();
 	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+}
+/**
+ * Show the new message
+ */
+private void showMessage(String newMessage, Image newImage) {
+	// Any change?
+	if (message.equals(newMessage) && messageImage == newImage)
+		return;
+
+	message = newMessage;
+	if (message == null)
+		message = "";//$NON-NLS-1$
+	messageImage = newImage;
+
+	if (!showingError) {
+		// we are not showing an error
+		messageLabel.setText(message);
+		messageLabel.setImage(messageImage);
+		messageLabel.setToolTipText(message);
+	}
 }
 /**
  * Shows the preference page corresponding to the given preference node.
@@ -901,6 +974,10 @@ public void updateButtons() {
  */
 public void updateMessage() {
 	String pageMessage = currentPage.getMessage();
+	int pageMessageType = IMessageProvider.NONE;
+	if (pageMessage != null && currentPage instanceof IMessageProvider)
+		pageMessageType = ((IMessageProvider)currentPage).getMessageType();
+		
 	String pageErrorMessage = currentPage.getErrorMessage();
 
 	// Adjust the font
@@ -913,7 +990,7 @@ public void updateMessage() {
 	if (pageMessage == null) {
 		setMessage(currentPage.getTitle());
 	} else {
-		setMessage(pageMessage);
+		setMessage(pageMessage, pageMessageType);
 	}
 	setErrorMessage(pageErrorMessage);
 }

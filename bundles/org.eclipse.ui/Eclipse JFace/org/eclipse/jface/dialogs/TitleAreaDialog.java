@@ -19,21 +19,23 @@ import org.eclipse.swt.graphics.Point;
  */
 public class TitleAreaDialog extends Dialog {
 	/**
-	 * Image registry key for info message image (value <code>"dialog_title_info_image"</code>).
+	 * Image registry key for info message image.
 	 * @since 2.0
+	 * @deprecated
 	 */
-	public static final String DLG_IMG_TITLE_INFO = "dialog_title_info_image";//$NON-NLS-1$
+	public static final String DLG_IMG_TITLE_INFO = DLG_IMG_MESSAGE_INFO;//$NON-NLS-1$
 
 	/**
-	 * Image registry key for warning message image (value <code>"dialog_title_warning_image"</code>).
+	 * Image registry key for warning message image.
 	 * @since 2.0
+	 * @deprecated
 	 */
-	public static final String DLG_IMG_TITLE_WARNING = "dialog_title_warning_image";//$NON-NLS-1$
+	public static final String DLG_IMG_TITLE_WARNING = DLG_IMG_MESSAGE_WARNING;//$NON-NLS-1$
 
 	/**
-	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
+	 * Image registry key for error message image.
 	 */
-	public static final String DLG_IMG_TITLE_ERROR = "dialog_title_error_image";//$NON-NLS-1$
+	public static final String DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;//$NON-NLS-1$
 
 	/**
 	 * Image registry key for banner image (value <code>"dialog_title_banner_image"</code>).
@@ -43,12 +45,14 @@ public class TitleAreaDialog extends Dialog {
 	/**
 	 * Message type constant used to display an info icon with the message.
 	 * @since 2.0
+	 * @deprecated
 	 */
 	public final static String INFO_MESSAGE = "INFO_MESSAGE"; //$NON-NLS-1$
 	
 	/**
 	 * Message type constant used to display a warning icon with the message.
 	 * @since 2.0
+	 * @deprecated
 	 */
 	public final static String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
 
@@ -75,9 +79,6 @@ public class TitleAreaDialog extends Dialog {
 	
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_TITLE_INFO, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_info.gif"));//$NON-NLS-1$
-		reg.put(DLG_IMG_TITLE_WARNING, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_warning.gif"));//$NON-NLS-1$
-		reg.put(DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_error.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
 	}
 
@@ -91,6 +92,7 @@ public class TitleAreaDialog extends Dialog {
 	private String errorMessage;
 	private Composite messageArea;
 	private Label messageLabel;
+
 	private Label messageImageLabel;
 	private Image messageImage;
 	private Color normalMsgAreaBackground;
@@ -343,6 +345,7 @@ protected Label getTitleImageLabel() {
  * @return a two element array, the first element is the message without any 
  * prefix or <code>null</code> and the second element in an <code>Image</code>
  * or <code>null</code>
+ * @ depricated
  */
 private Object[] parseMessage(String unparsedMessage) {
 	Image newImage = null;
@@ -421,8 +424,7 @@ public void setErrorMessage(String newErrorMessage) {
  * the message is saved and will be redisplayed when the error message is set
  * to <code>null</code>.
  * <p>
- * The message may be prefixed with either <code>INFO_MESSAGE</code> or
- * <code>WARNING_MESSAGE</code> to display an icon along with the message
+ * Shortcut for <code>setMessage(newMessage, NONE)</code>
  * </p> 
  * 
  * @param newMessage the message, or <code>null</code> to clear
@@ -430,7 +432,10 @@ public void setErrorMessage(String newErrorMessage) {
  */
 public void setMessage(String newMessage) {
 	Object[] array = parseMessage(newMessage);
-	showMessage((String)array[0], (Image)array[1]);
+	if (array[1] == null)
+		setMessage(newMessage, IMessageProvider.NONE);
+	else	
+		showMessage((String)array[0], (Image)array[1]);
 }
 /**
  * Set the message text. If the message line currently displays an error,
@@ -447,17 +452,67 @@ public void setMessage(String newMessage) {
  * @param messageType the type of message, one of INFO_MESSAGE or 
  * 	WARNING_MESSAGE or <code>null</code>. 
  * @since 2.0
+ * @deprecated
  * 
  */
 public void setMessage(String newMessage, String messageType) {
 	Image newImage = null;
 	if (messageType != null) {
 		if (messageType.equals(INFO_MESSAGE)) 
-			newImage = JFaceResources.getImage(DLG_IMG_TITLE_INFO);
+			newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_INFO);
 		else if (messageType.equals(WARNING_MESSAGE)) 
-			newImage = JFaceResources.getImage(DLG_IMG_TITLE_WARNING);
+			newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING);
 	}
 
+	showMessage(newMessage, newImage);
+}
+/**
+ * Sets the message for this dialog with an indication of what type
+ * of message it is.
+ * <p>
+ * The valid message types are one of <code>NONE</code>, 
+ * <code>INFORMATION</code>, <code>WARNING</code>, or <code>ERROR</code>.
+ * </p>
+ * <p>
+ * Note that for backward compatibility, a message of type <code>ERROR</code> 
+ * is different than an error message (set using <code>setErrorMessage</code>). 
+ * An error message overrides the current message until the error message is 
+ * cleared. This method replaces the current message and does not affect the 
+ * error message.
+ * </p>
+ *
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
+ * @param newType the message type
+ * @since 2.0
+ */
+public void setMessage(String newMessage, int newType) {
+	// The following is a temp workaround for depricated API
+	Object[] array = parseMessage(newMessage);
+	if (array[1] != null) {
+		showMessage((String)array[0], (Image)array[1]);
+		return;
+	}
+	// end workaround
+	
+	Image newImage = null;
+	
+	if (newMessage != null) {
+		switch (newType) {
+			case IMessageProvider.NONE :
+				break;
+			case IMessageProvider.INFORMATION :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_INFO);
+				break;
+			case IMessageProvider.WARNING :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING);
+				break;
+			case IMessageProvider.ERROR :
+				newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_ERROR);
+				break;
+		}
+	}
+	
 	showMessage(newMessage, newImage);
 }
 /**

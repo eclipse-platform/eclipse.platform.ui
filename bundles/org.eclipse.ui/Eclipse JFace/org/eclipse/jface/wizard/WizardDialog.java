@@ -71,6 +71,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 	// The current page message and description
 	private String pageMessage;
+	private int pageMessageType = IMessageProvider.NONE;
 	private String pageDescription;
 	
 	// The progress monitor
@@ -996,10 +997,15 @@ public void updateMessage() {
 		return;
 
 	pageMessage = currentPage.getMessage();
+	if (pageMessage != null && currentPage instanceof IMessageProvider) 
+		pageMessageType = ((IMessageProvider)currentPage).getMessageType();
+	else
+		pageMessageType = IMessageProvider.NONE;
+		 
 	if (pageMessage == null)
 		setMessage(pageDescription);
 	else
-		setMessage(pageMessage);
+		setMessage(pageMessage, pageMessageType);
 	setErrorMessage(currentPage.getErrorMessage());
 }
 /**

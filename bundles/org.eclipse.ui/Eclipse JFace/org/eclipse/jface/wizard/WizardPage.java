@@ -264,6 +264,7 @@ public void setMessage(String newMessage) {
  * @param messageType the type of message, one of INFO_MESSAGE or 
  * 	WARNING_MESSAGE or <code>null</code>. 
  * @since 2.0
+ * @deprecated
  */
 public void setMessage(String newMessage, String messageType) {
 	if (newMessage == null || messageType == null) 

@@ -47,13 +47,36 @@ public abstract class Dialog extends Window {
 	 * Image registry key for warning image (value <code>"dialog_warning_image"</code>).
 	 */
 	public static final String DLG_IMG_WARNING = "dialog_warning_image";//$NON-NLS-1$
+	
+	
+	/**
+	 * Image registry key for info message image (value <code>"dialog_messsage_info_image"</code>).
+	 * @since 2.0
+	 */
+	public static final String DLG_IMG_MESSAGE_INFO = "dialog_messasge_info_image";//$NON-NLS-1$
+
+	/**
+	 * Image registry key for info message image (value <code>"dialog_messasge_warning_image"</code>).
+	 * @since 2.0
+	 */
+	public static final String DLG_IMG_MESSAGE_WARNING = "dialog_messasge_warning_image";//$NON-NLS-1$
+
+	/**
+	 * Image registry key for info message image (value <code>"dialog_message_error_image"</code>).
+	 * @since 2.0
+	 */
+	public static final String DLG_IMG_MESSAGE_ERROR = "dialog_message_error_image";//$NON-NLS-1$
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/error.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_INFO, ImageDescriptor.createFromFile(Dialog.class, "images/inform.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_QUESTION, ImageDescriptor.createFromFile(Dialog.class, "images/question.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_WARNING, ImageDescriptor.createFromFile(Dialog.class, "images/warning.gif"));//$NON-NLS-1$
+		reg.put(DLG_IMG_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/error.gif"));//$NON-NLS-1$
+		
+		reg.put(DLG_IMG_MESSAGE_INFO, ImageDescriptor.createFromFile(Dialog.class, "images/message_info.gif"));//$NON-NLS-1$
+		reg.put(DLG_IMG_MESSAGE_WARNING, ImageDescriptor.createFromFile(Dialog.class, "images/message_warning.gif"));//$NON-NLS-1$
+		reg.put(DLG_IMG_MESSAGE_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/message_error.gif"));//$NON-NLS-1$
 	}
 
 	/**
