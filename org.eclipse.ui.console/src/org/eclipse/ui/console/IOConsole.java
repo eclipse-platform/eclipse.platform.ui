@@ -515,11 +515,14 @@ public class IOConsole extends AbstractConsole {
      */
     public IHyperlink getHyperlink(int offset) {
         try {
-            Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-            Position position = findPosition(offset, positions);
-            if (position instanceof IOConsoleHyperlinkPosition) {
-                return ((IOConsoleHyperlinkPosition) position).getHyperLink();
-            }
+        	IDocument document = getDocument();
+        	if (document != null) {
+	            Position[] positions = document.getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+	            Position position = findPosition(offset, positions);
+	            if (position instanceof IOConsoleHyperlinkPosition) {
+	                return ((IOConsoleHyperlinkPosition) position).getHyperLink();
+	            }
+        	}
         } catch (BadPositionCategoryException e) {
         }        
         return null;
