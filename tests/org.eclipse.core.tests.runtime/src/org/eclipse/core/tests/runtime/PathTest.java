@@ -715,7 +715,7 @@ public class PathTest extends RuntimeTest {
 		//Case 1, absolute path with no trailing separator
 		IPath anyPath = new Path("/first/second/third");
 
-		assertEquals("1.0", Path.EMPTY, anyPath.uptoSegment(0));
+		assertEquals("1.0", Path.ROOT, anyPath.uptoSegment(0));
 		assertEquals("1.1", new Path("/first"), anyPath.uptoSegment(1));
 		assertEquals("1.2", new Path("/first/second"), anyPath.uptoSegment(2));
 		assertEquals("1.3", new Path("/first/second/third"), anyPath.uptoSegment(3));
@@ -724,17 +724,37 @@ public class PathTest extends RuntimeTest {
 		//Case 2, absolute path with trailing separator
 		anyPath = new Path("/first/second/third/");
 
-		assertEquals("2.0", Path.EMPTY, anyPath.uptoSegment(0));
+		assertEquals("2.0", Path.ROOT, anyPath.uptoSegment(0));
 		assertEquals("2.1", new Path("/first/"), anyPath.uptoSegment(1));
 		assertEquals("2.2", new Path("/first/second/"), anyPath.uptoSegment(2));
 		assertEquals("2.3", new Path("/first/second/third/"), anyPath.uptoSegment(3));
 		assertEquals("2.4", new Path("/first/second/third/"), anyPath.uptoSegment(4));
 
+		//Case 3, relative path with no trailing separator
+		anyPath = new Path("first/second/third");
+
+		assertEquals("3.0", Path.EMPTY, anyPath.uptoSegment(0));
+		assertEquals("3.1", new Path("first"), anyPath.uptoSegment(1));
+		assertEquals("3.2", new Path("first/second"), anyPath.uptoSegment(2));
+		assertEquals("3.3", new Path("first/second/third"), anyPath.uptoSegment(3));
+		assertEquals("3.4", new Path("first/second/third"), anyPath.uptoSegment(4));
+
+		//Case 4, relative path with trailing separator
+		anyPath = new Path("first/second/third/");
+
+		assertEquals("4.0", Path.EMPTY, anyPath.uptoSegment(0));
+		assertEquals("4.1", new Path("first/"), anyPath.uptoSegment(1));
+		assertEquals("4.2", new Path("first/second/"), anyPath.uptoSegment(2));
+		assertEquals("4.3", new Path("first/second/third/"), anyPath.uptoSegment(3));
+		assertEquals("4.4", new Path("first/second/third/"), anyPath.uptoSegment(4));
+
 		// bug 58835 - upToSegment(0) needs to preserve device
 		anyPath = new Path("c:/first/second/third");
-		assertEquals("3.0", new Path("c:"), anyPath.uptoSegment(0));
-
+		assertEquals("5.0", new Path("c:/"), anyPath.uptoSegment(0));
 		anyPath = new Path("c:/first/second/third/");
-		assertEquals("3.1", new Path("c:"), anyPath.uptoSegment(0));
+		assertEquals("5.1", new Path("c:/"), anyPath.uptoSegment(0));
+		anyPath = new Path("c:first/second/third/");
+		assertEquals("5.2", new Path("c:"), anyPath.uptoSegment(0));
+		
 	}
 }

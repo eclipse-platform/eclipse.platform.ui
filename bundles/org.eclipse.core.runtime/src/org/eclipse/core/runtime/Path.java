@@ -58,6 +58,7 @@ public class Path implements IPath, Cloneable {
 
 	/** Constant empty string value. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String[] EMPTY_STRING_ARRAY = new String[] {};
 
 	/** Constant value containing the empty path with no device. */
 	public static final Path EMPTY = new Path(EMPTY_STRING);
@@ -883,7 +884,7 @@ public class Path implements IPath, Cloneable {
 	 */
 	public IPath uptoSegment(int count) {
 		if (count == 0)
-			return device == null ? Path.EMPTY : new Path(device, EMPTY_STRING);
+			return new Path(device, EMPTY_STRING_ARRAY, separators & HAS_LEADING);
 		if (count >= segments.length)
 			return this;
 		Assert.isTrue(count > 0, "Invalid parameter to Path.uptoSegment"); //$NON-NLS-1$
