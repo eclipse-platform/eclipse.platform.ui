@@ -175,7 +175,13 @@ public class RemoteFolderTreeBuilder {
 				Policy.checkCanceled(monitor);
 				fetchDelta(session, Session.CURRENT_LOCAL_FOLDER, Policy.subMonitorFor(monitor, 50));
 				if (projectDoesNotExist) {
-					return null;
+					// We cannot handle the case where a project (i.e. the top-most CVS folder)
+					// has been deleted directly on the sever (i.e. deleted using rm -rf)
+					if (root.isCVSFolder() && ! root.isManaged()) {
+						throw new CVSException(Policy.bind("RemoteFolderTreeBuild.folderDeletedFromServer", root.getFolderSyncInfo().getRepository()));
+					} else {
+						return null;
+					}
 				}
 			} finally {
 				session.close();
