@@ -14,12 +14,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.progress.UIJob;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.progress.ResourceCompletionListener;
+import org.eclipse.ui.internal.progress.WorkbenchUIJob;
 
 /**
  * Standard workbench wizard that create a new file resource in the workspace.
@@ -43,71 +48,108 @@ import org.eclipse.ui.internal.dialogs.DialogUtil;
  */
 public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
 	private WizardNewFileCreationPage mainPage;
-/**
- * Creates a wizard for creating a new file resource in the workspace.
- */
-public BasicNewFileResourceWizard() {
-	super();
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public void addPages() {
-	super.addPages();
-	mainPage = new WizardNewFileCreationPage("newFilePage1",  getSelection());//$NON-NLS-1$
-	mainPage.setTitle(ResourceMessages.getString("FileResource.pageTitle")); //$NON-NLS-1$
-	mainPage.setDescription(ResourceMessages.getString("FileResource.description")); //$NON-NLS-1$
-	addPage(mainPage);
-}
-/* (non-Javadoc)
- * Method declared on IWorkbenchWizard.
- */
-public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	super.init(workbench, currentSelection);
-	setWindowTitle(ResourceMessages.getString("FileResource.shellTitle")); //$NON-NLS-1$
-	setNeedsProgressMonitor(true);
-}
-/* (non-Javadoc)
- * Method declared on BasicNewResourceWizard.
- */
-protected void initializeDefaultPageImageDescriptor() {
-	String iconPath = "icons/full/";//$NON-NLS-1$
-	try {
-		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + "wizban/newfile_wiz.gif");//$NON-NLS-1$
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		setDefaultPageImageDescriptor(desc);
+	/**
+	 * Creates a wizard for creating a new file resource in the workspace.
+	 */
+	public BasicNewFileResourceWizard() {
+		super();
 	}
-	catch (MalformedURLException e) {
-		// Should not happen.  Ignore.
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public void addPages() {
+		super.addPages();
+		mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection()); //$NON-NLS-1$
+		mainPage.setTitle(ResourceMessages.getString("FileResource.pageTitle")); //$NON-NLS-1$
+		mainPage.setDescription(ResourceMessages.getString("FileResource.description")); //$NON-NLS-1$
+		addPage(mainPage);
 	}
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public boolean performFinish() {
-	IFile file = mainPage.createNewFile();
-	if (file == null)
-		return false;
-
-	selectAndReveal(file);
-
-	// Open editor on new file.
-	IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
-	try {
-		if (dw != null) {
-			IWorkbenchPage page = dw.getActivePage();
-			if (page != null)
-				page.openEditor(file);
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchWizard.
+	 */
+	public void init(
+		IWorkbench workbench,
+		IStructuredSelection currentSelection) {
+		super.init(workbench, currentSelection);
+		setWindowTitle(ResourceMessages.getString("FileResource.shellTitle")); //$NON-NLS-1$
+		setNeedsProgressMonitor(true);
+	}
+	/* (non-Javadoc)
+	 * Method declared on BasicNewResourceWizard.
+	 */
+	protected void initializeDefaultPageImageDescriptor() {
+		String iconPath = "icons/full/"; //$NON-NLS-1$
+		try {
+			URL installURL =
+				Platform
+					.getPlugin(PlatformUI.PLUGIN_ID)
+					.getDescriptor()
+					.getInstallURL();
+			URL url = new URL(installURL, iconPath + "wizban/newfile_wiz.gif"); //$NON-NLS-1$
+			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+			setDefaultPageImageDescriptor(desc);
+		} catch (MalformedURLException e) {
+			// Should not happen.  Ignore.
 		}
-	} catch (PartInitException e) {
-		DialogUtil.openError(
-			dw.getShell(),
-			ResourceMessages.getString("FileResource.errorMessage"), //$NON-NLS-1$
-			e.getMessage(),
-			e);
 	}
-			
-	return true;
-}
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public boolean performFinish() {
+
+		ResourceCompletionListener listener =
+			new ResourceCompletionListener() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.progress.IJobCompletionListener#aborted(org.eclipse.core.runtime.IStatus)
+			 */
+			public void aborted(IStatus status) {
+					// Do nothing if aborted.
+
+	}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.progress.IJobCompletionListener#finished(org.eclipse.core.runtime.IStatus)
+			 */
+			public void finished(IStatus status) {
+
+				if (!status.isOK())
+					return;
+
+				WorkbenchUIJob job = new WorkbenchUIJob() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						IFile file = (IFile) getResource();
+						if (file == null)
+							return Status.CANCEL_STATUS;
+						selectAndReveal(file);
+
+						// Open editor on new file.
+						IWorkbenchWindow dw =
+							getWorkbench().getActiveWorkbenchWindow();
+						
+						try {
+							if (dw != null) {
+								IWorkbenchPage page = dw.getActivePage();
+								if (page != null)
+									page.openEditor(file);
+							}
+						} catch (PartInitException e) {
+							return UIJob.errorStatus(e);
+						}
+						return Status.OK_STATUS;
+					}
+
+				};
+				job.schedule();
+
+			}
+
+		};
+		mainPage.createNewFileDeferred(listener);
+		return true;
+	}
+
 }

@@ -15,16 +15,39 @@ import org.eclipse.swt.widgets.Display;
 
 public abstract class UIJob extends NotifyingJob {
 	private Display display;
+
+	/**
+	 * Convenience method to return a status for an exception.
+	 * @param exception
+	 * @return
+	 */
+	public static IStatus errorStatus(Throwable exception) {
+		return new Status(
+			IStatus.ERROR,
+			"org.eclipse.jface",
+			IStatus.ERROR,
+			exception.getMessage(),
+			exception);
+
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final IStatus run(final IProgressMonitor monitor) {
 
-		if (display == null) {
+		Display asyncDisplay = getDisplay();
+		
+		if (asyncDisplay == null) {
+			
 			System.out.println("No display");
-			return new Status(IStatus.ERROR,"org.eclipse.jface",IStatus.ERROR,"Display must be set",null);
+			return new Status(
+				IStatus.ERROR,
+				"org.eclipse.jface",
+				IStatus.ERROR,
+				"Display must be set",
+				null);
 		}
-		display.asyncExec(new Runnable() {
+		asyncDisplay.asyncExec(new Runnable() {
 			public void run() {
 				IStatus result = null;
 				try {
@@ -47,9 +70,17 @@ public abstract class UIJob extends NotifyingJob {
 	/**
 	 * Run the job in the UI Thread.
 	 */
-	public abstract IStatus runInUIThread(IProgressMonitor montior);
+	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
 	public void setDisplay(Display runDisplay) {
 		display = runDisplay;
 	}
+	/**
+	 * Get the display for use by the receiver.
+	 * @return
+	 */
+	public Display getDisplay() {
+		return display;
+	}
+
 }

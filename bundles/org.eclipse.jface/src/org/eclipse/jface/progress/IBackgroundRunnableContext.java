@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.progress;
 
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * IBackgroundRunnableContext is the class used to run runnables
@@ -21,7 +21,7 @@ public interface IBackgroundRunnableContext {
 	/**
 	* Runs the given <code>IBackgroundRunnableContext</code> in this context.
 	*
-	* @param runnable the runnable to run
+	* @param job the job to run
 	* @param completionListener. The listener to be updated when done.
 	*
 	* @exception InvocationTargetException wraps any exception or error which occurs 
@@ -31,7 +31,7 @@ public interface IBackgroundRunnableContext {
 	*  if cancelable is <code>false</code>.
 	*/
 	public void run(
-		IRunnableWithProgress runnable,
+		Job job,
 		IJobCompletionListener completionListener);
 
 }

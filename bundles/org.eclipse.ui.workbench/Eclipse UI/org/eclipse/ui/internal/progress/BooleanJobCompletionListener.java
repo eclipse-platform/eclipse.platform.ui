@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
@@ -12,7 +22,7 @@ import org.eclipse.jface.progress.*;
 public class BooleanJobCompletionListener implements IJobCompletionListener {
 
 	private boolean complete = false;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.IJobCompletionListener#finished(org.eclipse.core.runtime.IStatus)
 	 */
@@ -28,8 +38,8 @@ public class BooleanJobCompletionListener implements IJobCompletionListener {
 		complete = false;
 
 	}
-	
-	public boolean completed(){
+
+	public boolean completed() {
 		return complete;
 	}
 

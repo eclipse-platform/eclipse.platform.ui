@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class WizardDialog
 	extends TitleAreaDialog
-	implements IWizardContainer, IBackgroundRunnableContext {
+	implements IWizardContainer {
 
 	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
@@ -1172,39 +1172,6 @@ public class WizardDialog
 			title = ""; //$NON-NLS-1$
 
 		getShell().setText(title);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.progress.IBackgroundRunnableContext#run(org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.jface.progress.IJobCompletionListener)
-	 */
-	public void run(
-		final IRunnableWithProgress runnable,
-		IJobCompletionListener completionListener) {
-		UIJob job = new UIJob() {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				try {
-					runnable.run(monitor);
-					return Status.OK_STATUS;
-				} catch (InvocationTargetException e) {
-					Throwable targetExc = e.getTargetException();
-					return new Status(
-						Status.WARNING,
-						"org.eclipse.jface",
-						0,
-						"Internal Error:",
-						targetExc);
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
-
-			}
-		};
-
-		job.addCompletionListener(completionListener);
-		job.setDisplay(getShell().getDisplay());
-		job.schedule();
-
 	}
 
 }
