@@ -309,6 +309,7 @@ class NewWizardNewPage
 	    toolBar.setLayoutData(data);
 	    
         helpButton.addSelectionListener(new SelectionAdapter() {
+        	
         	/* (non-Javadoc)
         	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
         	 */
@@ -318,7 +319,8 @@ class NewWizardNewPage
         });	    
 		
 		descriptionText = new Text(descParent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
-		descriptionText.setFont(parent.getFont());				
+		descriptionText.setFont(parent.getFont());	
+		descriptionText.setBackground(parent.getBackground());
 		data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessVerticalSpace = true;
 		data.horizontalSpan = 2;
@@ -327,13 +329,15 @@ class NewWizardNewPage
         imageSeperator = new Label(descParent, SWT.SEPARATOR | SWT.HORIZONTAL);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
+        data.widthHint = 0;
+        data.heightHint = 0;
         imageSeperator.setLayoutData(data);
                 
         descImageCanvas = new Canvas(descParent, SWT.NONE);
         data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
         data.horizontalSpan = 2;        
-        data.widthHint = DESCRIPTION_IMAGE_WIDTH;
-        data.heightHint = DESCRIPTION_IMAGE_HEIGHT;
+        data.widthHint = 0;
+        data.heightHint = 0;
 	    descImageCanvas.setLayoutData(data);    
 	    
 	    // hook a listener to get rid of cached images.
@@ -377,8 +381,7 @@ class NewWizardNewPage
 		        			imageTable.put(descriptor, image);			        		
 			        	}
 			        }	        
-			        if (image != null) {			            
-			            imageSeperator.setVisible(true);			            
+			        if (image != null) {			            			            
 				        GC gc = new GC(descImageCanvas);
 				        Rectangle bounds = image.getBounds();
                         int xOffset = (size.x - bounds.width) / 2;
@@ -388,7 +391,6 @@ class NewWizardNewPage
 				        return;
 				    }        
 				}
-				imageSeperator.setVisible(false);
 		        GC gc = new GC(descImageCanvas);
 		        gc.fillRectangle(0,0, size.x, size.y);
 		        gc.dispose();
@@ -417,7 +419,8 @@ class NewWizardNewPage
 				width *= scale;
 				height *= scale;
 				return imageData.scaledTo(width, height);
-            }});        		
+            }
+    	});        		
 	}
 
 	/**
@@ -713,15 +716,6 @@ class NewWizardNewPage
 			
 		if (descriptionText != null && !descriptionText.isDisposed()) {
         	descriptionText.setText(string);        	        	
-//        	Point viewerSize = descriptionText.getSize();
-//            descriptionText.setSize(descriptionText.computeSize(viewerSize.x, viewerSize.y, true));
-//			descriptionText.setSize(descriptionText.getSize());
-//			if (descriptionText.getVerticalBar().getMaximum() == 0) {
-//				descriptionText.getVerticalBar().setVisible(false);
-//			}
-//			else {
-//				descriptionText.getVerticalBar().setVisible(true);
-//			}
         }       
         
         if (selectedObject != null) {
@@ -737,12 +731,47 @@ class NewWizardNewPage
 		else {
 			helpButton.getParent().setVisible(false);
 		}
+
+		if (hasImage(selectedObject)) {
+		    GridData data = (GridData) descImageCanvas.getLayoutData(); 
+	        data.widthHint = DESCRIPTION_IMAGE_WIDTH;
+	        data.heightHint = DESCRIPTION_IMAGE_HEIGHT;
+		    data = (GridData) imageSeperator.getLayoutData();
+		    data.widthHint = SWT.DEFAULT;
+		    data.heightHint = SWT.DEFAULT;		    		    
+		}
+		else {
+		    GridData data = (GridData) descImageCanvas.getLayoutData(); 
+		    data.widthHint = 0;
+		    data.heightHint = 0;
+		    data = (GridData) imageSeperator.getLayoutData();
+		    data.widthHint = 0;
+		    data.heightHint = 0;		    
+		}
 		
+		descImageCanvas.getParent().layout();
+
 		descImageCanvas.redraw();
 		
 	}
 
 	/**
+	 * Tests whether the given wizard has an associated image.
+	 * 
+     * @param selectedObject the wizard to test
+     * @return whether the given wizard has an associated image
+     */
+    private boolean hasImage(WorkbenchWizardElement selectedObject) {
+        if (selectedObject == null)
+            return false;
+        
+        if (selectedObject.getDescriptionImage() != null)
+            return true;
+        
+        return false;
+    }
+
+    /**
 	 * @param selectedObject
 	 */
 	private void updateWizardSelection(WorkbenchWizardElement selectedObject) {
