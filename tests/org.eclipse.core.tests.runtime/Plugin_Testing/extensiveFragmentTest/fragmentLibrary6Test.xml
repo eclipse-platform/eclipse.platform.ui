@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Fragment Library 6 Test"
+  id="fragmentLibrary6Test"
+  version="1.0"
+  plugin-id="library6Test"
+  plugin-version="1.2">
+
+  <runtime>
+     <library name="lib2.jar"/>
+  </runtime>
+
+</fragment>

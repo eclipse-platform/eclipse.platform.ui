@@ -29,35 +29,13 @@ public ExtensiveFragmentTest(String name) {
 }
 
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	// test extension points
-	suite.addTest(new ExtensiveFragmentTest("extensionPoint1Test"));
-	suite.addTest(new ExtensiveFragmentTest("extensionPoint2Test"));
-	suite.addTest(new ExtensiveFragmentTest("extensionPoint3Test"));
-	suite.addTest(new ExtensiveFragmentTest("extensionPoint4Test"));
-	suite.addTest(new ExtensiveFragmentTest("extensionPoint5Test"));
-	// test extensions
-	suite.addTest(new ExtensiveFragmentTest("extension1Test"));
-	suite.addTest(new ExtensiveFragmentTest("extension2Test"));
-	suite.addTest(new ExtensiveFragmentTest("extension3Test"));
-	suite.addTest(new ExtensiveFragmentTest("extension4Test"));
-	suite.addTest(new ExtensiveFragmentTest("extension5Test"));
-	// test libraries
-	suite.addTest(new ExtensiveFragmentTest("library1Test"));
-	suite.addTest(new ExtensiveFragmentTest("library2Test"));
-	suite.addTest(new ExtensiveFragmentTest("library3Test"));
-	suite.addTest(new ExtensiveFragmentTest("library4Test"));
-	suite.addTest(new ExtensiveFragmentTest("library5Test"));
-	// test prerequisites
-	suite.addTest(new ExtensiveFragmentTest("requires1Test"));
-	suite.addTest(new ExtensiveFragmentTest("requires2Test"));
-	suite.addTest(new ExtensiveFragmentTest("requires3Test"));
-	suite.addTest(new ExtensiveFragmentTest("requires4Test"));
-	suite.addTest(new ExtensiveFragmentTest("requires5Test"));
-	return suite;
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new ExtensiveFragmentTest("testDuplicateLibrary2"));
+//	return suite;
+	return new TestSuite(ExtensiveFragmentTest.class);
 }
 
-public void extensionPoint1Test() {
+public void testExtensionPoint1() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -92,7 +70,7 @@ public void extensionPoint1Test() {
 	assertNotNull("1.7 Got xpt3 extension point", ((IPluginDescriptor)plugin).getExtensionPoint("xpt3"));
 }
 
-public void extensionPoint2Test() {
+public void testExtensionPoint2() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -125,7 +103,7 @@ public void extensionPoint2Test() {
 	assertNotNull("2.5 Got xpt3 extension point", ((IPluginDescriptor)plugin).getExtensionPoint("xpt3"));
 }
 
-public void extensionPoint3Test() {
+public void testExtensionPoint3() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -159,7 +137,7 @@ public void extensionPoint3Test() {
 	assertNotNull("3.6 Got xpt2 extension point", ((IPluginDescriptor)plugin).getExtensionPoint("xpt2"));
 }
 
-public void extensionPoint4Test() {
+public void testExtensionPoint4() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -193,7 +171,7 @@ public void extensionPoint4Test() {
 	assertNotNull("4.6 Got xpt3 extension point", ((IPluginDescriptor)plugin).getExtensionPoint("xpt3"));
 }
 
-public void extensionPoint5Test() {
+public void testExtensionPoint5() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -233,7 +211,7 @@ public void extensionPoint5Test() {
 	assertNotNull("5.12 Got xpt8 extension point", ((IPluginDescriptor)plugin).getExtensionPoint("xpt8"));
 }
 
-public void extension1Test() {
+public void testExtension1() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -268,7 +246,7 @@ public void extension1Test() {
 	assertNotNull("6.7 Got xpt3 extension", ((IPluginDescriptor)plugin).getExtension("xpt3"));
 }
 
-public void extension2Test() {
+public void testExtension2() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -301,7 +279,7 @@ public void extension2Test() {
 	assertNotNull("7.5 Got xpt3 extension", ((IPluginDescriptor)plugin).getExtension("xpt3"));
 }
 
-public void extension3Test() {
+public void testExtension3() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -335,7 +313,7 @@ public void extension3Test() {
 	assertNotNull("8.6 Got xpt2 extension", ((IPluginDescriptor)plugin).getExtension("xpt2"));
 }
 
-public void extension4Test() {
+public void testExtension4() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -369,7 +347,7 @@ public void extension4Test() {
 	assertNotNull("9.6 Got xpt3 extension", ((IPluginDescriptor)plugin).getExtension("xpt3"));
 }
 
-public void extension5Test() {
+public void testExtension5() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -409,7 +387,7 @@ public void extension5Test() {
 	assertNotNull("10.12 Got xpt8 extension", ((IPluginDescriptor)plugin).getExtension("xpt8"));
 }
 
-public void library1Test() {
+public void testLibrary1() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -456,7 +434,7 @@ public void library1Test() {
 	assertTrue("11.7 Got lib3 library", lib3Idx != -1);
 }
 
-public void library2Test() {
+public void testLibrary2() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -489,7 +467,7 @@ public void library2Test() {
 	assertTrue("12.5 Got lib3 library", libraries[0].getName().equals("lib3.jar"));
 }
 
-public void library3Test() {
+public void testLibrary3() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -532,7 +510,7 @@ public void library3Test() {
 	assertTrue("13.6 Got lib2 library", lib2Idx != -1);
 }
 
-public void library4Test() {
+public void testLibrary4() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -575,7 +553,7 @@ public void library4Test() {
 	assertTrue("14.6 Got lib3 library", lib3Idx != -1);
 }
 
-public void library5Test() {
+public void testLibrary5() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -642,7 +620,7 @@ public void library5Test() {
 	assertTrue("15.12 Got lib8 library", lib8Idx != -1);
 }
 
-public void requires1Test() {
+public void testRequires1() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -692,7 +670,7 @@ public void requires1Test() {
 	assertTrue("16.7 Got plugin3 prerequisite", req3Idx != -1);
 }
 
-public void requires2Test() {
+public void testRequires2() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -726,7 +704,7 @@ public void requires2Test() {
 	assertTrue("17.5 Got plugin3 prerequisite", requires[0].getPlugin().equals("plugin3"));
 }
 
-public void requires3Test() {
+public void testRequires3() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -771,7 +749,7 @@ public void requires3Test() {
 	assertTrue("18.6 Got plugin2 prerequisite", req2Idx != -1);
 }
 
-public void requires4Test() {
+public void testRequires4() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -816,7 +794,7 @@ public void requires4Test() {
 	assertTrue("19.6 Got plugin3 prerequisite", req3Idx != -1);
 }
 
-public void requires5Test() {
+public void testRequires5() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -889,6 +867,66 @@ public void requires5Test() {
 	assertTrue("20.10 Got plugin6 prerequisite", req6Idx != -1);
 	assertTrue("20.11 Got plugin7 prerequisite", req7Idx != -1);
 	assertTrue("20.12 Got plugin8 prerequisite", req8Idx != -1);
+}
+
+public void testDuplicateLibrary() {
+	String errorMessage = "Fragment \"fragmentLibrary6Test\" for plug-in \"library6Test\", has added duplicate library entry \"lib2.jar\" .";
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
+	InternalFactory factory = new InternalFactory(problems);
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	String[] pluginPaths = new String[2];
+	pluginPaths[0] = tempPlugin.getLocation().concat("Plugin_Testing/extensiveFragmentTest/library6Test.xml");
+	pluginPaths[1] = tempPlugin.getLocation().concat("Plugin_Testing/extensiveFragmentTest/fragmentLibrary6Test.xml");
+	URL pluginURLs[] = new URL[2];
+	for (int i = 0; i < pluginURLs.length; i++) {
+		URL pURL = null;
+		try {
+			pURL = new URL (pluginPaths[i]);
+		} catch (java.net.MalformedURLException e) {
+			assertTrue("Bad URL for " + pluginPaths[i], true);
+		}
+		pluginURLs[i] = pURL;
+	}
+	IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);
+	IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
+	assertTrue("21.0 Only one plugin", pluginDescriptors.length == 1);
+	PluginDescriptorModel plugin = (PluginDescriptorModel)pluginDescriptors[0];
+	assertTrue("21.1 Got the right plugin", plugin.getId().equals("library6Test"));
+	PluginFragmentModel[] fragmentList = ((PluginRegistryModel)registry).getFragments();
+	assertTrue("21.2 Only one fragment", fragmentList.length == 1);
+	PluginFragmentModel fragment = fragmentList[0];
+	assertTrue("21.3 Got the right fragment", fragment.getId().equals("fragmentLibrary6Test"));
+	assertTrue("21.4 Got the right errors", problems.toString().indexOf(errorMessage) != -1);
+}
+
+public void testDuplicateLibrary2() {
+	String errorMessage = "Fragment \"fragmentLibrary7Test\" for plug-in \"library7Test\", has added duplicate library entry \"anotherFolderName/\" .";
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "extensiveFragmentTest", null);
+	InternalFactory factory = new InternalFactory(problems);
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	String[] pluginPaths = new String[2];
+	pluginPaths[0] = tempPlugin.getLocation().concat("Plugin_Testing/extensiveFragmentTest/library7Test.xml");
+	pluginPaths[1] = tempPlugin.getLocation().concat("Plugin_Testing/extensiveFragmentTest/fragmentLibrary7Test.xml");
+	URL pluginURLs[] = new URL[2];
+	for (int i = 0; i < pluginURLs.length; i++) {
+		URL pURL = null;
+		try {
+			pURL = new URL (pluginPaths[i]);
+		} catch (java.net.MalformedURLException e) {
+			assertTrue("Bad URL for " + pluginPaths[i], true);
+		}
+		pluginURLs[i] = pURL;
+	}
+	IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);
+	IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
+	assertTrue("21.0 Only one plugin", pluginDescriptors.length == 1);
+	PluginDescriptorModel plugin = (PluginDescriptorModel)pluginDescriptors[0];
+	assertTrue("21.1 Got the right plugin", plugin.getId().equals("library7Test"));
+	PluginFragmentModel[] fragmentList = ((PluginRegistryModel)registry).getFragments();
+	assertTrue("21.2 Only one fragment", fragmentList.length == 1);
+	PluginFragmentModel fragment = fragmentList[0];
+	assertTrue("21.3 Got the right fragment", fragment.getId().equals("fragmentLibrary7Test"));
+	assertTrue("21.4 Got the right errors", problems.toString().indexOf(errorMessage) != -1);
 }
 
 }
