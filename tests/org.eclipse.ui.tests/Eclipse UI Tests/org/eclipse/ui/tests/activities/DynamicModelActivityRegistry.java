@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.activities.CategoryDefinition;
  * testing purposes.
  */
 public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
-	final String pluginId = "org.eclipse.ui.tests"; //$NON-NLS-1$
+	final String sourceId = "org.eclipse.ui.tests"; //$NON-NLS-1$
 	/**
 	 * The constructor for the plugin model registry.
 	 */
@@ -71,13 +71,13 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 						((ActivityDefinition) activityDefinitions.toArray()[0])
 								.getId(),
 						((ActivityDefinition) activityDefinitions.toArray()[1])
-								.getId(), pluginId)); //$NON-NLS-1$
+								.getId(), sourceId)); //$NON-NLS-1$
 		activityActivityBindingDefinitions
 				.add(new ActivityActivityBindingDefinition(
 						((ActivityDefinition) activityDefinitions.toArray()[2])
 								.getId(),
 						((ActivityDefinition) activityDefinitions.toArray()[3])
-								.getId(), pluginId)); //$NON-NLS-1$
+								.getId(), sourceId)); //$NON-NLS-1$
 	}
 	/**
 	 * Populate the activity pattern binding definitions.
@@ -89,7 +89,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 					.add(new ActivityPatternBindingDefinition(
 							((ActivityDefinition) activityDefinitions.toArray()[index])
 									.getId(), "org.eclipse.pattern" //$NON-NLS-1$
-									+ Integer.toString(index + 1), pluginId));
+									+ Integer.toString(index + 1), sourceId));
 		}
 	}
 	/**
@@ -103,19 +103,19 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 					.add(new CategoryActivityBindingDefinition(
 							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
 							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
-							pluginId));
+							sourceId));
 			counter++;
 			categoryActivityBindingDefinitions
 					.add(new CategoryActivityBindingDefinition(
 							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
 							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
-							pluginId));
+							sourceId));
 			counter++;
 			categoryActivityBindingDefinitions
 					.add(new CategoryActivityBindingDefinition(
 							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
 							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
-							pluginId));
+							sourceId));
 			counter++;
 		}
 	}
@@ -129,7 +129,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 			stringToAppend = Integer.toString(index);
 			activityDefinitions.add(new ActivityDefinition(
 					"org.eclipse.activity" + stringToAppend, "Activity " //$NON-NLS-1$ //$NON-NLS-2$
-							+ stringToAppend, pluginId, "description")); //$NON-NLS-1$
+							+ stringToAppend, sourceId, "description")); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -142,7 +142,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 			stringToAppend = Integer.toString(index);
 			categoryDefinitions.add(new CategoryDefinition(
 					"org.eclipse.category" + stringToAppend, "Category " //$NON-NLS-1$ //$NON-NLS-2$
-							+ stringToAppend, pluginId, "description")); //$NON-NLS-1$
+							+ stringToAppend, sourceId, "description")); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -155,7 +155,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 */
 	public void addActivity(String activityId, String activityName) {
 		activityDefinitions.add(new ActivityDefinition(activityId,
-				activityName, pluginId, "description")); //$NON-NLS-1$
+				activityName, sourceId, "description")); //$NON-NLS-1$
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -168,7 +168,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 */
 	public void removeActivity(String activityId, String activityName) {
 		activityDefinitions.remove(new ActivityDefinition(activityId,
-				activityName, pluginId, "description")); //$NON-NLS-1$
+				activityName, sourceId, "description")); //$NON-NLS-1$
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -181,7 +181,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 */
 	public void addCategory(String categoryId, String categoryName) {
 		categoryDefinitions.add(new CategoryDefinition(categoryId,
-				categoryName, pluginId, "description")); //$NON-NLS-1$
+				categoryName, sourceId, "description")); //$NON-NLS-1$
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -194,7 +194,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 */
 	public void removeCategory(String categoryId, String categoryName) {
 		categoryDefinitions.remove(new CategoryDefinition(categoryId,
-				categoryName, pluginId, "description")); //$NON-NLS-1$
+				categoryName, sourceId, "description")); //$NON-NLS-1$
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -208,7 +208,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	public void addActivityActivityBinding(String childId, String parentId) {
 		activityActivityBindingDefinitions
 				.add(new ActivityActivityBindingDefinition(childId, parentId,
-						pluginId));
+						sourceId));
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -222,7 +222,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	public void removeActivityActivityBinding(String childId, String parentId) {
 		activityActivityBindingDefinitions
 				.remove(new ActivityActivityBindingDefinition(childId,
-						parentId, pluginId));
+						parentId, sourceId));
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -236,7 +236,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	public void addCategoryActivityBinding(String activityId, String categoryId) {
 		categoryActivityBindingDefinitions
 				.add(new CategoryActivityBindingDefinition(activityId,
-						categoryId, pluginId));
+						categoryId, sourceId));
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -251,7 +251,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 			String categoryId) {
 		categoryActivityBindingDefinitions
 				.remove(new CategoryActivityBindingDefinition(activityId,
-						categoryId, pluginId));
+						categoryId, sourceId));
 		fireActivityRegistryChanged();
 	}
 	/**
@@ -271,7 +271,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 				categoryDefinitions.remove(currentCategory);
 				categoryDefinitions.add(new CategoryDefinition(categoryId,
 						currentCategory.getName(), currentCategory
-								.getPluginId(), categoryDescription));
+								.getSourceId(), categoryDescription));
 				fireActivityRegistryChanged();
 				return;
 			}
@@ -294,7 +294,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 				activityDefinitions.remove(currentActivity);
 				activityDefinitions.add(new ActivityDefinition(activityId,
 						currentActivity.getName(), currentActivity
-								.getPluginId(), activityDescription));
+								.getSourceId(), activityDescription));
 				fireActivityRegistryChanged();
 				return;
 			}
@@ -315,7 +315,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 			if (currentActivity.getId().equals(activityId)) {
 				activityDefinitions.remove(currentActivity);
 				activityDefinitions.add(new ActivityDefinition(activityId,
-						activityName, currentActivity.getPluginId(),
+						activityName, currentActivity.getSourceId(),
 						currentActivity.getDescription()));
 				fireActivityRegistryChanged();
 				return;
@@ -337,7 +337,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 			if (currentCategory.getId().equals(categoryId)) {
 				categoryDefinitions.remove(currentCategory);
 				categoryDefinitions.add(new CategoryDefinition(categoryId,
-						categoryName, currentCategory.getPluginId(),
+						categoryName, currentCategory.getSourceId(),
 						currentCategory.getDescription()));
 				fireActivityRegistryChanged();
 				return;
@@ -373,7 +373,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	public void addActivityPatternBinding(String activityId, String pattern) {
 		if (activityPatternBindingDefinitions
 				.add(new ActivityPatternBindingDefinition(activityId, pattern,
-						pluginId))) {
+						sourceId))) {
 			fireActivityRegistryChanged();
 			return;
 		}
