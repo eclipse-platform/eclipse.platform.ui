@@ -366,7 +366,12 @@ public final class InternalPlatform implements IPlatform {
 			} else {
 				status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
 			}
-			log(status); //$NON-NLS-1$
+			//we have to be safe, so don't try to log if the platform is not running 
+			//since it will fail - last resort is to print the stack trace on stderr
+			if (initialized)
+				log(status);
+			else
+				e.printStackTrace();
 		}
 		code.handleException(e);
 	}
