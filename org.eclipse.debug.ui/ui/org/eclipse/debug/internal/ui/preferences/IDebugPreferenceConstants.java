@@ -87,6 +87,11 @@ public interface IDebugPreferenceConstants {
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSize"; //$NON-NLS-1$
 	
 	/**
+	 * Serialized relative weights of the sashed elements of the launch configuration dialog.
+	 */
+	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSashWeights"; //$NON-NLS-1$
+	
+	/**
 	 * The maximum size of the launch history list
 	 */
 	public static int MAX_LAUNCH_HISTORY_SIZE= 15;

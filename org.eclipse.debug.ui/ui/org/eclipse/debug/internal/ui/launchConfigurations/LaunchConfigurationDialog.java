@@ -63,6 +63,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -117,6 +118,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The mode (run or debug) for this dialog.
 	 */
 	private String fMode;
+	
+	/**
+	 * The Composite used to insert an adjustable 'sash' between the tree and the tabs.
+	 */
+	private SashForm fSashForm;
+	
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {1, 3};
 	
 	/**
 	 * The launch configuration edit area.
@@ -418,7 +426,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getLaunchManager().addLaunchConfigurationListener(this);
 		initializeBounds();
 		doInitialTreeSelection();
+		//initializeSashForm();
 		return contents;
+	}
+
+	/**
+	 * Initialize the relative weights (widths) of the 2 sides of the sash.
+	 */
+	protected void initializeSashForm() {
+		int[] sashWeights = DEFAULT_SASH_WEIGHTS;
+		String sashWeightString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS);
+		if (sashWeightString.length() > 0) {
+			Point sashWeightPoint = parseCoordinates(sashWeightString);
+			if (sashWeightPoint != null) {
+				sashWeights[0] = sashWeightPoint.x;
+				sashWeights[1] = sashWeightPoint.y;
+			}
+		}
+		getSashForm().setWeights(sashWeights);
 	}
 	
 	/**
@@ -454,15 +479,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Write out this dialog's Shell size & location to the preference store.
+	 * Write out this dialog's Shell size, location & sash weights to the preference store.
 	 */
 	protected void persistShellGeometry() {
 		Point shellLocation = getShell().getLocation();
 		Point shellSize = getShell().getSize();
+		//int[] sashWeights = getSashForm().getWeights();
 		String locationString = serializeCoords(shellLocation);
 		String sizeString = serializeCoords(shellSize);
+		//String sashWeightString = serializeCoords(new Point(sashWeights[0], sashWeights[1]));
 		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION, locationString);
 		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE, sizeString);
+		//getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS, sashWeightString);
 	}
 	
 	/**
@@ -587,14 +615,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
 		setModeLabelState();
 
+		/*
+		setSashForm(new SashForm(topComp, SWT.NONE));
+		getSashForm().setOrientation(SWT.HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		getSashForm().setLayoutData(gd);
+		*/
+
 		// Build the launch configuration selection area
 		// and put it into the composite.
+		//Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
 		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(topComp);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
 	
 		// Build the launch configuration edit area
 		// and put it into the composite.
+		//Composite editAreaComp = createLaunchConfigurationEditArea(getSashForm());
 		Composite editAreaComp = createLaunchConfigurationEditArea(topComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
@@ -832,8 +870,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		
+		Label treeLabel = new Label(comp, SWT.NONE);
+		treeLabel.setText("Launch Con&figurations:");
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		treeLabel.setLayoutData(gd);
+		
 		TreeViewer tree = new TreeViewer(comp);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		// Set width hint to 0 to force tree to only be as wide as the combined
 		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
@@ -855,9 +899,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		Button newButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
+		((GridData)newButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		
 		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
+		((GridData)deleteButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		
 		setButtonActionDuplicate(new ButtonActionDuplicate(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Duplicate_1"), null)); //$NON-NLS-1$
 		
@@ -1058,6 +1104,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return buffer.toString();
 	}
 	
+	private void setSashForm(SashForm sashForm) {
+		fSashForm = sashForm;
+	}
+	
+	protected SashForm getSashForm() {
+		return fSashForm;
+	}
+
 	/**
 	 * Sets the tree viewer used to display launch configurations.
 	 * 
@@ -1958,12 +2012,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected String generateUniqueNameFrom(String startingName) {
 		int index = 1;
 		String baseName = startingName;
-		int underscoreIndex = baseName.lastIndexOf('_');
-		if (underscoreIndex > -1) {
-			String trailer = baseName.substring(underscoreIndex + 1);
+		int copyIndex = baseName.lastIndexOf(" (");
+		if (copyIndex > -1) {
+			String trailer = baseName.substring(copyIndex + 1);
 			try {
 				index = Integer.parseInt(trailer);
-				baseName = startingName.substring(0, underscoreIndex);
+				baseName = startingName.substring(0, copyIndex);
 			} catch (NumberFormatException nfe) {
 			}
 		} 
@@ -1971,9 +2025,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		try {
 			while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
 				StringBuffer buffer = new StringBuffer(baseName);
-				buffer.append('_');
+				buffer.append(" (");
 				buffer.append(String.valueOf(index));
 				index++;
+				buffer.append(')');
 				newName = buffer.toString();		
 			}		
 		} catch (CoreException e) {
