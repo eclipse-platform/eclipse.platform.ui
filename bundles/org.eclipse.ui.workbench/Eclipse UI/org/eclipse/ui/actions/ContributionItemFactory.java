@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.actions.PinEditorContributionItem;
-import org.eclipse.ui.internal.actions.HelpSearchComboContributionItem;
+import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
 
 /**
  * Access to standard contribution items provided by the workbench.
@@ -209,17 +209,17 @@ public abstract class ContributionItemFactory {
     };
     
     /**
-     * Workbench contribution item (id "searchCombo"): An editable drop-down combo
+     * Workbench contribution item (id "helpSearch"): An editable field
      * for entering help search queries.
      * @since 3.1
      */
-    public static final ContributionItemFactory HELP_SEARCH_COMBO = new ContributionItemFactory(
-            "searchCombo") {//$NON-NLS-1$
+    public static final ContributionItemFactory HELP_SEARCH = new ContributionItemFactory(
+            "helpSearch") {//$NON-NLS-1$
         public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new HelpSearchComboContributionItem(window, getId());
+            return new HelpSearchContributionItem(window, getId());
         }
     };
 

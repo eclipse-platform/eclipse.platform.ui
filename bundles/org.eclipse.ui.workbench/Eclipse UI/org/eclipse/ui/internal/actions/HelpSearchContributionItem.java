@@ -2,21 +2,26 @@ package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
- * This is the contribution item that is used to add a help serch combo box to
+ * This is the contribution item that is used to add a help search field to
  * the cool bar.
  * 
  * @since 3.1
  */
-
-public class HelpSearchComboContributionItem extends ControlContribution {
-	private static final String ID = "org.eclipse.ui.searchCombo"; //$NON-NLS-1$
+public class HelpSearchContributionItem extends ControlContribution {
+	private static final String ID = "org.eclipse.ui.helpSearch"; //$NON-NLS-1$
 	
 	private IWorkbenchWindow window;
 
@@ -27,25 +32,26 @@ public class HelpSearchComboContributionItem extends ControlContribution {
 	/**
 	 * Creates the contribution item.
 	 * 
-	 * @param window
+	 * @param window the window
 	 */
-	public HelpSearchComboContributionItem(IWorkbenchWindow window) {
+	public HelpSearchContributionItem(IWorkbenchWindow window) {
 		this(window, ID);
 	}
 
 	/**
 	 * Creates the contribution item.
 	 * 
-	 * @param window
-	 * @param id
+	 * @param window the window
+	 * @param id the contribution item id
 	 */
-	public HelpSearchComboContributionItem(IWorkbenchWindow window, String id) {
+	public HelpSearchContributionItem(IWorkbenchWindow window, String id) {
 		super(id);
+        Assert.isNotNull(window);
 		this.window = window;
 	}
 
 	protected Control createControl(Composite parent) {
-		combo = new Combo(parent, SWT.NULL);
+		combo = new Combo(parent, SWT.NONE);
 		combo.setToolTipText(WorkbenchMessages.getString("WorkbenchWindow.searchCombo.toolTip")); //$NON-NLS-1$
 		String[] items = WorkbenchPlugin.getDefault().getDialogSettings()
 				.getArray(ID);
@@ -62,7 +68,7 @@ public class HelpSearchComboContributionItem extends ControlContribution {
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = combo.getSelectionIndex();
-				if (index!= -1)
+				if (index != -1)
 					doSearch(combo.getItem(index), false);
 			}
 		});
@@ -74,8 +80,8 @@ public class HelpSearchComboContributionItem extends ControlContribution {
 	}
 
 	private void doSearch(String phrase, boolean updateList) {
-		if (phrase.length()==0) {
-			window.getShell().getDisplay().beep();
+		if (phrase.length() == 0) {
+            window.getWorkbench().getHelpSystem().displaySearch();
 			return;
 		}
 		if (updateList) {
@@ -95,6 +101,6 @@ public class HelpSearchComboContributionItem extends ControlContribution {
 						combo.getItems());
 			}
 		}
-		PlatformUI.getWorkbench().getHelpSystem().search(phrase);
+		window.getWorkbench().getHelpSystem().search(phrase);
 	}
 }
