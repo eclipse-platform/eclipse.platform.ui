@@ -19,8 +19,11 @@ import java.io.Reader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -34,7 +37,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
 
 /**
- * Default provider for the quickdiff display - the saved document is taken as the reference.
+ * Default provider for the quickdiff display - the saved document is taken as
+ * the reference.
  * 
  * @since 3.0
  */
@@ -42,9 +46,15 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 
 	/** <code>true</code> if the document has been read. */
 	private boolean fDocumentRead= false;
-	/** The reference document - might be <code>null</code> even if <code>fDocumentRead</code> is <code>true</code>. */
+	/**
+	 * The reference document - might be <code>null</code> even if <code>fDocumentRead</code>
+	 * is <code>true</code>.
+	 */
 	private IDocument fReference= null;
-	/** Our unique id that makes us comparable to another instance of the same provider. See extension point reference. */
+	/**
+	 * Our unique id that makes us comparable to another instance of the same
+	 * provider. See extension point reference.
+	 */
 	private String fId;
 	/** The current document provider. */
 	private IDocumentProvider fDocumentProvider;
@@ -52,20 +62,51 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private IEditorInput fEditorInput;
 	/** Private lock noone else will synchronize on. */
 	private final Object fLock= new Object();
-	/** The progress monitor for a currently running <code>getReference</code> operation, or <code>null</code>. */
+	/**
+	 * The progress monitor for a currently running <code>getReference</code>
+	 * operation, or <code>null</code>.
+	 */
 	private IProgressMonitor fProgressMonitor;
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getReference()
+	/**
+	 * A job to put the reading of file contents into a background.
+	 */
+	private final class ReadJob extends Job {
+
+		/**
+		 * Creates a new instance.
+		 */
+		public ReadJob() {
+			super(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.readJob.label")); //$NON-NLS-1$
+			setPriority(SHORT);
+		}
+
+		/**
+		 * Calls
+		 * {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)}
+		 * and returns {@link Status#OK_STATUS}.
+		 * 
+		 * {@inheritdoc}
+		 * 
+		 * @return {@link Status#OK_STATUS}
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			readDocument(monitor, false);
+			return Status.OK_STATUS;
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public IDocument getReference(IProgressMonitor monitor) {
 		if (!fDocumentRead)
-			readDocument(monitor);
+			readDocument(monitor, true); // force reading it
 		return fReference;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#dispose()
+	/**
+	 * {@inheritdoc}
 	 */
 	public void dispose() {
 		IDocumentProvider provider= fDocumentProvider;
@@ -86,27 +127,26 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getId()
+	/**
+	 * {@inheritdoc}
 	 */
 	public String getId() {
 		return fId;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#setActiveEditor(org.eclipse.ui.texteditor.ITextEditor)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void setActiveEditor(ITextEditor targetEditor) {
-		
 		IDocumentProvider provider= null;
 		IEditorInput input= null;
-		if (targetEditor != null) { 
+		if (targetEditor != null) {
 			provider= targetEditor.getDocumentProvider();
 			input= targetEditor.getEditorInput();
 		}
-			
+		
 		// dispose if the editor input or document provider have changed
-		// note that they may serve multiple editors	
+		// note that they may serve multiple editors
 		if (provider != fDocumentProvider || input != fEditorInput) {
 			dispose();
 			synchronized (fLock) {
@@ -116,15 +156,15 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#isEnabled()
+	/**
+	 * {@inheritdoc}
 	 */
 	public boolean isEnabled() {
 		return fEditorInput != null && fDocumentProvider != null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#setId(java.lang.String)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void setId(String id) {
 		fId= id;
@@ -134,9 +174,12 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * Reads in the saved document into <code>fReference</code>.
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code>
+	 * @param force <code>true</code> if the reference document should also
+	 *        be read if the current document is <code>null</code>,<code>false</code>
+	 *        if it should only be updated if it already existed.
 	 */
-	private void readDocument(IProgressMonitor monitor) {
-		
+	private void readDocument(IProgressMonitor monitor, boolean force) {
+
 		// protect against concurrent disposal
 		IDocumentProvider prov= fDocumentProvider;
 		IEditorInput inp= fEditorInput;
@@ -148,16 +191,29 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			IStorageDocumentProvider provider= (IStorageDocumentProvider) prov;
 			
 			if (doc == null)
-				doc= new Document();
-	
-			// addElementStateListener adds at most once - no problem to call repeatedly
-			((IDocumentProvider)provider).addElementStateListener(this);
-			
+				if (force || fDocumentRead)
+					doc= new Document();
+				else
+					return;
+
+			// addElementStateListener adds at most once - no problem to call
+			// repeatedly
+			((IDocumentProvider) provider).addElementStateListener(this);
 			IJobManager jobMgr= Platform.getJobManager();
 			IFile file= input.getFile();
 			
 			try {
 				fProgressMonitor= monitor;
+
+				// this protects others from not being able to delete the file,
+				// and protects ourselves from concurrent access to fReference
+				// (in the case there alread is a valid fReference)
+
+				// one might argue that this rule should already be in the Job
+				// description we're running in, however:
+				// 1) we don't mind waiting for someone else here
+				// 2) we do not take long, or require other locks etc. -> short
+				// delay for any other job requiring the lock on file
 				jobMgr.beginRule(file, monitor);
 				
 				InputStream stream= getFileContents(file);
@@ -180,21 +236,20 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			if (monitor != null && monitor.isCanceled())
 				return;
 			
-			
 			// update state
 			synchronized (fLock) {
-				if (fDocumentProvider == provider && fEditorInput == input) { 
-					// only update state if our provider / input pair has not been updated in between (dispose or setActiveEditor) 
+				if (fDocumentProvider == provider && fEditorInput == input) {
+					// only update state if our provider / input pair has not
+					// been updated in between (dispose or setActiveEditor)
 					fReference= doc;
 					fDocumentRead= true;
 				}
 			}
-			
 		}
 	}
 
 	/* utility methods */
-	
+
 	/**
 	 * Gets the contents of <code>file</code> as an input stream.
 	 * 
@@ -206,20 +261,21 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		try {
 			if (file != null)
 				stream= file.getContents();
-				
 		} catch (CoreException e) {
+			// ignore
 		}
 		return stream;
 	}
 
 	/**
-	 * Returns the encoding of the file corresponding to <code>input</code>. If no encoding can
-	 * be found, the default encoding as returned by <code>provider.getDefaultEncoding()</code> is
-	 * returned. 
+	 * Returns the encoding of the file corresponding to <code>input</code>.
+	 * If no encoding can be found, the default encoding as returned by 
+	 * <code>provider.getDefaultEncoding()</code> is returned.
 	 * 
 	 * @param input the current editor input
 	 * @param provider the current document provider
-	 * @return the encoding for the file corresponding to <code>input</code>, or the default encoding
+	 * @return the encoding for the file corresponding to <code>input</code>,
+	 *         or the default encoding
 	 */
 	private static String getEncoding(IFileEditorInput input, IStorageDocumentProvider provider) {
 		String encoding= provider.getEncoding(input);
@@ -229,8 +285,9 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	}
 
 	/**
-	 * Intitializes the given document with the given stream using the given encoding.
-	 *
+	 * Intitializes the given document with the given stream using the given
+	 * encoding.
+	 * 
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
@@ -241,7 +298,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		Reader in= null;
 		try {
 			final int DEFAULT_FILE_SIZE= 15 * 1024;
-
+			
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
 			StringBuffer buffer= new StringBuffer(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
@@ -261,45 +318,48 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 				try {
 					in.close();
 				} catch (IOException x) {
+					// ignore
 				}
 			}
 		}
 	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDirtyStateChanged(java.lang.Object, boolean)
+
+	/* IElementStateListener implementation */
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		if (!isDirty && element == fEditorInput) {
 			// document has been saved or reverted - recreate reference
-			readDocument(null);
+			new ReadJob().schedule();
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementContentAboutToBeReplaced(java.lang.Object)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void elementContentAboutToBeReplaced(Object element) {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementContentReplaced(java.lang.Object)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void elementContentReplaced(Object element) {
 		if (element == fEditorInput) {
 			// document has been reverted or replaced
-			readDocument(null);
+			new ReadJob().schedule();
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDeleted(java.lang.Object)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void elementDeleted(Object element) {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementMoved(java.lang.Object, java.lang.Object)
+	/**
+	 * {@inheritdoc}
 	 */
 	public void elementMoved(Object originalElement, Object movedElement) {
 	}
