@@ -1802,7 +1802,7 @@ public final class Workbench implements IWorkbench {
                 if (desc == null)
                     throw new WorkbenchException(
                             WorkbenchMessages
-                                    .getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+                                    .format("WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
