@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.ui.tests"
+   name="Eclipse UI Tests"
+   version="1.0.0"
+   provider-name="Object Technology International"
+   class="org.eclipse.ui.tests.TestPlugin">
+<requires>
+   <import plugin="org.eclipse.core.runtime"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.junit"/>
+</requires>
+
+<runtime>
+   <library name="uitests.jar"/>
+</runtime>
+
+<extension 
+	point="org.eclipse.ui.test.harness.uiTests">
+	<uiTest 
+		id="ui.TestSuite"
+		class="org.eclipse.ui.tests.UiTestSuite"/>
+	<uiTest 
+		id="ui.api.TestSuite"
+		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
+	<uiTest 
+		id="ui.api.PlatformUITest"
+		class="org.eclipse.ui.tests.api.PlatformUITest"/>
+	<uiTest 
+		id="ui.api.IWorkbenchTest"
+		class="org.eclipse.ui.tests.api.IWorkbenchTest"/>
+</extension>
+
+</plugin>
