@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.update.core; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.update.internal.core.UpdateCore
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.update.configuration,
+ org.eclipse.update.core,
+ org.eclipse.update.core.model,
+ org.eclipse.update.internal.core,
+ org.eclipse.update.internal.mirror,
+ org.eclipse.update.internal.model,
+ org.eclipse.update.internal.operations,
+ org.eclipse.update.internal.search,
+ org.eclipse.update.internal.security,
+ org.eclipse.update.operations,
+ org.eclipse.update.search,
+ org.eclipse.update.standalone
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.update.configurator
+Eclipse-AutoStart: true
