@@ -108,21 +108,18 @@ class ShowSearchesAction extends Action {
 		}
 		
 		LabelProvider labelProvider=new SearchesLabelProvider();
-		try {		
-			ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new SearchResultContentProvider(), labelProvider);
-			if (selectedAction != null) {
-				Object[] selected= new Object[1];
-				selected[0]= selectedAction;
-				dlg.setInitialSelections(selected);
+
+		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new SearchResultContentProvider(), labelProvider);
+		if (selectedAction != null) {
+			Object[] selected= new Object[1];
+			selected[0]= selectedAction;
+			dlg.setInitialSelections(selected);
+		}
+		if (dlg.open() == ListDialog.OK) {
+			List result= Arrays.asList(dlg.getResult());
+			if (result != null && result.size() == 1) {
+				((ShowSearchAction)result.get(0)).run();
 			}
-			if (dlg.open() == ListDialog.OK) {
-				List result= Arrays.asList(dlg.getResult());
-				if (result != null && result.size() == 1) {
-					((ShowSearchAction)result.get(0)).run();
-				}
-			}
-		} finally {
-			labelProvider.dispose();
 		}
 	}
 }
