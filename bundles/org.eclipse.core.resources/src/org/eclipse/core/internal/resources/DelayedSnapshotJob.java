@@ -34,6 +34,7 @@ public class DelayedSnapshotJob extends Job {
 	 * @see Job#run()
 	 */
 	public IStatus run(IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
 		if (monitor.isCanceled())
 			return Status.CANCEL_STATUS;
 		if (ResourcesPlugin.getWorkspace() == null)

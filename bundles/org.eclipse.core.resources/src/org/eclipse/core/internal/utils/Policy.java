@@ -23,7 +23,7 @@ public class Policy {
 
 	public static final boolean buildOnCancel = false;
 	public static int opWork = 99;
-	public static int endOpWork= 1;
+	public static int endOpWork = 1;
 	public static final int totalWork = 100;
 
 	// default workspace description values
@@ -154,9 +154,7 @@ public class Policy {
 	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		return monitor;
+		return monitor == null ? new NullProgressMonitor() : monitor;
 	}
 
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
