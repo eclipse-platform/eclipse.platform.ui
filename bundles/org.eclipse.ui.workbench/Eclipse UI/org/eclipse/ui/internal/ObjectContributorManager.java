@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * </ul>
  *
  * @see IObjectContributor
- * @see ObjectContributorManager
  */
 public abstract class ObjectContributorManager {
     // Empty list that is immutable
@@ -197,9 +196,6 @@ public abstract class ObjectContributorManager {
                     .getInterfaces(), result, seen);
     }
 
-    /**
-     *
-     */
     public boolean isApplicableTo(IStructuredSelection selection,
             IObjectContributor contributor) {
         Iterator elements = selection.iterator();
@@ -210,9 +206,6 @@ public abstract class ObjectContributorManager {
         return true;
     }
 
-    /**
-     *
-     */
     public boolean isApplicableTo(List list, IObjectContributor contributor) {
         Iterator elements = list.iterator();
         while (elements.hasNext()) {
@@ -222,9 +215,6 @@ public abstract class ObjectContributorManager {
         return true;
     }
 
-    /**
-     * @see IContributorManager#registerContributor
-     */
     public void registerContributor(IObjectContributor contributor,
             String targetType) {
         Vector contributorList = (Vector) contributors.get(targetType);
@@ -236,17 +226,11 @@ public abstract class ObjectContributorManager {
         flushLookup();
     }
 
-    /**
-     * @see IContributorManager#unregisterAllContributors
-     */
     public void unregisterAllContributors() {
         contributors = new Hashtable(5);
         flushLookup();
     }
 
-    /**
-     * @see IContributorManager#unregisterContributor
-     */
     public void unregisterContributor(IObjectContributor contributor,
             String targetType) {
         Vector contributorList = (Vector) contributors.get(targetType);
@@ -256,9 +240,6 @@ public abstract class ObjectContributorManager {
         flushLookup();
     }
 
-    /**
-     * @see IContributorManager#unregisterContributors
-     */
     public void unregisterContributors(String targetType) {
         contributors.remove(targetType);
         flushLookup();
@@ -319,7 +300,7 @@ public abstract class ObjectContributorManager {
      * This considers contributors on any super classes and interfaces. This
      * will only return contributions that are adaptable.
      * 
-     * @param objectClass the class to search for contributions.
+     * @param resourceClass the class to search for contributions.
      * @return the contributions for the given class. This considers
      * adaptable contributors on any super classes and interfaces.
      * 
@@ -346,7 +327,7 @@ public abstract class ObjectContributorManager {
     /**
      * Returns the contributions for the given type name. 
      * 
-     * @param objectClass the class to search for contributions.
+     * @param adapterType the class to search for contributions.
      * @return the contributions for the given class. This considers
      * contributors to this specific type.
      * 
