@@ -416,7 +416,10 @@ public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
 	// Check for valid URL
 	//--------------------
 	try {
-		new URL(strText);
+		String strURL = strText;
+		strURL = strURL.replace(java.io.File.separatorChar,'/');
+
+		new URL(strURL);
 	}
 	catch (MalformedURLException ex) {
 		// Disable add button
@@ -476,7 +479,10 @@ public void widgetSelected(SelectionEvent e) {
 		// The URL is guarenteed to be valid here
 		//---------------------------------------
 		try {
-			URL url = new URL(_textAdditionalLocation.getText());
+			String strURL = _textAdditionalLocation.getText();
+			strURL = strURL.replace(java.io.File.separatorChar,'/');
+			
+			URL url = new URL(strURL);
 			_textAdditionalLocation.setText(url.toExternalForm());
 
 			TableItem tableItem = new TableItem(_tableAdditionalLocations, SWT.NULL);

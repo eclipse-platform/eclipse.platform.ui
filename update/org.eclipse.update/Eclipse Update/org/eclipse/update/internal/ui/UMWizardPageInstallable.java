@@ -842,7 +842,7 @@ protected void initializeContent() {
 	// Determine if any locations could not be accessed
 	//-------------------------------------------------
 	if (vectorURLsFailed.size() > 0) {
-		strbMessage.append(UpdateManagerStrings.getString("S_Unable_to_access_the_following_locations" + ":"));
+		strbMessage.append(UpdateManagerStrings.getString("S_Unable_to_access_the_following_locations") + ":");
 		for (int i = 0; i < vectorURLsFailed.size(); ++i) {
 			strbMessage.append("\n   ");
 			strbMessage.append(((URLNamePair) vectorURLsFailed.elementAt(i))._getName());
