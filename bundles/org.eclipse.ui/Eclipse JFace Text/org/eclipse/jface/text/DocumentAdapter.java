@@ -23,7 +23,9 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	private String fLineDelimiter= null;
 	/** Indicates whether this adapter is forwarding document changes */
 	private boolean fIsForwarding= true;
-	
+	/** Indicates whether the current document event describes a complete replace. */
+	private boolean fDocumentContentReplaced= false;
+	/** Indicates that the line delimiter cache is flushed */
 	private boolean fInvalidateLineDelimiter;
 	
 	/**
@@ -190,12 +192,19 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 */
 	public void documentChanged(DocumentEvent event) {
 		// check whether the given event is the one which was remembered
-		if (fEvent != null && event == fEvent)
-			fireTextChanged();
-
-		if (fInvalidateLineDelimiter) {
-			fLineDelimiter= null;
-			fInvalidateLineDelimiter= false;
+		if (fEvent != null && event == fEvent) {
+			
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
+			if (fDocumentContentReplaced) {
+				fDocumentContentReplaced= false;
+				fireTextSet();
+			} else
+				fireTextChanged();
+			
+			if (fInvalidateLineDelimiter) {
+				fLineDelimiter= null;
+				fInvalidateLineDelimiter= false;
+			}
 		}			
 	}
 	
@@ -203,16 +212,26 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
-		try {
-			// invalidate cached line delimiter if first line of document was changed
-			if (event.getOffset() < fDocument.getLineLength(0))
-				fInvalidateLineDelimiter= true;
-		} catch (BadLocationException e) {
+		
+		if (event.getOffset() == 0 && event.getLength() == fDocument.getLength()) {
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
+			fEvent= event;
+			fInvalidateLineDelimiter= true;
+			fDocumentContentReplaced= true;
+		
+		} else {
+		
+			try {
+				// invalidate cached line delimiter if first line of document was changed
+				if (event.getOffset() < fDocument.getLineLength(0))
+					fInvalidateLineDelimiter= true;
+			} catch (BadLocationException e) {
+			}
+	
+			// Remember the given event
+		    fEvent= event;
+			fireTextChanging();
 		}
-
-		// Remember the given event
-	    fEvent= event;
-		fireTextChanging();
 	}
 	
 	/**
