@@ -126,7 +126,7 @@ public class InternalAntRunner {
 	protected String loggerClassname = null;
 
 	// properties
-	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipseRunning";
+	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 
 public InternalAntRunner() {
 	buildListeners = new ArrayList(5);
