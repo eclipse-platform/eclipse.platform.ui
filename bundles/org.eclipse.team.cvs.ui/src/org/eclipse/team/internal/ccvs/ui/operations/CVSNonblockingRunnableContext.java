@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -30,6 +31,16 @@ import org.eclipse.ui.PlatformUI;
  * This runnable context executes it's operation in the context of a background job.
  */
 public class CVSNonblockingRunnableContext implements ICVSRunnableContext {
+
+	private IJobChangeListener listener;
+
+	public CVSNonblockingRunnableContext() {
+		this(null);
+	}
+	
+	public CVSNonblockingRunnableContext(IJobChangeListener listener) {
+		this.listener = listener;
+	}
 
 	protected IStatus run(IRunnableWithProgress runnable, IProgressMonitor monitor) {
 		try {
@@ -61,13 +72,18 @@ public class CVSNonblockingRunnableContext implements ICVSRunnableContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.ICVSRunnableContext#run(java.lang.String, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void run(String title, ISchedulingRule schedulingRule, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+	public void run(String title, ISchedulingRule schedulingRule, boolean postponeBuild, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		Job job;
-		if (schedulingRule == null) {
+		if (schedulingRule == null && !postponeBuild) {
 			job = getBasicJob(title, runnable);
 		} else {
 			job = getWorkspaceJob(title, runnable);
-			job.setRule(schedulingRule);
+			if (schedulingRule != null) {
+				job.setRule(schedulingRule);
+			}
+		}
+		if (listener != null) {
+			job.addJobChangeListener(listener);
 		}
 		job.schedule();
 	}

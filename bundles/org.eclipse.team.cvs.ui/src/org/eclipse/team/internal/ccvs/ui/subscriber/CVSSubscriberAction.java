@@ -124,7 +124,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		SyncInfoSet syncSet = getFilteredSyncInfoSet(getFilteredSyncInfos());
 		if (syncSet == null || syncSet.isEmpty()) return;
 		try {
-			getCVSRunnableContext().run(getJobName(syncSet), getSchedulingRule(syncSet), getRunnable(syncSet));
+			getCVSRunnableContext().run(getJobName(syncSet), getSchedulingRule(syncSet), true, getRunnable(syncSet));
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {

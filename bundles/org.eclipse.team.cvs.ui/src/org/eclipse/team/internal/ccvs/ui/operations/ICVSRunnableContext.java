@@ -34,6 +34,7 @@ public interface ICVSRunnableContext {
 	public abstract void run(
 		String title,
 		ISchedulingRule schedulingRule,
+		boolean postponeBuild, 
 		IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException;
 		

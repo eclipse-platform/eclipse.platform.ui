@@ -73,14 +73,14 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	public synchronized void run() throws CVSException, InterruptedException {
 		ICVSRunnableContext context = getCVSRunnableContext();
 		try {
-			getCVSRunnableContext().run(getTaskName(), getSchedulingRule(), this);
+			getCVSRunnableContext().run(getTaskName(), getSchedulingRule(), getPostponeBuild(), this);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException();
 		}
 	}
-	
+
 	protected boolean areJobsEnabled() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS);
 	}
@@ -106,6 +106,15 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 */
 	protected ISchedulingRule getSchedulingRule() {
 		return null;
+	}
+	
+	/**
+	 * Return whether the auto-build should be postponed whil ethe operation is running.
+	 * The default is to postone a build.
+	 * @return
+	 */
+	protected boolean getPostponeBuild() {
+		return true;
 	}
 	
 	/* (non-Javadoc)

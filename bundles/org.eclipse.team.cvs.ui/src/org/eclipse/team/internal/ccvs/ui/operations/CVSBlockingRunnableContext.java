@@ -42,8 +42,8 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 	 * override this to provide progress in some other way (Progress Monitor or
 	 * job).
 	 */
-	public void run(String title, ISchedulingRule schedulingRule, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		getRunnableContext().run(true /* fork */, true /* cancelable */, wrapRunnable(title, schedulingRule, runnable));
+	public void run(String title, ISchedulingRule schedulingRule, boolean postponeBuild, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		getRunnableContext().run(true /* fork */, true /* cancelable */, wrapRunnable(title, schedulingRule, postponeBuild, runnable));
 	}
 
 	protected IRunnableContext getRunnableContext() {
@@ -57,12 +57,12 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 	 * Return an IRunnableWithProgress that sets the task name for the progress monitor
 	 * and runs in a workspace modify operation if requested.
 	 */
-	private IRunnableWithProgress wrapRunnable(final String title, final ISchedulingRule schedulingRule, final IRunnableWithProgress runnable) {
+	private IRunnableWithProgress wrapRunnable(final String title, final ISchedulingRule schedulingRule, final boolean postponeBuild, final IRunnableWithProgress runnable) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(title, 100);
 				try {
-					if (schedulingRule == null) {
+					if (schedulingRule == null && !postponeBuild) {
 						runnable.run(Policy.subMonitorFor(monitor, 100));
 					} else {
 						final Exception[] exception = new Exception[] { null };
