@@ -61,6 +61,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 	public Category() {
 		this.id = MISC_ID;
 		this.name = MISC_NAME;
+		this.pluginId = MISC_ID;  // TODO: remove hack for bug 55172
 	}
 	
 	/**
@@ -85,7 +86,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 	 */
 	public Category(IConfigurationElement configElement) throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);
-        pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+        pluginId = configElement.getDeclaringExtension().getNamespace();
 		name = configElement.getAttribute(ATT_NAME);
 		unparsedPath = configElement.getAttribute(ATT_PARENT);
 		configurationElement = configElement;
