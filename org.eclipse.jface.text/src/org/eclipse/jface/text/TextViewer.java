@@ -368,7 +368,7 @@ public class TextViewer extends Viewer implements
 				Iterator iterator= fListeners.iterator();
 				while (iterator.hasNext() && event.doit) {
 					VerifyKeyListener listener= (VerifyKeyListener) iterator.next();
-					listener.verifyKey(event);
+					listener.verifyKey(event); // we might trigger reentrant calls on GTK
 				}
 			} finally {
 				fReentranceCount--;
@@ -4287,6 +4287,12 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	public final void setRedraw(boolean redraw) {
+		// don't use the setRedraw feature on linux
+		// to avoid skipping
+		// see bug 26153
+		if (!"gtk".equals(SWT.getPlatform()))  //$NON-NLS-1$
+			return;
+		
 		if (!redraw) {
 			if (fRedrawCounter == 0)
 				disableRedrawing();

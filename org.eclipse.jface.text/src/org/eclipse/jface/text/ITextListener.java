@@ -13,12 +13,12 @@ package org.eclipse.jface.text;
 
 
 /**
- * Text listeners registered with an text viewer are informed about 
+ * Text listeners registered with a text viewer are informed about 
  * all text viewer modifications by means of text events. A text event
  * describes a change as a replace operation.<p>
  * The changes described in the event are the changes applied to the text viewer's
  * widget (i.e. its visual representation) and not those applied to the text viewer's
- * document. The text event can be asked to return the according document 
+ * document. The text event can be asked to return the corresponding document 
  * event. If a text listener receives a text event, it is guaranteed that 
  * both the document and the viewer's visual representation are in sync.<p>
  * Clients may implement this interface.
