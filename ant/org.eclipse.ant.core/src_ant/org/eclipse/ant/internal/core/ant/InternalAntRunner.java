@@ -88,6 +88,7 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.XmlLogger;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.Task;
 import org.eclipse.ant.internal.core.Type;
@@ -169,9 +170,9 @@ public class InternalAntRunner {
 	 */
 	public void addBuildListeners(List classNames) {
 		if (fBuildListeners == null) {
-			fBuildListeners = new ArrayList(5);
+			fBuildListeners = new ArrayList(classNames.size());
 		}
-		fBuildListeners = classNames;
+		fBuildListeners.addAll(classNames);
 	}
 
 	/**
@@ -433,6 +434,7 @@ public class InternalAntRunner {
 		try {
 			getCurrentProject().init();
 			
+			preprocessCommandLine(argList);
 			addBuildListeners(getCurrentProject());
 			
 			boolean executeScript= true;
@@ -446,6 +448,9 @@ public class InternalAntRunner {
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
+			createMonitorBuildListener(getCurrentProject());
+			fireBuildStarted(getCurrentProject());
+			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			setProperties(getCurrentProject());
 			setTasks(getCurrentProject());
@@ -457,8 +462,7 @@ public class InternalAntRunner {
 				return;
 			}
 			
-			createMonitorBuildListener(getCurrentProject());
-			fireBuildStarted(getCurrentProject());
+			
 			if (fExtraArguments != null) {
 				printArguments(getCurrentProject());
 			}
@@ -511,6 +515,10 @@ public class InternalAntRunner {
 		if (fLoggerClassname != null) {
 			try {
 				fBuildLogger = (BuildLogger) (Class.forName(fLoggerClassname).newInstance());
+			} catch (ClassCastException e) {
+				String message = MessageFormat.format("Class {0} which was specified to perform logging is not an instance of BuildLogger.  Using org.apache.tools.ant.DefaultLogger", new String[]{fLoggerClassname}); //$NON-NLS-1$
+				logMessage(null, message, Project.MSG_ERR);
+				fBuildLogger = new DefaultLogger();
 			} catch (Exception e) {
 				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{fLoggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
@@ -544,11 +552,46 @@ public class InternalAntRunner {
 	 */
 	private void fireBuildFinished(Project project, Throwable error) {
 		BuildEvent event = new BuildEvent(project);
+		
+		if(usingXmlLogger()) {
+			//generate the log file in the correct location
+			String fileName= project.getProperty("XmlLogger.file");
+			if (fileName == null) {
+				fileName= "log.xml";
+			}
+			IPath path= new Path(fileName);
+			if (!path.isAbsolute()) {
+				path= new Path(getBuildFileLocation());
+				path= path.removeLastSegments(1);
+				path= path.addTrailingSeparator();
+				path= path.append(fileName);
+			}
+		
+			project.setProperty("XmlLogger.file", path.toOSString());
+		}
+		
 		event.setException(error);
 		for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
 			BuildListener listener = (BuildListener) iterator.next();
 			listener.buildFinished(event);
 		}
+	}
+
+	private boolean usingXmlLogger() {
+		if (fBuildLogger instanceof XmlLogger) {
+			return true;
+		}
+		if (fBuildListeners != null) {
+			Enumeration e= getCurrentProject().getBuildListeners().elements();
+			while (e.hasMoreElements()) {
+				BuildListener element = (BuildListener) e.nextElement();
+				if (element instanceof XmlLogger) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	protected void logMessage(Project project, String message, int priority) {
@@ -634,6 +677,22 @@ public class InternalAntRunner {
 		return fgAntVersion;
 	}
 
+	protected void preprocessCommandLine(List commands) {
+		String[] args = getArguments(commands, "-listener"); //$NON-NLS-1$
+		if (args != null) {
+			if (fBuildListeners == null) {
+				fBuildListeners= new ArrayList(1);
+			}
+			
+			fBuildListeners.add(args[0]);
+		}
+
+		args = getArguments(commands, "-logger"); //$NON-NLS-1$
+		if (args != null) {
+			fLoggerClassname = args[0];
+		}
+	}
+	
 	/**
 	 * Looks for interesting command line arguments. 
 	 * Returns whether it is OK to run the script.
@@ -697,16 +756,6 @@ public class InternalAntRunner {
 			for (int i = 1; i < args.length; i++) {
 				fTargets.add(args[i]);
 			}
-		}
-
-		args = getArguments(commands, "-listener"); //$NON-NLS-1$
-		if (args != null) {
-			fBuildListeners.add(args[0]);
-		}
-
-		args = getArguments(commands, "-logger"); //$NON-NLS-1$
-		if (args != null) {
-			fLoggerClassname = args[0];
 		}
 
 		processProperties(commands);
