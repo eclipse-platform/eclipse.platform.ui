@@ -75,6 +75,8 @@ public class FilteredComboTree extends FilteredTree {
 				textChanged();
 			}
 		});
+		filterCombo.getAccessible().addAccessibleListener(getAccessibleListener());
+		
 	}
 
 	/* (non-Javadoc)
@@ -103,5 +105,12 @@ public class FilteredComboTree extends FilteredTree {
 	 */
 	public Combo getFilterCombo() {
 		return filterCombo;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredTree#getFilterText()
+	 */
+	protected String getFilterText() {
+		return filterCombo.getText();
 	}
 }

@@ -155,18 +155,35 @@ public class FilteredTree extends Composite {
 	 */
 	protected void createFilterControl(Composite parent) {
 		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
-		filterText.getAccessible().addAccessibleListener(new AccessibleAdapter(){
-			public void getName(AccessibleEvent e) {
-				if(filterText.getText().length() == 0){
-					e.result = initialText;
-					return;
-				}
-				e.result = filterText.getText();
-			}
-		});
+		filterText.getAccessible().addAccessibleListener(getAccessibleListener());
 	}
 
-    /**
+	protected AccessibleAdapter getAccessibleListener() {
+		return new AccessibleAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.accessibility.AccessibleListener#getName(org.eclipse.swt.accessibility.AccessibleEvent)
+			 */
+			public void getName(AccessibleEvent e) {
+				String filterTextString = getFilterText();
+				if(filterTextString.length() == 0){
+					e.result = initialText;
+				}
+				else
+					e.result = filterTextString;
+			}
+			
+		};
+	}
+
+	/**
+	 * Get the text from the filter widget.
+	 * @return String
+	 */
+    protected String getFilterText() {
+		return filterText.getText();
+	}
+
+	/**
      * update the receiver after the text has changed
      */
     protected void textChanged() {
@@ -305,4 +322,13 @@ public class FilteredTree extends Composite {
         };
         getFilterControl().addFocusListener(listener);
     }
+
+	/**
+	 * Get the initial text for the receiver.
+	 * @return String
+	 */
+	protected String getInitialText() {
+		return initialText;
+	}
+	
 }
