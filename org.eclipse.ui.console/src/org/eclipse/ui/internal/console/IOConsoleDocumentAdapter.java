@@ -159,6 +159,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         char nullChar = (char)0x0;
         while(index > 0 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
             line.setCharAt(index, nullChar);
+            line.setLength(index);
             index--;
         }
         return line.toString();
