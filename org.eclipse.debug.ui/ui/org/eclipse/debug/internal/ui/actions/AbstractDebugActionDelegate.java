@@ -242,6 +242,17 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @return structured selection
 	 */	
 	protected IStructuredSelection getSelection() {
+		if (getView() != null) {
+			//cannot used the cached selection in a view
+			//as the selection can be out of date for context menu
+			//actions. See bug 14556
+			ISelection s= getView().getViewSite().getSelectionProvider().getSelection();
+			if (s instanceof IStructuredSelection) {
+				return (IStructuredSelection)s;
+			} else {
+				return StructuredSelection.EMPTY;
+			}
+		}
 		return fSelection;
 	}
 	

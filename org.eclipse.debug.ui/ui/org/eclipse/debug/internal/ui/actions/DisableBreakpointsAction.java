@@ -8,8 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 public class DisableBreakpointsAction extends EnableBreakpointsAction {
 	
 	/**
-	 * When there is a multi-selection, this method will indicate which way
-	 * the breakpoints will be toggled
+	 * This action disables breakpoints.
 	 */
 	protected boolean isEnableAction() {
 		return false;

@@ -28,10 +28,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class EnableBreakpointsAction implements IViewActionDelegate, IPartListener, IBreakpointListener {
 	
 	private IViewPart fView;
-	private IStructuredSelection fSelection;
 	private IAction fAction;
 	
-
 	public EnableBreakpointsAction() {
 	}
 		
@@ -52,10 +50,21 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		view.getViewSite().getPage().addPartListener(this);
 	}
 
+	protected void update() {
+		selectionChanged(getAction(), getView().getViewSite().getSelectionProvider().getSelection());
+	}
+	
 	/**
-	 * @see Action#run()
+	 * This action enables breakpoints.
 	 */
-	public void run() {
+	protected boolean isEnableAction() {
+		return true;
+	}
+	
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
 		int size= selection.size();
 		if (size == 0) {
@@ -84,27 +93,8 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 	}
 
-	/**
-	 * @see IUpdate#update()
-	 */
-	public void update() {
-		selectionChanged(getAction(), getView().getViewSite().getSelectionProvider().getSelection());
-	}
-	
-	/**
-	 * When there is a multi-selection, this method will indicate which way
-	 * the breakpoints will be toggled
-	 */
-	protected boolean isEnableAction() {
-		return true;
-	}
-	
-		
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-		run();
+	private IStructuredSelection getSelection() {
+		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
 	}
 
 	/**
@@ -120,7 +110,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		if (!(o instanceof IBreakpoint)) {
 			return;
 		}
-		setSelection(sel);
+		
 		Iterator enum= sel.iterator();
 		IBreakpoint bp= (IBreakpoint)enum.next();
 		if (!enum.hasNext()) {
@@ -137,13 +127,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 	}
 	
-	protected IStructuredSelection getSelection() {
-		return fSelection;
-	}
 
-	protected void setSelection(IStructuredSelection selection) {
-		fSelection = selection;
-	}
 	/**
 	 * Removes this action as a breakpoint and part listener.
 	 */
