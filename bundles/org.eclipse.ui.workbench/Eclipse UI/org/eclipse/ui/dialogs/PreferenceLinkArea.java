@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.dialogs;
+package org.eclipse.ui.dialogs;
 
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
@@ -87,6 +87,10 @@ public class PreferenceLinkArea extends Object {
 		return null;
 	}
 	
+	/**
+	 * Return the control for the receiver.
+	 * @return Control
+	 */
 	public Control getControl(){
 		return pageLink;
 	}

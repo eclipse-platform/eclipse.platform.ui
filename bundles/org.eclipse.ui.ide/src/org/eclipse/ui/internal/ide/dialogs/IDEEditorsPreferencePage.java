@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.ui.WorkbenchEncoding;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
-import org.eclipse.ui.internal.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
