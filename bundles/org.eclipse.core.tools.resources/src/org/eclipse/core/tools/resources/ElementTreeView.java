@@ -223,6 +223,9 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			return count;
 		}
 
+		int basicSizeof(String str) {
+			return 44 + 2 * str.length();
+		}
 		int basicSizeof(Map map) {
 			if (map == null)
 				return 0;
@@ -246,7 +249,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object == null || DeepSize.ignore(object))
 				return 0;
 			if (object instanceof String)
-				return 44 + 2 * ((String) object).length();
+				return basicSizeof((String) object);
 			if (object instanceof byte[])
 				return 16 + ((byte[]) object).length;
 			if (object instanceof MarkerAttributeMap)
@@ -275,7 +278,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (!DeepSize.ignore(name)) {
 				nonIdenticalStrings++;
 				//can't call sizeof because it will call isUnique again and weed out duplicates
-				stringMemory += 44 + 2 * name.length();
+				stringMemory += basicSizeof(name);
 
 				//now want to count the number of duplicate equal but non-identical strings
 				Counter counter = (Counter) strings.get(name);
@@ -347,11 +350,16 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			}
 
 			int max = 20;
+			int savings = 0;
 			buffer.append("The top " + max + " equal but non-identical strings are:\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int i = 0; i < max && i < sortedList.size(); i++) {
+			for (int i = 0; i < sortedList.size() && ((Counter)sortedList.get(i)).getCount() > 1; i++) {
 				Counter c = (Counter) sortedList.get(i);
-				buffer.append("\t" + c.getName() + "->" + prettyPrint(c.getCount()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (i < max)
+					buffer.append("\t" + c.getName() + "->" + prettyPrint(c.getCount()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				savings += ((c.getCount() - 1) * basicSizeof(c.getName()));
 			}
+			buffer.append("Potential savings of using unique strings: " + savings + "\n");
+			
 			//post changes to UI thread
 			viewer.getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
