@@ -578,7 +578,7 @@ private void loadPredefinedPersp(
         switch(descs[i].getLocation()) {
 	    	case IPageLayout.RIGHT:
 	    	    if (stickyFolderRight == null)
-	    	        stickyFolderRight = layout.createFolder(
+	    	        stickyFolderRight = layout.createPlaceholderFolder(
 	    	                IStickyViewDescriptor.STICKY_FOLDER_RIGHT, 
 	    	                IPageLayout.RIGHT, 
 	    	                .75f, 
@@ -587,7 +587,7 @@ private void loadPredefinedPersp(
 	    		break;
 	    	case IPageLayout.LEFT:
 	    	    if (stickyFolderLeft == null)
-	    	        stickyFolderLeft = layout.createFolder(
+	    	        stickyFolderLeft = layout.createPlaceholderFolder(
 	    	                IStickyViewDescriptor.STICKY_FOLDER_LEFT, 
 	    	                IPageLayout.LEFT, 
 	    	                .25f, 
@@ -596,7 +596,7 @@ private void loadPredefinedPersp(
 	    		break;
 	    	case IPageLayout.TOP:
 	    	    if (stickyFolderTop == null)
-	    	        stickyFolderTop = layout.createFolder(
+	    	        stickyFolderTop = layout.createPlaceholderFolder(
 	    	                IStickyViewDescriptor.STICKY_FOLDER_TOP, 
 	    	                IPageLayout.TOP, 
 	    	                .25f, 
@@ -605,7 +605,7 @@ private void loadPredefinedPersp(
 	    		break;
 	    	case IPageLayout.BOTTOM:
 	    	    if (stickyFolderBottom == null)
-	    	        stickyFolderBottom = layout.createFolder(
+	    	        stickyFolderBottom = layout.createPlaceholderFolder(
 	    	                IStickyViewDescriptor.STICKY_FOLDER_BOTTOM, 
 	    	                IPageLayout.BOTTOM, 
 	    	                .75f, 
