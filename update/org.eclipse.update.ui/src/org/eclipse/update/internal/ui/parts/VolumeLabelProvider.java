@@ -24,12 +24,12 @@ public class VolumeLabelProvider extends LabelProvider {
 	 * Constructor for VolumeLabelProvider.
 	 */
 	public VolumeLabelProvider() {
-		floppyImage = UpdateUIPluginImages.DESC_FLOPPY_OBJ.createImage();
-		cdImage = UpdateUIPluginImages.DESC_CD_OBJ.createImage();
-		vfixedImage = UpdateUIPluginImages.DESC_VFIXED_OBJ.createImage();
-		vremoteImage = UpdateUIPluginImages.DESC_VREMOTE_OBJ.createImage();
+		floppyImage = UpdateUIImages.DESC_FLOPPY_OBJ.createImage();
+		cdImage = UpdateUIImages.DESC_CD_OBJ.createImage();
+		vfixedImage = UpdateUIImages.DESC_VFIXED_OBJ.createImage();
+		vremoteImage = UpdateUIImages.DESC_VREMOTE_OBJ.createImage();
 		vremovableImage =
-			UpdateUIPluginImages.DESC_VREMOVABLE_OBJ.createImage();
+			UpdateUIImages.DESC_VREMOVABLE_OBJ.createImage();
 	}
 
 	public String getText(Object obj) {
@@ -48,19 +48,19 @@ public class VolumeLabelProvider extends LabelProvider {
 			switch (type) {
 				case LocalSystemInfo.VOLUME_CDROM :
 					nativeLabel =
-						UpdateUIPlugin.getResourceString(KEY_VOLUME_CDROM);
+						UpdateUI.getResourceString(KEY_VOLUME_CDROM);
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_3 :
 					nativeLabel =
-						UpdateUIPlugin.getResourceString(KEY_VOLUME_FLOPPY_3);
+						UpdateUI.getResourceString(KEY_VOLUME_FLOPPY_3);
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_5 :
 					nativeLabel =
-						UpdateUIPlugin.getResourceString(KEY_VOLUME_FLOPPY_5);
+						UpdateUI.getResourceString(KEY_VOLUME_FLOPPY_5);
 					break;
 				case LocalSystemInfo.VOLUME_FIXED:
 					nativeLabel = 
-						UpdateUIPlugin.getResourceString(KEY_LOCAL_DISK);
+						UpdateUI.getResourceString(KEY_LOCAL_DISK);
 					break;
 			}
 		}

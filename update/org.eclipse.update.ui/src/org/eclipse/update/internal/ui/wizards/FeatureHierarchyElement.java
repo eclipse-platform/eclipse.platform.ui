@@ -5,7 +5,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 
 /**
@@ -327,7 +327,7 @@ public class FeatureHierarchyElement {
 			String mode = MainPreferencePage.getUpdateVersionsMode();
 
 			IFeature[] allInstalled =
-				UpdateUIPlugin.getInstalledFeatures(feature, false);
+				UpdateUI.getInstalledFeatures(feature, false);
 			for (int i = 0; i < allInstalled.length; i++) {
 				IFeature candidate = allInstalled[i];
 				PluginVersionIdentifier cversion =

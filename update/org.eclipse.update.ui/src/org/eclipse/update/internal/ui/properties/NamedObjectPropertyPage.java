@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 
 /**
@@ -40,7 +40,7 @@ public class NamedObjectPropertyPage
 		container.setLayout(layout);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getResourceString(KEY_NAME));
 		objectName = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		objectName.setLayoutData(gd);
@@ -82,7 +82,7 @@ public class NamedObjectPropertyPage
 			valid = !exists(newName);
 			if (!valid)
 				errorMessage =
-					UpdateUIPlugin.getFormattedMessage(KEY_EXISTS, newName);
+					UpdateUI.getFormattedMessage(KEY_EXISTS, newName);
 		}
 		setValid(valid);
 		setErrorMessage(errorMessage);

@@ -1,6 +1,6 @@
 package org.eclipse.update.internal.ui.search;
 
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class DefaultUpdatesSearchObject extends SearchObject {
@@ -9,14 +9,14 @@ public class DefaultUpdatesSearchObject extends SearchObject {
 
 	public DefaultUpdatesSearchObject() {
 		super(
-			UpdateUIPlugin.getResourceString(KEY_NAME),
+			UpdateUI.getResourceString(KEY_NAME),
 			SearchCategoryRegistryReader.getDefault().getDescriptor(
 				"org.eclipse.update.ui.updates"),
 			true);
-		setModel(UpdateUIPlugin.getDefault().getUpdateModel());
+		setModel(UpdateUI.getDefault().getUpdateModel());
 	}
 	private IDialogSettings getSection() {
-		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
 		IDialogSettings section = master.getSection(SECTION_ID);
 		if (section == null) {
 			section = master.addNewSection(SECTION_ID);

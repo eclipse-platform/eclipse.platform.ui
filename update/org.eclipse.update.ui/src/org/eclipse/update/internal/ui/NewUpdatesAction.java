@@ -8,7 +8,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.update.core.ISite;
@@ -60,7 +59,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 			pmd.run(true, true, getOperation());
 			showResults();
 		} catch (InterruptedException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {
@@ -75,7 +74,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 					return;
 				}
 			}
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 	
@@ -88,7 +87,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	
 	private void showConnectionErrors(IStatus status) {
 		ErrorDialog.openError(window.getShell(),
-			UpdateUIPlugin.getResourceString(KEY_TITLE),
+			UpdateUI.getResourceString(KEY_TITLE),
 			null, 
 			status);
 	}			
@@ -97,8 +96,8 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	private void showNoUpdatesMessage() {
 		MessageDialog.openInformation(
 			window.getShell(),
-			UpdateUIPlugin.getResourceString(KEY_TITLE),
-			UpdateUIPlugin.getResourceString(KEY_MESSAGE));
+			UpdateUI.getResourceString(KEY_TITLE),
+			UpdateUI.getResourceString(KEY_MESSAGE));
 	}
 
 	private void openNewUpdatesWizard() {
@@ -108,7 +107,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
-			UpdateUIPlugin.informRestartNeeded();
+			UpdateUI.informRestartNeeded();
 	}
 
 	private IRunnableWithProgress getOperation() {

@@ -73,7 +73,7 @@ public class TargetPage extends BannerPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_LSITE_OBJ);
+			return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_LSITE_OBJ);
 		}
 
 		/**
@@ -109,11 +109,11 @@ public class TargetPage extends BannerPage {
 		PendingChange pendingChange,
 		IInstallConfiguration config) {
 		super("Target");
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
 		defaultTargetSite = getDefaultTargetSite(config, pendingChange, false);
 		affinitySite = getAffinitySite(config, pendingChange.getFeature());
@@ -139,7 +139,7 @@ public class TargetPage extends BannerPage {
 			try {
 				return InstallWizard.findConfigSite(oldFeature, config);
 			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e, false);
+				UpdateUI.logException(e, false);
 				return null;
 			}
 		}
@@ -191,7 +191,7 @@ public class TargetPage extends BannerPage {
 						return site;
 					}
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e, false);
+					UpdateUI.logException(e, false);
 				}
 			}
 		}
@@ -199,7 +199,7 @@ public class TargetPage extends BannerPage {
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		config.removeInstallConfigurationChangedListener(configListener);
 		super.dispose();
 	}
@@ -221,7 +221,7 @@ public class TargetPage extends BannerPage {
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		final Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUIPlugin.getResourceString(KEY_NEW));
+		button.setText(UpdateUI.getResourceString(KEY_NEW));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -240,18 +240,18 @@ public class TargetPage extends BannerPage {
 		status.setLayout(layout);
 		Label label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUIPlugin.getResourceString(KEY_REQUIRED_FREE_SPACE));
+			UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUIPlugin.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+			UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 
-		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		selectFirstTarget();
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
 		return client;
@@ -316,7 +316,7 @@ public class TargetPage extends BannerPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUIPlugin.getResourceString(KEY_LOCATION_EMPTY);
+			errorMessage = UpdateUI.getResourceString(KEY_LOCATION_EMPTY);
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -340,7 +340,7 @@ public class TargetPage extends BannerPage {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUIPlugin.getResourceString(KEY_LOCATION_MESSAGE));
+		dd.setMessage(UpdateUI.getResourceString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
 			File file = new File(path);
@@ -365,14 +365,14 @@ public class TargetPage extends BannerPage {
 					config.addConfiguredSite(csite);
 				else {
 					String title =
-						UpdateUIPlugin.getResourceString(
+						UpdateUI.getResourceString(
 							KEY_LOCATION_ERROR_TITLE);
 					String message =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_LOCATION_ERROR_MESSAGE,
 							file.getPath());
 					String message2 =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_ERROR_REASON,
 							status.getMessage());
 					message = message + "\r\n" + message2;
@@ -381,7 +381,7 @@ public class TargetPage extends BannerPage {
 				}
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		}
 		return true;
@@ -402,17 +402,17 @@ public class TargetPage extends BannerPage {
 			site.getSite().getInstallSizeFor(pendingChange.getFeature());
 		if (required == -1)
 			requiredSpaceLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
 		else
 			requiredSpaceLabel.setText(
-				UpdateUIPlugin.getFormattedMessage(KEY_SIZE, "" + required));
+				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
 			availableSpaceLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
 		else
 			availableSpaceLabel.setText(
-				UpdateUIPlugin.getFormattedMessage(KEY_SIZE, "" + available));
+				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));
 	}
 
 	public IConfiguredSite getTargetSite() {

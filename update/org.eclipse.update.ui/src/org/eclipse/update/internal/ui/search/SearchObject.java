@@ -14,7 +14,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 
 public class SearchObject extends NamedModelObject {
@@ -182,7 +182,7 @@ public class SearchObject extends NamedModelObject {
 		searchThread.start();
 		Throwable throwable = searchThread.getThrowable();
 		if (throwable != null) {
-			UpdateUIPlugin.logException(throwable);
+			UpdateUI.logException(throwable);
 			if (throwable instanceof InvocationTargetException) {
 				throw (InvocationTargetException) throwable;
 			} else if (throwable instanceof InterruptedException) {
@@ -234,12 +234,12 @@ public class SearchObject extends NamedModelObject {
 		ArrayList candidates = new ArrayList();
 
 		monitor.beginTask(
-			UpdateUIPlugin.getResourceString(KEY_BEGIN),
+			UpdateUI.getResourceString(KEY_BEGIN),
 			IProgressMonitor.UNKNOWN);
 
 		if (getSearchMyComputer()) {
 			monitor.setTaskName(
-				UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER));
+				UpdateUI.getResourceString(KEY_MY_COMPUTER));
 			initializeMyComputerSites(monitor);
 		}
 		ArrayList statusList = new ArrayList();
@@ -248,7 +248,7 @@ public class SearchObject extends NamedModelObject {
 			int ntasks = queries.length * (1 + candidates.size());
 
 			monitor.beginTask(
-				UpdateUIPlugin.getResourceString(KEY_BEGIN),
+				UpdateUI.getResourceString(KEY_BEGIN),
 				ntasks);
 
 			for (int i = 0; i < queries.length; i++) {
@@ -257,7 +257,7 @@ public class SearchObject extends NamedModelObject {
 				if (site != null) {
 					SubProgressMonitor subMonitor =
 						new SubProgressMonitor(monitor, 1);
-					UpdateUIPlugin.getResourceString(KEY_CHECKING);
+					UpdateUI.getResourceString(KEY_CHECKING);
 					IStatus status =
 						searchOneSite(display, site, query, subMonitor);
 					if (status != null)
@@ -292,7 +292,7 @@ public class SearchObject extends NamedModelObject {
 		if (statusList.size() > 0) {
 			IStatus[] children =
 				(IStatus[]) statusList.toArray(new IStatus[statusList.size()]);
-				MultiStatus multiStatus = new MultiStatus(UpdateUIPlugin.getPluginId(), ISite.SITE_ACCESS_EXCEPTION, children, UpdateUIPlugin.getResourceString("Search.networkProblems"), //$NON-NLS-1$
+				MultiStatus multiStatus = new MultiStatus(UpdateUI.getPluginId(), ISite.SITE_ACCESS_EXCEPTION, children, UpdateUI.getResourceString("Search.networkProblems"), //$NON-NLS-1$
 	null);
 			throw new CoreException(multiStatus);
 		}
@@ -311,7 +311,7 @@ public class SearchObject extends NamedModelObject {
 		SubProgressMonitor monitor)
 		throws CoreException {
 		String text =
-			UpdateUIPlugin.getFormattedMessage(KEY_CONTACTING, siteAdapter.getLabel());
+			UpdateUI.getFormattedMessage(KEY_CONTACTING, siteAdapter.getLabel());
 		monitor.subTask(text);
 		URL siteURL = siteAdapter.getURL();
 
@@ -332,7 +332,7 @@ public class SearchObject extends NamedModelObject {
 			monitor.worked(1);
 			return status;
 		}
-		text = UpdateUIPlugin.getFormattedMessage(KEY_CHECKING, 
+		text = UpdateUI.getFormattedMessage(KEY_CHECKING, 
 					siteAdapter.getLabel());
 		monitor.getWrappedProgressMonitor().subTask(text);
 
@@ -422,7 +422,7 @@ public class SearchObject extends NamedModelObject {
 	private void addBookmarks(ArrayList result) {
 		if (getSearchBookmarks() == false)
 			return;
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		SiteBookmark[] bookmarks = model.getBookmarkLeafs();
 		for (int i = 0; i < bookmarks.length; i++) {
 			SiteBookmark bookmark = bookmarks[i];

@@ -26,7 +26,7 @@ public abstract class WebInstallHandler {
 	 * @since 2.0
 	 */
 	public static String getWebAppServerHost() {
-		return UpdateUIPlugin.getDefault().getAppServerHost();
+		return UpdateUI.getDefault().getAppServerHost();
 	}
 
 	/**
@@ -38,7 +38,7 @@ public abstract class WebInstallHandler {
 	 * @since 2.0
 	 */
 	public static int getWebAppServerPort() {
-		return UpdateUIPlugin.getDefault().getAppServerPort();
+		return UpdateUI.getDefault().getAppServerPort();
 	}
 
 	public static String getEncodedURLName(String urlName) {
@@ -78,7 +78,7 @@ public abstract class WebInstallHandler {
 					+ ":"
 					+ port
 					+ "/"
-					+ UpdateUIPlugin.WEB_APP_ID
+					+ UpdateUI.WEB_APP_ID
 					+ "/install";
 			return URLEncoder.encode(value);
 		}

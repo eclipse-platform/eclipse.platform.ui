@@ -2,7 +2,7 @@ package org.eclipse.update.internal.ui.forms;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.update.configuration.IProblemHandler;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  *
@@ -14,7 +14,7 @@ public class UIProblemHandler implements IProblemHandler {
 	 * @see IProblemHandler#reportProblem(String)
 	 */
 	public boolean reportProblem(String problemText) {
-		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
-		return MessageDialog.openQuestion(UpdateUIPlugin.getActiveWorkbenchShell(), title, problemText);
+		String title = UpdateUI.getResourceString(KEY_TITLE);
+		return MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(), title, problemText);
 	}
 }

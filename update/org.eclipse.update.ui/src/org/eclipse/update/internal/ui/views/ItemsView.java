@@ -31,7 +31,7 @@ public class ItemsView extends BaseTableView {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			return UpdateUIPlugin
+			return UpdateUI
 				.getDefault()
 				.getUpdateModel()
 				.getPendingChanges();
@@ -79,9 +79,9 @@ public class ItemsView extends BaseTableView {
 					break;
 			}
 			boolean patch = job.getFeature().isPatch();
-			ImageDescriptor desc = patch?UpdateUIPluginImages.DESC_EFIX_OBJ:
-			UpdateUIPluginImages.DESC_FEATURE_OBJ;
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(
+			ImageDescriptor desc = patch?UpdateUIImages.DESC_EFIX_OBJ:
+			UpdateUIImages.DESC_FEATURE_OBJ;
+			return UpdateUI.getDefault().getLabelProvider().get(
 				desc,
 				flags);
 		}
@@ -142,7 +142,7 @@ public class ItemsView extends BaseTableView {
 
 	public ItemsView() {
 		modelListener = new UpdateModelChangedListener();
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ItemsView extends BaseTableView {
 		TableViewer viewer = getTableViewer();
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		viewer.setInput(UpdateUI.getDefault().getUpdateModel());
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -173,7 +173,7 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		deleteAction.setText(
-			UpdateUIPlugin.getResourceString("ItemsView.popup.delete"));
+			UpdateUI.getResourceString("ItemsView.popup.delete"));
 			
 		processAction = new Action() {
 			public void run() {
@@ -181,7 +181,7 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		processAction.setText(
-			UpdateUIPlugin.getResourceString("ItemsView.popup.process"));
+			UpdateUI.getResourceString("ItemsView.popup.process"));
 
 		processAllAction = new Action() {
 			public void run() {
@@ -189,24 +189,24 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		processAllAction.setText(
-			UpdateUIPlugin.getResourceString("ItemsView.popup.processAll"));
+			UpdateUI.getResourceString("ItemsView.popup.processAll"));
 
 		super.makeActions();
 	}
 
 	public void dispose() {
 		hookListeners(false);
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
 	protected void partControlCreated() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		hookListeners(true);
 	}
 
 	protected void hookListeners(boolean add) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		if (add)
 			model.addUpdateModelChangedListener(modelListener);
 		else
@@ -237,7 +237,7 @@ public class ItemsView extends BaseTableView {
 	}
 
 	private void doProcessAll() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		PendingChange[] jobs = model.getPendingChanges();
 		doProcess(jobs);
 	}
@@ -254,7 +254,7 @@ public class ItemsView extends BaseTableView {
 				dialog.getShell().setSize(600, 500);
 				dialog.open();
 				if (wizard.isSuccessfulInstall())
-					UpdateUIPlugin.informRestartNeeded();
+					UpdateUI.informRestartNeeded();
 			}
 		});
 	}
@@ -264,7 +264,7 @@ public class ItemsView extends BaseTableView {
 			return;
 		IStructuredSelection ssel =
 			(IStructuredSelection) getViewer().getSelection();
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 
 		for (Iterator iter = ssel.iterator(); iter.hasNext();) {
 			model.removePendingChange((PendingChange) iter.next());
@@ -276,7 +276,7 @@ public class ItemsView extends BaseTableView {
 	}
 
 	private void updateTitle() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		PendingChange[] changes = model.getPendingChanges();
 
 		int total = changes.length;
@@ -289,7 +289,7 @@ public class ItemsView extends BaseTableView {
 		}
 		String baseName = getSite().getRegisteredName();
 		String title =
-			UpdateUIPlugin.getFormattedMessage(
+			UpdateUI.getFormattedMessage(
 				"ItemsView.title",
 				new String[] {
 					getSite().getRegisteredName(),

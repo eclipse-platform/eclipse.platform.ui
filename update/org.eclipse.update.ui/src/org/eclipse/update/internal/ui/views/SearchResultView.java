@@ -100,7 +100,7 @@ public class SearchResultView
 					case 4 :
 						long size = feature.getDownloadSize();
 						if (size == -1)
-							return UpdateUIPlugin.getResourceString(
+							return UpdateUI.getResourceString(
 								KEY_UNKNOWN_SIZE);
 						else
 							return feature.getDownloadSize() + "KB";
@@ -114,8 +114,8 @@ public class SearchResultView
 			return null;
 		}
 		public Image getImage(Object obj) {
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ);
+			return UpdateUI.getDefault().getLabelProvider().get(
+				UpdateUIImages.DESC_FEATURE_OBJ);
 		}
 	}
 	class NameSorter extends ViewerSorter {
@@ -144,7 +144,7 @@ public class SearchResultView
 	 * The constructor.
 	 */
 	public SearchResultView() {
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		modelListener = new ModelListener();
 	}
 
@@ -162,13 +162,13 @@ public class SearchResultView
 	}
 
 	protected void controlCreated() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(modelListener);
 		hookSelectionListener(true);
 	}
 
 	private void hookSelectionListener(boolean add) {
-		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		IWorkbenchPage page = UpdateUI.getActivePage();
 		if (page != null) {
 			if (add)
 				page.addSelectionListener(this);
@@ -182,19 +182,19 @@ public class SearchResultView
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_SITE));
+		column.setText(UpdateUI.getResourceString(KEY_C_SITE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_SIZE));
+		column.setText(UpdateUI.getResourceString(KEY_C_SIZE));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, 200, true));
@@ -206,8 +206,8 @@ public class SearchResultView
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(modelListener);
 		hookSelectionListener(false);
 		super.dispose();
@@ -227,22 +227,22 @@ public class SearchResultView
 		showSearchAction = new Action() {
 			public void run() {
 				try {
-					IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+					IWorkbenchPage page = UpdateUI.getActivePage();
 					DetailsView dview =
 						(DetailsView) page.showView(
 							UpdatePerspective.ID_DETAILS);
 					dview.showPage(DetailsView.SEARCH_PAGE, currentSearch);
 				} catch (PartInitException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				}
 			}
 		};
 		showSearchAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_LABEL));
+			UpdateUI.getResourceString(KEY_SHOW_SEARCH_LABEL));
 		showSearchAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_TOOLTIP));
+			UpdateUI.getResourceString(KEY_SHOW_SEARCH_TOOLTIP));
 		showSearchAction.setImageDescriptor(
-			UpdateUIPluginImages.DESC_SHOW_SEARCH);
+			UpdateUIImages.DESC_SHOW_SEARCH);
 	}
 
 	public void setCurrentSearch(SearchObject currentSearch) {
@@ -257,7 +257,7 @@ public class SearchResultView
 		else {
 			int count = getTableViewer().getTable().getItemCount();
 			String title =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					KEY_TITLE,
 					new String[] {
 						getSite().getRegisteredName(),

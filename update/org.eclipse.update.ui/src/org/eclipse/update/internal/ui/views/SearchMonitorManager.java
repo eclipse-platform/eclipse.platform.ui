@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.search.SearchObject;
@@ -53,7 +53,7 @@ public class SearchMonitorManager {
 		}
 
 		private void update() {
-			UpdateUIPlugin.getDefault().getUpdateModel().fireObjectChanged(
+			UpdateUI.getDefault().getUpdateModel().fireObjectChanged(
 				sobj,
 				NamedModelObject.P_NAME);
 		}
@@ -124,7 +124,7 @@ public class SearchMonitorManager {
 	}
 	
 	private void initialize() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		NamedModelObject [] bookmarks = model.getBookmarks();
 		for (int i=0; i<bookmarks.length; i++) {
 			processBookmark(bookmarks[i]);

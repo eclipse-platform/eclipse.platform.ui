@@ -8,7 +8,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -19,7 +19,7 @@ public class AppServerPreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_DESCRIPTION =
 		"AppServerPreferencePage.description";
-	private static final String PREFIX = UpdateUIPlugin.getPluginId();
+	private static final String PREFIX = UpdateUI.getPluginId();
 	public static final String P_MASTER_SWITCH = PREFIX + ".appServer";
 	public static final String P_ENCODE_URLS = PREFIX + ".encodeURLs";
 	private static final String KEY_MASTER_SWITCH =
@@ -53,8 +53,8 @@ public class AppServerPreferencePage
 	 */
 	public AppServerPreferencePage() {
 		super(GRID);
-		setPreferenceStore(UpdateUIPlugin.getDefault().getPreferenceStore());
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESCRIPTION));
+		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
+		setDescription(UpdateUI.getResourceString(KEY_DESCRIPTION));
 	}
 
 	/**
@@ -70,13 +70,13 @@ public class AppServerPreferencePage
 		masterField =
 			new MasterField(
 				P_MASTER_SWITCH,
-				UpdateUIPlugin.getResourceString(KEY_MASTER_SWITCH),
+				UpdateUI.getResourceString(KEY_MASTER_SWITCH),
 				getFieldEditorParent());
 		addField(masterField);
 		BooleanFieldEditor encodeURLs =
 			new BooleanFieldEditor(
 				P_ENCODE_URLS,
-				UpdateUIPlugin.getResourceString(KEY_ENCODE_URLS),
+				UpdateUI.getResourceString(KEY_ENCODE_URLS),
 				getFieldEditorParent());
 		addField(encodeURLs);
 		masterField.setSlave(encodeURLs);
@@ -94,13 +94,13 @@ public class AppServerPreferencePage
 	}
 	public static boolean getUseApplicationServer() {
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		return store.getBoolean(P_MASTER_SWITCH);
 	}
 
 	public static boolean getEncodeURLs() {
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		return store.getBoolean(P_ENCODE_URLS);
 	}
 
@@ -114,7 +114,7 @@ public class AppServerPreferencePage
 						handleServerActivation();
 						bag[0] = true;
 					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
+						UpdateUI.logException(e);
 						bag[0] = false;
 					}
 				}
@@ -122,20 +122,20 @@ public class AppServerPreferencePage
 			result = bag[0];
 		}
 		if (result)
-			UpdateUIPlugin.getDefault().savePluginPreferences();
+			UpdateUI.getDefault().savePluginPreferences();
 		return result;
 	}
 
 	private void handleServerActivation() throws CoreException {
 		boolean masterSwitch = getUseApplicationServer();
-		boolean webAppRunning = UpdateUIPlugin.getDefault().isWebAppStarted();
+		boolean webAppRunning = UpdateUI.getDefault().isWebAppStarted();
 
 		if (!masterSwitch && webAppRunning) {
 			// remove Web app
-			UpdateUIPlugin.getDefault().stopWebApp();
+			UpdateUI.getDefault().stopWebApp();
 		} else if (masterSwitch && !webAppRunning) {
 			// add Web app
-			UpdateUIPlugin.getDefault().startWebApp();
+			UpdateUI.getDefault().startWebApp();
 		}
 	}
 }

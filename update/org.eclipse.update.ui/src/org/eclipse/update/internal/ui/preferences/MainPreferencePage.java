@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -22,7 +22,7 @@ public class MainPreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_DESCRIPTION =
 		"MainPreferencePage.description";
-	private static final String PREFIX = UpdateUIPlugin.getPluginId();
+	private static final String PREFIX = UpdateUI.getPluginId();
 	public static final String P_HISTORY_SIZE = PREFIX + ".historySize";
 	public static final String P_BROWSER = PREFIX + ".browser";
 	public static final String EMBEDDED_VALUE = "embedded";
@@ -63,8 +63,8 @@ public class MainPreferencePage
 	 */
 	public MainPreferencePage() {
 		super(GRID);
-		setPreferenceStore(UpdateUIPlugin.getDefault().getPreferenceStore());
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESCRIPTION));
+		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
+		setDescription(UpdateUI.getResourceString(KEY_DESCRIPTION));
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class MainPreferencePage
 		IntegerFieldEditor maxLevel =
 			new IntegerFieldEditor(
 				P_HISTORY_SIZE,
-				UpdateUIPlugin.getResourceString(KEY_HISTORY_SIZE),
+				UpdateUI.getResourceString(KEY_HISTORY_SIZE),
 				getFieldEditorParent());
 		maxLevel.setValidRange(1, Integer.MAX_VALUE);
 		addField(maxLevel);
@@ -86,15 +86,15 @@ public class MainPreferencePage
 			RadioGroupFieldEditor browser =
 				new RadioGroupFieldEditor(
 					P_BROWSER,
-					UpdateUIPlugin.getResourceString(KEY_BROWSER_CHOICE),
+					UpdateUI.getResourceString(KEY_BROWSER_CHOICE),
 					1,
 					new String[][] {
 						{
-							UpdateUIPlugin.getResourceString(
+							UpdateUI.getResourceString(
 								KEY_BROWSER_CHOICE_EMBEDDED),
 							EMBEDDED_VALUE },
 						{
-					UpdateUIPlugin.getResourceString(KEY_BROWSER_CHOICE_SYSTEM),
+					UpdateUI.getResourceString(KEY_BROWSER_CHOICE_SYSTEM),
 						SYSTEM_VALUE }
 			}, getFieldEditorParent());
 			addField(browser);
@@ -104,15 +104,15 @@ public class MainPreferencePage
 		RadioGroupFieldEditor updateVersions =
 			new RadioGroupFieldEditor(
 				P_UPDATE_VERSIONS,
-				UpdateUIPlugin.getResourceString(KEY_UPDATE_VERSIONS),
+				UpdateUI.getResourceString(KEY_UPDATE_VERSIONS),
 				1,
 				new String[][] {
 					{
-						UpdateUIPlugin.getResourceString(
+						UpdateUI.getResourceString(
 							KEY_UPDATE_VERSIONS_EQUIVALENT),
 						EQUIVALENT_VALUE },
 					{
-				UpdateUIPlugin.getResourceString(
+				UpdateUI.getResourceString(
 					KEY_UPDATE_VERSIONS_COMPATIBLE),
 					COMPATIBLE_VALUE }
 		}, getFieldEditorParent());
@@ -123,7 +123,7 @@ public class MainPreferencePage
 		ColorFieldEditor topicColor =
 			new ColorFieldEditor(
 				UpdateColors.P_TOPIC_COLOR,
-				UpdateUIPlugin.getResourceString(KEY_TOPIC_COLOR),
+				UpdateUI.getResourceString(KEY_TOPIC_COLOR),
 				getFieldEditorParent());
 		addField(topicColor);
 		
@@ -140,7 +140,7 @@ public class MainPreferencePage
 	protected void createHttpProxy(Composite composite, int columnSpan) {
 		
 		enableHttpProxy = new Button(composite,SWT.CHECK);
-		enableHttpProxy.setText(UpdateUIPlugin.getResourceString(KEY_ENABLE_HTTP_PROXY));
+		enableHttpProxy.setText(UpdateUI.getResourceString(KEY_ENABLE_HTTP_PROXY));
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		enableHttpProxy.setLayoutData(gd);
@@ -149,7 +149,7 @@ public class MainPreferencePage
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		httpProxyHostLabel.setLayoutData(gd);
-		httpProxyHostLabel.setText(UpdateUIPlugin.getResourceString(KEY_HTTP_PROXY_SERVER));
+		httpProxyHostLabel.setText(UpdateUI.getResourceString(KEY_HTTP_PROXY_SERVER));
 		
 		httpProxyHostText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		httpProxyHostText.setFont(composite.getFont());
@@ -163,7 +163,7 @@ public class MainPreferencePage
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		httpProxyPortLabel.setLayoutData(gd);
-		httpProxyPortLabel.setText(UpdateUIPlugin.getResourceString(KEY_HTTP_PROXY_PORT));
+		httpProxyPortLabel.setText(UpdateUI.getResourceString(KEY_HTTP_PROXY_PORT));
 
 		httpProxyPortText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		httpProxyPortText.setFont(composite.getFont());
@@ -189,19 +189,19 @@ public class MainPreferencePage
 	}
 	private int getHistorySize() {
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		return store.getInt(P_HISTORY_SIZE);
 	}
 	
 	public static boolean getUseEmbeddedBrowser() {
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		return store.getString(P_BROWSER).equals(EMBEDDED_VALUE);
 	}
 
 	public static String getUpdateVersionsMode() {
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		return store.getString(P_UPDATE_VERSIONS);
 	}
 
@@ -214,12 +214,12 @@ public class MainPreferencePage
 						SiteManager.getLocalSite().setMaximumHistoryCount(getHistorySize());
 						SiteManager.setHttpProxyInfo(enableHttpProxy.getSelection(),httpProxyHostText.getText(),httpProxyPortText.getText());
 					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
+						UpdateUI.logException(e);
 					}
 				}
 			});
 		}
-		UpdateUIPlugin.getDefault().savePluginPreferences();
+		UpdateUI.getDefault().savePluginPreferences();
 		return result;
 	}
 	public void performApply() {

@@ -39,9 +39,9 @@ public class MainForm extends UpdateWebForm {
 
 	public MainForm(UpdateFormPage page) {
 		super(page);
-		itemImage = UpdateUIPluginImages.DESC_ITEM.createImage();
-		configsImage = UpdateUIPluginImages.DESC_CONFIGS_VIEW.createImage();
-		sitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
+		itemImage = UpdateUIImages.DESC_ITEM.createImage();
+		configsImage = UpdateUIImages.DESC_CONFIGS_VIEW.createImage();
+		sitesImage = UpdateUIImages.DESC_SITES_VIEW.createImage();
 	}
 
 	public void dispose() {
@@ -52,10 +52,10 @@ public class MainForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 		super.initialize(modelObject);
 		IPreferenceStore pstore =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				if (e.getProperty().equals(UpdateColors.P_TOPIC_COLOR))
@@ -106,7 +106,7 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_UPDATES_TITLE),
+				UpdateUI.getResourceString(KEY_UPDATES_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
@@ -114,7 +114,7 @@ public class MainForm extends UpdateWebForm {
 		text = factory.createFormEngine(parent);
 		setFocusControl(text);
 		text.load(
-			UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC),
+			UpdateUI.getResourceString(KEY_UPDATES_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -135,14 +135,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_INSTALLS_TITLE),
+				UpdateUI.getResourceString(KEY_INSTALLS_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent);
 		text.load(
-			UpdateUIPlugin.getResourceString(KEY_INSTALLS_DESC),
+			UpdateUI.getResourceString(KEY_INSTALLS_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -166,14 +166,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_TITLE),
+				UpdateUI.getResourceString(KEY_UNINSTALLS_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent);
 		text.load(
-			UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC),
+			UpdateUI.getResourceString(KEY_UNINSTALLS_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -198,14 +198,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_HISTORY_TITLE),
+				UpdateUI.getResourceString(KEY_HISTORY_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent);
 		text.load(
-			UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC),
+			UpdateUI.getResourceString(KEY_HISTORY_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -224,7 +224,7 @@ public class MainForm extends UpdateWebForm {
 
 	private IViewPart showView(String viewId) {
 		try {
-			IViewPart part = UpdateUIPlugin.getActivePage().showView(viewId);
+			IViewPart part = UpdateUI.getActivePage().showView(viewId);
 			return part;
 		} catch (PartInitException e) {
 			return null;

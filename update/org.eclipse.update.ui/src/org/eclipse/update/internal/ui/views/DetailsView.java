@@ -120,7 +120,7 @@ public class DetailsView extends MultiPageView {
 			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
 		}
 		if (useEmbedded) {
-			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+			IWorkbenchPage page = UpdateUI.getActivePage();
 			try {
 				IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
 				if (part == null) {
@@ -130,7 +130,7 @@ public class DetailsView extends MultiPageView {
 					page.bringToTop(part);
 				((IEmbeddedWebBrowser) part).openTo(url);
 			} catch (PartInitException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 		} else {
 			if (win32) {
@@ -194,7 +194,7 @@ public class DetailsView extends MultiPageView {
 			history.add(pageId, input);
 		backAction.update();
 		forwardAction.update();
-		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		IWorkbenchPage page = UpdateUI.getActivePage();
 		if (page == null)
 			return;
 		IPerspectiveDescriptor desc = page.getPerspective();
@@ -210,7 +210,7 @@ public class DetailsView extends MultiPageView {
 					page.showView(UpdatePerspective.ID_DETAILS);
 				}
 				catch (PartInitException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				}
 				// Restore focus to the selection provider
 				if (part!=null) part.setFocus();
@@ -304,13 +304,13 @@ public class DetailsView extends MultiPageView {
 				performHome();
 			}
 		};
-		homeAction.setText(UpdateUIPlugin.getResourceString(KEY_HOME));
-		homeAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_HOME));
-		homeAction.setImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV);
+		homeAction.setText(UpdateUI.getResourceString(KEY_HOME));
+		homeAction.setToolTipText(UpdateUI.getResourceString(KEY_T_HOME));
+		homeAction.setImageDescriptor(UpdateUIImages.DESC_HOME_NAV);
 		homeAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_HOME_NAV_H);
+			UpdateUIImages.DESC_HOME_NAV_H);
 		homeAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_HOME_NAV_D);
+			UpdateUIImages.DESC_HOME_NAV_D);
 		WorkbenchHelp.setHelp(
 			homeAction,
 			"org.eclipse.update.ui.DetailsView_homeAction");
@@ -323,14 +323,14 @@ public class DetailsView extends MultiPageView {
 				setEnabled(canPerformBackward());
 			}
 		};
-		backAction.setText(UpdateUIPlugin.getResourceString(KEY_BACKWARD));
+		backAction.setText(UpdateUI.getResourceString(KEY_BACKWARD));
 		backAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_T_BACKWARD));
-		backAction.setImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV);
+			UpdateUI.getResourceString(KEY_T_BACKWARD));
+		backAction.setImageDescriptor(UpdateUIImages.DESC_BACKWARD_NAV);
 		backAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
+			UpdateUIImages.DESC_BACKWARD_NAV_H);
 		backAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
+			UpdateUIImages.DESC_BACKWARD_NAV_D);
 		backAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
 			backAction,
@@ -344,14 +344,14 @@ public class DetailsView extends MultiPageView {
 				setEnabled(canPerformForward());
 			}
 		};
-		forwardAction.setText(UpdateUIPlugin.getResourceString(KEY_FORWARD));
+		forwardAction.setText(UpdateUI.getResourceString(KEY_FORWARD));
 		forwardAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_T_FORWARD));
-		forwardAction.setImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV);
+			UpdateUI.getResourceString(KEY_T_FORWARD));
+		forwardAction.setImageDescriptor(UpdateUIImages.DESC_FORWARD_NAV);
 		forwardAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_FORWARD_NAV_H);
+			UpdateUIImages.DESC_FORWARD_NAV_H);
 		forwardAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_FORWARD_NAV_D);
+			UpdateUIImages.DESC_FORWARD_NAV_D);
 		forwardAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
 			forwardAction,

@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 
 /**
  * @version 	1.0
@@ -130,35 +130,35 @@ public class SharedLabelProvider
 
 	private ImageDescriptor[] getLowerLeftOverlays(int flags) {
 		if ((flags & F_ERROR) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_ERROR_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_ERROR_CO };
 		if ((flags & F_WARNING) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_WARNING_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_WARNING_CO };
 		return null;
 	}
 
 	private ImageDescriptor[] getUpperRightOverlays(int flags) {
 		if ((flags & F_LINKED) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_LINKED_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_LINKED_CO };
 		return null;
 	}
 	
 	private ImageDescriptor[] getLowerRightOverlays(int flags) {
 		if ((flags & F_CURRENT) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_CURRENT_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_CURRENT_CO };
 		if ((flags & F_MOD) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_MOD_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_MOD_CO };
 		if ((flags & F_ADD) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_ADD_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_ADD_CO };
 		if ((flags & F_DEL) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_DEL_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_DEL_CO };
 		if ((flags & F_UNCONFIGURED) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_UNCONF_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_UNCONF_CO };
 		return null;
 	}
 	
 	private ImageDescriptor[] getUpperLeftOverlays(int flags) {
 		if ((flags & F_UPDATED) != 0)
-			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_UPDATED_CO };
+			return new ImageDescriptor[] { UpdateUIImages.DESC_UPDATED_CO };
 		return null;
 	}
 

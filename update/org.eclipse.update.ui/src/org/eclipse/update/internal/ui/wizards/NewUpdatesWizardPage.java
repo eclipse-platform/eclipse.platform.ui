@@ -83,13 +83,13 @@ public class NewUpdatesWizardPage extends BannerPage {
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 					boolean patch = feature.isPatch();
-					return UpdateUIPlugin.getDefault().getLabelProvider().get(
+					return UpdateUI.getDefault().getLabelProvider().get(
 						patch
-							? UpdateUIPluginImages.DESC_EFIX_OBJ
-							: UpdateUIPluginImages.DESC_FEATURE_OBJ);
+							? UpdateUIImages.DESC_EFIX_OBJ
+							: UpdateUIImages.DESC_FEATURE_OBJ);
 				} catch (CoreException e) {
-					return UpdateUIPlugin.getDefault().getLabelProvider().get(
-						UpdateUIPluginImages.DESC_FEATURE_OBJ,
+					return UpdateUI.getDefault().getLabelProvider().get(
+						UpdateUIImages.DESC_FEATURE_OBJ,
 						UpdateLabelProvider.F_ERROR);
 				}
 			} else
@@ -118,13 +118,13 @@ public class NewUpdatesWizardPage extends BannerPage {
 						case 3 :
 							long size = feature.getDownloadSize();
 							if (size == -1)
-								return UpdateUIPlugin.getResourceString(
+								return UpdateUI.getResourceString(
 									KEY_UNKNOWN_SIZE);
 							else
 								return feature.getDownloadSize() + "KB";
 					}
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 					return "??";
 				}
 			}
@@ -176,16 +176,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		PendingChange[] changes,
 		IInstallConfiguration config) {
 		super("Target");
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChanges = changes;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		setBannerVisible(false);
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -207,7 +207,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		buttonContainer.setLayoutData(gd);
 
 		Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUIPlugin.getResourceString(KEY_SELECT_ALL));
+		button.setText(UpdateUI.getResourceString(KEY_SELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(true);
@@ -218,7 +218,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		SWTUtil.setButtonDimensionHint(button);
 
 		button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUIPlugin.getResourceString(KEY_DESELECT_ALL));
+		button.setText(UpdateUI.getResourceString(KEY_DESELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(false);
@@ -229,7 +229,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
-		moreInfoButton.setText(UpdateUIPlugin.getResourceString(KEY_MORE_INFO));
+		moreInfoButton.setText(UpdateUI.getResourceString(KEY_MORE_INFO));
 		moreInfoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doMoreInfo();
@@ -239,11 +239,11 @@ public class NewUpdatesWizardPage extends BannerPage {
 		moreInfoButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(moreInfoButton);
 
-		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setCheckedElements(pendingChanges);
 		
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_FEATURE_DESC));
+		label.setText(UpdateUI.getResourceString(KEY_FEATURE_DESC));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -260,7 +260,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setText(UpdateUI.getResourceString(KEY_FILTER_CHECK));
 		filterCheck.setSelection(true);
 		tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -295,7 +295,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		String total = "" + totalCount;
 		String selected = "" + checked.length;
 		counterLabel.setText(
-			UpdateUIPlugin.getFormattedMessage(
+			UpdateUI.getFormattedMessage(
 				KEY_COUNTER,
 				new String[] { selected, total }));
 		boolean duplicates = false;
@@ -310,13 +310,13 @@ public class NewUpdatesWizardPage extends BannerPage {
 			setMessage(null);
 		else
 			setMessage(
-				UpdateUIPlugin.getResourceString(KEY_DUPLICATE_WARNING),
+				UpdateUI.getResourceString(KEY_DUPLICATE_WARNING),
 				WARNING);
 	}
 
 	private void createTableViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_TABLE_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_TABLE_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -330,16 +330,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_SIZE));
+		column.setText(UpdateUI.getResourceString(KEY_C_SIZE));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, 200, true));

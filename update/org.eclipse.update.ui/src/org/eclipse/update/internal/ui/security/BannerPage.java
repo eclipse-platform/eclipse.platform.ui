@@ -13,7 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 
 public abstract class BannerPage extends DialogPage {
 	private Image bannerImage;
@@ -52,7 +52,7 @@ public abstract class BannerPage extends DialogPage {
 		Image image=null;
 		if (imageURL==null) {
 			// use default
-			bannerImage = UpdateUIPluginImages.DESC_INSTALL_BANNER.createImage();
+			bannerImage = UpdateUIImages.DESC_INSTALL_BANNER.createImage();
 			image = bannerImage;
 		}
 		return image;

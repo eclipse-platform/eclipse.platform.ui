@@ -84,11 +84,11 @@ public class MultiReviewPage extends BannerPage {
 				IFeature feature = job.getFeature();
 				boolean patch = feature.isPatch();
 				UpdateLabelProvider provider =
-					UpdateUIPlugin.getDefault().getLabelProvider();
+					UpdateUI.getDefault().getLabelProvider();
 				if (patch)
-					return provider.get(UpdateUIPluginImages.DESC_EFIX_OBJ);
+					return provider.get(UpdateUIImages.DESC_EFIX_OBJ);
 				else
-					return provider.get(UpdateUIPluginImages.DESC_FEATURE_OBJ);
+					return provider.get(UpdateUIImages.DESC_FEATURE_OBJ);
 			}
 			return null;
 		}
@@ -138,14 +138,14 @@ public class MultiReviewPage extends BannerPage {
 	 */
 	public MultiReviewPage(PendingChange[] jobs) {
 		super("MultiReview");
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		this.jobs = orderJobs(jobs);
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -224,7 +224,7 @@ public class MultiReviewPage extends BannerPage {
 		counterLabel.setLayoutData(gd);
 
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setText(UpdateUI.getResourceString(KEY_FILTER_CHECK));
 		filterCheck.setSelection(true);
 		tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -254,16 +254,16 @@ public class MultiReviewPage extends BannerPage {
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_TASK));
+		column.setText(UpdateUI.getResourceString(KEY_C_TASK));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUIPlugin.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(30));
@@ -280,7 +280,7 @@ public class MultiReviewPage extends BannerPage {
 				pageChanged();
 			}
 		});
-		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setAllChecked(true);
 		return table;
 	}
@@ -305,7 +305,7 @@ public class MultiReviewPage extends BannerPage {
 		String total = "" + totalCount;
 		String selected = "" + checked.length;
 		counterLabel.setText(
-			UpdateUIPlugin.getFormattedMessage(
+			UpdateUI.getFormattedMessage(
 				KEY_COUNTER,
 				new String[] { selected, total }));
 		if (checked.length > 0) {
@@ -385,7 +385,7 @@ public class MultiReviewPage extends BannerPage {
 	private void showStatus() {
 		if (validationStatus != null) {
 			ErrorDialog.openError(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
+				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
 				validationStatus);

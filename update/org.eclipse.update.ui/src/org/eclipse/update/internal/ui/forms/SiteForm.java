@@ -36,7 +36,7 @@ public class SiteForm extends UpdateWebForm {
 
 	public SiteForm(UpdateFormPage page) {
 		super(page);
-		updateSitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
+		updateSitesImage = UpdateUIImages.DESC_SITES_VIEW.createImage();
 	}
 
 	public void dispose() {
@@ -67,7 +67,7 @@ public class SiteForm extends UpdateWebForm {
 		setFocusControl(desc);
 		desc.registerTextObject(KEY_UPDATE_SITES_IMAGE, updateSitesImage);
 		String text =
-			UpdateUIPlugin.getResourceString(
+			UpdateUI.getResourceString(
 				webSiteFlag ? KEY_WDESC : KEY_DESC);
 		desc.load(text, true, true);
 		TableData td = new TableData();
@@ -102,7 +102,7 @@ public class SiteForm extends UpdateWebForm {
 		};
 		link = new SelectableFormLabel(parent, SWT.NULL);
 		link.setText(
-			UpdateUIPlugin.getResourceString(
+			UpdateUI.getResourceString(
 				webSiteFlag ? KEY_WLINK : KEY_LINK));
 		factory.turnIntoHyperlink(link, listener);
 		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm");
@@ -120,11 +120,11 @@ public class SiteForm extends UpdateWebForm {
 
 		if (oldWebSiteFlag != newWebSiteFlag) {
 			String text =
-				UpdateUIPlugin.getResourceString(
+				UpdateUI.getResourceString(
 					newWebSiteFlag ? KEY_WDESC : KEY_DESC);
 			desc.load(text, true, true);
 			link.setText(
-				UpdateUIPlugin.getResourceString(
+				UpdateUI.getResourceString(
 					newWebSiteFlag ? KEY_WLINK : KEY_LINK));
 		}
 		setHeadingText(adapter.getLabel());

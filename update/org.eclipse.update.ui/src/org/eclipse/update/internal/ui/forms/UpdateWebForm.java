@@ -17,12 +17,12 @@ public class UpdateWebForm extends WebForm implements IUpdateForm, IUpdateModelC
 
 	public UpdateWebForm(IUpdateFormPage page) {
 		this.page = page;
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(this);
 	}
 	
 	public void dispose() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
 		super.dispose();
 	}
@@ -41,9 +41,9 @@ public class UpdateWebForm extends WebForm implements IUpdateForm, IUpdateModelC
 	public void initialize(Object model) {
 		super.initialize(model);
 		if (isWhiteBackground()) {
-			setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
+			setHeadingImage(UpdateUIImages.get(UpdateUIImages.IMG_FORM_BANNER));
 			setHeadingUnderlineImage(
-				UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
+				UpdateUIImages.get(UpdateUIImages.IMG_FORM_UNDERLINE));
 		}
 		refreshSize();
 	}

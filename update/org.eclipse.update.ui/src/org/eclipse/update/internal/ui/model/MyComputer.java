@@ -30,7 +30,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	}
 
 	public String getName() {
-		return UpdateUIPlugin.getResourceString(KEY_LABEL);
+		return UpdateUI.getResourceString(KEY_LABEL);
 	}
 
 	public String toString() {
@@ -43,7 +43,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	public Object[] getChildren(Object parent) {
 		BusyIndicator
 			.showWhile(
-				UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(),
+				UpdateUI.getActiveWorkbenchShell().getDisplay(),
 				new Runnable() {
 			public void run() {
 				IVolume[] volumes = LocalSystemInfo.getVolumes();
@@ -67,7 +67,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
-		return UpdateUIPluginImages.DESC_COMPUTER_OBJ;
+		return UpdateUIImages.DESC_COMPUTER_OBJ;
 	}
 
 	/**

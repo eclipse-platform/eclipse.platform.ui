@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 
 /**
  * Insert the type's description here.
@@ -59,6 +59,6 @@ public abstract class BaseTreeView extends BaseView {
 		};
 		collapseAllAction.setText("Collapse All");
 		collapseAllAction.setToolTipText("Collapse All");
-		collapseAllAction.setImageDescriptor(UpdateUIPluginImages.DESC_COLLAPSE_ALL);
+		collapseAllAction.setImageDescriptor(UpdateUIImages.DESC_COLLAPSE_ALL);
 	}
 }

@@ -9,7 +9,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class UpdateModel implements IAdaptable {
 	private Vector changes = new Vector();
@@ -19,7 +19,7 @@ public class UpdateModel implements IAdaptable {
 	private static final String BOOKMARK_FILE = "bookmarks.xml";
 	
 	public UpdateModel() {
-		settings = UpdateUIPlugin.getDefault().getDialogSettings();
+		settings = UpdateUI.getDefault().getDialogSettings();
 	}
 	
 	public void startup() {
@@ -28,7 +28,7 @@ public class UpdateModel implements IAdaptable {
 	}
 	
 	private String getBookmarksFileName() {
-		IPath path = UpdateUIPlugin.getDefault().getStateLocation();
+		IPath path = UpdateUI.getDefault().getStateLocation();
 		path = path.append(BOOKMARK_FILE);
 		return path.toOSString();
 	}

@@ -2,7 +2,7 @@ package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 
 /**
@@ -21,8 +21,8 @@ public class NewFolderWizardPage extends BaseNewWizardPage {
 	 */
 	public NewFolderWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 	}
 
 	/**

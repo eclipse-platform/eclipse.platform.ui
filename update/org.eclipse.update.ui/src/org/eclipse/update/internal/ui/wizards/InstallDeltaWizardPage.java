@@ -88,10 +88,10 @@ public class InstallDeltaWizardPage extends WizardPage {
 				int flags = 0; 
 				if (statusTable.get(obj) != null)
 					flags = UpdateLabelProvider.F_ERROR;
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_UPDATES_OBJ, flags);
+				return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_UPDATES_OBJ, flags);
 			}
 			if (obj instanceof DeltaFeature)
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_FEATURE_OBJ);
+				return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_FEATURE_OBJ);
 			return super.getImage(obj);
 		}
 	}
@@ -103,14 +103,14 @@ public class InstallDeltaWizardPage extends WizardPage {
 	public InstallDeltaWizardPage(ISessionDelta[] deltas) {
 		super("installDeltaPage");
 		this.deltas = deltas;
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		initializeStatusTable();
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -148,7 +148,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_LABEL));
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -186,7 +186,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
 		deleteButton.setEnabled(false);
-		deleteButton.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
+		deleteButton.setText(UpdateUI.getResourceString(KEY_DELETE));
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -200,7 +200,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		errorsButton = new Button(buttonContainer, SWT.PUSH);
 		errorsButton.setEnabled(false);
-		errorsButton.setText(UpdateUIPlugin.getResourceString(KEY_ERRORS));
+		errorsButton.setText(UpdateUI.getResourceString(KEY_ERRORS));
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);

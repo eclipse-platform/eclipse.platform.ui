@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.search.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -23,9 +23,9 @@ public class BookmarkUtil {
 			Node root = doc.getDocumentElement();
 			processRoot(root, bookmarks);
 		} catch (SAXException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		} catch (IOException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -77,7 +77,7 @@ public class BookmarkUtil {
 		NodeList children,
 		BookmarkFolder folder,
 		Vector bookmarks) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			NamedModelObject object = null;

@@ -8,7 +8,7 @@ package org.eclipse.update.internal.ui.forms;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
@@ -29,7 +29,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 	super.initialize(modelObject);
 }
 
@@ -46,7 +46,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
+	text.setText(UpdateUI.getResourceString(KEY_DESC));
 	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.DiscoveryFolderForm");
 }
 

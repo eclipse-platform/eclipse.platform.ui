@@ -34,11 +34,11 @@ public class InstallWizard extends Wizard {
 	}
 
 	public InstallWizard(PendingChange job, boolean needLicensePage) {
-		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
+		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
+		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUIPlugin.getResourceString("InstallWizard.wtitle"));
+		setWindowTitle(UpdateUI.getResourceString("InstallWizard.wtitle"));
 		this.job = job;
 		this.needLicensePage = needLicensePage;
 	}
@@ -102,7 +102,7 @@ public class InstallWizard extends Wizard {
 			if (target instanceof InstallAbortedException) {
 				// should we revert to the previous configuration?
 			} else {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 			return false;
 		} catch (InterruptedException e) {
@@ -138,7 +138,7 @@ public class InstallWizard extends Wizard {
 			config.setLabel(Utilities.format(config.getCreationDate()));
 			return config;
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return null;
 		}
 	}
@@ -153,9 +153,9 @@ public class InstallWizard extends Wizard {
 				IInstallConfiguration savedConfig = localSite.addToPreservedConfigurations(cconfig);
 				VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 				String key = "@"+vid.getIdentifier()+"_"+vid.getVersion();
-				String newLabel = UpdateUIPlugin.getFormattedMessage(KEY_SAVED_CONFIG, key);
+				String newLabel = UpdateUI.getFormattedMessage(KEY_SAVED_CONFIG, key);
 				savedConfig.setLabel(newLabel);
-				UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 				model.fireObjectChanged(savedConfig, null);
 			}
 		}
@@ -195,7 +195,7 @@ public class InstallWizard extends Wizard {
 				site.remove(feature, monitor);
 			} else {
 				// we should do something here
-				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
+				throwError(UpdateUI.getResourceString(KEY_UNABLE));
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
 			if (optionalFeatures == null)
@@ -214,7 +214,7 @@ public class InstallWizard extends Wizard {
 				if (!oldSuccess) {
 					if (!isNestedChild(oldFeature))
 						// "eat" the error if nested child
-						throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+						throwError(UpdateUI.getResourceString(KEY_OLD));
 				}
 			}
 			if (oldFeature == null) {
@@ -232,7 +232,7 @@ public class InstallWizard extends Wizard {
 			// should not be here
 			return;
 		}
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addPendingChange(job);
 	}
 
@@ -271,7 +271,7 @@ public class InstallWizard extends Wizard {
 		IStatus status =
 			new Status(
 				IStatus.ERROR,
-				UpdateUIPlugin.getPluginId(),
+				UpdateUI.getPluginId(),
 				IStatus.OK,
 				message,
 				null);
@@ -376,7 +376,7 @@ public class InstallWizard extends Wizard {
 			// find other features and unconfigure
 			String id = iref.getVersionedIdentifier().getIdentifier();
 			IFeature[] sameIds =
-				UpdateUIPlugin.searchSite(id, targetSite, true);
+				UpdateUI.searchSite(id, targetSite, true);
 			for (int j = 0; j < sameIds.length; j++) {
 				IFeature sameId = sameIds[j];
 				// Ignore self.
@@ -429,7 +429,7 @@ public class InstallWizard extends Wizard {
 				if (preserve) {
 						String id =
 							iref.getVersionedIdentifier().getIdentifier();
-						UpdateUIPlugin.setOriginatingURL(id, url);
+						UpdateUI.setOriginatingURL(id, url);
 				} else {
 					try {
 						IFeature ifeature = iref.getFeature();

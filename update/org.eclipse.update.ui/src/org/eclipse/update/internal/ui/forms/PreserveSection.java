@@ -32,12 +32,12 @@ public class PreserveSection extends UpdateSection {
 	public PreserveSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		setHeaderText(UpdateUI.getResourceString(KEY_TITLE));
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -58,8 +58,8 @@ public class PreserveSection extends UpdateSection {
 		td.grabHorizontal = true;
 		td.colspan = 2;
 		textLabel.setLayoutData(td);
-		textLabel.load(UpdateUIPlugin.getResourceString(KEY_TEXT), true, false);
-		Image configsImage = UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_CONFIGS_VIEW);
+		textLabel.load(UpdateUI.getResourceString(KEY_TEXT), true, false);
+		Image configsImage = UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_CONFIGS_VIEW);
 		HyperlinkAction action = new HyperlinkAction() {
 			public void linkActivated(IHyperlinkSegment link) {
 				ConfigurationView view =
@@ -71,11 +71,11 @@ public class PreserveSection extends UpdateSection {
 		};
 		textLabel.registerTextObject("link", action);
 		textLabel.registerTextObject("image", configsImage);
-		preserveLabel = factory.createLabel(container, UpdateUIPlugin.getResourceString(KEY_PRESERVE_TEXT));
+		preserveLabel = factory.createLabel(container, UpdateUI.getResourceString(KEY_PRESERVE_TEXT));
 		td = new TableData();
 		td.valign = TableData.MIDDLE;
 				
-		preserveButton = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_PRESERVE_BUTTON), SWT.PUSH); //$NON-NLS-1$
+		preserveButton = factory.createButton(container, UpdateUI.getResourceString(KEY_PRESERVE_BUTTON), SWT.PUSH); //$NON-NLS-1$
 		preserveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performPreserve();
@@ -97,13 +97,13 @@ public class PreserveSection extends UpdateSection {
 			localSite.addToPreservedConfigurations(config);
 			localSite.save();
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 	
 	private IViewPart showView(String viewId) {
 		try {
-			IViewPart part = UpdateUIPlugin.getActivePage().showView(viewId);
+			IViewPart part = UpdateUI.getActivePage().showView(viewId);
 			return part;
 		} catch (PartInitException e) {
 			return null;

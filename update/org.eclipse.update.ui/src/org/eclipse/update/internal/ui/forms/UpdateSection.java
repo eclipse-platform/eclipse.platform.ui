@@ -6,7 +6,7 @@ package org.eclipse.update.internal.ui.forms;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.ui.forms.internal.*;
@@ -16,7 +16,7 @@ public abstract class UpdateSection extends FormSection {
 	
 	public UpdateSection(UpdateFormPage page) {
 		this.page = page;
-		IPreferenceStore pstore = UpdateUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore pstore = UpdateUI.getDefault().getPreferenceStore();
 		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				if (e.getProperty().equals(UpdateColors.P_TOPIC_COLOR))

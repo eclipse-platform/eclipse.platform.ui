@@ -13,7 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 
 /**
@@ -42,7 +42,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.PasswordRequired")); //$NON-NLS-1$
+		newShell.setText(UpdateUI.getResourceString("UserVerificationDialog.PasswordRequired")); //$NON-NLS-1$
 	}
 	/**
 	 */
@@ -71,8 +71,8 @@ public class UserValidationDialog extends Dialog {
 		main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(main, SWT.WRAP);
-		String text = UpdateUIPlugin.getResourceString("UserVerificationDialog.EnterNameAndPassword")+ realm; //$NON-NLS-1$
-		text += "\n" + UpdateUIPlugin.getResourceString("UserVerificationDialog.Domain")+domain; //$NON-NLS-1$ //$NON-NLS-2$
+		String text = UpdateUI.getResourceString("UserVerificationDialog.EnterNameAndPassword")+ realm; //$NON-NLS-1$
+		text += "\n" + UpdateUI.getResourceString("UserVerificationDialog.Domain")+domain; //$NON-NLS-1$ //$NON-NLS-2$
 		label.setText(text);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
@@ -88,7 +88,7 @@ public class UserValidationDialog extends Dialog {
 	 * area.
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.Password")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUI.getResourceString("UserVerificationDialog.Password")); //$NON-NLS-1$
 
 		passwordField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -103,7 +103,7 @@ public class UserValidationDialog extends Dialog {
 	 * area.
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.UserName")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUI.getResourceString("UserVerificationDialog.UserName")); //$NON-NLS-1$
 
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

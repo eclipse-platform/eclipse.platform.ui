@@ -72,8 +72,8 @@ public class OptionalFeaturesPage extends BannerPage {
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ);
+			return UpdateUI.getDefault().getLabelProvider().get(
+				UpdateUIImages.DESC_FEATURE_OBJ);
 		}
 	}
 
@@ -84,15 +84,15 @@ public class OptionalFeaturesPage extends BannerPage {
 		PendingChange pendingChange,
 		IInstallConfiguration config) {
 		super("OptionalFeatures");
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -113,7 +113,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			}
 		});
 		selectAllButton.setText(
-			UpdateUIPlugin.getResourceString(KEY_SELECT_ALL));
+			UpdateUI.getResourceString(KEY_SELECT_ALL));
 		GridData gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -128,7 +128,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			}
 		});
 		deselectAllButton.setText(
-			UpdateUIPlugin.getResourceString(KEY_DESELECT_ALL));
+			UpdateUI.getResourceString(KEY_DESELECT_ALL));
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -140,7 +140,7 @@ public class OptionalFeaturesPage extends BannerPage {
 
 	private void createCheckboxTreeViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_TREE_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

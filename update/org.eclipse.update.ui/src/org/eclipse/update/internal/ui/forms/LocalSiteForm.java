@@ -12,7 +12,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
@@ -31,7 +31,7 @@ public class LocalSiteForm extends UpdateWebForm {
 
 	public LocalSiteForm(UpdateFormPage page) {
 		super(page);
-		aboutInfo = UpdateUIPlugin.getDefault().getAboutInfo();
+		aboutInfo = UpdateUI.getDefault().getAboutInfo();
 		ImageDescriptor desc = aboutInfo.getAboutImage();
 		if (desc != null)
 			image = desc.createImage(); // may be null
@@ -44,7 +44,7 @@ public class LocalSiteForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 		super.initialize(modelObject);
 	}
 

@@ -10,7 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class UpdateColors {
 	public static final String P_TOPIC_COLOR = "UpdateColors.topicColor";
@@ -42,7 +42,7 @@ public class UpdateColors {
 			return (Color) colorTable.get(preferenceName);
 
 		IPreferenceStore store =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		if (store == null) {
 			Color color = getDefaultColor(display, preferenceName);
 			colorTable.put(preferenceName, color);

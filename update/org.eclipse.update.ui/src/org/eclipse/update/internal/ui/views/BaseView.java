@@ -116,7 +116,7 @@ public abstract class BaseView extends ViewPart {
 	protected void makeActions() {
 		showDetailsAction = new Action() {
 			public void run() {
-				IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+				IWorkbenchPage page = UpdateUI.getActivePage();
 				try {
 					IViewPart part =
 						page.showView(UpdatePerspective.ID_DETAILS);
@@ -124,7 +124,7 @@ public abstract class BaseView extends ViewPart {
 						BaseView.this,
 						viewer.getSelection());
 				} catch (PartInitException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				}
 			}
 		};
@@ -132,7 +132,7 @@ public abstract class BaseView extends ViewPart {
 			showDetailsAction,
 			"org.eclipse.update.ui.BaseViewer_showDetailsAction");
 		showDetailsAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_SHOW_DETAILS));
+			UpdateUI.getResourceString(KEY_SHOW_DETAILS));
 	}
 
 	protected void initDragAndDrop() {
@@ -157,18 +157,18 @@ public abstract class BaseView extends ViewPart {
 	protected boolean confirmDeletion() {
 		IStructuredSelection ssel =
 			(IStructuredSelection) viewer.getSelection();
-		String title = UpdateUIPlugin.getResourceString(KEY_CONFIRM_DELETE);
+		String title = UpdateUI.getResourceString(KEY_CONFIRM_DELETE);
 		String message;
 
 		if (ssel.size() > 1) {
 			message =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					KEY_CONFIRM_DELETE_MULTIPLE,
 					"" + ssel.size());
 		} else {
 			Object obj = ssel.getFirstElement().toString();
 			message =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					KEY_CONFIRM_DELETE_SINGLE,
 					obj.toString());
 		}

@@ -11,7 +11,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -152,7 +152,7 @@ public class PluginsSearchCategory extends SearchCategory {
 		newButton =
 			factory.createButton(
 				container,
-				UpdateUIPlugin.getResourceString(KEY_NEW),
+				UpdateUI.getResourceString(KEY_NEW),
 				SWT.PUSH);
 		newButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -167,7 +167,7 @@ public class PluginsSearchCategory extends SearchCategory {
 		deleteButton =
 			factory.createButton(
 				container,
-				UpdateUIPlugin.getResourceString(KEY_DELETE),
+				UpdateUI.getResourceString(KEY_DELETE),
 				SWT.PUSH);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -192,7 +192,7 @@ public class PluginsSearchCategory extends SearchCategory {
 			new NewPluginEntryDialog(tableViewer.getControl().getShell());
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_TITLE));
+			UpdateUI.getResourceString(KEY_NEW_TITLE));
 		dialog.getShell().pack();
 		if (dialog.open() == NewPluginEntryDialog.OK) {
 			if (imports == null)

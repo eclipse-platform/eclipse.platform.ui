@@ -12,7 +12,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
 
@@ -26,7 +26,7 @@ public class PropertyWebForm extends UpdateWebForm {
 	public PropertyWebForm(IUpdateFormPage page) {
 		super(page);
 		IPreferenceStore pstore =
-			UpdateUIPlugin.getDefault().getPreferenceStore();
+			UpdateUI.getDefault().getPreferenceStore();
 		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				if (e.getProperty().equals(UpdateColors.P_TOPIC_COLOR))

@@ -27,7 +27,7 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 	 */
 	public void run(IAction action) {
 		IWorkbenchWindow currentWindow =
-			UpdateUIPlugin.getActiveWorkbenchWindow();
+			UpdateUI.getActiveWorkbenchWindow();
 		IWorkbenchPage currentPage = currentWindow.getActivePage();
 
 		if (currentPage != null
@@ -42,14 +42,14 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 				: currentWindow;
 
 		try {
-			//IAdaptable input = UpdateUIPlugin.getWorkspace();
+			//IAdaptable input = UpdateUI.getWorkspace();
 			IWorkbenchPage updatePage =
 				window.getWorkbench().showPerspective(
 					UpdatePerspective.PERSPECTIVE_ID,
 					window);
 			ensureCriticalViewsVisible(updatePage);
 		} catch (WorkbenchException e) {
-			UpdateUIPlugin.logException(e, true);
+			UpdateUI.logException(e, true);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 				page.bringToTop(view);
 			}
 		} catch (PartInitException e) {
-			UpdateUIPlugin.logException(e, true);
+			UpdateUI.logException(e, true);
 		}
 	}
 

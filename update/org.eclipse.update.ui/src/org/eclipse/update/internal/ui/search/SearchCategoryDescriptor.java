@@ -22,7 +22,7 @@ public class SearchCategoryDescriptor {
 		String imageName = config.getAttribute("icon");
 		if (imageName == null)
 			return null;
-		return UpdateUIPluginImages.getImageDescriptorFromPlugin(
+		return UpdateUIImages.getImageDescriptorFromPlugin(
 			config.getDeclaringExtension().getDeclaringPluginDescriptor(),
 			imageName);
 	}
@@ -30,7 +30,7 @@ public class SearchCategoryDescriptor {
 		String imageName = config.getAttribute("icon");
 		if (imageName == null)
 			return null;
-		return UpdateUIPluginImages.getImageFromPlugin(
+		return UpdateUIImages.getImageFromPlugin(
 			config.getDeclaringExtension().getDeclaringPluginDescriptor(),
 			imageName);
 	}
@@ -52,7 +52,7 @@ public class SearchCategoryDescriptor {
 				return category;
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 		return null;
 	}

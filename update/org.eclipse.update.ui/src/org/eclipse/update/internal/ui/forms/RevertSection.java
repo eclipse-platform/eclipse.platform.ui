@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
 
@@ -41,8 +41,8 @@ public class RevertSection extends UpdateSection {
 	public RevertSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setHeaderText(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 	}
 
 	public Composite createClient(
@@ -89,24 +89,24 @@ public class RevertSection extends UpdateSection {
 			int length = history.length;
 			canRevert = length > 1;
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 		container.getParent().setVisible(canRevert);
 		if (!canRevert)
 			return;
 		if (config.isCurrent()) {
 			currentTextLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_CURRENT_TEXT));
+				UpdateUI.getResourceString(KEY_CURRENT_TEXT));
 			textLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_REVERT_TEXT));
+				UpdateUI.getResourceString(KEY_REVERT_TEXT));
 			revertButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_REVERT_BUTTON));
+				UpdateUI.getResourceString(KEY_REVERT_BUTTON));
 		} else {
 			currentTextLabel.setText(""); //$NON-NLS-1$
 			textLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_RESTORE_TEXT));
+				UpdateUI.getResourceString(KEY_RESTORE_TEXT));
 			revertButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_RESTORE_BUTTON));
+				UpdateUI.getResourceString(KEY_RESTORE_BUTTON));
 		}
 		container.layout(true);
 	}
@@ -123,7 +123,7 @@ public class RevertSection extends UpdateSection {
 			}
 			performRevert(target);
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -137,8 +137,8 @@ public class RevertSection extends UpdateSection {
 		final boolean restart) {
 		if (confirm) {
 			// ask the user to confirm and bail if canceled
-			String title = UpdateUIPlugin.getActivePage().getLabel();
-			if (!MessageDialog.openConfirm(UpdateUIPlugin.getActiveWorkbenchShell(), title, UpdateUIPlugin.getResourceString("InstallConfigurationPage.RevertSection.confirm.message"))) //$NON-NLS-1$
+			String title = UpdateUI.getActivePage().getLabel();
+			if (!MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), title, UpdateUI.getResourceString("InstallConfigurationPage.RevertSection.confirm.message"))) //$NON-NLS-1$
 				return false;
 		}
 
@@ -146,7 +146,7 @@ public class RevertSection extends UpdateSection {
 		IStatus status = ActivityConstraints.validatePendingRevert(target);
 		if (status != null) {
 			ErrorDialog.openError(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
+				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
 				status);
@@ -166,22 +166,22 @@ public class RevertSection extends UpdateSection {
 					saveLocalSite();
 					success = true;
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				} finally {
 					monitor.done();
 					result[0] = success;
 					if (success && restart)
-						UpdateUIPlugin.informRestartNeeded();
+						UpdateUI.informRestartNeeded();
 				}
 			}
 		};
 		try {
 			ProgressMonitorDialog dialog =
 				new ProgressMonitorDialog(
-					UpdateUIPlugin.getActiveWorkbenchShell().getShell());
+					UpdateUI.getActiveWorkbenchShell().getShell());
 			dialog.run(false, true, operation);
 		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		} catch (InterruptedException e) {
 		}
 		return result[0];

@@ -14,7 +14,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IURLEntry;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class SiteCategory extends UIModelObject {
 private static final String KEY_OTHER_LABEL= "SiteCategory.other.label";
@@ -32,7 +32,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 		public OtherCategory() {
 			entry = new IURLEntry () {
 				public String getAnnotation() {
-					return UpdateUIPlugin.getResourceString(KEY_OTHER_DESCRIPTION);
+					return UpdateUI.getResourceString(KEY_OTHER_DESCRIPTION);
 				}
 				public URL getURL() {
 					return null;
@@ -61,7 +61,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	
 	public SiteCategory(String name, ICategory category) {
 		if (category==null) {
-		   this.name = UpdateUIPlugin.getResourceString(KEY_OTHER_LABEL);
+		   this.name = UpdateUI.getResourceString(KEY_OTHER_LABEL);
 		   this.category = new OtherCategory();
 		}
 		else {

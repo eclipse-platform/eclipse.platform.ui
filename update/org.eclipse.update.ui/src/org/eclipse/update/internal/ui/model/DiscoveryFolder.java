@@ -1,14 +1,14 @@
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.core.runtime.CoreException;
 
 public class DiscoveryFolder extends BookmarkFolder {
 	public DiscoveryFolder() {
-		super(UpdateUIPlugin.getResourceString("DiscoveryFolder"));
-		setModel(UpdateUIPlugin.getDefault().getUpdateModel());
+		super(UpdateUI.getResourceString("DiscoveryFolder"));
+		setModel(UpdateUI.getDefault().getUpdateModel());
 	}
 	public void initialize() {
 		children.clear();
@@ -32,7 +32,7 @@ public class DiscoveryFolder extends BookmarkFolder {
 				}
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 	private boolean isIncluded(

@@ -38,12 +38,12 @@ public class MultiInstallWizard extends Wizard {
 	}
 
 	public MultiInstallWizard(PendingChange[] jobs, boolean needLicensePage) {
-		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
+		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
+		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(
-			UpdateUIPlugin.getResourceString("MultiInstallWizard.wtitle"));
+			UpdateUI.getResourceString("MultiInstallWizard.wtitle"));
 		this.jobs = jobs;
 		this.needLicensePage = needLicensePage;
 	}
@@ -96,7 +96,7 @@ public class MultiInstallWizard extends Wizard {
 			if (targetException instanceof InstallAbortedException) {
 				return true;
 			} else {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 			return false;
 		} catch (InterruptedException e) {
@@ -113,7 +113,7 @@ public class MultiInstallWizard extends Wizard {
 		IProgressMonitor monitor)
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
-			UpdateUIPlugin.getResourceString(KEY_INSTALLING),
+			UpdateUI.getResourceString(KEY_INSTALLING),
 			jobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];
@@ -225,7 +225,7 @@ public class MultiInstallWizard extends Wizard {
 			config.setLabel(Utilities.format(config.getCreationDate()));
 			return config;
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return null;
 		}
 	}
@@ -246,10 +246,10 @@ public class MultiInstallWizard extends Wizard {
 					job.getFeature().getVersionedIdentifier();
 				String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
 				String newLabel =
-					UpdateUIPlugin.getFormattedMessage(KEY_SAVED_CONFIG, key);
+					UpdateUI.getFormattedMessage(KEY_SAVED_CONFIG, key);
 				savedConfig.setLabel(newLabel);
 				UpdateModel model =
-					UpdateUIPlugin.getDefault().getUpdateModel();
+					UpdateUI.getDefault().getUpdateModel();
 				model.fireObjectChanged(savedConfig, null);
 			}
 		}
@@ -307,7 +307,7 @@ public class MultiInstallWizard extends Wizard {
 			} else {
 				// we should do something here
 				throwError(
-					UpdateUIPlugin.getFormattedMessage(
+					UpdateUI.getFormattedMessage(
 						KEY_UNABLE,
 						feature.getLabel()));
 			}
@@ -329,7 +329,7 @@ public class MultiInstallWizard extends Wizard {
 					if (!isNestedChild(oldFeature))
 						// "eat" the error if nested child
 						throwError(
-							UpdateUIPlugin.getFormattedMessage(
+							UpdateUI.getFormattedMessage(
 								KEY_OLD,
 								oldFeature.getLabel()));
 				}
@@ -349,7 +349,7 @@ public class MultiInstallWizard extends Wizard {
 			// should not be here
 			return;
 		}
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		job.markProcessed();
 		model.fireObjectChanged(job, null);
 	}
@@ -389,7 +389,7 @@ public class MultiInstallWizard extends Wizard {
 		IStatus status =
 			new Status(
 				IStatus.ERROR,
-				UpdateUIPlugin.getPluginId(),
+				UpdateUI.getPluginId(),
 				IStatus.OK,
 				message,
 				null);
@@ -494,7 +494,7 @@ public class MultiInstallWizard extends Wizard {
 			// find other features and unconfigure
 			String id = iref.getVersionedIdentifier().getIdentifier();
 			IFeature[] sameIds =
-				UpdateUIPlugin.searchSite(id, targetSite, true);
+				UpdateUI.searchSite(id, targetSite, true);
 			for (int j = 0; j < sameIds.length; j++) {
 				IFeature sameId = sameIds[j];
 				// Ignore self.
@@ -549,7 +549,7 @@ public class MultiInstallWizard extends Wizard {
 					try {
 						String id =
 							iref.getVersionedIdentifier().getIdentifier();
-						UpdateUIPlugin.setOriginatingURL(id, url);
+						UpdateUI.setOriginatingURL(id, url);
 					} catch (CoreException e) {
 						// Silently ignore
 					}

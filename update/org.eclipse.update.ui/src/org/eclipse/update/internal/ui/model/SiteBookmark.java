@@ -9,7 +9,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {
@@ -74,7 +74,7 @@ public class SiteBookmark extends NamedModelObject
 				connect(monitor);
 			}
 			catch (CoreException e) {
-				UpdateUIPlugin.logException(e, showDialogIfFailed);
+				UpdateUI.logException(e, showDialogIfFailed);
 			}
 		}
 		return site;

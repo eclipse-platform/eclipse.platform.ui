@@ -10,8 +10,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IVerificationResult;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 
 /**
  * 
@@ -23,7 +23,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	private Composite pageContainer;
 	private Image defaultImage = null;
 	private ImageDescriptor defaultImageDescriptor =
-		UpdateUIPluginImages.DESC_INSTALL_WIZ;
+		UpdateUIImages.DESC_INSTALL_WIZ;
 	
 	/**
 	 * Constructor for JarVerificationDialog.
@@ -51,14 +51,14 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUIPlugin.getResourceString("JarVerificationDialog.Install"),
+					UpdateUI.getResourceString("JarVerificationDialog.Install"),
 					false);
 				//$NON-NLS-1$
 			} else {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUIPlugin.getResourceString("JarVerificationDialog.Continue"),
+					UpdateUI.getResourceString("JarVerificationDialog.Continue"),
 					false);
 				//$NON-NLS-1$				
 			}
@@ -68,14 +68,14 @@ public class JarVerificationDialog extends TitleAreaDialog {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUIPlugin.getResourceString("JarVerificationDialog.Cancel"),
+				UpdateUI.getResourceString("JarVerificationDialog.Cancel"),
 				true);
 			//$NON-NLS-1$							
 		} else {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUIPlugin.getResourceString("JarVerificationDialog.Cancel"),
+				UpdateUI.getResourceString("JarVerificationDialog.Cancel"),
 				true);
 		}
 		getButton(IDialogConstants.CANCEL_ID).setFocus();
@@ -87,7 +87,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite compositeParent = (Composite)super.createDialogArea(parent);
 		setTitleImage(this.getImage());
-		setTitle(UpdateUIPlugin.getResourceString("JarVerificationDialog.Title"));
+		setTitle(UpdateUI.getResourceString("JarVerificationDialog.Title"));
 		
 		_DialogPage.createControl(compositeParent);
 		pageContainer=(Composite)_DialogPage.getControl();

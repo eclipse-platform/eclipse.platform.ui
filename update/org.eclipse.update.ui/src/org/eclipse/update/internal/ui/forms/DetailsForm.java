@@ -243,15 +243,15 @@ public class DetailsForm extends PropertyWebForm {
 
 	public DetailsForm(UpdateFormPage page) {
 		super(page);
-		providerImage = UpdateUIPluginImages.DESC_PROVIDER.createImage();
+		providerImage = UpdateUIImages.DESC_PROVIDER.createImage();
 		modelListener = new ModelListener();
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(modelListener);
 		sectionHandler = new HyperlinkHandler();
 	}
 
 	public void dispose() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(modelListener);
 		providerImage.dispose();
 		for (Enumeration enum = imageCache.elements();
@@ -303,22 +303,22 @@ public class DetailsForm extends PropertyWebForm {
 		providerLabel =
 			createProperty(
 				properties,
-				UpdateUIPlugin.getResourceString(KEY_PROVIDER));
+				UpdateUI.getResourceString(KEY_PROVIDER));
 		versionLabel =
 			createProperty(
 				properties,
-				UpdateUIPlugin.getResourceString(KEY_VERSION));
+				UpdateUI.getResourceString(KEY_VERSION));
 		installedVersionLabel =
 			createProperty(
 				properties,
-				UpdateUIPlugin.getResourceString(KEY_IVERSION));
+				UpdateUI.getResourceString(KEY_IVERSION));
 		sizeLabel =
 			createProperty(
 				properties,
-				UpdateUIPlugin.getResourceString(KEY_SIZE));
+				UpdateUI.getResourceString(KEY_SIZE));
 		estimatedTime = createProperty(
 				properties,
-				UpdateUIPlugin.getResourceString(KEY_ESTIMATE));
+				UpdateUI.getResourceString(KEY_ESTIMATE));
 		supportedPlatformsGroup = new ReflowGroup() {
 			public void fillExpansion(
 				Composite expansion,
@@ -329,23 +329,23 @@ public class DetailsForm extends PropertyWebForm {
 				osLabel =
 					createProperty(
 						expansion,
-						UpdateUIPlugin.getResourceString(KEY_OS));
+						UpdateUI.getResourceString(KEY_OS));
 				wsLabel =
 					createProperty(
 						expansion,
-						UpdateUIPlugin.getResourceString(KEY_WS));
+						UpdateUI.getResourceString(KEY_WS));
 				nlLabel =
 					createProperty(
 						expansion,
-						UpdateUIPlugin.getResourceString(KEY_NL));
+						UpdateUI.getResourceString(KEY_NL));
 				archLabel =
 					createProperty(
 						expansion,
-						UpdateUIPlugin.getResourceString(KEY_ARCH));
+						UpdateUI.getResourceString(KEY_ARCH));
 			}
 		};
 		supportedPlatformsGroup.setText(
-			UpdateUIPlugin.getResourceString(KEY_PLATFORMS));
+			UpdateUI.getResourceString(KEY_PLATFORMS));
 		new Label(properties, SWT.NULL);
 		supportedPlatformsGroup.createControl(properties, factory);
 		setFocusControl(supportedPlatformsGroup.getControl());
@@ -359,7 +359,7 @@ public class DetailsForm extends PropertyWebForm {
 		Label label =
 			createHeading(
 				container,
-				UpdateUIPlugin.getResourceString(KEY_DESC));
+				UpdateUI.getResourceString(KEY_DESC));
 		td = new TableData();
 		td.colspan = 2;
 		label.setLayoutData(td);
@@ -390,18 +390,18 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		};
 		infoLinkLabel = new SelectableFormLabel(footer, SWT.NULL);
-		infoLinkLabel.setText(UpdateUIPlugin.getResourceString(KEY_INFO_LINK));
+		infoLinkLabel.setText(UpdateUI.getResourceString(KEY_INFO_LINK));
 		factory.turnIntoHyperlink(infoLinkLabel, listener);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		infoLinkLabel.setLayoutData(gd);
 		licenseLink = new InfoLink((DetailsView) getPage().getView());
-		licenseLink.setText(UpdateUIPlugin.getResourceString(KEY_LICENSE_LINK));
+		licenseLink.setText(UpdateUI.getResourceString(KEY_LICENSE_LINK));
 		licenseLink.createControl(footer, factory);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		licenseLink.getControl().setLayoutData(gd);
 		copyrightLink = new InfoLink((DetailsView) getPage().getView());
 		copyrightLink.setText(
-			UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
+			UpdateUI.getResourceString(KEY_COPYRIGHT_LINK));
 		copyrightLink.createControl(footer, factory);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
@@ -433,14 +433,14 @@ public class DetailsForm extends PropertyWebForm {
 		groupUpdatesLabel =
 			createHeading(
 				batch,
-				UpdateUIPlugin.getResourceString("Group Updates"));
+				UpdateUI.getResourceString("Group Updates"));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		groupUpdatesLabel.setLayoutData(gd);
 		addButton =
 			factory.createButton(
 				batch,
-				UpdateUIPlugin.getResourceString(KEY_BATCH_INSTALL),
+				UpdateUI.getResourceString(KEY_BATCH_INSTALL),
 				SWT.CHECK);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -477,7 +477,7 @@ public class DetailsForm extends PropertyWebForm {
 		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
 			public void run() {
 				try {
-					IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+					IWorkbenchPage page = UpdateUI.getActivePage();
 					IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
 					if (view != null)
 						page.bringToTop(view);
@@ -487,7 +487,7 @@ public class DetailsForm extends PropertyWebForm {
 						inputBlock = false;
 					}
 				} catch (PartInitException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				}
 			}
 		});
@@ -508,7 +508,7 @@ public class DetailsForm extends PropertyWebForm {
 						currentAdapter = adapter;
 						currentFeature = adapter.getFeature(null);
 					} catch (CoreException e) {
-						//UpdateUIPlugin.logException(e);
+						//UpdateUI.logException(e);
 						currentFeature =
 							new MissingFeature(
 								adapter.getSite(),
@@ -549,10 +549,10 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		if (buf.length() > 0) {
 			String versionText = buf.toString();
-			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			PendingChange change = model.findRelatedPendingChange(feature);
 			if (change != null) {
-				return UpdateUIPlugin.getFormattedMessage(
+				return UpdateUI.getFormattedMessage(
 					KEY_PENDING_VERSION,
 					versionText);
 			} else
@@ -567,7 +567,7 @@ public class DetailsForm extends PropertyWebForm {
 		if (feature == null)
 			return;
 
-		installedFeatures = UpdateUIPlugin.getInstalledFeatures(feature);
+		installedFeatures = UpdateUI.getInstalledFeatures(feature);
 
 		setHeadingText(feature.getLabel());
 		providerLabel.setText(feature.getProvider());
@@ -576,16 +576,16 @@ public class DetailsForm extends PropertyWebForm {
 		String installedVersion = getInstalledVersion(feature);
 		if (installedVersion == null)
 			installedVersion =
-				UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
+				UpdateUI.getResourceString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
 		long size = feature.getDownloadSize();
 		String format = null;
 		if (size != -1) {
 			String stext = Long.toString(size);
-			String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
-			format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
+			String pattern = UpdateUI.getResourceString(KEY_SIZE_VALUE);
+			format = UpdateUI.getFormattedMessage(pattern, stext);
 		} else {
-			format = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
+			format = UpdateUI.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
 		}
 		sizeLabel.setText(format);
 		long estimate = SiteManager.estimate(feature.getURL());
@@ -593,10 +593,10 @@ public class DetailsForm extends PropertyWebForm {
 		if (estimate>=0 && size!=-1){
 			String hours = Long.toString(estimate/3600000);
 			String minutes = Long.toString(estimate%3600000);
-			String pattern = UpdateUIPlugin.getResourceString(KEY_ESTIMATE_VALUE);
-			estimateFormat = UpdateUIPlugin.getFormattedMessage(pattern,new String[]{hours,minutes});
+			String pattern = UpdateUI.getResourceString(KEY_ESTIMATE_VALUE);
+			estimateFormat = UpdateUI.getFormattedMessage(pattern,new String[]{hours,minutes});
 		} else {
-			estimateFormat = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_ESTIMATE_VALUE);
+			estimateFormat = UpdateUI.getResourceString(KEY_UNKNOWN_ESTIMATE_VALUE);
 		}
 		estimatedTime.setText(estimateFormat);
 		if (feature.getDescription() != null)
@@ -622,7 +622,7 @@ public class DetailsForm extends PropertyWebForm {
 		copyrightLink.setInfo(feature.getCopyright());
 		this.reinstallCode = 0;
 
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		PendingChange relatedJob =
 			model.findRelatedPendingChange(currentFeature);
 		doButton.setVisible(getDoButtonVisibility(false, relatedJob));
@@ -780,7 +780,7 @@ public class DetailsForm extends PropertyWebForm {
 			return false;
 		if (currentAdapter == null || currentAdapter.isIncluded())
 			return false;
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
 		if (currentAdapter instanceof IConfiguredSiteContext) {
@@ -809,22 +809,22 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void updateButtonText(boolean update) {
 		if (reinstallCode == REPAIR) {
-			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_REPAIR));
+			doButton.setText(UpdateUI.getResourceString(KEY_DO_REPAIR));
 			addButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_BATCH_REPAIR));
+				UpdateUI.getResourceString(KEY_BATCH_REPAIR));
 			return;
 		}
 		if (reinstallCode == CHANGE) {
-			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_CHANGE));
+			doButton.setText(UpdateUI.getResourceString(KEY_DO_CHANGE));
 			addButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_BATCH_CHANGE));
+				UpdateUI.getResourceString(KEY_BATCH_CHANGE));
 			return;
 		}
 		if (currentFeature instanceof MissingFeature) {
 			MissingFeature mf = (MissingFeature) currentFeature;
 			if (mf.isOptional() && mf.getOriginatingSiteURL() != null) {
 				doButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_DO_INSTALL));
+					UpdateUI.getResourceString(KEY_DO_INSTALL));
 				return;
 			}
 		}
@@ -832,23 +832,23 @@ public class DetailsForm extends PropertyWebForm {
 			boolean configured = isConfigured();
 			if (configured) {
 				doButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
+					UpdateUI.getResourceString(KEY_DO_UNCONFIGURE));
 				addButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_BATCH_UNCONFIGURE));
+					UpdateUI.getResourceString(KEY_BATCH_UNCONFIGURE));
 			} else {
 				doButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_DO_CONFIGURE));
+					UpdateUI.getResourceString(KEY_DO_CONFIGURE));
 				addButton.setText(
-					UpdateUIPlugin.getResourceString(KEY_BATCH_CONFIGURE));
+					UpdateUI.getResourceString(KEY_BATCH_CONFIGURE));
 			}
 		} else if (update && !alreadyInstalled) {
-			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UPDATE));
+			doButton.setText(UpdateUI.getResourceString(KEY_DO_UPDATE));
 			addButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_BATCH_UPDATE));
+				UpdateUI.getResourceString(KEY_BATCH_UPDATE));
 		} else {
-			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_INSTALL));
+			doButton.setText(UpdateUI.getResourceString(KEY_DO_INSTALL));
 			addButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_BATCH_INSTALL));
+				UpdateUI.getResourceString(KEY_BATCH_INSTALL));
 		}
 	}
 
@@ -985,12 +985,12 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private void doAdd(boolean selection) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		if (selection) {
 			int mode = getCurrentJobType();
 			PendingChange job = createPendingChange(mode);
 			model.addPendingChange(job);
-			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+			IWorkbenchPage page = UpdateUI.getActivePage();
 			IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
 			if (view != null) {
 				page.bringToTop(view);
@@ -1062,13 +1062,13 @@ public class DetailsForm extends PropertyWebForm {
 			return result[0];
 		} else {
 			String message =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					KEY_OPTIONAL_INSTALL_MESSAGE,
 					siteURL.toString());
 			status =
 				new Status(
 					IStatus.ERROR,
-					UpdateUIPlugin.PLUGIN_ID,
+					UpdateUI.PLUGIN_ID,
 					IStatus.OK,
 					message,
 					null);
@@ -1077,7 +1077,7 @@ public class DetailsForm extends PropertyWebForm {
 			// Show error dialog
 			ErrorDialog.openError(
 				shell,
-				UpdateUIPlugin.getResourceString(KEY_OPTIONAL_INSTALL_TITLE),
+				UpdateUI.getResourceString(KEY_OPTIONAL_INSTALL_TITLE),
 				null,
 				status);
 		}
@@ -1115,7 +1115,7 @@ public class DetailsForm extends PropertyWebForm {
 			ActivityConstraints.validatePendingChange(job);
 		if (validationStatus != null) {
 			ErrorDialog.openError(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
+				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
 				validationStatus);
@@ -1131,20 +1131,20 @@ public class DetailsForm extends PropertyWebForm {
 				InstallWizard wizard = new InstallWizard(job, needLicensePage);
 				WizardDialog dialog =
 					new InstallWizardDialog(
-						UpdateUIPlugin.getActiveWorkbenchShell(),
+						UpdateUI.getActiveWorkbenchShell(),
 						wizard);
 				dialog.create();
 				dialog.getShell().setSize(600, 500);
 				dialog.open();
 				if (wizard.isSuccessfulInstall())
-					UpdateUIPlugin.informRestartNeeded();
+					UpdateUI.informRestartNeeded();
 			}
 		});
 	}
 
 	private static void unconfigurePatch(Shell shell, IFeature feature) {
 		IInstallConfiguration config =
-			UpdateUIPlugin.getBackupConfigurationFor(feature);
+			UpdateUI.getBackupConfigurationFor(feature);
 		if (config == null) {
 			String message =
 				"This feature is a patch and cannot be directly disabled. Locate a configuration before it was installed and revert to it instead.";
@@ -1157,10 +1157,10 @@ public class DetailsForm extends PropertyWebForm {
 			if (success) {
 				localSite.removeFromPreservedConfigurations(config);
 				localSite.save();
-				UpdateUIPlugin.informRestartNeeded();
+				UpdateUI.informRestartNeeded();
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -1223,7 +1223,7 @@ public class DetailsForm extends PropertyWebForm {
 				}
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		}
 		if (missing.size() > 0) {
@@ -1231,13 +1231,13 @@ public class DetailsForm extends PropertyWebForm {
 			MessageDialog dialog =
 				new MessageDialog(
 					getControl().getShell(),
-					UpdateUIPlugin.getResourceString(KEY_MISSING_TITLE),
+					UpdateUI.getResourceString(KEY_MISSING_TITLE),
 					(Image) null,
-					UpdateUIPlugin.getResourceString(KEY_MISSING_MESSAGE),
+					UpdateUI.getResourceString(KEY_MISSING_MESSAGE),
 					MessageDialog.WARNING,
 					new String[] {
-						UpdateUIPlugin.getResourceString(KEY_MISSING_SEARCH),
-						UpdateUIPlugin.getResourceString(KEY_MISSING_ABORT)},
+						UpdateUI.getResourceString(KEY_MISSING_SEARCH),
+						UpdateUI.getResourceString(KEY_MISSING_ABORT)},
 					0);
 			int result = dialog.open();
 			if (result == 0)
@@ -1284,7 +1284,7 @@ public class DetailsForm extends PropertyWebForm {
 		if (desc == null)
 			return;
 		String name =
-			UpdateUIPlugin.getFormattedMessage(
+			UpdateUI.getFormattedMessage(
 				KEY_SEARCH_OBJECT_NAME,
 				currentFeature.getLabel());
 		SearchObject search = new SearchObject(name, desc, true);
@@ -1294,15 +1294,15 @@ public class DetailsForm extends PropertyWebForm {
 		search.setSearchDiscovery(true);
 		String value = PluginsSearchCategory.encodeImports(missing);
 		search.getSettings().put("imports", value);
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		try {
-			UpdateUIPlugin.getActivePage().showView(
+			UpdateUI.getActivePage().showView(
 				UpdatePerspective.ID_UPDATES);
 		} catch (PartInitException e) {
 		}
 		model.addBookmark(search);
 		try {
-			UpdateUIPlugin.getActivePage().showView(
+			UpdateUI.getActivePage().showView(
 				UpdatePerspective.ID_DETAILS);
 		} catch (PartInitException e) {
 		}

@@ -10,7 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -340,7 +340,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 				contributeCandidates(isites[i]);
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e, false);
+			UpdateUI.logException(e, false);
 		}
 	}
 	
@@ -408,7 +408,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 	}
 
 	public String getCurrentSearch() {
-		return UpdateUIPlugin.getResourceString(KEY_CURRENT_SEARCH);
+		return UpdateUI.getResourceString(KEY_CURRENT_SEARCH);
 	}
 
 	private boolean isNewerVersion(

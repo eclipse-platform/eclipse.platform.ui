@@ -106,7 +106,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 
 	private void createNavBar(Composite parent) {
 		Label addressLabel = new Label(parent, SWT.NONE);
-		addressLabel.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
+		addressLabel.setText(UpdateUI.getResourceString(KEY_ADDRESS));
 
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		addressCombo.addModifyListener(new ModifyListener() {
@@ -167,22 +167,22 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		goAction.setEnabled(false);
-		goAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_GO));
-		goAction.setImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV);
-		goAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_D);
-		goAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_H);
+		goAction.setToolTipText(UpdateUI.getResourceString(KEY_GO));
+		goAction.setImageDescriptor(UpdateUIImages.DESC_GO_NAV);
+		goAction.setDisabledImageDescriptor(UpdateUIImages.DESC_GO_NAV_D);
+		goAction.setHoverImageDescriptor(UpdateUIImages.DESC_GO_NAV_H);
 
 		stopAction = new Action() {
 			public void run() {
 				browser.stop();
 			}
 		};
-		stopAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_STOP));
-		stopAction.setImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV);
+		stopAction.setToolTipText(UpdateUI.getResourceString(KEY_STOP));
+		stopAction.setImageDescriptor(UpdateUIImages.DESC_STOP_NAV);
 		stopAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_STOP_NAV_D);
+			UpdateUIImages.DESC_STOP_NAV_D);
 		stopAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_STOP_NAV_H);
+			UpdateUIImages.DESC_STOP_NAV_H);
 		stopAction.setEnabled(false);
 
 		refreshAction = new Action() {
@@ -191,12 +191,12 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		refreshAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_REFRESH));
-		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
+			UpdateUI.getResourceString(KEY_REFRESH));
+		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_REFRESH_NAV_D);
+			UpdateUIImages.DESC_REFRESH_NAV_D);
 		refreshAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+			UpdateUIImages.DESC_REFRESH_NAV_H);
 		refreshAction.setEnabled(false);
 
 		backwardAction = new Action() {
@@ -206,13 +206,13 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		};
 		backwardAction.setEnabled(false);
 		backwardAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_BACKWARD));
+			UpdateUI.getResourceString(KEY_BACKWARD));
 		backwardAction.setImageDescriptor(
-			UpdateUIPluginImages.DESC_BACKWARD_NAV);
+			UpdateUIImages.DESC_BACKWARD_NAV);
 		backwardAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
+			UpdateUIImages.DESC_BACKWARD_NAV_D);
 		backwardAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
+			UpdateUIImages.DESC_BACKWARD_NAV_H);
 
 		forwardAction = new Action() {
 			public void run() {
@@ -220,12 +220,12 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		forwardAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_FORWARD));
-		forwardAction.setImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV);
+			UpdateUI.getResourceString(KEY_FORWARD));
+		forwardAction.setImageDescriptor(UpdateUIImages.DESC_FORWARD_NAV);
 		forwardAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_FORWARD_NAV_D);
+			UpdateUIImages.DESC_FORWARD_NAV_D);
 		forwardAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_FORWARD_NAV_H);
+			UpdateUIImages.DESC_FORWARD_NAV_H);
 		forwardAction.setEnabled(false);
 		toolBarManager.add(goAction);
 		toolBarManager.add(new Separator());

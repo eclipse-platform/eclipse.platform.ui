@@ -98,20 +98,20 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		*/
 		public Image getColumnImage(Object obj, int col) {
 			if (obj instanceof IConfiguredSite)
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(
-					UpdateUIPluginImages.DESC_LSITE_OBJ);
+				return UpdateUI.getDefault().getLabelProvider().get(
+					UpdateUIImages.DESC_LSITE_OBJ);
 			if (obj instanceof PendingChange) {
 				PendingChange job = (PendingChange) obj;
 				boolean patch = job.getFeature().isPatch();
 				ImageDescriptor base =
 					patch
-						? UpdateUIPluginImages.DESC_EFIX_OBJ
-						: UpdateUIPluginImages.DESC_FEATURE_OBJ;
+						? UpdateUIImages.DESC_EFIX_OBJ
+						: UpdateUIImages.DESC_FEATURE_OBJ;
 				int flags = 0;
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 				if (jobSite == null || jobSite.targetSite == null)
 					flags = UpdateLabelProvider.F_ERROR;
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(
+				return UpdateUI.getDefault().getLabelProvider().get(
 					base,
 					flags);
 			}
@@ -156,10 +156,10 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	 */
 	public MultiTargetPage(IInstallConfiguration config) {
 		super("MultiTarget");
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		this.config = config;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
 		targetSites = new Hashtable();
 	}
@@ -186,7 +186,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			try {
 				return InstallWizard.findConfigSite(oldFeature, config);
 			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e, false);
+				UpdateUI.logException(e, false);
 				return null;
 			}
 		}
@@ -242,7 +242,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 						return site;
 					}
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e, false);
+					UpdateUI.logException(e, false);
 				}
 			}
 		}
@@ -250,7 +250,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		config.removeInstallConfigurationChangedListener(configListener);
 		super.dispose();
 	}
@@ -266,7 +266,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_JOBS_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_JOBS_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -276,7 +276,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		new Label(client, SWT.NULL);
 
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_SITE_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_SITE_LABEL));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -290,7 +290,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		addButton = new Button(buttonContainer, SWT.PUSH);
-		addButton.setText(UpdateUIPlugin.getResourceString(KEY_NEW));
+		addButton.setText(UpdateUI.getResourceString(KEY_NEW));
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -309,13 +309,13 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		status.setLayout(layout);
 		label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUIPlugin.getResourceString(KEY_REQUIRED_FREE_SPACE));
+			UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUIPlugin.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+			UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
@@ -436,7 +436,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUIPlugin.getResourceString(KEY_LOCATION_EMPTY);
+			errorMessage = UpdateUI.getResourceString(KEY_LOCATION_EMPTY);
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -469,7 +469,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUIPlugin.getResourceString(KEY_LOCATION_MESSAGE));
+		dd.setMessage(UpdateUI.getResourceString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
 			File file = new File(path);
@@ -494,14 +494,14 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 					config.addConfiguredSite(csite);
 				else {
 					String title =
-						UpdateUIPlugin.getResourceString(
+						UpdateUI.getResourceString(
 							KEY_LOCATION_ERROR_TITLE);
 					String message =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_LOCATION_ERROR_MESSAGE,
 							file.getPath());
 					String message2 =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_ERROR_REASON,
 							status.getMessage());
 					message = message + "\r\n" + message2;
@@ -510,7 +510,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 				}
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		}
 		return true;
@@ -530,17 +530,17 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		long required = computeRequiredSizeFor(site);
 		if (required == -1)
 			requiredSpaceLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
 		else
 			requiredSpaceLabel.setText(
-				UpdateUIPlugin.getFormattedMessage(KEY_SIZE, "" + required));
+				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
 			availableSpaceLabel.setText(
-				UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
 		else
 			availableSpaceLabel.setText(
-				UpdateUIPlugin.getFormattedMessage(KEY_SIZE, "" + available));
+				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));
 	}
 
 	private long computeRequiredSizeFor(IConfiguredSite site) {
@@ -602,7 +602,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			IFeature target = jobSite.job.getFeature();
 			if (target.equals(patch))
 				continue;
-			if (UpdateUIPlugin.isPatch(target, patch))
+			if (UpdateUI.isPatch(target, patch))
 				return jobSite;
 
 		}

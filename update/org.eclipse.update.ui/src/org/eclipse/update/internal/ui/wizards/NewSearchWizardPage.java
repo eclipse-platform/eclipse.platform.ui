@@ -5,7 +5,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.search.*;
 
@@ -28,8 +28,8 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	public NewSearchWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	protected void createClientControl(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_CATEGORY));
+		label.setText(UpdateUI.getResourceString(KEY_CATEGORY));
 		categoryCombo = new Combo(parent, SWT.READ_ONLY);
 		descriptors =
 			SearchCategoryRegistryReader.getDefault().getCategoryDescriptors();
@@ -64,7 +64,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	}
 
 	public boolean finish() {
-		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		SearchObject search = new SearchObject(getName(), descriptor);
 		addToModel(search);
 		return true;

@@ -6,7 +6,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class MissingFeature implements IFeature {
 
@@ -15,7 +15,7 @@ public class MissingFeature implements IFeature {
 	private IFeatureReference reference;
 	private IFeature parent;
 	private IURLEntry desc;
-	private VersionedIdentifier id = new VersionedIdentifier(UpdateUIPlugin.getResourceString("MissingFeature.id"), "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+	private VersionedIdentifier id = new VersionedIdentifier(UpdateUI.getResourceString("MissingFeature.id"), "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 	public MissingFeature(ISite site, URL url) {
 		this.site = site;
 		this.url = url;
@@ -24,7 +24,7 @@ public class MissingFeature implements IFeature {
 				return null;
 			}
 			public String getAnnotation() {
-				return UpdateUIPlugin.getResourceString("MissingFeature.desc.unknown"); //$NON-NLS-1$
+				return UpdateUI.getResourceString("MissingFeature.desc.unknown"); //$NON-NLS-1$
 			}
 			public Object getAdapter(Class key) {
 				return null;
@@ -49,7 +49,7 @@ public class MissingFeature implements IFeature {
 					return null;
 				}
 				public String getAnnotation() {
-					return UpdateUIPlugin.getResourceString("MissingFeature.desc.optional"); //$NON-NLS-1$
+					return UpdateUI.getResourceString("MissingFeature.desc.optional"); //$NON-NLS-1$
 				}
 				public Object getAdapter(Class key) {
 					return null;
@@ -76,7 +76,7 @@ public class MissingFeature implements IFeature {
 		if (vid == null)
 			return null;
 		String key = vid.getIdentifier();
-		return UpdateUIPlugin.getOriginatingURL(key);
+		return UpdateUI.getOriginatingURL(key);
 	}
 
 	/*
@@ -137,7 +137,7 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
-		return UpdateUIPlugin.getResourceString("MissingFeature.provider"); //$NON-NLS-1$
+		return UpdateUI.getResourceString("MissingFeature.provider"); //$NON-NLS-1$
 	}
 
 	/*

@@ -6,7 +6,7 @@ package org.eclipse.update.internal.ui.forms;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
@@ -27,7 +27,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 		super.initialize(modelObject);
 	}
 
@@ -49,7 +49,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 		path.setLayoutData(td);
 
 		FormEngine engine = factory.createFormEngine(parent);
-		String markup = UpdateUIPlugin.getResourceString(KEY_DESC);
+		String markup = UpdateUI.getResourceString(KEY_DESC);
 		markup = "<form>"+markup+"</form>";
 		engine.load(markup, true, true);
 		td = new TableData();

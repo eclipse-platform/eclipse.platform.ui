@@ -303,19 +303,19 @@ public class UpdatesView
 		}
 		public Image getImage(Object obj) {
 			UpdateLabelProvider provider =
-				UpdateUIPlugin.getDefault().getLabelProvider();
+				UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof SiteBookmark) {
 				SiteBookmark bookmark = (SiteBookmark) obj;
 				return provider.get(
 					bookmark.isWebBookmark()
-						? UpdateUIPluginImages.DESC_WEB_SITE_OBJ
-						: UpdateUIPluginImages.DESC_SITE_OBJ);
+						? UpdateUIImages.DESC_WEB_SITE_OBJ
+						: UpdateUIImages.DESC_SITE_OBJ);
 			}
 			if (obj instanceof MyComputer) {
-				return provider.get(UpdateUIPluginImages.DESC_COMPUTER_OBJ);
+				return provider.get(UpdateUIImages.DESC_COMPUTER_OBJ);
 			}
 			if (obj instanceof DiscoveryFolder) {
-				return provider.get(UpdateUIPluginImages.DESC_PLACES_OBJ);
+				return provider.get(UpdateUIImages.DESC_PLACES_OBJ);
 			}
 			if (obj instanceof MyComputerDirectory) {
 				IVolume volume = ((MyComputerDirectory) obj).getVolume();
@@ -327,7 +327,7 @@ public class UpdatesView
 				return ((MyComputerDirectory) obj).getImage(obj);
 			}
 			if (obj instanceof ExtensionRoot) {
-				return provider.get(UpdateUIPluginImages.DESC_LSITE_OBJ);
+				return provider.get(UpdateUIImages.DESC_LSITE_OBJ);
 			}
 			if (obj instanceof MyComputerFile) {
 				ImageDescriptor desc =
@@ -335,10 +335,10 @@ public class UpdatesView
 				return provider.get(desc);
 			}
 			if (obj instanceof SiteCategory) {
-				return provider.get(UpdateUIPluginImages.DESC_CATEGORY_OBJ);
+				return provider.get(UpdateUIImages.DESC_CATEGORY_OBJ);
 			}
 			if (obj instanceof BookmarkFolder) {
-				return provider.get(UpdateUIPluginImages.DESC_BFOLDER_OBJ);
+				return provider.get(UpdateUIImages.DESC_BFOLDER_OBJ);
 			}
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
@@ -357,8 +357,8 @@ public class UpdatesView
 					efix = ((IFeature) obj).isPatch();
 				return provider.get(
 					efix
-						? UpdateUIPluginImages.DESC_EFIX_OBJ
-						: UpdateUIPluginImages.DESC_FEATURE_OBJ,
+						? UpdateUIImages.DESC_EFIX_OBJ
+						: UpdateUIImages.DESC_FEATURE_OBJ,
 					flags);
 			}
 			return super.getImage(obj);
@@ -373,7 +373,7 @@ public class UpdatesView
 					obj.isSearchInProgress()
 						? UpdateLabelProvider.F_CURRENT
 						: 0;
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(
+				return UpdateUI.getDefault().getLabelProvider().get(
 					desc.getImageDescriptor(),
 					flags);
 			}
@@ -418,18 +418,18 @@ public class UpdatesView
 	 * The constructor.
 	 */
 	public UpdatesView() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(this);
 		selectionListener = new SelectionChangedListener();
 		updateSearchObject = new DefaultUpdatesSearchObject();
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		volumeLabelProvider = new VolumeLabelProvider();
 	}
 
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		volumeLabelProvider.dispose();
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
 		if (handCursor != null)
 			handCursor.dispose();
@@ -446,7 +446,7 @@ public class UpdatesView
 		searchMonitorManager.register(updateSearchObject);
 		getTreeViewer().setContentProvider(new SiteProvider());
 		getTreeViewer().setLabelProvider(new SiteLabelProvider());
-		getTreeViewer().setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		getTreeViewer().setInput(UpdateUI.getDefault().getUpdateModel());
 		WorkbenchHelp.setHelp(
 			getControl(),
 			"org.eclipse.update.ui.UpdatesView");
@@ -474,7 +474,7 @@ public class UpdatesView
 		initDrillDown();
 		propertiesAction =
 			new PropertyDialogAction(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
+				UpdateUI.getActiveWorkbenchShell(),
 				getTreeViewer());
 		newAction = new Action() {
 			public void run() {
@@ -484,7 +484,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			newAction,
 			"org.eclipse.update.ui.UpdatesView_newAction");
-		newAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SITE));
+		newAction.setText(UpdateUI.getResourceString(KEY_NEW_SITE));
 
 		newFolderAction = new Action("newFolder") {
 			public void run() {
@@ -495,7 +495,7 @@ public class UpdatesView
 			newFolderAction,
 			"org.eclipse.update.ui.UpdatesView_newFolderAction");
 		newFolderAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
+			UpdateUI.getResourceString(KEY_NEW_FOLDER));
 
 		newSearchAction = new Action("newSearch") {
 			public void run() {
@@ -506,7 +506,7 @@ public class UpdatesView
 			newSearchAction,
 			"org.eclipse.update.ui.UpdatesView_newSearchAction");
 		newSearchAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
+			UpdateUI.getResourceString(KEY_NEW_SEARCH));
 
 		newLocalAction = new Action("newLocal") {
 			public void run() {
@@ -518,7 +518,7 @@ public class UpdatesView
 			newLocalAction,
 			"org.eclipse.update.ui.UpdatesView_newLocalAction");
 		newLocalAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
+			UpdateUI.getResourceString(KEY_NEW_LOCAL_SITE));
 
 		showSearchResultAction = new Action("showSearch") {
 			public void run() {
@@ -529,41 +529,41 @@ public class UpdatesView
 			newLocalAction,
 			"org.eclipse.update.ui.UpdatesView_showSearchResultAction");
 		showSearchResultAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_RESULT));
+			UpdateUI.getResourceString(KEY_SHOW_SEARCH_RESULT));
 
 		deleteAction = new DeleteAction();
 		WorkbenchHelp.setHelp(
 			deleteAction,
 			"org.eclipse.update.ui.UpdatesView_deleteAction");
-		deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
+		deleteAction.setText(UpdateUI.getResourceString(KEY_DELETE));
 
 		openWebAction = new Action("openWeb") {
 			public void run() {
 				performOpenWeb();
 			}
 		};
-		openWebAction.setText(UpdateUIPlugin.getResourceString(KEY_OPEN_WEB));
+		openWebAction.setText(UpdateUI.getResourceString(KEY_OPEN_WEB));
 
 		cutAction = new Action("cut") {
 			public void run() {
 				performCut();
 			}
 		};
-		cutAction.setText(UpdateUIPlugin.getResourceString(KEY_CUT));
+		cutAction.setText(UpdateUI.getResourceString(KEY_CUT));
 
 		copyAction = new Action("copy") {
 			public void run() {
 				performCopy();
 			}
 		};
-		copyAction.setText(UpdateUIPlugin.getResourceString(KEY_COPY));
+		copyAction.setText(UpdateUI.getResourceString(KEY_COPY));
 
 		pasteAction = new Action("paste") {
 			public void run() {
 				performPaste();
 			}
 		};
-		pasteAction.setText(UpdateUIPlugin.getResourceString(KEY_PASTE));
+		pasteAction.setText(UpdateUI.getResourceString(KEY_PASTE));
 
 		refreshAction = new Action("refresh") {
 			public void run() {
@@ -573,14 +573,14 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			refreshAction,
 			"org.eclipse.update.ui.UpdatesView_refreshAction");
-		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
+		refreshAction.setText(UpdateUI.getResourceString(KEY_REFRESH));
 		refreshAction.setToolTipText(
-			UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
-		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
+			UpdateUI.getResourceString(KEY_REFRESH_TOOLTIP));
+		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
-			UpdateUIPluginImages.DESC_REFRESH_NAV_D);
+			UpdateUIImages.DESC_REFRESH_NAV_D);
 		refreshAction.setHoverImageDescriptor(
-			UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+			UpdateUIImages.DESC_REFRESH_NAV_H);
 
 		fileFilterAction = new Action() {
 			public void run() {
@@ -594,7 +594,7 @@ public class UpdatesView
 			fileFilterAction,
 			"org.eclipse.update.ui.UpdatesView_fileFilterAction");
 		fileFilterAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
+			UpdateUI.getResourceString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
 
 		getTreeViewer().addFilter(fileFilter);
@@ -613,7 +613,7 @@ public class UpdatesView
 			filterEnvironmentAction,
 			"org.eclipse.update.ui.UpdatesView_filterEnvironmentAction");
 		filterEnvironmentAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_FILTER_ENVIRONMENT));
+			UpdateUI.getResourceString(KEY_FILTER_ENVIRONMENT));
 		boolean envValue = getStoredEnvironmentValue();
 		filterEnvironmentAction.setChecked(envValue);
 
@@ -629,7 +629,7 @@ public class UpdatesView
 			showCategoriesAction,
 			"org.eclipse.update.ui.UpdatesView_showCategoriesAction");
 		showCategoriesAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_SHOW_CATEGORIES));
+			UpdateUI.getResourceString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
 
 		linkExtensionAction = new Action("link") {
@@ -641,7 +641,7 @@ public class UpdatesView
 			linkExtensionAction,
 			"org.eclipse.update.ui.UpdatesView_linkExtensionAction");
 		linkExtensionAction.setText(
-			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
+			UpdateUI.getResourceString(KEY_LINK_EXTENSION));
 
 		getTreeViewer().addSelectionChangedListener(selectionListener);
 		hookGlobalActions();
@@ -659,13 +659,13 @@ public class UpdatesView
 
 	private boolean getStoredEnvironmentValue() {
 		IDialogSettings settings =
-			UpdateUIPlugin.getDefault().getDialogSettings();
+			UpdateUI.getDefault().getDialogSettings();
 		return !settings.getBoolean(P_FILTER);
 	}
 
 	private void setStoredEnvironmentValue(boolean value) {
 		IDialogSettings settings =
-			UpdateUIPlugin.getDefault().getDialogSettings();
+			UpdateUI.getDefault().getDialogSettings();
 		settings.put(P_FILTER, !value);
 	}
 
@@ -700,7 +700,7 @@ public class UpdatesView
 		manager.add(refreshAction);
 		manager.add(new Separator());
 		MenuManager newMenu =
-			new MenuManager(UpdateUIPlugin.getResourceString(KEY_NEW));
+			new MenuManager(UpdateUI.getResourceString(KEY_NEW));
 		newMenu.add(newAction);
 		newMenu.add(newFolderAction);
 		newMenu.add(newSearchAction);
@@ -773,16 +773,16 @@ public class UpdatesView
 	}
 
 	private void performNewBookmark() {
-		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		Shell shell = UpdateUI.getActiveWorkbenchShell();
 		NewSiteBookmarkWizardPage page =
 			new NewSiteBookmarkWizardPage(getSelectedFolder());
 		NewWizard wizard =
-			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+			new NewWizard(page, UpdateUIImages.DESC_NEW_BOOKMARK);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_BOOKMARK_TITLE));
+			UpdateUI.getResourceString(KEY_NEW_BOOKMARK_TITLE));
 		//dialog.getShell().setSize(400, 400);
 		dialog.open();
 	}
@@ -798,29 +798,29 @@ public class UpdatesView
 	}
 
 	private void performNewBookmarkFolder() {
-		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		Shell shell = UpdateUI.getActiveWorkbenchShell();
 		NewFolderWizardPage page = new NewFolderWizardPage(getSelectedFolder());
 		NewWizard wizard =
-			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_FOLDER);
+			new NewWizard(page, UpdateUIImages.DESC_NEW_FOLDER);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER_TITLE));
+			UpdateUI.getResourceString(KEY_NEW_FOLDER_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
 
 	private void performNewSearch() {
-		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		Shell shell = UpdateUI.getActiveWorkbenchShell();
 		NewSearchWizardPage page = new NewSearchWizardPage(getSelectedFolder());
 		NewWizard wizard =
-			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_SEARCH);
+			new NewWizard(page, UpdateUIImages.DESC_NEW_SEARCH);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH_TITLE));
+			UpdateUI.getResourceString(KEY_NEW_SEARCH_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -834,8 +834,8 @@ public class UpdatesView
 				SiteBookmark bookmark = (SiteBookmark) obj;
 				if (bookmark.getType() == SiteBookmark.LOCAL) {
 					//UpdateModel model =
-					//	UpdateUIPlugin.getDefault().getUpdateModel();
-					Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+					//	UpdateUI.getDefault().getUpdateModel();
+					Shell shell = UpdateUI.getActiveWorkbenchShell();
 					NewSiteBookmarkWizardPage page =
 						new NewSiteBookmarkWizardPage(
 							getSelectedFolder(),
@@ -843,11 +843,11 @@ public class UpdatesView
 					NewWizard wizard =
 						new NewWizard(
 							page,
-							UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+							UpdateUIImages.DESC_NEW_BOOKMARK);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
 					dialog.getShell().setText(
-						UpdateUIPlugin.getResourceString(
+						UpdateUI.getResourceString(
 							KEY_NEW_BOOKMARK_TITLE));
 					dialog.open();
 				}
@@ -865,7 +865,7 @@ public class UpdatesView
 	}
 
 	private void doDelete(IStructuredSelection selection) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof NamedModelObject) {
@@ -936,7 +936,7 @@ public class UpdatesView
 					TextTransfer.getInstance()});
 			return true;
 		} catch (SWTError e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		}
 	}
@@ -970,7 +970,7 @@ public class UpdatesView
 	}
 
 	private void performShowSearchResult() {
-		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		IWorkbenchPage page = UpdateUI.getActivePage();
 		SearchResultView view =
 			(SearchResultView) page.findView(
 				UpdatePerspective.ID_SEARCH_RESULTS);
@@ -983,7 +983,7 @@ public class UpdatesView
 						UpdatePerspective.ID_SEARCH_RESULTS);
 				view.setSelectionActive(true);
 			} catch (PartInitException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 		}
 		if (view != null)
@@ -1002,14 +1002,14 @@ public class UpdatesView
 					try {
 						// reinitialize the authenticator  
 						UpdateManagerAuthenticator auth =
-							UpdateUIPlugin.getDefault().getAuthenticator();
+							UpdateUI.getDefault().getAuthenticator();
 						if (auth != null)
 							auth.reset();
 						if (obj instanceof SiteBookmark)
 							 ((SiteBookmark) obj).connect(false, null);
 						getViewer().refresh(obj);
 					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
+						UpdateUI.logException(e);
 					}
 				}
 			});
@@ -1021,7 +1021,7 @@ public class UpdatesView
 						monitor.beginTask("", 3);
 						// reinitialize the authenticator  
 						UpdateManagerAuthenticator auth =
-							UpdateUIPlugin.getDefault().getAuthenticator();
+							UpdateUI.getDefault().getAuthenticator();
 						if (auth != null)
 							auth.reset();
 						monitor.worked(1);
@@ -1048,7 +1048,7 @@ public class UpdatesView
 			try {
 				getViewSite().getWorkbenchWindow().run(true, true, op);
 			} catch (InvocationTargetException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -1069,10 +1069,10 @@ public class UpdatesView
 					true)) {
 				InstallWizard.makeConfigurationCurrent(config, null);
 				InstallWizard.saveLocalSite();
-				UpdateUIPlugin.informRestartNeeded();
+				UpdateUI.informRestartNeeded();
 			}
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -1138,7 +1138,7 @@ public class UpdatesView
 		try {
 			getViewSite().getWorkbenchWindow().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		} catch (InterruptedException e) {
 		}
 		return bag.catalog;
@@ -1167,7 +1167,7 @@ public class UpdatesView
 		if (child instanceof PendingChange)
 			return;
 		if (child instanceof NamedModelObject) {
-			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			if (child instanceof SearchObject) {
 				searchMonitorManager.register((SearchObject) child);
 			}

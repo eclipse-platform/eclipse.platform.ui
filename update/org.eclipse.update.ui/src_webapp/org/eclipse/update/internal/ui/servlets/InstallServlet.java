@@ -10,7 +10,7 @@ import javax.servlet.http.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.forms.DetailsForm;
 import org.eclipse.update.internal.ui.model.PendingChange;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
@@ -130,7 +130,7 @@ public class InstallServlet extends HttpServlet {
 		
 		display.syncExec(new Runnable() {
 			public void run() {
-				final Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+				final Shell shell = UpdateUI.getActiveWorkbenchShell();
 				BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 					public void run() {
 						result[0] = doExecuteInstall(writer, shell, siteURL, vid, needLicensePage);
@@ -189,7 +189,7 @@ public class InstallServlet extends HttpServlet {
 	}
 
 	private IFeature findLatestOldFeature(IFeature feature) {
-		IFeature[] oldFeatures = UpdateUIPlugin.getInstalledFeatures(feature);
+		IFeature[] oldFeatures = UpdateUI.getInstalledFeatures(feature);
 		if (oldFeatures.length == 0)
 			return null;
 

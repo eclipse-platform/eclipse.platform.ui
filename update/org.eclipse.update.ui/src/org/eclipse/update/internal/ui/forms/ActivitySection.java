@@ -10,7 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -42,8 +42,8 @@ public class ActivitySection extends UpdateSection {
 	public ActivitySection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
+		setHeaderText(UpdateUI.getResourceString(KEY_TITLE));
+		setDescription(UpdateUI.getResourceString(KEY_DESC));
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -59,10 +59,10 @@ public class ActivitySection extends UpdateSection {
 		
 		headers = new Control [5];
 		
-		headers[0] = createHeader(container, factory, UpdateUIPlugin.getResourceString(KEY_DATE));
-		headers[1] = createHeader(container, factory, UpdateUIPlugin.getResourceString(KEY_TARGET));
-		headers[2] = createHeader(container, factory, UpdateUIPlugin.getResourceString(KEY_ACTION));
-		headers[3] = createHeader(container, factory, UpdateUIPlugin.getResourceString(KEY_STATUS));
+		headers[0] = createHeader(container, factory, UpdateUI.getResourceString(KEY_DATE));
+		headers[1] = createHeader(container, factory, UpdateUI.getResourceString(KEY_TARGET));
+		headers[2] = createHeader(container, factory, UpdateUI.getResourceString(KEY_ACTION));
+		headers[3] = createHeader(container, factory, UpdateUI.getResourceString(KEY_STATUS));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		headers[3].setLayoutData(gd);
 		Composite separator = factory.createCompositeSeparator(container);
@@ -129,35 +129,35 @@ public class ActivitySection extends UpdateSection {
 		int action = activity.getAction();
 		switch (action) {
 			case IActivity.ACTION_CONFIGURE:
-				return UpdateUIPlugin.getResourceString(KEY_CONFIGURE);
+				return UpdateUI.getResourceString(KEY_CONFIGURE);
 			case IActivity.ACTION_FEATURE_INSTALL:
-				return UpdateUIPlugin.getResourceString(KEY_FEATURE_INSTALL);
+				return UpdateUI.getResourceString(KEY_FEATURE_INSTALL);
 			case IActivity.ACTION_FEATURE_REMOVE:
-				return UpdateUIPlugin.getResourceString(KEY_FEATURE_REMOVE);
+				return UpdateUI.getResourceString(KEY_FEATURE_REMOVE);
 			case IActivity.ACTION_SITE_INSTALL:
-				return UpdateUIPlugin.getResourceString(KEY_SITE_INSTALL);
+				return UpdateUI.getResourceString(KEY_SITE_INSTALL);
 			case IActivity.ACTION_SITE_REMOVE:
-				return UpdateUIPlugin.getResourceString(KEY_SITE_REMOVE);
+				return UpdateUI.getResourceString(KEY_SITE_REMOVE);
 			case IActivity.ACTION_UNCONFIGURE:
-				return UpdateUIPlugin.getResourceString(KEY_UNCONFIGURE);
+				return UpdateUI.getResourceString(KEY_UNCONFIGURE);
 			case IActivity.ACTION_REVERT:
-				return UpdateUIPlugin.getResourceString(KEY_REVERT);
+				return UpdateUI.getResourceString(KEY_REVERT);
 			case IActivity.ACTION_RECONCILIATION:
-				return UpdateUIPlugin.getResourceString(KEY_RECONCILIATION);				
+				return UpdateUI.getResourceString(KEY_RECONCILIATION);				
 			case IActivity.ACTION_ADD_PRESERVED:
-				return UpdateUIPlugin.getResourceString(KEY_ADD_PRESERVED);					
+				return UpdateUI.getResourceString(KEY_ADD_PRESERVED);					
 			default:
-				return UpdateUIPlugin.getResourceString(KEY_UNKNOWN);		
+				return UpdateUI.getResourceString(KEY_UNKNOWN);		
 		}
 	}
 	
 	private String getStatusLabel(IActivity activity) {
 		switch (activity.getStatus()) {
 			case IActivity.STATUS_OK:
-				return UpdateUIPlugin.getResourceString(KEY_OK);
+				return UpdateUI.getResourceString(KEY_OK);
 			case IActivity.STATUS_NOK:
-				return UpdateUIPlugin.getResourceString(KEY_NOK);
+				return UpdateUI.getResourceString(KEY_NOK);
 		}
-		return UpdateUIPlugin.getResourceString(KEY_UNKNOWN);
+		return UpdateUI.getResourceString(KEY_UNKNOWN);
 	}
 }

@@ -64,7 +64,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	class ContainerLabelProvider extends LabelProvider {
 		public Image getImage(Object obj) {
 			if (obj instanceof BookmarkFolder)
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_BFOLDER_OBJ);
+				return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_BFOLDER_OBJ);
 			return super.getImage(obj);
 		}
 	}
@@ -72,11 +72,11 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	public BaseNewWizardPage(BookmarkFolder folder) {
 		super("");
 		this.folder = folder;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -89,7 +89,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getResourceString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
@@ -100,7 +100,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		});
 		createClientControl(container, layout.numColumns);
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_CREATE_IN));
+		label.setText(UpdateUI.getResourceString(KEY_CREATE_IN));
 		containerText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
@@ -112,7 +112,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			}
 		});
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_EXISTING));
+		label.setText(UpdateUI.getResourceString(KEY_EXISTING));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -134,7 +134,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 				handleSelectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
-		tree.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		tree.setInput(UpdateUI.getDefault().getUpdateModel());
 		if (folder != null)
 			tree.setSelection(new StructuredSelection(folder), true);
 		validatePage();
@@ -155,7 +155,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		if (containerText.getText().length() > 0) {
 			folder = getFolderFromPath(containerText.getText());
 			if (folder == null) {
-				message = UpdateUIPlugin.getResourceString(KEY_INVALID);
+				message = UpdateUI.getResourceString(KEY_INVALID);
 			}
 		} else
 			folder = null;
@@ -166,7 +166,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		setPageComplete(message == null && complete);
 	}
 	private BookmarkFolder getFolderFromPath(String path) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		return model.getFolder(new Path(path));
 	}
 	private void handleSelectionChanged(IStructuredSelection selection) {
@@ -185,7 +185,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	public abstract boolean finish();
 
 	protected void addToModel(NamedModelObject object) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		BookmarkFolder parentFolder = getFolder();
 		if (parentFolder != null)
 			parentFolder.addChild(object);

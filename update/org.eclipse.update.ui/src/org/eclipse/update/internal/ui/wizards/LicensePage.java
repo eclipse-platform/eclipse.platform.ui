@@ -31,16 +31,16 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 	 */
 	public LicensePage(boolean multiLicenseMode) {
 		super("License"); //$NON-NLS-1$
-		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setTitle(UpdateUI.getResourceString(KEY_TITLE));
 		setPageComplete(false);
 		this.multiLicenseMode = multiLicenseMode;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 		setDescription(
-			UpdateUIPlugin.getResourceString(
+			UpdateUI.getResourceString(
 				multiLicenseMode ? KEY_DESC2 : KEY_DESC));
 	}
 	public void dispose() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -109,7 +109,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 
 		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
 		acceptButton.setText(
-			UpdateUIPlugin.getResourceString(
+			UpdateUI.getResourceString(
 				multiLicenseMode ? KEY_ACCEPT2 : KEY_ACCEPT));
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -118,7 +118,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		});
 		Button declineButton = new Button(buttonContainer, SWT.RADIO);
 		declineButton.setText(
-			UpdateUIPlugin.getResourceString(
+			UpdateUI.getResourceString(
 				multiLicenseMode ? KEY_DECLINE2 : KEY_DECLINE));
 		declineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -145,10 +145,10 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 					item.setText(label);
 					boolean efix = feature.isPatch();
 					item.setImage(
-						UpdateUIPlugin.getDefault().getLabelProvider().get(
+						UpdateUI.getDefault().getLabelProvider().get(
 							efix
-								? UpdateUIPluginImages.DESC_EFIX_OBJ
-								: UpdateUIPluginImages.DESC_FEATURE_OBJ));
+								? UpdateUIImages.DESC_EFIX_OBJ
+								: UpdateUIImages.DESC_FEATURE_OBJ));
 					String license = feature.getLicense().getAnnotation();
 					// Question: Can this ever be null? What is the runtime cost?
 					item.setData(license);

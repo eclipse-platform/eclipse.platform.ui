@@ -10,7 +10,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
@@ -40,7 +40,7 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		container.setLayout(layout);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getResourceString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE|SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
@@ -58,13 +58,13 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		if (changed) {
 			IInstallConfiguration config = getConfiguration();
 			config.setLabel(nameText.getText());
-			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			model.fireObjectChanged(getElement(), null);
 			try {
 				SiteManager.getLocalSite().save();
 			}
 			catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 		}
 		return true;

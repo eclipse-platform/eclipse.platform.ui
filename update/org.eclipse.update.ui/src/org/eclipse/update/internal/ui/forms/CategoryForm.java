@@ -11,7 +11,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.SiteCategory;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.views.DetailsView;
@@ -34,7 +34,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 	super.initialize(modelObject);
 	//((Composite)getControl()).layout(true);
 }
@@ -73,7 +73,7 @@ protected void createContents(Composite parent) {
 		}
 	};
 	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setText(UpdateUIPlugin.getResourceString(KEY_MORE_INFO));
+	link.setText(UpdateUI.getResourceString(KEY_MORE_INFO));
 	factory.turnIntoHyperlink(link, listener);
 	link.setVisible(false);
 	setFocusControl(link);

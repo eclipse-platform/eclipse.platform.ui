@@ -9,7 +9,7 @@ import java.text.MessageFormat;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
@@ -30,7 +30,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 	super.initialize(modelObject);
 }
 
@@ -47,7 +47,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
+	text.setText(UpdateUI.getResourceString(KEY_DESC));
 	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.MyComputerForm");
 }
 
@@ -58,7 +58,7 @@ public void expandTo(Object obj) {
 }
 
 private void inputChanged(MyComputer myComputer) {
-	String pattern = UpdateUIPlugin.getResourceString(KEY_TITLE);
+	String pattern = UpdateUI.getResourceString(KEY_TITLE);
 	String name = System.getProperty("user.name");
 	String message = MessageFormat.format(pattern, new Object[] {name});
 	setHeadingText(message);

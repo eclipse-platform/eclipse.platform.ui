@@ -72,7 +72,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			String location = configSite.getSite().getURL().getFile();
-			return UpdateUIPlugin.getFormattedMessage(
+			return UpdateUI.getFormattedMessage(
 				KEY_CONFLICT,
 				new String[] { version, location });
 		}
@@ -116,8 +116,8 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			if (obj instanceof ArrayList)
 				flags = UpdateLabelProvider.F_WARNING;
 			if (obj instanceof IdEntry || obj instanceof ArrayList)
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(
-					UpdateUIPluginImages.DESC_FEATURE_OBJ,
+				return UpdateUI.getDefault().getLabelProvider().get(
+					UpdateUIImages.DESC_FEATURE_OBJ,
 					flags);
 			return null;
 		}
@@ -126,20 +126,20 @@ public class DuplicateConflictsDialog extends MessageDialog {
 	public DuplicateConflictsDialog(Shell shell, ArrayList conflicts) {
 		super(
 			shell,
-			UpdateUIPlugin.getResourceString(KEY_TITLE),
+			UpdateUI.getResourceString(KEY_TITLE),
 			null,
-			UpdateUIPlugin.getResourceString(KEY_MESSAGE),
+			UpdateUI.getResourceString(KEY_MESSAGE),
 			WARNING,
 			new String[] {
 				IDialogConstants.YES_LABEL,
 				IDialogConstants.NO_LABEL },
 			0);
 		this.conflicts = conflicts;
-		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
 	public boolean close() {
-		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
 
@@ -150,7 +150,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_TREE_LABEL));
 
 		treeViewer = new TreeViewer(client, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);

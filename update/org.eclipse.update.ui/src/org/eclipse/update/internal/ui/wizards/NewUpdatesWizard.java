@@ -17,8 +17,8 @@ import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.search.SearchObject;
@@ -34,8 +34,8 @@ public class NewUpdatesWizard extends Wizard {
 	private int installCount = 0;
 
 	public NewUpdatesWizard(SearchObject searchObject) {
-		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_UPDATE_WIZ);
+		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
+		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		createPendingChanges(searchObject);
@@ -65,11 +65,11 @@ public class NewUpdatesWizard extends Wizard {
 			try {
 				IFeature feature = adapter.getFeature(null);
 				IFeature[] installed =
-					UpdateUIPlugin.getInstalledFeatures(feature);
+					UpdateUI.getInstalledFeatures(feature);
 				PendingChange change = new PendingChange(installed[0], feature);
 				result.add(change);
 			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ public class NewUpdatesWizard extends Wizard {
 		IStatus status = ActivityConstraints.validatePendingOneClickUpdate(selectedJobs);
 		if (status != null) {
 			ErrorDialog.openError(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
+				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
 				status);
@@ -137,7 +137,7 @@ public class NewUpdatesWizard extends Wizard {
 			if (targetException instanceof InstallAbortedException) {
 				return true;
 			} else {
-				UpdateUIPlugin.logException(e);
+				UpdateUI.logException(e);
 			}
 			return false;
 		} catch (InterruptedException e) {
@@ -184,7 +184,7 @@ public class NewUpdatesWizard extends Wizard {
 		IProgressMonitor monitor)
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
-			UpdateUIPlugin.getResourceString(KEY_INSTALLING),
+			UpdateUI.getResourceString(KEY_INSTALLING),
 			jobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];
@@ -229,7 +229,7 @@ public class NewUpdatesWizard extends Wizard {
 			}
 			unconfigure(oldFeature);
 		}
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addPendingChange(job);
 	}
 
@@ -250,7 +250,7 @@ public class NewUpdatesWizard extends Wizard {
 		IStatus status =
 			new Status(
 				IStatus.ERROR,
-				UpdateUIPlugin.getPluginId(),
+				UpdateUI.getPluginId(),
 				IStatus.OK,
 				message,
 				null);

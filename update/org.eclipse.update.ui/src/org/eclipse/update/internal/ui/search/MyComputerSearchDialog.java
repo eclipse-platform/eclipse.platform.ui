@@ -16,7 +16,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.jface.dialogs.Dialog;
 
@@ -104,7 +104,7 @@ public class MyComputerSearchDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_LABEL));
+		label.setText(UpdateUI.getResourceString(KEY_LABEL));
 
 		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		viewer.setContentProvider(new DriveContentProvider());
@@ -116,7 +116,7 @@ public class MyComputerSearchDialog extends Dialog {
 					event.getChecked());
 			}
 		});
-		viewer.setInput(UpdateUIPlugin.getDefault());
+		viewer.setInput(UpdateUI.getDefault());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		gd.heightHint = 300;

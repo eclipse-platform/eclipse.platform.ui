@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
@@ -43,7 +43,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 	public void initialize(Object modelObject) {
 		setHeadingText("");
 		super.initialize(modelObject);
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		modelListener = new IUpdateModelChangedListener() {
 			public void objectsAdded(Object parent, Object[] children) {
 			}
@@ -82,11 +82,11 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		dateLabel =
 			createProperty(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_CREATED_ON));
+				UpdateUI.getResourceString(KEY_CREATED_ON));
 		currentLabel =
 			createProperty(
 				parent,
-				UpdateUIPlugin.getResourceString(KEY_CURRENT_CONFIG));
+				UpdateUI.getResourceString(KEY_CURRENT_CONFIG));
 		factory.createLabel(parent, null);
 
 		activitySection = new ActivitySection((UpdateFormPage) getPage());
@@ -148,8 +148,8 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		dateLabel.setText(Utilities.format(date));
 		String isCurrent =
 			configuration.isCurrent()
-				? UpdateUIPlugin.getResourceString(KEY_YES)
-				: UpdateUIPlugin.getResourceString(KEY_NO);
+				? UpdateUI.getResourceString(KEY_YES)
+				: UpdateUI.getResourceString(KEY_NO);
 		currentLabel.setText(isCurrent);
 
 		activitySection.configurationChanged(configuration);

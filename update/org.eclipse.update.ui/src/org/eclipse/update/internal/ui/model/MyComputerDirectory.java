@@ -13,7 +13,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class MyComputerDirectory
 	extends UIModelObject
@@ -64,7 +64,7 @@ public class MyComputerDirectory
 			final boolean[] result = new boolean[1];
 			BusyIndicator
 				.showWhile(
-					UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(),
+					UpdateUI.getActiveWorkbenchShell().getDisplay(),
 					new Runnable() {
 				public void run() {
 					File[] children = file.listFiles();
@@ -83,7 +83,7 @@ public class MyComputerDirectory
 	public Object[] getChildren(Object parent) {
 		BusyIndicator
 			.showWhile(
-				UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(),
+				UpdateUI.getActiveWorkbenchShell().getDisplay(),
 				new Runnable() {
 			public void run() {
 				File[] files = file.listFiles();

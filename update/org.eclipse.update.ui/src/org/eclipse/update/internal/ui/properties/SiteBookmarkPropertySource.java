@@ -6,7 +6,7 @@ package org.eclipse.update.internal.ui.properties;
 import java.net.*;
 
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 
 public class SiteBookmarkPropertySource implements IPropertySource {
@@ -41,26 +41,26 @@ public class SiteBookmarkPropertySource implements IPropertySource {
 			desc =
 				new TextPropertyDescriptor(
 					SiteBookmark.P_URL,
-					UpdateUIPlugin.getResourceString(KEY_URL_LABEL));
+					UpdateUI.getResourceString(KEY_URL_LABEL));
 		else
 			desc =
 				new PropertyDescriptor(
 					SiteBookmark.P_URL,
-					UpdateUIPlugin.getResourceString(KEY_URL_LABEL));
-		desc.setDescription(UpdateUIPlugin.getResourceString(KEY_URL_DESC));
+					UpdateUI.getResourceString(KEY_URL_LABEL));
+		desc.setDescription(UpdateUI.getResourceString(KEY_URL_DESC));
 		descriptors[0] = desc;
 
 		if (bookmark.getType() == SiteBookmark.USER)
 			desc =
 				new TextPropertyDescriptor(
 					SiteBookmark.P_NAME,
-					UpdateUIPlugin.getResourceString(KEY_NAME_LABEL));
+					UpdateUI.getResourceString(KEY_NAME_LABEL));
 		else
 			desc =
 				new PropertyDescriptor(
 					SiteBookmark.P_NAME,
-					UpdateUIPlugin.getResourceString(KEY_NAME_LABEL));
-		desc.setDescription(UpdateUIPlugin.getResourceString(KEY_NAME_DESC));
+					UpdateUI.getResourceString(KEY_NAME_LABEL));
+		desc.setDescription(UpdateUI.getResourceString(KEY_NAME_DESC));
 		descriptors[1] = desc;
 		return descriptors;
 	}

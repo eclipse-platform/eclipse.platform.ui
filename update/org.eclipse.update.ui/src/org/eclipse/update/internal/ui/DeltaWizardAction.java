@@ -33,7 +33,7 @@ public class DeltaWizardAction implements IWorkbenchWindowActionDelegate {
 					SiteManager.handleNewChanges();
 				}
 				catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
+					UpdateUI.logException(e);
 				}
 			}
 		});

@@ -10,7 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 
 public abstract class BannerPage extends WizardPage {
 	private Image bannerImage;
@@ -63,7 +63,7 @@ public abstract class BannerPage extends WizardPage {
 		if (imageURL == null) {
 			// use default
 			bannerImage =
-				UpdateUIPluginImages.DESC_INSTALL_BANNER.createImage();
+				UpdateUIImages.DESC_INSTALL_BANNER.createImage();
 			image = bannerImage;
 		}
 		return image;

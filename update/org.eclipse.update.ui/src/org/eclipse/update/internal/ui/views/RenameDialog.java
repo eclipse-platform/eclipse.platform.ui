@@ -6,7 +6,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.NamedModelObject;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -64,7 +64,7 @@ public class RenameDialog extends Dialog {
 
 		Label label = new Label(container, SWT.NULL);
 		label.setText(
-			UpdateUIPlugin.getFormattedMessage(KEY_LABEL, object.getName()));
+			UpdateUI.getFormattedMessage(KEY_LABEL, object.getName()));
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -96,7 +96,7 @@ public class RenameDialog extends Dialog {
 		}
 		status.setText(
 			duplicate
-				? UpdateUIPlugin.getFormattedMessage(KEY_EXISTS, name)
+				? UpdateUI.getFormattedMessage(KEY_EXISTS, name)
 				: "");
 		okButton.setEnabled(!duplicate);
 	}

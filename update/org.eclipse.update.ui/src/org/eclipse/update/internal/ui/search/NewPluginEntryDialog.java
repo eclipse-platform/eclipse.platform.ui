@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.Import;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author dejan
@@ -37,7 +37,7 @@ public class NewPluginEntryDialog extends Dialog {
 		container.setLayout(layout);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString("NewPluginEntryDialog.id")); //$NON-NLS-1$
+		label.setText(UpdateUI.getResourceString("NewPluginEntryDialog.id")); //$NON-NLS-1$
 		
 		idText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -49,7 +49,7 @@ public class NewPluginEntryDialog extends Dialog {
 		});
 		
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString("NewPluginEntryDialog.version")); //$NON-NLS-1$
+		label.setText(UpdateUI.getResourceString("NewPluginEntryDialog.version")); //$NON-NLS-1$
 		
 		versionText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

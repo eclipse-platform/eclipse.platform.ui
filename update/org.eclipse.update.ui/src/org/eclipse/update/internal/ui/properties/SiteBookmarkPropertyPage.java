@@ -11,7 +11,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.events.*;
 import java.net.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -48,24 +48,24 @@ public class SiteBookmarkPropertyPage
 		container.setLayout(layout);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getResourceString(KEY_NAME));
 		siteName = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteName.setLayoutData(gd);
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
+		label.setText(UpdateUI.getResourceString(KEY_ADDRESS));
 		siteURL = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteURL.setLayoutData(gd);
 		
 		updateButton = new Button(container, SWT.RADIO);
-		updateButton.setText(UpdateUIPlugin.getResourceString(KEY_UPDATE_SITE));
+		updateButton.setText(UpdateUI.getResourceString(KEY_UPDATE_SITE));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		updateButton.setLayoutData(gd);
 		
 		webButton = new Button(container, SWT.RADIO);
-		webButton.setText(UpdateUIPlugin.getResourceString(KEY_WEB_SITE));
+		webButton.setText(UpdateUI.getResourceString(KEY_WEB_SITE));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		webButton.setLayoutData(gd);

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 import org.eclipse.update.ui.forms.internal.*;
@@ -71,7 +71,7 @@ public class MultipleSelectionForm extends UpdateWebForm {
 		tableViewer = new TableViewer(factory.createTable(parent, SWT.NULL));
 		tableViewer.setContentProvider(new ViewProvider());
 		tableViewer.setLabelProvider(
-			UpdateUIPlugin.getDefault().getLabelProvider());
+			UpdateUI.getDefault().getLabelProvider());
 		td = new TableData();
 		td.align = TableData.FILL;
 		td.valign = TableData.FILL;

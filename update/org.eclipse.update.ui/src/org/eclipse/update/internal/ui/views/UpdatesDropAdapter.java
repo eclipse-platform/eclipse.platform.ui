@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.views;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 
 /**
@@ -51,7 +51,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 	}
 
 	private void saveModel() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.saveBookmarks();
 	}
 
@@ -68,7 +68,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 		Shell shell,
 		BookmarkFolder parentFolder,
 		NamedModelObject object) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 
 		Object[] siblings =
 			parentFolder != null
@@ -89,7 +89,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 			dialog.create();
 			dialog.getShell().setSize(350, 150);
 			dialog.getShell().setText(
-				UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+				UpdateUI.getResourceString(KEY_CONFLICT));
 			if (dialog.open() != RenameDialog.OK)
 				return false;
 		}

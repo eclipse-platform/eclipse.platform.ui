@@ -27,8 +27,8 @@ public class InstallDeltaWizard
 	 */
 	public InstallDeltaWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUIPlugin.getResourceString(KEY_WTITLE));
-		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_UPDATE_WIZ);
+		setWindowTitle(UpdateUI.getResourceString(KEY_WTITLE));
+		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 	}
 
 	public void addPages() {
@@ -57,7 +57,7 @@ public class InstallDeltaWizard
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		} catch (InterruptedException e) {
 			return false;
@@ -71,7 +71,7 @@ public class InstallDeltaWizard
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask(
-			UpdateUIPlugin.getResourceString(KEY_PROCESSING),
+			UpdateUI.getResourceString(KEY_PROCESSING),
 			selectedDeltas.length + removedDeltas.length);
 		processed = 0;
 		for (int i = 0; i < removedDeltas.length; i++) {
@@ -106,13 +106,13 @@ public class InstallDeltaWizard
 			public void run() {
 				WizardDialog dialog =
 					new WizardDialog(
-						UpdateUIPlugin.getActiveWorkbenchShell(),
+						UpdateUI.getActiveWorkbenchShell(),
 						InstallDeltaWizard.this);
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
 				if (processed > 0)
-					UpdateUIPlugin.informRestartNeeded();
+					UpdateUI.informRestartNeeded();
 			}
 		});
 	}

@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
@@ -31,7 +31,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
 	super.initialize(modelObject);
 	//((Composite)getControl()).layout(true);
 }
@@ -48,7 +48,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();	
 	urlLabel = factory.createHeadingLabel(parent, null);
 	FormEngine desc = factory.createFormEngine(parent);
-	desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
+	desc.load(UpdateUI.getResourceString(KEY_DESC), true, true);
 	setFocusControl(desc);
 	TableData td = new TableData();
 	td.align = TableData.FILL;

@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.views;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.BookmarkFolder;
 import org.eclipse.update.internal.ui.model.NamedModelObject;
 import org.eclipse.update.internal.ui.model.UpdateModel;
@@ -73,7 +73,7 @@ public class UpdatesDragAdapter extends DragSourceAdapter {
 			return;
 		if (event.detail == DND.DROP_MOVE) {
 			NamedModelObject[] objects = (NamedModelObject[]) dragData;
-			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			for (int i = 0; i < objects.length; i++) {
 				NamedModelObject obj = objects[i];
 				Object parent = obj.getParent(obj);

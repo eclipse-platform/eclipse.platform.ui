@@ -6,7 +6,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.PendingChange;
 
 /**
@@ -212,15 +212,15 @@ public class ActivityConstraints {
 		throws CoreException {
 		if (feature.isPatch()) {
 			IInstallConfiguration backup =
-				UpdateUIPlugin.getBackupConfigurationFor(feature);
+				UpdateUI.getBackupConfigurationFor(feature);
 			String msg;
 			if (backup != null)
 				msg =
-					UpdateUIPlugin.getFormattedMessage(
+					UpdateUI.getFormattedMessage(
 						KEY_PATCH_UNCONFIGURE_BACKUP,
 						backup.getLabel());
 			else
-				msg = UpdateUIPlugin.getResourceString(KEY_PATCH_UNCONFIGURE);
+				msg = UpdateUI.getResourceString(KEY_PATCH_UNCONFIGURE);
 			status.add(createStatus(feature, msg));
 			return true;
 		}
@@ -320,7 +320,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							newFeature,
-							UpdateUIPlugin.getResourceString(KEY_EXCLUSIVE)));
+							UpdateUI.getResourceString(KEY_EXCLUSIVE)));
 					continue;
 				}
 				if (mode == PendingChange.UNCONFIGURE
@@ -391,7 +391,7 @@ public class ActivityConstraints {
 					IStatus conflict =
 						createStatus(
 							newFeature,
-							UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+							UpdateUI.getResourceString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -441,7 +441,7 @@ public class ActivityConstraints {
 					IStatus conflict =
 						createStatus(
 							newFeature,
-							UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+							UpdateUI.getResourceString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -507,7 +507,7 @@ public class ActivityConstraints {
 		// check for <includes> cycle
 		if (features.contains(feature)) {
 			IStatus status =
-				createStatus(top, UpdateUIPlugin.getResourceString(KEY_CYCLE));
+				createStatus(top, UpdateUI.getResourceString(KEY_CYCLE));
 			throw new CoreException(status);
 		}
 
@@ -589,7 +589,7 @@ public class ActivityConstraints {
 		throws CoreException {
 		for (int i = 0; i < features.size(); i++) {
 			IFeature candidate = (IFeature) features.get(i);
-			if (UpdateUIPlugin.isPatch(feature, candidate)) {
+			if (UpdateUI.isPatch(feature, candidate)) {
 				ArrayList removeTree =
 					computeFeatureSubtree(candidate, null, null, true);
 				result.addAll(removeTree);
@@ -751,7 +751,7 @@ public class ActivityConstraints {
 					if (!version.isGreaterThan(cversion)) {
 						// Don't allow this.
 						String msg =
-							UpdateUIPlugin.getFormattedMessage(
+							UpdateUI.getFormattedMessage(
 								KEY_PATCH_REGRESSION,
 								new String[] {
 									ifeature.getLabel(),
@@ -767,7 +767,7 @@ public class ActivityConstraints {
 				// is a patch itself
 				if (!isPatch(ifeature)) {
 					String msg =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_PATCH_MISSING_TARGET,
 							new String[] {
 								ifeature.getLabel(),
@@ -817,7 +817,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUIPlugin.getResourceString(KEY_OS)));
+							UpdateUI.getResourceString(KEY_OS)));
 					continue;
 				}
 			}
@@ -827,7 +827,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUIPlugin.getResourceString(KEY_WS)));
+							UpdateUI.getResourceString(KEY_WS)));
 					continue;
 				}
 			}
@@ -837,7 +837,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUIPlugin.getResourceString(KEY_ARCH)));
+							UpdateUI.getResourceString(KEY_ARCH)));
 					continue;
 				}
 			}
@@ -871,7 +871,7 @@ public class ActivityConstraints {
 				status.add(
 					createStatus(
 						null,
-						UpdateUIPlugin.getResourceString(KEY_PLATFORM)));
+						UpdateUI.getResourceString(KEY_PLATFORM)));
 				return;
 			}
 		}
@@ -897,7 +897,7 @@ public class ActivityConstraints {
 		}
 
 		status.add(
-			createStatus(null, UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
+			createStatus(null, UpdateUI.getResourceString(KEY_PRIMARY)));
 	}
 
 	/*
@@ -980,18 +980,18 @@ public class ActivityConstraints {
 					// report status
 					String target =
 						featurePrereq
-							? UpdateUIPlugin.getResourceString(
+							? UpdateUI.getResourceString(
 								KEY_PREREQ_FEATURE)
-							: UpdateUIPlugin.getResourceString(KEY_PREREQ_PLUGIN);
+							: UpdateUI.getResourceString(KEY_PREREQ_PLUGIN);
 					String msg =
-						UpdateUIPlugin.getFormattedMessage(
+						UpdateUI.getFormattedMessage(
 							KEY_PREREQ,
 							new String[] { target, id });
 
 					if (!ignoreVersion) {
 						if (rule == IImport.RULE_PERFECT)
 							msg =
-								UpdateUIPlugin.getFormattedMessage(
+								UpdateUI.getFormattedMessage(
 									KEY_PREREQ_PERFECT,
 									new String[] {
 										target,
@@ -999,7 +999,7 @@ public class ActivityConstraints {
 										version.toString()});
 						else if (rule == IImport.RULE_EQUIVALENT)
 							msg =
-								UpdateUIPlugin.getFormattedMessage(
+								UpdateUI.getFormattedMessage(
 									KEY_PREREQ_EQUIVALENT,
 									new String[] {
 										target,
@@ -1007,7 +1007,7 @@ public class ActivityConstraints {
 										version.toString()});
 						else if (rule == IImport.RULE_COMPATIBLE)
 							msg =
-								UpdateUIPlugin.getFormattedMessage(
+								UpdateUI.getFormattedMessage(
 									KEY_PREREQ_COMPATIBLE,
 									new String[] {
 										target,
@@ -1015,7 +1015,7 @@ public class ActivityConstraints {
 										version.toString()});
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
-								UpdateUIPlugin.getFormattedMessage(
+								UpdateUI.getFormattedMessage(
 									KEY_PREREQ_GREATER,
 									new String[] {
 										target,
@@ -1096,7 +1096,7 @@ public class ActivityConstraints {
 		if (included) {
 			// feature is included as optional but
 			// no parent is currently configured.
-			String msg = UpdateUIPlugin.getResourceString(KEY_OPTIONAL_CHILD);
+			String msg = UpdateUI.getResourceString(KEY_OPTIONAL_CHILD);
 			status.add(createStatus(feature, msg));
 		} else {
 			//feature is root - can be configured
@@ -1131,7 +1131,7 @@ public class ActivityConstraints {
 			if (cconfig.getTimeline() != config.getTimeline()) {
 				// Not the same timeline - cannot revert
 				String msg =
-					UpdateUIPlugin.getFormattedMessage(
+					UpdateUI.getFormattedMessage(
 						KEY_WRONG_TIMELINE,
 						config.getLabel());
 				status.add(createStatus(null, msg));
@@ -1148,9 +1148,9 @@ public class ActivityConstraints {
 		ArrayList children) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = UpdateUIPlugin.getResourceString(rootKey);
+		String message = UpdateUI.getResourceString(rootKey);
 		return new MultiStatus(
-			UpdateUIPlugin.getPluginId(),
+			UpdateUI.getPluginId(),
 			IStatus.ERROR,
 			carray,
 			message,
@@ -1166,7 +1166,7 @@ public class ActivityConstraints {
 			PluginVersionIdentifier version =
 				feature.getVersionedIdentifier().getVersion();
 			fullMessage =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					KEY_CHILD_MESSAGE,
 					new String[] {
 						feature.getLabel(),
@@ -1176,7 +1176,7 @@ public class ActivityConstraints {
 
 		return new Status(
 			IStatus.ERROR,
-			UpdateUIPlugin.getPluginId(),
+			UpdateUI.getPluginId(),
 			IStatus.OK,
 			fullMessage,
 			null);

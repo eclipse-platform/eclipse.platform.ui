@@ -110,9 +110,9 @@ public class SearchForm extends UpdateWebForm {
 			updateButtonText();
 			searchButton.setEnabled(true);
 			Date date = new Date();
-			String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
+			String pattern = UpdateUI.getResourceString(KEY_LAST_SEARCH);
 			String text =
-				UpdateUIPlugin.getFormattedMessage(
+				UpdateUI.getFormattedMessage(
 					pattern,
 					Utilities.format(date));
 			infoLabel.setText(text);
@@ -128,7 +128,7 @@ public class SearchForm extends UpdateWebForm {
 		}
 		
 		private void activateSearchResultSelection() {
-			SearchResultView sview = (SearchResultView)UpdateUIPlugin.getActivePage().findView(UpdatePerspective.ID_SEARCH_RESULTS);
+			SearchResultView sview = (SearchResultView)UpdateUI.getActivePage().findView(UpdatePerspective.ID_SEARCH_RESULTS);
 			if (sview!=null)
 				sview.setSelectionActive(true);
 		}
@@ -137,7 +137,7 @@ public class SearchForm extends UpdateWebForm {
 	public SearchForm(UpdateFormPage page) {
 		super(page);
 		IDialogSettings master =
-			UpdateUIPlugin.getDefault().getDialogSettings();
+			UpdateUI.getDefault().getDialogSettings();
 		settings = master.getSection(SETTINGS_SECTION);
 		if (settings == null)
 			settings = master.addNewSection(SETTINGS_SECTION);
@@ -162,7 +162,7 @@ public class SearchForm extends UpdateWebForm {
 	}
 
 	private void updateHeadingText(SearchObject obj) {
-		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
+		String title = UpdateUI.getResourceString(KEY_TITLE);
 		if (obj != null)
 			title += " - " + obj.getName();
 		setHeadingText(title);
@@ -183,7 +183,7 @@ public class SearchForm extends UpdateWebForm {
 		TableData td;
 
 		descLabel = factory.createFormEngine(parent);
-		descLabel.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
+		descLabel.load(UpdateUI.getResourceString(KEY_DESC), true, true);
 		td = new TableData();
 		td.colspan = 2;
 		descLabel.setLayoutData(td);
@@ -209,7 +209,7 @@ public class SearchForm extends UpdateWebForm {
 		td.colspan = 2;
 		optionContainer.setLayoutData(td);
 
-		queryGroup.setText(UpdateUIPlugin.getResourceString(KEY_QUERY));
+		queryGroup.setText(UpdateUI.getResourceString(KEY_QUERY));
 		queryGroup.createControl(optionContainer, factory);
 		setFocusControl(queryGroup.getControl());
 
@@ -224,7 +224,7 @@ public class SearchForm extends UpdateWebForm {
 				myComputerCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				myComputerCheck.setText(
-					UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_CHECK));
+					UpdateUI.getResourceString(KEY_MY_COMPUTER_CHECK));
 				myComputerCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						myComputerSettings.setEnabled(
@@ -237,7 +237,7 @@ public class SearchForm extends UpdateWebForm {
 				myComputerSettings =
 					factory.createButton(expansion, null, SWT.PUSH);
 				myComputerSettings.setText(
-					UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_MORE));
+					UpdateUI.getResourceString(KEY_MY_COMPUTER_MORE));
 				myComputerSettings
 					.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -252,7 +252,7 @@ public class SearchForm extends UpdateWebForm {
 										searchObject);
 								sd.create();
 								sd.getShell().setText(
-									UpdateUIPlugin.getResourceString(
+									UpdateUI.getResourceString(
 										KEY_MY_COMPUTER_TITLE));
 								sd.open();
 							}
@@ -263,7 +263,7 @@ public class SearchForm extends UpdateWebForm {
 				discoveryCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				discoveryCheck.setText(
-					UpdateUIPlugin.getResourceString(KEY_DISCOVERY_CHECK));
+					UpdateUI.getResourceString(KEY_DISCOVERY_CHECK));
 				discoveryCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchDiscovery(
@@ -277,7 +277,7 @@ public class SearchForm extends UpdateWebForm {
 				bookmarkCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				bookmarkCheck.setText(
-					UpdateUIPlugin.getResourceString(KEY_BOOKMARK_CHECK));
+					UpdateUI.getResourceString(KEY_BOOKMARK_CHECK));
 				bookmarkCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchBookmarks(
@@ -290,7 +290,7 @@ public class SearchForm extends UpdateWebForm {
 
 				filterCheck = factory.createButton(expansion, null, SWT.CHECK);
 				filterCheck.setText(
-					UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+					UpdateUI.getResourceString(KEY_FILTER_CHECK));
 				filterCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setFilterEnvironment(
@@ -302,13 +302,13 @@ public class SearchForm extends UpdateWebForm {
 				filterCheck.setLayoutData(gd);
 			}
 		};
-		optionsGroup.setText(UpdateUIPlugin.getResourceString(KEY_OPTIONS));
+		optionsGroup.setText(UpdateUI.getResourceString(KEY_OPTIONS));
 		optionsGroup.createControl(optionContainer, factory);
 
 /*
 		fullModeCheck = factory.createButton(parent, null, SWT.CHECK);
 		fullModeCheck.setText(
-			UpdateUIPlugin.getResourceString(KEY_FULL_MODE_CHECK));
+			UpdateUI.getResourceString(KEY_FULL_MODE_CHECK));
 		fullModeCheck.setSelection(settings.getBoolean(S_FULL_MODE));
 		fullModeCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -339,14 +339,14 @@ public class SearchForm extends UpdateWebForm {
 		GridData gd;
 
 		infoLabel = factory.createLabel(searchContainer, null);
-		infoLabel.setText(UpdateUIPlugin.getResourceString(KEY_NO_LAST_SEARCH));
+		infoLabel.setText(UpdateUI.getResourceString(KEY_NO_LAST_SEARCH));
 		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		infoLabel.setLayoutData(gd);
 
 		searchButton =
 			factory.createButton(
 				searchContainer,
-				UpdateUIPlugin.getResourceString(KEY_SEARCH_NOW),
+				UpdateUI.getResourceString(KEY_SEARCH_NOW),
 				SWT.PUSH);
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -390,7 +390,7 @@ public class SearchForm extends UpdateWebForm {
 		container.setLayout(layout);
 		factory.createLabel(
 			container,
-			UpdateUIPlugin.getResourceString(KEY_CATEGORY));
+			UpdateUI.getResourceString(KEY_CATEGORY));
 		categoryCombo = new CCombo(container, SWT.READ_ONLY | SWT.FLAT);
 		categoryCombo.setBackground(factory.getBackgroundColor());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -515,10 +515,10 @@ public class SearchForm extends UpdateWebForm {
 			//searchResultSection.setSearchObject(searchObject);
 			//searchResultSection.searchStarted();
 		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		} catch (InterruptedException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 			return false;
 		}
 		return true;
@@ -527,7 +527,7 @@ public class SearchForm extends UpdateWebForm {
 	private void hookSearchView() {
 		try {
 			String viewId = UpdatePerspective.ID_SEARCH_RESULTS;
-			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+			IWorkbenchPage page = UpdateUI.getActivePage();
 			SearchResultView sview = (SearchResultView)page.findView(viewId);
 
 			if (sview == null) {
@@ -540,7 +540,7 @@ public class SearchForm extends UpdateWebForm {
 			}
 			sview.setCurrentSearch(searchObject);
 		} catch (PartInitException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -601,10 +601,10 @@ public class SearchForm extends UpdateWebForm {
 		boolean inSearch =
 			searchObject != null && searchObject.isSearchInProgress();
 		if (inSearch)
-			searchButton.setText(UpdateUIPlugin.getResourceString(KEY_CANCEL));
+			searchButton.setText(UpdateUI.getResourceString(KEY_CANCEL));
 		else
 			searchButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_SEARCH_NOW));
+				UpdateUI.getResourceString(KEY_SEARCH_NOW));
 		searchButton.getParent().layout(true);
 	}
 

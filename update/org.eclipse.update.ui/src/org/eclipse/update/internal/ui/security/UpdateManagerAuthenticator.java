@@ -11,7 +11,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * A transient database that remembers information, such as usernames and
@@ -45,7 +45,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			Platform.addAuthorizationInfo(serverUrl, realm, scheme, info);
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 			try {
 				ip = InetAddress.getByName(resourceUrl.getHost());
 			} catch (UnknownHostException e) {
-				UpdateUIPlugin.logException(e, false);
+				UpdateUI.logException(e, false);
 			}
 
 			this.requestingPort = resourceUrl.getPort();
@@ -95,7 +95,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			Platform.addProtectionSpace(resourceUrl, realm);
 		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e, false);
+			UpdateUI.logException(e, false);
 		}
 	}
 
@@ -166,7 +166,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			ip = InetAddress.getByName(url.getHost());
 		} catch (UnknownHostException e) {
-			UpdateUIPlugin.logException(e, false);
+			UpdateUI.logException(e, false);
 		}
 
 		if (requestingSite != null && !requestingSite.equals(ip))
@@ -226,7 +226,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 
 		} catch (MalformedURLException e) {
 			IStatus status = Utilities.newCoreException("", e).getStatus();
-			UpdateUIPlugin.log(status, false);
+			UpdateUI.log(status, false);
 		}
 		return new PasswordAuthentication("", new char[] { ' ' }); //$NON-NLS-1$
 	}
