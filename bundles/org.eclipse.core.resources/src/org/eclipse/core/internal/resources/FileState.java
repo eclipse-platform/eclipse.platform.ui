@@ -53,16 +53,16 @@ public class FileState extends PlatformObject implements IFileState {
 			return (description == null) ? null : (String) description.getProperty(IContentDescription.CHARSET);
 		} catch (IOException e) {
 			failed = true;
-			String message = Policy.bind("history.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
-			throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+			String message = Policy.bind("history.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
 			if (contents != null)
 				try {
 					contents.close();
 				} catch (IOException e) {
 					if (!failed) {
-						String message = Policy.bind("history.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
-						throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+						String message = Policy.bind("history.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+						throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 					}
 				}
 		}

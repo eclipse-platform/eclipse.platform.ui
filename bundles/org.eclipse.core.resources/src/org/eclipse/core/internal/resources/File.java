@@ -216,24 +216,29 @@ public class File extends Resource implements IFile {
 		if (charset != null || !checkImplicit)
 			return charset;
 		// tries to obtain a description for the file contents
+		IContentDescription description = getContentDescription();
+		return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
+	}
+
+	public IContentDescription getContentDescription() throws CoreException {
+		// tries to obtain a description for this file contents
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		InputStream contents = new BufferedInputStream(getContents());
+		InputStream contents = getContents();
 		boolean failed = false;
 		try {
-			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
-			return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
+			return contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.ALL);
 		} catch (IOException e) {
 			failed = true;
-			String message = Policy.bind("resources.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
-			throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+			String message = Policy.bind("resources.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
 			if (contents != null)
 				try {
 					contents.close();
 				} catch (IOException e) {
 					if (!failed) {
-						String message = Policy.bind("resources.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
-						throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+						String message = Policy.bind("resources.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+						throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 					}
 				}
 		}

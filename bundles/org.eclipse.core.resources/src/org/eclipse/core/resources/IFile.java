@@ -12,6 +12,7 @@ package org.eclipse.core.resources;
 
 import java.io.InputStream;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 /**
  * Files are leaf resources which contain data.
@@ -470,6 +471,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 */
 	public String getCharset(boolean checkImplicit) throws CoreException;
 
+	public IContentDescription getContentDescription() throws CoreException;
 	/**
 	 * Returns an open input stream on the contents of this file.
 	 * This refinement of the corresponding <code>IStorage</code> method 

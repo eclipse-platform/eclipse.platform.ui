@@ -254,10 +254,10 @@ public interface IResourceStatus extends IStatus {
 	public static final int WORKSPACE_LOCKED = 380;
 
 	/** Status code constant (value 381) indicating that a problem occurred while
-	 * retrieving the charset for a resource.
+	 * retrieving the content description for a resource.
 	 * Severity: error. Category: workspace. 
 	 */
-	public static final int FAILED_RETRIEVING_CHARSET = 381;
+	public static final int FAILED_DESCRIBING_CONTENTS = 381;
 
 	// Internal constants [500-598]
 	// Information Only [500-532]
