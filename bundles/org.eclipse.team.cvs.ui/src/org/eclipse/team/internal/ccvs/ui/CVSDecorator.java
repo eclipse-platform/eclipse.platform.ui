@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
@@ -22,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
@@ -34,6 +37,10 @@ public class CVSDecorator implements ITeamDecorator {
 	ImageDescriptor dirty;
 	ImageDescriptor checkedIn;
 	ImageDescriptor checkedOut;
+
+	//a dummy core exception used to short-circuit a resource visit
+	private static final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, CVSProviderPlugin.ID, 1, "", null));
+
 
 	/**
 	 * Define a cached image descriptor which only creates the image data once
@@ -105,7 +112,7 @@ public class CVSDecorator implements ITeamDecorator {
 		List overlays = new ArrayList(5);
 		CVSTeamProvider p = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
 		if(p!=null) {
-			if(p.isDirty(resource)) {
+			if(isChildDirty(resource)) {
 				overlays.add(dirty);
 			}
 			if(p.hasRemote(resource)) {
@@ -116,5 +123,51 @@ public class CVSDecorator implements ITeamDecorator {
 			}
 		}
 		return new ImageDescriptor[][] {(ImageDescriptor[])overlays.toArray(new ImageDescriptor[overlays.size()])};
+	}
+	
+	private boolean isChildDirty(IResource resource) {
+		try {
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					
+					// a project can't be dirty, continue with its children
+					if(resource.getType() == IResource.PROJECT) {
+						return true;
+					}
+										
+					ICVSResource cvsResource;
+					if(resource.getType() == IResource.FILE) {
+						cvsResource = new LocalFile(resource.getLocation().toFile());
+					} else {
+						cvsResource = new LocalFolder(resource.getLocation().toFile());
+					}
+					
+					try {
+						if (!cvsResource.isManaged()) {
+							if (cvsResource.isIgnored()) {
+								return false;
+							} else {
+								// new resource, show as dirty
+								throw DECORATOR_EXCEPTION;
+							}
+						}
+						if (!cvsResource.isFolder()) {
+							if(((ICVSFile)cvsResource).isModified()) {
+								// file has changed, show as dirty
+								throw DECORATOR_EXCEPTION;
+							}
+						}
+					} catch(CVSException e) {
+						return true;
+					}
+					// no change -- keep looking in children
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE, true);
+		} catch (CoreException e) {
+			//if our exception was caught, we know there's a dirty child
+			return e == DECORATOR_EXCEPTION;
+		}
+		return false;
 	}
 }
