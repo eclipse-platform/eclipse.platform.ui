@@ -20,6 +20,7 @@ import org.xml.sax.*;
  * Can be linked with other Toc objects.
  */
 public class Toc extends TocNode implements IToc, ITocElement{
+	private static final int SIZE_UNINITIALIZED = -1;
 	private String link_to;
 	private String href;
 	private String label;
@@ -27,14 +28,12 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	private ITopic[] topicArray;
 	private Topic descriptionTopic;
 	/**
-	 * Collection of IToc
+	 * Collection of Toc
 	 */
 	private Collection childrenTocs;
 	private DirectoryToc directoryToc;
-	/**
-	 * Map of all topics in a TOC for fast lookup by href
-	 */
-	private Map topicMap;
+	private Map topicMap = new HashMap();
+	private int size=SIZE_UNINITIALIZED;
 	/**
 	 * Constructor.  Used when parsing help contributions.
 	 */
@@ -98,40 +97,48 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		return label;
 	}
 	/**
-	 * Returns a topic with the specified href.
-	 * <br> It is possible that multiple tocs have 
-	 * the same href, in which case there is no guarantee 
-	 * which one is returned.
-	 * @param href The topic's href value.
+	 * Returns a topic with the specified href defined by this TOC,
+	 * without looking in children TOCs
+	 * <br> If the TOC contains multiple 
+	 * topics with the same href only of them (arbitrarily chosen) will 
+	 * be returned.
+	 * @param href the topic's URL.
+	 * @return ITopic or null
+	 */
+	public ITopic getOwnedTopic(String href) {		
+		return(ITopic)topicMap.get(href);
+	}
+	/**
+	 * Returns a topic with the specified href defined by this TOC.
+	 * <br> If the TOC contains multiple 
+	 * topics with the same href only of them (arbitrarily chosen) will 
+	 * be returned.
+	 * <p> If no topic is specified, then the TOC description topic is 
+	 * returned, or null if there is no description topic for the TOC.
+	 * </p>
+	 * @param href the topic's URL or null
+	 * @return ITopic or null
 	 */
 	public ITopic getTopic(String href) {
-		if (href == null)
+		if (href == null){
 			return descriptionTopic;
-
-		if (topicMap == null) {
-			buildTopicMap();
 		}
-		return (ITopic) topicMap.get(href);
-	}
-	protected void buildTopicMap() {
-		// traverse TOC and fill in the topicMap
-		topicMap = new HashMap();
-		FastStack stack = new FastStack();
-		ITopic[] topics = getTopics();
-		for (int i = 0; i < topics.length; i++)
-			stack.push(topics[i]);
-		while (!stack.isEmpty()) {
-			ITopic topic = (ITopic) stack.pop();
-			if (topic != null) {
-				String topicHref = topic.getHref();
-				if (topicHref != null) {
-					topicMap.put(topicHref, topic);
-				}
-				ITopic[] subtopics = topic.getSubtopics();
-				for (int i = 0; i < subtopics.length; i++)
-					stack.push(subtopics[i]);
+		ITopic result=getOwnedTopic(href);
+		if(result!=null){
+			return result;
+		}
+		
+		// check in children TOCs
+		for(Iterator it=getChildrenTocs().iterator(); it.hasNext();){
+			Toc childToc=(Toc)it.next();
+			// can call getTopic because href!=null,
+			// hence no chance of retrieving description topic for child TOC
+			result=childToc.getTopic(href);
+			if(result!=null){
+				break;
 			}
 		}
+		return result;
 	}
 	/**
 	 * This public method is to be used after the build of TOCs
@@ -193,15 +200,24 @@ public class Toc extends TocNode implements IToc, ITocElement{
 
 	/**
 	 * Gets the childrenTocs.
-	 * @return Returns a Collection
+	 * @return Returns a Collection of Toc
 	 */
 	public Collection getChildrenTocs() {
 		return childrenTocs;
 	}
 	public int size(){
-		if (topicMap == null) {
-			buildTopicMap();
+		if(size==SIZE_UNINITIALIZED){
+			size=topicMap.size();
+			for(Iterator it=childrenTocs.iterator(); it.hasNext();){
+				size+=((Toc)it.next()).size();
+			}
 		}
-		return topicMap.size();
+		return size;
+	}
+	void cacheTopic(ITopic topic){
+		String topicHref = topic.getHref();
+		if (topicHref != null) {
+			topicMap.put(topicHref, topic);
+		}
 	}
 }

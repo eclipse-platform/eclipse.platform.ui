@@ -91,6 +91,7 @@ public class SearchResults implements ISearchHitCollector {
 				if (scope != null) {
 					label = scope.getTopic(href).getLabel();
 				} else
+					// TODO can getTopic() return null?
 					label = toc.getTopic(href).getLabel();
 			}
 			if (label == null || "".equals(label))

@@ -39,8 +39,8 @@ public interface IToc extends IHelpResource {
 	 * <p> If no topic is specified, then the TOC description topic is 
 	 * returned, or null if there is no description topic for the TOC.
 	 * </p>
-	 * @param href The topic's URL.
-	 * @return ITopic
+	 * @param href the topic's URL or null
+	 * @return ITopic or null
 	 */
 	public ITopic getTopic(String href);
 }
