@@ -33,7 +33,7 @@ public class AddBuildFileAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		BuildFileSelectionDialog dialog = new BuildFileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "Select a build file");
+		BuildFileSelectionDialog dialog = new BuildFileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
 		dialog.open();
 		IFile file= dialog.getResult();
 		if (file == null) {

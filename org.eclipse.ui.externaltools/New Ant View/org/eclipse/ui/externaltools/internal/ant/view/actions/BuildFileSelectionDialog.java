@@ -1,6 +1,7 @@
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -49,7 +50,7 @@ public class BuildFileSelectionDialog extends MessageDialog {
  *    <code>null</code> to display a default message
  */
 public BuildFileSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
-	super(parentShell, "Resource selection", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
+	super(parentShell, "Add Build File", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
 	root = rootElement;
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
@@ -75,7 +76,6 @@ protected Control createDialogArea(Composite parent) {
 	//create the input element, which has the root resource
 	//as its only child
 
-	createMessageArea(composite);
 	selectionGroup =
 		new TreeAndListGroup(
 			composite,
@@ -115,6 +115,14 @@ private ITreeContentProvider getResourceProvider(final int resourceType) {
 				IResource[] members = null;
 				try {
 					members = ((IContainer)o).members();
+					List accessibleMembers= new ArrayList(members.length);
+					for (int i = 0; i < members.length; i++) {
+						IResource resource = members[i];
+						if (resource.isAccessible()) {
+							accessibleMembers.add(resource);
+						}
+					}
+					members= (IResource[])accessibleMembers.toArray(new IResource[accessibleMembers.size()]);
 				} catch (CoreException e) {
 					//just return an empty set of children
 					return new Object[0];
