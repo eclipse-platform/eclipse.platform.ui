@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.*;
  */
 public class AntRunner implements IPlatformRunnable {
 
+	private static boolean buildRunning= false;
 	protected String buildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
 	protected List buildListeners;
 	protected String[] targets;
@@ -69,9 +70,10 @@ public class AntRunner implements IPlatformRunnable {
 	}
 
 	/**
-	 * Sets the arguments to be passed to the script (e.g. -Dos=win32 -Dws=win32 -verbose).
+	 * Sets the arguments to be passed to the build (e.g. -Dos=win32 -Dws=win32
+	 * - verbose).
 	 * 
-	 * @param arguments the arguments to be passed to the script
+	 * @param arguments the arguments to be passed to the build
 	 */
 	public void setArguments(String arguments) {
 		this.arguments = getArray(arguments);
@@ -116,9 +118,9 @@ public class AntRunner implements IPlatformRunnable {
 	}
 
 	/**
-	 * Sets the arguments to be passed to the script (e.g. -Dos=win32 -Dws=win32 -verbose).
+	 * Sets the arguments to be passed to the build (e.g. -Dos=win32 -Dws=win32 -verbose).
 	 * 
-	 * @param arguments the arguments to be passed to the script
+	 * @param arguments the arguments to be passed to the build
 	 * @since 2.1
 	 */
 	public void setArguments(String[] arguments) {
@@ -185,7 +187,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @see TargetInfo
 	 * @since 2.1
 	 */
-	public TargetInfo[] getAvailableTargets() throws CoreException {
+	public synchronized TargetInfo[] getAvailableTargets() throws CoreException {
 		Class classInternalAntRunner= null;
 		Object runner= null;
 		try {
@@ -229,26 +231,29 @@ public class AntRunner implements IPlatformRunnable {
 			return new TargetInfo[0];
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e));
+			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e));
 		}
 	}
 
 	/**
-	 * Runs the build script. If a progress monitor is specified it will
-	 * be available during the script execution as a reference in the
-	 * Ant Project (<code>org.apache.tools.ant.Project.getReferences()</code>).
-	 * A long-running task could, for example, get the monitor during its
-	 * execution and check for cancellation. The key value to retrieve the
-	 * progress monitor instance is <code>AntCorePlugin.ECLIPSE_PROGRESS_MONITOR</code>.
+	 * Runs the build file. If a progress monitor is specified it will be
+	 * available during the script execution as a reference in the Ant Project
+	 * (<code>org.apache.tools.ant.Project.getReferences()</code>). A long-
+	 * running task could, for example, get the monitor during its execution and
+	 * check for cancellation. The key value to retrieve the progress monitor
+	 * instance is <code>AntCorePlugin.ECLIPSE_PROGRESS_MONITOR</code>.
+	 * 
+	 * Only one build can occur at any given time.
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
-		long startTime = 0;
-		if (IAntCoreConstants.DEBUG_BUILDFILE_TIMING) {
-			startTime = System.currentTimeMillis();
+		if (buildRunning) {
+			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalCoreAntMessages.getString("AntRunner.Already_in_progess"), new String[]{buildFileLocation}), null); //$NON-NLS-1$
+			throw new CoreException(status);
 		}
+		buildRunning= true;
 		Object runner= null;
 		Class classInternalAntRunner= null;
 		try {
@@ -324,13 +329,10 @@ public class AntRunner implements IPlatformRunnable {
 			handleInvocationTargetException(runner, classInternalAntRunner, e);
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
-			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
+			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e);
 			throw new CoreException(status);
 		} finally {
-			if (IAntCoreConstants.DEBUG_BUILDFILE_TIMING) {
-				long finishTime = System.currentTimeMillis();
-				System.out.println(InternalCoreAntMessages.getString("AntRunner.Buildfile_run_took___9") + (finishTime - startTime) + InternalCoreAntMessages.getString("AntRunner._milliseconds._10")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			buildRunning= false;
 		}
 	}
 
@@ -366,7 +368,7 @@ public class AntRunner implements IPlatformRunnable {
 			internalError= true;
 			message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
 		}
-		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException);
+		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, realException);
 		if (internalError) {
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
@@ -383,13 +385,13 @@ public class AntRunner implements IPlatformRunnable {
 		} else {
 			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"); //$NON-NLS-1$
 		}
-		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
+		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e);
 		AntCorePlugin.getPlugin().getLog().log(status);
 		throw new CoreException(status);
 	}
 
 	/**
-	 * Runs the build script.
+	 * Runs the build file.
 	 */
 	public void run() throws CoreException {
 		run((IProgressMonitor) null);
@@ -479,4 +481,15 @@ public class AntRunner implements IPlatformRunnable {
  	public void setAntHome(String antHome) {
  		this.antHome= antHome;
  	}
+	/**
+	 * Returns whether an Ant build is already in progress
+	 * 
+	 * Only one Ant build can occur at any given time.
+	 * 
+	 * @since 2.1
+	 * @return boolean
+	 */
+	public static boolean isBuildRunning() {
+		return buildRunning;
+	}
 }
