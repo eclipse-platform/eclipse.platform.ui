@@ -52,15 +52,15 @@ public interface IHandler {
     /**
      * Executes with the map of parameter values by name.
      * 
-     * @param parameterValuesByName
-     *            the map of parameter values by name. Reserved for future use,
-     *            must be <code>null</code>.
+     * @param event
+     *            An event containing all the information about the current
+     *            state of the application; must not be <code>null</code>.
      * @return the result of the execution. Reserved for future use, must be
      *         <code>null</code>.
      * @throws ExecutionException
      *             if an exception occurred during execution.
      */
-    Object execute(Map parameterValuesByName) throws ExecutionException;
+    Object execute(ExecutionEvent event) throws ExecutionException;
 
     /**
      * Returns the map of attribute values by name.

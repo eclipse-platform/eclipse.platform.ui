@@ -228,16 +228,16 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * the debugging flag is set, then this print information about which
 	 * handler is selected for performing this command.
 	 * 
-	 * @param parameterValuesByName
-	 *            The parameters to pass to the underlying handler; must not be
-	 *            <code>null</code>.
+     * @param event
+     *            An event containing all the information about the current
+     *            state of the application; must not be <code>null</code>.
 	 * @return The result of the execution; may be <code>null</code>.
 	 * @throws ExecutionException
 	 *             If the handler has problems executing this command.
 	 * @throws NotHandledException
 	 *             If there is no handler.
 	 */
-	public final Object execute(final Map parameterValuesByName)
+	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException, NotHandledException {
 		final IHandler handler = this.handler;
 
@@ -258,7 +258,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		// Perform the execution, if there is a handler.
 		if (handler != null)
-			return handler.execute(parameterValuesByName);
+			return handler.execute(event);
 
 		throw new NotHandledException("There is no handler to execute."); //$NON-NLS-1$
 	}
