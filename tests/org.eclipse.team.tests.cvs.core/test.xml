@@ -29,7 +29,7 @@
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties"/>
       <property name="data-dir" value="${location}"/>
       <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
-      <property name="classname" value="org.eclipse.team.tests.ccvs.core.provider.AllTests"/>
+      <property name="classname" value="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider"/>
     </ant>
     
     <!-- Session Test ** CVS Resources ** -->
@@ -37,7 +37,7 @@
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties"/>
       <property name="data-dir" value="${location}"/>
       <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
-      <property name="classname" value="org.eclipse.team.tests.ccvs.core.cvsresources.AllTests"/>
+      <property name="classname" value="org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResource"/>
     </ant>
 
   </target>

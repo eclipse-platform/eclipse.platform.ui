@@ -309,6 +309,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * Compare the files contents and sync information
 	 */
 	protected void assertEquals(IPath parent, ICVSFile file1, ICVSFile file2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
+		if (file1.getName().equals(".project")) return;
 		// Getting the contents first is important as it will fetch the proper sync info if one of the files is a remote handle
 		assertTrue("Contents of " + parent.append(file1.getName()) + " do not match", compareContent(getContents(file1), getContents(file2)));
 		assertEquals(parent.append(file1.getName()), file1.getSyncInfo(), file2.getSyncInfo(), includeTimestamps, includeTags);
@@ -529,11 +530,16 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}
 	}
 	
-	protected void shareProject(IProject project) throws TeamException {
-		importProject(project);
-		((CVSProvider)CVSProviderPlugin.getProvider()).checkout(getRepository(), project, null, null, DEFAULT_MONITOR);
-		// We need to checking because of the .vcm_meta file
-		getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+	protected void shareProject(IProject project) throws TeamException, CoreException {
+		((CVSProvider)CVSProviderPlugin.getProvider()).createModule(getRepository(), project, null, DEFAULT_MONITOR);
+		List resourcesToAdd = new ArrayList();
+		IResource[] members = project.members();
+		for (int i = 0; i < members.length; i++) {
+			if ( ! CVSWorkspaceRoot.getCVSResourceFor(members[i]).isIgnored()) {
+				resourcesToAdd.add(members[i]);
+			}
+		}
+		getProvider(project).add((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]), IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 	}
