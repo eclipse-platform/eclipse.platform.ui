@@ -12,13 +12,6 @@ package org.eclipse.ui.internal.decorators;
  ******************************************************************************/
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -138,104 +131,37 @@ class LightweightDecoratorManager {
 	}
 
 	/**
-	 * Decorate the Image supplied with the overlays for any of
-	 * the enabled lightweight decorators. 
-	 * @return ImageDescriptor[] is any work is done, otherwise null.
-	 */
-	ImageDescriptor[] findOverlays(Object element, Object adapted) {
-
-		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
-		ImageDescriptor[] descriptors = new ImageDescriptor[5];
-		boolean decorated =
-			overlayCache.findDescriptors(element, decorators, descriptors);
-		if (adapted != null) {
-			decorated =
-				decorated
-					|| overlayCache.findDescriptors(
-						adapted,
-						getDecoratorsFor(adapted),
-						descriptors);
-		}
-		if (decorated)
-			return descriptors;
-		else
-			return null;
-	}
-	/**
-	* Fill the prefixResult and suffixResult with all of the applied prefixes
-	* and suffixes.
+	* Fill the decoration with all of the results of the 
+	* decorators.
 	* 
 	* @param element The source element
-    * @param adapted The adapted value of element or null
-    * @param prefixResult. All of the applied prefixes
-    * @param suffixResult. All of the applied suffixes.
+	* @param adapted The adapted value of element or null
+	* @param decoration. The DecorationResult we are working on.
 	*/
-	
-	void getPrefixAndSuffix(
+
+	void getDecorations(
 		Object element,
 		Object adapted,
-		List prefixResult,
-		List suffixResult) {
-
-		LinkedList appliedDecorators = new LinkedList();
-		LinkedList appliedAdaptedDecorators = new LinkedList();
+		DecorationResult decoration) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
-				//Add in reverse order for symmetry of suffixes
-				appliedDecorators.addFirst(decorators[i]);
-				String prefix = decorators[i].getPrefix(element);
-				if (prefix != null)
-					prefixResult.add(prefix);
+				decoration.setCurrentDefinition(decorators[i]);
+				decorators[i].decorate(element, decoration);
 			}
 		}
 
 		if (adapted != null) {
-			LightweightDecoratorDefinition[] adaptedDecorators =
-				getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if (adaptedDecorators[i]
-					.getEnablement()
-					.isEnabledFor(adapted)) {
-					//Add in reverse order for symmetry of suffixes
-					appliedAdaptedDecorators.addFirst(adaptedDecorators[i]);
-					String prefix = adaptedDecorators[i].getPrefix(adapted);
-					if (prefix != null)
-						prefixResult.add(prefix);
+			decorators = getDecoratorsFor(adapted);
+
+			for (int i = 0; i < decorators.length; i++) {
+				if (decorators[i].getEnablement().isEnabledFor(adapted)) {
+					decoration.setCurrentDefinition(decorators[i]);
+					decorators[i].decorate(adapted, decoration);
 				}
 			}
-		}
-
-		//Nothing happened so just return
-		if (appliedDecorators.isEmpty() && appliedAdaptedDecorators.isEmpty())
-			return;
-
-		if (adapted != null) {
-			Iterator appliedIterator = appliedAdaptedDecorators.iterator();
-			while (appliedIterator.hasNext()) {
-				String suffix =
-					(
-						(LightweightDecoratorDefinition) appliedIterator
-							.next())
-							.getSuffix(
-						element);
-				if (suffix != null)
-					suffixResult.add(suffix);
-			}
-		}
-
-		Iterator appliedIterator = appliedDecorators.iterator();
-		while (appliedIterator.hasNext()) {
-			String suffix =
-				(
-					(LightweightDecoratorDefinition) appliedIterator
-						.next())
-						.getSuffix(
-					element);
-			if (suffix != null)
-				suffixResult.add(suffix);
 		}
 
 	}

@@ -64,32 +64,4 @@ class OverlayCache {
 		return getImageFor(icon);
 	}
 
-	/**
-	 * Find the overlays for element using the supplied decorators.
-	 * @return boolean - true if anything was applied.
-	 * @param element
-	 * @param decorators
-	 * @param descriptors
-	 */
-	boolean findDescriptors(
-		Object element,
-		LightweightDecoratorDefinition[] decorators,
-		ImageDescriptor[] descriptors) {
-		boolean anythingApplied = false;
-		for (int i = 0; i < decorators.length; i++) {
-			if (decorators[i].getEnablement().isEnabledFor(element)) {
-				ImageDescriptor overlay = decorators[i].getOverlay(element);
-				if (overlay != null) {
-					int quadrant = decorators[i].getQuadrant();
-					//Only allow one per quadrant
-					if (descriptors[quadrant] == null) {
-						descriptors[quadrant] = overlay;
-						anythingApplied = true;
-					}
-				}
-			}
-		}
-		return anythingApplied;
-	}
-
 }

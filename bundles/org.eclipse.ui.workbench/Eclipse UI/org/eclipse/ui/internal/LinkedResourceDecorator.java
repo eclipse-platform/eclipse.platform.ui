@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.PlatformUI;
@@ -29,10 +30,13 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 
 	static {
 		String fileName = WorkbenchImages.ICONS_PATH + "ovr16/" + ICON_NAME;
-		
-		LINKED = WorkbenchImages.getImageDescriptorFromPlugin(Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(), fileName); 
+
+		LINKED =
+			WorkbenchImages.getImageDescriptorFromPlugin(
+				Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(),
+				fileName);
 	}
-		
+
 	/**
 	 * Creates a new <code>LinkedResourceDecorator</code>.
 	 */
@@ -49,37 +53,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	public void dispose() {
 		// no resources to dispose
 	}
-	/**
-	 * Returns the linked resource overlay if the given element is a 
-	 * linked resource.
-	 * 
-	 * @param element element to decorate
-	 * @return the linked resource overlay or null if element is not a 
-	 * 	linked resource.
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
-	 */
-	public ImageDescriptor getOverlay(Object element) {
-		if (element instanceof IResource == false)
-			return null;
-			
-		IResource resource = (IResource) element;
-		if (resource.isLinked()) {
-			return LINKED;
-		}		
-		return null;
-	}
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getPrefix(java.lang.Object)
-	 */
-	public String getPrefix(Object element) {
-		return null;
-	}
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getSuffix(java.lang.Object)
-	 */
-	public String getSuffix(Object element) {
-		return null;
-	}
+
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
@@ -90,6 +64,27 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
+	}
+
+	/**
+	 * Adds the linked resource overlay if the given element is a linked
+	 * resource.
+	 * 
+	 * @param element element to decorate
+	 * @param decoration. The decoration we are adding to
+	 * @return the linked resource overlay or null if element is not a 
+	 * 	linked resource.
+	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
+	 */
+	public void decorate(Object element, IDecoration decoration) {
+
+		if (element instanceof IResource == false)
+			return;
+		IResource resource = (IResource) element;
+		if (resource.isLinked()) {
+			decoration.addOverlay(LINKED);
+		}
+
 	}
 
 }

@@ -12,12 +12,8 @@ package org.eclipse.ui.internal.decorators;
  ******************************************************************************/
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -102,8 +98,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 					}
 				});
 			}
-		}
-		else
+		} else
 			return decorator;
 
 		if (decorator == null) {
@@ -149,49 +144,17 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 	/**
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
 	 */
-	public ImageDescriptor getOverlay(Object element) {
+	public void decorate(Object element, IDecoration decoration) {
 		try {
 			//Internal decorator might be null so be prepared
 			ILightweightLabelDecorator currentDecorator =
 				internalGetDecorator();
 			if (currentDecorator != null)
-				return currentDecorator.getOverlay(element);
+				currentDecorator.decorate(element, decoration);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
-		return null;
-	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getPrefix(java.lang.Object)
-	 */
-	public String getPrefix(Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILightweightLabelDecorator currentDecorator =
-				internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.getPrefix(element);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getSuffix(java.lang.Object)
-	 */
-	public String getSuffix(Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILightweightLabelDecorator currentDecorator =
-				internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.getSuffix(element);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
 	}
 
 }

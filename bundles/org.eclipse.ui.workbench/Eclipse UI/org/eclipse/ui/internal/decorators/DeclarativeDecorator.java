@@ -5,6 +5,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
@@ -14,44 +15,16 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  */
 
 public class DeclarativeDecorator implements ILightweightLabelDecorator {
-	
+
 	private String iconLocation;
 	private IConfigurationElement configElement;
 	private ImageDescriptor descriptor;
-	
-	DeclarativeDecorator(IConfigurationElement definingElement, String iconPath){
+
+	DeclarativeDecorator(
+		IConfigurationElement definingElement,
+		String iconPath) {
 		this.iconLocation = iconPath;
 		this.configElement = definingElement;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
-	 */
-	public ImageDescriptor getOverlay(Object element) {
-		if(descriptor == null){
-			URL source = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
-			try{
-				descriptor = ImageDescriptor.createFromURL(new URL(source,iconLocation));
-			}
-			catch(MalformedURLException exception){
-				return null;
-			}
-		}
-		return descriptor;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getPrefix(java.lang.Object)
-	 */
-	public String getPrefix(Object element) {
-		return "";
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getSuffix(java.lang.Object)
-	 */
-	public String getSuffix(Object element) {
-		return "";
 	}
 
 	/**
@@ -77,6 +50,28 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
+	 */
+	public void decorate(Object element, IDecoration decoration) {
+
+		if (descriptor == null) {
+			URL source =
+				configElement
+					.getDeclaringExtension()
+					.getDeclaringPluginDescriptor()
+					.getInstallURL();
+			try {
+				decoration.addOverlay(
+					ImageDescriptor.createFromURL(
+						new URL(source, iconLocation)));
+			} catch (MalformedURLException exception) {
+				return;
+			}
+		}
+
 	}
 
 }

@@ -1,6 +1,5 @@
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * The ILightweightLabelDecorator is a decorator that decorates
@@ -11,31 +10,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * of org.eclipse.ui.decorators.
  */
 public interface ILightweightLabelDecorator extends IBaseLabelProvider {
+	
 	/**
-	* Get the overlayImage for element.	
-	* @param element the element whose image is being decorated
-	* @return the overlay image, or <code>null</code> if no decoration is to be applied
-	*
-	* @see org.eclipse.jface.resource.CompositeImageDescriptor
-	*/
-	public ImageDescriptor getOverlay(Object element);
-
-	/**
-	 * Returns the prefix to be used for decorating the prefix of
-	 * an element.
-	 *
-	 * @param element the element whose image is being decorated
-	 * @return the decorated text label, or <code>null</code> if no decoration is to be applied
+	 * Calculate decorations based on element. 
+	 * @param element
+	 * @param decoration
 	 */
-	public String getPrefix(Object element);
-
-	/**
-	 * Returns the suffix to be used for decorating the prefix of
-	 * an element.
-	 *
-	 * @param element the element whose image is being decorated
-	 * @return the decorated text label, or <code>null</code> if no decoration is to be applied
-	 */
-	public String getSuffix(Object element);
+	public void decorate(Object element, IDecoration decoration);
 
 }

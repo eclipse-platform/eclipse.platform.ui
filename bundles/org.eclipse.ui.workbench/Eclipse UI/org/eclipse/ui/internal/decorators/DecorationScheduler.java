@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -187,8 +186,8 @@ public class DecorationScheduler implements IResourceChangeListener {
 			notifyAll();
 		}
 		try {
-			if(decoratorUpdateThread != null)	
-			// Wait for the decorator thread to finish before returning.
+			if (decoratorUpdateThread != null)
+				// Wait for the decorator thread to finish before returning.
 				decoratorUpdateThread.join();
 		} catch (InterruptedException e) {
 		}
@@ -272,6 +271,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 				while (true) {
 					// will block if there are no resources to be decorated
 					DecorationReference reference = next();
+					DecorationResult cacheResult = new DecorationResult();
 
 					// if next() returned null, we are done and should shut down.
 					if (reference == null) {
@@ -281,30 +281,16 @@ public class DecorationScheduler implements IResourceChangeListener {
 					//Don't decorate if there is already a pending result
 					if (!resultCache.containsKey(reference.getElement())) {
 
-						LinkedList prefixes = new LinkedList();
-						LinkedList suffixes = new LinkedList();
-
 						decoratorManager
 							.getLightweightManager()
-							.getPrefixAndSuffix(
+							.getDecorations(
 							reference.getElement(),
 							reference.getAdaptedElement(),
-							prefixes,
-							suffixes);
+							cacheResult);
 
-						ImageDescriptor[] descriptors =
-							decoratorManager
-								.getLightweightManager()
-								.findOverlays(
-								reference.getElement(),
-								reference.getAdaptedElement());
-
-						if (prefixes.size() > 0 || descriptors != null) {
+						if (cacheResult.hasValue()) {
 							DecorationResult result =
-								new DecorationResult(
-									prefixes,
-									suffixes,
-									descriptors);
+								cacheResult.copyAndClear();
 							resultCache.put(reference.getElement(), result);
 							pendingUpdate.add(reference.getElement());
 						};
