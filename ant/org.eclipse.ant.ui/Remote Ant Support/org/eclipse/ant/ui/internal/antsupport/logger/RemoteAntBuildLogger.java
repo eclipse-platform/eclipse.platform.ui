@@ -14,9 +14,11 @@ package org.eclipse.ant.ui.internal.antsupport.logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +26,9 @@ import java.util.List;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
+import org.eclipse.ant.ui.internal.antsupport.AntSecurityException;
+import org.eclipse.ant.ui.internal.antsupport.InternalAntMessages;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -31,6 +36,9 @@ import org.apache.tools.ant.Location;
  * See MessageIds for more information about the protocol.
  */
 public class RemoteAntBuildLogger extends DefaultLogger {
+
+	/** Time of the start of the build */
+    private long startTime = System.currentTimeMillis();
 
 	/**
 	 * The client socket.
@@ -62,6 +70,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	private boolean fSentProcessId= false;
 	
 	private List fEventQueue;
+	
+	private List fMessageQueue;
 	
 	/**
 	 * Thread reading from the socket
@@ -98,12 +108,16 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 	}
 	
-	/**
-	 * The class loader to be used for loading tests.
-	 * Subclasses may override to use another class loader.
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
 	 */
-	protected ClassLoader getClassLoader() {
-		return getClass().getClassLoader();
+	protected void printMessage(String message, PrintStream stream, int priority) {
+		super.printMessage(message, stream, priority);
+		StringBuffer sendMessage= new StringBuffer();
+		sendMessage.append(priority);
+		sendMessage.append(',');
+		sendMessage.append(message.trim());
+		sendMessage(sendMessage.toString());
 	}
 	
 	/**
@@ -167,8 +181,22 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	}
 
 	private void sendMessage(String msg) {
-		if(fWriter == null) {
+		if (fWriter == null) {
+			if (msg != null) {
+				if (fMessageQueue == null) {
+					fMessageQueue= new ArrayList();
+				}
+				fMessageQueue.add(msg);
+			}
 			return;
+		}
+		
+		if (fMessageQueue != null) {
+			for (Iterator iter = fMessageQueue.iterator(); iter.hasNext();) {
+				String message = (String) iter.next();
+				fWriter.println(message);
+			}
+			fMessageQueue= null;
 		}
 		fWriter.println(msg);
 	}
@@ -177,15 +205,59 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
-		super.buildFinished(event);
+		handleException(event);
+        printMessage( getTimeString(System.currentTimeMillis() - startTime), out, Project.MSG_INFO); 
 		shutDown();
 	}
+	
+	protected void handleException(BuildEvent event) {
+		Throwable exception = event.getException();
+		if (exception == null
+		|| exception instanceof AntSecurityException) {
+			return;
+		}
+		printMessage(MessageFormat.format(InternalAntMessages.getString("RemoteAntBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
+					out, Project.MSG_ERR);	
+	}
+	
+	private String getTimeString(long milliseconds) {
+		long seconds = milliseconds / 1000;
+		long minutes = seconds / 60;
+		seconds= seconds % 60;
+
+		StringBuffer result= new StringBuffer(InternalAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
+		if (minutes > 0) {
+			result.append(minutes);
+			if (minutes > 1) {
+				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._minutes_2")); //$NON-NLS-1$
+			} else {
+				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._minute_3")); //$NON-NLS-1$
+			}
+		}
+		if (seconds > 0) {
+			if (minutes > 0) {
+				result.append(' ');
+			}
+			result.append(seconds);
+	
+			if (seconds > 1) {
+				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._seconds_4")); //$NON-NLS-1$
+			} else {
+				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._second_5")); //$NON-NLS-1$
+			} 
+		}
+		if (seconds == 0 && minutes == 0) {
+			result.append(milliseconds);
+			result.append(InternalAntMessages.getString("RemoteAntBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
+		}
+		return result.toString();
+	}
+			
 
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-		super.targetStarted(event);
 		if (!fSentProcessId) {
 			String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
 			if (portProperty != null) {
@@ -201,8 +273,14 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				for (Iterator iter = fEventQueue.iterator(); iter.hasNext();) {
 					processEvent((BuildEvent)iter.next());
 				}
+				fEventQueue= null;
 			}
 		}
+
+		if (Project.MSG_INFO <= msgOutputLevel) {
+			String msg= event.getTarget().getName() + ":"; //$NON-NLS-1$
+			printMessage(msg, out, Project.MSG_INFO);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -213,12 +291,10 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			shutDown();
 			System.exit(0);
 		}
-		int priority = event.getPriority();
 		
-		if (priority > msgOutputLevel) {
+		if (event.getPriority() > msgOutputLevel) {
 			return;
 		}
-		super.messageLogged(event);
 		
 		if (!fSentProcessId) {
 			if (fEventQueue == null){
@@ -227,15 +303,17 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			fEventQueue.add(event);
 			return;
 		}
+		
 		processEvent(event);
 	}
 
 	private void processEvent(BuildEvent event) {
+		
 		if (event.getTask() != null & !emacsMode) {
 			try {
 				BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
 				String line = r.readLine();
-				StringBuffer message= null;
+				StringBuffer message;
 				String taskName= event.getTask().getTaskName();
 				StringBuffer labelBuff= new StringBuffer();
 				labelBuff.append('[');
@@ -245,6 +323,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				Location location= event.getTask().getLocation();
 				while (line != null) {
 					message= new StringBuffer(MessageIds.TASK);
+					message.append(event.getPriority());
+					message.append(',');
 					message.append(taskName);
 					message.append(',');
 					line= (label + line).trim();
@@ -258,6 +338,12 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				}
 			} catch (IOException e) {
 			}
+		} else {
+			StringBuffer sendMessage= new StringBuffer();
+			sendMessage.append(event.getPriority());
+			sendMessage.append(',');
+			sendMessage.append(event.getMessage().trim());
+			sendMessage(sendMessage.toString());
 		}
 	}
 }

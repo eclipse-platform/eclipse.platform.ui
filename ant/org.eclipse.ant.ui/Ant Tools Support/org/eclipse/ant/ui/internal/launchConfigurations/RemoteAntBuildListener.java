@@ -19,15 +19,17 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.tools.ant.Project;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Region;
 
@@ -51,19 +53,20 @@ public class RemoteAntBuildListener {
 	private int fPort= -1;
 	private PrintWriter fWriter;
 	private BufferedReader fBufferedReader;
-	private boolean fDebug= false;
+	private boolean fDebug= true;
 	private IProcess fProcess;
 	private String fProcessId;
 	private File fBuildFileParent= null;
+	private List fMessageQueue;
 	
 	/**
-	 * Reads the message stream from the RemoteTestRunner
+	 * Reads the message stream from the RemoteAntBuildLogger
 	 */
 	private class ServerConnection extends Thread {
 		private int fPort;
 		
 		public ServerConnection(int port) {
-			super("ServerConnection"); //$NON-NLS-1$
+			super("Ant Build Server Connection"); //$NON-NLS-1$
 			fPort= port;
 		}
 		
@@ -73,7 +76,10 @@ public class RemoteAntBuildListener {
 					System.out.println("Creating server socket " + fPort); //$NON-NLS-1$
 				}
 				fServerSocket= new ServerSocket(fPort);
-				fSocket= fServerSocket.accept();				
+				fSocket= fServerSocket.accept();			
+				if (fDebug) {
+					System.out.println("Connection"); //$NON-NLS-1$
+				}	
 				fBufferedReader= new BufferedReader(new InputStreamReader(fSocket.getInputStream()));
 				fWriter= new PrintWriter(fSocket.getOutputStream(), true);
 				String message;
@@ -81,7 +87,6 @@ public class RemoteAntBuildListener {
 					receiveMessage(message);
 				}
 			} catch (SocketException e) {
-				//notifyTestRunTerminated();
 			} catch (IOException e) {
 				// fall through
 			}
@@ -145,44 +150,51 @@ public class RemoteAntBuildListener {
 	}
 		
 	private void receiveMessage(String message) {
+		if (fDebug) {
+			System.out.println(message);
+		}
 		if (message.startsWith(MessageIds.TASK)) {
 			message= message.substring(MessageIds.TASK.length());
 			
 			int index= message.indexOf(',');
-			String name= message.substring(0, index);
+			int priority= Integer.parseInt(message.substring(0, index));
 			int index2= message.indexOf(',', index + 1);
-			int lineLength= Integer.parseInt(message.substring(index + 1, index2));
-			int finalIndex= index2 + 1 + lineLength;
-			String line= message.substring(index2 + 1, finalIndex);
+			String taskName= message.substring(index + 1, index2);
+			int index3= message.indexOf(',', index2 + 1);
+			int lineLength= Integer.parseInt(message.substring(index2 + 1, index3));
+			int finalIndex= index3 + 1 + lineLength;
+			String line= message.substring(index3 + 1, finalIndex);
 			String location= message.substring(finalIndex + 1);
 	
-			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
+			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 3);
 			int offset = Math.max(size - 2, 1);
 			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
 			IConsoleHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
 			if (taskLink != null) {
 				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), line);
 			}
+			
+			StringBuffer fullMessage= new StringBuffer();
+			adornMessage(taskName, line, fullMessage);
+			writeMessage(fullMessage.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$
 		} else if (message.startsWith(MessageIds.PROCESS_ID)) {
 			message= message.substring(MessageIds.PROCESS_ID.length());
 			fProcessId= message;
-		} else if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
-			String fileName = message.substring(10).trim();
-			IFile file = AntUtil.getFileForLocation(fileName, fBuildFileParent);
-			if (file != null) {
-				FileLink link = new FileLink(file, null,  -1, -1, -1);
-				TaskLinkManager.addTaskHyperlink(getProcess(), link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName); //$NON-NLS-1$
-				fBuildFileParent= file.getLocation().toFile().getParentFile();
+		} else {
+			int index= message.indexOf(',');
+			if (index > 0) {
+				int priority= Integer.parseInt(message.substring(0, index));
+				message= message.substring(index + 1);
+				writeMessage(message + System.getProperty("line.separator"), priority); //$NON-NLS-1$
 			}
 		}
 	}
 	
 	/**
-	 * Returns the associated process, finding it if necessary, if not
-	 * already found.
+	 * Returns the associated process, finding it if necessary.
 	 */
 	private IProcess getProcess() {
-		if (fProcess == null) {
+		if (fProcess == null && fProcessId != null) {
 			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 			for (int i = 0; i < all.length; i++) {
 				IProcess process = all[i];
@@ -193,5 +205,71 @@ public class RemoteAntBuildListener {
 			}
 		}
 		return fProcess;
-	}	
+	}
+	
+	private AntStreamMonitor getMonitor(int priority) {
+		IProcess process= getProcess();
+		if (process == null) {
+			return null;
+		}
+		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
+		AntStreamMonitor monitor = null;
+		switch (priority) {
+			case Project.MSG_INFO:
+				monitor = (AntStreamMonitor)proxy.getOutputStreamMonitor();
+				break;
+			case Project.MSG_ERR:
+				monitor = (AntStreamMonitor)proxy.getErrorStreamMonitor();
+				break;
+			case Project.MSG_DEBUG:
+				monitor = (AntStreamMonitor)proxy.getDebugStreamMonitor();
+				break;
+			case Project.MSG_WARN:
+				monitor = (AntStreamMonitor)proxy.getWarningStreamMonitor();
+				break;
+			case Project.MSG_VERBOSE:
+				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
+				break;
+		}
+		return monitor;
+	}
+	
+	/**
+	 * Builds a right justified task prefix for the given build event, placing it
+	 * in the given string buffer.
+	 *  
+	 * @param event build event
+	 * @param fullMessage buffer to place task prefix in
+	 */
+	private void adornMessage(String taskName, String line, StringBuffer fullMessage) {
+		if (taskName == null) {
+			taskName = "null"; //$NON-NLS-1$
+		}
+		
+		int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 6);
+		for (int i = 0; i < size; i++) {
+			fullMessage.append(' ');
+		}
+		
+		fullMessage.append(line);
+	}
+	
+	private void writeMessage(String message, int priority) {
+		AntStreamMonitor monitor= getMonitor(priority);
+		if (monitor == null) {
+			if (fMessageQueue == null) {
+				fMessageQueue= new ArrayList();
+			}
+			fMessageQueue.add(message);
+			return;
+		}
+		if (fMessageQueue != null) {
+			for (Iterator iter = fMessageQueue.iterator(); iter.hasNext();) {
+				String oldMessage = (String) iter.next();
+				monitor.append(oldMessage);
+			}
+			fMessageQueue= null;
+		}
+		monitor.append(message);
+	}
 }
