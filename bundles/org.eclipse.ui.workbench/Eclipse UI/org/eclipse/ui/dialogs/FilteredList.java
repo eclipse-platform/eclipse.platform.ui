@@ -63,12 +63,12 @@ public class FilteredList extends Composite {
 		}
 		
 		public boolean match(Object element) {
-			return fMatcher.match(fRenderer.getText(element));
+			return fMatcher.match(fLabelProvider.getText(element));
 		}	
 	}
 
 	private Table fList;
-	private ILabelProvider fRenderer;
+	private ILabelProvider fLabelProvider;
 	private boolean fMatchEmptyString= true;
 	private boolean fIgnoreCase;
 	private boolean fAllowDuplicates;
@@ -148,15 +148,16 @@ public class FilteredList extends Composite {
 	}	
 	
 	/**
-	 * Constructs a new instance of a filtered list.
-	 * @param parent           the parent composite.
-	 * @param style            the widget style.
-	 * @param renderer         the label renderer.
-	 * @param ignoreCase       specifies whether sorting and folding is case sensitive.
-	 * @param allowDuplicates  specifies whether folding of duplicates is desired.
-	 * @param matchEmptyString specifies whether empty filter strings should filter everything or nothing.
+	 * Constructs a new filtered list.
+	 * 
+	 * @param parent           the parent composite
+	 * @param style            the widget style
+	 * @param labelProvider    the label renderer
+	 * @param ignoreCase       specifies whether sorting and folding is case sensitive
+	 * @param allowDuplicates  specifies whether folding of duplicates is desired
+	 * @param matchEmptyString specifies whether empty filter strings should filter everything or nothing
 	 */
-	public FilteredList(Composite parent, int style, ILabelProvider renderer,
+	public FilteredList(Composite parent, int style, ILabelProvider labelProvider,
 		boolean ignoreCase, boolean allowDuplicates, boolean matchEmptyString)
 	{
 		super(parent, SWT.NONE);
@@ -171,13 +172,13 @@ public class FilteredList extends Composite {
 		fList.setFont(parent.getFont());
 		fList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				fRenderer.dispose();
+				fLabelProvider.dispose();
 				if (fUpdateThread != null)
 					fUpdateThread.requestStop();
 			}
 		});
 		
-		fRenderer= renderer;
+		fLabelProvider= labelProvider;
 		fIgnoreCase= ignoreCase;		
 		fSorter= new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
 		fAllowDuplicates= allowDuplicates;
@@ -203,8 +204,8 @@ public class FilteredList extends Composite {
 		fLabels= new Label[length];
 		Set imageSet= new HashSet();
 		for (int i= 0; i != length; i++) {
-			String text= fRenderer.getText(fElements[i]);
-			Image image= fRenderer.getImage(fElements[i]);
+			String text= fLabelProvider.getText(fElements[i]);
+			Image image= fLabelProvider.getImage(fElements[i]);
 			
 			fLabels[i]= new Label(text, image);				
 			imageSet.add(image);
@@ -568,75 +569,84 @@ public class FilteredList extends Composite {
 
 	/**
 	 * Returns whether or not duplicates are allowed.
-	 * @return boolean
+	 * 
+	 * @return <code>true</code> indicates duplicates are allowed
 	 */
-	public boolean allowsDuplicates() {
+	public boolean getAllowDuplicates() {
 		return fAllowDuplicates;
 	}
 
 	/**
-	 * Returns whether or not case should be ignored.
-	 * @return boolean
-	 */
-	public boolean ignoresCase() {
-		return fIgnoreCase;
-	}
-
-	/**
-	 * Returns whether empty filter strings should filter everything or nothing.
-	 * @return boolean true if the should filter everything out
-	 */
-	public boolean shouldMatchEmptyString() {
-		return fMatchEmptyString;
-	}
-
-	/**
-	 * Returns the label provider for the items.
-	 * @return ILabelProvider
-	 */
-	public ILabelProvider getLabelProvider() {
-		return fRenderer;
-	}
-
-	/**
 	 * Sets whether or not duplicates are allowed.
-	 * If this value is set the items should be set 
-	 * again for this value to take effect.
-	 * @param allowDuplicates true indicates duplicates are allowed
+	 * If this value is set the items should be set again for this value
+	 * to take effect.
+	 *
+	 * @param allowDuplicates <code>true</code> indicates duplicates are allowed
 	 */
 	public void setAllowDuplicates(boolean allowDuplicates) {
 		this.fAllowDuplicates = allowDuplicates;
 	}
 
 	/**
+	 * Returns whether or not case should be ignored.
+	 * 
+	 * @return <code>true</code> if case should be ignored
+	 */
+	public boolean getIgnoreCase() {
+		return fIgnoreCase;
+	}
+
+	/**
 	 * Sets whether or not case should be ignored
-	 * If this value is set the items
-	 * should be set again for this value to take effect.
-	 * @param ignoreCase True if case should be ignored.
+	 * If this value is set the items should be set again for this value 
+	 * to take effect.
+	 * 
+	 * @param ignoreCase <code>true</code> if case should be ignored
 	 */
 	public void setIgnoreCase(boolean ignoreCase) {
 		this.fIgnoreCase = ignoreCase;
 	}
 
 	/**
-	 * Sets whether empty filter strings should filter everything or nothing.
-	 * If this value is set the items should be set again for this value to take
-	 * effect.
-	 * @param fMatchEmptyString The fMatchEmptyString to set
+	 * Returns whether empty filter strings should filter everything or nothing.
+	 * 
+	 * @return <code>true</code> for the empty string to
+	 *   match all items, <code>false</code> to match none
 	 */
-	public void setMatchEmptyString(boolean shouldMatchEmptyString) {
-		this.fMatchEmptyString = shouldMatchEmptyString;
+	public boolean getMatchEmptyString() {
+		return fMatchEmptyString;
+	}
+
+	/**
+	 * Sets whether empty filter strings should filter everything or nothing.
+	 * If this value is set the items should be set again for this value 
+	 * to take effect.
+	 * 
+	 * @param matchEmptyString <code>true</code> for the empty string to
+	 *   match all items, <code>false</code> to match none
+	 */
+	public void setMatchEmptyString(boolean matchEmptyString) {
+		this.fMatchEmptyString = matchEmptyString;
+	}
+
+	/**
+	 * Returns the label provider for the items.
+	 * 
+	 * @return the label provider
+	 */
+	public ILabelProvider getLabelProvider() {
+		return fLabelProvider;
 	}
 
 	/**
 	 * Sets the label provider.
-	 * If this value is set the items
-	 * should be set again for this value to take effect.
-
-	 * @param fRenderer The fRenderer to set
+	 * If this value is set the items should be set again for this value 
+	 * to take effect.
+	 * 
+	 * @param labelProvider the label provider
 	 */
 	public void setLabelProvider(ILabelProvider labelProvider) {
-		this.fRenderer = labelProvider;
+		this.fLabelProvider = labelProvider;
 	}
 
 }
