@@ -213,20 +213,22 @@
                id="org.eclipse.team.cvs.ui.showAnnotation">
          </action>
          <action
-               label="%CompareWithRevisionAction.label"
                helpContextId="org.eclipse.team.cvs.ui.compare_with_revision_action_context"
-               tooltip="%CompareWithRevisionAction.tooltip"
+               label="%CompareWithRevisionAction.label"
+               definitionId="org.eclipse.team.cvs.ui.compareWithRevision"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
+               tooltip="%CompareWithRevisionAction.tooltip"
                menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithRevision">
+               id="org.eclipse.team.cvs.ui.compareWithRevision">
          </action>
          <action
-               label="%ReplaceWithRevisionAction.label"
                helpContextId="org.eclipse.team.cvs.ui.replace_with_revision_action_context"
-               tooltip="%ReplaceWithRevisionAction.tooltip"
+               label="%ReplaceWithRevisionAction.label"
+               definitionId="org.eclipse.team.cvs.ui.replaceWithRevision"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRevisionAction"
+               tooltip="%ReplaceWithRevisionAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.ccvs.ui.replaceWithRevision">
+               id="org.eclipse.team.cvs.ui.replaceWithRevision">
          </action>
          <action
                label="%EditAction.label"
@@ -301,36 +303,40 @@
                id="org.eclipse.team.cvs.ui.tag">
          </action>
          <action
-               label="%CompareWithTagAction.label"
                helpContextId="org.eclipse.team.cvs.ui.compare_with_tag_action_context"
-               tooltip="%CompareWithTagAction.tooltip"
+               label="%CompareWithTagAction.label"
+               definitionId="org.eclipse.team.cvs.ui.compareWithTag"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
+               tooltip="%CompareWithTagAction.tooltip"
                menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithTag">
+               id="org.eclipse.team.cvs.ui.compareWithTag">
          </action>
          <action
-               label="%CompareWithRemoteAction.label"
                helpContextId="org.eclipse.team.cvs.ui.compare_with_latest_action_context"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
+               label="%CompareWithRemoteAction.label"
+               definitionId="org.eclipse.team.cvs.ui.compareWithRemote"
                tooltip="%CompareWithRemoteAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
                menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithRemote">
+               id="org.eclipse.team.cvs.ui.compareWithRemote">
          </action>
          <action
-               label="%ReplaceWithTagAction.label"
                helpContextId="org.eclipse.team.cvs.ui.replace_with_tag_action_context"
-               tooltip="%ReplaceWithTagAction.tooltip"
+               label="%ReplaceWithTagAction.label"
+               definitionId="org.eclipse.team.cvs.ui.replaceWithTag"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+               tooltip="%ReplaceWithTagAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.ccvs.ui.replaceWithTag">
+               id="org.eclipse.team.cvs.ui.replaceWithTag">
          </action>
          <action
-               label="%ReplaceWithAction.label"
                helpContextId="org.eclipse.team.cvs.ui.replace_with_latest_action_context"
-               tooltip="%ReplaceWithAction.tooltip"
+               label="%ReplaceWithAction.label"
+               definitionId="org.eclipse.team.cvs.ui.replace"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
+               tooltip="%ReplaceWithAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.ccvs.ui.replace">
+               id="org.eclipse.team.cvs.ui.replace">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
@@ -1135,6 +1141,36 @@
             name="%CommitAction.name"
             id="org.eclipse.team.cvs.ui.commit"/>
       <command
+            category="org.eclipse.team.cvs.ui.actionSet"
+            description="%ReplaceWithAction.tooltip"
+            name="%ReplaceWithAction.name"
+            id="org.eclipse.team.cvs.ui.replace"/>
+      <command
+            description="%ReplaceWithTagAction.tooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            name="%ReplaceWithTagAction.name"
+            id="org.eclipse.team.cvs.ui.replaceWithTag"/>
+      <command
+            description="%ReplaceWithRevisionAction.tooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            name="%ReplaceWithRevisionAction.name"
+            id="org.eclipse.team.cvs.ui.replaceWithRevision"/>
+      <command
+            description="%CompareWithRemoteAction.tooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            name="%CompareWithRemoteAction.name"
+            id="org.eclipse.team.cvs.ui.compareWithRemote"/>
+      <command
+            description="%CompareWithTagAction.tooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            name="%CompareWithTagAction.name"
+            id="org.eclipse.team.cvs.ui.compareWithTag"/>
+      <command
+            description="%CompareWithRevisionAction.tooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            name="%CompareWithRevisionAction.name"
+            id="org.eclipse.team.cvs.ui.compareWithRevision"/>
+      <command
             description="%UpdateAction.tooltip"
             category="org.eclipse.team.cvs.ui.actionSet"
             name="%UpdateAction.name"
@@ -1230,7 +1266,25 @@
             handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
       <handlerSubmission
             handler="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
-            commandId="org.eclipse.team.cvs.ui.checkout"/>      
+            commandId="org.eclipse.team.cvs.ui.checkout"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
+            commandId="org.eclipse.team.cvs.ui.compareWithRevision"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
+            commandId="org.eclipse.team.ccvs.ui.compareWithTag"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
+            commandId="org.eclipse.team.cvs.ui.compareWithRemote"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+            commandId="org.eclipse.team.cvs.ui.replaceWithTag"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRevisionAction"
+            commandId="org.eclipse.team.cvs.ui.replaceWithRevision"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
+            commandId="org.eclipse.team.cvs.ui.replace"/>      
    </extension>
    
 <!-- ********** Color and Font Definitions ************** -->   
