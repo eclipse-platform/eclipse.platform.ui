@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -137,13 +138,18 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		protected void handleRemoved(IResource[] resources) {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				File file = resource.getLocation().toFile();
-				// if a resource is deleted, then clear the cache, there is not need for a delta.
-				if(!SyncFileUtil.isMetaFile(file)) {
-					clearCache(file, IResource.DEPTH_INFINITE);
-				} else {
-					if(resource.getName().equals("CVS")) {
-						handleMetaChange(file, resource);
+				if(resource!=null) {
+					IPath location = resource.getLocation();
+					if(location!=null) {
+						File file = resource.getLocation().toFile();
+						// if a resource is deleted, then clear the cache, there is not need for a delta.
+						if(!SyncFileUtil.isMetaFile(file)) {
+							clearCache(file, IResource.DEPTH_INFINITE);
+						} else {
+							if(resource.getName().equals("CVS")) {
+								handleMetaChange(file, resource);
+							}
+						}
 					}
 				}
 			}
@@ -188,13 +194,21 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		 */
 		private void handleDefault(IResource[] resources) {
 			for (int i = 0; i < resources.length; i++) {
-				File file = resources[i].getLocation().toFile();
-				if(SyncFileUtil.isMetaFile(file)) {
-					handleMetaChange(file.getParentFile(), resources[i].getParent());
-					// add all parents children to delta
-				} else {
-					if(!file.getName().equals("CVS")) {
-						delta.add(resources[i]);
+				// it's seems that sometimes the resources in the array are null.
+				IResource resource = resources[i];
+				if(resource!=null) {
+					IPath location = resource.getLocation();
+					// if the resource does not exist on disk, ignore it.
+					if(location!=null) {
+						File file = location.toFile();
+						if(SyncFileUtil.isMetaFile(file)) {
+							handleMetaChange(file.getParentFile(), resources[i].getParent());
+							// add all parents children to delta
+						} else {
+							if(!file.getName().equals("CVS")) {
+								delta.add(resources[i]);
+							}
+						}
 					}
 				}
 			}
