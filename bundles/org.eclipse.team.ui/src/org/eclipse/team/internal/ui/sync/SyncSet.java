@@ -241,12 +241,14 @@ public class SyncSet {
 		}
 	}
 	/**
-	 * Removes all conflicting nodes from this set that are not auto-mergeable
+	 * Removes all nodes from this set that are not auto-mergeable conflicts
 	 */
 	public void removeNonMergeableNodes() {
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
 			if ((node.getKind() & IRemoteSyncElement.MANUAL_CONFLICT) != 0) {
+				it.remove();
+			} else if (node.getChangeDirection() != ITeamNode.CONFLICTING) {
 				it.remove();
 			}
 		}
