@@ -160,7 +160,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     ssh2HomeBrowse=new Button(group, SWT.NULL);
     ssh2HomeBrowse.setText(Policy.bind("CVSSSH2PreferencePage.24")); //$NON-NLS-1$
-    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd=new GridData();
     gd.horizontalSpan=1;
     ssh2HomeBrowse.setLayoutData(gd);
 
@@ -178,7 +178,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     privateKeyAdd=new Button(group, SWT.NULL);
     privateKeyAdd.setText(Policy.bind("CVSSSH2PreferencePage.26")); //$NON-NLS-1$
-    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd=new GridData();
     gd.horizontalSpan=1;
     privateKeyAdd.setLayoutData(gd);
 
@@ -290,7 +290,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
     proxyPortText.setLayoutData(gd);
-
+    
     createSpacer(group, 3);
 
     enableAuth=new Button(group, SWT.CHECK);
@@ -402,6 +402,18 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
     keyCommentText.setLayoutData(gd);
+    
+    keyCommentText.addModifyListener(new ModifyListener(){
+    	public void modifyText(ModifyEvent e){
+    		if(kpair==null)return;
+    		try{
+    			ByteArrayOutputStream out=new ByteArrayOutputStream();
+    			kpair.writePublicKey(out, keyCommentText.getText());
+    			out.close();
+    			publicKeyText.setText(out.toString());
+    		}
+    		catch(IOException ee){}
+    }});
 
     keyPassphrase1Label=new Label(group, SWT.NONE);
     keyPassphrase1Label.setText(Policy.bind("CVSSSH2PreferencePage.43")); //$NON-NLS-1$
@@ -446,6 +458,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    }
 
 	    kpair=KeyPair.genKeyPair(jsch, type);
+	    
 	    ByteArrayOutputStream out=new ByteArrayOutputStream();
 	    kpairComment=_type+"-1024"; //$NON-NLS-1$
 	    kpair.writePublicKey(out, kpairComment);
@@ -948,7 +961,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   public boolean performOk() {
     boolean result=super.performOk();
     if(result){
-
+    	setErrorMessage(null);
       String home=ssh2HomeText.getText();
       File _home=new File(home);
       if(!_home.exists()){
@@ -957,15 +970,27 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.99")); //$NON-NLS-1$
 	if(mb.open()==SWT.YES){
 	  if(!(_home.mkdirs())){
-	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	  mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
-	  mb.setMessage(Policy.bind("CVSSSH2PreferencePage.100")+home); //$NON-NLS-1$
-	  mb.open();
+	  setErrorMessage(Policy.bind("CVSSSH2PreferencePage.100")+home); //$NON-NLS-1$
 	  return false;
 	  }
 	}
       }
 
+      {
+      int i=-1;
+      try {	
+      	i=Integer.parseInt(proxyPortText.getText());
+      }
+      catch (NumberFormatException ee) {
+      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
+      	return false;
+      }
+      if((i < 0) || (i > 65535)){
+      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
+      	return false;
+      }
+      }
+      
       IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
       store.setValue(KEY_SSH2HOME, home);
       store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
@@ -987,6 +1012,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
   public void performApply() {
     super.performApply();
 
+    setErrorMessage(null);
+    
     String home=ssh2HomeText.getText();
     File _home=new File(home);
     if(!_home.exists()){
@@ -995,14 +1022,27 @@ public class CVSSSH2PreferencePage extends PreferencePage
       mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.101")); //$NON-NLS-1$
       if(mb.open()==SWT.YES){
 	if(!(_home.mkdirs())){
-	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	  mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$	  
-	  mb.setMessage(Policy.bind("CVSSSH2PreferencePage.102")+home); //$NON-NLS-1$
-	  mb.open();
+		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.102")+home); //$NON-NLS-1$
+		return;
 	}
       }
     }
 
+    {
+    	int i=-1;
+    	try {	
+    		i=Integer.parseInt(proxyPortText.getText());
+    	}
+    	catch (NumberFormatException ee) {
+    		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
+    		return;
+    	}
+    	if((i < 0) || (i > 65535)){
+    		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
+    		return;
+    	}
+    }
+    
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     store.setValue(KEY_SSH2HOME, ssh2HomeText.getText());
     store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
