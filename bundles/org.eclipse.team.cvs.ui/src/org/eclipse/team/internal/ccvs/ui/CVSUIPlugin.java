@@ -1,0 +1,135 @@
+package org.eclipse.team.internal.ccvs.ui;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+/**
+ * UI Plugin for CVS provider-specific workbench functionality.
+ */
+public class CVSUIPlugin extends AbstractUIPlugin {
+	/**
+	 * The id of the CVS plug-in
+	 */
+	public static final String ID = "org.eclipse.team.cvs.ui";
+	
+	private Hashtable imageDescriptors = new Hashtable(20);
+
+	public final static String ICON_PATH;
+	static {
+		if (Display.getCurrent().getIconDepth() > 4) {
+			ICON_PATH = ICVSUIConstants.ICON_PATH_FULL;
+		} else {
+			ICON_PATH = ICVSUIConstants.ICON_PATH_BASIC;
+		}
+	}
+
+	/**
+	 * The singleton plug-in instance
+	 */
+	private static CVSUIPlugin plugin;
+	
+	/**
+	 * CVSUIPlugin constructor
+	 * 
+	 * @param descriptor  the plugin descriptor
+	 */
+	public CVSUIPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		plugin = this;
+	}
+
+	/**
+	 * Creates an image and places it in the image registry.
+	 */
+	protected void createImageDescriptor(String id, URL baseURL) {
+		URL url = null;
+		try {
+			url = new URL(baseURL, ICON_PATH + id);
+		} catch (MalformedURLException e) {
+		}
+		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		imageDescriptors.put(id, desc);
+	}
+	
+	/**
+	 * Returns the active workbench page.
+	 * 
+	 * @return the active workbench page
+	 */
+	public static IWorkbenchPage getActivePage() {
+		return getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	}
+	
+	/**
+	 * Returns the image descriptor for the given image ID.
+	 * Returns null if there is no such image.
+	 */
+	public ImageDescriptor getImageDescriptor(String id) {
+		return (ImageDescriptor)imageDescriptors.get(id);
+	}
+	
+	/**
+	 * Returns the singleton plug-in instance.
+	 * 
+	 * @return the plugin instance
+	 */
+	public static CVSUIPlugin getPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * Initializes the table of images used in this plugin.
+	 */
+	private void initializeImages() {
+		URL baseURL = getDescriptor().getInstallURL();
+	
+		// objects
+		createImageDescriptor(ICVSUIConstants.IMG_REPOSITORY, baseURL); 
+		createImageDescriptor(ICVSUIConstants.IMG_REFRESH, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION, baseURL);
+	}
+	/**
+	 * Convenience method for logging statuses to the plugin log
+	 * 
+	 * @param status  the status to log
+	 */
+	public static void log(IStatus status) {
+		getPlugin().getLog().log(status);
+	}
+	
+	/**
+	 * @see Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages");
+		CVSTeamProvider.setPrintStream(new PrintStream(new ConsoleOutputStream()));
+
+		CVSAdapterFactory factory = new CVSAdapterFactory();
+		Platform.getAdapterManager().registerAdapters(factory, IRemoteFile.class);
+		Platform.getAdapterManager().registerAdapters(factory, IRemoteFolder.class);
+		Platform.getAdapterManager().registerAdapters(factory, IRemoteRoot.class);
+		
+		initializeImages();
+	}
+}

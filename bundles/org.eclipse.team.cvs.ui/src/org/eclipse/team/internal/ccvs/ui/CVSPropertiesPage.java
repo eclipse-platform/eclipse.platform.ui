@@ -1,0 +1,195 @@
+package org.eclipse.team.internal.ccvs.ui;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.IUserInfo;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.ui.dialogs.PropertyPage;
+
+public class CVSPropertiesPage extends PropertyPage {
+	IProject project;
+	
+	// Widgets
+	Text userText;
+	Text passwordText;
+	Combo methodType;
+	
+	boolean passwordChanged;
+
+	IUserInfo info;
+	CVSTeamProvider provider;
+		
+	/*
+	 * @see PreferencesPage#createContents
+	 */
+	protected Control createContents(Composite parent) {
+		initialize();
+		
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		
+		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"));
+		methodType = createCombo(composite);
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"));
+		userText = createTextField(composite);
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"));
+		passwordText = createTextField(composite);
+		passwordText.setEchoChar('*');
+		
+		initializeValues();
+		passwordText.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				passwordChanged = true;
+			}
+		});
+		return composite;
+	}
+	/**
+	 * Utility method that creates a combo box
+	 *
+	 * @param parent  the parent for the new label
+	 * @return the new widget
+	 */
+	protected Combo createCombo(Composite parent) {
+		Combo combo = new Combo(parent, SWT.READ_ONLY);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		combo.setLayoutData(data);
+		return combo;
+	}
+	/**
+	 * Utility method that creates a label instance
+	 * and sets the default layout data.
+	 *
+	 * @param parent  the parent for the new label
+	 * @param text  the text for the new label
+	 * @return the new label
+	 */
+	protected Label createLabel(Composite parent, String text) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData(data);
+		return label;
+	}
+	/**
+	 * Create a text field specific for this application
+	 *
+	 * @param parent  the parent of the new text field
+	 * @return the new text field
+	 */
+	protected Text createTextField(Composite parent) {
+		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.verticalAlignment = GridData.CENTER;
+		data.grabExcessVerticalSpace = false;
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		text.setLayoutData(data);
+		return text;
+	}
+	/**
+	 * Initializes the page
+	 */
+	private void initialize() {
+		// Get the project that is the source of this property page
+		project = null;
+		IAdaptable element = getElement();
+		if (element instanceof IProject) {
+			project = (IProject)element;
+		} else {
+			Object adapter = element.getAdapter(IProject.class);
+			if (adapter instanceof IProject) {
+				project = (IProject)adapter;
+			}
+		}
+	}
+	/**
+	 * Set the initial values of the widgets
+	 */
+	private void initializeValues() {
+		passwordChanged = false;
+		
+		provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
+		if (provider == null) return;
+		
+		String[] methods = CVSTeamProvider.getConnectionMethods();
+		for (int i = 0; i < methods.length; i++) {
+			methodType.add(methods[i]);
+		}
+		try {
+			String method = provider.getConnectionMethod(project);
+			methodType.select(methodType.indexOf(method));
+		
+			info = provider.getUserInfo(project);
+			userText.setText(info.getUsername());
+		} catch (TeamException e) {
+			showError(e.getStatus());
+		}
+		passwordText.setText("*********");
+	}
+	/*
+	 * @see PreferencesPage#performOk
+	 */
+	public boolean performOk() {
+		info.setUsername(userText.getText());
+		if (passwordChanged) {
+			info.setPassword(passwordText.getText());
+		}
+		try {
+			provider.setConnectionInfo(project, methodType.getText(), info);
+		} catch (TeamException e) {
+			showError(e.getStatus());
+		}
+		return true;
+	}
+	/**
+	 * Shows the given errors to the user.
+	 */
+	protected void showError(IStatus status) {
+		showError(status, null, null, getShell());
+	}
+	protected void showError(IStatus status, String title, String message, Shell shell) {
+		if (!status.isOK()) {
+			IStatus toShow = status;
+			if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				if (children.length == 1) {
+					toShow = children[0];
+				}
+			}
+			if (title == null)
+				title = status.getMessage();
+			ErrorDialog.openError(shell, title, message, toShow);
+			CVSUIPlugin.log(toShow);
+		}
+	}
+}
+

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+	name="%pluginName"
+	id="org.eclipse.team.cvs.ui"
+	version="2.0.0"
+	provider-name="Object Technology International, Inc."
+	class="org.eclipse.team.internal.ccvs.ui.CVSUIPlugin">
+
+	<requires>
+		<import plugin="org.eclipse.core.runtime"/>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.ui"/>
+		<import plugin="org.eclipse.team.core"/>
+		<import plugin="org.eclipse.team.ui"/>
+		<import plugin="org.eclipse.team.cvs.core"/>
+	</requires>
+
+	<runtime>
+		<library name="teamcvsui.jar"/>
+	</runtime>
+
+	<!-- *************** Authenticator **************** -->
+	<extension point="org.eclipse.team.cvs.core.authenticator">
+		<authenticator>
+			<run class="org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator"/>
+		</authenticator>
+	</extension>
+	
+	<!-- *************** Decorator **************** -->
+	<extension point="org.eclipse.team.ui.decorators">
+	<decorator 
+		class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
+		natureId="org.eclipse.team.cvs.core.cvsnature"/>
+	</extension>
+
+	
+	<!-- ******************* Wizards ****************** -->
+	<extension point="org.eclipse.team.ui.configurationWizards">
+		<wizard
+			name="%ConfigurationWizard.name"
+			icon="icons/full/wizards/newconnect_wiz.gif"
+			class="org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizard"
+			id="org.eclipse.team.ccvs.ui.ConfigurationWizard">
+		</wizard>
+	</extension>
+
+	<!-- ************** Property Pages *************** -->
+	<extension point="org.eclipse.ui.propertyPages">
+		<page name="CVS" id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage"
+			objectClass="org.eclipse.core.resources.IProject"
+			class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage">
+			<filter name="nature" value="org.eclipse.team.cvs.core.cvsnature"/> 
+		</page>
+	</extension>
+  
+  	<!-- ******************* Menus ******************** -->
+	<extension point="org.eclipse.ui.popupMenus"> 
+		<objectContribution 
+			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
+			objectClass="org.eclipse.core.resources.IResource"> 
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.add"
+				label="%AddAction.label"
+				tooltip="%AddAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.tag"
+				label="%TagAction.label"
+				tooltip="%TagAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.diff"
+				label="%DiffAction.label"
+				tooltip="%DiffAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DiffAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.update"
+				label="%UpdateAction.label"
+				tooltip="%UpdateAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.replace"
+				label="%ReplaceWithAction.label"
+				tooltip="%ReplaceWithAction.tooltip"
+				menubarPath="replaceWithMenu/replaceWithGroup"
+				class="org.eclipse.team.ui.actions.UpdateAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.commit"
+				label="%CommitAction.label"
+				tooltip="%CommitAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
+		</objectContribution>
+		<objectContribution 
+			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
+			objectClass="org.eclipse.team.ccvs.core.IRemoteFolder">
+			<action 
+				id="org.eclipse.team.ccvs.ui.addToWorkspace"
+				label="%AddToWorkspaceAction.label"
+				tooltip="%AddToWorkspaceAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
+		</objectContribution>
+		<objectContribution 
+			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
+			objectClass="org.eclipse.team.ccvs.core.IRemoteFile">
+			<action 
+				id="org.eclipse.team.ccvs.ui.openRemoteFile"
+				label="%OpenRemoteFileAction.label"
+				tooltip="%OpenRemoteFileAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction"/>
+		</objectContribution>
+	</extension> 
+
+	<!-- ************** Action Set ***************** -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet id="org.eclipse.team.ccvs.CVSActionSet" label="CVS" visible="true" description="CVS specific actions">
+			<action id="org.eclipse.team.ccvs.Checkout"
+				toolbarPath="Normal/CVSWizards"
+				label="%CheckoutAction.label"
+				tooltip="%CheckoutAction.tooltip"
+				icon="icons/full/ctool16/checkout.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"/>
+		</actionSet>
+	</extension>
+	
+	<!-- ************* Property pages ************** -->
+<!--
+	<extension point="org.eclipse.ui.propertyPages">
+		<page name="CVS" 
+			id="org.eclipse.team.ccvs.ui.ResourcePropertiesPage" 
+			objectClass="org.eclipse.core.resources.IResource" 
+			class="org.eclipse.team.internal ccvs.ui.ResourcePropertiesPage">
+			<filter name="projectNature" value="org.eclipse.team.ccvs.cvsnature"/> 
+		</page>
+	</extension>
+-->
+
+	<!-- ************** Views ********************** -->
+	<extension point="org.eclipse.ui.views">
+		<category 
+			id="org.eclipse.team.ccvs.ui"
+			name="%viewCategory">
+		</category>
+		<view
+			name="%Console.name"
+			category="org.eclipse.team.ccvs.ui"
+			class="org.eclipse.team.internal.ccvs.ui.Console"
+			id="org.eclipse.team.ccvs.ui.console"
+			icon="icons/full/cview16/console_view.gif">
+		</view>
+		<view
+			id="org.eclipse.team.ccvs.ui.RepositoriesView"
+			icon="icons/full/cview16/repo_rep.gif"
+			name="%RepositoriesView.name"
+			category="org.eclipse.team.ccvs.ui"
+			class="org.eclipse.team.internal.ccvs.ui.RepositoriesView">
+		</view>
+	</extension>
+	
+	<extension point="org.eclipse.ui.resourceFilters">
+		<filter pattern="CVS" selected="true"/> 
+	</extension>
+</plugin>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.team.ui"
+   name="%pluginName"
+   version="2.0.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.team.ui.TeamUIPlugin">
+<requires>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.team.core"/>
+   <import plugin="org.eclipse.ui"/>
+</requires>
+
+<runtime>
+   <library name="teamui.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<extension-point id="configurationWizards" name="Configuration Wizards"/>
+<extension-point id="decorators" name="Provider Decorators"/>
+
+<!-- Define some example ASCII extensions. This will be done
+     by other plugins later. -->
+     
+<extension point="org.eclipse.team.core.fileTypes">
+  <fileTypes extension="txt" key="isAscii" value="true"/>
+  <fileTypes extension="java" key="isAscii" value="true"/>
+  <fileTypes extension="properties" key="isAscii" value="true"/>
+  <fileTypes extension="xml" key="isAscii" value="true"/>
+</extension>
+
+<!-- **************** PREFERENCES ******************* -->
+   <extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.eclipse.team.ui.ASCIIPreferences"
+       	  class="org.eclipse.team.internal.ui.ASCIIPreferencePage"
+       	    name="%ASCIIPreferencePage.name">
+       </page>
+   </extension>
+   
+   <extension point="org.eclipse.ui.viewActions"> 
+      <viewContribution 
+         id="org.eclipse.team.ui.navcontribution" 
+         targetID="org.eclipse.ui.views.ResourceNavigator"> 
+         <action id="org.eclipse.team.ui.infoinnav" 
+              label="%ToggleNavigatorDecorations.label" 
+              menubarPath="additions" 
+              state="false"
+              tooltip="%ToggleNavigatorVersionLabels.tooltip" 
+              class="org.eclipse.team.ui.actions.ToggleNavigatorDecorations">
+         </action> 
+     </viewContribution> 
+   </extension>
+
+<!-- ****************** POPUP ACTIONS *************** -->
+
+<extension
+     point="org.eclipse.ui.popupMenus">
+	<objectContribution
+	   id="org.eclipse.team.ui.ProjectContributions"
+	   objectClass="org.eclipse.core.resources.IProject">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>		
+		<action 
+			id="org.eclipse.team.ui.DeconfigureProject"
+			label="%DeconfigureProject.label"
+			tooltip="%DeconfigureProject.tooltip"
+			menubarPath="team.main/projectGroup"
+			enablesFor="1"
+			class="org.eclipse.team.ui.actions.DeconfigureProjectAction">
+		</action>
+		<action 
+			id="org.eclipse.team.ui.ConfigureProject"
+			label="%ConfigureProject.label"
+			tooltip="%ConfigureProject.tooltip"
+			menubarPath="team.main/projectGroup"
+			enablesFor="1"
+			class="org.eclipse.team.ui.actions.ConfigureProjectAction">
+		</action>
+	</objectContribution>	
+
+	<objectContribution
+       	   id="org.eclipse.team.ui.ResourceContributions"
+           objectClass="org.eclipse.core.resources.IResource">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>
+	</objectContribution>
+	
+	<objectContribution
+       	   id="org.eclipse.team.ui.FileContributions"
+           objectClass="org.eclipse.core.resources.IFile">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>	
+		<action 
+			id="org.eclipse.team.ui.Delete"
+			label="%Delete.label"
+			tooltip="%Delete.tooltip"
+			menubarPath="team.main/advancedGroup"
+			class="org.eclipse.team.ui.actions.DeleteAction">
+		</action>
+		<action 
+			id="org.eclipse.team.ui.Move"
+			label="%Move.label"
+			tooltip="%Move.tooltip"
+			menubarPath="team.main/advancedGroup"
+			class="org.eclipse.team.ui.actions.MoveAction">
+		</action>			
+	</objectContribution>
+	
+	<objectContribution
+       	   id="org.eclipse.team.ui.FolderContributions"
+           objectClass="org.eclipse.core.resources.IFolder">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>
+		<action 
+			id="org.eclipse.team.ui.Delete"
+			label="%Delete.label"
+			tooltip="%Delete.tooltip"
+			menubarPath="team.main/advancedGroup"
+			class="org.eclipse.team.ui.actions.DeleteAction">
+		</action>
+		<action 
+			id="org.eclipse.team.ui.Move"
+			label="%Move.label"
+			tooltip="%Move.tooltip"
+			menubarPath="team.main/advancedGroup"
+			class="org.eclipse.team.ui.actions.MoveAction">
+		</action>				
+	</objectContribution>
+</extension>
+
+</plugin>

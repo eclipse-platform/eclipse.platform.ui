@@ -1,0 +1,32 @@
+package org.eclipse.team.internal.ccvs.ui.model;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
+import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+
+/**
+ * Extension to the generic workbench content provider mechanism
+ * to lazily determine whether an element has children.  That is,
+ * children for an element aren't fetched until the user clicks
+ * on the tree expansion box.
+ */
+public class RemoteContentProvider extends WorkbenchContentProvider {
+	/* (non-Javadoc)
+	 * Method declared on WorkbenchContentProvider.
+	 */
+	public boolean hasChildren(Object element) {
+		if (element == null) {
+			return false;
+		}
+		// the + box will always appear, but then disappear
+		// if not needed after you first click on it.
+		if (element instanceof IRemoteResource) {
+			return ((IRemoteResource)element).getType() != IRemoteResource.FILE;
+		}
+		return true;
+	}
+}

@@ -1,0 +1,68 @@
+package org.eclipse.team.ui.actions;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
+import java.util.Set;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.ITeamManager;
+import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ui.Policy;
+
+/**
+ * CheckOutAction checks the selected resources out from the provider.
+ */
+public class CheckOutAction extends TeamAction {
+	/*
+	 * Method declared on IActionDelegate.
+	 */
+	public void run(IAction action) {
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					Hashtable table = getProviderMapping();
+					Set keySet = table.keySet();
+					monitor.beginTask("", keySet.size() * 1000);
+					monitor.setTaskName(Policy.bind("CheckOutAction.checkingOut"));
+					Iterator iterator = keySet.iterator();
+					while (iterator.hasNext()) {
+						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+						ITeamProvider provider = (ITeamProvider)iterator.next();
+						List list = (List)table.get(provider);
+						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+						provider.checkout(providerResources, IResource.DEPTH_ZERO, subMonitor);
+					}
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		}, Policy.bind("CheckOutAction.checkout"), this.PROGRESS_BUSYCURSOR);
+	}	
+	/**
+	 * @see TeamAction#isEnabled()
+	 */
+	protected boolean isEnabled() throws TeamException {
+		IResource[] resources = getSelectedResources();
+		if (resources.length == 0) return false;
+		ITeamManager manager = TeamPlugin.getManager();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			if (provider == null) return false;
+			if (provider.isCheckedOut(resources[i])) return false;
+		}
+		return true;
+	}
+}
