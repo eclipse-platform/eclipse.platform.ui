@@ -60,7 +60,10 @@ public class AboutDialog extends ProductInfoDialog {
 	private  	AboutInfo     	aboutInfo;
 	private 	ArrayList images = new ArrayList();
 	private 	StyledText text;
-	private	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	private final static	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	private final static int FEATURES_ID = IDialogConstants.CLIENT_ID + 1;
+	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
+	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
 /**
  * Create an instance of the AboutDialog
@@ -70,6 +73,28 @@ public AboutDialog(Shell parentShell) {
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	aboutInfo = workbench.getAboutInfo();
 }
+/* (non-Javadoc)
+ * Method declared on Dialog.
+ */
+protected void buttonPressed(int buttonId) {
+	switch (buttonId) {
+		case FEATURES_ID : {
+			new AboutFeaturesDialog(getShell()).open();
+			return;
+		}
+		case PLUGINS_ID : {
+			new AboutPluginsDialog(getShell()).open();
+			return;
+		}
+		case INFO_ID : {
+			((Workbench)PlatformUI.getWorkbench()).openSystemSummaryEditor();
+			close();
+			return;
+		}
+	}
+	super.buttonPressed(buttonId);
+}
+
 public boolean close() {
 	//get rid of the image that was displayed on the left-hand side of the Welcome dialog
 	if (image != null)
@@ -97,6 +122,18 @@ protected void configureShell(Shell newShell) {
  * @param parent the button bar composite
  */
 protected void createButtonsForButtonBar(Composite parent) {
+	parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+	createButton(parent, FEATURES_ID, WorkbenchMessages.getString("AboutDialog.featureInfo"), false);
+	createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutDialog.pluginInfo"), false);
+	createButton(parent, INFO_ID, WorkbenchMessages.getString("AboutDialog.systemInfo"), false);
+
+	Label l = new Label(parent, SWT.NONE);
+	l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	GridLayout layout = (GridLayout)parent.getLayout();
+	layout.numColumns++;
+	layout.makeColumnsEqualWidth = false;
+
 	Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	b.setFocus();
 }
@@ -226,48 +263,6 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	bar.setLayoutData(data);
-	
-	// button composite
-	Composite buttonComposite = new Composite(outer, SWT.NONE);
-
-	// create a layout with spacing and margins appropriate for the font size.
-	layout = new GridLayout();
-	layout.numColumns = 2; // this is incremented by createButton
-	layout.makeColumnsEqualWidth = true;
-	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	buttonComposite.setLayout(layout);
-	data = new GridData();
-	data.horizontalAlignment = GridData.BEGINNING;
-	buttonComposite.setLayoutData(data);
-
-	Button button = new Button(buttonComposite, SWT.PUSH);
-	button.setText(WorkbenchMessages.getString("AboutDialog.featureInfo")); //$NON-NLS-1$
-	data = new GridData();
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	button.setLayoutData(data);
-	button.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent event) {
-			new AboutFeaturesDialog(getShell()).open();
-		}
-	});
-	
-	button = new Button(buttonComposite, SWT.PUSH);
-	button.setText(WorkbenchMessages.getString("AboutDialog.pluginInfo")); //$NON-NLS-1$
-	data = new GridData();
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	button.setLayoutData(data);
-	button.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent event) {
-			new AboutPluginsDialog(getShell()).open();
-		}
-	});
 	
 	return outer;
 }

@@ -811,6 +811,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Open the Welcome editor for the primary feature
 	 */
+	public void openSystemSummaryEditor() {
+		openEditor(new SystemSummaryEditorInput(), SystemSummaryEditor.ID);
+	}
+		
+	/**
+	 * Open the Welcome editor for the primary feature
+	 */
 	private void openWelcomeEditor() {
 		// See if a welcome page is specified
 		AboutInfo info = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
@@ -825,20 +832,26 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// Don't show it again
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
 
+		openEditor(new WelcomeEditorInput(info), WELCOME_EDITOR_ID);
+		return;
+	}
+	/**
+	 * Open an editor for the given input
+	 */
+	private void openEditor(IEditorInput input, String editorId) {
 		if (getWorkbenchWindowCount() == 0) {
 			// Something is wrong, there should be at least
 			// one workbench window open by now.
 			return;
 		}
-
+		
 		IWorkbenchWindow win = getActiveWorkbenchWindow();
 		if (win == null)
 			win = getWorkbenchWindows()[0];
-
+		
 		WorkbenchPage page = (WorkbenchPage)win.getActivePage();
 		if (page == null) {
-			// Create the initial page. We use the default perspective rather than
-			// the perspective specified by a welcome perspective
+			// Create the page. 
 			try {
 				IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 				page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(
@@ -851,29 +864,46 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					e.getStatus());
 			}
 		}
-	
+		
 		if (page == null)
 			return;
 		
 		page.setEditorAreaVisible(true);
-	
-		// see if we already have a welcome editor
-		IEditorPart editor = page.findEditor(new WelcomeEditorInput(info));
+		
+		// see if we already have an editor
+		IEditorPart editor = page.findEditor(input);
 		if (editor != null) {	
 			page.activate(editor);
 				return;
 		}
-	
+		
+		if (page.getActivePerspective() == null) {
+			try {
+				showPerspective(
+					WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective(),
+					win);
+			} catch (WorkbenchException e) {
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+				ErrorDialog.openError(
+					win.getShell(),
+					WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+					WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"),  //$NON-NLS-1$
+					status);
+				return;
+			}
+		}
+		
 		try {
-			page.openEditor(new WelcomeEditorInput(info), WELCOME_EDITOR_ID);
+			page.openEditor(input, editorId);
 		} catch (PartInitException e) {
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 			ErrorDialog.openError(
 				win.getShell(),
-				WorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"),  //$NON-NLS-1$
 				status);
 		}
+		return;
 	}
 	/**
 	 * Opens a new window and page with the default perspective.
