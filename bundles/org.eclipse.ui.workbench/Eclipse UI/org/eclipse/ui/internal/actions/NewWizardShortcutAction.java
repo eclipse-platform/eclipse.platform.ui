@@ -55,8 +55,9 @@ public class NewWizardShortcutAction extends Action implements
         this.window = window;
     }
 
-    /**
-     *	This action has been invoked by the user
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
         // create instance of target wizard
