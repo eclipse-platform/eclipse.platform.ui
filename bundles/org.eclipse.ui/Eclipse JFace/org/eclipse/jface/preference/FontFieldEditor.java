@@ -210,6 +210,8 @@ protected Button getChangeControl(Composite parent) {
 				changeFontButton= null;
 			}
 		});
+		changeFontButton.setFont(parent.getFont());
+		setButtonLayoutData(changeFontButton);
 	} else {
 		checkParent(changeFontButton, parent);
 	}
@@ -252,6 +254,7 @@ public Control getPreviewControl() {
 protected Label getValueControl(Composite parent) {
 	if (valueControl == null) {
 		valueControl = new Label(parent, SWT.LEFT);
+		valueControl.setFont(parent.getFont());
 		valueControl.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				valueControl = null;
