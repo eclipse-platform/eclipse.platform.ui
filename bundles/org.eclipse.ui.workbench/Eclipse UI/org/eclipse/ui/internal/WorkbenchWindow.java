@@ -31,6 +31,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -113,6 +114,9 @@ public class WorkbenchWindow extends ApplicationWindow
 	private MenuItem restoreItem;
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
+	private boolean showShortcutBar = true;
+	private boolean showStatusLine = true;
+	private boolean showToolBar = true;
 	
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages";//$NON-NLS-1$
@@ -125,9 +129,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	static final int BAR_SIZE = 23;
 
 	/**
-	 * This vertical layout supports a fixed size Toolbar area, a separator line,
-	 * the variable size content area,
-	 * and a fixed size status line.
+	 * The layout for the workbench window's shell.
 	 */
 	class WorkbenchWindowLayout extends Layout {
 	
@@ -144,7 +146,7 @@ public class WorkbenchWindow extends ApplicationWindow
 				if (w == getToolBarControl()) {
 					skip = true;
 					result.y+= BAR_SIZE;  
-				} else if (w == shortcutBar.getControl()) {
+				} else if (getShortcutBar() != null && w == getShortcutBar().getControl()) {
 					skip = true;
 				} 
 				if (!skip) {
@@ -170,57 +172,87 @@ public class WorkbenchWindow extends ApplicationWindow
 			Control[] ws= composite.getChildren();
 			for (int i= 0; i < ws.length; i++) {
 				Control w= ws[i];
-				if (i == 0 || w == separator2) { // Separators
+				if (i == 0) {
 					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
 					clientArea.y+= e.y;
 					clientArea.height-= e.y;
+				} else if (w == getSeparator2()) {
+					if (getShowToolBar()) {
+						Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+						w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
+						clientArea.y+= e.y;
+						clientArea.height-= e.y;
+					}
+					else {
+						w.setBounds(0,0,0,0);
+					}
 				} else if (w == getToolBarControl()) {
-					int height = BAR_SIZE;
-					if (toolBarChildrenExist()) { 
-						Point e = w.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
-						height = e.y;
-					}
-					w.setBounds(clientArea.x, clientArea.y, clientArea.width, height);
-					clientArea.y+= height;
-					clientArea.height-= height;
-				} else if (getStatusLineManager() != null && w == getStatusLineManager().getControl()) {
-					int width = BAR_SIZE;
-					if (shortcutBar != null) {
-						Widget widget = shortcutBar.getControl();
-						if (widget != null) {
-							if (widget instanceof ToolBar) {
-								ToolBar bar = (ToolBar) widget;
-								if (bar.getItemCount() > 0) {
-									ToolItem item = bar.getItem(0);
-									width = item.getWidth();
-									Rectangle trim = bar.computeTrim(0,0,width,width);
-									width = trim.width; 
-								}
-							}
-						}	
-					}	
-					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					w.setBounds(clientArea.x + width, clientArea.y+clientArea.height-e.y, clientArea.width - width, e.y);
-					clientArea.height-= e.y + VGAP;
-				} else if (w == shortcutBar.getControl()) {
-					int width = BAR_SIZE;
-					if (w instanceof ToolBar) {
-						ToolBar bar = (ToolBar) w;
-						if (bar.getItemCount() > 0) {
-							ToolItem item = bar.getItem(0);
-							width = item.getWidth();
-							Rectangle trim = bar.computeTrim(0,0,width,width);
-							width = trim.width;
+					if (getShowToolBar()) {
+						int height = BAR_SIZE;
+						if (toolBarChildrenExist()) { 
+							Point e = w.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
+							height = e.y;
 						}
+						w.setBounds(clientArea.x, clientArea.y, clientArea.width, height);
+						clientArea.y+= height;
+						clientArea.height-= height;
 					}
-					w.setBounds(clientArea.x, clientArea.y, width, clientArea.height);
-					clientArea.x+= width + VGAP;
-					clientArea.width-= width + VGAP;
-				} else if (w == separator3) {
-					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					w.setBounds(clientArea.x, clientArea.y, e.x, clientArea.height);
-					clientArea.x+= e.x;
+					else {
+						w.setBounds(0,0,0,0);
+					}
+				} else if (getStatusLineManager() != null && w == getStatusLineManager().getControl()) {
+					if (getShowStatusLine()) {
+						int width = 0;
+						if (getShortcutBar() != null && getShowShortcutBar()) {
+							Widget widget = getShortcutBar().getControl();
+							if (widget != null) {
+								if (widget instanceof ToolBar) {
+									ToolBar bar = (ToolBar) widget;
+									if (bar.getItemCount() > 0) {
+										ToolItem item = bar.getItem(0);
+										width = item.getWidth();
+										Rectangle trim = bar.computeTrim(0,0,width,width);
+										width = trim.width; 
+									}
+								}
+							}	
+						}	
+						Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+						w.setBounds(clientArea.x + width, clientArea.y+clientArea.height-e.y, clientArea.width - width, e.y);
+						clientArea.height-= e.y + VGAP;
+					}
+					else {
+						w.setBounds(0,0,0,0);
+					}
+				} else if (getShortcutBar() != null && w == getShortcutBar().getControl()) {
+					if (getShowShortcutBar()) {
+						int width = BAR_SIZE;
+						if (w instanceof ToolBar) {
+							ToolBar bar = (ToolBar) w;
+							if (bar.getItemCount() > 0) {
+								ToolItem item = bar.getItem(0);
+								width = item.getWidth();
+								Rectangle trim = bar.computeTrim(0,0,width,width);
+								width = trim.width;
+							}
+						}
+						w.setBounds(clientArea.x, clientArea.y, width, clientArea.height);
+						clientArea.x+= width + VGAP;
+						clientArea.width-= width + VGAP;
+					}
+					else {
+						w.setBounds(0,0,0,0);
+					}
+				} else if (w == getSeparator3()) {
+					if (getShowShortcutBar()) {
+						Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+						w.setBounds(clientArea.x, clientArea.y, e.x, clientArea.height);
+						clientArea.x+= e.x;
+					}
+					else {
+						w.setBounds(0,0,0,0);
+					}
 				} else {
 					// Must be client.
 					// Inset client area by 3 pixels 
@@ -231,8 +263,10 @@ public class WorkbenchWindow extends ApplicationWindow
 	}
 	
 /**
- * WorkbenchWindow constructor comment.
- * @param workbench Workbench
+ * Constructs a new workbench window.
+ * 
+ * @param workbench the Workbench
+ * @param number the number for the window
  */
 public WorkbenchWindow(Workbench workbench, int number) {
 	super(null);
@@ -246,6 +280,8 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
+	updateBarVisibility();
+	
 	// Add actions.
 	actionPresentation = new ActionPresentation(this);
 	actionBuilder = ((Workbench) getWorkbench()).createActionBuilder(this);
@@ -478,7 +514,7 @@ private void showEmptyWindowMessage() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setLayout(new WorkbenchWindowLayout());
+	shell.setLayout(getLayout());
 	shell.setSize(800, 600);
 	separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 	createShortcutBar(shell);
@@ -862,11 +898,36 @@ private void updateActiveActions() {
 }
 
 /**
+ * Returns the layout for the shell.
+ * 
+ * @return the layout for the shell
+ */
+protected Layout getLayout() {
+	return new WorkbenchWindowLayout();
+}
+
+/**
  * @see IWorkbenchWindow
  */
 public IPerspectiveService getPerspectiveService() {
 	return perspectiveService;
 }
+
+/**
+ * Returns the separator2 control.
+ */
+protected Label getSeparator2() {
+	return separator2;
+}
+
+/**
+ * Returns the separator3 control.
+ */
+protected Label getSeparator3() {
+	return separator3;
+}
+
+
 /**
  * @see IWorkbenchWindow
  */
@@ -896,9 +957,36 @@ public ToolBarManager getShortcutBar() {
 /*package*/ShortcutBarPartDragDrop getShortcutDND() {
 	return shortcutDND;	
 }
+
+/**
+ * Returns whether the shortcut bar should be shown.
+ * 
+ * @return <code>true</code> to show it, <code>false</code> to hide it
+ */
+public boolean getShowShortcutBar() {
+	return showShortcutBar;
+}
+
+/**
+ * Returns whether the status bar should be shown.
+ * 
+ * @return <code>true</code> to show it, <code>false</code> to hide it
+ */
+public boolean getShowStatusLine() {
+	return showStatusLine;
+}
+
+/**
+ * Returns whether the tool bar should be shown.
+ * 
+ * @return <code>true</code> to show it, <code>false</code> to hide it
+ */
+public boolean getShowToolBar() {
+	return showToolBar;
+}
+
 /**
  * Returns the status line manager for this window (if it has one).
- *
  *
  * @return the status line manager, or <code>null</code> if
  *   this window does not have a status line
@@ -907,6 +995,7 @@ public ToolBarManager getShortcutBar() {
 protected StatusLineManager getStatusLineManager() {
 	return super.getStatusLineManager();
 }
+
 /**
  * Returns tool bar control for the window. Overridden
  * to support CoolBars.
@@ -916,6 +1005,7 @@ protected StatusLineManager getStatusLineManager() {
 protected Control getToolBarControl() {
 	return getCoolBarControl();
 }
+
 /**
  * WorkbenchWindow uses CoolBarManager, so return null here.
  * </p>
@@ -924,6 +1014,7 @@ protected Control getToolBarControl() {
 public ToolBarManager getToolBarManager() {
 	return null;
 }
+
 /**
  * @see IWorkbenchWindow
  */
@@ -1326,6 +1417,34 @@ public void setActivePage(final IWorkbenchPage in) {
 		}
 	});
 }
+
+/**
+ * Sets whether the shortcut bar should be visible.
+ * 
+ * @param show <code>true</code> to show it, <code>false</code> to hide it
+ */
+public void setShowShortcutBar(boolean show) {
+	showShortcutBar = show;
+}
+
+/**
+ * Sets whether the status line should be visible.
+ * 
+ * @param show <code>true</code> to show it, <code>false</code> to hide it
+ */
+public void setShowStatusLine (boolean show) {
+	showStatusLine = show;
+}
+
+/**
+ * Sets whether the tool bar should be visible.
+ * 
+ * @param show <code>true</code> to show it, <code>false</code> to hide it
+ */
+public void setShowToolBar(boolean show) {
+	showToolBar = show;
+}
+
 /**
  * Shows the popup menu for a page item in the shortcut bar.
  */
@@ -1536,6 +1655,19 @@ public void updateActionSets() {
 			updateTitle();
 	}
 }
+
+/**
+ * Updates the visibility of the shortcut bar, status line, and toolbar.
+ * Does not cause the shell to relayout.
+ */
+public void updateBarVisibility() {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	setShowShortcutBar(store.getBoolean(IPreferenceConstants.SHOW_SHORTCUT_BAR));
+	setShowStatusLine(store.getBoolean(IPreferenceConstants.SHOW_STATUS_LINE));
+	setShowToolBar(store.getBoolean(IPreferenceConstants.SHOW_TOOL_BAR));
+}
+
+
 /**
  * Updates the window title.
  */

@@ -134,5 +134,13 @@ public interface IPreferenceConstants {
 	
 	// Show Tasks view to users when build contains errors
 	public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$
+	
+	// Show the shortcut bar in workbench windows
+	public static final String SHOW_SHORTCUT_BAR = "SHOW_SHORTCUT_BAR"; //$NON-NLS-1$
 
+	// Show the status line in workbench windows
+	public static final String SHOW_STATUS_LINE = "SHOW_STATUS_LINE"; //$NON-NLS-1$
+
+	// Show the toolbar in workbench windows
+	public static final String SHOW_TOOL_BAR = "SHOW_TOOL_BAR"; //$NON-NLS-1$
 }

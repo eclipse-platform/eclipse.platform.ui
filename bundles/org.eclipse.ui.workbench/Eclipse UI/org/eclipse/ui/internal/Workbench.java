@@ -380,7 +380,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable input) throws WorkbenchException {
 		// Create a workbench window (becomes active window)
-		WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
+		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
 		windowManager.add(newWindow);
 
@@ -549,12 +549,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public IEditorRegistry getEditorRegistry() {
 		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
-	/*
+	
+	/**
 	 * Returns the number for a new window.  This will be the first
 	 * number > 0 which is not used to identify another window in
 	 * the workbench.
 	 */
-	private int getNewWindowNumber() {
+	protected int getNewWindowNumber() {
 		// Get window list.
 		Window[] windows = windowManager.getWindows();
 		int count = windows.length;
@@ -580,6 +581,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		return count + 1;
 	}
+	
 	/**
 	 * Returns the perspective registry for the workbench.
 	 *
@@ -896,8 +898,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			registry.put(update.getId(),registry.getFontData(update.getDefaultsTo()));
 		}
 	}
-	/*
-	 * *
+	/**
 	 * Initialize the specified font with the stored value.
 	 */
 	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
@@ -934,13 +935,23 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public boolean isStarting() {
 		return isStarting;
 	}
-	/*
+	
+ 	/**
+ 	 * Creates a new workbench window.
+ 	 * 
+ 	 * @return the new workbench window
+     */
+ 	protected WorkbenchWindow newWorkbenchWindow() {
+ 		return new WorkbenchWindow(this, getNewWindowNumber());
+	}
+	
+	/**
 	 * Create the initial workbench window.
 	 * @return true if the open succeeds
 	 */
 	private void openFirstTimeWindow() {
 		// Create the window.
-		WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
+		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 		windowManager.add(newWindow);
 
@@ -954,7 +965,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		newWindow.open();
 	}
-	/*
+	
+	/**
 	 * Create the workbench UI from a persistence file.
 	 */
 	private int openPreviousWorkbenchState() {
@@ -1129,7 +1141,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// Read the workbench windows.
 		for (int x = 0; x < children.length; x++) {
 			childMem = children[x];
-			WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
+			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
 			IPerspectiveDescriptor desc = null;
 			if (x < newFeaturesWithPerspectives.length)
@@ -1547,7 +1559,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	/**
-	 * shutdown the application.
+	 * Shuts down the application.
 	 */
 	private void shutdown() {
 		WorkbenchColors.shutdown();

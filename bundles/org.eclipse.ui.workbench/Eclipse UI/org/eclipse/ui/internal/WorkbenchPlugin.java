@@ -427,6 +427,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE, IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE); // Current Window
 		store.setDefault(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA, IPreferenceConstants.EDITOR_LIST_NAME_SORT); // Name Sort
 		store.setDefault(IPreferenceConstants.COLOR_ICONS, false);
+		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
+		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
+		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		
 		// Set the default behaviour for showing the task list when there are compiles errors in the build
 		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
