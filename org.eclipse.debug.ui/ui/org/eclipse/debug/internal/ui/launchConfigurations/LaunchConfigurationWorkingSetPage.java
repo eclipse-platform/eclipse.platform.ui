@@ -127,6 +127,13 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 
 		// Set help context for the page 
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.WORKING_SET_PAGE);
+
+		initializeCheckedState();
+		if (fWorkingSet != null) {
+			fWorkingSetName.setText(fWorkingSet.getName());
+		}
+		
+		setPageComplete(false);
 	}
 
 	/**
@@ -141,11 +148,14 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 	 */
 	public void setSelection(IWorkingSet workingSet) {
 		fWorkingSet= workingSet;
+		// work around bug 24095
+		if (getContainer() == null) {
+			return;
+		}
 		if (getShell() != null && fWorkingSetName != null) {
 			fFirstCheck= false;
-			fWorkingSetName.setText(fWorkingSet.getName());
 			initializeCheckedState();
-			validateInput();
+			fWorkingSetName.setText(fWorkingSet.getName());
 		}
 	}
 
