@@ -448,8 +448,8 @@ public class ContentAssistant implements IContentAssistant {
 		
 		protected Point getAboveLocation() {
 			StyledText text= fViewer.getTextWidget();
-			int caret= text.getCaretOffset();
-			Point p= text.getLocationAtOffset(caret);
+			int start= text.getSelectionRange().x;
+			Point p= text.getLocationAtOffset(start);
 			return text.toDisplay(p);
 		}
 	
@@ -937,7 +937,7 @@ public class ContentAssistant implements IContentAssistant {
 	 *
 	 * @param document the document
 	 * @param position a document position
-	 * @return an array of validator
+	 * @return an validator
 	 *
 	 * @see IContentAssistProcessor#getContextInformationValidator
 	 */
@@ -945,6 +945,22 @@ public class ContentAssistant implements IContentAssistant {
 		IContentAssistProcessor p= getProcessor(document, position);
 		if (p != null)
 			return p.getContextInformationValidator();
+		return null;
+	}
+	
+	/**
+	 * Returns the context information presenter that should be used to 
+	 * display context information. The position is used to determine the appropriate 
+	 * content assist processor to invoke.
+	 *
+	 * @param document the document
+	 * @param position a document position
+	 * @return a presenter
+	 */
+	IContextInformationPresenter getContextInformationPresenter(IDocument document, int position) {
+		IContextInformationValidator validator= getContextInformationValidator(document, position);
+		if (validator instanceof IContextInformationPresenter)
+			return (IContextInformationPresenter) validator;
 		return null;
 	}
 	

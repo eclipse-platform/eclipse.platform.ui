@@ -72,7 +72,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		 */
 		private void stop() {
 			
-			fWindowShell.setVisible(false);
+			fHoverShell.setVisible(false);
 			
 			StyledText text= fTextViewer.getTextWidget();
 			text.removeMouseListener(this);
@@ -152,7 +152,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		 */
 		public void focusLost(FocusEvent event) {
 			if (fTextViewer.getTextWidget() == event.widget) {
-				fWindowShell.getDisplay().asyncExec(new Runnable() {
+				fHoverShell.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						stop();
 					}
@@ -170,10 +170,12 @@ class TextHoveringController extends MouseTrackAdapter {
 	/** The text viewer this controller is connected to */
 	private TextViewer fTextViewer;
 	
-	/** The popup window shell */
-	private Shell fWindowShell;
-	/** The label shown in the popup window shell */
-	private Label fWindowLabel;
+	/** The hover shell */
+	private Shell fHoverShell;
+	/** The hover text */
+	private StyledText fHoverText;
+	/** The hover text presentation */
+	private TextPresentation fHoverPresentation= new TextPresentation();
 	/** Remembers the previous mouse hover location */
 	private Point fHoverLocation= new Point(-1, -1);
 	
@@ -194,12 +196,12 @@ class TextHoveringController extends MouseTrackAdapter {
 		fTextViewer= textViewer;
 		
 		StyledText styledText= textViewer.getTextWidget();
-		fWindowShell= new Shell(styledText.getShell(), SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
-		fWindowLabel= new Label(fWindowShell, SWT.NO_FOCUS);
+		fHoverShell= new Shell(styledText.getShell(), SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+		fHoverText= new StyledText(fHoverShell, SWT.MULTI | SWT.READ_ONLY);
 		
 		Display display= styledText.getShell().getDisplay();
-		fWindowShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		fWindowLabel.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		fHoverShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		fHoverText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
 	
 	/**
@@ -355,8 +357,17 @@ class TextHoveringController extends MouseTrackAdapter {
 		String info= hover.getHoverInfo(fTextViewer, region);
 		if (info != null && info.trim().length() > 0) {
 			Rectangle coveredArea= computeCoveredArea(region);
-			if (fWindowShell != null && !fWindowShell.isDisposed()) {
-				fWindowLabel.setText(info);
+			if (fHoverShell != null && !fHoverShell.isDisposed()) {
+				
+				fHoverText.setText(info);
+				
+				if (hover instanceof IHoverInfoPresenter) {
+					IHoverInfoPresenter presenter= (IHoverInfoPresenter) hover;
+					fHoverPresentation.clear();
+					if (presenter.updatePresentation(info, fHoverPresentation))
+						TextPresentation.applyTextPresentation(fHoverPresentation, fHoverText);
+				}
+				
 				showWindow(coveredArea, computeWindowLocation(event.x, event.y, coveredArea));
 			}
 		}
@@ -371,18 +382,18 @@ class TextHoveringController extends MouseTrackAdapter {
 	 */
 	private void showWindow(Rectangle coveredArea, Point location) {
 		
-		Point size= fWindowLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point size= fHoverText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		
-		fWindowLabel.setSize(size.x + 3, size.y);
-		fWindowShell.setSize(size.x + 5, size.y + 2);
+		fHoverText.setSize(size.x + 3, size.y);
+		fHoverShell.setSize(size.x + 5, size.y + 2);
 		
-		fWindowLabel.setLocation(1,1);
-		fWindowShell.setLocation(location);
+		fHoverText.setLocation(1,1);
+		fHoverShell.setLocation(location);
 		
 		new WindowCloser(coveredArea).start();
 		uninstall();
 		
-		fWindowShell.setVisible(true);
+		fHoverShell.setVisible(true);
 	}
 	
 	/**
@@ -403,9 +414,9 @@ class TextHoveringController extends MouseTrackAdapter {
 	 * Disposes this hovering controller	 
 	 */
 	public void dispose() {
-		if (fWindowShell != null && !fWindowShell.isDisposed()) {
-			fWindowShell.dispose();
-			fWindowShell= null;
+		if (fHoverShell != null && !fHoverShell.isDisposed()) {
+			fHoverShell.dispose();
+			fHoverShell= null;
 		}
 	}
 }

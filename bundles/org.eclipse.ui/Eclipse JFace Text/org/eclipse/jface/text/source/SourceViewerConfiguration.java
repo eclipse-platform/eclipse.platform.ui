@@ -125,15 +125,15 @@ public class SourceViewerConfiguration {
 		return new DefaultAutoIndentStrategy();
 	}
 	/**
-	 * Returns the default prefix to be used by the line-prefix operation
+	 * Returns the default prefixes to be used by the line-prefix operation
 	 * in the given source viewer for text of the given content type. This implementation always
 	 * returns <code>null</code>.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the prefix is applicable
-	 * @return the default prefix or <code>null</code> if the prefix operation should not be supported
+	 * @return the default prefixes or <code>null</code> if the prefix operation should not be supported
 	 */
-	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
+	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
 
@@ -156,7 +156,7 @@ public class SourceViewerConfiguration {
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the prefix is applicable
-	 * @return a prefix or <code>null</code> if the prefix operation should not be supported
+	 * @return the prefixes or <code>null</code> if the prefix operation should not be supported
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "\t", "    ", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

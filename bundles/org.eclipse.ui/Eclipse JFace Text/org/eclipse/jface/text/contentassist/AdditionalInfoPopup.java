@@ -180,7 +180,7 @@ class AdditionalInfoPopup implements SelectionListener, DisposeListener, Runnabl
 			Rectangle r= selection[0].getBounds(0);
 			Point location= fProposalShell.toDisplay(fProposalTable.getLocation());
 			int offset= (fProposalTable.getSelectionIndex() - fProposalTable.getTopIndex() + 1) * fProposalTable.getItemHeight();
-			return new Point(location.x + r.x + (r.width / 2), location.y + offset);
+			return new Point(location.x + r.x + (r.width / 8), location.y + offset + 2);
 		} 
 		
 		return null;

@@ -4,7 +4,28 @@ package org.eclipse.jface.text.contentassist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.swt.widgets.Table;import org.eclipse.swt.widgets.TableItem;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.ITextViewer;
+import java.util.Iterator;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
 
 
 /**
@@ -30,7 +51,8 @@ class ContextInformationPopup implements IContentAssistListener {
 	private String fLineDelimiter= null;
 
 	private Shell fContextInfoPopup;
-	private Label fContextInfoLabel;
+	private StyledText fContextInfoText;
+	private TextPresentation fTextPresentation;
 	
 	public ContextInformationPopup(ContentAssistant contentAssistant, ITextViewer viewer) {
 		fContentAssistant= contentAssistant;
@@ -76,15 +98,26 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 	
 	private void internalShowContextInfo(IContextInformation information) {
-		createContextInfoPopup();
-		setContextInformation(information);
-		displayContextInfoPopup();
-		
 		
 		int pos= fViewer.getSelectedRange().x;
 		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), pos);
-		validator.install(information, fViewer, pos);
-		fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+		
+		if (validator != null) {
+			validator.install(information, fViewer, pos);
+			
+			IContextInformationPresenter presenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), pos);
+			if (presenter != null) {
+				fTextPresentation= new TextPresentation();
+				presenter.install(information, fViewer, pos);
+				presenter.updatePresentation(pos, fTextPresentation);
+			}
+			
+			createContextInfoPopup();
+			setContextInformation(information);
+			displayContextInfoPopup();
+			
+			fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+		}
 	}
 	
 	private IContextInformation[] computeContextInformation() {
@@ -104,38 +137,32 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoPopup= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		Color c= fContextInfoPopup.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		fContextInfoPopup.setBackground(c);
-		fContextInfoLabel= new Label(fContextInfoPopup, SWT.LEFT | SWT.WRAP);
+		fContextInfoText= new StyledText(fContextInfoPopup, SWT.MULTI | SWT.READ_ONLY);
 		c= fContentAssistant.getContextInfoPopupBackground();
 		if (c != null)
-			fContextInfoLabel.setBackground(c);
+			fContextInfoText.setBackground(c);
 	}
 	
 	private void setContextInformation(IContextInformation information) {
-		if (Helper.okToUse(fContextInfoLabel)) {
-
-			fContextInfoLabel.setRedraw(false);
-
-			Display display= fContextInfoLabel.getDisplay();
-			if (information.getImage() != null)
-				fContextInfoLabel.setImage(information.getImage());
-			fContextInfoLabel.setText(information.getInformationDisplayString());
-
-			fContextInfoLabel.setRedraw(true);
-		}
+		if (Helper.okToUse(fContextInfoText))
+			fContextInfoText.setText(information.getInformationDisplayString());
 	}
 	
 	private void displayContextInfoPopup() {
 		
-		Point size= fContextInfoLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point size= fContextInfoText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		
 		size.x += 3;
-		fContextInfoLabel.setSize(size);
-		fContextInfoLabel.setLocation(1,1);
+		fContextInfoText.setSize(size);
+		fContextInfoText.setLocation(1,1);
 		size.x += 2;
 		size.y += 2;
 		fContextInfoPopup.setSize(size);
 
 		fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP);
+		if (fTextPresentation != null)
+			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+			
 		fContextInfoPopup.setVisible(true);
 	}
 
@@ -146,6 +173,11 @@ class ContextInformationPopup implements IContentAssistListener {
 			fContextInfoPopup.setVisible(false);
 			fContextInfoPopup.dispose();
 			fContextInfoPopup= null;
+			
+			if (fTextPresentation != null) {
+				fTextPresentation.clear();
+				fTextPresentation= null;
+			}
 		}
 	}
 	
@@ -303,7 +335,8 @@ class ContextInformationPopup implements IContentAssistListener {
 			return false;
 
 		} else if (key == 0x1B) {
-			hideContextSelector(); // Terminate on Esc
+			// Terminate on Esc
+			hideContextSelector();
 		}
 		
 		return true;
@@ -329,7 +362,8 @@ class ContextInformationPopup implements IContentAssistListener {
 			}
 			
 		} else if (key == 0x1B) {
-			hideContextInfoPopup(); // Terminate on Esc
+			// Terminate on Esc
+ 			hideContextInfoPopup();
 		} else {
 			validateContextInformation();
 		}
@@ -359,12 +393,31 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 
 	private void validateContextInformation() {
-		IDocument doc= fViewer.getDocument();
-		int pos= fViewer.getSelectedRange().x;
+		/*
+		 * Post the code in the event queue in order to ensure that the
+		 * action described by this verify key event has already beed executed.
+		 * Otherwise, we'd validate the context information based on the 
+		 * pre key stroke state.
+		 */
+		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
+			public void run() {			
 		
-		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(doc, pos);
-		if (validator == null || !validator.isContextInformationValid(pos))
-			hideContextInfoPopup();
+				if (Helper.okToUse(fContextInfoPopup)) {
+					
+					IDocument doc= fViewer.getDocument();
+					int pos= fViewer.getSelectedRange().x;
+					
+					IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(doc, pos);
+					if (validator == null || !validator.isContextInformationValid(pos)) {
+						hideContextInfoPopup();
+					} else {
+						IContextInformationPresenter presenter= fContentAssistant.getContextInformationPresenter(doc, pos);
+						if (presenter != null && presenter.updatePresentation(pos, fTextPresentation))
+							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+					}
+				}
+			}
+		});
 	}
 }
 

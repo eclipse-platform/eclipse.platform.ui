@@ -195,9 +195,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			if (prefixes != null && prefixes.length > 0)
 				setIndentPrefixes(prefixes, t);
 			
-			String prefix= configuration.getDefaultPrefix(this, t);
-			if (prefix != null && prefix.length() > 0)
-				setDefaultPrefix(prefix, t);
+			prefixes= configuration.getDefaultPrefixes(this, t);
+			if (prefixes != null && prefixes.length > 0)
+				setDefaultPrefixes(prefixes, t);
 		}
 		
 		activatePlugins();

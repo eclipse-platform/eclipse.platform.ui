@@ -168,7 +168,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				int line= fRuler.getLineOfLastMouseButtonActivity();
 				if (line == markerLine)
 					return true;
-				return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
+				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multiline Bookmarks and Tasks"
+				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
 			} catch (BadLocationException x) {
 			}
 		}

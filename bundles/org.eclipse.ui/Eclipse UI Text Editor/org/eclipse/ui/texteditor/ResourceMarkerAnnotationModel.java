@@ -101,6 +101,10 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * @param markerDeltas the list of marker deltas
 	 */
 	private void update(IMarkerDelta[] markerDeltas) {
+		
+		if (markerDeltas.length ==  0)
+			return;
+		
 		for (int i= 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta= markerDeltas[i];
 			switch (delta.getKind()) {

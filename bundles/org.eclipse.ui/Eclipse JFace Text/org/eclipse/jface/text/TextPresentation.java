@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 
  
 /**
@@ -26,6 +27,28 @@ import org.eclipse.swt.custom.StyleRange;
  * must be explicitly asked for using <code>getDefaultStyleRange</code>.
  */
 public class TextPresentation {
+	
+	
+	
+	/**
+	 * Applies the given presentation to the given text widget.
+	 *
+	 * @param presentation the style information
+	 * @param the widget to which to apply the style information
+	 */
+	public static void applyTextPresentation(TextPresentation presentation, StyledText text) {
+		
+		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];				
+		
+		int i= 0;
+		Iterator e= presentation.getAllStyleRangeIterator();
+		while (e.hasNext())
+			ranges[i++]= (StyleRange) e.next();
+		
+		text.setStyleRanges(ranges);
+	}	
+	
+	
 	
 	
 	/**
@@ -334,5 +357,14 @@ public class TextPresentation {
 			return null;
 					
 		return new Region(first.start, last.start - first. start + last.length);
-	}	
+	}
+	
+	/**
+	 * Clears this presentation by resetting all applied changes.
+	 */
+	public void clear() {
+		fDefaultRange= null;
+		fResultWindow= null;
+		fRanges.clear();
+	}
 }

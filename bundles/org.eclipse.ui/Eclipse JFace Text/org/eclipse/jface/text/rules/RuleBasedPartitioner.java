@@ -196,11 +196,6 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 				
 				// remove all affected positions
 				while (first < category.length) {
-					
-					/*
-					 * 1GII2RZ: ITPJUI:WINNT - AssertionFailed Ex. in Java editor
-					 * TypedPosition p= (TypedPosition) category[first++];
-					 */
 					TypedPosition p= (TypedPosition) category[first];
 					if (lastScannedPosition >= p.getOffset() + p.getLength() || 
 							(p.overlapsWith(start, length) && 
@@ -208,11 +203,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 							 	 !contentType.equals(p.getType())))) {
 						d.removePosition(CONTENT_TYPES_CATEGORY, p);
 						changed= true;
-						/*
-						 * 1GII2RZ: ITPJUI:WINNT - AssertionFailed Ex. in Java editor
-						 */
 						++ first;
-						
 					} else
 						break;
 				}
