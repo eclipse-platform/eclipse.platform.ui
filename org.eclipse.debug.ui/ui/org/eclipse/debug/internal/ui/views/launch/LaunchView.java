@@ -656,7 +656,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 			if (editor == null) {
 				if (fEditor == null || fEditor.isDirty() || page.isEditorPinned(fEditor)) {
-					editor = openEditor(page, input, getEditorId(), false);
+					editor = openEditor(page, input, getEditorId());
 					fEditor = editor;
 				} else if (fEditor instanceof IReusableEditor && getEditorId().equals(fEditor.getSite().getId())) {
 					((IReusableEditor)fEditor).setInput(input);
@@ -664,13 +664,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					page.bringToTop(editor);
 				} else {
 					page.closeEditor(fEditor, false);
-					editor = openEditor(page, input, getEditorId(), false);
+					editor = openEditor(page, input, getEditorId());
 					fEditor = editor;
 				}
 			}
 		} else {
 			// Open a new editor
-			editor = openEditor(page, getEditorInput(), getEditorId(), false);
+			editor = openEditor(page, getEditorInput(), getEditorId());
 		}
 		return editor;
 	}
@@ -680,7 +680,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * or <code>null</code> if an error occurred while attempting to open the
 	 * editor.
 	 */
-	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id, boolean activate) {
+	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
 		final IEditorPart[] editor = new IEditorPart[] {null};
 		Runnable r = new Runnable() {
 			public void run() {

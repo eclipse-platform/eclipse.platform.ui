@@ -246,7 +246,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 				IAdaptable element= (IAdaptable)event.getElement();
 				boolean state= event.getChecked();		
 				if (isExpandable(element)) {
-					setSubtreeChecked(element, state, true);
+					setSubtreeChecked(element, state);
 				}
 					
 				updateParentState(element, state);
@@ -256,7 +256,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 		});
 	}
 	
-	private void setSubtreeChecked(Object parent, boolean state, boolean checkExpandedState) {
+	private void setSubtreeChecked(Object parent, boolean state) {
 		if (!(parent instanceof IAdaptable)) {
 			return;
 		}
@@ -267,7 +267,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 			Object[] children= fTreeContentProvider.getChildren(parent);
 			for (int i= children.length - 1; i >= 0; i--) {
 				Object element= children[i];	
-				setSubtreeChecked(element, state, true);
+				setSubtreeChecked(element, state);
 			}
 		}
 
@@ -312,7 +312,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 				for (int i= 0; i < elements.length; i++) {
 					Object element= elements[i];
 					if (isExpandable(element)) {
-						setSubtreeChecked(element, true, true);
+						setSubtreeChecked(element, true);
 					}
 					updateParentState(element, true);
 				}
