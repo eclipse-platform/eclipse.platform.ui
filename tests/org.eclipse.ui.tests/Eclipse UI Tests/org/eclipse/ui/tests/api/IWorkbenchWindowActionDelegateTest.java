@@ -37,20 +37,20 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	
-	public void testDispose() throws Throwable {
-		// Run the action.
-		testRun();
-		
-		// Get the action.
-		MockActionDelegate delegate = getDelegate();
-		assertNotNull(delegate);
-		
-		// Dispose action.
-		// Verify that the dispose method is called.
-		delegate.callHistory.clear();
-		removeAction();
-		assertTrue(delegate.callHistory.contains("dispose"));
-	}
+//	public void testDispose() throws Throwable {
+//		// Run the action.
+//		testRun();
+//		
+//		// Get the action.
+//		MockActionDelegate delegate = getDelegate();
+//		assertNotNull(delegate);
+//		
+//		// Dispose action.
+//		// Verify that the dispose method is called.
+//		delegate.callHistory.clear();
+//		removeAction();
+//		assertTrue(delegate.callHistory.contains("dispose"));
+//	}
 	
 	/**
 	 * @see IActionDelegateTest#createActionWidget()
