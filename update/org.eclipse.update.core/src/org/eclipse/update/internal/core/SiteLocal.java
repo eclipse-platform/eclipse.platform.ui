@@ -634,10 +634,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				siteEntries = currentSite.getPluginEntries();
 			}
 			IPluginEntry[] featuresEntries = element.getFeature().getPluginEntries();
-			IPluginEntry[] result = intersection(featuresEntries, siteEntries);
+			IPluginEntry[] result = substract(featuresEntries, siteEntries);
 			if (result == null || (result.length != 0)) {
 				((FeatureReferenceModel) element).setBroken(true);
-				IPluginEntry[] missing = intersection(featuresEntries, result);
+				IPluginEntry[] missing = substract(featuresEntries, result);
 				String listOfMissingPlugins = "";
 				for (int k = 0; k < missing.length; k++) {
 					listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionIdentifier().toString();
@@ -666,7 +666,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * Returns the plugin entries that are in source array and
 	 * missing from target array
 	 */
-	private IPluginEntry[] intersection(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
+	private IPluginEntry[] substract(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
 
 		// No pluginEntry to Install, return Nothing to instal
 		if (sourceArray == null || sourceArray.length == 0) {
@@ -703,18 +703,28 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	private void checkConfigure(IFeatureReference ref, ConfigurationSite newConfigSite) throws CoreException {
 		// check if all the needed plugins are part of all plugin
+		boolean configured = false;
+		//FIXME right now we figure the exact match
+		// but a feature can be running b/c a *compatible* plugin 
+		// match has been found
+		// we should check the id only, forget about version ???
+		// algorithm has to be reviewed...
 		IPluginEntry[] allPlugins = getAllRunningPlugin();
 		IFeature feature = ref.getFeature();
 		IPluginEntry[] result = new IPluginEntry[0];
 		if ( feature!=null){
 			IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
-			result = intersection(featurePlugins, allPlugins);
+			result = substract(featurePlugins, allPlugins);
+			if (result.length==0){
+				configured = true;
+			}
+			
 		} else {
 			((FeatureReference)ref).setBroken(true);
 		}
 
 		// there are some plugins the feature need that are not present
-		if (result.length != 0 || ref.isBroken()) {
+		if (!configured || ref.isBroken()) {
 			(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);			
 		} else {
 			(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel)ref);			

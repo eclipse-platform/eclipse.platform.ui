@@ -1,11 +1,11 @@
 package org.eclipse.update.core;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /*
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * This is a base class for singleton handler of web-based install
