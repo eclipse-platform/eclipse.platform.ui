@@ -18,6 +18,7 @@ import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * A content describer for detecting the name of the top-level element of the
@@ -55,6 +56,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * will be.
 	 */
 	private String elementToFind = null;
+
 	/* (Intentionally not included in javadoc)
 	 * Determines the validation status for the given contents.
 	 * 
@@ -71,6 +73,9 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		try {
 			if (!xmlHandler.parseContents(contents))
 				return INVALID;
+		} catch (SAXException e) {
+			// we may be handed any kind of contents... it is normal we fail to parse
+			return INVALID;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
 			throw new RuntimeException(e);

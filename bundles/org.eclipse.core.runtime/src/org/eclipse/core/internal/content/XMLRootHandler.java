@@ -98,6 +98,16 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		final SAXParser parser = parserFactory.newSAXParser();
 		final XMLReader reader = parser.getXMLReader();
 		reader.setProperty("http://xml.org/sax/properties/lexical-handler", this); //$NON-NLS-1$
+		// disable DTD validation (bug 63625)
+		try {
+			//	be sure validation is "off" or the feature to ignore DTD's will not apply
+			reader.setFeature("http://xml.org/sax/features/validation", false); //$NON-NLS-1$
+			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+		} catch (SAXNotRecognizedException e) {
+			// not a big deal if the parser does not recognize the features
+		} catch (SAXNotSupportedException e) {
+			// not a big deal if the parser does not support the features
+		}
 		return parser;
 	}
 
@@ -153,21 +163,18 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return elementFound;
 	}
 
-	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException {
+	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
 		try {
 			factory = getFactory();
 			if (factory == null)
 				return false;
 			final SAXParser parser = createParser(factory);
-			// to support external entities specified as relative URIs (see bug 63298) 
+			// to support external entities specified as relative URIs (see bug 63298)
 			contents.setSystemId("/"); //$NON-NLS-1$
 			parser.parse(contents, this);
-		} catch (final StopParsingException e) {
-			// Abort the parsing normally.  Fall through...
-		} catch (final SAXException e) {
-			// we may be handed any kind of contents... it is normal we fail to parse
-			return false;
+		} catch (StopParsingException e) {
+			// Abort the parsing normally. Fall through...
 		}
 		return true;
 	}

@@ -20,7 +20,8 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public final class ContentType implements IContentType {
-	private static final String DESCRIBER_ELEMENT = "describer";	 //$NON-NLS-1$
+	private static final String DESCRIBER_ELEMENT = "describer"; //$NON-NLS-1$
+
 	/* A placeholder for missing/invalid describers. */
 	private class InvalidDescriber implements IContentDescriber {
 		public int describe(InputStream contents, IContentDescription description) throws IOException {
@@ -162,14 +163,15 @@ public final class ContentType implements IContentType {
 		}
 	}
 
-	int describe(IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) throws IOException {
+	int describe(IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
-			// I/O exceptions are expected, and will flow to the caller
-			throw ioe;
+			String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+			log(message, ioe);
+			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
-			// describer seems to be buggy. just disable it (logging the reason) 
+			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
 			return IContentDescriber.INVALID;
 		} catch (Error e) {
@@ -181,14 +183,15 @@ public final class ContentType implements IContentType {
 		}
 	}
 
-	int describe(IContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) throws IOException {
+	int describe(ITextContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) {
 		try {
-			return ((ITextContentDescriber) selectedDescriber).describe(contents, description);
+			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
-			// I/O exceptions are expected, and will flow to the caller
-			throw ioe;
+			String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+			log(message, ioe);
+			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
-			// describer seems to be buggy. just disable it (logging the reason)			
+			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
 			return IContentDescriber.INVALID;
 		} catch (Error e) {
@@ -196,7 +199,13 @@ public final class ContentType implements IContentType {
 			invalidateDescriber(e);
 			throw e;
 		} finally {
-			contents.reset();
+			try {
+				contents.reset();
+			} catch (IOException ioe) {
+				// this should only happen if the describer closed the reader (it should not)
+				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				log(message, ioe);
+			}
 		}
 	}
 
@@ -226,7 +235,7 @@ public final class ContentType implements IContentType {
 			return getTarget().getDefaultCharset();
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		String currentCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, internalGetDefaultCharset());
-		// an empty string as charset means: no default charset 
+		// an empty string as charset means: no default charset
 		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
 	}
 
@@ -240,7 +249,7 @@ public final class ContentType implements IContentType {
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		// if "" is specified no describer should be created 
+		// if "" is specified no describer should be created
 		if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
 			return null;
 		synchronized (this) {
@@ -250,7 +259,9 @@ public final class ContentType implements IContentType {
 				try {
 					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
 				} catch (CoreException ce) {
-					// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents					
+					// the content type definition was invalid. Ensure we don't
+					// try again, and this content type does not accept any
+					// contents
 					return invalidateDescriber(ce);
 				}
 		}
@@ -283,7 +294,7 @@ public final class ContentType implements IContentType {
 			return getTarget().getFileSpecs(typeMask);
 		if (fileSpecs == null)
 			return new String[0];
-		// invert the last two bits so it is easier to compare 
+		// invert the last two bits so it is easier to compare
 		typeMask ^= (IGNORE_PRE_DEFINED | IGNORE_USER_DEFINED);
 		List result = new ArrayList(fileSpecs.size());
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
@@ -327,9 +338,11 @@ public final class ContentType implements IContentType {
 		return fileSpecs != null && !fileSpecs.isEmpty();
 	}
 
-	/** 
-	 * @param text the file spec string
-	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
+	/**
+	 * @param text
+	 *            the file spec string
+	 * @param typeMask
+	 *            FILE_NAME_SPEC or FILE_EXTENSION_SPEC
 	 * @return true if this file spec has already been added, false otherwise
 	 */
 	private boolean hasFileSpec(String text, int typeMask) {
@@ -362,18 +375,19 @@ public final class ContentType implements IContentType {
 		return defaultCharset;
 	}
 
-	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
+	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)
-			return defaultDescription;		
+			return defaultDescription;
 		IContentDescriber describer = this.getDescriber();
-		// no describer - just return the default description		
+		// no describer - just return the default description
 		if (describer == null)
 			return defaultDescription;
 		ContentDescription description = new ContentDescription(options);
-		describer.describe(buffer, description);
-		// if the describer didn't add any details, just return the default description 
+		describe(describer, buffer, description);
+		// if the describer didn't add any details, just return the default
+		// description
 		if (!description.isSet())
 			return defaultDescription;
 		// check if any of the defaults need to be applied
@@ -383,20 +397,20 @@ public final class ContentType implements IContentType {
 		return description;
 	}
 
-	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {		
+	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)
 			return defaultDescription;
 		IContentDescriber describer = this.getDescriber();
-		// no describer - just return the default description		
+		// no describer - just return the default description
 		if (describer == null)
 			return defaultDescription;
 		ContentDescription description = new ContentDescription(options);
 		if (!(describer instanceof ITextContentDescriber))
 			throw new UnsupportedOperationException();
-		((ITextContentDescriber) describer).describe(buffer, description);
-		// if the describer didn't add any details, just return the default description 
+		describe((ITextContentDescriber) describer, buffer, description);
+		// if the describer didn't add any details, just return the default description
 		if (!description.isSet())
 			return defaultDescription;
 		// check if any of the defaults need to be applied
@@ -438,10 +452,14 @@ public final class ContentType implements IContentType {
 	private IContentDescriber invalidateDescriber(Throwable reason) {
 		setValidation(STATUS_INVALID);
 		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
+		log(message, reason);
+		return describer = new InvalidDescriber();
+	}
+
+	private void log(String message, Throwable reason) {
 		// don't log CoreExceptions again
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
 		InternalPlatform.getDefault().log(status);
-		return describer = new InvalidDescriber();
 	}
 
 	public boolean isAssociatedWith(String fileName) {
@@ -495,7 +513,7 @@ public final class ContentType implements IContentType {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc) 
 	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
 	 */
 	public void setDefaultCharset(String userCharset) throws CoreException {
