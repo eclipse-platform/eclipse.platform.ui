@@ -104,6 +104,11 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		fWorkingSetDescriptors = registry.getWorkingSetDescriptors();
 		
+		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
+		for (int i = 0; i < workingSets.length; i++) {
+			workingSetManager.removeWorkingSet(workingSets[i]);
+		}		
 		setupResources();
 	}
 	private void setupResources() throws CoreException {
