@@ -73,6 +73,12 @@ INPUT {
 	padding-right:4px;
 }
 
+#main {	
+	background-image: url("images/banner_prod.jpg");
+	background-position:top left;
+	background-repeat:no-repeat;
+}
+
 </style>
 
 <script language="JavaScript">
@@ -111,10 +117,12 @@ function doSearch()
 
 <form  name="searchForm"   onsubmit="doSearch()">
 					
-<table width="100%" height="100%" cellspacing=0 cellpading=0 border=0>
+<table id=main width="100%" height="100%" cellspacing=0 cellpading=0 border=0>
 <tr>
 <td align=left>
+<!--
 	<img src="images/banner_prod.jpg">
+-->
 </td>
 <td align=right >
 	<table height="100%" cellspacing=0 cellpading=0 border=0 style="margin-right:5px;" >

@@ -57,18 +57,6 @@ SPAN {
 </head>
 
 <body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
-<!--
-<div id="titleText" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;"></div>
-
-<table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 valign=bottom width="100%" height="100%" nowrap>
-<tr>
-<td valign=bottom></td>
-<td align=right ><div id="toolbarButton"><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a></div></td>
-</tr>
-</table>
-
-</body>
--->
 
 	<div id="titleText">&nbsp;<%=WebappResources.getString("Content", request)%></div>
 		
