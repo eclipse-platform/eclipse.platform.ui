@@ -133,4 +133,10 @@ class TableLabelProvider extends LabelProvider implements
 	}
 	private void addTargetLocation() {
 	}
+	
+	public ISite getTargetSite() {
+		IStructuredSelection sel = (IStructuredSelection)tableViewer.getSelection();
+		if (sel.isEmpty()) return null;
+		return (ISite)sel.getFirstElement();
+	}
 }

@@ -53,6 +53,9 @@ class SiteProvider extends DefaultContentProvider
 		}
 		if (parent instanceof SiteCategory) {
 			final SiteCategory category = (SiteCategory)parent;
+			IStatusLineManager mng = getViewSite().getActionBars().getStatusLineManager();
+			mng.setMessage("Connecting the server...");
+			mng.getProgressMonitor().beginTask("", IProgressMonitor.UNKNOWN);
 			BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 									new Runnable() {
 				public void run() {
@@ -64,6 +67,8 @@ class SiteProvider extends DefaultContentProvider
 					}
 				}
 									});
+			mng.getProgressMonitor().done();
+			mng.setMessage("");
 			return category.getChildren();
 		}
 		return new Object[0];
@@ -238,6 +243,9 @@ class CatalogBag {
 private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 	if (!bookmark.isSiteConnected()) {
 		final CatalogBag bag = new CatalogBag();
+		IStatusLineManager mng = getViewSite().getActionBars().getStatusLineManager();
+		mng.setMessage("Connecting the server...");
+		mng.getProgressMonitor().beginTask("", IProgressMonitor.UNKNOWN);
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				try {
@@ -248,6 +256,8 @@ private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 				}
 			}
 		});
+		mng.getProgressMonitor().done();
+		mng.setMessage("");
 		if (bag.catalog!=null) return bag.catalog;
 	}
 	if (bookmark.getSite()!=null) {

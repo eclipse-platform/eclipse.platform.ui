@@ -119,6 +119,12 @@ class ReflowInfoGroup extends InfoGroup {
 	}
 }
 
+class PageSettings {
+	public static final int LICENSE_EXPANDED = 0x2;
+	public static final int COPYRIGHT_EXPANDED = 0x4;
+	public int flags;
+}
+
 public DetailsForm(UpdateFormPage page) {
 	super(page);
 	providerImage = UpdateUIPluginImages.DESC_PROVIDER.createImage();
@@ -270,13 +276,16 @@ public void expandTo(final Object obj) {
 }
 
 private void inputChanged(IFeature feature) {
+	if (currentFeature!=null) {
+		saveSettings(currentFeature);
+	}
 	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
-	sizeLabel.setText("0 KB");
+	sizeLabel.setText("0KB");
 	descriptionText.setText(feature.getDescription().getText());
 	Image logoImage = loadProviderImage(feature);
 	if (logoImage==null)
@@ -296,15 +305,36 @@ private void inputChanged(IFeature feature) {
 	
 	licenseGroup.setInfo(feature.getLicense());
 	copyrightGroup.setInfo(feature.getCopyright());
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	doButton.setEnabled(!model.checklistContains(feature));
+	doButton.setVisible(true);
+	
+	restoreSettings(feature);
 	reflow();
 	updateSize();
 	((Composite)getControl()).redraw();
 
-	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	doButton.setEnabled(!model.checklistContains(feature));
-	doButton.setVisible(true);
-
 	currentFeature = feature;
+}
+
+private void restoreSettings(IFeature feature) {
+	PageSettings settings = (PageSettings)getSettings(feature);
+	if (settings==null) return;
+	if ((settings.flags & PageSettings.LICENSE_EXPANDED)!=0)
+	   licenseGroup.setExpanded(true);
+	if ((settings.flags & PageSettings.COPYRIGHT_EXPANDED)!=0)
+	   copyrightGroup.setExpanded(true);
+}
+
+private void saveSettings(IFeature feature) {
+	PageSettings settings = (PageSettings)getSettings(feature);
+	if (settings==null) settings = new PageSettings();
+	settings.flags =0;
+	if (licenseGroup.isExpanded())
+	   settings.flags |= PageSettings.LICENSE_EXPANDED;
+	if (copyrightGroup.isExpanded())
+	   settings.flags |= PageSettings.COPYRIGHT_EXPANDED;
+	setSettings(feature, settings);
 }
 
 private Image loadProviderImage(IFeature feature) {
@@ -438,4 +468,5 @@ private void doButtonSelected() {
 		});
 	}
 }
+
 }

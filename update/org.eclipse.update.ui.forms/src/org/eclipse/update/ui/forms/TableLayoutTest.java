@@ -47,7 +47,9 @@ public static void main (String [] args) {
      
      Label label;
      CLabel clabel;
-     
+     Button b;
+     TableData td;
+/*     
      label = new Label(c, SWT.NULL);
      label.setText("Single line1");
      
@@ -57,14 +59,14 @@ public static void main (String [] args) {
      text.setText("This is a much longer text that I want wrapped,"+
      " but depending on the window size it can be rendered completely.");
      
-     Button b = new Button(c, SWT.PUSH);
+     b = new Button(c, SWT.PUSH);
      b.setText("Simple button");
      
      label = new Label(c, SWT.WRAP);
      label.setText("Another text that may or may not be wrapped");
 
      label = new Label(c, SWT.NULL);
-     TableData td = new TableData(TableData.RIGHT, TableData.BOTTOM);
+     td = new TableData(TableData.RIGHT, TableData.BOTTOM);
      label.setLayoutData(td);
      label.setText("Fixed label");
      
@@ -78,7 +80,7 @@ public static void main (String [] args) {
      td = new TableData(TableData.LEFT, TableData.MIDDLE);
      label.setLayoutData(td);
      label.setText("Some text in the nested label that can be wrapped");
-     
+*/     
      label = new Label(c, SWT.NULL);
      label.setText("Text in the left column");
      

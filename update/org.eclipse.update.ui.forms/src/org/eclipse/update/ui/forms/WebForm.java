@@ -49,7 +49,18 @@ protected void layout(Composite parent, boolean changed) {
 	if (isHeadingVisible()) {
 		y = getHeadingHeight(parent);
 	}
-	Point csize = client.computeSize(bounds.width, SWT.DEFAULT, changed);
+	Point csize;
+	Layout layout = client.getLayout();
+	if (layout!=null && layout instanceof HTMLTableLayout) {
+		HTMLTableLayout hlayout = (HTMLTableLayout)layout;
+		csize = hlayout.computeSize(client, bounds.width, SWT.DEFAULT, true);
+		if (csize.x < bounds.width) csize.x = bounds.width;
+		Rectangle trim = control.computeTrim(0, 0, csize.x, csize.y);
+		csize = new Point(trim.width, trim.height);
+	}
+	else {
+	   csize = client.computeSize(bounds.width, SWT.DEFAULT, changed);
+	}
 	client.setBounds(x, y, csize.x, csize.y);
 }
 
@@ -59,7 +70,18 @@ protected Point computeSize(Composite parent, int wHint, int hHint, boolean chan
 	if (isHeadingVisible()) {
 		height = getHeadingHeight(parent);
 	}
-	Point csize = client.computeSize(width, SWT.DEFAULT, changed);
+	Point csize;
+	Layout layout = client.getLayout();
+	if (layout!=null && layout instanceof HTMLTableLayout) {
+		HTMLTableLayout hlayout = (HTMLTableLayout)layout;
+		csize = hlayout.computeSize(client, width, SWT.DEFAULT, true);
+		if (csize.x < width) csize.x = width;
+		Rectangle trim = control.computeTrim(0, 0, csize.x, csize.y);
+		csize = new Point(trim.width, trim.height);
+	}
+	else {
+	   csize = client.computeSize(width, SWT.DEFAULT, changed);
+	}
 	width = csize.x;
 	height += csize.y;
 	return new Point (width, height);
@@ -151,6 +173,7 @@ public void updateSize() {
 	if (size.x < swidth) size.x = swidth;
 	Rectangle trim = control.computeTrim(0, 0, size.x, size.y);
 	size = new Point(trim.width, trim.height);
+	System.out.println("ssize="+ssize.width+", size="+size.x);
 	control.setSize(size);
 }
 
