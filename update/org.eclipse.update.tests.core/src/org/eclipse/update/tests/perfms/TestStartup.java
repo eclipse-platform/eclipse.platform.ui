@@ -29,7 +29,7 @@ public class TestStartup extends UpdateManagerTestCase {
 
 	public void testConfigurationCreation() {
 		Performance perf= Performance.getDefault();
-		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter performanceMeter= perf.createPerformanceMeter("Parse update configuration");
 		try {
 			for (int i= 0; i < 10; i++) {
 				performanceMeter.start();
@@ -50,7 +50,7 @@ public class TestStartup extends UpdateManagerTestCase {
 	
 	public void testConfigurationDetection() {
 		Performance perf= Performance.getDefault();
-		PerformanceMeter performanceMeter= perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter performanceMeter= perf.createPerformanceMeter("Parse features directory");
 		try {
 			for (int i= 0; i < 10; i++) {
 				performanceMeter.start();

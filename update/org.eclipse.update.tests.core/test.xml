@@ -47,8 +47,23 @@
     </ant>
   </target>
 	
+	<!-- This target defines the performance tests that need to be run. -->
+	<target name="performance-suite">
+	  <property name="your-performance-folder" value="${eclipse-home}/update_performance_folder"/>
+	  <delete dir="${your-performance-folder}" quiet="true"/>
+	  <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+	    <property name="data-dir" value="${your-performance-folder}"/>
+	    <property name="plugin-name" value="${plugin-name}"/>
+	    <property name="classname" value="org.eclipse.update.tests.perfms.AllPerformanceTests"/>
+	  </ant>
+	</target>
+	
   <!-- This target runs the performance test suites. -->
-  <target name="performance">
-  </target>
+	<target name="performance" depends="init,performance-suite">
+	  <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+	    <property name="includes" value="org*.xml"/>
+	    <property name="output-file" value="${plugin-name}.xml"/>
+	  </ant>
+	</target>
 
 </project>
