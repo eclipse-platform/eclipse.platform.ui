@@ -67,7 +67,7 @@ public class AntTestChecker {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void buildFinished(String projectName) {
+	public void buildFinished() {
 		buildsFinishedCount++;
 	}
 
@@ -85,7 +85,7 @@ public class AntTestChecker {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void targetFinished(String targetName) {
+	public void targetFinished() {
 		targetsFinishedCount++;
 	}
 
@@ -100,7 +100,7 @@ public class AntTestChecker {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void taskFinished(String taskName) {
+	public void taskFinished() {
 		taskFinishedCount++;
 	}
 

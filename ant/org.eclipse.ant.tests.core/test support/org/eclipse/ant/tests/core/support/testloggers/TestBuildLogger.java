@@ -64,7 +64,7 @@ public class TestBuildLogger implements BuildLogger {
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
 		fHandledException= null;
-		AntTestChecker.getDefault().buildFinished(event.getProject().getName());
+		AntTestChecker.getDefault().buildFinished();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void targetFinished(BuildEvent event) {
 		handleException(event);
-		AntTestChecker.getDefault().targetFinished(event.getTarget().getName());
+		AntTestChecker.getDefault().targetFinished();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void taskFinished(BuildEvent event) {
 		handleException(event);
-		AntTestChecker.getDefault().targetFinished(event.getTask().getTaskName());
+		AntTestChecker.getDefault().targetFinished();
 	}
 
 	/**
