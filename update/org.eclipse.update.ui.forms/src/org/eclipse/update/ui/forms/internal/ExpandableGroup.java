@@ -21,7 +21,6 @@ public abstract class ExpandableGroup {
 	private Composite expansion;
 	protected SelectableFormLabel textLabel;
 	private Composite control;
-	private int style;
 	private boolean expandable=true;
 	
 class ExpandableLayout extends Layout {
@@ -69,7 +68,7 @@ class ExpandableLayout extends Layout {
 	}
 	
 	public ExpandableGroup(int style) {
-		this.style = style;
+		//this.style = style;
 	}
 	
 	public Control getControl() {

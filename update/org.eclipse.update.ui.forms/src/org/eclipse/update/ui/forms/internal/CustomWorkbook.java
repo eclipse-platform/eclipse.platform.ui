@@ -20,8 +20,6 @@ import org.eclipse.swt.custom.*;
 
 public class CustomWorkbook implements IFormWorkbook {
 	private Hashtable pages;
-	private IFormPage sourcePage;
-	private IFormPage lastFormPage;
 	private boolean firstPageSelected=true;
 	private CTabFolder tabFolder;
 	private Vector listeners=new Vector();
@@ -39,7 +37,6 @@ public void addPage(IFormPage page) {
 	item.setToolTipText(page.getTitle());
 	item.setData(page);
 	pages.put(page, item);
-	if (page.isSource()) sourcePage = page;
 	
 	if (firstPageSelected && currentPage == null)
 		selectPage(page, true);
