@@ -36,6 +36,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -272,25 +273,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			ITextSelection textSelection= (ITextSelection)getSelection();
 			text= textSelection.getText();
 		} else {
+			IResource resource= null;
 			Object item= null;
 			if (selection instanceof IStructuredSelection)
 				item= ((IStructuredSelection)selection).getFirstElement();
 			if (item instanceof IResource) {
-				IResource resource= (IResource)item;
+				resource= (IResource)item;
 				text= resource.getName();
-				extension= resource.getFileExtension();
-				if (extension == null)
-					extension= resource.getName();
-				else
-					extension= "*." + extension;
 			}
 			else if (item instanceof ISearchResultViewEntry) {
 				IMarker marker= (IMarker)((ISearchResultViewEntry)item).getSelectedMarker();
-				extension= marker.getResource().getFileExtension();
-				if (extension == null)
-					extension= marker.getResource().getName();
-				else
-					extension= "*." + extension; //$NON-NLS-1$
+				resource= marker.getResource();
 				try {
 					text= (String)marker.getAttribute(SearchUI.LINE);
 				} catch (CoreException ex) {
@@ -304,16 +297,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 				adapter= ((IAdaptable)item).getAdapter(IResource.class);
 				if (adapter instanceof IResource) {
-					IResource resource= (IResource)adapter;
+					resource= (IResource)adapter;
 					if (text == null)	// keep text, if provided by workbench adapter
 						text= resource.getName();
-					extension= resource.getFileExtension();
-					if (extension == null)
-						extension= resource.getName();
-					else
-						extension= "*." + extension;
 				}
 			}
+			if (resource instanceof IFile ) {
+				extension= resource.getFileExtension();
+				if (extension == null)
+					extension= resource.getName();
+				else
+					extension= "*." + extension;
+			}
+			else
+				extension= "*";
 		}		
 		fPattern.setText(insertEscapeChars(text));
 		if (extension == null)
