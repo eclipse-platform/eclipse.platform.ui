@@ -13,23 +13,31 @@ package org.eclipse.ui.internal.csm.activities.api;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IActivityListener</code> can be used by clients to 
+ * receive notification of changes to one or more instances of 
+ * <code>IActivity</code>.
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface may be implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IActivity#addActivityListener
+ * @see IActivity#removeActivityListener
+ * @see IActivityEvent
  */
 public interface IActivityListener {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @param activityEvent
+	 * Notifies that one or more attributes of an instance of 
+	 * <code>IActivity</code> have changed. Specific details are described in 
+	 * the <code>IActivityEvent</code>.
+	 *
+	 * @param activityEvent the activity event. Guaranteed not to be 
+	 *                      <code>null</code>.
 	 */
 	void activityChanged(IActivityEvent activityEvent);
 }

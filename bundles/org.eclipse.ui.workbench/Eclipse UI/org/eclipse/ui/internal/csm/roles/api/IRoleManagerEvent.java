@@ -13,7 +13,16 @@ package org.eclipse.ui.internal.csm.roles.api;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IRoleManagerEvent</code> describes changes to an 
+ * instance of <code>IRoleManager</code>. 
+ * </p>
+ * <p>
+ * An instance of <code>IRoleManagerEvent</code> specifies the instance of 
+ * <code>IRoleManager</code> that changed, but otherwise does not specify the 
+ * nature of that change. Clients can only assume that one or more attributes of 
+ * the particular instance of <code>IRoleManager</code> have changed. In the 
+ * future, this interface may be extended to be more specific about the nature 
+ * of the change.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +32,15 @@ package org.eclipse.ui.internal.csm.roles.api;
  * </p>
  * 
  * @since 3.0
+ * @see IRoleManagerListener#roleManagerChanged
  */
 public interface IRoleManagerEvent {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
+	 * Returns the instance of <code>IRoleManager</code> that has changed.
+	 *
+	 * @return the instance of <code>IRoleManager</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	IRoleManager getRoleManager();
 }

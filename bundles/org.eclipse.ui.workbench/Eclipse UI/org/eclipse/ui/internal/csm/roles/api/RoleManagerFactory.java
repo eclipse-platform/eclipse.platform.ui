@@ -18,13 +18,14 @@ import org.eclipse.ui.internal.csm.roles.RoleManager;
  * This class allows clients to broker instances of <code>IRoleManager</code>. 
  * </p>
  * <p>
- * Clients are not permitted to extend this class.
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IRoleManager
  */
 public final class RoleManagerFactory {
 

@@ -13,7 +13,8 @@ package org.eclipse.ui.internal.csm.roles.api;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IActivityBinding</code> represents a binding between
+ * a role and an activity.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +24,16 @@ package org.eclipse.ui.internal.csm.roles.api;
  * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.roles.IRole
  */
 public interface IActivityBinding extends Comparable {
 
 	/**
-	 * JAVADOC
+	 * Returns the unique identifier of the activity represented in this 
+	 * binding.
 	 * 
-	 * @return
+	 * @return the unique identifier of the activity. Guaranteed not to be 
+	 *         <code>null</code>.
 	 */	
 	String getActivityId();
 }

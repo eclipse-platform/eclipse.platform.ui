@@ -19,13 +19,14 @@ import org.eclipse.ui.internal.csm.activities.ActivityManager;
  * <code>IActivityManager</code>.
  * </p>
  * <p>
- * Clients are not permitted to extend this class.
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IActivityManager
  */
 public final class ActivityManagerFactory {
 

@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.csm.activities.api;
  * activity.
  * </p>
  * <p>
- * Clients are not permitted to extend this class.
+ * This class is not intended to be extended by clients.
  * </p> 
  * <p>
  * <em>EXPERIMENTAL</em>
