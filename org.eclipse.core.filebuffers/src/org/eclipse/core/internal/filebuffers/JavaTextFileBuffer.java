@@ -274,6 +274,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @since 3.1
 	 */
 	public IContentType getContentType () throws CoreException {
+		if (fFile == null)
+			return null;
+		
 		InputStream stream= null;
 		try {
 			if (isDirty()) {
