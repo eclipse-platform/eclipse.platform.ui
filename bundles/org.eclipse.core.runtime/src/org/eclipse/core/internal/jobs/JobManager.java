@@ -502,6 +502,7 @@ public class JobManager implements IJobManager {
 	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
 	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+		monitor = Policy.monitorFor(monitor);
 		IJobChangeListener listener = null;
 		final List jobs;
 		final int jobCount;
