@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
@@ -41,11 +42,16 @@ public class CommitAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
-					ReleaseCommentDialog dialog = new ReleaseCommentDialog(getShell());
-					dialog.setComment(previousComment);
-					int result = dialog.open();
-					if (result != ReleaseCommentDialog.OK) return;
-					previousComment = dialog.getComment();
+					final Shell s = getShell();
+					s.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							ReleaseCommentDialog dialog = new ReleaseCommentDialog(s);
+							dialog.setComment(previousComment);
+							int result = dialog.open();
+							if (result != ReleaseCommentDialog.OK) return;
+							previousComment = dialog.getComment();
+						}
+					});
 					
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
