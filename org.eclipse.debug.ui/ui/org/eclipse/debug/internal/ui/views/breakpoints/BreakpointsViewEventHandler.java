@@ -26,6 +26,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -164,13 +165,16 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							// If the groups has changed, completely refresh the view to
 							// pick up structural changes.
 							fView.getViewer().refresh();
-							fView.initializeCheckedState();
 							if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 							    fView.updateViewerBackground();
 							}
 							fView.updateObjects();
 							// Fire a selection change to update contributed actions
 							viewer.setSelection(viewer.getSelection());
+							for (int i = 0; i < breakpoints.length; i++) {
+								viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
+							}
+							fView.initializeCheckedState();
 							return;
 						}
 						List groupsToUpdate= new ArrayList();
