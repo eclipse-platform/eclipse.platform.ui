@@ -91,7 +91,10 @@ public void assertDoesNotExistInFileSystem(String message, IResource[] resources
  */
 public void assertDoesNotExistInFileSystem(String message, IResource resource) {
 	try {
-		assertTrue(message, !existsInFileSystem(resource));
+		if (existsInFileSystem(resource)) {
+			String formatted = message == null ? "" : message + " ";
+			fail(formatted + resource.getFullPath() + " unexpectedly exists in the file system");
+		}
 	} catch (CoreException e) {
 		assertTrue(e.toString(), false);
 	}
@@ -133,7 +136,10 @@ protected void assertEquals(String message, Object[] expected, Object[] actual) 
  * resource info tree.
  */
 public void assertDoesNotExistInWorkspace(String message, IResource resource) {
-	assertTrue(message, !existsInWorkspace(resource));
+	if (existsInWorkspace(resource, false)) {
+		String formatted = message == null ? "" : message + " ";
+		fail(formatted + resource.getFullPath().toString() + " unexpectedly exists in the workspace");
+	}
 }
 /**
  * Assert that the given resource does not exist in the workspace 
@@ -163,7 +169,10 @@ public void assertExistsInFileSystem(String message, IResource[] resources) {
  */
 public void assertExistsInFileSystem(String message, IResource resource) {
 	try {
-		assertTrue(message, existsInFileSystem(resource));
+		if (!existsInFileSystem(resource)) {
+			String formatted = message == null ? "" : message + " ";
+			fail(formatted + resource.getFullPath() + " unexpectedly does not exist in the file system");
+		}
 	} catch (CoreException e) {
 		assertTrue(e.toString(), false);
 	}
@@ -181,7 +190,7 @@ public void assertExistsInFileSystem(IResource resource) {
  * workspace resource info tree.
  */
 public void assertExistsInWorkspace(IResource[] resources) {
-	assertExistsInWorkspace("", resources);
+	assertExistsInWorkspace("", resources, false);
 }
 /**
  * Assert that each element of the resource array exists in the 
@@ -196,7 +205,7 @@ public void assertExistsInWorkspace(IResource[] resources, boolean phantom) {
  */
 public void assertExistsInWorkspace(String message, IResource[] resources) {
 	for (int i = 0; i < resources.length; i++) {
-		assertExistsInWorkspace(message, resources[i]);
+		assertExistsInWorkspace(message, resources[i], false);
 	}
 }
 /**
@@ -213,21 +222,24 @@ public void assertExistsInWorkspace(String message, IResource[] resources, boole
  * resource info tree.
  */
 public void assertExistsInWorkspace(String message, IResource resource) {
-	assertTrue(message, existsInWorkspace(resource));
+	assertExistsInWorkspace(message, resource, false);
 }
 /**
  * Assert whether or not the given resource exists in the workspace 
  * resource info tree.
  */
 public void assertExistsInWorkspace(String message, IResource resource, boolean phantom) {
-	assertTrue(message, existsInWorkspace(resource, phantom));
+	if (!existsInWorkspace(resource, phantom)) {
+		String formatted = message == null ? "" : message + " ";
+		fail(formatted + resource.getFullPath().toString() + " unexpectedly does not exist in the workspace");
+	}
 }
 /**
  * Assert whether or not the given resource exists in the workspace 
  * resource info tree.
  */
 public void assertExistsInWorkspace(IResource resource) {
-	assertExistsInWorkspace("", resource);
+	assertExistsInWorkspace("", resource, false);
 }
 /**
  * Assert whether or not the given resource exists in the workspace 
@@ -549,9 +561,6 @@ private boolean existsInFileSystem(IResource resource) throws CoreException {
 	if (path == null)
 		path = computeDefaultLocation(resource);
 	return path.toFile().exists();
-}
-private boolean existsInWorkspace(IResource resource) {
-	return resource.exists();
 }
 private boolean existsInWorkspace(IResource resource, boolean phantom) {
 	IResource target = getWorkspace().getRoot().findMember(resource.getFullPath(), phantom);
