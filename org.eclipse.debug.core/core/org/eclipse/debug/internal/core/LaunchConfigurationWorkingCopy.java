@@ -223,7 +223,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
 			if (!file.exists()) {
 				file.create(stream, false, null);
-				//getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
 			} else {
 				// validate edit
 				if (file.isReadOnly()) {
@@ -233,7 +232,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					}
 				}				
 				file.setContents(stream, false, false, null);
-				//getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
 			}
 		}		
 	}
