@@ -479,12 +479,15 @@ public class SyncInfoSet {
 	 * while the listeners are notified so listeners must be cautious in order to avoid deadlock.
 	 */
 	public void endInput(IProgressMonitor monitor) {
-		if (lock.getDepth() == 1) {
-			// Remain locked while firing the events so the handlers 
-			// can expect the set to remain constant while they process the events
-			fireChanges(Policy.monitorFor(monitor));
+		try {
+			if (lock.getDepth() == 1) {
+				// Remain locked while firing the events so the handlers 
+				// can expect the set to remain constant while they process the events
+				fireChanges(Policy.monitorFor(monitor));
+			}
+		} finally {
+			lock.release();
 		}
-		lock.release();
 	}
 
 	protected void resetChanges() {

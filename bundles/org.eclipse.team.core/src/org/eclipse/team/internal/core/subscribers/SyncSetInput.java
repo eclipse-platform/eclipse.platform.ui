@@ -48,8 +48,9 @@ public abstract class SyncSetInput {
 	 * obtain the contents from the input source.
 	 */
 	public void reset(IProgressMonitor monitor) throws TeamException {
-		syncSet.beginInput();
+		
 		try {
+			syncSet.beginInput();
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(null, 100);
 			syncSet.clear();

@@ -274,14 +274,23 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			
 			// Create a monitor that will handle preemptions and dispatch if required
 			IProgressMonitor collectionMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN) {
+				boolean dispatching = false;
 				public void subTask(String name) {
-					handlePreemptiveEvents(this);
-					handlePendingDispatch(this);
+					dispatch();
 					super.subTask(name);
 				}
+				private void dispatch() {
+					if (dispatching) return;
+					try {
+						dispatching = true;
+						handlePreemptiveEvents(this);
+						handlePendingDispatch(this);
+					} finally {
+						dispatching = false;
+					}
+				}
 				public void worked(int work) {
-					handlePreemptiveEvents(this);
-					handlePendingDispatch(this);
+					dispatch();
 					super.worked(work);
 				}
 			};
