@@ -16,15 +16,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
@@ -108,26 +105,6 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 			protected void okPressed() {
 				if (enabler != null) {
 					enabler.updateActivityStates();
-
-					// refresh the managers on all windows.
-					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						if (windows[i] instanceof WorkbenchWindow) {
-							WorkbenchWindow window = (WorkbenchWindow) windows[i];
-							IContributionManager manager = window.getMenuBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getCoolBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getToolBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getStatusLineManager();
-							if (manager != null)
-								manager.update(true);
-						}
-					}
 				}
 				super.okPressed();
 			}
