@@ -55,7 +55,7 @@ public class HelpApplication
 			return EXIT_RESTART;
 		}
 
-		metadata = new File(Platform.getLocation().toFile(), ".metadata/");
+		metadata = new File(Platform.getInstanceLocation().toFile(), ".metadata/");
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out.println(
 				"Help web application could not start.  Check log file for details.");
