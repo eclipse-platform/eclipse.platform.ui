@@ -559,7 +559,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	private boolean canUpdateViewer() {
 		StructuredViewer viewer = getViewer();
-		if(viewer == null) return false;
+		if(viewer == null || viewer.getControl().isDisposed()) return false;
 		Display display = viewer.getControl().getDisplay();
 		if (display == null) return false;
 		if (display.getThread() != Thread.currentThread ()) return false;
