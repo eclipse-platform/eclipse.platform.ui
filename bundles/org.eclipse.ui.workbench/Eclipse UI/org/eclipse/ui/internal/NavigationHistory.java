@@ -335,28 +335,42 @@ protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
 			markLocation(page.getActiveEditor());
 	} 
 	boolean oldHistory = false;
+	// track entries that are actually restored
+	int j = 0;
 	for (int i = 0; i < items.length; i++) {
 		IMemento item = items[i];
-		NavigationHistoryEntry entry = new NavigationHistoryEntry(page);
-		history.add(entry);
-		entry.restoreState(item,history);
-		// Track whether or not we are dealing with a navigation history that has the 
+		// Track whether or not we are dealing with a navigation history that has the
 		// drop down list support.
-		if (item.getString(IWorkbenchConstants.TAG_HISTORY_LABEL) == null) {
+		String entryText = item.getString(IWorkbenchConstants.TAG_HISTORY_LABEL);
+		if (entryText == null) {
 			oldHistory = true;
 			break;
 		}
+		// Do not restore "blank" entries.  Fix for 27317.
+		if (entryText.equals("")) {
+			continue;
+		}
+		NavigationHistoryEntry entry = new NavigationHistoryEntry(page);
+		history.add(entry);
+		entry.restoreState(item,history);
 		if(item.getString(IWorkbenchConstants.TAG_ACTIVE) != null)
-			activeEntry = i;
+			activeEntry = j;
+		j++;
 	}
 	if (oldHistory) {
-		// If we have an old history - one that doesn't support the drop down list feature -
-		// clear the old history since it is not compatible with the drop down feature.
+		// If we have an old or invalid history (one that doesn't support the drop down 
+		// list feature), clear the old history since it is not compatible with the 
+		// drop down feature.
 		history.clear();
 		if(page.getActiveEditor() != null)
 			markLocation(page.getActiveEditor());
 		return;
 	}	
+	if(items.length != 0 && j == 0) {
+		// no items were restored
+		if(page.getActiveEditor() != null)
+			markLocation(page.getActiveEditor());
+	}
 		 
 	NavigationHistoryEntry entry = getEntry(activeEntry);
 	if(entry != null && entry.editorInput != null) {

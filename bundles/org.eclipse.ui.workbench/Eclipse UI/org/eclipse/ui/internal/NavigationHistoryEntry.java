@@ -35,8 +35,12 @@ public class NavigationHistoryEntry {
 		editorID= part.getSite().getId();
 		editorInput= part.getEditorInput();
 		this.location = location;
-		if (location == null) {
-			historyText =  part.getTitle();
+		if (location != null) {
+			historyText = location.getText();
+		}
+		// ensure that the historyText is initialized to something
+		if (historyText == null || historyText.equals("")) {
+			historyText = part.getTitle();
 		}
 	}
 	/**
@@ -103,11 +107,20 @@ public class NavigationHistoryEntry {
 	 */
 	/* package */ String getHistoryText() {
 		if (location != null) {
-			// location exists or has been restored, use its text 
-			return location.getText();
-		}			
-		// otherwise return the historyText
-		return historyText;
+			// location exists or has been restored, use its text.
+			// Also update the historyText so that this value will
+			// be saved.  Doing so handles cases where getText() value 
+			// may be dynamic. 
+			String text = location.getText();
+			if ((text == null) || text.equals("")) {
+				text = historyText;
+			} else {
+				historyText = text;
+			}
+			return text;
+		} else {		
+			return historyText;
+		}
 	}
 	/** 
 	 * Saves the state of this entry and its location.
@@ -116,9 +129,6 @@ public class NavigationHistoryEntry {
 	/* package */ boolean handlePartClosed() {
 		if(!isPersistable())
 			return false;
-		// Save the state of this part in a memento, this memento will then be used when saving
-		// this history entry.
-		historyText = getHistoryText();	
 		if(mementoEntry == null && memento == null) {	
 			IPersistableElement persistable = editorInput.getPersistable();	
 			memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
