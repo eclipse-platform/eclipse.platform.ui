@@ -952,6 +952,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			document.replace(replaceOffset, replaceLen, remainingPrefix);
 			
 			fViewer.setSelectedRange(replaceOffset + remainingLen, 0);
+			fViewer.revealRange(replaceOffset + remainingLen, 0);
 			
 			return true;
 		} catch (BadLocationException e) {
