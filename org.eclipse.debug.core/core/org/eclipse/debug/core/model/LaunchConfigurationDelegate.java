@@ -202,14 +202,16 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 *  projects
 	 */
 	protected void addReferencedProjects(IProject project, Set references) throws CoreException{
-		IProject[] projects = project.getReferencedProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject refProject= projects[i];
-			if (refProject.exists() && !references.contains(refProject)) {
-				references.add(refProject);
-				addReferencedProjects(refProject, references);
-			}
-		}		
+		if (project.isOpen()) {
+			IProject[] projects = project.getReferencedProjects();
+			for (int i = 0; i < projects.length; i++) {
+				IProject refProject= projects[i];
+				if (refProject.exists() && !references.contains(refProject)) {
+					references.add(refProject);
+					addReferencedProjects(refProject, references);
+				}
+			}		
+		}
 	}
 	
 	/**  
