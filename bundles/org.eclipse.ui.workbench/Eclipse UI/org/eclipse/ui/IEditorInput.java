@@ -18,20 +18,24 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * like a file name but more abstract.  It is not a model.  It is a 
  * description of the model source for an <code>IEditorPart</code>.
  * <p>
+ * Clients implementing this editor input interface should override
+ * <code>Object.equals(Object)</code> to answer true for two inputs
+ * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
+ * are dependent on this to find an editor with the same input.
+ * </p><p>
  * Clients should extend this interface to declare new types of editor
  * inputs.
- * </p>
- * <p>
+ * </p><p>
  * An editor input is passed to an editor via the <code>IEditorPart.init</code>
  * method. Due to the wide range of valid editor inputs, it is not possible to
  * define generic methods for getting and setting bytes.
- * </p>
- * <p>
+ * </p><p>
  * Editor input must implement the <code>IAdaptable</code> interface; extensions
  * are managed by the platform's adapter manager.
  * </p>
  *
  * @see org.eclipse.ui.IEditorPart
+ * @see org.eclipse.ui.IWorkbenchPage#openEditor
  */
 public interface IEditorInput extends IAdaptable {
 /**
