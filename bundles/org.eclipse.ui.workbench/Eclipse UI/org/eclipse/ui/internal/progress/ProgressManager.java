@@ -778,22 +778,22 @@ public class ProgressManager extends ProgressProvider
 				try {
 					dialog.setOpenOnRun(false);
 					setUserInterfaceActive(false);
-					dialog.run(true, true, runnable);
-					setUserInterfaceActive(true);
+					dialog.run(true, true, runnable);					
 				} catch (InvocationTargetException e) {
 					invokes[0] = e;
 				} catch (InterruptedException e) {
 					interrupt[0] = e;
 				}
+				finally{
+					setUserInterfaceActive(true);
+				}
 			}
 		};
 		busyCursorWhile(dialogWaitRunnable, dialog);
 		if (invokes[0] != null) {
-			setUserInterfaceActive(true);
 			throw invokes[0];
 		}
 		if (interrupt[0] != null) {
-			setUserInterfaceActive(true);
 			throw interrupt[0];
 		}
 	}
