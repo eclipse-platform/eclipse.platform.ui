@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public class KeyStroke implements Comparable {
+public final class KeyStroke implements Comparable {
 
 	public final static String ALT = "ALT"; //$NON-NLS-1$
 	public final static String ARROW_DOWN = "ARROW_DOWN"; //$NON-NLS-1$

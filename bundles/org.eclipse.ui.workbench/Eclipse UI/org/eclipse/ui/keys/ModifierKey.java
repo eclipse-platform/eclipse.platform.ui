@@ -9,14 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
  * JAVADOC
- * </p>
- * <p>
- * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,21 +21,14 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class NotDelegatedException extends Exception {
+public final class ModifierKey extends Key {
 
-	/**
-	 * JAVADOC
-	 */	
-	public NotDelegatedException() {
-		super();
-	}
+	public final static ModifierKey ALT = new ModifierKey("ALT"); 
+	public final static ModifierKey COMMAND = new ModifierKey("COMMAND"); 
+	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
+	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
 
-	/**
-	 * JAVADOC
-	 *
-	 * @param s
-	 */	
-	public NotDelegatedException(String s) {
-		super(s);
+	private ModifierKey(String name) {
+		super(name);
 	}
 }

@@ -22,9 +22,9 @@ import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.KeySequence;
-import org.eclipse.ui.commands.ParseException;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.ParseException;
 
 final class Persistence {
 

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.commands;
 
+import org.eclipse.ui.keys.KeySequence;
+
 /**
  * <p>
  * JAVADOC

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
@@ -21,14 +21,9 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class ModifierKey extends Key {
+public abstract class NaturalKey extends Key {
 
-	public final static ModifierKey ALT = new ModifierKey("ALT"); 
-	public final static ModifierKey COMMAND = new ModifierKey("COMMAND"); 
-	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
-	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
-
-	private ModifierKey(String name) {
+	NaturalKey(String name) {
 		super(name);
 	}
 }

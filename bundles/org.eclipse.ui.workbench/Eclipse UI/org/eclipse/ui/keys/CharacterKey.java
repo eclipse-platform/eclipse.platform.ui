@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class CharacterKey extends NaturalKey {
+public final class CharacterKey extends NaturalKey {
 
 	private static CharacterKey[] cache = new CharacterKey[256];
 

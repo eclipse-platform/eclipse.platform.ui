@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands.old;
 
 /**
  * <p>
  * JAVADOC
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -21,14 +24,21 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class GestureKey extends NaturalKey {
+public class NotDelegatedException extends Exception {
 
-	public final static GestureKey EAST = new GestureKey("EAST"); 
-	public final static GestureKey NORTH = new GestureKey("NORTH"); 
-	public final static GestureKey SOUTH = new GestureKey("SOUTH"); 
-	public final static GestureKey WEST = new GestureKey("WEST"); 
+	/**
+	 * JAVADOC
+	 */	
+	public NotDelegatedException() {
+		super();
+	}
 
-	private GestureKey(String name) {
-		super(name);
+	/**
+	 * JAVADOC
+	 *
+	 * @param s
+	 */	
+	public NotDelegatedException(String s) {
+		super(s);
 	}
 }

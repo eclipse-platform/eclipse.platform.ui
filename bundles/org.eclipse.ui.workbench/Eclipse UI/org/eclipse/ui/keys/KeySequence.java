@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public class KeySequence implements Comparable {
+public final class KeySequence implements Comparable {
 
 	private final static char KEY_STROKE_DELIMITER = ' '; //$NON-NLS-1$
 	private final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\r\u001b\u007F"; //$NON-NLS-1$

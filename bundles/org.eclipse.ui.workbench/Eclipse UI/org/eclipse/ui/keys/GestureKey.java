@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
@@ -21,9 +21,14 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public abstract class NaturalKey extends Key {
+public final class GestureKey extends NaturalKey {
 
-	NaturalKey(String name) {
+	public final static GestureKey EAST = new GestureKey("EAST"); 
+	public final static GestureKey NORTH = new GestureKey("NORTH"); 
+	public final static GestureKey SOUTH = new GestureKey("SOUTH"); 
+	public final static GestureKey WEST = new GestureKey("WEST"); 
+
+	private GestureKey(String name) {
 		super(name);
 	}
 }

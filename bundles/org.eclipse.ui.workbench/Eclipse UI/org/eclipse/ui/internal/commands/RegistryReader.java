@@ -24,6 +24,7 @@ import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IImageBinding;
+import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
@@ -35,12 +36,14 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	private List commands;
 	private List contextBindings;
 	private List imageBindings;
+	private List keyBindings;
 	private List keyConfigurations;
 	private IPluginRegistry pluginRegistry;
 	private List unmodifiableCategories;
 	private List unmodifiableCommands;
 	private List unmodifiableContextBindings;
 	private List unmodifiableImageBindings;
+	private List unmodifiableKeyBindings;
 	private List unmodifiableKeyConfigurations;
 	
 	RegistryReader(IPluginRegistry pluginRegistry) {
@@ -50,6 +53,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		unmodifiableCommands = Collections.EMPTY_LIST;
 		unmodifiableContextBindings = Collections.EMPTY_LIST;
 		unmodifiableImageBindings = Collections.EMPTY_LIST;		
+		unmodifiableKeyBindings = Collections.EMPTY_LIST;
 		unmodifiableKeyConfigurations = Collections.EMPTY_LIST;
 	}
 
@@ -67,6 +71,10 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	
 	List getImageBindings() {
 		return unmodifiableImageBindings;
+	}
+
+	List getKeyBindings() {
+		return unmodifiableKeyBindings;
 	}
 
 	List getKeyConfigurations() {
@@ -94,6 +102,11 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		else 
 			imageBindings.clear();
 			
+		if (keyBindings == null)
+			keyBindings = new ArrayList();
+		else 
+			keyBindings.clear();
+
 		if (keyConfigurations == null)
 			keyConfigurations = new ArrayList();
 		else 
@@ -106,6 +119,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		unmodifiableCommands = Collections.unmodifiableList(new ArrayList(commands));
 		unmodifiableContextBindings = Collections.unmodifiableList(new ArrayList(contextBindings));
 		unmodifiableImageBindings = Collections.unmodifiableList(new ArrayList(imageBindings));
+		unmodifiableKeyBindings = Collections.unmodifiableList(new ArrayList(keyBindings));
 		unmodifiableKeyConfigurations = Collections.unmodifiableList(new ArrayList(keyConfigurations));
 	}
 
@@ -123,6 +137,9 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 		if (Persistence.TAG_IMAGE_BINDING.equals(name))
 			return readImageBinding(element);
+
+		if (Persistence.TAG_KEY_BINDING.equals(name))
+			return readKeyBinding(element);
 
 		if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
 			return readKeyConfiguration(element);
@@ -180,6 +197,15 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	
 		if (imageBinding != null)
 			imageBindings.add(imageBinding);	
+		
+		return true;
+	}
+
+	private boolean readKeyBinding(IConfigurationElement element) {
+		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (keyBinding != null)
+			keyBindings.add(keyBinding);	
 		
 		return true;
 	}
