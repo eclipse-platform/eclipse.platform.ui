@@ -13,7 +13,6 @@ Contributors:
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

@@ -4,7 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IncrementalProjectBuilder;

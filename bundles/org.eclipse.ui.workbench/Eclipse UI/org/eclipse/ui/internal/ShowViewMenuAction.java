@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ShowViewMenuAction extends ShowPartPaneMenuAction {
