@@ -39,15 +39,10 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * Reconciliation is the comparison between the old preserved state and the new one from platform.cfg
 	 * 
 	 * If the old state contained sites that are not in the new state, the old sites are not added to the state
-	 * 
 	 * If the new state contains sites that were not in the old state, configure the site and configure all the found features
-	 * 
 	 * If the sites are in both states, verify the features
-	 * 
 	 * if the old site contained features that are not in the new site, the features are not added to the site
-	 * 
 	 * if the new site contains feature that were not in the old site, configure the new feature
-	 * 
 	 * if the feature is in both site (old and new), use old feature state
 	 * 
 	 * When adding a feature to a site, we will check if the feature is broken or not. 
@@ -57,9 +52,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * only one feature is configured
 	 */
 	public void reconcile(boolean isOptimistic) throws CoreException {
-
-		UpdateManagerPlugin.getPlugin().debug(
-			"******* START RECONCILIATION ********");
 
 		IPlatformConfiguration platformConfig =
 			BootLoader.getCurrentPlatformConfiguration();

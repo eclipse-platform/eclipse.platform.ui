@@ -27,7 +27,8 @@ public class InternalSiteManager {
 
 	public static ILocalSite localSite;
 
-	public static final String DEFAULT_SITE_TYPE = SiteURLContentProvider.SITE_TYPE;
+	public static final String DEFAULT_SITE_TYPE =
+		SiteURLContentProvider.SITE_TYPE;
 	private static final String DEFAULT_EXECUTABLE_SITE_TYPE =
 		SiteFileContentProvider.SITE_TYPE;
 	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
@@ -39,7 +40,7 @@ public class InternalSiteManager {
 	// cache found sites
 	private static Map sites = new HashMap();
 	public static boolean cache = true;
-	
+
 	// true if an exception occured creating localSite
 	// so we cache it and don't attempt to create it again
 	private static CoreException exceptionOccured = null;
@@ -56,14 +57,15 @@ public class InternalSiteManager {
 	 */
 	private static ILocalSite internalGetLocalSite(boolean isOptimistic)
 		throws CoreException {
-		
-		if (exceptionOccured!=null) throw exceptionOccured;
-			
+
+		if (exceptionOccured != null)
+			throw exceptionOccured;
+
 		if (localSite == null) {
 			try {
-			localSite = SiteLocal.internalGetLocalSite(isOptimistic);
-			} catch (CoreException e){
-				exceptionOccured=e;
+				localSite = SiteLocal.internalGetLocalSite(isOptimistic);
+			} catch (CoreException e) {
+				exceptionOccured = e;
 				throw e;
 			}
 		}
@@ -80,7 +82,7 @@ public class InternalSiteManager {
 			return null;
 
 		if (cache && sites.containsKey(siteURL)) {
-			site = (ISite)sites.get(siteURL);
+			site = (ISite) sites.get(siteURL);
 			return site;
 		}
 
@@ -99,9 +101,10 @@ public class InternalSiteManager {
 				throw preservedException;
 			}
 		}
-		
-		if (site!=null) sites.put(siteURL,site);
-		
+
+		if (site != null)
+			sites.put(siteURL, site);
+
 		return site;
 	}
 
@@ -122,7 +125,8 @@ public class InternalSiteManager {
 			// attempt to use this type instead	
 
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_TYPE) {
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_TYPE) {
 				UpdateManagerPlugin.getPlugin().debug(
 					"The Site :"
 						+ siteURL.toExternalForm()
@@ -134,7 +138,7 @@ public class InternalSiteManager {
 			InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
 			try {
 				if (exception.getNewType() == null)
-					throw e;				
+					throw e;
 				site = createSite(exception.getNewType(), siteURL);
 			} catch (InvalidSiteTypeException e1) {
 				throw Utilities.newCoreException(
@@ -175,7 +179,8 @@ public class InternalSiteManager {
 	private static ISite createSite(String siteType, URL url)
 		throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
-		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
+		ISiteFactory factory =
+			SiteTypeFactory.getInstance().getFactory(siteType);
 
 		try {
 
@@ -300,7 +305,10 @@ public class InternalSiteManager {
 		IInstallDeltaHandler handler = null;
 
 		String pluginID =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			UpdateManagerPlugin
+				.getPlugin()
+				.getDescriptor()
+				.getUniqueIdentifier();
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements =
 			pluginRegistry.getConfigurationElementsFor(
@@ -316,7 +324,9 @@ public class InternalSiteManager {
 			//$NON-NLS-1$
 		} else {
 			IConfigurationElement element = elements[0];
-			handler = (IInstallDeltaHandler) element.createExecutableExtension("class");
+			handler =
+				(IInstallDeltaHandler) element.createExecutableExtension(
+					"class");
 			//$NON-NLS-1$
 		}
 
@@ -347,16 +357,26 @@ public class InternalSiteManager {
 			File[] allFiles = file.listFiles();
 			for (int i = 0; i < allFiles.length; i++) {
 				try {
+					// TRACE
+					if (UpdateManagerPlugin.DEBUG
+						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+						UpdateManagerPlugin.getPlugin().debug(
+							"Found delta change:" + allFiles[i]);
+					}
 					parser = new InstallChangeParser(allFiles[i]);
 					ISessionDelta change = parser.getInstallChange();
 					if (change != null) {
 						sessionDeltas.add(change);
 					}
 				} catch (Exception e) {
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+					if (UpdateManagerPlugin.DEBUG
+						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 						CoreException exc =
-							Utilities.newCoreException("Unable to parse install change:" + allFiles[i], e);
-						UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
+							Utilities.newCoreException(
+								"Unable to parse install change:" + allFiles[i],
+								e);
+						UpdateManagerPlugin.getPlugin().getLog().log(
+							exc.getStatus());
 					}
 				}
 			}
@@ -365,7 +385,8 @@ public class InternalSiteManager {
 		if (sessionDeltas.size() == 0)
 			return new ISessionDelta[0];
 
-		return (ISessionDelta[]) sessionDeltas.toArray(arrayTypeFor(sessionDeltas));
+		return (ISessionDelta[]) sessionDeltas.toArray(
+			arrayTypeFor(sessionDeltas));
 	}
 
 	/*
@@ -393,7 +414,8 @@ public class InternalSiteManager {
 	 */
 	public static boolean reconcile(boolean optimisticReconciliation)
 		throws CoreException {
-		internalGetLocalSite(optimisticReconciliation); // does the reconciliation
+		internalGetLocalSite(optimisticReconciliation);
+		// does the reconciliation
 		ISessionDelta[] deltas = InternalSiteManager.getSessionDeltas();
 		if (deltas != null && deltas.length > 0) {
 			return true;
