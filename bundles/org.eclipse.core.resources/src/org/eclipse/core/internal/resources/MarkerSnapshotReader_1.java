@@ -5,13 +5,13 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.runtime.*;
-//
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
+
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 //
 /**
  * Snapshot the markers for the specified resource to the given output stream.
@@ -51,7 +51,7 @@ public MarkerSnapshotReader_1(Workspace workspace) {
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
  */
-public void read(DataInputStream input) throws IOException {
+public void read(DataInputStream input) throws IOException, CoreException {
 	IPath path = new Path(input.readUTF());
 	int markersSize = input.readInt();
 	MarkerSet markers = new MarkerSet(markersSize);
@@ -94,7 +94,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 	}
 	return result.isEmpty() ? null : result;
 }
-private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException {
+private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException, CoreException {
 	MarkerInfo info = new MarkerInfo();
 	info.setId(input.readLong());
 	byte constant = input.readByte();
@@ -108,7 +108,9 @@ private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws 
 			info.setType((String) readTypes.get(input.readInt()));
 			break;
 		default :
-			Assert.isTrue(false, "Errors restoring markers.");
+			//if we get here the marker file is corrupt
+			String msg = Policy.bind("resources.readMarkers");
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 	}
 	info.internalSetAttributes(readAttributes(input));
 	return info;

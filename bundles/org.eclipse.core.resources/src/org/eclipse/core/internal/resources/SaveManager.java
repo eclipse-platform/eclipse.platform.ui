@@ -10,14 +10,16 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.internal.events.*;
+import java.io.*;
+import java.util.*;
+
+import org.eclipse.core.internal.events.BuilderPersistentInfo;
+import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
-import java.io.*;
-import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class SaveManager implements IElementInfoFlattener, IManager {
 	protected Workspace workspace;
@@ -440,17 +442,34 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
 		// inside an operation, be sure to close it afterwards
 		workspace.newWorkingTree();
 		try {
+			String msg = Policy.bind("resources.startupProblems");
+			MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, null);
+			
 			restoreMasterTable();
 			// restore the saved tree and overlay the snapshots if any
 			restoreTree(workspace, Policy.subMonitorFor(monitor, 10));
 			restoreSnapshots(Policy.subMonitorFor(monitor, 10));
+			
 			restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
-			restoreSyncInfo(workspace.getRoot(), Policy.subMonitorFor(monitor, 10));
+			// tolerate failure for non-critical information
+			// if startup fails, the entire workspace is shot
+//			try {
+//				restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
+//			} catch (CoreException e) {
+//				problems.merge(e.getStatus());
+//			}
+			try {
+				restoreSyncInfo(workspace.getRoot(), Policy.subMonitorFor(monitor, 10));
+			} catch (CoreException e) {
+				problems.merge(e.getStatus());
+			}
 			// restore meta info last because it might close a project if its description is not readable
-			restoreMetaInfo(workspace, Policy.subMonitorFor(monitor, 10));
+			restoreMetaInfo(workspace, problems, Policy.subMonitorFor(monitor, 10));
 			IProject[] roots = workspace.getRoot().getProjects();
 			for (int i = 0; i < roots.length; i++)
 				 ((Project) roots[i]).startup();
+			if (!problems.isOK())
+				ResourcesPlugin.getPlugin().getLog().log(problems);
 		} finally {
 			workspace.getElementTree().immutable();
 		}
@@ -535,7 +554,7 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
  * Restores the state of this workspace by opening the projects
  * which were open when it was last saved.
  */
-protected void restoreMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
+protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) {
 	// FIXME: read the meta info for the workspace?
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++) {
@@ -543,7 +562,7 @@ protected void restoreMetaInfo(Workspace workspace, IProgressMonitor monitor) th
 		try {
 			restoreMetaInfo((Project) roots[i], monitor);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			problems.merge(e.getStatus());
 		}
 	}
 }

@@ -28,7 +28,7 @@ protected MarkerSnapshotReader getReader(int formatVersion) throws IOException {
 			throw new IOException(Policy.bind("resources.format"));
 	}
 }
-public void read(DataInputStream input) throws IOException {
+public void read(DataInputStream input) throws IOException, CoreException {
 	int formatVersion = readVersionNumber(input);
 	MarkerSnapshotReader reader = getReader(formatVersion);
 	reader.read(input);

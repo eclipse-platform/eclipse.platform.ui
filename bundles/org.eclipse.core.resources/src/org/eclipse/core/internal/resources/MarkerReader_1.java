@@ -5,18 +5,12 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * This class is used to read markers from disk. This is for version 1. 
@@ -56,7 +50,7 @@ public MarkerReader_1(Workspace workspace) {
  * STRING_VALUE -> int String
  * NULL_VALUE -> int
  */
-public void read(DataInputStream input, boolean generateDeltas) throws IOException {
+public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
 	try {
 		List readTypes = new ArrayList(5);
 		while (true) {
@@ -116,7 +110,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 	}
 	return result.isEmpty() ? null : result;
 }
-private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException {
+private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException, CoreException {
 	MarkerInfo info = new MarkerInfo();
 	info.setId(input.readLong());
 	int constant = input.readInt();
@@ -130,7 +124,9 @@ private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws 
 			info.setType((String) readTypes.get(input.readInt()));
 			break;
 		default :
-			Assert.isTrue(false, "Errors restoring markers.");
+			//if we get here the marker file is corrupt
+			String msg = Policy.bind("resources.readMarkers");
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 	}
 	info.internalSetAttributes(readAttributes(input));
 	return info;

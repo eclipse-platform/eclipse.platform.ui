@@ -52,7 +52,7 @@ public void readPartners(DataInputStream input) throws CoreException {
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, message));
 	}
 }
-public void readSyncInfo(DataInputStream input) throws IOException {
+public void readSyncInfo(DataInputStream input) throws IOException, CoreException {
 	// dispatch to the appropriate reader depending
 	// on the version of the file
 	int formatVersion = readVersionNumber(input);

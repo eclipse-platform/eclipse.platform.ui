@@ -5,14 +5,12 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.internal.utils.Assert;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 
 /**
  * This class is used to read sync info from disk. This is the implementation
@@ -40,7 +38,7 @@ public SyncInfoReader_3(Workspace workspace, Synchronizer synchronizer) {
  * BYTES -> byte[]
  * 
  */ 
-public void readSyncInfo(DataInputStream input) throws IOException {
+public void readSyncInfo(DataInputStream input) throws IOException, CoreException {
 	try {
 		List readPartners = new ArrayList(5);
 		while (true) {
@@ -51,7 +49,7 @@ public void readSyncInfo(DataInputStream input) throws IOException {
 		// ignore end of file
 	}
 }
-private void readSyncInfo(IPath path, DataInputStream input, List readPartners) throws IOException {
+private void readSyncInfo(IPath path, DataInputStream input, List readPartners) throws IOException, CoreException {
 	int size = input.readInt();
 	HashMap table = new HashMap(size);
 	for (int i = 0; i < size; i++) {
@@ -68,7 +66,9 @@ private void readSyncInfo(IPath path, DataInputStream input, List readPartners) 
 				name = (QualifiedName) readPartners.get(input.readInt());
 				break;
 			default :
-				Assert.isTrue(false, "Errors restoring sync info for resource.");
+				//if we get here then the sync info file is corrupt
+				String msg = Policy.bind("resources.readSync", path == null ? "" : path.toString());
+				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, path, msg, null);
 		}
 		// read the bytes
 		int length = input.readInt();

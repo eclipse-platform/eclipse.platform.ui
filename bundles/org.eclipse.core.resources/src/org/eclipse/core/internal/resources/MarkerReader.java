@@ -5,9 +5,11 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.internal.utils.Policy;
 import java.io.DataInputStream;
 import java.io.IOException;
+
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * This class is used to read markers from disk. Subclasses implement
@@ -32,7 +34,7 @@ protected MarkerReader getReader(int formatVersion) throws IOException {
 			throw new IOException(Policy.bind("resources.format"));
 	}
 }
-public void read(DataInputStream input, boolean generateDeltas) throws IOException {
+public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
 	int formatVersion = readVersionNumber(input);
 	MarkerReader reader = getReader(formatVersion);
 	reader.read(input, generateDeltas);
