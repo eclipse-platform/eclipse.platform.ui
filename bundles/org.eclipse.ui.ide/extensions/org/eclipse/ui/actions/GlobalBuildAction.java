@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,14 +20,19 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -55,6 +61,9 @@ public class GlobalBuildAction
 	 * action has been <code>dispose</code>d.
 	 */
 	private IWorkbenchWindow workbenchWindow;
+	
+	//The family to see if this has already run
+	private static final Object FAMILY_MANUAL_BUILD = new Object();
 			
 /**
  * Creates a new action of the appropriate type. The action id is 
@@ -165,7 +174,7 @@ public void doBuild() {
  */
 /* package */ void doBuildOperation() {
 	
-	Job buildJob = new Job(IDEWorkbenchMessages.getString("GlobalBuildAction.jobTitle")){
+	Job buildJob = new Job(IDEWorkbenchMessages.getString("GlobalBuildAction.jobTitle")){ //$NON-NLS-1$
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -194,6 +203,13 @@ public void doBuild() {
 			}
 			
 			return status;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return FAMILY_MANUAL_BUILD == family;
 		}
 	};
 	
@@ -227,6 +243,9 @@ public void run() {
 	// Verify that there are builders registered on at
 	// least one project
 	if (!verifyBuildersAvailable(roots))
+		return;
+	
+	if(!verifyNoManualRunning())
 		return;
 		
 	// Save all resources prior to doing build
@@ -285,6 +304,33 @@ public void dispose() {
 		return;
 	}
 	workbenchWindow = null;
+}
+
+/**
+ * Verify that no manual build is running. If it is then give the
+ * use the option to cancel. If they cancel, cancel the jobs and
+ * return true, otherwise return false.
+ * @return whether or not there is a manual build job running.
+ */
+private boolean verifyNoManualRunning(){
+	Job[] buildJobs = JobManager.getInstance().find(FAMILY_MANUAL_BUILD);
+	if(buildJobs.length == 0)
+		return true;
+	
+	boolean cancel =  
+		MessageDialog.openQuestion(
+			workbenchWindow.getShell(),
+			IDEWorkbenchMessages.getString("GlobalBuildAction.BuildRunningTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("GlobalBuildAction.BuildRunningMessage")); //$NON-NLS-1$
+	if(cancel){
+		for (int i = 0; i < buildJobs.length; i++) {
+			Job job = buildJobs[i];
+			job.cancel();
+		}
+	}
+	
+	//If they cancelled get them to do it again.
+	return false;
 }
 
 }
