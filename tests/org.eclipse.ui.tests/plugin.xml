@@ -93,18 +93,12 @@
 
 <extension point = "org.eclipse.ui.actionSets"> 
 	<actionSet id="org.eclipse.ui.tests.api.MockActionSet"
-		label="Mock ActionSet">
-		<menu id="org.eclipse.ui.tests.api.MockActionSetMenu" 
-			label="Mock ActionSet Menu" 
-			path="additions"> 
-			<separator name="group"/> 
-	    </menu> 
-	    <action id="org.eclipse.ui.tests.api.MockAction" 
+		label="Mock Action Set">
+		<action id="org.eclipse.ui.tests.api.MockWindowAction" 
                 label="Mock Action" 
-                menubarPath="org.eclipse.ui.tests.api.MockActionSetMenu/group"
-				class = "org.eclipse.ui.tests.api.MockAction">
+                menubarPath="additions"
+				class = "org.eclipse.ui.tests.api.MockWorkbenchWindowActionDelegate">
             </action> 
-
     </actionSet> 
 </extension> 
 </plugin>

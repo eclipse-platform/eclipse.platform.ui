@@ -1,11 +1,12 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.test.harness.util.CallHistory;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
@@ -16,9 +17,11 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private Composite myParent;		
 	private IWorkbenchPartSite site;
 	private String title;
+	private MockSelectionProvider selectionProvider;
 	
 	public MockWorkbenchPart() {		
 		callTrace = new CallHistory();
+		selectionProvider = new MockSelectionProvider();		
 	}
 	
 	public CallHistory getCallHistory()
@@ -32,6 +35,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	
 	public void setSite(IWorkbenchPartSite site) {
 		this.site = site;
+		site.setSelectionProvider(selectionProvider);		
 	}
 	
 	public IWorkbenchPartSite getSite() {
@@ -102,5 +106,12 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 */
 	public Object getAdapter(Class arg0) {
 		return null;
+	}
+	
+	/**
+	 * Fires a selection out.
+	 */
+	public void fireSelection() {
+		selectionProvider.fireSelection();
 	}
 }

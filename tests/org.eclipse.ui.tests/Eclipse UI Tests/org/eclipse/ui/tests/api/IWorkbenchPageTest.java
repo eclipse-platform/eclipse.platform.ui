@@ -549,7 +549,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	}
 
 	public void testShowActionSet() {
-		String id = MockAction.SET_ID;
+		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		int totalBefore = page.getActionSets().length;
@@ -579,7 +579,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		WorkbenchPage page = (WorkbenchPage) fActivePage;
 		int totalBefore = page.getActionSets().length;
 
-		String id = MockAction.SET_ID;
+		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet( id );
 		assertEquals(page.getActionSets().length, totalBefore + 1);
 
