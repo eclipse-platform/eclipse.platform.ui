@@ -64,7 +64,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(parent.getFont());
 
-		WorkbenchPreferencePage.createSpace(composite);
 		createEditorHistoryGroup(composite);
 		
 		WorkbenchPreferencePage.createSpace(composite);
