@@ -1091,7 +1091,7 @@ public void updateMovedFileTimestamp(IFile file, long timestamp) {
 	// Update the timestamp in the tree.
 	ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
 	// The info should never be null since we just checked that the resource exists in the tree.
-	((Resource) file).getLocalManager().updateLocalSync(info, timestamp, true);
+	((Resource) file).getLocalManager().updateLocalSync(info, timestamp);
 	//remove the linked bit since this resource has been moved in the file system
 	info.clear(ICoreConstants.M_LINK);
 }

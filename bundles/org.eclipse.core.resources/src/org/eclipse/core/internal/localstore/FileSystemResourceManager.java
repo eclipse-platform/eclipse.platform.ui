@@ -247,7 +247,7 @@ public void internalWrite(IProject target, IProjectDescription description, int 
 	//been changed from the outside
 	long lastModified = ((Resource)descriptionFile).getResourceInfo(false, false).getLocalSyncInfo();
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, true);
+	updateLocalSync(info, lastModified);
 
 	//for backwards compatibility, ensure the old .prj file is deleted
 	getWorkspace().getMetaArea().clearOldDescription(target);
@@ -310,7 +310,7 @@ public void link(Resource target, IPath localLocation) {
 	if (localLocation.isAbsolute())
 		lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, target.getType() == IResource.FILE);
+	updateLocalSync(info, lastModified);
 }
 
 public IPath locationFor(IResource target) {
@@ -490,12 +490,12 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	//if the project description has changed between sessions, let it remain
 	//out of sync -- that way link changes will be reconciled on next refresh
 	if (!creation)
-		updateLocalSync(info, lastModified, true);
+		updateLocalSync(info, lastModified);
 	
 	//update the timestamp on the project as well so we know when it has
 	//been changed from the outside
 	info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, true);
+	updateLocalSync(info, lastModified);
 
 	if (error != null)
 		throw error;
@@ -606,18 +606,12 @@ public void startup(IProgressMonitor monitor) throws CoreException {
 /**
  * The ResourceInfo must be mutable.
  */
-public void updateLocalSync(ResourceInfo info, long localSyncInfo, boolean isFile) {
+public void updateLocalSync(ResourceInfo info, long localSyncInfo) {
 	info.setLocalSyncInfo(localSyncInfo);
-
 	if (localSyncInfo == I_NULL_SYNC_INFO)
 		info.clear(M_LOCAL_EXISTS);
 	else
 		info.set(M_LOCAL_EXISTS);
-
-	if (isFile)
-		info.set(M_LOCAL_IS_FILE);
-	else
-		info.clear(M_LOCAL_IS_FILE);
 }
 /**
  * The target must exist in the workspace. The content InputStream is
@@ -671,7 +665,7 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 		// get the new last modified time and stash in the info
 		lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-		updateLocalSync(info, lastModified, true);
+		updateLocalSync(info, lastModified);
 		if (uuid != null)
 			CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(uuid).getAbsolutePath(), localFile.getAbsolutePath(), false);
 	} finally {
@@ -700,7 +694,7 @@ public void write(IFolder target, boolean force, IProgressMonitor monitor) throw
 	getStore().writeFolder(file);
 	long lastModified = CoreFileSystemLibrary.getLastModified(file.getAbsolutePath());
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, false);
+	updateLocalSync(info, lastModified);
 }
 
 /**

@@ -73,7 +73,7 @@ protected void createResource(UnifiedTreeNode node, Resource target) throws Core
 	}
 	/* Use the basic file creation protocol since we don't want to create any content on disk. */
 	info = workspace.createResource(target, false);
-	target.getLocalManager().updateLocalSync(info, node.getLastModified(), target.getType() == IResource.FILE);
+	target.getLocalManager().updateLocalSync(info, node.getLastModified());
 }
 protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, false);
@@ -96,7 +96,7 @@ protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreEx
 	}
 	node.setResource(target);
 	info = target.getResourceInfo(false, true);
-	target.getLocalManager().updateLocalSync(info, node.getLastModified(), false);
+	target.getLocalManager().updateLocalSync(info, node.getLastModified());
 }
 protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, false);
@@ -113,7 +113,7 @@ protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreEx
 	}
 	node.setResource(target);
 	info = target.getResourceInfo(false, true);
-	target.getLocalManager().updateLocalSync(info, node.getLastModified(), true);
+	target.getLocalManager().updateLocalSync(info, node.getLastModified());
 }
 /**
  * Returns the status of the nodes visited so far.  This will be a multi-status
@@ -127,7 +127,7 @@ protected void resourceChanged(Resource target, long lastModified) throws CoreEx
 	ResourceInfo info = target.getResourceInfo(false, true);
 	if (info == null)
 		return;
-	target.getLocalManager().updateLocalSync(info, lastModified, target.getType() == IResource.FILE);
+	target.getLocalManager().updateLocalSync(info, lastModified);
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
 }

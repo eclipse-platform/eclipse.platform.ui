@@ -342,7 +342,7 @@ public void convertToPhantom() throws CoreException {
 		return;
 	info.clearSessionProperties();
 	info.set(M_PHANTOM);
-	getLocalManager().updateLocalSync(info, I_NULL_SYNC_INFO, getType() == FILE);
+	getLocalManager().updateLocalSync(info, I_NULL_SYNC_INFO);
 	info.setModificationStamp(IResource.NULL_STAMP);
 	// should already be done by the #deleteResource call but left in 
 	// just to be safe and for code clarity.

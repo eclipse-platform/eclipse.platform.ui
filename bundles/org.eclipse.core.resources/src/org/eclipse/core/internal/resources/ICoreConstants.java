@@ -26,7 +26,6 @@ public interface ICoreConstants {
 	// Useful flag masks for resource info states
 	static final int M_OPEN = 0x1;
 	static final int M_LOCAL_EXISTS = 0x2;
-	static final int M_LOCAL_IS_FILE = 0x4;
 	static final int M_PHANTOM = 0x8;
 	static final int M_USED = 0x10;
 	static final int M_TYPE = 0xF00;
