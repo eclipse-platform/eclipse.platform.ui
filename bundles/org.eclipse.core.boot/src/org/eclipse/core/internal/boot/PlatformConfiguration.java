@@ -2133,13 +2133,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// look for the product initialization file relative to the install location
 		URL url = BootLoader.getInstallURL();
 		
-		if (defaultFeature != null)
-			return; // already set
-								
-		// load any initialization attributes. These become the initial default settings
-		// for critical attributes (eg. default primary feature) supplied by the packaging team.
-		// Once these are reflected in the configuration they cannot be changed via the
-		// initialization mechanism
+		// load any initialization attributes. These are the default settings for
+		// key attributes (eg. default primary feature) supplied by the packaging team.
+		// They are always reloaded on startup to pick up any changes due to
+		// "native" updates.
 		Properties initProps = new Properties();
 		InputStream is = null;
 		try {
@@ -2147,9 +2144,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			is = initURL.openStream();
 			initProps.load(is);
 			if (DEBUG) 
-				debug("Initializing from "+initURL.toExternalForm()); //$NON-NLS-1$
+				debug("Defaults from "+initURL.toExternalForm()); //$NON-NLS-1$
 		} catch(IOException e) {
-			return; // could not load "first-time" settings
+			return; // could not load default settings
 		} finally {
 			if (is!=null) {
 				try {
@@ -2160,12 +2157,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 				
-		// use "first-time" settings if not already set
-		defaultFeature = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
-		if (defaultFeature != null) {
+		// use default settings if supplied
+		String initId = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
+		if (initId != null) {
 			String application = loadAttribute(initProps, INIT_DEFAULT_FEATURE_APPLICATION, null);
-			IFeatureEntry fe = createFeatureEntry(defaultFeature, null, null, true, application, null);
+			IFeatureEntry fe = findConfiguredFeatureEntry(initId);
+			if (fe == null)
+				// create entry if not exists
+				fe = createFeatureEntry(initId, null, null, true, application, null);
+			else 
+				// update existing entry with new info
+				fe = createFeatureEntry(initId, fe.getFeatureVersion(), fe.getFeaturePluginVersion(), fe.canBePrimary(), application, fe.getFeatureRootURLs());
 			configureFeatureEntry(fe);
+			defaultFeature = initId;
 			if (DEBUG) {
 				debug("    Default primary feature: "+defaultFeature); //$NON-NLS-1$
 				if (application != null)
