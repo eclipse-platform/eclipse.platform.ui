@@ -52,6 +52,7 @@ public class ViewPane extends PartPane
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
+	private ActionDescriptor[] extendedActions;
 	
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
@@ -190,6 +191,12 @@ public void createControl(Composite parent) {
 		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
 	}
 }
+public ActionDescriptor[] getExtendedActions() {
+	if(extendedActions == null)
+		return new ActionDescriptor[0];
+	return extendedActions;
+}
+
 protected void createChildControl() {
 	final IWorkbenchPart part[] = new IWorkbenchPart[]{partReference.getPart(false)};
 	if(part[0] == null)
@@ -205,6 +212,7 @@ protected void createChildControl() {
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
 			builder.readActionExtensions((IViewPart)getViewReference().getPart(true));
+			extendedActions = builder.getExtendedActions();
 			updateActionBars();
 		}
 		public void handleException(Throwable e) {

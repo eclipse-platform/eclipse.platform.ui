@@ -49,6 +49,16 @@ public IEditorActionBarContributor getActionBarContributor() {
 		return null;
 }
 /**
+ * Returns the extension editor action bar contributor for this editor.
+ */
+public IEditorActionBarContributor getExtensionActionBarContributor() {
+	EditorActionBars bars = (EditorActionBars)getActionBars();
+	if (bars != null)
+		return bars.getExtensionContributor();
+	else
+		return null;
+}
+/**
  * Returns the editor
  */
 public IEditorPart getEditorPart() {

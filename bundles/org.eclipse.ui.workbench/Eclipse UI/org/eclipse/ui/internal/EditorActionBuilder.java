@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.jface.action.*;
 import java.util.*;
 
@@ -25,6 +24,18 @@ public class EditorActionBuilder extends PluginActionBuilder {
 		}
 		public void dispose() {
 		};
+		public ActionDescriptor[] getExtendedActions() {
+			if(cache == null)
+				return new ActionDescriptor[0];
+			ArrayList result = new ArrayList(cache.size());
+			for (Iterator iter = cache.iterator(); iter.hasNext();) {
+				Object element = (Object) iter.next();
+				if (element instanceof ActionDescriptor) {
+					result.add(element);
+				}
+			}
+			return (ActionDescriptor[])result.toArray(new ActionDescriptor[result.size()]);
+		}
 		public void init(IActionBars bars, IWorkbenchPage page) {
 			contributeToMenu(bars.getMenuManager());
 			contributeToToolBar(bars.getToolBarManager());

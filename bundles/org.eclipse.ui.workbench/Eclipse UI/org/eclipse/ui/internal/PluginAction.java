@@ -50,13 +50,14 @@ public abstract class PluginAction extends Action
 	/**
 	 * PluginAction constructor.
 	 */
-	public PluginAction(IConfigurationElement actionElement, String runAttribute) {
+	public PluginAction(IConfigurationElement actionElement, String runAttribute,String definitionId) {
 		super();
 
 		// Create unique action id.
 		setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$
 		++actionCount;
-
+		setActionDefinitionId(definitionId);
+				
 		// Store arguments.
 		this.configElement = actionElement;
 		this.runAttribute = runAttribute;

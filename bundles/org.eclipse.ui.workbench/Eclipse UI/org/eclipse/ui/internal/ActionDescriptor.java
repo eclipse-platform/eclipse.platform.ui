@@ -154,15 +154,15 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target) {
 	switch (targetType) {
 		case T_VIEW:
-			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target);
+			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target,definitionId);
 		case T_EDITOR:
-			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target);
+			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target,definitionId);
 		case T_WORKBENCH:
 			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target,definitionId);
 		case T_WORKBENCH_PULLDOWN:
-			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target,definitionId);
 		case T_POPUP:
-			return new ObjectPluginAction(actionElement, ATT_CLASS);
+			return new ObjectPluginAction(actionElement, ATT_CLASS,definitionId);
 		default:
 			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
 			return null;

@@ -19,8 +19,8 @@ public class PartPluginAction extends PluginAction {
  * PartPluginAction constructor.
  *
  */
-public PartPluginAction(IConfigurationElement actionElement, String runAttribute) {
-	super(actionElement, runAttribute);
+public PartPluginAction(IConfigurationElement actionElement, String runAttribute,String definitionId) {
+	super(actionElement, runAttribute,definitionId);
 }
 /**
  * Registers this action as a listener of the workbench part.

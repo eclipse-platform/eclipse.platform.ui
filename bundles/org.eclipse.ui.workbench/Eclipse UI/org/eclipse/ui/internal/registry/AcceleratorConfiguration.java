@@ -3,7 +3,7 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.HashMap;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * An accelerator configuration represents a collection of accelerator key to 
@@ -14,6 +14,8 @@ public class AcceleratorConfiguration {
 	private String id;
 	private String name;
 	private String description;
+	private String parentConfigurationString;
+	private AcceleratorConfiguration parentConfiguration;
 	/**
 	 * Create an instance of AcceleratorConfiguration and initializes 
 	 * it with its id, name and description.
@@ -34,21 +36,24 @@ public class AcceleratorConfiguration {
 	 */
 	public String getName() {
 		return name;
+	}		
+
+	public AcceleratorConfiguration getParentConfiguration() {
+		if(id.equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID))
+			return null;
+		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		if(parentConfiguration ==  null) {
+			parentConfiguration = registry.getConfiguration(parentConfigurationString);
+			if(parentConfiguration ==  null) 
+				parentConfiguration = registry.getConfiguration(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
+		}
+		return parentConfiguration;
 	}
+	
 	/**
 	 * Return this configuration's description.
 	 */
 	public String getDescription() {
 		return description;	
-	}
-	/**
-	 * Re-initializes all scopes to use this configuration.
-	 */
-	public void initializeScopes() {
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorScope scopes[] = registry.getScopes();
-		for (int i = 0; i < scopes.length; i++) {
-			scopes[i].initializeAccelerators(this);
-		}
 	}
 }

@@ -37,6 +37,11 @@ public class AcceleratorRegistry {
 		sets = new ArrayList();
 		fakeAccelerators = new ArrayList();	
 	}
+	
+	public List getAcceleratorSets() {
+		return sets;
+	}	
+	
 	/**
 	 * Adds the given accelerator configuration to the registry.
 	 */	

@@ -47,8 +47,7 @@ public class WWinPluginAction extends PluginAction
 	public WWinPluginAction(IConfigurationElement actionElement,
 		String runAttribute, IWorkbenchWindow window,String definitionId) 
 	{
-		super(actionElement, runAttribute);
-		setActionDefinitionId(definitionId);
+		super(actionElement, runAttribute,definitionId);
 		this.window = window;
 
 		// If config specifies a retarget action, create it now

@@ -136,7 +136,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction openProjectAction;
 	private RetargetAction closeProjectAction;
 	
-	private KeyBindingMenu keyBindingMenu;
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
 // end menu reorg	

@@ -36,6 +36,18 @@ protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConf
 	return new ActionDescriptor(element, ActionDescriptor.T_VIEW, targetPart);
 }
 /**
+ * Return all extendedn actions. */
+public ActionDescriptor[] getExtendedActions() {
+	ArrayList result = new ArrayList(cache.size());
+	for (Iterator iter = cache.iterator(); iter.hasNext();) {
+		Object element = (Object) iter.next();
+		if (element instanceof ActionDescriptor) {
+			result.add(element);
+		}
+	}
+	return (ActionDescriptor[])result.toArray(new ActionDescriptor[result.size()]);
+}
+/**
  *
  */
 public void readActionExtensions(IViewPart viewPart) {

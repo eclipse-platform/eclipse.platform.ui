@@ -73,6 +73,12 @@ public IEditorActionBarContributor getEditorContributor() {
 	return editorContributor;
 }
 /**
+ * Gets the extension contributor
+ */
+public IEditorActionBarContributor getExtensionContributor() {
+	return extensionContributor;
+}
+/**
  * Returns the editor type.
  */
 public String getEditorType() {

@@ -4,45 +4,98 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
-import org.eclipse.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IMarkerHelpRegistry;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
+import org.eclipse.ui.internal.keybindings.Configuration;
+import org.eclipse.ui.internal.keybindings.KeyBindingManager;
+import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -556,6 +609,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs) {
+		KeyBindingManager.getInstance();
+		
 		isStarting = true;
 
 		this.commandLineArgs = commandLineArgs;
@@ -690,12 +745,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void initializeAcceleratorConfiguration() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		
 		if (id == null)
 			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		acceleratorConfiguration = registry.getConfiguration(id);
-		if(acceleratorConfiguration!=null)
-			acceleratorConfiguration.initializeScopes();
+
+		Configuration configuration = 
+			KeyBindingManager.getInstance().getConfigurationForId(id);
+		
+		if (configuration == null)
+			configuration = Configuration.create();
+		
+		KeyBindingManager.getInstance().setConfiguration(configuration);
 	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
@@ -1412,10 +1472,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * with the given id.
 	 */
 	public void setActiveAcceleratorConfiguration(AcceleratorConfiguration config) {
-		if(config!=null) {
-			acceleratorConfiguration = config;	
-			acceleratorConfiguration.initializeScopes();
-		}
+		if (config != null) {
+			acceleratorConfiguration = config; 
+ 			String id = config.getId();			
+			Configuration configuration = KeyBindingManager.getInstance().getConfigurationForId(id);
+		
+			if (configuration == null)
+				configuration = Configuration.create();
+	
+			KeyBindingManager.getInstance().setConfiguration(configuration);
+		}	
 	}
 	/**
 	 * @see IExecutableExtension

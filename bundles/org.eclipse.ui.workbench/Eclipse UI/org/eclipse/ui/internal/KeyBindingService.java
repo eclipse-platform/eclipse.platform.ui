@@ -23,30 +23,32 @@ import org.eclipse.ui.internal.registry.*;
  * </ul>
  */
 public class KeyBindingService implements IKeyBindingService {
+	
 	private IPartListener partListener;
 	private ShellListener shellListener;
 	
 	/* Maps action definition id to action. */
 	private HashMap defIdToAction = new HashMap();
+	
 	/* Maps action definition id to action. Includes the actions 
 	 * registered in this service and its parent so that only one 
 	 * lookup is needed.
 	 */
 	private HashMap allDefIdToAction = new HashMap();
+
 	/* The active accelerator scope which is set by the editor */
-	private AcceleratorScope scope;
+	private String[] scopeIds = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
+	
 	/* The Workbench window key binding service which manages the 
 	 * global actions and the action sets 
 	 */
 	private WWinKeyBindingService parent;
+	
 	/* A number increased by the parent whenever a new action 
 	 * is registered so that this instance can update its mapping
 	 * when it is out of sync.
 	 */
 	private long parentUpdateNumber;
-	/* Maps acc to action. 
-	 */
-	private HashMap editorActions = new HashMap();
 	
 	/**
 	 * Create an instance of KeyBindingService and initializes 
@@ -58,88 +60,63 @@ public class KeyBindingService implements IKeyBindingService {
 			public void partBroughtToTop(IWorkbenchPart part) {}
 			public void partClosed(IWorkbenchPart part) {}
 			public void partDeactivated(IWorkbenchPart part) {
-				AcceleratorScope.resetMode(KeyBindingService.this);
+				parent.clear();
 			}
 			public void partOpened(IWorkbenchPart part) {}
 		};
+		
 		shellListener = new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {
-				AcceleratorScope.resetMode(KeyBindingService.this);	
+				parent.clear();
 			}
 		};
+		
 		parent = service;
 		parentUpdateNumber = parent.getUpdateNumber() - 1;
 		service.getWindow().getPartService().addPartListener(partListener);
 		service.getWindow().getShell().addShellListener(shellListener);
-		if(site instanceof EditorSite)
-			initEditorActions((EditorSite)site);
-	}
-	/*
-	 * Merge the actions from its parents with its registered actions
-	 * in one HashMap
-	 */
-	private void initializeMapping() {
-		parentUpdateNumber = parent.getUpdateNumber();
-		allDefIdToAction = parent.getMapping();
-		allDefIdToAction.putAll(defIdToAction);
-	}
-	/*
-	 * Initialize a hash map with all editor actions. Used
-	 * for backward compatibility.
-	 */
-	private void initEditorActions(EditorSite site) {
-		EditorMenuManager nenuMgr = (EditorMenuManager)site.getActionBars().getMenuManager();
-		IAction actions[] = nenuMgr.getAllContributedActions();
-		for (int i = 0; i < actions.length; i++) {
-			int acc = actions[i].getAccelerator();
-			if(acc != 0)
-				editorActions.put(new Integer(acc),actions[i]);
+		ActionDescriptor actionDescriptors[] = null;
+		
+		if(site instanceof EditorSite) {
+			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor)((EditorSite)site).getExtensionActionBarContributor();
+			if(contributor == null)
+				actionDescriptors = new ActionDescriptor[0];
+			else
+				actionDescriptors = contributor.getExtendedActions();
+		} else {
+			actionDescriptors = ((ViewPane)site.getPane()).getExtendedActions();
+		}
+		
+		for (int i = 0; i < actionDescriptors.length; i++) {
+			IAction action = actionDescriptors[i].getAction();
+			
+			if (action.getActionDefinitionId() != null)
+				registerAction(action);
 		}
 	}
+
 	/*
-	 * HACK: Should be deleted once we find a solution
-	 * for editor actions which is not supported by this key 
-	 * binding implementation.
+	 * @see IKeyBindingService#getScopeIds()
 	 */
-	public boolean processEditorAction(Event e, int acc) {
-		IAction action = (IAction)editorActions.get(new Integer(acc));
-		if(action == null)
-			return false;
-		action.runWithEvent(e);
-		return true;
-	}
-	/*
-	 * HACK: Should be deleted once we find a solution
-	 * for editor actions which is not supported by this key 
-	 * binding implementation.
-	 */
-	public int[] getEditorActions() {
-		int result[] = new int[editorActions.size()];
-		int i = 0;
-		for (Iterator iter = editorActions.keySet().iterator(); iter.hasNext();i++) {
-			result[i] = ((Integer)iter.next()).intValue();
-		}
-		return result;
-	}
-	/** 
-	 * Remove the part listener when the editor site is disposed.
-	 */
-	public void dispose() {
-		getWindow().getPartService().removePartListener(partListener);
-		getWindow().getShell().removeShellListener(shellListener);
-	}
-	/*
-	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
-	 */
-    public String getActiveAcceleratorConfigurationId() {
-    	return ((Workbench)PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getId();
+	public String[] getScopeIds() {
+    	return (String[]) scopeIds.clone();
     }
+
 	/*
-	 * @see IKeyBindingService#processKey(Event)
+	 * @see IKeyBindingService#setScopeIds(String[] scopeIds)
 	 */
-	public boolean processKey(KeyEvent event) {
-		return false;
+	public void setScopeIds(String[] scopeIds)
+		throws IllegalArgumentException {
+		if (scopeIds == null || scopeIds.length < 1)
+			throw new IllegalArgumentException();
+			
+    	this.scopeIds = (String[]) scopeIds.clone();
+    	
+    	for (int i = 0; i < scopeIds.length; i++)
+			if (scopeIds[i] == null)
+				throw new IllegalArgumentException();    	
     }
+
 	/*
 	 * @see IKeyBindingService#registerAction(IAction)
 	 */
@@ -150,52 +127,79 @@ public class KeyBindingService implements IKeyBindingService {
     	Assert.isNotNull(defId,"All registered action must have a definition id"); //$NON-NLS-1$
 		defIdToAction.put(defId,action);
 		allDefIdToAction.put(defId,action);
-		if(scope != null)
-			scope.registerAction(action.getAccelerator(),defId);
     }
-    /*
-	 * @see IKeyBindingService#registerAction(IAction)
+    
+   	/*
+	 * @see IKeyBindingService#unregisterAction(IAction)
 	 */
-	public void enable(boolean enable) {
+	public void unregisterAction(IAction action) {   		
+    	String defId = action.getActionDefinitionId();
+    	Assert.isNotNull(defId,"All registered action must have a definition id"); //$NON-NLS-1$
+		defIdToAction.remove(defId);
+		allDefIdToAction.remove(defId);
+    }
+	
+	/*
+	 * Merge the actions from its parents with its registered actions
+	 * in one HashMap
+	 */
+	private void initializeMapping() {
+		parentUpdateNumber = parent.getUpdateNumber();
+		allDefIdToAction = parent.getMapping();
+		allDefIdToAction.putAll(defIdToAction);
 	}
+	
+	/** 
+	 * Remove the part listener when the editor site is disposed.
+	 */
+	public void dispose() {
+		parent.getWindow().getPartService().removePartListener(partListener);
+		parent.getWindow().getShell().removeShellListener(shellListener);
+	}
+	
     /**
      * Returns the action mapped with the specified <code>definitionId</code>
      */
     public IAction getAction(String definitionId) {
     	//Chech if parent has changed. E.g. added action sets.
-    	if(parentUpdateNumber != parent.getUpdateNumber())
+    	if (parentUpdateNumber != parent.getUpdateNumber())
     		initializeMapping();
-    	return (IAction)allDefIdToAction.get(definitionId);
+    		
+    	return (IAction) allDefIdToAction.get(definitionId);
     }
+
+	/*
+	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
+	 */
+    public String getActiveAcceleratorConfigurationId() {
+    	return ((Workbench)PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getId();
+    }
+
 	/*
 	 * @see IKeyBindingService#getActiveAcceleratorScopeId()
 	 */
 	public String getActiveAcceleratorScopeId() {
-    	return scope.getId();
+   		return getScopeIds()[0];
     }
-    /**
-     * Returns the active scope.
-     */
-	public AcceleratorScope getActiveAcceleratorScope() {
-    	return scope;
-    }
-    /**
-     * Returns the workbench window.
-     */
-    public IWorkbenchWindow getWindow() {
-    	return parent.getWindow();	
-    } 
+
 	/*
 	 * @see IKeyBindingService#setActiveAcceleratorScopeId(String)
 	 */ 
-    public void setActiveAcceleratorScopeId(String scopeId) {
-    	AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-    	scope = registry.getScope(scopeId);
+    public void setActiveAcceleratorScopeId(String scopeId)
+    	throws IllegalArgumentException {
+   		setScopeIds(new String[] { scopeId });
     }
-	/**
-	 * Update the KeyBindingMenu with the current set of accelerators.
+    
+   	/*
+	 * @see IKeyBindingService#processKey(Event)
 	 */
-	public void updateAccelerators(boolean defaultMode) {
-		parent.updateAccelerators(defaultMode);
+	public boolean processKey(KeyEvent event) {
+		return false;
+    }
+
+    /*
+	 * @see IKeyBindingService#registerAction(IAction)
+	 */
+	public void enable(boolean enable) {
 	}
 }

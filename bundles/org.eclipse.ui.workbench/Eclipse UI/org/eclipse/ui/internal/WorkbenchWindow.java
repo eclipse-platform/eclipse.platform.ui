@@ -7,35 +7,79 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.actions.OpenNewWindowMenu;
-import org.eclipse.ui.actions.OpenNewPageMenu;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.keybindings.Action;
+import org.eclipse.ui.internal.keybindings.KeyBindingManager;
+import org.eclipse.ui.internal.keybindings.KeySequence;
+import org.eclipse.ui.internal.keybindings.KeyStroke;
+import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
  * A window within the workbench.
@@ -518,36 +562,63 @@ private void createShortcutBar(Shell shell) {
 protected MenuManager createMenuManager() {
 	final MenuManager result = super.createMenuManager();
 	result.setOverrides(new IContributionManagerOverrides() {
+		
 		public Integer getAccelerator(IContributionItem item) {
-			return new Integer(0);
-		}
-		public String getAcceleratorText(IContributionItem item) {
-			if(!(item instanceof ActionContributionItem))
-				return null;
+			if (!(item instanceof ActionContributionItem))
+				return null;	
+						
 			ActionContributionItem aci = (ActionContributionItem)item;
 			String defId = aci.getAction().getActionDefinitionId();
-			if(defId == null) {
-				String registeredAction = null;
-				int acc[] = new int[]{aci.getAction().getAccelerator()};
-				if(acc[0] != 0)
-					registeredAction = getKeyBindingService().getDefinitionId(acc);
-				if(registeredAction == null)
-					return null;
-				else
-					return ""; //$NON-NLS-1$
-			} else {
-				String registeredAction = null;
-				int acc[][] = getKeyBindingService().getAccelerators(defId);
-				if(acc == null)
-					return null;
-				for (int i = 0; i < acc.length; i++) {
-					registeredAction = getKeyBindingService().getDefinitionId(acc[i]);
-					if(!defId.equals(registeredAction))
-						return ""; //$NON-NLS-1$
+
+			if (defId == null) {
+				int accelerator = aci.getAction().getAccelerator();
+				
+				if (accelerator != 0) {				
+					KeySequence keySequence = KeySequence.create(
+						KeyStroke.create(accelerator));						
+					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
+					Action action = (Action) sequenceActionMap.get(keySequence);
+					
+					if (action == null || action.getValue() == null)
+						return null;
 				}
-			}
-			return getKeyBindingService().getAcceleratorText(defId);
+
+				return new Integer(0);
+			} 
+
+			return new Integer(0);
+			//TBD: later we can move the accelerator from the hidden menu to here:
+			//String acceleratorText = KeyBindingManager.getInstance().getAcceleratorTextForAction(defId);			
+			//return (acceleratorText != null ? acceleratorText : new Integer(0));	
 		}
+		
+		public String getAcceleratorText(IContributionItem item) {
+			if (!(item instanceof ActionContributionItem))
+				return null;	
+						
+			ActionContributionItem aci = (ActionContributionItem)item;
+			String defId = aci.getAction().getActionDefinitionId();
+
+			if (defId == null) {
+				int accelerator = aci.getAction().getAccelerator();
+				
+				if (accelerator != 0) {				
+					KeySequence keySequence = KeySequence.create(
+						KeyStroke.create(accelerator));						
+					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
+					Action action = (Action) sequenceActionMap.get(keySequence);
+					
+					if (action == null || action.getValue() == null)
+						return null;
+				}
+
+				return "";
+			} 
+
+			String acceleratorText = KeyBindingManager.getInstance().getAcceleratorTextForAction(defId);			
+			return (acceleratorText != null ? acceleratorText : "");			
+		}
+		
 		public String getText(IContributionItem item) {
 			if(!(item instanceof MenuManager))
 				return null;
@@ -568,7 +639,7 @@ protected MenuManager createMenuManager() {
 			if (index < 0 || index == (text.length() -1))
 				return text;
 				
-			char altChar = 	Character.toUpperCase(text.charAt(index + 1));
+			char altChar = Character.toUpperCase(text.charAt(index + 1));
 			String defId = keyBindingService.getDefinitionId(new int[]{SWT.ALT | altChar});
 			if(defId == null)
 				return text;
@@ -577,6 +648,7 @@ protected MenuManager createMenuManager() {
 				return text.substring(1);
 			return text.substring(0, index) + text.substring(index + 1);
 		}
+		
 		public Boolean getEnabled(IContributionItem item) {
 			return null;
 		}
@@ -1099,6 +1171,9 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
 		
 	setActivePage(newActivePage);
+	IWorkbenchPart part = newActivePage.getActivePart();
+	if(part != null)
+		getKeyBindingService().update(part,true);
 		
 	return result;
 }
