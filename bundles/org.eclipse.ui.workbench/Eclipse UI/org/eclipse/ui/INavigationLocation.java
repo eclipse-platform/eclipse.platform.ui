@@ -75,10 +75,5 @@ public interface INavigationLocation {
 	 *
 	 * @return String the display text
 	 */
-	public void setText(String text);
-	/**
-	 * The message <code>update</code> is sent to the active location before
-	 * another location becomes active.
-	 */	
 	public void update();
 }
