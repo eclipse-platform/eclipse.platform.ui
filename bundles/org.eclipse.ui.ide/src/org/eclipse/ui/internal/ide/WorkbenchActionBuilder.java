@@ -30,7 +30,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IDEContributionItemFactory;
 
@@ -39,8 +40,9 @@ import org.eclipse.ui.ide.IDEContributionItemFactory;
  */
 public final class WorkbenchActionBuilder {
 
-	private IWorkbenchWindowConfigurer windowConfigurer;
 
+	private IWorkbenchWindow window;
+	
 	// generic actions
 	private IWorkbenchAction closeAction;
 	private IWorkbenchAction closeAllAction;
@@ -115,31 +117,21 @@ public final class WorkbenchActionBuilder {
 
 	/**
 	 * Constructs a new action builder which contributes actions
-	 * to the given window configurer.
+	 * to the given window.
 	 * 
-	 * @windowConfigurer the window configurer
+	 * @param window the window
 	 */
-	public WorkbenchActionBuilder(IWorkbenchWindowConfigurer windowConfigurer) {
-		super();
-		this.windowConfigurer = windowConfigurer;
+	public WorkbenchActionBuilder(IWorkbenchWindow window) {
+		this.window = window;
 	}
 
 	/**
 	 * Returns the window to which this action builder is contributing.
 	 */
 	private IWorkbenchWindow getWindow() {
-		return windowConfigurer.getWindow();
+		return window;
 	}
 	
-	/**
-	 * Builds the actions and contributes them to the given window.
-	 */
-	public void buildActions() {
-		makeActions();
-		fillActionBars();
-		hookListeners();
-	}
-
 	/**
 	 * Hooks listeners on the preference store and the window's page, perspective and selection services.
 	 */
@@ -187,54 +179,54 @@ public final class WorkbenchActionBuilder {
 		importResourcesAction.setEnabled(value);
 		exportResourcesAction.setEnabled(value);
 	}
+	
 	/**
-	 * Fills the menu bar and coolbar with the workbench actions.
+	 * Builds the actions and contributes them to the given window.
 	 */
-	private void fillActionBars() {
-		fillActionBars(windowConfigurer);
+	public void makeAndPopulateActions(IWorkbenchConfigurer windowConfigurer, IActionBarConfigurer actionBarConfigurer) {
+		makeActions(windowConfigurer, actionBarConfigurer);
+		populateMenuBar(actionBarConfigurer);
+		populateCoolBar(actionBarConfigurer);
+		hookListeners();
 	}
-	/**
-	 * Fills the given action bars with the workbench actions.
-	 */
-	private void fillActionBars(IWorkbenchWindowConfigurer configurer) {
-		fillMenuBar(configurer.getMenuManager());
-		fillCoolBar(configurer);
-	}
+	
 	/**
 	 * Fills the coolbar with the workbench actions.
 	 */
-	private void fillCoolBar(IWorkbenchWindowConfigurer configurer) {
+	public void populateCoolBar(IActionBarConfigurer configurer) {
 		configurer.addToToolBarMenu(new ActionContributionItem(lockToolBarAction));
 		configurer.addToToolBarMenu(new ActionContributionItem(editActionSetAction));
 
 		IToolBarManager tBarMgr = configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.NEW_GROUP, true);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.NEW_GROUP, true);
 		tBarMgr.add(newWizardDropDownAction);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.NEW_EXT, false);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_GROUP, false);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.NEW_EXT, false);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_GROUP, false);
 		tBarMgr.add(saveAction);
 		tBarMgr.add(saveAsAction);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_EXT, false);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_EXT, false);
 		tBarMgr.add(printAction);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.PRINT_EXT, false);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_GROUP, true);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.PRINT_EXT, false);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_GROUP, true);
 		IContributionItem item = IDEContributionItemFactory.BUILD.create(getWindow());
 		registerGlobalAction(((ActionContributionItem) item).getAction());
 		tBarMgr.add(item);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_EXT, false);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.MB_ADDITIONS, true);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_EXT, false);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.MB_ADDITIONS, true);
 
 		tBarMgr = configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.HISTORY_GROUP, true);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.HISTORY_GROUP, true);
 		tBarMgr.add(backwardHistoryAction);
 		tBarMgr.add(forwardHistoryAction);
-		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.PIN_GROUP, true);
+		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.PIN_GROUP, true);
 		tBarMgr.add(ContributionItemFactory.PIN_EDITOR.create(getWindow()));
 	}
+	
 	/**
 	 * Fills the menu bar with the workbench actions.
 	 */
-	private void fillMenuBar(IMenuManager menubar) {
+	public void populateMenuBar(IActionBarConfigurer configurer) {		
+		IMenuManager menubar = configurer.getMenuManager();
 		menubar.add(createFileMenu());
 		menubar.add(createEditMenu());
 		menubar.add(createNavigateMenu());
@@ -243,6 +235,7 @@ public final class WorkbenchActionBuilder {
 		menubar.add(createWindowMenu());
 		menubar.add(createHelpMenu());
 	}
+	
 	/**
 	 * Creates and returns the File menu.
 	 */
@@ -533,10 +526,12 @@ public final class WorkbenchActionBuilder {
 	/**
 	 * Create actions for the menu bar and toolbar
 	 */
-	private void makeActions() {
+	private void makeActions(IWorkbenchConfigurer workbenchConfigurer, IActionBarConfigurer actionBarConfigurer) {
 
 		// The actions in jface do not have menu vs. enable, vs. disable vs. color
 		// There are actions in here being passed the workbench - problem 
+		setCurrentActionBarConfigurer(actionBarConfigurer);
+		
 		newWizardAction = ActionFactory.NEW.create(getWindow());
 		registerGlobalAction(newWizardAction);
 
@@ -595,7 +590,7 @@ public final class WorkbenchActionBuilder {
 
 		try {
 			aboutAction = IDEActionFactory.ABOUT.create(getWindow());
-			AboutInfo aboutInfo = windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+			AboutInfo aboutInfo = workbenchConfigurer.getPrimaryFeatureAboutInfo();
 			String productName = aboutInfo.getProductName();
 			if (productName == null) {
 				productName = ""; //$NON-NLS-1$
@@ -626,7 +621,7 @@ public final class WorkbenchActionBuilder {
 		// registerGlobalAction(deleteAction);
 
 		try {
-			AboutInfo[] infos = windowConfigurer.getWorkbenchConfigurer().getAllFeaturesAboutInfo();
+			AboutInfo[] infos = workbenchConfigurer.getAllFeaturesAboutInfo();
 			// See if a welcome page is specified
 			for (int i = 0; i < infos.length; i++) {
 				if (infos[i].getWelcomePageURL() != null) {
@@ -755,7 +750,18 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(projectPropertyDialogAction);
 	}
 
+	/** 
+     * A convience variable and method so that the actionConfigurer doesn't need to
+     * get passed into registerGlobalAction every time it's called.
+     */
+	private IActionBarConfigurer actionBarConfigurer;
+	
+	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)
+	{
+		this.actionBarConfigurer = actionBarConfigurer;
+	}
+	
 	private void registerGlobalAction(IAction action) {
-		windowConfigurer.registerGlobalAction(action);
+		actionBarConfigurer.registerGlobalAction(action);
 	}
 }

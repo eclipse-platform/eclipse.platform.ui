@@ -60,6 +60,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
@@ -296,14 +297,11 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		return true;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowOpen
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer windowConfigurer) {
-		// setup the action builder to populate the toolbar and menubar
-		WorkbenchActionBuilder actionBuilder = new WorkbenchActionBuilder(windowConfigurer);
-		windowConfigurer.setData(ACTION_BUILDER, actionBuilder);
-		actionBuilder.buildActions();
 		
 		// add the drag and drop support for the editor area
 		windowConfigurer.addEditorAreaTransfer(EditorInputTransfer.getInstance());
@@ -952,6 +950,37 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		configurer.declareImage(symbolicName, desc, shared);
+	}
+	
+	
+	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer actionConfigurer, int flags) {
+		
+		// setup the action builder to populate the toolbar and menubar in the configurer
+		WorkbenchActionBuilder actionBuilder = null;
+		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
+		
+		// For proxy calls to this method it is important that we use the same object
+		// associated with the windowConfigurer
+		actionBuilder = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
+		if (actionBuilder == null) {
+			actionBuilder = new WorkbenchActionBuilder(window);
+		}
+		
+		if ((flags & FILL_PROXY) != 0) {
+			// Filling in fake actionbars
+			if ((flags & FILL_MENU_BAR) != 0) {
+				actionBuilder.populateMenuBar(actionConfigurer);
+			}
+			if ((flags & FILL_TOOL_BAR) != 0) {
+				actionBuilder.populateCoolBar(actionConfigurer);
+			}
+		} else {
+			// make, fill, and hook listeners to actionbuilderconfigurer
+			// reference to IWorkbenchConfigurer is need for the ABOUT action
+			windowConfigurer.setData(ACTION_BUILDER,actionBuilder);
+			actionBuilder.makeAndPopulateActions(configurer, actionConfigurer);
+		}
+		
 	}
 	
 }
