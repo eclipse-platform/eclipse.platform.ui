@@ -45,8 +45,12 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	private void removeProblems() {
+		IFile file= getFile();
+		if (file == null || !file.exists()) {
+			return;
+		}
 		try {
-			getFile().deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			file.deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			// assume there were no problems
 		}
