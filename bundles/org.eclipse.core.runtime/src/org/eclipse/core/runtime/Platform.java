@@ -11,11 +11,9 @@
 package org.eclipse.core.runtime;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.jobs.IJobManager;
