@@ -13,9 +13,7 @@ package org.eclipse.team.internal.ui.wizards;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import javax.xml.parsers.*;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -25,6 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.UIProjectSetSerializationContext;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.xml.sax.InputSource;
@@ -81,13 +80,16 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 									newProjects.addAll(Arrays.asList(projects));
 							}
 						} else {
+							UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell());
 							Iterator it = map.keySet().iterator();
 							while (it.hasNext()) {
 								String id = (String)it.next();
 								List references = (List)map.get(id);
-								IProjectSetSerializer serializer = Team.getProjectSetSerializer(id);
+								RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
+								ProjectSetCapability serializer = providerType.getProjectSetCapability();
+								ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
 								if (serializer != null) {
-									IProject[] projects = serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), filename, getShell(), monitor);
+									IProject[] projects = serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), context, monitor);
 									if (projects != null)
 										newProjects.addAll(Arrays.asList(projects));
 								}

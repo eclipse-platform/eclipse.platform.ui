@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Given this String, it can create in the workspace an IProject.
  * 
  * @since 2.0
+ * 
+ * @deprecated 
+ *       Use {@link org.eclipse.team.core.RepositoryProviderType#getProjectSetSerializer()}
+ *       to obtain an instance of {@link org.eclipse.team.core.ProjectSetSerializer} instead.
  */
 
 public interface IProjectSetSerializer {

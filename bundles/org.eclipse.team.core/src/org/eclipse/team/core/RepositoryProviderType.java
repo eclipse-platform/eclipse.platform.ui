@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.core.DefaultProjectSetCapability;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -141,19 +142,35 @@ public abstract class RepositoryProviderType {
 	}
 
 	/**
-	 * Answers the ProjectSetCapability that is intended to implement methods to import and
-	 * create project sets.  If the provider doesn't wish to provide this
+	 * Answers an object for serializing and deserializing
+	 * of references to projects.  Given a project, it can produce a
+	 * UTF-8 encoded String which can be stored in a file.
+	 * Given this String, it can load a project into the workspace.
+	 * It also provides a mechanism
+	 * by which repository providers can be notified when a project set is created and exported.
+	 * If the provider doesn't wish to provide this
 	 * feature, return null.
 	 * <p>
-	 * Note that at the current time, the <code>IProjectSetSerializer</code> is still used to import
-	 * and export project sets. The <code>ProjectSetCapability</code> only provides a mechanism
-	 * by which repository providers can be notified when a project set is created and exported.
-	 * In the future, it is intended that IProjectSetSerializer be replaced by <code>IProjectSetSerializer</code>.
+	 * Subclasses should override this method to return the appropriate
+	 * serializer for the associated repository type.
+	 * It is recommended that serializers not have any references to UI classes
+	 * so that they can be used in a headless environment.
+	 * <p>
+	 * At this time, the default implementation wrappers the <code>IProjectSetSerializer</code>
+	 * interface if one exists, providing backward compatibility with existing code.
+	 * At some time in the future, the <code>IProjectSetSerializer</code> interface will be removed
+	 * and the default implementation will revert to having limited functionality.
 	 * 
-	 * @return ProjectSetCapability
+	 * @return the project set serializer (or <code>null</code>)
 	 */
-	
 	public ProjectSetCapability getProjectSetCapability() {
+		// Provide backward compatibility with the old IProjectSetSerializer interface
+		IProjectSetSerializer oldSerializer = Team.getProjectSetSerializer(getID());
+		if (oldSerializer != null) {
+			ProjectSetCapability capability = new DefaultProjectSetCapability();
+			capability.setSerializer(oldSerializer);
+			return capability;
+		}
 		return null;
 	}
 }

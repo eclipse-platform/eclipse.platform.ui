@@ -510,6 +510,11 @@ public final class Team {
 	public static void shutdown() {
 		TeamPlugin.getPlugin().savePluginPreferences();
 	}
+	/**
+	 * @deprecated 
+	 * 		Use {@link org.eclipse.team.core.RepositoryProviderType#getProjectSetSerializer()}
+	 * 		to obtain an instance of {@link org.eclipse.team.core.ProjectSetSerializer} instead.
+	 */
 	public static IProjectSetSerializer getProjectSetSerializer(String id) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
