@@ -124,26 +124,46 @@ protected void createDestinationGroup(Composite parent) {
 protected void createOptionsGroupButtons(Group optionsGroup) {
 	
 	Font font = optionsGroup.getFont();
-	// overwrite... checkbox
-	overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	overwriteExistingFilesCheckbox.setText(
-		DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
-	overwriteExistingFilesCheckbox.setFont(font);
+	createOverwriteExisting(optionsGroup, font);
 
+	createDirectoryStructureOptions(optionsGroup, font);
+}
+
+/**
+ * Create the buttons for the group that determine if the entire or
+ * selected directory structure should be created.
+ * @param optionsGroup
+ * @param font
+ */
+protected void createDirectoryStructureOptions(Group optionsGroup, Font font) {
 	// create directory structure radios
 	createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
 	createDirectoryStructureButton.setText(
 		DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
 	createDirectoryStructureButton.setSelection(false);
 	createDirectoryStructureButton.setFont(font);
-
-
+	
+	
 	// create directory structure radios
 	createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
 	createSelectionOnlyButton.setText(
 		DataTransferMessages.getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$}
 	createSelectionOnlyButton.setSelection(true);
 	createSelectionOnlyButton.setFont(font);
+}
+
+/**
+ * Create the button for checking if we should ask if we are going to
+ * overwrite existing files.
+ * @param optionsGroup
+ * @param font
+ */
+protected void createOverwriteExisting(Group optionsGroup, Font font) {
+	// overwrite... checkbox
+	overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+	overwriteExistingFilesCheckbox.setText(
+		DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
+	overwriteExistingFilesCheckbox.setFont(font);
 }
 
 /**
