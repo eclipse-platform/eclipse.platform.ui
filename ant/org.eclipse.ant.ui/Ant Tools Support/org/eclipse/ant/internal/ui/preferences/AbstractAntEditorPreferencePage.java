@@ -347,4 +347,12 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		}
 		return buffer.toString();
 	}
+
+	protected Label getLabelControl(Control[] labelledTextField) {
+		return (Label)labelledTextField[0];
+	}
+
+	protected Text getTextControl(Control[] labelledTextField) {
+		return (Text)labelledTextField[1];
+	}
 }

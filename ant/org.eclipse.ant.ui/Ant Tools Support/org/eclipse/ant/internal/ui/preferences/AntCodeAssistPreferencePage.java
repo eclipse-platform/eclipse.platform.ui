@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Text;
 
 /*
  * The page for setting the Ant editor code assist options.
@@ -62,14 +61,6 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 	
-	private Label getLabelControl(Control[] labelledTextField){
-		return (Label)labelledTextField[0];
-	}
-
-	private Text getTextControl(Control[] labelledTextField){
-		return (Text)labelledTextField[1];
-	}
-		
 	private Control createContentAssistPage(Composite parent) {
 		Font font= parent.getFont();
 		Composite contentAssistComposite= new Composite(parent, SWT.NULL);
