@@ -29,7 +29,9 @@ public class BuildManager implements ICoreConstants, IManager {
 	protected DeltaDataTree currentDelta;
 	
 	public static boolean DEBUG_BUILD = false;
+	public static boolean DEBUG_NEEDS_BUILD = false;
 	public static final String OPTION_DEBUG_BUILD = ResourcesPlugin.PI_RESOURCES + "/debug/build";
+	public static final String OPTION_NEEDS_BUILD = ResourcesPlugin.PI_RESOURCES + "/debug/build/needbuild";
 	
 	/**
 	 * Cache used to optimize the common case of an autobuild against
@@ -92,8 +94,8 @@ public class BuildManager implements ICoreConstants, IManager {
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
 	if (ResourcesPlugin.getPlugin().isDebugging()) {
-		String option = Platform.getDebugOption(OPTION_DEBUG_BUILD);
-		DEBUG_BUILD = "true".equalsIgnoreCase(option);
+		DEBUG_BUILD = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_BUILD));
+		DEBUG_NEEDS_BUILD = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_NEEDS_BUILD));
 	}
 }
 
@@ -437,14 +439,20 @@ protected boolean needsBuild(InternalBuilder builder) {
 	currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
 	
 	//search for the builder's project
-	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null)
+	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
+		if (DEBUG_NEEDS_BUILD)
+			System.out.println("Invoking " + toString(builder) + " because of changes in: " + builder.getProject().getName());
 		return true;
+	}
 	
 	//search for builder's interesting projects
 	IProject[] projects = builder.getInterestingProjects();	
 	for (int i = 0; i < projects.length; i++) {
-		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null)
+		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
+			if (DEBUG_NEEDS_BUILD)
+				System.out.println("Invoking " + toString(builder) + " because of changes in: " + projects[i].getName());
 			return true;
+		}
 	}
 	return false;	
 }
@@ -503,5 +511,14 @@ public void setBuildersPersistentInfo(IProject project, Map map) throws CoreExce
 public void shutdown(IProgressMonitor monitor) {
 }
 public void startup(IProgressMonitor monitor) {
+}
+/**
+ * Returns a string representation of the given builder.  
+ * For debugging purposes only.
+ */
+protected String toString(InternalBuilder builder) {
+	String name = builder.getClass().getName();
+	name = name.substring(name.lastIndexOf('.') + 1);
+	return name + "(" + builder.getProject().getName() + ")";
 }
 }
