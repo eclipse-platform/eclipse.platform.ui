@@ -570,7 +570,7 @@ public class KeysPreferencePage
 		// Button for adding trapped key strokes
 		buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);
 		buttonAddKey.setToolTipText(
-			Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText"));
+			Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText")); //$NON-NLS-1$
 		gridData = new GridData();
 		gridData.heightHint = comboCategory.getTextHeight();
 		buttonAddKey.setLayoutData(gridData);
@@ -742,15 +742,15 @@ public class KeysPreferencePage
 
 		// Basic tab
 		final TabItem basicTab = new TabItem(tabFolder, SWT.NULL);
-		basicTab.setText(Util.translateString(RESOURCE_BUNDLE, "basicTab.Text"));
-		basicTab.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "basicTab.ToolTipText"));
+		basicTab.setText(Util.translateString(RESOURCE_BUNDLE, "basicTab.Text")); //$NON-NLS-1$
+		basicTab.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "basicTab.ToolTipText")); //$NON-NLS-1$
 		basicTab.setControl(createBasicTab(tabFolder));
 
 		// Advanced tab
 		final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
-		advancedTab.setText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.Text"));
+		advancedTab.setText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.Text")); //$NON-NLS-1$
 		advancedTab.setToolTipText(
-			Util.translateString(RESOURCE_BUNDLE, "advancedTab.ToolTipText"));
+			Util.translateString(RESOURCE_BUNDLE, "advancedTab.ToolTipText")); //$NON-NLS-1$
 		advancedTab.setControl(createAdvancedTab(tabFolder));
 
 		return tabFolder;
