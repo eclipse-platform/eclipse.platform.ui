@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 
 /**
- * Clears the output of the selected launches
+ * Clears the output in the current console viewer
  */
 public class ClearOutputAction extends Action {
 
