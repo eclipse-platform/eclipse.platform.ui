@@ -63,8 +63,6 @@ import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
  * but used in many heavy weight (and especially source editing) editors, such as line numbers, 
  * change ruler, overview ruler, print margins, current line highlighting, etc.
  * 
- * <p>Note that this is work in progress and API is still subject to change for <code>3.0</code>.</p>
- * 
  * @since 3.0
  */
 public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
