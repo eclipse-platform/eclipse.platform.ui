@@ -363,10 +363,9 @@ public final class WorkbenchActionBuilder {
 			MenuManager newMenu = new MenuManager(newText, newId) {
 				public String getMenuText() {
 					String result= super.getMenuText();
-					String shortCut = null;
-					if (newQuickMenu != null) {
-					    shortCut = newQuickMenu.getShortCutString();
-					}
+					if (newQuickMenu == null)
+					    return result;
+					String shortCut = newQuickMenu.getShortCutString();
 					if (shortCut == null)
 						return result;
 					return result + "\t" + shortCut; //$NON-NLS-1$
@@ -481,6 +480,8 @@ public final class WorkbenchActionBuilder {
 			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn"), "showIn") {  //$NON-NLS-1$ //$NON-NLS-2$
 				public String getMenuText() {
 					String result= super.getMenuText();
+					if (showInQuickMenu == null)
+					    return null;
 					String shortCut= showInQuickMenu.getShortCutString();
 					if (shortCut == null)
 						return result;
