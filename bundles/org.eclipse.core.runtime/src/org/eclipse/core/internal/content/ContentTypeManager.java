@@ -79,7 +79,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return new LazyInputStream(contents, MARK_LIMIT);
 	}
 
-	protected static LazyReader readBuffer(Reader contents) throws IOException {
+	protected static LazyReader readBuffer(Reader contents) {
 		return new LazyReader(contents, MARK_LIMIT);
 	}
 
