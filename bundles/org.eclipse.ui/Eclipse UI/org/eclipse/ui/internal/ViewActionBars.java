@@ -47,6 +47,6 @@ public IToolBarManager getToolBarManager() {
 public void updateActionBars() {
 	pane.updateActionBars();
 	getStatusLineManager().update(false);
-	super.updateActionBars();
+	fireActionHandlersChanged();
 }
 }

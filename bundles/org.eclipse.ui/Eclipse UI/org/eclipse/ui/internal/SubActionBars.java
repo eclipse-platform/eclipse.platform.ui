@@ -136,6 +136,17 @@ protected void firePropertyChange(PropertyChangeEvent event) {
 	}
 }
 /**
+ * Notifies any property change listeners if the
+ * global action handlers have changed
+ */
+protected void fireActionHandlersChanged() {
+	if (actionHandlersChanged) {
+		// Doesn't actually pass the old and new values
+		firePropertyChange(new PropertyChangeEvent(this, P_ACTION_HANDLERS, null, null));
+		actionHandlersChanged = false;
+	}
+}
+/**
  * Get the handler for a window action.
  *
  * @param actionID an action ID declared in the registry
@@ -248,10 +259,6 @@ public void setGlobalActionHandler(String actionID, IAction handler) {
  */
 public void updateActionBars() {
 	parent.updateActionBars();
-	if (actionHandlersChanged) {
-		// Doesn't actually pass the old and new values
-		firePropertyChange(new PropertyChangeEvent(this, P_ACTION_HANDLERS, null, null));
-		actionHandlersChanged = false;
-	}
+	fireActionHandlersChanged();
 }
 }
