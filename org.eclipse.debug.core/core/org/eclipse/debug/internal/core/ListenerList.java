@@ -60,7 +60,7 @@ public class ListenerList {
 		}
 		// grow array if necessary
 		if (fSize == fListeners.length) {
-			Object[] temp= new Object[fSize * 2];
+			Object[] temp= new Object[(fSize * 2) + 1];
 			System.arraycopy(fListeners, 0, temp, 0, fSize);
 			fListeners= temp;
 		}
