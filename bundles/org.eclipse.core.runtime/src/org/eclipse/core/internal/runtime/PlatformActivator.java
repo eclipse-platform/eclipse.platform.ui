@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.*;
 import java.util.Hashtable;
 import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
@@ -295,8 +296,10 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void registerEntryLocator() {
 		EntryLocator systemResources = new EntryLocator() {
 			public URL getProperties(String basename, Locale locale) {
+				HashMap overrides = new HashMap();
+				overrides.put("$nl$", locale.getLanguage() + '_' + locale.getCountry()); //$NON-NLS-1$
 				IPath propertiesPath = new Path("$nl$/" + basename.replace('.', '/') + ".properties"); //$NON-NLS-1$ //$NON-NLS-2$
-				return Platform.find(context.getBundle(), propertiesPath);
+				return Platform.find(context.getBundle(), propertiesPath, overrides);
 			}
 		};
 		context.registerService(EntryLocator.class.getName(), systemResources, null);
