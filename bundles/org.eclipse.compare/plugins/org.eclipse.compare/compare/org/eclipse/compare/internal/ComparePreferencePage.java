@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Color;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
@@ -103,9 +102,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(USE_SINGLE_LINE, false);
 		store.setDefault(USE_RESOLVE_UI, false);
 		
-		Display display= Display.getDefault();
-		Color color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, color.getRGB());		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, TEXT_FONT);
