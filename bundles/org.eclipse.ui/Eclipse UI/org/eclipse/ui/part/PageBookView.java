@@ -10,6 +10,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.FocusEvent;
 import java.util.*;
@@ -451,11 +452,16 @@ protected void showPageRec(PageRec pageRec) {
 
 	// Show new page.
 	activeRec = pageRec;
-	book.showPage(activeRec.page.getControl());
-	activeRec.subActionBars.activate();
-	refreshGlobalActionHandlers();
+	Control pageControl = activeRec.page.getControl();
+	if (pageControl != null && !pageControl.isDisposed()) {
+		// Verify that the page control is not disposed
+		// If we are closing, it may have already been disposed
+		book.showPage(pageControl);
+		activeRec.subActionBars.activate();
+		refreshGlobalActionHandlers();
 
-	// Update action bars.
-	getViewSite().getActionBars().updateActionBars();
+		// Update action bars.
+		getViewSite().getActionBars().updateActionBars();
+	}
 }
 }
