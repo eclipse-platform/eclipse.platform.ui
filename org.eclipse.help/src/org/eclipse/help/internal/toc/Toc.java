@@ -105,26 +105,29 @@ public class Toc extends TocNode implements IToc {
 			return descriptionTopic;
 
 		if (topicMap == null) {
-			// traverse TOC and fill in the topicMap
-			topicMap = new HashMap();
-			FastStack stack = new FastStack();
-			ITopic[] topics = getTopics();
-			for (int i = 0; i < topics.length; i++)
-				stack.push(topics[i]);
-			while (!stack.isEmpty()) {
-				ITopic topic = (ITopic) stack.pop();
-				if (topic != null) {
-					String topicHref = topic.getHref();
-					if (topicHref != null) {
-						topicMap.put(topicHref, topic);
-					}
-					ITopic[] subtopics = topic.getSubtopics();
-					for (int i = 0; i < subtopics.length; i++)
-						stack.push(subtopics[i]);
-				}
-			}
+			buildTopicMap();
 		}
 		return (ITopic) topicMap.get(href);
+	}
+	protected void buildTopicMap() {
+		// traverse TOC and fill in the topicMap
+		topicMap = new HashMap();
+		FastStack stack = new FastStack();
+		ITopic[] topics = getTopics();
+		for (int i = 0; i < topics.length; i++)
+			stack.push(topics[i]);
+		while (!stack.isEmpty()) {
+			ITopic topic = (ITopic) stack.pop();
+			if (topic != null) {
+				String topicHref = topic.getHref();
+				if (topicHref != null) {
+					topicMap.put(topicHref, topic);
+				}
+				ITopic[] subtopics = topic.getSubtopics();
+				for (int i = 0; i < subtopics.length; i++)
+					stack.push(subtopics[i]);
+			}
+		}
 	}
 	/**
 	 * This public method is to be used after the build of TOCs
@@ -143,7 +146,8 @@ public class Toc extends TocNode implements IToc {
 			// for memory foot print, release list of child
 			// and parent nodes.
 			children = null;
-			parents = null;
+			//TODO need parents to find path to a given topic later, get rid of not needed objects (at least TocFile member of Anchor)
+			//parents = null;
 			// after TOC is build, TocFile no longer needed
 			tocFile = null;
 		}
@@ -194,5 +198,11 @@ public class Toc extends TocNode implements IToc {
 	 */
 	public Collection getChildrenTocs() {
 		return childrenTocs;
+	}
+	public int size(){
+		if (topicMap == null) {
+			buildTopicMap();
+		}
+		return topicMap.size();
 	}
 }

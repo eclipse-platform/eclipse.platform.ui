@@ -217,24 +217,37 @@ function expand(node) {
   	node.src = minus.src;
   	// set the UL as well
   	var ul = getChildNode(node.parentNode, "UL");
-  	if (ul != null) ul.className = "expanded";
+  	if (ul != null){
+  		ul.className = "expanded";
+  		if (ul.id.length > 0){
+  			if (!frames.dynLoadFrame) {
+  				return;
+  			}
+  			var ix = window.location.href.indexOf('?');
+  			if (ix < 0) {
+  				return;
+  			}
+  			var query = window.location.href.substr(ix);
+  			frames.dynLoadFrame.location = "tocFragment.jsp" + query + "&path=" + ul.id;
+  		}
+  	}
 }
 
 /**
  * Expands the nodes from root to the specified node
  */
-function expandPathTo(node)
+function expandPathTo(node, inclusive)
 {
 	// when the node is a link, get the plus/minus image
 	if (node.tagName == "A") 
 	{
 		var img = getChildNode(node.parentNode, "IMG")
 		if (img == null) return;
-		expandPathTo(img);
+		expandPathTo(img, inclusive);
 		return;
 	}
 	
-	if (isCollapsed(node))
+	if (inclusive && isCollapsed(node))
 		expand(node);
 		
 	var li = node.parentNode;
@@ -246,7 +259,7 @@ function expandPathTo(node)
 	var img = getChildNode(li, "IMG");
 	if (img == null) return;
 		
-	expandPathTo(img);
+	expandPathTo(img, true);
 }
 
 /**
@@ -309,7 +322,7 @@ function selectTopic(topic)
 	{
 		if (topic == links[i].href)
 		{
-			expandPathTo(links[i]);
+			expandPathTo(links[i], false);
 			highlightTopic(links[i]);
 			scrollIntoView(links[i]);
 			return true;
@@ -326,7 +339,7 @@ function selectTopicById(id)
 	var topic = document.getElementById(id);
 	if (topic)
 	{
-		expandPathTo(topic);
+		expandPathTo(topic, false);
 		highlightTopic(topic);
 		scrollIntoView(topic);
 		return true;

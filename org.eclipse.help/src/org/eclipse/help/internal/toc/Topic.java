@@ -9,16 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.help.ITopic;
+import org.eclipse.help.*;
 import org.xml.sax.*;
 /**
  * Topic.  Visible navigation element.
  * Labeled, contains linik to a document.
  * Can also act as a container for other documents.
  */
-class Topic extends TocNode implements ITopic {
+public class Topic extends TocNode implements ITopic {
 	private String href;
 	private String label;
 	private ITopic[] topicArray;
@@ -62,7 +62,8 @@ class Topic extends TocNode implements ITopic {
 			// for memory foot print, release list of child
 			// and parent nodes.
 			children = null;
-			parents = null;
+			//TODO need parents to find path to a given topic later, get rid of not needed objects (at least TocFile member of Anchor)
+			//parents = null;
 		}
 		return topicArray;
 	}
@@ -73,5 +74,60 @@ class Topic extends TocNode implements ITopic {
 
 	void setHref(String href) {
 		this.href = href;
+	}
+	/**
+	 * Obtains shortest path leading to this topic in a given TOC
+	 * @param toc
+	 * @return ITopic[] or null, path excludes TOC and includes this topic
+	 */
+	public ITopic[] getPathInToc(IToc toc){
+		List /* of TocNode */ ancestors=getTopicPathInToc(toc, this);
+		if(ancestors==null){
+			return null;
+		}
+		return (ITopic[]) ancestors.toArray(new ITopic[ancestors.size()]);
+	}
+	
+	/**
+	 * Obtains List of ancestors (TocNodes) leading to specific topic or null
+	 * @param toc
+	 * @param topic
+	 * @return List with TocElements: topic1, topic2, topic
+	 */
+	static List getTopicPathInToc(IToc toc, Topic topic){
+		List topicParents=new ArrayList(topic.getParents());
+		for(ListIterator it=topicParents.listIterator(); it.hasNext(); ){
+			TocNode tocNode=(TocNode)it.next();
+			if(!(tocNode instanceof Topic)){
+				// Check if any parent is the needed TOC
+				if(tocNode==toc){
+					// success, found the correct TOC
+					List ancestors=new ArrayList();
+					ancestors.add(topic);
+					return ancestors;
+				}else{
+					// substitute real topics for toc, link, and anchor parent nodes, because we are looging for the shortest path
+					List grandParents=tocNode.getParents();
+					it.remove();
+					for(Iterator it2=grandParents.iterator(); it2.hasNext();){
+						it.add(it2.next());
+						it.previous();
+					}
+				}
+				
+			}
+		}
+		
+		for(Iterator it=topicParents.iterator(); it.hasNext();){
+			// delegate to ancestors first
+			List a =getTopicPathInToc(toc, (Topic)it.next());
+			if(a!=null){
+				// then add this topic to the path
+				a.add(topic);
+				return a;
+			}
+		}
+		
+		return null;
 	}
 }

@@ -11,17 +11,20 @@
 package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
-
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for tocView.jsp initialization
  */
 public class TocData extends RequestData {
+	private static final int DYNAMIC_LOAD_TRESHOLD = 1000;
+	private static final int DYNAMIC_LOAD_LEVELS = 2;
 
 	// Request parameters
 	private String tocHref;
@@ -31,6 +34,10 @@ public class TocData extends RequestData {
 	private String topicHelpHref;
 	// Selected TOC
 	private int selectedToc;
+	// path from TOC to the root topic of the TOC fragment
+	private int[] rootPath = null;
+	// path from TOC to the selected topic, excluding TOC;
+	private ITopic[] topicPath = null;
 
 	// List of TOC's
 	private IToc[] tocs;
@@ -52,6 +59,25 @@ public class TocData extends RequestData {
 			tocHref = null;
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
+		// initialize rootPath
+		String pathStr = request.getParameter("path");
+		if (pathStr != null && pathStr.length() > 0) {
+			// TODO use Java 1.4 API to do this
+			String[] paths = CookieUtil.split(pathStr, '_');
+			int[] indexes = new int[paths.length];
+			boolean indexesOK = true;
+			for (int i = 0; i < paths.length; i++) {
+				try {
+					indexes[i] = Integer.parseInt(paths[i]);
+				} catch (NumberFormatException nfe) {
+					indexesOK = false;
+					break;
+				}
+				if (indexesOK) {
+					rootPath = indexes;
+				}
+			}
+		}
 
 		imagesDirectory = preferences.getImagesDirectory();
 
@@ -122,12 +148,22 @@ public class TocData extends RequestData {
 		selectedToc = -1;
 		if (tocHref != null && tocHref.length() > 0) {
 			tocs = getTocs();
-			for (int i = 0; selectedToc == -1 && i < tocs.length; i++)
-				if (tocHref.equals(tocs[i].getHref()))
+			for (int i = 0; selectedToc == -1 && i < tocs.length; i++) {
+				if (tocHref.equals(tocs[i].getHref())) {
 					selectedToc = i;
+				}
+			}
 		} else {
 			// try obtaining the TOC from the topic
 			selectedToc = findTocContainingTopic(topicHref);
+
+			ITopic topic = findTopic();
+			if (topic != null
+				&& topic instanceof org.eclipse.help.internal.toc.Topic) {
+				topicPath =
+					((org.eclipse.help.internal.toc.Topic) topic).getPathInToc(
+						tocs[selectedToc]);
+			}
 		}
 	}
 
@@ -157,6 +193,32 @@ public class TocData extends RequestData {
 		// nothing found
 		return -1;
 	}
+	/**
+	 * Finds topic in a TOC
+	 * @return ITopic or null
+	 */
+	private ITopic findTopic() {
+		String topic = getSelectedTopic();
+		if (topic == null || topic.equals(""))
+			return null;
+
+		int index = topic.indexOf("/topic/");
+		if (index != -1)
+			topic = topic.substring(index + 6);
+		index = topic.indexOf('?');
+		if (index != -1)
+			topic = topic.substring(0, index);
+
+		if (topic == null || topic.equals(""))
+			return null;
+
+		if (getSelectedToc() < 0)
+			return null;
+		IToc selectedToc = getTocs()[getSelectedToc()];
+		if (selectedToc == null)
+			return null;
+		return selectedToc.getTopic(topic);
+	}
 
 	/**
 	 * Generates the HTML code (a tree) for a TOC.
@@ -165,19 +227,72 @@ public class TocData extends RequestData {
 	 * @throws IOException
 	 */
 	public void generateToc(int toc, Writer out) throws IOException {
-
 		ITopic[] topics = tocs[toc].getTopics();
-		for (int i = 0; i < topics.length; i++) {
-			generateTopic(topics[i], out);
+		tocs[toc].getTopics();
+
+		int maxLevels = DYNAMIC_LOAD_LEVELS;
+		if (tocs[toc] instanceof Toc
+			&& ((Toc) tocs[toc]).size() < DYNAMIC_LOAD_TRESHOLD) {
+			maxLevels = -1;
 		}
+		// Construct ID of subtree root
+		StringBuffer id = new StringBuffer();
+		if (rootPath != null) {
+			// navigate to root topic, skipping parents
+			for (int p = 0; p < rootPath.length; p++) {
+				if (id.length() > 0) {
+					id.append('_');
+				}
+				topics = topics[rootPath[p]].getSubtopics();
+				id.append(rootPath[p]);
+			}
+			out.write("<ul class='expanded' id=\"" + id.toString() + "\">\n");
+		}
+
+		for (int i = 0; i < topics.length; i++) {
+			String idPrefix = id.toString();
+			if (idPrefix.length() > 0) {
+				idPrefix = idPrefix + "_" + Integer.toString(i);
+			} else {
+				idPrefix = Integer.toString(i);
+			}
+
+			generateTopic(
+				topics[i],
+				out,
+				idPrefix,
+				maxLevels,
+				rootPath == null ? 0 : rootPath.length);
+		}
+
+		if (rootPath != null) {
+			out.write("</ul>\n");
+		}
+
 	}
 
-	private void generateTopic(ITopic topic, Writer out) throws IOException {
-
-		out.write("<li>");
-
+	/**
+	 * 
+	 * @param topic
+	 * @param out
+	 * @param maxLevels relative number of topic levels to generate (pass <0 for inifinite), 1 generates this topic as last level topic
+	 * @param currentLevel current level of topic, 0 is first Level under TOC
+	 * @throws IOException
+	 */
+	private void generateTopic(
+		ITopic topic,
+		Writer out,
+		String path,
+		int maxLevels,
+		int currentLevel)
+		throws IOException {
+		if (maxLevels == 0) {
+			return;
+		}
 		boolean hasNodes = topic.getSubtopics().length > 0;
+
 		if (hasNodes) {
+			out.write("<li>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='collapsed' >");
@@ -188,15 +303,46 @@ public class TocData extends RequestData {
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 
-			out.write("<ul class='collapsed'>\n");
+			// is it ancestor of topic to reveal
+			boolean isAncestor =
+				topicPath != null
+					&& topicPath.length > currentLevel + 1
+					&& topicPath[currentLevel] == topic;
+
+			if (maxLevels != 1 || isAncestor) {
+				out.write("<ul class='collapsed'>\n");
+			} else {
+				// children will not be generated
+				out.write("<ul class='collapsed' id=\"" + path + "\">\n");
+			}
 
 			ITopic[] topics = topic.getSubtopics();
-			for (int i = 0; i < topics.length; i++) {
-				generateTopic(topics[i], out);
+			if (1 <= maxLevels
+				&& maxLevels <= DYNAMIC_LOAD_LEVELS
+				&& isAncestor) {
+				// ignore max levels, show children
+				for (int i = 0; i < topics.length; i++) {
+					generateTopic(
+						topics[i],
+						out,
+						path + "_" + i,
+						DYNAMIC_LOAD_LEVELS,
+						currentLevel + 1);
+				}
+			} else {
+				for (int i = 0; i < topics.length; i++) {
+					generateTopic(
+						topics[i],
+						out,
+						path + "_" + i,
+						maxLevels - 1,
+						currentLevel + 1);
+				}
 			}
 
 			out.write("</ul>\n");
 		} else {
+			out.write("<li>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='h'>");
