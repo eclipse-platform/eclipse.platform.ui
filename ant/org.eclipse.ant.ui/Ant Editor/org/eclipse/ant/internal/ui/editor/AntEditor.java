@@ -140,7 +140,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
-			if (selectionProvider == null) {
+			if (selectionProvider == null || getAntModel() == null) {
 				return;
 			}
 				
@@ -158,7 +158,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
-			if (selectionProvider == null) {
+			if (selectionProvider == null || getAntModel() == null) {
 				return;
 			}
 			
@@ -958,6 +958,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 			if (text != null && text.length() > 0) {
 				AntModel model= getAntModel();
+				if (model == null) {
+					return null;
+				}
 				node= model.getReferenceNode(text);
 				if (node == null) {
 					node= model.getTargetNode(text);
@@ -1019,19 +1022,22 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		
-		IAction action= getAction("OpenDeclaration"); //$NON-NLS-1$
-		if (action != null) {
-			String openGroup = "group.open"; //$NON-NLS-1$
-    	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup)); 
-			menu.appendToGroup(openGroup, action);
+		if (getAntModel() != null) {
+			IAction action= getAction("OpenDeclaration"); //$NON-NLS-1$
+			if (action != null) {
+				String openGroup = "group.open"; //$NON-NLS-1$
+	    	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup)); 
+				menu.appendToGroup(openGroup, action);
+			}
+			
+			action= getAction("renameInFile"); //$NON-NLS-1$
+			String editGroup = "group.edit"; //$NON-NLS-1$
+		    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup)); 
+			menu.appendToGroup(editGroup, action);
+			
+			action= getAction("ContentFormat"); //$NON-NLS-1$
+			menu.appendToGroup(editGroup, action);
 		}
-		action= getAction("renameInFile"); //$NON-NLS-1$
-		String editGroup = "group.edit"; //$NON-NLS-1$
-	    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup)); 
-		menu.appendToGroup(editGroup, action);
-		
-		action= getAction("ContentFormat"); //$NON-NLS-1$
-		menu.appendToGroup(editGroup, action);
 	}
 	
 	private void startTabConversion() {
@@ -1162,6 +1168,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private void updateForInitialReconcile() {
 		IDocumentProvider provider=  getDocumentProvider();
 		if (provider == null) {//disposed
+			return;
+		}
+		
+		if (getAntModel() == null) {
 			return;
 		}
 		ISynchronizable doc= (ISynchronizable) provider.getDocument(getEditorInput());
@@ -1357,8 +1367,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * on the current selection.
 	 * 
 	 * @param selection the text selection
-	 * @param astRoot the compilation unit AST
-	 * @since 3.0
+	 * @param antModel the model for the buildfile
+	 * @since 3.1
 	 */
 	protected void updateOccurrenceAnnotations(ITextSelection selection, AntModel antModel) {
 
@@ -1369,7 +1379,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			return;
 		}
 		
-		if (selection == null) {
+		if (selection == null || antModel == null) {
 			return;
 		}
 		

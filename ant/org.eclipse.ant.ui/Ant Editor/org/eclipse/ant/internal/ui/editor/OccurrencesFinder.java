@@ -38,7 +38,7 @@ public class OccurrencesFinder {
 	}
 	
 	public List perform() {
-		if (fOffset == 0) {
+		if (fOffset == 0 || fAntModel == null) {
 			return null;
 		}
 		AntElementNode container= fAntModel.getNode(fOffset, false);

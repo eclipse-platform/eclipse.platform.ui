@@ -57,12 +57,14 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 		ITextEditor editor= getTextEditor();
 		
 		boolean checked= false;
+		boolean enabled= false;
 		if (editor instanceof AntEditor) {
 			checked= ((AntEditor)editor).isMarkingOccurrences();
+			enabled= ((AntEditor)editor).getAntModel() != null;
 		}
 			
 		setChecked(checked);
-		setEnabled(editor != null);
+		setEnabled(enabled);
 	}
 	
 	/*
