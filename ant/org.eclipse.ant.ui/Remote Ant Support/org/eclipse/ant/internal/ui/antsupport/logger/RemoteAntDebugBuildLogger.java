@@ -368,7 +368,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        String propertyValue;
 	        while (iter.hasNext()) {
 	            propertyName = (String) iter.next();
-	            if (propertyName.equals("line.separator")) {
+	            if (propertyName.equals("line.separator")) { //$NON-NLS-1$
 	            	continue;
 	            }
 	            if (fProperties == null || fProperties.get(propertyName) == null) { //new property
