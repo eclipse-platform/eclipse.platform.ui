@@ -55,9 +55,11 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	public RepositorySelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
-	protected TableViewer createTable(Composite parent) {
+	protected TableViewer createTable(Composite parent, int span) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = span;
+		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, true));
 		table.setLayout(layout);
@@ -77,14 +79,14 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		
 		Label description = new Label(composite, SWT.WRAP);
-		GridData data = new GridData();
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
 		description.setText(Policy.bind("RepositorySelectionPage.description")); //$NON-NLS-1$
 
 		useExistingRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useExisting"), 2); //$NON-NLS-1$
-		table = createTable(composite);
+		table = createTable(composite, 2);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
