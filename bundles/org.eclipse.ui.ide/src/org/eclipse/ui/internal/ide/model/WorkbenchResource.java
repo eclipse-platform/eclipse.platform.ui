@@ -125,10 +125,6 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
             return testProperty(res, false, false, value);
         } else if (name.equals(PROJECT_SESSION_PROPERTY)) {
             return testProperty(res, false, true, value);
-        } else if (name.equals(XML_FIRST_TAG)) {
-            return testXMLProperty(res, name, value);
-        } else if (name.equals(XML_DTD_NAME)) {
-            return testXMLProperty(res, name, value);
         } else if (name.equals(CONTENT_TYPE_ID)) {
             return testContentTypeProperty(res, value);
         }
@@ -231,110 +227,17 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
                     return false;
                 }
                 return expectedVal == null || expectedVal.equals(actualVal);
-            } else {
-                Object actualVal = resToCheck.getSessionProperty(key);
-                if (actualVal == null) {
-                    return false;
-                }
-                return expectedVal == null
+            } 
+
+            Object actualVal = resToCheck.getSessionProperty(key);
+             if (actualVal == null) 
+                 return false;
+              
+             return expectedVal == null
                         || expectedVal.equals(actualVal.toString());
-            }
+            
         } catch (CoreException e) {
             // ignore
-        }
-        return false;
-    }
-
-    /**
-     * Test whether a given xml property matches that xml
-     * element in the file.  Note that these properties will
-     * be stored as persistent properties.  If the underlying 
-     * xml file changes, the xml will be reparsed to re-retrieve
-     * these property values.
-     * 
-     * @param resource the resource associated with the xml file
-     * @param propertyName the name of the property we are looking for
-     * @param value the value we expect to find
-     * @return true if the value found for this property, matches
-     *     the value passed in as a parameter.
-     * 
-     * @deprecated This method will be removed in future builds.  It has been
-     * replaced with testContentTypeProperty.
-     */
-    private boolean testXMLProperty(IResource resource, String propertyName,
-            String value) {
-        String expectedVal = value.trim();
-        try {
-            QualifiedName key = new QualifiedName(
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, propertyName);
-            IResource resToCheck = resource;
-            if (resToCheck == null) {
-                return false;
-            }
-            // Check to see if the persistent properties are stale
-            long modTime = resToCheck.getModificationStamp();
-            QualifiedName modKey = new QualifiedName(
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, XML_LAST_MOD);
-            String lastPropMod = resToCheck.getPersistentProperty(modKey);
-            long realLastPropMod = 0L;
-            if (lastPropMod != null) {
-                try {
-                    realLastPropMod = new Long(lastPropMod).longValue();
-                } catch (NumberFormatException nfe) {
-                    // log it but continue working
-                    IDEWorkbenchPlugin
-                            .log(
-                                    "Problem converting last mod to long in testXMLProperty", new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem converting last mod to long in testXMLProperty", nfe)); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-            }
-            String actualVal = null;
-            if (modTime != IResource.NULL_STAMP && realLastPropMod == modTime) {
-                // Make sure we don't pick up stale information
-                actualVal = resToCheck.getPersistentProperty(key);
-            } else if (realLastPropMod > 0l) {
-                // Make sure that these persistent properties
-                // are cleared so that we don't pick up any
-                // stale values by mistake.  If we've never parsed
-                // this file, however, we don't need to worry
-                // about stale values.
-                QualifiedName qname1 = new QualifiedName(
-                        IDEWorkbenchPlugin.IDE_WORKBENCH,
-                        IResourceActionFilter.XML_DTD_NAME);
-                QualifiedName qname2 = new QualifiedName(
-                        IDEWorkbenchPlugin.IDE_WORKBENCH,
-                        IResourceActionFilter.XML_FIRST_TAG);
-                try {
-                    resToCheck.setPersistentProperty(qname1, null);
-                    resToCheck.setPersistentProperty(qname2, null);
-                } catch (CoreException c) {
-                    IDEWorkbenchPlugin
-                            .log(
-                                    "Problem clearing stale xml properties", c.getStatus()); //$NON-NLS-1$
-                }
-            }
-
-            // Either we have never parsed this file or we 
-            // have parsed it but the file has changed since
-            // the last time it was parsed.
-            if (actualVal == null) {
-                try {
-                    new PropertyParser().parseResource(resToCheck);
-                } catch (Exception e) {
-                    IDEWorkbenchPlugin
-                            .log(
-                                    "Problem parsing for xml properties", new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem parsing for xml properties", e)); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                // Now recheck the persistent property as it may have
-                // been populated.
-                actualVal = resToCheck.getPersistentProperty(key);
-                if (actualVal == null)
-                    return false;
-            }
-            return expectedVal == null || expectedVal.equals(actualVal);
-        } catch (CoreException e) {
-            // Just output a message to the log file and continue
-            IDEWorkbenchPlugin.log(
-                    "Problem testing xml property", e.getStatus()); //$NON-NLS-1$
         }
         return false;
     }
