@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
@@ -27,8 +26,8 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
  */
 public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
     
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		if (element instanceof IStackFrame) {
