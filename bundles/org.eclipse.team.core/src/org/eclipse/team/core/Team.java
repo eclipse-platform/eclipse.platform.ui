@@ -26,6 +26,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +46,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.StringMatcher;
@@ -57,6 +60,8 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public final class Team {
 	
+	public static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
+	public static final String PREF_TEAM_SEPARATOR = "\n"; //$NON-NLS-1$
 	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	
 	// File type constants
@@ -67,14 +72,11 @@ public final class Team {
 	// File name of the persisted file type information
 	private static final String STATE_FILE = ".fileTypes"; //$NON-NLS-1$
 	
-	// File name of the persisted global ignore patterns
-	private final static String GLOBALIGNORE_FILE = ".globalIgnores"; //$NON-NLS-1$
-
 	// Keys: file extensions. Values: Integers
 	private static Hashtable fileTypes;
 
 	// The ignore list that is read at startup from the persisted file
-	private static Map globalIgnore;
+	private static Map globalIgnore, pluginIgnore;
 
 	private static class FileTypeInfo implements IFileTypeInfo {
 		private String extension;
@@ -249,6 +251,23 @@ public final class Team {
 		for (int i = 0; i < patterns.length; i++) {
 			globalIgnore.put(patterns[i], new Boolean(enabled[i]));
 		}
+		// Now set into preferences
+		StringBuffer buf = new StringBuffer();
+		Iterator e = globalIgnore.keySet().iterator();
+		while (e.hasNext()) {
+			String pattern = (String)e.next();
+			boolean isCustom = (!pluginIgnore.containsKey(pattern)) ||
+				!((Boolean)pluginIgnore.get(pattern)).equals((Boolean)globalIgnore.get(pattern));
+			if (isCustom) {
+				buf.append(pattern);
+				buf.append(PREF_TEAM_SEPARATOR);
+				boolean en = ((Boolean)globalIgnore.get(pattern)).booleanValue();
+				buf.append(en);
+				buf.append(PREF_TEAM_SEPARATOR);
+			}
+			
+		}
+		TeamPlugin.getPlugin().getPluginPreferences().setValue(PREF_TEAM_IGNORES, buf.toString());
 	}
 	
 	/**
@@ -438,6 +457,7 @@ public final class Team {
 	 * Reads the ignores currently defined by extensions.
 	 */
 	private static void initializePluginIgnores() {
+		pluginIgnore = new Hashtable();
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.IGNORE_EXTENSION);
@@ -451,6 +471,7 @@ public final class Team {
 							String selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
 							// if this ignore doesn't already exist, add it to the global list
+							pluginIgnore.put(pattern, new Boolean(enabled));
 							if (!globalIgnore.containsKey(pattern)) {
 								globalIgnore.put(pattern, new Boolean(enabled));
 							}
@@ -460,90 +481,66 @@ public final class Team {
 			}		
 		}
 	}
-	
+
 	/*
 	 * IGNORE
 	 * 
-	 * Save global ignore file
-	 */
-	private static void saveIgnoreState() throws TeamException {
-		// save global ignore list to disk
-		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(GLOBALIGNORE_FILE + ".tmp").toFile(); //$NON-NLS-1$
-		File stateFile = pluginStateLocation.append(GLOBALIGNORE_FILE).toFile();
-		try {
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
-			try {
-				writeIgnoreState(dos);
-			} finally {
-				dos.close();
-			}
-			if (stateFile.exists() & !stateFile.delete())
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.couldNotDelete", stateFile.getAbsolutePath()), null)); //$NON-NLS-1$
-			if (!tempFile.renameTo(stateFile))
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.couldNotRename", tempFile.getAbsolutePath(), stateFile.getAbsolutePath()), null)); //$NON-NLS-1$
-		} catch (IOException ex) {
-			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.writeError", stateFile.getAbsolutePath()), ex)); //$NON-NLS-1$
-		}
-	}
-	
-	/*
-	 * IGNORE
-	 * 
-	 * Write the global ignores to the stream
-	 */
-	private static void writeIgnoreState(DataOutputStream dos) throws IOException {
-		// write the global ignore list
-		if (globalIgnore == null) getAllIgnores();
-		int ignoreLength = globalIgnore.size();
-		dos.writeInt(ignoreLength);
-		Iterator e = globalIgnore.keySet().iterator();
-		while (e.hasNext()) {
-			String pattern = (String)e.next();
-			boolean enabled = ((Boolean)globalIgnore.get(pattern)).booleanValue();
-			dos.writeUTF(pattern);
-			dos.writeBoolean(enabled);
-		}
-	}
-	
-	/*
-	 * IGNORE
-	 * 
-	 * Reads the global ignore file
+	 * Reads global ignore preferences and populates globalIgnore
 	 */
 	private static void readIgnoreState() throws TeamException {
-		// read saved repositories list and ignore list from disk, only if the file exists
-		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(GLOBALIGNORE_FILE);
-		File f = pluginStateLocation.toFile();
-		if(f.exists()) {
-			try {
-				DataInputStream dis = new DataInputStream(new FileInputStream(f));
-				try {
-					globalIgnore = new Hashtable(11);
-					int ignoreCount = 0;
-					try {
-						ignoreCount = dis.readInt();
-					} catch (EOFException e) {
-						// Ignore the exception, it will occur if there are no ignore
-						// patterns stored in the provider state file.
-						return;
-					}
-					for (int i = 0; i < ignoreCount; i++) {
-						String pattern = dis.readUTF();
-						boolean enabled = dis.readBoolean();
-						globalIgnore.put(pattern, new Boolean(enabled));
-					}
-				} finally {
-					dis.close();
-				}
-			} catch (FileNotFoundException e) {
-				// not a fatal error, there just happens not to be any state to read
-			} catch (IOException ex) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.readError"), ex));			 //$NON-NLS-1$
-			}
+		if (readBackwardCompatibleIgnoreState()) return;
+		Preferences pref = TeamPlugin.getPlugin().getPluginPreferences();
+		if (!pref.contains(PREF_TEAM_IGNORES)) return;
+		String prefIgnores = pref.getString(PREF_TEAM_IGNORES);
+		StringTokenizer tok = new StringTokenizer(prefIgnores, PREF_TEAM_SEPARATOR);
+		String pattern, enabled;
+		try {
+			while (true) {
+				pattern = tok.nextToken();
+				if (pattern.length()==0) return;
+				enabled = tok.nextToken();
+				globalIgnore.put(pattern, new Boolean(enabled));
+			} 
+		} catch (NoSuchElementException e) {
+			return;
 		}
 	}
 
+	/*
+	 * For backward compatibility, we still look at if we have .globalIgnores
+	 */
+	private static boolean readBackwardCompatibleIgnoreState() throws TeamException {
+		String GLOBALIGNORE_FILE = ".globalIgnores"; //$NON-NLS-1$
+		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(GLOBALIGNORE_FILE);
+		File f = pluginStateLocation.toFile();
+		if (!f.exists()) return false;
+		try {
+			DataInputStream dis = new DataInputStream(new FileInputStream(f));
+			try {
+				int ignoreCount = 0;
+				try {
+					ignoreCount = dis.readInt();
+				} catch (EOFException e) {
+					// Ignore the exception, it will occur if there are no ignore
+					// patterns stored in the provider state file.
+					return false;
+				}
+				for (int i = 0; i < ignoreCount; i++) {
+					String pattern = dis.readUTF();
+					boolean enabled = dis.readBoolean();
+					globalIgnore.put(pattern, new Boolean(enabled));
+				}
+			} finally {
+				dis.close();
+			}
+			f.delete();
+		} catch (FileNotFoundException e) {
+			// not a fatal error, there just happens not to be any state to read
+		} catch (IOException ex) {
+			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.readError"), ex));			 //$NON-NLS-1$
+		}
+		return true;
+	}
 	/**
 	 * Initialize the registry, restoring its state.
 	 * 
@@ -579,12 +576,7 @@ public final class Team {
 	 */	
 	public static void shutdown() {
 		saveTextState();
-		try {
-			// make sure that we update our state on disk
-			saveIgnoreState();
-		} catch (TeamException ex) {
-			TeamPlugin.log(IStatus.WARNING, Policy.bind("TeamPlugin_setting_global_ignore_7"), ex); //$NON-NLS-1$
-		}
+		TeamPlugin.getPlugin().savePluginPreferences();
 	}
 	public static IProjectSetSerializer getProjectSetSerializer(String id) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
