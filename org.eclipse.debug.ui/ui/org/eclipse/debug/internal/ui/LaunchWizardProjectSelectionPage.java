@@ -218,7 +218,6 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		});
 
 		fElementsList.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		initializeSettings();
 	}
 
 	/**
@@ -262,28 +261,20 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	 */
 	protected void initializeSettings() {
 		
-		Runnable runnable= new Runnable() {
-			public void run() {
-				if (getControl().isDisposed()) {
-					return;
-				}
-				Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				if (children.length == 1) {
-					fElementsList.setSelection(new StructuredSelection(children[0]), true);
-					setMessage(null);
-					setPageComplete(true);
-				} else if (children.length > 0) {
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
-					setPageComplete(false);
-				} else {
-					// no elements to select
-					setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
-					setPageComplete(false);
-				}
-				fPatternText.setFocus();
-			}
-		};
-		Display.getCurrent().asyncExec(runnable);
+		Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		if (children.length == 1) {
+			fElementsList.setSelection(new StructuredSelection(children[0]), true);
+			setMessage(null);
+			setPageComplete(true);
+		} else if (children.length > 0) {
+			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
+			setPageComplete(false);
+		} else {
+			// no elements to select
+			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
+			setPageComplete(false);
+		}
+		fPatternText.setFocus();
 	}
 	
 	/**
@@ -295,6 +286,13 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	
 	public IWizardContainer getContainer() {
 		return super.getContainer();
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			initializeSettings();
+		}
 	}
 }
 

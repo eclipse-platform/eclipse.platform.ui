@@ -101,7 +101,6 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		} else {
 			setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_RUN));
 		}
-		initializeSettings();
 		setControl(root);
 		WorkbenchHelp.setHelp(
 			ancestor,
@@ -180,18 +179,12 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	* </ul>
 	*/
 	protected void initializeSettings() {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				if (getControl().isDisposed()) {
-					return;
-				}
-				if (fLaunchers.length == 0) {
-					setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_LAUNCHER));
-				} else
-					fLaunchersList.setSelection(new StructuredSelection(fLaunchers[0]));
-				}
-		};
-		Display.getCurrent().asyncExec(runnable);
+		
+		if (fLaunchers.length == 0) {
+			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_LAUNCHER));
+		} else {
+			fLaunchersList.setSelection(new StructuredSelection(fLaunchers[0]));
+		}
 	}
 
 	protected void updateDefaultLauncherButton(ILauncher launcher) {
@@ -245,6 +238,13 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			projectName= DebugUIUtils.getResourceString(UNKNOWN);
 		}
 		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			initializeSettings();
+		}
 	}
 }
 
