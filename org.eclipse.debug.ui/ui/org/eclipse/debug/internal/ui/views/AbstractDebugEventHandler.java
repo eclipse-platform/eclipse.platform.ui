@@ -53,6 +53,11 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	private List fDataQueue = new ArrayList();
 	
 	/**
+	 * Lock to add to/remove from data and event queues.
+	 */
+	private Object LOCK = new Object();
+	
+	/**
 	 * Update job 
 	 */
 	private EventProcessingJob fUpdateJob = new EventProcessingJob();
@@ -85,14 +90,12 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
             while (more && (count < 50)) {
                 DebugEvent[] eventSet = null;
                 Object data = null;
-			    synchronized (fEventSetQueue) {
+			    synchronized (LOCK) {
 			        if (fEventSetQueue.isEmpty()) {
 			            return Status.OK_STATUS;
 			        }
 			        eventSet = (DebugEvent[]) fEventSetQueue.remove(0);
 			        more = !fEventSetQueue.isEmpty();
-			    }
-			    synchronized (fDataQueue) {
 			        data = fDataQueue.remove(0);
 			        if (data == NULL) {
 			            data = null;
@@ -148,24 +151,22 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if (events.length == 0) {
 		    return;
 		}
-		events = doPreprocessEvents(events);
-		if (events.length == 0) {
-		    return;
-		}
-		// add the event set to the queue and schedule update
-		synchronized (fEventSetQueue) {
+		synchronized (LOCK) {
+			events = doPreprocessEvents(events);
+			if (events.length == 0) {
+			    return;
+			}
+			// add the event set to the queue and schedule update
 		    fEventSetQueue.add(events);
-		    synchronized (fDataQueue) {
-		        if (fDataQueue.size() < fEventSetQueue.size()) {
-		            fDataQueue.add(NULL);
-		        }
-		    }		    
+	        if (fDataQueue.size() < fEventSetQueue.size()) {
+	            fDataQueue.add(NULL);
+	        }
 		}
 		fUpdateJob.schedule();
 	}
 	
 	protected void queueData(Object data) {
-	    synchronized (fDataQueue) {
+	    synchronized (LOCK) {
 	        fDataQueue.add(data);
         }
 	}
@@ -270,7 +271,10 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	public void dispose() {
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.removeDebugEventListener(this);
-		fEventSetQueue.clear();
+		synchronized (LOCK) {
+			fEventSetQueue.clear();
+			fDataQueue.clear();
+		}
 	}
 	
 	/**
