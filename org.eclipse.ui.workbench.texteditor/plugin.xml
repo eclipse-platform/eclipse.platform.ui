@@ -566,12 +566,6 @@
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        keySequence=""
-	        contextId="org.eclipse.ui.textEditorScope"
-	        commandId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
 	        keySequence="M1+ARROW_RIGHT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.goto.wordNext"
