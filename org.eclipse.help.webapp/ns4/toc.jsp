@@ -26,7 +26,7 @@
 	}
 	else
 	{
-		selectedTOC = (Element)application.getAttribute(tocHref);
+		selectedTOC = tocs.getToc(tocHref);
 	}
 		
 	if (selectedTOC != null)

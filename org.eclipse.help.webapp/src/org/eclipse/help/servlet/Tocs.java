@@ -29,12 +29,6 @@ public class Tocs
 			this.context = context;
 			connector = new EclipseConnector(context);
 			this.tocs = loadXML("help:/toc/");
-
-			// index each toc by its id (store it in the context so we can get it later)
-			Element[] tocsArray = getTocs();
-			for (int i = 0; i < tocsArray.length; i++)
-				context.setAttribute(tocsArray[i].getAttribute("href"), tocsArray[i]);
-
 		}
 		catch (Exception e)
 		{
@@ -55,6 +49,19 @@ public class Tocs
 		return tocsArray;
 	}
 
+	/**
+	 * Returns a toc by its href
+	 */
+	public Element getToc(String href)
+	{
+		if (href == null) return null;
+		Element[] tocsArray = getTocs();
+		for (int i = 0; i < tocsArray.length; i++)
+			if (href.equals(tocsArray[i].getAttribute("href")))
+				return tocsArray[i];
+		return null;
+	}
+	
 	/**
 	 * Generates the html for the navigation tree based on the input xml data
 	 */
