@@ -24,10 +24,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
- * 
+ * Abstract implementation of an action which selects some subset of breakpoints.
  */
 public abstract class AbstractSelectBreakpointsAction extends AbstractBreakpointsViewAction {
 
+    /**
+     * The currently selected breakpoints.
+     */
     private IBreakpoint[] fBreakpoints= new IBreakpoint[0];
 
 	/* (non-Javadoc)
@@ -44,10 +47,20 @@ public abstract class AbstractSelectBreakpointsAction extends AbstractBreakpoint
 	    }
 	}
 	
+	/**
+	 * Returns whether or not the given breakpoints "match" based on some
+	 * subclass-specific criteria. This information is used to select
+	 * all breakpoints that match the selected breakpoint(s).
+	 * 
+	 * @param breakpointOne a breakpoint
+	 * @param breakpointTwo another breakpoint
+	 * @return whether or not the given breakpoints match
+	 */
 	public abstract boolean breakpointsMatch(IBreakpoint breakpointOne, IBreakpoint breakpointTwo);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.actions.breakpointGroups.AbstractSelectBreakpointsAction#getElementsToSelect(java.lang.Object[])
+    /**
+     * Returns a list of breakpoints which match any of the currently selected
+     * breakpoints.
      */
     public List chooseSimilarBreakpoints() {
         Set breakpointsToSelect= new HashSet();
@@ -64,6 +77,9 @@ public abstract class AbstractSelectBreakpointsAction extends AbstractBreakpoint
         return new ArrayList(breakpointsToSelect);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+     */
     public void selectionChanged(IAction action, ISelection selection) {
         List selectedBreakpoints= new ArrayList();
         Iterator iter = ((IStructuredSelection) selection).iterator();
