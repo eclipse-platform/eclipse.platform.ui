@@ -1354,7 +1354,9 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
  * Calling this method with a one segment absolute destination
  * path is equivalent to calling:
  * <pre>
- 		move(workspace.newProjectDescription(folder.getName()),updateFlags,monitor);
+ 		IProjectDescription description = getDescription();
+ 		description.setName(path.lastSegment());
+ 		move(description, updateFlags, monitor);
  * </pre>
  * </p>
  * <p>
