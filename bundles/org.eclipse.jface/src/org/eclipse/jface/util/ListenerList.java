@@ -55,10 +55,10 @@ public class ListenerList {
 	private static final Object[] EmptyArray = new Object[0];
 	
 	/**
-	 * Creates a listener list with an initial capacity of 3.
+	 * Creates a listener list with an initial capacity of 1.
 	 */
 	public ListenerList() {
-		this(3);
+		this(1);
 	}
 	
 	/**
