@@ -57,4 +57,10 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * with the same name
 	 */
 	public boolean isFindDuplicates();
+	
+	/**
+	 * Notifies this source lookup director that it should initialize
+	 * its set of source lookup participants.
+	 */
+	public void initializeParticipants();
 }

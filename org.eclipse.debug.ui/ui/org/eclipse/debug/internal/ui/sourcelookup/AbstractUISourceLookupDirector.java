@@ -23,8 +23,7 @@ import org.eclipse.jface.window.Window;
 /**
  * The UI implementation of an AbstractSourceLookupDirector.
  */
-public class AbstractUISourceLookupDirector
-	extends AbstractSourceLookupDirector {	
+public abstract class AbstractUISourceLookupDirector extends AbstractSourceLookupDirector {	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector#resolveSourceElement(org.eclipse.debug.core.model.IStackFrame, java.util.List)

@@ -331,10 +331,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 					NodeList children = entry.getChildNodes();
 					List containers = parseSourceContainers(children);
 					setSourceContainers((ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]));
-					return;
 				}
 			}
 		}
+		initializeParticipants();
 	}
 	
 	/**
@@ -383,6 +383,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @return a single source element for the given stack frame
 	 */
 	public Object resolveSourceElement(IStackFrame frame, List sources) {
+		// TODO: use a status handler (prompter) in the UI
 		return sources.get(0);
 	}
 
@@ -416,7 +417,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		dispose();
 		setLaunchConfiguration(configuration);
-		setSourceContainers(new ISourceContainer[]{new DefaultSourceContainer()});				
+		setSourceContainers(new ISourceContainer[]{new DefaultSourceContainer()});
+		initializeParticipants();
 	}	
 	
 	/* (non-Javadoc)
