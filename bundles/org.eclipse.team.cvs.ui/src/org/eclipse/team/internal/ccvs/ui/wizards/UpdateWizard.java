@@ -20,12 +20,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 
 public class UpdateWizard extends Wizard {
 
@@ -65,12 +61,15 @@ public class UpdateWizard extends Wizard {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						CVSTeamProvider provider = ((CVSTeamProvider)RepositoryProvider.getProvider(project));	
-						provider.update(new IResource[] { project }, updatePage.getLocalOptions(),
-							updatePage.getTag(), true /*createBackups*/, monitor);
+						new UpdateOperation(
+							null, /* workbench part */ // TODO: Shoild have a part
+							new IResource[] { project }, 
+							updatePage.getLocalOptions(),
+							updatePage.getTag())
+								.run(monitor);
 						result[0] = true;
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
+					} catch (InterruptedException e) {
+						// User cancelled
 					} finally {
 						monitor.done();
 					}

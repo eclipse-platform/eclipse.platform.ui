@@ -23,10 +23,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -515,26 +513,6 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Add the given resources to their associated providers.
-	 * This schedules the resources for addition; they still need to be committed.
-	 */
-	public void add(IResource[] resources, IProgressMonitor monitor) throws TeamException {
-		Map table = getProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName(Policy.bind("RepositoryManager.adding")); //$NON-NLS-1$
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(getCurrentComment());
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.add(providerResources, IResource.DEPTH_ZERO, subMonitor);
-		}		
-	}
-	
-	/**
 	 * Method getCurrentComment.
 	 * @return String
 	 */
@@ -542,41 +520,6 @@ public class RepositoryManager {
 		if (previousComments.length == 0)
 			return ""; //$NON-NLS-1$
 		return previousComments[0];
-	}
-
-	/**
-	 * Delete the given resources from their associated providers.
-	 * This schedules the resources for deletion; they still need to be committed.
-	 */
-	public void delete(IResource[] resources, IProgressMonitor monitor) throws TeamException {
-		Map table = getProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName(Policy.bind("RepositoryManager.deleting")); //$NON-NLS-1$
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(getCurrentComment());
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.delete(providerResources, subMonitor);
-		}		
-	}
-	
-	public void update(IResource[] resources, Command.LocalOption[] options, boolean createBackups, IProgressMonitor monitor) throws TeamException {
-		Map table = getProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName(Policy.bind("RepositoryManager.updating")); //$NON-NLS-1$
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, options, null, createBackups, subMonitor);
-		}		
 	}
 	
 	/**
@@ -621,45 +564,6 @@ public class RepositoryManager {
 			}
 		});
 		return result[0];
-	}
-	/**
-	 * Commit the given resources to their associated providers.
-	 * 
-	 * @param resources  the resources to commit
-	 * @param monitor  the progress monitor
-	 */
-	public void commit(IResource[] resources, String comment, IProgressMonitor monitor) throws TeamException {
-		Map table = getProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName(Policy.bind("RepositoryManager.committing")); //$NON-NLS-1$
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(comment);
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
-		}
-	}
-	
-	/**
-	 * Helper method. Return a Map mapping provider to a list of resources
-	 * shared with that provider.
-	 */
-	private Map getProviderMapping(IResource[] resources) {
-		Map result = new HashMap();
-		for (int i = 0; i < resources.length; i++) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
-			List list = (List)result.get(provider);
-			if (list == null) {
-				list = new ArrayList();
-				result.put(provider, list);
-			}
-			list.add(resources[i]);
-		}
-		return result;
 	}
 	
 	public ICVSRepositoryLocation getRepositoryLocationFor(ICVSResource resource) {

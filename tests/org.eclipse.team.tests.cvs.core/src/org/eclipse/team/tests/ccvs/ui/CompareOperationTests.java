@@ -139,7 +139,7 @@ public class CompareOperationTests extends CVSOperationTest {
 		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
 		addResources(copy, new String[] { "folder1/newFile", "folder2/folder3/add.txt" }, false);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, false);
-		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
 
 		// Run the compare operation of the project folder
 		ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(project);

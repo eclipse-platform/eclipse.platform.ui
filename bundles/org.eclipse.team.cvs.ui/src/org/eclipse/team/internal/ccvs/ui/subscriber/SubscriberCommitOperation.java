@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -23,10 +25,13 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Commit;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.ui.Utils;
@@ -119,8 +124,6 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 		final List commits = new ArrayList(); // of IResource
 		// New resources that are not yet under CVS control and need a "cvs add"
 		final List additions = new ArrayList(); // of IResource
-		// Deleted resources that need a "cvs remove"
-		final List deletions = new ArrayList(); // of IResource
 		// A list of incoming or conflicting file changes to be made outgoing changes
 		final List makeOutgoing = new ArrayList(); // of SyncInfo
 		// A list of out-of-sync folders that must be made in-sync
@@ -157,9 +160,8 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 									additions.add(resource);
 								break;
 							case SyncInfo.DELETION:
-								// Outgoing deletion. 'delete' it before committing.
-								if (!isRemoved(resource))
-									deletions.add(resource);
+								// Outgoing deletion is handled by move/delete
+								// hook and EclipseSynchronizer
 								break;
 							case SyncInfo.CHANGE:
 								// Outgoing change. Just commit it.
@@ -182,33 +184,46 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 				}
 			}
 		}
-		try {
-			// Calculate the total amount of work needed
-			int work = (makeOutgoing.size() + additions.size() + deletions.size() + commits.size()) * 100;
-			monitor.beginTask(null, work);
-			
-			if (makeInSync.size() > 0) {
-				makeInSync((SyncInfo[]) makeInSync.toArray(new SyncInfo[makeInSync.size()]));			
-			}
-
-			if (makeOutgoing.size() > 0) {
-				makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
-			}
-
-			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-			if (additions.size() != 0) {
-				manager.add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, additions.size() * 100));
-			}
-			if (deletions.size() != 0) {
-				manager.delete((IResource[])deletions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, deletions.size() * 100));
-			}
-			manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, Policy.subMonitorFor(monitor, commits.size() * 100));
-			
-		} catch (TeamException e) {
-			throw CVSException.wrapException(e);
+		// Calculate the total amount of work needed
+		int work = (makeOutgoing.size() + additions.size() + commits.size()) * 100;
+		monitor.beginTask(null, work);
+		
+		if (makeInSync.size() > 0) {
+			makeInSync((SyncInfo[]) makeInSync.toArray(new SyncInfo[makeInSync.size()]));			
 		}
+
+		if (makeOutgoing.size() > 0) {
+			makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
+		}
+
+		if (additions.size() != 0) {
+			add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, additions.size() * 100));
+		}
+		commit((IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, commits.size() * 100));		
 	}	
 	
+	private void commit(IResource[] commits, IProgressMonitor monitor) throws TeamException {
+		try {
+			new CommitOperation(getPart(), commits,
+					new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment) })
+						.run(monitor);
+		} catch (InvocationTargetException e) {
+			throw TeamException.asTeamException(e);
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
+		}
+	}
+
+	private void add(IResource[] additions, IProgressMonitor monitor) throws TeamException {
+		try {
+			new AddOperation(getPart(), additions).run(monitor);
+		} catch (InvocationTargetException e1) {
+			throw TeamException.asTeamException(e1);
+		} catch (InterruptedException e1) {
+			throw new OperationCanceledException();
+		}
+	}
+
 	/**
 	 * Prompts the user to determine how conflicting changes should be handled.
 	 * Note: This method is designed to be overridden by test cases.
@@ -301,16 +316,6 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 		} else {
 			return cvsResource.isManaged();
 		}
-	}
-
-	private boolean isRemoved(IResource resource) throws CVSException {
-		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		if (!cvsResource.isFolder()) {
-			byte[] syncBytes =  ((ICVSFile)cvsResource).getSyncBytes();
-			if (syncBytes == null) return true;
-			return ResourceSyncInfo.isDeletion(syncBytes);
-		}
-		return true;
 	}
 
 }

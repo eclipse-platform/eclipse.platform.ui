@@ -69,9 +69,9 @@ public class RemoteResourceTest extends EclipseTest {
 		IResource[] newResources = buildResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 		CVSTeamProvider provider = getProvider(copy);
-		provider.add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		provider.delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
-		provider.checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		addResources(newResources);
+		deleteResources(new IResource[] {copy.getFile("deleted.txt")});
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
 		
 		// Build the remote tree from the original and ensure it matches the copy
 		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree(getRepository(), project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -114,7 +114,7 @@ public class RemoteResourceTest extends EclipseTest {
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, "-copy");
 		addResources(copy, new String[] { "folder2/folder3/b.txt" }, false);
-		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
 
 		// Build the remote tree from the project
 		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree(getRepository(), project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -136,8 +136,8 @@ public class RemoteResourceTest extends EclipseTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		setContentsAndEnsureModified(copy.getFile("folder2/folder3/c.txt"));
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
-		getProvider(copy).delete(new IResource[] {copy.getFile("folder2/folder3/b.txt")}, DEFAULT_MONITOR);
-		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		deleteResources(new IResource[] {copy.getFile("folder2/folder3/b.txt")});
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
 
 		// Build the remote tree from the project
 		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree(getRepository(), project.getFolder("folder2"), CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -174,7 +174,7 @@ public class RemoteResourceTest extends EclipseTest {
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(project, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
-		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		commitResources(new IResource[] {project}, IResource.DEPTH_INFINITE);
 		
 		// Fetch the remote tree for the version
 		ICVSRemoteResource tree = CVSWorkspaceRoot.getRemoteTree(project, v1Tag, DEFAULT_MONITOR);

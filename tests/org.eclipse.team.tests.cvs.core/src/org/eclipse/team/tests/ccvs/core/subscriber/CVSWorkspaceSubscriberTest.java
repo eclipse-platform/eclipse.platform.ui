@@ -27,7 +27,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -930,7 +929,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IProject project = createProject(new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
 		tagProject(project, branch, false /* force */);
-		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, branch, true /*createBackups*/, DEFAULT_MONITOR);
+		updateProject(project, branch, false);
 
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, branch);

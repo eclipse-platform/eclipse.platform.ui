@@ -11,22 +11,15 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
 
 /**
  * AddAction performs a 'cvs add' command on the selected resources. If a
@@ -34,34 +27,12 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 public class AddAction extends WorkspaceAction {
 	
-	/*
-	 * @see CVSAction#execute()
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		if (!promptForAddOfIgnored()) return;
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {					
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("AddAction.adding")); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 1000);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.add(providerResources, IResource.DEPTH_INFINITE, subMonitor);
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
-
+		new AddOperation(getTargetPart(), getSelectedResources()).run();
 	}
 	
 	/**
@@ -85,13 +56,6 @@ public class AddAction extends WorkspaceAction {
 			return MessageDialog.openQuestion(getShell(), Policy.bind("AddAction.addIgnoredTitle"), Policy.bind("AddAction.addIgnoredQuestion")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return true;
-	}
-
-	/*
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
-	 */
-	protected String getErrorTitle() {
-		return Policy.bind("AddAction.addFailed"); //$NON-NLS-1$
 	}
 
 	/**

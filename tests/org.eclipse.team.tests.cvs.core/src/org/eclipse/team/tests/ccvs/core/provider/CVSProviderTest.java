@@ -101,11 +101,11 @@ public class CVSProviderTest extends EclipseTest {
 		// Perform some operations on the project
 		IResource[] newResources = buildResources(project, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		setContentsAndEnsureModified(project.getFile("changed.txt"));
-		getProvider(project).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		getProvider(project).delete(new IResource[] {project.getFile("deleted.txt")}, DEFAULT_MONITOR);
+		addResources(newResources);
+		deleteResources(new IResource[] {project.getFile("deleted.txt")});
 		assertIsModified("testDeepCheckin: ", newResources);
 		assertIsModified("testDeepCheckin: ", new IResource[] {project.getFile("deleted.txt"), project.getFile("changed.txt")});
-		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		commitResources(new IResource[] {project}, IResource.DEPTH_INFINITE);
 		assertLocalStateEqualsRemote(project);
 	}
 	
@@ -138,11 +138,11 @@ public class CVSProviderTest extends EclipseTest {
 		// Perform some operations on the copy
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		setContentsAndEnsureModified(copy.getFile("changed.txt"));
-		getProvider(copy).delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
+		deleteResources(new IResource[] {copy.getFile("deleted.txt")});
 		
 		// Commit the copy and update the project
-		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, DEFAULT_MONITOR);
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
+		updateProject(project, null, false);
 		assertEquals(project, copy);
 	}
 	

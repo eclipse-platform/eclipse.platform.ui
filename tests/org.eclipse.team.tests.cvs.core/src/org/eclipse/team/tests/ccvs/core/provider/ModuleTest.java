@@ -125,7 +125,7 @@ public class ModuleTest extends EclipseTest {
 		ICVSFolder parent = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		ICVSResource vcmmeta = CVSWorkspaceRoot.getCVSResourceFor(project.getFile(".vcm_meta"));
 		if ( ! vcmmeta.isManaged() && ! parent.getFolderSyncInfo().getIsStatic()) {
-			getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+			addResources(new IResource[] {project.getFile(".vcm_meta")});
 			waitMsec(1000);
 			commitProject(project);
 		}

@@ -95,5 +95,27 @@ public class UpdateOperation extends SingleCommandOperation {
 	protected ICommandOutputListener getCommandOutputListener() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#handleErrors(org.eclipse.core.runtime.IStatus[])
+	 */
+	protected void handleErrors(IStatus[] errors) throws CVSException {
+		// We are only concerned with server errors
+		List serverErrors = new ArrayList();
+		for (int i = 0; i < errors.length; i++) {
+			IStatus status = errors[i];
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				serverErrors.add(status);
+			}
+		}
+		if (serverErrors.isEmpty()) return;
+		super.handleErrors((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
+	 */
+	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
+		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+	}
 }

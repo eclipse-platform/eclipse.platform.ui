@@ -25,13 +25,13 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -108,7 +108,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			return entry;
 		}
 		public String getName() {
-			ICVSRemoteResource edition = getRemoteResource();
 			String revisionName = entry.getRevision();
 			if (revisionName != null) {
 				IResource resource = CVSCompareRevisionsInput.this.resource;
@@ -125,7 +124,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			}
 			return super.getName();
 		}
-	};
+	}
 	
 	/**
 	 * A compare node that gets its label from the right element
@@ -146,7 +145,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		public void fireContentChanges() {
 			fireChange();
 		}
-	};
+	}
 	/**
 	 * A content provider which knows how to get the children of the diff container
 	 */
@@ -161,7 +160,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			}
 			return null;
 		}
-	};
+	}
 	
 	public CVSCompareRevisionsInput(IFile resource, ILogEntry[] editions) {
 		super(new CompareConfiguration());
@@ -207,7 +206,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	}
 	
 	private void initLabels() {
-		CompareConfiguration cc = (CompareConfiguration)getCompareConfiguration();
+		CompareConfiguration cc = getCompareConfiguration();
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
 		String resourceName = resource.getName();
@@ -230,11 +229,14 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 							// Do the load. This just consists of setting the local contents. We don't
 							// actually want to change the base.
 							try {
-								CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject());
 								CVSTag revisionTag = new CVSTag(((ICVSRemoteFile)edition).getRevision(), CVSTag.VERSION);
-								if(CVSAction.checkForMixingTags(shell, new IResource[] {resource}, revisionTag)) {							
-									provider.update(new IResource[] {resource}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
-								 				    revisionTag, true /*create backups*/, monitor);
+								if(CVSAction.checkForMixingTags(shell, new IResource[] {resource}, revisionTag)) {
+									new UpdateOperation(
+											null, 
+											new IResource[] {resource},
+											new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
+											revisionTag)
+												.run(monitor);
 									getHistoryTableProvider().setFile((ICVSFile)edition);
 								}
 							} catch (TeamException e) {

@@ -154,7 +154,7 @@ public class ResourceDeltaTest extends EclipseTest {
 		IFolder folder = project.getFolder("newfolder");
 		folder.create(false, true, null);
 		assertAdditionMarkerFor(folder, true);
-		getProvider(project).add(new IResource[] {folder}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {folder});
 		assertAdditionMarkerFor(folder, false);
 	}
 	

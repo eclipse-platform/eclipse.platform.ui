@@ -23,7 +23,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 
@@ -54,8 +53,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		tagProject(project, root, false);
 		tagProject(project, branch, false);
-		getProvider(copy).update(new IResource[] {copy}, Command.NO_LOCAL_OPTIONS,
-		branch, false /*createBackups*/, DEFAULT_MONITOR);
+		updateProject(copy, branch, false);
 		return copy;
 	}
 	

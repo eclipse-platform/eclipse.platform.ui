@@ -12,32 +12,15 @@ package org.eclipse.team.tests.ccvs.core.provider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -280,7 +263,7 @@ public class IsModifiedTests extends EclipseTest {
 		// create, add and commit a file
 		IResource[] addedResources = buildResources(project, new String[] {"folder1/added.txt"}, false);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/added.txt"}, true);
-		getProvider(project).add(addedResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(addedResources);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/added.txt"}, true);
 		commitResources(project, new String[] {"folder1/added.txt"});
 		assertModificationState(project, null, true);
@@ -299,7 +282,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored.txt".getBytes()), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
-		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile(".cvsignore")});
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
 		assertModificationState(project, null, true);
@@ -310,7 +293,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		// re-add the ignore and then delete the ignored
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored.txt".getBytes()), false, DEFAULT_MONITOR);
-		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile(".cvsignore")});
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
 		assertModificationState(project, null, true);
@@ -319,7 +302,7 @@ public class IsModifiedTests extends EclipseTest {
 		// add the ignored file to version control
 		buildResources(project, new String[] {"ignored.txt"}, false);
 		assertModificationState(project, null, true);
-		getProvider(project).add(new IResource[] {project.getFile("ignored.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("ignored.txt")});
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		commitProject(project);
 		assertModificationState(project, null, true);
@@ -338,7 +321,7 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFile("folder2/a.txt").copy(project.getFile("folder1/a.txt").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt"}, true);
 		// add the source, delete the destination and commit
-		getProvider(project).add(new IResource[] {project.getFile("folder1/a.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder1/a.txt")});
 		project.getFile("folder2/a.txt").delete(false, DEFAULT_MONITOR);
 		commitProject(project);
 		assertModificationState(project, null, true);
@@ -348,7 +331,7 @@ public class IsModifiedTests extends EclipseTest {
 		// copy the destination back to the source
 		project.getFile("folder2/a.txt").copy(project.getFile("folder1/a.txt").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder2/", "folder2/a.txt"}, true);
-		getProvider(project).add(new IResource[] {project.getFile("folder2/a.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder2/a.txt")});
 		commitProject(project);
 		assertModificationState(project, null, true);
 	}
@@ -358,7 +341,7 @@ public class IsModifiedTests extends EclipseTest {
 		// create a folder
 		project.getFolder("folder1/folder2").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder2/"}, true);
-		getProvider(project).add(new IResource[] {project.getFolder("folder1/folder2/")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFolder("folder1/folder2/")});
 		assertModificationState(project, null, true);
 		
 		// create a folder
@@ -382,9 +365,9 @@ public class IsModifiedTests extends EclipseTest {
 			"folder1/folder2/folder3/add1.txt",
 			"folder1/folder2/folder3/folder4/"}, true);
 		// add to version control
-		getProvider(project).add(new IResource[] {
+		addResources(new IResource[] {
 			project.getFile("folder1/folder2/folder3/add1.txt"),
-			project.getFolder("folder1/folder2/folder3/folder4/")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+			project.getFolder("folder1/folder2/folder3/folder4/")});
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder2/", "folder1/folder2/folder3",
 			"folder1/folder2/folder3/add1.txt"}, true);
 		// commit
@@ -400,7 +383,7 @@ public class IsModifiedTests extends EclipseTest {
 		// ignore the folder
 		project.getFile("folder1/.cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
-		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder1/.cvsignore")});
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
 		commitResources(project, new String[] {"folder1/.cvsignore"});
 		assertModificationState(project, null, true);
@@ -412,7 +395,7 @@ public class IsModifiedTests extends EclipseTest {
 		// re-add the .cvsignore and then delete the ignored
 		project.getFile("folder1/.cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
-		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder1/.cvsignore")});
 		commitResources(project, new String[] {"folder1/.cvsignore"});
 		assertModificationState(project, null, true);
 		project.getFolder("folder/ignored").delete(false, DEFAULT_MONITOR);
@@ -420,7 +403,7 @@ public class IsModifiedTests extends EclipseTest {
 		// add the ignored file to version control
 		buildResources(project, new String[] {"folder1/ignored/file.txt"}, false);
 		assertModificationState(project, null, true);
-		getProvider(project).add(new IResource[] {project.getFile("folder1/ignored/file.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder1/ignored/file.txt")});
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/ignored/", "folder1/ignored/file.txt"}, true);
 		commitProject(project);
 		assertModificationState(project, null, true);
@@ -474,7 +457,7 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFolder("folder2/folder3/").copy(project.getFolder("folder1/folder3").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder3", "folder1/folder3/file.txt", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
 		// add the source, delete the destination and commit
-		getProvider(project).add(new IResource[] {project.getFile("folder1/folder3/file.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile("folder1/folder3/file.txt")});
 		project.getFolder("folder2/folder3").delete(false, DEFAULT_MONITOR);
 		commitProject(project);
 		assertModificationState(project, null, true);
@@ -484,7 +467,7 @@ public class IsModifiedTests extends EclipseTest {
 		// copy the destination back to the source
 		project.getFolder("folder2/folder3/").copy(project.getFolder("folder1/folder3").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
-		getProvider(project).add(new IResource[] {project.getFolder("folder2/folder3/")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFolder("folder2/folder3/")});
 		commitProject(project);
 		assertModificationState(project, null, true);
 	}
@@ -501,14 +484,14 @@ public class IsModifiedTests extends EclipseTest {
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 		setContentsAndEnsureModified(copy.getFile("merged.txt"));
-		getProvider(copy).delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
+		deleteResources(new IResource[] {copy.getFile("deleted.txt")});
 		assertModificationState(copy, new String[] {".", "added.txt", "folder2/", "folder2/added.txt", "changed.txt", "merged.txt", "deleted.txt"}, true);
-		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
 		assertModificationState(copy, null, true);
 		
 		// update the project and check status
 		setContentsAndEnsureModified(project.getFile("merged.txt"));
-		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, DEFAULT_MONITOR);
+		updateProject(project, null, false);
 		assertModificationState(project, new String[] {".", "merged.txt"}, true);
 		// can't commit because of merge
 		// commitProject(project);
@@ -524,7 +507,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		
 		// peform un update -C
-		getProvider(project).update(new IResource[] {project}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, null, true /*createBackups*/, DEFAULT_MONITOR);
+		updateProject(project, null, true /* ignore local changes */);
 		assertModificationState(project, null, true);
 	}
 	
@@ -543,7 +526,7 @@ public class IsModifiedTests extends EclipseTest {
 		// Create a project and add a .cvsignore to it
 		IProject project = createProject("testIgnoredAfterCheckout", new String[] { ".changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
-		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(new IResource[] {project.getFile(".cvsignore")});
 		commitProject(project);
 		assertModificationState(project, null, true);
 		project.getFolder("ignored").create(false, true, DEFAULT_MONITOR);

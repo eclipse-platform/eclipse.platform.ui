@@ -11,20 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 
 /**
  * UpdateAction performs a 'cvs update' command on the selected resources.
@@ -38,36 +28,8 @@ public class UpdateAction extends WorkspaceAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {					
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("UpdateAction.updating")); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.update(providerResources, Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, subMonitor);
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
-
-	}
-
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
-	 */
-	protected String getErrorTitle() {
-		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+		new UpdateOperation(getTargetPart(), getSelectedResources(), Command.NO_LOCAL_OPTIONS, null /* use the tag of the resources */)
+			.run();
 	}
 
 	/**

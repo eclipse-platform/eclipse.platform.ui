@@ -90,10 +90,11 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return newResources;
 	}
 	
-	protected void addResources(IResource[] newResources) throws TeamException, CoreException {
+	protected void addResources(IResource[] newResources) throws CoreException {
 		if (newResources.length == 0) return;
-		getProvider(newResources[0]).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		executeHeadless(new AddOperation(null, newResources));
 	}
+	
 	/**
 	 * Perform a CVS edit of the given resources
 	 */
@@ -176,9 +177,17 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return resources;
 	}
 	
+	/**
+	 * Delete the resources and mark them as outgoing deletions.
+	 * Deleting the resources is enough since the move/delete hook will
+	 * tak care of making them outgoing deletions.
+	 */
 	protected void deleteResources(IResource[] resources) throws TeamException, CoreException {
 		if (resources.length == 0) return;
-		getProvider(resources[0]).delete(resources, DEFAULT_MONITOR);
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			resource.delete(false, DEFAULT_MONITOR);
+		}
 	}
 	/**
 	 * Unmanage the resources
@@ -201,8 +210,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
-		}	
-		getProvider(container).update(resources, options, null, true /*createBackups*/, DEFAULT_MONITOR);
+		}
+		executeHeadless(new UpdateOperation(null, resources, options, null));
 		return resources;
 	}
 	
@@ -222,7 +231,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
 		}
-		getProvider(project).update(new IResource[] {project}, options, tag, true /*createBackups*/, DEFAULT_MONITOR);
+		executeHeadless(new UpdateOperation(null, new IResource[] {project}, options, tag));
 	}
 	
 	public void commitProject(IProject project) throws TeamException, CoreException {
@@ -247,7 +256,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	protected void commitResources(IResource[] resources, int depth) throws TeamException, CoreException {
 		if (resources.length == 0) return;
-		getProvider(resources[0]).checkin(resources, depth, DEFAULT_MONITOR);
+		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, "") }));
 	}
 	/**
 	 * Commit the resources from an existing container to the CVS repository
@@ -705,8 +714,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 				resourcesToAdd.add(members[i]);
 			}
 		}
-		getProvider(project).add((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]), IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		addResources((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]));
+		commitResources(new IResource[] {project}, IResource.DEPTH_INFINITE);
 		// Pause to ensure that future operations happen later than timestamp of committed resources
 		waitMsec(1500);
 	}
