@@ -715,7 +715,7 @@
                id="org.eclipse.debug.ui.breakpointsView.toolbar.setDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
-               icon="icons/full/obj16/breakpoint_group.gif"
+               icon="icons/full/obj16/brkp_grp.gif"
                helpContextId="set_default_breakpoint_group_action_context"
                label="%setDefaultGroup.label"
                tooltip="%setDefaultGroup.tooltip">
@@ -1151,7 +1151,7 @@
          </action>
          <action
                label="%addToGroup.label"
-               icon="icons/full/obj16/breakpoint_group.gif"
+               icon="icons/full/obj16/brkp_grp.gif"
                helpContextId="add_breakpoint_to_group_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.AddBreakpointToGroupAction"
                menubarPath="breakpointGroupGroup"
