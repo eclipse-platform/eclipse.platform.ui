@@ -504,9 +504,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		
 		ThemeElementCategory category = createCategoryControl(mainColumn);
 
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 2;		
+		Label label = new Label(mainColumn, SWT.LEFT);	
+		label.setText(RESOURCE_BUNDLE.getString("colorsAndFonts")); //$NON-NLS-1$
+		myApplyDialogFont(label);
+		label.setLayoutData(data);
+		
 		createList(mainColumn);
 		Composite controlColumn = new Composite(mainColumn, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		controlColumn.setLayoutData(data);
 		layout = new GridLayout();
@@ -610,27 +617,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * @param parent the parent <code>Composite</code>.
 	 */
 	private void createList(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
-		composite.setLayoutData(data);
-
-		Label label = new Label(composite, SWT.LEFT);
-		label.setText(RESOURCE_BUNDLE.getString("colorsAndFonts")); //$NON-NLS-1$
-		myApplyDialogFont(label);
-
 		presentationList =
-			new TableViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		presentationList.setContentProvider(new ArrayContentProvider());
 		PresentationLabelProvider provider = new PresentationLabelProvider();
 		presentationList.setLabelProvider(provider);
 		presentationList.setSorter(new ViewerSorter());
 		
-		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);		
+		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		data.heightHint = 175;
 		presentationList.getControl().setLayoutData(data);
 		column = new TableColumn(presentationList.getTable(), SWT.LEFT);
         myApplyDialogFont(presentationList.getControl());
@@ -1005,7 +1000,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			if (definition.getValue() != null) { // value-based color
 				if (colorPreferencesToSet
 					.get(id)
-					.equals(StringConverter.asRGB(getPreferenceStore().getDefaultString(id), null)))
+					.equals(definition.getValue()))
 					return true;
 			} else {
 				if (colorPreferencesToSet.get(id).equals(getColorAncestorValue(definition)))
@@ -1216,10 +1211,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 			RGB newRGB;
 			if (definition.getValue() != null) {
-				newRGB =
-					StringConverter.asRGB(
-						getPreferenceStore().getDefaultString(definition.getId()),
-						null);
+				newRGB = definition.getValue();
 			} else {
 				newRGB = getColorAncestorValue(definition);
 			}

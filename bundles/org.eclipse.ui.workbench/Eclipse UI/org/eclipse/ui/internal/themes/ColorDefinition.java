@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 
 /**
@@ -108,12 +109,10 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	}
 
 	/**
-	 * @return the value.  It will either be <code>null</code> or a 
-	 *		<code>String</code> in the form rrr,ggg,bbb.  Any SWT constants 
-	 *		supplied to the constructor will be evaluated and converted into 
-	 *		their RGB value.
+	 * @return the value. Any SWT constants  supplied to the constructor will be 
+	 * evaluated and converted into their RGB value.
 	 */
-	public String getValue() {
+	public RGB getValue() {
 	    return ColorUtils.getColorValue(rawValue);
 	}
 	

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.Comparator;
 
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 
 
@@ -129,7 +130,7 @@ public class GradientDefinition implements IPluginContribution, ICategorizedThem
     /**
      * @return Returns the rawValues.
      */
-    public String[] getValues() {
+    public RGB [] getValues() {
         return ColorUtils.getColorValues(rawValues);
     }
     /**

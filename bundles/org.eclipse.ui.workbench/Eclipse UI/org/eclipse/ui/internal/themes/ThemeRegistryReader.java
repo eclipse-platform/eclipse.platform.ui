@@ -17,11 +17,15 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
+import org.eclipse.ui.themes.IColorFactory;
 
 /**
  * Registry reader for themes.
@@ -38,6 +42,8 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String ATT_LABEL = "label"; //$NON-NLS-1$
 	public static final String ATT_PERCENTAGE = "percentage"; //$NON-NLS-1$
 	public static final String ATT_VALUE = "value"; //$NON-NLS-1$
+	
+	public static final String ATT_COLORFACTORY = "colorFactory"; //$NON-NLS-1$
 	
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -152,13 +158,17 @@ public class ThemeRegistryReader extends RegistryReader {
 		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
 
 		String value = element.getAttribute(ATT_VALUE);
+		
+		if (value == null) {
+			value = checkColorFactory(element);
+		}
 
 		if ((value == null && defaultMapping == null)
 			|| (value != null && defaultMapping != null)) {
 			logError(element, RESOURCE_BUNDLE.getString("Colors.badDefault")); //$NON-NLS-1$
 			return null;
 		}
-
+		
 		String categoryId = element.getAttribute(ATT_CATEGORYID);
 		
 		String description = null;
@@ -168,7 +178,6 @@ public class ThemeRegistryReader extends RegistryReader {
 
 		if (descriptions.length > 0)
 			description = descriptions[0].getValue();
-
 		
 		return new ColorDefinition(
 				name,
@@ -243,7 +252,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	    }
 		else if (element.getName().equals(TAG_THEME)) {
 		    if (themeDescriptor != null)
-		        logError(element, "Cannot have nested themes.");
+		        logError(element, RESOURCE_BUNDLE.getString("Themes.badNesting")); //$NON-NLS-1$
 		    else {
 				themeDescriptor = readTheme(element);
 				if (themeDescriptor != null) {
@@ -277,7 +286,7 @@ public class ThemeRegistryReader extends RegistryReader {
 		String value = element.getAttribute(ATT_VALUE);
 		
 		if (value != null && defaultMapping != null) {
-			// TODO logError(element, RESOURCE_BUNDLE.getString("badDefault")); //$NON-NLS-1$
+			logError(element, RESOURCE_BUNDLE.getString("Fonts.badDefault")); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -324,6 +333,10 @@ public class ThemeRegistryReader extends RegistryReader {
 		String values [] = new String[children.length + 1];		
 		
         values[0] = element.getAttribute(ATT_INITIALVALUE);
+        if (values[0] == null) {
+        	values[0] = checkColorFactory(element);
+        }
+        
         if (values[0] == null || values[0].equals("")) { //$NON-NLS-1$
             logError(element, RESOURCE_BUNDLE.getString("Gradient.badGradientValue")); //$NON-NLS-1$
             return null;                    
@@ -333,6 +346,10 @@ public class ThemeRegistryReader extends RegistryReader {
         
         for (int i = 0; i < children.length; i++) {      
             String value = children[i].getAttribute(ATT_VALUE);
+            if (value == null) {
+            	value  = checkColorFactory(children[i]);
+            }
+            
             if (value == null || value.equals("")) { //$NON-NLS-1$
                 logError(element, RESOURCE_BUNDLE.getString("Gradient.badGradientValue")); //$NON-NLS-1$
                 return null;                    
@@ -377,6 +394,32 @@ public class ThemeRegistryReader extends RegistryReader {
 					.getUniqueIdentifier());
 	}	
 	
+    /**
+	 * Attempt to load the color value from the colorFactory attribute.
+     *
+     * @param element the element to load from 
+     * @return the value, or null if it could not be obtained
+     */
+    private String checkColorFactory(IConfigurationElement element) {
+    	String value = null;
+	    if (element.getAttribute(ThemeRegistryReader.ATT_COLORFACTORY) != null || element.getChildren(ATT_COLORFACTORY).length > 0 ) {
+	        try {
+                IColorFactory factory = (IColorFactory) element.createExecutableExtension(ATT_COLORFACTORY);
+                value = StringConverter.asString(factory.createColor());
+            } catch (Exception e) {
+                WorkbenchPlugin.log(
+                        RESOURCE_BUNDLE.getString("Colors.badFactory"), //$NON-NLS-1$ 
+                        new Status(
+                                IStatus.ERROR, 
+                                WorkbenchPlugin.PI_WORKBENCH, 
+                                IStatus.ERROR, 
+                                e.getMessage(), 
+                                e)); 
+            }
+	    }	
+	    return value;	    
+    }
+
     /**
      * Read a theme.
      * 

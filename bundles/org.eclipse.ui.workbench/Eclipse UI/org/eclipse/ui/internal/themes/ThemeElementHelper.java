@@ -95,12 +95,8 @@ public final class ThemeElementHelper {
 		String id = definition.getId();
 		GradientData prefGradient = store != null ? PreferenceConverter.getGradient(store, id) : null;
 		
-		String[] values = definition.getValues();
-        RGB [] rgbs = new RGB[values.length];
-		for (int i = 0; i < rgbs.length; i++) {
-            rgbs[i] = StringConverter.asRGB(values[i], null);
-        }
-        
+        RGB [] rgbs = definition.getValues();
+
         GradientData defaultGradient = new GradientData(rgbs, definition.getPercentages(), definition.getDirection());		
 		
 		if (prefGradient == null || prefGradient == PreferenceConverter.GRADIENT_DEFAULT_DEFAULT) {
@@ -151,7 +147,7 @@ public final class ThemeElementHelper {
 		RGB prefColor = store != null ? PreferenceConverter.getColor(store, id) : null;
 		RGB defaultColor = null;
 		if (definition.getValue() != null)
-		    defaultColor = StringConverter.asRGB(definition.getValue(), null);
+		    defaultColor = definition.getValue();
 		else 
 		    defaultColor = registry.getRGB(definition.getDefaultsTo());
 		

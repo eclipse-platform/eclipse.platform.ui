@@ -1234,11 +1234,14 @@
          </gradientPart>
       </gradientDefinition>
       <gradientDefinition
-            initialValue="blend(COLOR_WHITE-COLOR_TITLE_BACKGROUND_GRADIENT)"
             label="Active View Tab Gradient"
             categoryId="org.eclipse.ui.workbenchMisc"
             direction="vertical"
             id="VIEW_TITLE_GRADIENT_COLOR_ACTIVE">
+		 <colorFactory plugin="org.eclipse.ui" class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter name="color1" value="COLOR_WHITE" />
+       	 	<parameter name="color2" value="COLOR_TITLE_BACKGROUND_GRADIENT" />
+         </colorFactory>
          <gradientPart
                percentage="100"
                value="COLOR_TITLE_BACKGROUND_GRADIENT">
