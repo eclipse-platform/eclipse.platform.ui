@@ -148,7 +148,7 @@ private IProject createNewProject() {
 				MessageDialog.openError(
 					getShell(), 
 					ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
-					ResourceMessages.getString("NewProject.caseVariantExistsError")  //$NON-NLS-1$,
+					ResourceMessages.format("NewProject.caseVariantExistsError", new String[] { newProjectHandle.getName()} )  //$NON-NLS-1$,
 					);	
 			} else {
 				ErrorDialog.openError(
