@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.help.appserver"/>
    </requires>
 
+
 <!-- Extension points -->
    <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.mxsd"/>
    <extension-point id="luceneAnalyzer" name="%lucene_analyzer" schema="schema/luceneAnalyzer.mxsd"/>
@@ -25,7 +26,7 @@
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.mxsd"/>
    <extension-point id="webapp" name="%webapp_extension_point_name" schema="schema/webapp.mxsd"/>
    <extension-point id="browser" name="%browser_extension_point_name" schema="schema/browser.mxsd"/>
-
+   <extension-point id="contentProducer" name="%content_producer_extension_point_name" schema="schema/contentProducer.exsd"/>
 
 <!--  Help URL protocols -->
    <extension
@@ -199,4 +200,5 @@
             id="org.eclipse.help.custombrowser">
       </browser>
    </extension>
+
 </plugin>
