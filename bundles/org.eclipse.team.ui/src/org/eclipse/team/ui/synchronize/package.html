@@ -1,21 +1,78 @@
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-  <meta content="text/html; charset=iso-8859-1"
- http-equiv="Content-Type">
-  <meta content="IBM" name="Author">
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM">
   <title>Package-level Javadoc</title>
 </head>
 <body>
-<p>Application programming interfaces for interaction
-with the Eclipse Synchronize View.</p>
+<p>Contains the team synchronization presentation framework and support
+for the Synchronize View.<br>
+</p>
 <h2>Package Specification</h2>
-<p>The Eclipse Team UI plug-in provides a set of classes and interfaces
+<p>Contains the team synchronization presentation framework and support
+for the Synchronize View. A synchronization framework is a unified
+architecture for presenting and manipulating resource synchronization
+state. Consider the
+synchronization model described by the classes in
+<code>org.eclipse.team.core.synchronize</code> as the physical
+representation of synchronization state then the classes in this
+package allow you to control
+how the model is presented to the user. This framework doesn't attempt
+to provide common operations for manipulating synchronization state.
+Instead it is left up to the framework user to add their own domain
+specific operations to the presentation.<br>
+</p>
+<p>The primary advantages of this synchronization presentation
+framework are that it:<br>
+</p>
+<ul>
+  <li><span style="font-weight: bold;">Provides a unified
+synchronization experience</span> in the workbench. It makes it easier
+to present one synchronization story to the user across multiple tools
+that synchronize resources. This includes access to the Synchronize
+View, the Team Synchronizing Perspective, the global Synchronize
+Action, Synchronize dialogs, and compare editors.<br>
+  </li>
+  <li><span style="font-weight: bold;">Reduces the effort required to
+learn other APIs</span> by eliminating the need to learn many workbench
+APIs to enable this rich support.<br>
+  </li>
+  <li><span style="font-weight: bold;">Fosters software re-use</span>
+by allowing multiple repository providers and other tools to enable
+rich integration without the initial cost of learning how to integrate
+into Eclipse.<br>
+  </li>
+</ul>
+<p>The synchronization presentation framework consists of:<br>
+</p>
+<ul>
+  <li><span style="font-weight: bold;">Synchronize View Interfaces</span>
+- Represents a set of classes and interfaces
 to support a generic synchronize view that can show multiple
-synchronize participants. This package contains a generic abstract
-synchronize participant that provides the common functionality for
-synchronize participants. The basic model for the Synchronize View APIs
-is the following:</p>
+synchronize participants.</li>
+  <li><span style="font-weight: bold;">Viewer Advisors</span> - The
+advisors allow decoupling viewer behavior from the viewers presentation
+and basically provide the ability to show synchronization information
+stored as <code>SyncInfo </code>or in a <code>SyncInfoSet</code> to
+be shown in a Viewer.</li>
+  <li><span style="font-weight: bold;">Compare Inputs</span> - These
+are helpers for allowing users to display and edit the resources being
+synchronized.</li>
+  <li><span style="font-weight: bold;">Synchronize action and operation
+utilities</span> - Represent helpers for writing actions that are
+performed on elements shown in synchronization viewers.<br>
+  </li>
+</ul>
+<hr style="width: 100%; height: 2px;">
+<h3>Synchronize View Interfaces<br>
+</h3>
+<p>These interfaces and classes support a generic Synchronize View that
+can show multiple
+synchronize participants. The basic model for integrating into the
+Synchronize View consists of:<br>
+</p>
 <ul>
   <li>A ISynchronizeManager manages registered synchronize
 participants. There can be several instances of the same participant
@@ -35,37 +92,21 @@ menus, and view menu.</li>
 </strong>extension point. There are two classes of synchronize
 participants: <em>static </em>participants will be created when the
 synchronize view is created, and <em>dynamic</em> participants that
-are created by user code at some other time. A synchronize manager (<b>ISynchronizeManager</b>)
+are created by user code at some other time. A synchronize manager
 manages all active synchronize participants, and provides notification
 of participants which are added and removed. Participants are displayed
 in a page book view. Each participant implementation is reponsible for
-creating its page (<b>IPageBookView</b>), which provides freedom of
+creating its page, which provides freedom of
 presentation to the synchronize view implementation. A single
 participant may be displayed simultaneously in multiple synchronize
-views, and in different workbench windows.</p>
-
-<p>This package contains classes that support displaying
-synchronization information described by SyncInfo. If you consider the
-synchronization model described by the classes in
-org.eclipse.team.core.synchronize as the physical representation of
-resource variants then the classes in this package allow you to control
-how the model is presented to the user. One key feature of these APIs
-is that they support managing dynamic models.<br>
+views, and in different workbench windows.<br>
 </p>
-<p>There is no specific support for the Synchronize View in this
-package. Instead, the classes here can be used to build a page that can
-be shown in the view, but they can also be used to show synchronization
-information in dialogs, wizards, and editors.<br>
-</p>
-<p>The central abstractions for presenting synchronization state are:<br>
-</p>
-<p>- SynchronizeModelProvider, SynchronizeModelElement: are the
-building blocks for
-describing the logical structure of a synchronization model.<br>
+<hr style="width: 100%; height: 2px;">
+<h3>Viewer Advisors</h3>
 - StructuredViewerAdvisor: are used to
 display the logical structure to the user and define the basics such as
 the SynchronizeModelProvider, label provider, and context menus.<br>
-- SyncInfoCompareInput: is used to show a comparison between a local
+<p>- SyncInfoCompareInput: is used to show a comparison between a local
 resource and a variant in a compare editor.<br>
 - SyncInfoSetCompareInput: is used to showing a set of variants in a
 compare editor<br>
@@ -73,45 +114,21 @@ compare editor<br>
 <p>Default implementations are provided and there are many levels of
 customizations available.<br>
 </p>
-<h2>Basic Example</h2>
-If you have a synchronization model described in a SyncInfoTree and
-would like to show it to the user in a simple resource hierarchical
-tree viewers you would:<br>
-<br>
-SyncInfoTree syncTree = getSyncTree();<br>
-DiffTreeViewerConfiguration viewerConfiguration = new
-DiffTreeViewerConfiguration(syncTree);<br>
-TreeViewer viewer = new TreeViewer(parent);<br>
-viewerConfiguration.initializeViewer(viewer);<br>
-...<br>
-viewerConfiguration.dispose();<br>
-<br>
-Some items of interest in the above example: (1) the viewer
-configuration is used to add behavior to different types of tree
-viewers and by default will build a hierarchical logical model of the
-synchronization info and, (2) the default label provider will show the
-nodes with resource decorations plus the standard diff change markers,
-(3) the default context menu action is expand all plus any object
-contributions.<br>
-<br>
-Another example, you would like to add additional label decorations,
-and actions defined as viewerContribution in your plugin.xml.<br>
-<br>
-SyncInfoTree syncTree = getSyncTree();<br>
-DiffTreeViewerConfiguration viewerConfiguration = new
-DiffTreeViewerConfiguration("org.eclipse.team.example.actions",
-syncTree) {<br>
-&nbsp;&nbsp;&nbsp; protected ILabelProvider getLabelProvider() {<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return new
-SyncInfoLabelProvider.DecoratingColorLabelProvider(new
-SyncInfoLabelProvider(), new MyCustorDecorator());<br>
-&nbsp;&nbsp;&nbsp; }<br>
-}<br>
-TreeViewer viewer = new TreeViewer(parent);<br>
-viewerConfiguration.initializeViewer(viewer);<br>
-...<br>
-viewerConfiguration.dispose();<br>
-
-
+<hr style="width: 100%; height: 2px;">
+<h3>Compare Inputs</h3>
+These are helpers for allowing users to display and edit resources
+being synchronized by integrating with the compare support available in
+Eclipse. <br>
+<hr style="width: 100%; height: 2px;">
+<h3>Synchronize action and operation utilities</h3>
+These are helpers for writing actions that are performed on elements
+shown in synchronize viewers.<br>
+<hr style="width: 100%; height: 2px;">
+<h3>Related Documentation</h3>
+<ul>
+  <li>Pointer to the ISV docs?</li>
+  <li>Tutorials?<br>
+  </li>
+</ul>
 </body>
 </html>
