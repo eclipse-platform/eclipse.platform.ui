@@ -723,8 +723,18 @@ protected boolean showPage(IPreferenceNode node) {
 			Point shellSize= shell.getSize();
 			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
 		} else if (hdiff < 0 || vdiff < 0) {
-			newPage.setSize(containerSize);
+			currentPage.setSize(containerSize);
 		}
+	}
+
+	// Ensure that all other pages are invisible 
+	// (including ones that triggered an exception during
+	// their creation).
+	Control[] children = pageContainer.getChildren();
+	Control currentControl = currentPage.getControl();
+	for (int i = 0; i < children.length; i++) {
+		if (children[i] != currentControl)
+			children[i].setVisible(false);
 	}
 
 	// Make the new page visible
