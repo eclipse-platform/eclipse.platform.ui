@@ -1155,7 +1155,7 @@ public final class InternalPlatform implements IPlatform {
 		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT, productId);
 		if (entries.length > 0) {
 			// There should only be one product with the given id so just take the first element
-			product = new Product(entries[0]);
+			product = new Product(productId, entries[0]);
 			return product;
 		}
 		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT);
