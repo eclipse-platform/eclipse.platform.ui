@@ -112,9 +112,8 @@ public class GenerateDiffFileWizard extends Wizard {
 					}
 					break;
 				case FILESYSTEM:
-					if (new File(getFilesystemFile()).isAbsolute()) {
-						valid = true;
-					}
+					File file = new File(getFilesystemFile());
+					valid = isValidFile(file);
 					break;
 				case CLIPBOARD:
 					valid = true;
@@ -133,6 +132,15 @@ public class GenerateDiffFileWizard extends Wizard {
 			return valid;
 		}
 
+		private boolean isValidFile(File file) {
+			if (!file.isAbsolute()) return false;
+			if (file.isDirectory()) return false;
+			File parent = file.getParentFile();
+			if (parent==null) return false;
+			if (!parent.exists()) return false;
+			if (!parent.isDirectory()) return false;
+			return true;
+		}
 		/**
 		 * Answers a full path to a file system file or <code>null</code> if the user
 		 * selected to save the patch in the workspace. 
@@ -519,20 +527,6 @@ public class GenerateDiffFileWizard extends Wizard {
 		try {
 			if(type != mainPage.CLIPBOARD) {
 				File file = new File(fs!=null ? fs : ws.getLocation().toOSString());
-				// Temporary code. Pending resolution of 31606
-				File parent = file.getParentFile();
-				if (parent!=null && !parent.exists()) {
-					String title = Policy.bind("GenerateCVSDiff.badParentTitle"); //$NON-NLS-1$
-					String msg =   Policy.bind("GenerateCVSDiff.badParentMsg"); //$NON-NLS-1$
-					final MessageDialog dialog = new MessageDialog(getShell(),
-																	title,
-																	null,
-																	msg,
-																	MessageDialog.ERROR,
-																	new String[] { IDialogConstants.OK_LABEL }, 0);
-					dialog.open();
-					return false;
-				}
 				if (file.exists()) {
 					// prompt then delete
 					String title = Policy.bind("GenerateCVSDiff.overwriteTitle"); //$NON-NLS-1$
