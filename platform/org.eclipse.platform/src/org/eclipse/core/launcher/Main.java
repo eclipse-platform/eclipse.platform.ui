@@ -1,14 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.launcher;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -153,6 +159,13 @@ public class Main {
 	private static final String CFG_FEATURE_ENTRY_ID = "id";
 	private static final String CFG_FEATURE_ENTRY_ROOT = "root";
 	private static final String CFG_EOF = "eof";
+
+	// log file handling
+	protected static final String STARTUP = "!STARTUP ";//$NON-NLS-1$
+	protected static final String logFileName = ".metadata" + File.separator + ".log";//$NON-NLS-1$ //$NON-NLS-2$
+	protected static File logFile = null;
+	protected static BufferedWriter log = null;
+	protected static String[] arguments;
 
 /**
  * Executes the launch.
@@ -447,13 +460,18 @@ private Object[] getVersionElements(String version) {
 public static void main(String[] args) {
 	Object result = null;
 	Main launcher = new Main();
+	arguments = args;
 	try {
 		result = launcher.run(args);
 	} catch (Throwable e) {
 		// try and take down the splash screen.
 		launcher.takeDownSplash();
-		System.out.println("Exception launching the Eclipse Platform:");
-		e.printStackTrace();
+		log("Exception launching the Eclipse Platform:");
+		log(e);
+		// FIXME: this is where we would return a special exit code
+		// if we wanted the executable to display a message to the user
+		// saying that they should check the log and the location of
+		// the log file.
 	}
 	int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 	System.exit(exitCode);
@@ -901,7 +919,7 @@ private void handleSplash(URL[] bootPath) {
 		showProcess = Runtime.getRuntime().exec(cmd);
 	} catch (Exception e) {
 		// continue without splash ...
-		e.printStackTrace();
+		log(e);
 	}
 	return;
 }
@@ -1088,4 +1106,104 @@ private String featureIndex(String id) {
 		return null;
 	return (String)featureIndex.get(id);
 }
+
+/*
+ * Entry point for logging.
+ */
+private static synchronized void log(Object obj) {
+	if (obj == null)
+		return;
+	try {
+		openLogFile();
+		try {
+			try {
+				write(STARTUP + new SimpleDateFormat().format(new Date()));
+			} catch (Exception e) {
+				write(STARTUP);
+			}
+			write(obj);
+		} finally {
+			if (logFile == null) {
+				if (log != null)
+					log.flush();
+			} else
+				closeLogFile();
+		}
+	} catch (Exception e) {
+		System.err.println("An exception occurred while writing to the platform log:");//$NON-NLS-1$
+		e.printStackTrace(System.err);
+		System.err.println("Logging to the console instead.");//$NON-NLS-1$
+		//we failed to write, so dump log entry to console instead
+		try {
+			log = logForStream(System.err);
+			write(obj);
+			log.flush();
+		} catch (Exception e2) {
+			System.err.println("An exception occurred while logging to the console:");//$NON-NLS-1$
+			e2.printStackTrace(System.err);
+		}
+	} finally {
+			log = null;
+	}
+}
+/*
+ * This should only be called from #log()
+ */
+private static void write(Object obj) throws IOException {
+	if (obj == null)
+		return;
+	if (obj instanceof Throwable) {
+		((Throwable) obj).printStackTrace(new PrintWriter(log));
+	} else {
+		log.write(String.valueOf(obj));
+	}
+	log.newLine();
+}
+private static void computeLogFileLocation() {
+	if (logFile != null)
+		return;
+	// check to see if the user specified a workspace location in the command-line args
+	for (int i=0; logFile == null && i<arguments.length; i++) {
+		if (arguments[i].equalsIgnoreCase(DATA)) {
+			// found the -data command line argument so the next argument should be the
+			// workspace location. Ensure that we have another arg to check
+			if (i+1<arguments.length)
+				logFile = new File(arguments[i+1]);
+		}
+	}
+	// otherwise use the default location
+	if (logFile == null)
+		logFile = new File(System.getProperty("user.dir"), "workspace");//$NON-NLS-1$ //$NON-NLS-2$
+	
+	// append the .metadata directory and .log file name to the path
+	logFile = new File(logFile, logFileName);
+	logFile.getParentFile().mkdirs();
+}
+private static void openLogFile() throws IOException {
+	computeLogFileLocation();
+	try {
+		log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
+	} catch (IOException e) {
+		logFile = null;
+		throw e;
+	}
+}
+private static BufferedWriter logForStream(OutputStream output) {
+	try {
+		return new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));//$NON-NLS-1$
+	} catch (UnsupportedEncodingException e) {
+		return new BufferedWriter(new OutputStreamWriter(output));
+	}
+}
+private static void closeLogFile() throws IOException {
+	try {
+		if (log != null) {
+			log.flush();
+			log.close();
+		}
+	} finally {
+		log = null;
+	}
+}
+
 }
