@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.IActiveKeyConfiguration;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IContextBinding;
@@ -32,6 +33,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 
+	private List activeKeyConfigurations;	
 	private List categories;	
 	private List commands;
 	private List contextBindings;
@@ -39,6 +41,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	private List keyBindings;
 	private List keyConfigurations;
 	private IPluginRegistry pluginRegistry;
+	private List unmodifiableActiveKeyConfigurations;
 	private List unmodifiableCategories;
 	private List unmodifiableCommands;
 	private List unmodifiableContextBindings;
@@ -49,12 +52,17 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	RegistryReader(IPluginRegistry pluginRegistry) {
 		super();	
 		this.pluginRegistry = pluginRegistry;
+		unmodifiableActiveKeyConfigurations = Collections.EMPTY_LIST;
 		unmodifiableCategories = Collections.EMPTY_LIST;
 		unmodifiableCommands = Collections.EMPTY_LIST;
 		unmodifiableContextBindings = Collections.EMPTY_LIST;
 		unmodifiableImageBindings = Collections.EMPTY_LIST;		
 		unmodifiableKeyBindings = Collections.EMPTY_LIST;
 		unmodifiableKeyConfigurations = Collections.EMPTY_LIST;
+	}
+
+	List getActiveKeyConfigurations() {
+		return unmodifiableActiveKeyConfigurations;
 	}
 
 	List getCategories() {
@@ -82,6 +90,11 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	}
 	
 	void load() {
+		if (activeKeyConfigurations == null)
+			activeKeyConfigurations = new ArrayList();
+		else 
+			activeKeyConfigurations.clear();		
+		
 		if (categories == null)
 			categories = new ArrayList();
 		else 
@@ -115,6 +128,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		if (pluginRegistry != null)	
 			readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 			
+		unmodifiableActiveKeyConfigurations = Collections.unmodifiableList(new ArrayList(activeKeyConfigurations));
 		unmodifiableCategories = Collections.unmodifiableList(new ArrayList(categories));
 		unmodifiableCommands = Collections.unmodifiableList(new ArrayList(commands));
 		unmodifiableContextBindings = Collections.unmodifiableList(new ArrayList(contextBindings));
@@ -125,6 +139,9 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	protected boolean readElement(IConfigurationElement element) {
 		String name = element.getName();
+
+		if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
+			return readActiveKeyConfiguration(element);
 
 		if (Persistence.TAG_CATEGORY.equals(name))
 			return readCategory(element);
@@ -144,8 +161,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
 			return readKeyConfiguration(element);
 
-		return true; // TODO
-		//return false;
+		return true; // TODO return false;
 	}
 
 	private String getPluginId(IConfigurationElement element) {
@@ -163,6 +179,15 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		}
 
 		return pluginId;
+	}
+
+	private boolean readActiveKeyConfiguration(IConfigurationElement element) {
+		IActiveKeyConfiguration activeKeyConfiguration = Persistence.readActiveKeyConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (activeKeyConfiguration != null)
+			activeKeyConfigurations.add(activeKeyConfiguration);	
+		
+		return true;
 	}
 
 	private boolean readCategory(IConfigurationElement element) {

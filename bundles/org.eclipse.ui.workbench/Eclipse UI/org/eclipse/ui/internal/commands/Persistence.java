@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.commands.IActiveKeyConfiguration;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IContextBinding;
@@ -30,6 +31,7 @@ final class Persistence {
 
 	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
+	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
@@ -50,6 +52,36 @@ final class Persistence {
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+
+	static IActiveKeyConfiguration readActiveKeyConfiguration(IMemento memento, String pluginIdOverride) {
+		if (memento == null)
+			throw new NullPointerException();			
+
+		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
+
+		if (keyConfigurationId == null)
+			keyConfigurationId = Util.ZERO_LENGTH_STRING;
+	
+		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
+		return new ActiveKeyConfiguration(keyConfigurationId, pluginId);
+	}
+
+	static List readActiveKeyConfigurations(IMemento memento, String name, String pluginIdOverride) {
+		if (memento == null || name == null)
+			throw new NullPointerException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new NullPointerException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readActiveKeyConfiguration(mementos[i], pluginIdOverride));
+	
+		return list;				
+	}
 
 	static List readCategories(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
@@ -306,6 +338,30 @@ final class Persistence {
 			list.add(readKeyConfiguration(mementos[i], pluginIdOverride));
 	
 		return list;				
+	}
+
+	static void writeActiveKeyConfiguration(IMemento memento, IActiveKeyConfiguration activeKeyConfiguration) {
+		if (memento == null || activeKeyConfiguration == null)
+			throw new NullPointerException();
+
+		memento.putString(TAG_KEY_CONFIGURATION_ID, activeKeyConfiguration.getKeyConfigurationId());
+		memento.putString(TAG_PLUGIN_ID, activeKeyConfiguration.getPluginId());
+	}
+
+	static void writeActiveKeyConfigurations(IMemento memento, String name, List activeKeyConfigurations) {
+		if (memento == null || name == null || activeKeyConfigurations == null)
+			throw new NullPointerException();
+		
+		activeKeyConfigurations = new ArrayList(activeKeyConfigurations);
+		Iterator iterator = activeKeyConfigurations.iterator();
+
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IActiveKeyConfiguration.class);
+
+		iterator = activeKeyConfigurations.iterator();
+
+		while (iterator.hasNext()) 
+			writeActiveKeyConfiguration(memento.createChild(name), (IActiveKeyConfiguration) iterator.next());
 	}
 
 	static void writeCategories(IMemento memento, String name, List categories) {

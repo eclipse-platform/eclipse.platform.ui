@@ -54,8 +54,7 @@ final class KeyBinding implements Comparable, IKeyBinding {
 				compareTo = keyConfigurationId.compareTo(keyBinding.keyConfigurationId);			
 
 				if (compareTo == 0) {
-					// TODO		
-					//compareTo = keySequence.compareTo(keyBinding.keySequence);
+					compareTo = keySequence.compareTo(keyBinding.keySequence);
 
 					if (compareTo == 0) {		
 						compareTo = locale.compareTo(keyBinding.locale);			
