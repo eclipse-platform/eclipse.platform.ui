@@ -122,44 +122,44 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					SafeFileChange fileChange= null;
 					
 					switch (delta.getKind()) {
-					case IResourceDelta.CHANGED:
-						if ((IResourceDelta.ENCODING & delta.getFlags()) != 0) {
-							if (!isDisposed() && !fCanBeSaved && isSynchronized()) {
+						case IResourceDelta.CHANGED:
+							if ((IResourceDelta.ENCODING & delta.getFlags()) != 0) {
+								if (!isDisposed() && !fCanBeSaved && isSynchronized()) {
+									fileChange= new SafeFileChange() {
+										protected void execute() throws Exception {
+											handleFileContentChanged();
+										}
+									};
+								}
+							}
+							if (fileChange == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+								if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
+									fileChange= new SafeFileChange() {
+										protected void execute() throws Exception {
+											handleFileContentChanged();
+										}
+									};
+								}
+							}
+							break;
+						case IResourceDelta.REMOVED:
+							if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+								final IPath path= delta.getMovedToPath();
 								fileChange= new SafeFileChange() {
 									protected void execute() throws Exception {
-										handleFileContentChanged();
+										handleFileMoved(path);
 									}
 								};
-							}
-						}
-					if (fileChange == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-						if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
-							fileChange= new SafeFileChange() {
-								protected void execute() throws Exception {
-									handleFileContentChanged();
+							} else {
+								if (!isDisposed() && !fCanBeSaved) {
+									fileChange= new SafeFileChange() {
+										protected void execute() throws Exception {
+											handleFileDeleted();
+										}
+									};
 								}
-							};
-						}
-					}
-					break;
-					case IResourceDelta.REMOVED:
-						if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-							final IPath path= delta.getMovedToPath();
-							fileChange= new SafeFileChange() {
-								protected void execute() throws Exception {
-									handleFileMoved(path);
-								}
-							};
-						} else {
-							if (!isDisposed() && !fCanBeSaved) {
-								fileChange= new SafeFileChange() {
-									protected void execute() throws Exception {
-										handleFileDeleted();
-									}
-								};
 							}
-						}
-					break;
+							break;
 					}
 					
 					if (fileChange != null) {
