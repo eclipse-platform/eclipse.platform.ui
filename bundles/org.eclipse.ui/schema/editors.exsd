@@ -185,6 +185,16 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="matchingStrategy" type="string">
+            <annotation>
+               <documentation>
+                  the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorMatchingStrategy&lt;/samp&gt;. This attribute should only be defined if the &lt;samp&gt;class&lt;/samp&gt; attribute is defined. This allows the editor extension to provide its own algorithm for matching the input of one of its editors to a given editor input.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorMatchingStrategy"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -72,5 +72,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(UIJobTest.class));
         addTest(new TestSuite(Bug75118Test.class));
         addTest(new TestSuite(FileEditorInputTest.class));
+        addTest(new TestSuite(IEditorMatchingStrategyTest.class));
     }
 }
