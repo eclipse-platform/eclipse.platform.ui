@@ -147,6 +147,7 @@ public class SiteStatusAnalyzer {
 					try {
 						childFeature = children[i].getFeature(null);
 					} catch (CoreException e) {
+                        childFeature = null;
 						if (!UpdateManagerUtils.isOptional(children[i]))
 							UpdateCore.warn("Error retrieving feature:" + children[i]); //$NON-NLS-1$
 					}
