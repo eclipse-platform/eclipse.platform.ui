@@ -11,10 +11,6 @@ import org.eclipse.core.internal.utils.*;
 import java.util.Enumeration;
 
 public abstract class Container extends Resource implements IContainer {
-	/**
-	 * Singleton indicating no children.
-	 */
-	protected static final IResource[] NO_CHILDREN = new IResource[0];
 protected Container(IPath path, Workspace container) {
 	super(path, container);
 }
@@ -82,7 +78,7 @@ protected IResource[] getChildren(Container parent, boolean phantom) {
 protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 	IPath[] children = workspace.tree.getChildren(parentPath);
 	if (children.length == 0)
-		return NO_CHILDREN;
+		return ICoreConstants.EMPTY_RESOURCE_ARRAY;
 	Resource[] result = new Resource[children.length];
 	int j = 0;
 	for (int i = 0; i < children.length; i++) {
