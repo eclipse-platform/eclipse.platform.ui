@@ -806,7 +806,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action = new ChangeVariableValueAction(this);
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
-		setAction(DOUBLE_CLICK_ACTION, action);
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
