@@ -137,7 +137,7 @@ public class ReleaseCommentDialog extends Dialog {
 			}
 		});
 		listViewer.setContentProvider(new WorkbenchContentProvider());
-		listViewer.setInput(new AdaptableList());
+		listViewer.setInput(new AdaptableResourceList(unaddedResources));
 	
 		addSelectionButtons(composite);
 	}
@@ -215,24 +215,6 @@ public class ReleaseCommentDialog extends Dialog {
 				list.add(unaddedResources[i]);
 		}
 		return (IResource[]) list.toArray(new IResource[list.size()]);
-	}
-
-	
-	public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
-		/**
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-		 */
-		public Object getAdapter(Class adapter) {
-			if (adapter == IWorkbenchAdapter.class) return this;
-			return null;
-		}
-
-		/**
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
-		 */
-		public Object[] getChildren(Object o) {
-			return unaddedResources;
-		}
 	}
 	
 	/**

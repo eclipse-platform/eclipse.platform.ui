@@ -679,6 +679,14 @@
 	  		 class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
 	  		 id="org.eclipse.team.cvs.ui.actions.NewRepositoryAction"> 
 	  	    </action>
+	  	   <action
+	  	  	toolbarPath="Normal/CVS"
+	  		 label="%CVSActionSet.syncLabel"
+	  		 tooltip="%CVSActionSet.syncTooltip"
+	  		 icon="icons/full/wizards/cvs_synch.gif"
+	  		 class="org.eclipse.team.internal.ccvs.ui.actions.SyncAllAction"
+	  		 id="org.eclipse.team.cvs.ui.actions.SyncAllAction"> 
+	  	    </action>
 	  </actionSet>
 	</extension>
 </plugin>

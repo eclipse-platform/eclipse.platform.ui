@@ -26,7 +26,8 @@ import org.eclipse.ui.PartInitException;
  */
 public class SyncAction extends WorkspaceAction {
 	public void execute(IAction action) {
-		IResource[] resources = getSelectedResources();
+		IResource[] resources = getResourcesToSync();
+		if (resources == null || resources.length == 0) return;
 		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
 		if (view == null) {
 			view = SyncView.findInActivePerspective();
@@ -57,5 +58,9 @@ public class SyncAction extends WorkspaceAction {
 	}
 	protected SyncCompareInput getCompareInput(IResource[] resources) {
 		return new CVSSyncCompareInput(resources);
+	}
+	
+	protected IResource[] getResourcesToSync() {
+		return getSelectedResources();
 	}
 }
