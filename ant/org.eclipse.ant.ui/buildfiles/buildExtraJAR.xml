@@ -10,10 +10,7 @@
 	<target name="init" depends="properties">
 		<property name="bootclasspath" value=""/>
 		<property name="plugin" value="org.eclipse.ant.ui"/>
-		<property name="version.suffix" value="_2.1.0"/>
-		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
-		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="win32.jar" value="${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar"/>
 		<property name="gtk.jar" value="${basedir}/../org.eclipse.swt.gtk/ws/gtk/swt.jar"/>

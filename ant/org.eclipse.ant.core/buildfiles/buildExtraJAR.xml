@@ -11,10 +11,7 @@
 
 	<target name="init" depends="properties">
 		<property name="plugin" value="org.eclipse.ant.core"/>
-		<property name="version.suffix" value="_2.1.0"/>
-		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
-		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
 	</target>
 
