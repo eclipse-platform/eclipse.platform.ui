@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
@@ -48,8 +49,12 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 				return new Boolean(true);
 			}
 		}
-		
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(shell, title, message, null, false, store, IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
+
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, message, MessageDialog.WARNING,
+				new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 1, null, false);
+		dialog.setPrefKey(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
+		dialog.setPrefStore(store);
+		dialog.open();
 		
 		int returnValue = dialog.getReturnCode();
 		if (returnValue == IDialogConstants.OK_ID) {
