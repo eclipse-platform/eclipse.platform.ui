@@ -1,9 +1,11 @@
 package org.eclipse.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
  
@@ -200,7 +202,16 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREF_SHOW_DETAIL_PANE = PLUGIN_ID + ".show_detail_pane"; //$NON-NLS-1$	
+	public static final String PREF_SHOW_DETAIL_PANE = PLUGIN_ID + ".show_detail_pane"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether the debugger will force activate the active
+	 * shell/window of the Eclipse workbench when a breakpoint is hit.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$	
+	
 		
 	// Debug views
 	

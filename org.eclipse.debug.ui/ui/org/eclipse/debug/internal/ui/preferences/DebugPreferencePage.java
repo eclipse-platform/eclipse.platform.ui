@@ -58,6 +58,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.getString("DebugPreferencePage.Reuse_editor_when_displa&ying_source_code_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.getString("DebugPreferencePage.Activate_the_&workbench_when_a_breakpoint_is_hit_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
@@ -89,6 +90,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		store.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 		store.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
+		store.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, false);
 		
 		store.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 	}
