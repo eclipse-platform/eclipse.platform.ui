@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.texteditor;
+package org.eclipse.jface.text.contentassist;
 
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,12 +25,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IEventConsumer;
-import org.eclipse.jface.text.contentassist.IContentAssistSubject;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * Adapts a <code>Combo</code> to an <code>IContentAssistSubject</code>.
@@ -41,7 +38,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistSubject;
  * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
  * @since 3.0
  */
-final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
+public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
 	private class InternalDocument extends Document {
 		
@@ -77,13 +74,13 @@ final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 	private Combo fCombo;
 	private HashMap fModifyListeners;
 
-
 	/**
 	 * Creates a content assist subject adapter for the given combo.
 	 * 
 	 * @param combo the combo to adapt
 	 */
 	public ComboContentAssistSubjectAdapter(Combo combo) {
+		super(combo, true);
 		Assert.isNotNull(combo);
 		fCombo= combo;
 		fModifyListeners= new HashMap();
@@ -124,21 +121,7 @@ final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 		 * FIXME: the two space widths below is a workaround for bug 44072
 		 */
 		int x= 2 * spaceWidth + fCombo.getClientArea().x + fCombo.getBorderWidth() + extent.x;
-		return new Point(x, fCombo.getLocation().y);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineDelimiter()
-	 */
-	public String getLineDelimiter() {
-		return System.getProperty("line.separator"); //$NON-NLS-1$
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#addKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
-	public void addKeyListener(KeyListener keyListener) {
-		fCombo.addKeyListener(keyListener);
+		return new Point(x, 0);
 	}
 
 	/*
@@ -168,43 +151,6 @@ final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#canAddVerifyKeyListener()
-	 */
-	public boolean supportsVerifyKeyListener() {
-		return false;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
-	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
-		return false;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
-	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
-		return false;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
-	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
-//		if (fVerifyKeyListeners.containsKey(verifyKeyListener)) {
-//			fCombo.removeListener(SWT.KeyUp, (Listener)fVerifyKeyListeners.get(verifyKeyListener));
-//		}
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
-	 */
-	public void setEventConsumer(IEventConsumer eventConsumer) {
-		// this is not supported
-	}
-
-	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setSelectedRange(int, int)
 	 */
 	public void setSelectedRange(int i, int j) {
@@ -217,23 +163,6 @@ final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fCombo.setSelection(new Point(i, i+j));
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
-	public void removeKeyListener(KeyListener keyListener) {
-		fCombo.removeKeyListener(keyListener);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
-	 */
-	public void removeSelectionListener(SelectionListener selectionListener) {
-		fCombo.removeSelectionListener(selectionListener);
-		Object listener= fModifyListeners.get(selectionListener);
-		if (listener instanceof Listener)
-			fCombo.removeListener(SWT.Modify, (Listener)listener);
 	}
 
 	/*
@@ -252,6 +181,17 @@ final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 		};
 		fCombo.addListener(SWT.Modify, listener); 
 		fModifyListeners.put(selectionListener, listener);
-		return true;
+		return true; //TODO: why return true?
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
+	 */
+	public void removeSelectionListener(SelectionListener selectionListener) {
+		fCombo.removeSelectionListener(selectionListener);
+		Object listener= fModifyListeners.get(selectionListener);
+		if (listener instanceof Listener)
+			fCombo.removeListener(SWT.Modify, (Listener)listener);
+	}
+
 }
