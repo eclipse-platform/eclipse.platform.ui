@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2005 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ *     IBM - Bug 73411
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
@@ -16,28 +17,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- *  
- */
 public class XmlTagFormatter {
 
     protected static class AttributePair {
 
-        private String attribute;
+        private String fAttribute;
+        private String fValue;
+        private char fQuote;
 
-        private String value;
-
-        public AttributePair(String attribute, String value) {
-            this.attribute = attribute;
-            this.value = value;
+        public AttributePair(String attribute, String value, char attributeQuote) {
+            fAttribute = attribute;
+            fValue = value;
+            fQuote= attributeQuote;
         }
 
         public String getAttribute() {
-            return attribute;
+            return fAttribute;
         }
 
         public String getValue() {
-            return value;
+            return fValue;
+        }
+        
+        public char getQuote() {
+            return fQuote;
         }
     }
 
@@ -52,30 +55,30 @@ public class XmlTagFormatter {
 
     protected static class Tag {
 
-        private List attributes = new ArrayList();
+        private List fAttributes = new ArrayList();
 
-        private boolean closed;
+        private boolean fClosed;
 
-        private String elementName;
+        private String fElementName;
 
-        public void addAttribute(String attribute, String value) {
-            attributes.add(new AttributePair(attribute, value));
+        public void addAttribute(String attribute, String value, char quote) {
+            fAttributes.add(new AttributePair(attribute, value, quote));
         }
 
         public int attributeCount() {
-            return attributes.size();
+            return fAttributes.size();
         }
 
         public AttributePair getAttributePair(int i) {
-            return (AttributePair) attributes.get(i);
+            return (AttributePair) fAttributes.get(i);
         }
 
         public String getElementName() {
-            return this.elementName;
+            return this.fElementName;
         }
 
         public boolean isClosed() {
-            return closed;
+            return fClosed;
         }
 
         public int minimumLength() {
@@ -94,46 +97,42 @@ public class XmlTagFormatter {
         }
 
         public void setAttributes(List attributePair) {
-            attributes.clear();
-            attributes.addAll(attributePair);
+            fAttributes.clear();
+            fAttributes.addAll(attributePair);
         }
 
         public void setClosed(boolean closed) {
-            this.closed = closed;
+            fClosed = closed;
         }
 
         public void setElementName(String elementName) {
-            this.elementName = elementName;
+            fElementName = elementName;
         }
 
         public String toString() {
             StringBuffer sb = new StringBuffer(500);
-            sb.append("<"); //$NON-NLS-1$
+            sb.append('<');
             sb.append(this.getElementName());
             if (this.attributeCount() > 0 || this.isClosed()) sb.append(' ');
 
             for (int i = 0; i < this.attributeCount(); i++) {
                 AttributePair attributePair = this.getAttributePair(i);
                 sb.append(attributePair.getAttribute());
-                sb.append("=\""); //$NON-NLS-1$
+                sb.append('=');
+                sb.append(attributePair.getQuote());
                 sb.append(attributePair.getValue());
-                sb.append("\""); //$NON-NLS-1$
+                sb.append(attributePair.getQuote());
                 if (this.isClosed() || i != this.attributeCount() - 1)
                         sb.append(' ');
             }
-            if (this.isClosed()) sb.append("/"); //$NON-NLS-1$
-            sb.append(">"); //$NON-NLS-1$
+            if (this.isClosed()) sb.append('/');
+            sb.append('>');
             return sb.toString();
         }
     }
 
     protected static class TagFormatter {
 
-        /**
-         * @param searchChar
-         * @param inTargetString
-         * @return
-         */
         private int countChar(char searchChar, String inTargetString) {
             StringCharacterIterator iter = new StringCharacterIterator(
                     inTargetString);
@@ -185,12 +184,6 @@ public class XmlTagFormatter {
             return (line.length() - tabCount) + (tabCount * tabWidth);
         }
 
-        /**
-         * @param tag
-         * @param prefs
-         * @param indent
-         * @return
-         */
         protected String wrapTag(Tag tag, FormattingPreferences prefs,
                 String indent) {
             StringBuffer sb = new StringBuffer(1024);
@@ -199,23 +192,27 @@ public class XmlTagFormatter {
             sb.append(' ');
 
             if (tag.attributeCount() > 0) {
-                sb.append(tag.getAttributePair(0).getAttribute());
-                sb.append("=\""); //$NON-NLS-1$
+                AttributePair pair= tag.getAttributePair(0);
+                sb.append(pair.getAttribute());
+                sb.append('=');
+                sb.append(pair.getQuote());
                 sb.append(tag.getAttributePair(0).getValue());
-                sb.append('"');
+                sb.append(pair.getQuote());
             }
 
             if (tag.attributeCount() > 1) {
                 char[] extraIndent = new char[tag.getElementName().length() + 2];
                 Arrays.fill(extraIndent, ' ');
                 for (int i = 1; i < tag.attributeCount(); i++) {
+                    AttributePair pair= tag.getAttributePair(i);
                     sb.append('\n');
                     sb.append(indent);
                     sb.append(extraIndent);
-                    sb.append(tag.getAttributePair(i).getAttribute());
-                    sb.append("=\""); //$NON-NLS-1$
-                    sb.append(tag.getAttributePair(i).getValue());
-                    sb.append('"');
+                    sb.append(pair.getAttribute());
+                    sb.append('=');
+                    sb.append(pair.getQuote());
+                    sb.append(pair.getValue());
+                    sb.append(pair.getQuote());
                 }
             }
 
@@ -226,8 +223,8 @@ public class XmlTagFormatter {
                 sb.append(' ');
             }
 
-            if (tag.isClosed()) sb.append("/"); //$NON-NLS-1$
-            sb.append(">"); //$NON-NLS-1$
+            if (tag.isClosed()) sb.append('/');
+            sb.append('>');
             return sb.toString();
         }
     }
@@ -236,13 +233,10 @@ public class XmlTagFormatter {
     // pattern
     protected static class TagParser {
 
-        private String elementName;
+        private String fElementName;
 
-        private String parseText;
+        private String fParseText;
 
-        /**
-         *  
-         */
         protected List getAttibutes(String elementText)
                 throws ParseException {
 
@@ -293,7 +287,7 @@ public class XmlTagFormatter {
                         // we've completed a pair!
                         AttributePair pair = new AttributePair(
                                 currentAttributeName.toString(),
-                                currentAttributeValue.toString());
+                                currentAttributeValue.toString(), attributeQuote);
 
                         attributePairs.add(pair);
 
@@ -388,30 +382,26 @@ public class XmlTagFormatter {
          * @return extracted XML element name
          */
         protected String getElementName(String tagText) throws ParseException {
-            if (!tagText.equals(this.parseText) || this.elementName == null) {
+            if (!tagText.equals(this.fParseText) || this.fElementName == null) {
                 int endOfTag = tagEnd(tagText);
                 if ((tagText.length() > 2) && (endOfTag > 1)) {
-                    this.parseText = tagText;
-                    this.elementName = tagText.substring(1, endOfTag);
+                    this.fParseText = tagText;
+                    this.fElementName = tagText.substring(1, endOfTag);
                 } else {
                     throw new ParseException("No element name for the tag:\n\t" //$NON-NLS-1$
                             + tagText);
                 }
             }
-            return elementName;
+            return fElementName;
         }
 
-        /**
-         * @param tagText
-         * @return
-         */
         protected boolean isClosed(String tagText) {
-            return tagText.charAt(tagText.lastIndexOf(">") - 1) == '/'; //$NON-NLS-1$
+            return tagText.charAt(tagText.lastIndexOf('>') - 1) == '/';
         }
 
         /**
          * @param tagText
-         * @return an fully populated tag
+         * @return a fully populated tag
          */
         public Tag parse(String tagText) throws ParseException {
             Tag tag = new Tag();
@@ -434,12 +424,6 @@ public class XmlTagFormatter {
         }
     }
 
-    /**
-     * @param tagText
-     * @param prefs
-     * @param indent
-     * @return
-     */
     public static String format(String tagText, FormattingPreferences prefs,
             String indent) {
 

@@ -265,6 +265,19 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
         simpleTest(source, target, getPreferences(true, true, 60), indent);
     }
+    
+    public void testBug73411() throws Exception {
+        String indent = "\t"; //$NON-NLS-1$
+        String source = "<target name='myTargetName' depends=\"a,b,c,d,e,f,g\" description=\'This is a very long element which ought to be \"wrapped\".'>"; //$NON-NLS-1$
+        String target = "<target name='myTargetName'\n" //$NON-NLS-1$
+                + indent
+                + "        depends=\"a,b,c,d,e,f,g\"\n" //$NON-NLS-1$
+                + indent
+                + "        description='This is a very long element which ought to be \"wrapped\".'\n" //$NON-NLS-1$
+                + indent + ">"; //$NON-NLS-1$
+
+        simpleTest(source, target, getPreferences(true, true, 60), indent);
+    }
 
     /**
      *  
@@ -313,8 +326,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
         assertEquals("<myElement />", tag.toString()); //$NON-NLS-1$
         assertEquals(tag.toString().length(), tag.minimumLength());
 
-        tag.addAttribute("attribute1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
-        tag.addAttribute("attribute2", "value2"); //$NON-NLS-1$ //$NON-NLS-2$
+        tag.addAttribute("attribute1", "value1", '"'); //$NON-NLS-1$ //$NON-NLS-2$
+        tag.addAttribute("attribute2", "value2", '"'); //$NON-NLS-1$ //$NON-NLS-2$
         assertEquals(
                 "<myElement attribute1=\"value1\" attribute2=\"value2\" />", //$NON-NLS-1$
                 tag.toString());
@@ -350,8 +363,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
         };
 
         tag.setElementName("myElement"); //$NON-NLS-1$
-        tag.addAttribute("attribute1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
-        tag.addAttribute("attribute2", "value2"); //$NON-NLS-1$ //$NON-NLS-2$
+        tag.addAttribute("attribute1", "value1", '"'); //$NON-NLS-1$ //$NON-NLS-2$
+        tag.addAttribute("attribute2", "value2", '"'); //$NON-NLS-1$ //$NON-NLS-2$
 
         tag.setClosed(true);
 
