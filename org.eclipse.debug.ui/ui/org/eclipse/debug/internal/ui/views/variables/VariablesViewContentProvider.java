@@ -1,6 +1,5 @@
 /*******************************************************************************
- * 
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -371,6 +370,10 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * partition of an indexed collection
 	 */
 	protected int getArrayPartitionSize() {
+		if (getDebugView() == null) {
+			// TODO: should fix this with a user pref
+			return 100;
+		}
 		return ((VariablesView)getDebugView()).getArrayPartitionSize();
 	}
 	

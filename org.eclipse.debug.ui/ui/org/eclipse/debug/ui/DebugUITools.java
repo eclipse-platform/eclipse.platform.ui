@@ -32,6 +32,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -41,12 +42,14 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.actions.ExpressionInformationControlAdapter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -706,5 +709,23 @@ public class DebugUITools {
 	 */
 	public static boolean isUseStepFilters() {
 		return DebugUIPlugin.getDefault().getStepFilterManager().isUseStepFilters();
+	}
+	
+	/**
+	 * Returns a new popup information control adapater that displays
+	 * an <code>IExpression</code>.
+	 * 
+	 * @see org.eclipse.debug.ui.actions.PopupInformationControl
+	 * @param page workbench page in which the popup is to be displayed
+	 * @param exp the expression to be displayed in the popup
+	 * @return a new popup information control adapater that displays
+	 * an <code>IExpression</code>
+	 * <p>
+	 * This method is yet experimental.
+	 * </p>
+	 * @since 3.0
+	 */
+	public static IPopupInformationControlAdapter newExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
+		return new ExpressionInformationControlAdapter(page, exp);
 	}
 }
