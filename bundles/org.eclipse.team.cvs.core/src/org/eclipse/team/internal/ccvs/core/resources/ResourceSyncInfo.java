@@ -43,7 +43,8 @@ public class ResourceSyncInfo {
 	
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo.
-	private static final String ADDED_REVISION = "0";
+	// XXX Should this be private
+	static final String ADDED_REVISION = "0";
 	
 	// fields describing the synchronization of a resource in CVS parlance
 	private int type;

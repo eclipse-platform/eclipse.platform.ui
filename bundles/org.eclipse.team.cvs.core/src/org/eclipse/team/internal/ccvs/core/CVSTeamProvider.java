@@ -855,23 +855,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * Only file resources can be merged.
 	 */
 	public void merged(IRemoteSyncElement[] elements) throws TeamException {	
-		boolean syncChanged = false;
-		try {
-			for (int i=0;i<elements.length;i++) {
-				IRemoteSyncElement element = elements[i];
-				if (element.isOutOfDate()) {
-					ICVSResource resource = getChild(element.getLocal());
-					if (resource.exists() && !resource.isFolder()) {
-						ResourceSyncInfo info = resource.getSyncInfo();
-						info = new ResourceSyncInfo(info.getName(), ((RemoteResource)element.getRemote()).getSyncInfo().getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
-						resource.setSyncInfo(info);
-						syncChanged = true;
-					}
-				}
-			}
-		} finally {
-			if (syncChanged)
-				Synchronizer.getInstance().save(new NullProgressMonitor());
+		for (int i=0;i<elements.length;i++) {
+			((CVSRemoteSyncElement)elements[i]).merged(null);
 		}
 	}
 	

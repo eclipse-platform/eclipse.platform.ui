@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core;
 import java.io.File;
 import java.io.PrintStream;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.commands.CommandDispatcher;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -15,6 +16,7 @@ import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
@@ -228,6 +230,14 @@ public class Client {
 	}
 	public static ICVSFile getManagedFile(File file) throws CVSException {
 		return new LocalFile(file);
+	}
+	
+	public static ICVSResource getManagedResource(IResource resource) throws CVSException {
+		File file = resource.getLocation().toFile();
+		if (resource.getType() == IResource.FILE)
+			return getManagedFolder(file);
+		else
+			return getManagedFile(file);
 	}
 	
 	/**
