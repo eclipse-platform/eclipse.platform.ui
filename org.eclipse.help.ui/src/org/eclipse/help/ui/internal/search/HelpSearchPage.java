@@ -221,6 +221,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 					true,
 					true,
 					new SearchOperation(searchQueryData));
+					dontCancel=false;
 			} catch (InvocationTargetException ex) {
 				return false;
 			} catch (InterruptedException e) {
