@@ -27,6 +27,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -205,7 +206,9 @@ final class HippieCompleteAction extends TextEditorAction {
 			fLastCompletion.advance();
 			
 			// move the caret to the insertion point
-			((AbstractTextEditor) getTextEditor()).getSourceViewer().setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
+			ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
+            sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
+            sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
 		} finally {
 			// allow changes
 			fModifyingLock= false;
