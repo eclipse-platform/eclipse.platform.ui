@@ -248,15 +248,17 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Add the folders, followed by files!
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
+		progress.beginTask(null, 100);
 		try {
+			// Opening the session takes 10% of the time
+			s.open(Policy.subMonitorFor(progress, 10));
 			if (!folders.isEmpty()) {
 				status = Command.ADD.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
 					Command.NO_LOCAL_OPTIONS,
 					(String[])folders.toArray(new String[folders.size()]),
 					null,
-					progress);
+					Policy.subMonitorFor(progress, 30));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
@@ -267,7 +269,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					Command.NO_LOCAL_OPTIONS,
 					(String[])textfiles.toArray(new String[textfiles.size()]),
 					null,
-					progress);
+					Policy.subMonitorFor(progress, 30));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
@@ -278,13 +280,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					new LocalOption[] { Command.KSUBST_BINARY },
 					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
 					null,
-					progress);
+					Policy.subMonitorFor(progress, 30));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
 		} finally {
 			s.close();
+			progress.done();
 		}
 	}
 	
@@ -306,20 +309,23 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, commandOptions, progress);
+		String[] arguments = getValidArguments(resources, commandOptions);
 					
 		// Commit the resources
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
+		progress.beginTask(null, 100);
 		try {
+			// Opening the session takes 20% of the time
+			s.open(Policy.subMonitorFor(progress, 20));
 			status = Command.COMMIT.execute(s,
 			Command.NO_GLOBAL_OPTIONS,
 			commandOptions,
 			arguments, null,
-			progress);
+			Policy.subMonitorFor(progress, 80));
 		} finally {
 			s.close();
+			progress.done();
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
@@ -431,20 +437,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		IProgressMonitor progress) throws TeamException {
 		
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, options, progress);
+		String[] arguments = getValidArguments(resources, options);
 
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
+		progress.beginTask(null, 100);
 		try {
+			s.open(Policy.subMonitorFor(progress, 20));
 			status = Command.DIFF.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
 				options,
 				arguments,
 				new DiffListener(stream),
-				progress);
+				Policy.subMonitorFor(progress, 80));
 		} finally {
 			s.close();
+			progress.done();
 		}
 	}
 	
@@ -642,7 +650,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/*
 	 * Get the arguments to be passed to a commit or update
 	 */
-	private String[] getValidArguments(IResource[] resources, LocalOption[] options, IProgressMonitor progress) throws CVSException {
+	private String[] getValidArguments(IResource[] resources, LocalOption[] options) throws CVSException {
 		int depth = Command.DO_NOT_RECURSE.isElementOf(options) ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		List arguments = new ArrayList(resources.length);
 		for (int i=0;i<resources.length;i++) {
@@ -864,7 +872,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 				
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, commandOptions, progress);
+		String[] arguments = getValidArguments(resources, commandOptions);
 		
 		// The tag name is supposed to be the first argument
 		ArrayList args = new ArrayList();
@@ -874,17 +882,20 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
+		progress.beginTask(null, 100);
 		try {
+			// Opening the session takes 20% of the time
+			s.open(Policy.subMonitorFor(progress, 20));
 			status = Command.TAG.execute(s,
 			Command.NO_GLOBAL_OPTIONS,
 			commandOptions,
 			// XXX We should pass the tag to the command
 			arguments,
 			null,
-			progress);
+			Policy.subMonitorFor(progress, 80));
 		} finally {
 			s.close();
+			progress.done();
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
@@ -928,19 +939,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Build the arguments list
 		localOptions.addAll(Arrays.asList(options));
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-		String[] arguments = getValidArguments(resources, commandOptions, progress);
+		String[] arguments = getValidArguments(resources, commandOptions);
 
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
+		progress.beginTask(null, 100);
 		try {
+			// Opening the session takes 20% of the time
+			s.open(Policy.subMonitorFor(progress, 20));
 			status = Command.UPDATE.execute(s,
 			Command.NO_GLOBAL_OPTIONS,
 			commandOptions,
 			arguments,
 			null,
-			progress);
+			Policy.subMonitorFor(progress, 80));
 		} finally {
+			progress.done();
 			s.close();
 			if(oldHandler!=null) {
 				Command.registerResponseHandler(oldHandler);
