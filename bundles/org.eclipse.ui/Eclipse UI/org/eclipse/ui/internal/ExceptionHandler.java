@@ -10,8 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
@@ -37,6 +36,8 @@ class ExceptionHandler implements Window.IExceptionHandler {
 	private Shell defaultParent = new Shell();
 	private boolean closing = false;
 	private Workbench workbench;
+	
+	private static boolean OPEN_DIALOG = "true".equals(Platform.getDebugOption("org.eclipse.ui/debug/internalerror/openDialog")); //$NON-NLS-1$
 	
 	//Pre-load all Strings trying to run as light as possible in case of fatal errors.
 	private static String MSG_UNHANDLED_EXCEPTION = WorkbenchMessages.getString("Unhandled_exception"); //$NON-NLS-1$
@@ -156,31 +157,39 @@ private void log(Throwable t) {
  * Inform the user about a fatal error. Return true if the user decide to 
  * exit workspace or if another faltal error happens while reporting it.
  */
-private boolean openQuestionDialog(Throwable t) {
+private boolean openQuestionDialog(Throwable internalError) {
 	try {
 		String msg = null;
-		if(t instanceof OutOfMemoryError) {
+		if(internalError instanceof OutOfMemoryError) {
 			msg = MSG_OutOfMemoryError;
-		} else if(t instanceof StackOverflowError) {
+		} else if(internalError instanceof StackOverflowError) {
 			msg = MSG_StackOverflowError;
-		} else if(t instanceof VirtualMachineError) {
+		} else if(internalError instanceof VirtualMachineError) {
 			msg = MSG_VirtualMachineError;
-		} else if(t instanceof SWTError) {
+		} else if(internalError instanceof SWTError) {
 			msg = MSG_SWTError;
 		} else {
-			if (t.getMessage() == null) {
+			if (internalError.getMessage() == null) {
 				msg = WorkbenchMessages.getString("InternalErrorNoArg");  //$NON-NLS-1$
 			} else {
-				msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {t.getMessage()}); //$NON-NLS-1$
-			} 
-			return openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,t,1); //$NON-NLS-1$
-	    }	
-		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t,1); //$NON-NLS-1$
+				msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {internalError.getMessage()}); //$NON-NLS-1$
+			}
+			if(OPEN_DIALOG) 
+				return openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,internalError,1); //$NON-NLS-1$
+			else
+				return false;
+	    }
+	    //Allways open the dialog in case of major error but does not show the detail button
+	    //if OPEN_DIALOG is false.
+	    Throwable detail = internalError;
+	    if(!OPEN_DIALOG)
+	    	detail = null;
+		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,detail,1); //$NON-NLS-1$
 	} catch (Throwable th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */
 		System.err.println("A fatal error happened while informing the user about a fatal error."); //$NON-NLS-1$
-		t.printStackTrace();
+		internalError.printStackTrace();
 		System.err.println("New exception."); //$NON-NLS-1$
 		th.printStackTrace();
 		return true;
