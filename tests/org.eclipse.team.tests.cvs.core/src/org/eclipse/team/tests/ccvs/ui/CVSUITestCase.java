@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
@@ -43,7 +44,6 @@ import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncSet;
 import org.eclipse.team.internal.ccvs.ui.sync.CommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceCommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceUpdateSyncAction;
@@ -359,11 +359,10 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
 			}
-			protected int promptForAdditions(CVSSyncSet cvsSyncSet) {
-				return 0; // yes! add unadded files
-			}
-			protected String promptForComment(RepositoryManager manager) {
-				return comment; // use our comment
+			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
+				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, unadded); // use our comment
+				dialog.setComment(comment);
+				return dialog;
 			}
 		};
 		commitAction.run();
@@ -373,11 +372,10 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
 			}
-			protected int promptForAdditions(CVSSyncSet cvsSyncSet) {
-				return 0; // yes! add unadded files
-			}
-			protected String promptForComment(RepositoryManager manager) {
-				return comment; // use our comment
+			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
+				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, unadded); // use our comment
+				dialog.setComment(comment);
+				return dialog;
 			}
 		};
 		forceCommitAction.run();
