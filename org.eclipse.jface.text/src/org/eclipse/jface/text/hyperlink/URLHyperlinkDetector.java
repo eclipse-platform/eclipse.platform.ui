@@ -75,6 +75,8 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		if (urlSeparatorOffset < 0)
 			return null;
 		
+		boolean startDoubleQuote= false;
+		
 		// URL protocol (left to "://")
 		int urlOffsetInLine= urlSeparatorOffset;
 		char ch;
@@ -83,7 +85,8 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 			ch= ' ';
 			if (urlOffsetInLine > -1)
 				ch= line.charAt(urlOffsetInLine);
-		} while (!Character.isWhitespace(ch));
+			startDoubleQuote= ch == '"';
+		} while (!Character.isWhitespace(ch) && !startDoubleQuote);
 		urlOffsetInLine++;
 		
 		// Right to "://"
@@ -94,6 +97,9 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		int urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
 		if (offsetInLine < urlOffsetInLine || offsetInLine > urlOffsetInLine + urlLength)
 			return null;
+		
+		if (startDoubleQuote && line.charAt(urlOffsetInLine + urlLength - 1) == '"')
+			urlLength--;
 		
 		// Set and validate URL string
 		try {
