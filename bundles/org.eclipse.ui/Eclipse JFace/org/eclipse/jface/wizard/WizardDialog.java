@@ -423,7 +423,7 @@ private Button createCancelButton(Composite parent) {
 	// increment the number of columns in the button bar
 	((GridLayout)parent.getLayout()).numColumns++;
 
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 
 	button.setText(IDialogConstants.CANCEL_LABEL);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

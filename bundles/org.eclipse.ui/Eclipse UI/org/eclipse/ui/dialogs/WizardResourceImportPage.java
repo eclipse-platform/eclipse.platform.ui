@@ -110,7 +110,7 @@ public void createControl(Composite parent) {
 
 	initializeDialogUnits(parent);
 	
-	Composite composite = new Composite(parent, SWT.NULL);
+	Composite composite = new Composite(parent, SWT.FLAT);
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -141,7 +141,7 @@ public void createControl(Composite parent) {
  */
 protected final void createDestinationGroup(Composite parent) {
 	// container specification group
-	Composite containerGroup = new Composite(parent,SWT.NONE);
+	Composite containerGroup = new Composite(parent,SWT.FLAT);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	containerGroup.setLayout(layout);
@@ -149,18 +149,18 @@ protected final void createDestinationGroup(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// container label
-	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
+	Label resourcesLabel = new Label(containerGroup,SWT.FLAT);
 	resourcesLabel.setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
 
 	// container name entry field
-	containerNameField = new Text(containerGroup,SWT.SINGLE|SWT.BORDER);
+	containerNameField = new Text(containerGroup,SWT.SINGLE | SWT.FLAT);
 	containerNameField.addListener(SWT.Modify,this);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	containerNameField.setLayoutData(data);
 
 	// container browse button
-	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
+	containerBrowseButton = new Button(containerGroup,SWT.PUSH | SWT.FLAT);
 	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browse2")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
@@ -181,7 +181,7 @@ protected void createFileSelectionGroup(Composite parent) {
 			new WorkbenchLabelProvider(),
 			getFileProvider(),
 			new WorkbenchLabelProvider(),
-			SWT.NONE,
+			SWT.FLAT,
 			SIZING_SELECTION_WIDGET_WIDTH,
 			SIZING_SELECTION_WIDGET_HEIGHT);
 

@@ -133,7 +133,7 @@ protected abstract String createList(String[] items);
  * @param key the resource name used to supply the button's label text
  */
 private Button createPushButton(Composite parent, String key) {
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 	button.setText(JFaceResources.getString(key));
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.heightHint = convertVerticalDLUsToPixels(button, IDialogConstants.BUTTON_HEIGHT);
@@ -267,7 +267,7 @@ public Composite getButtonBoxControl(Composite parent) {
  */
 public List getListControl(Composite parent) {
 	if (list == null) {
-		list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
+		list = new List(parent, SWT.FLAT | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		list.addSelectionListener(getSelectionListener());
 		list.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {

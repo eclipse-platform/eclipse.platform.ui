@@ -145,7 +145,7 @@ public boolean getBooleanValue() {
  */
 protected Button getChangeControl(Composite parent) {
 	if (checkBox == null) {
-		checkBox = new Button(parent, SWT.CHECK | SWT.LEFT);
+		checkBox = new Button(parent, SWT.CHECK | SWT.LEFT | SWT.FLAT);
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isSelected = checkBox.getSelection();

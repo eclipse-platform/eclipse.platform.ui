@@ -138,7 +138,7 @@ protected Control createContents(Composite parent) {
 	data.horizontalSpan = 2;
 	label.setLayoutData(data);
 
-	resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
+	resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.FLAT | SWT.FULL_SELECTION);
 	resourceTypeTable.addListener(SWT.Selection, this);
 	resourceTypeTable.addListener(SWT.DefaultSelection, this);
 	data = new GridData(GridData.FILL_BOTH);
@@ -152,7 +152,7 @@ protected Control createContents(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	groupComponent.setLayoutData(data);
 	
-	addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
+	addResourceTypeButton = new Button(groupComponent, SWT.PUSH | SWT.FLAT);
 	addResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.add")); //$NON-NLS-1$
 	addResourceTypeButton.addListener(SWT.Selection, this);
 	data = new GridData();
@@ -162,7 +162,7 @@ protected Control createContents(Composite parent) {
 	data.widthHint = Math.max(widthHint, addResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addResourceTypeButton.setLayoutData(data);
 	
-	removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
+	removeResourceTypeButton = new Button(groupComponent, SWT.PUSH | SWT.FLAT);
 	removeResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.remove")); //$NON-NLS-1$
 	removeResourceTypeButton.addListener(SWT.Selection, this);
 	data = new GridData();
@@ -187,7 +187,7 @@ protected Control createContents(Composite parent) {
 	data.horizontalSpan = 2;
 	editorLabel.setLayoutData(data);
 
-	editorTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER);
+	editorTable = new Table(pageComponent, SWT.SINGLE | SWT.FLAT);
 	editorTable.addListener(SWT.Selection, this);
 	editorTable.addListener(SWT.DefaultSelection, this);
 	data = new GridData(GridData.FILL_BOTH);
@@ -201,7 +201,7 @@ protected Control createContents(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	groupComponent.setLayoutData(data);
 	
-	addEditorButton = new Button(groupComponent, SWT.PUSH);
+	addEditorButton = new Button(groupComponent, SWT.PUSH | SWT.FLAT);
 	addEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.addEditor")); //$NON-NLS-1$
 	addEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
@@ -211,7 +211,7 @@ protected Control createContents(Composite parent) {
 	data.widthHint = Math.max(widthHint, addEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addEditorButton.setLayoutData(data);
 	
-	removeEditorButton = new Button(groupComponent, SWT.PUSH);
+	removeEditorButton = new Button(groupComponent, SWT.PUSH | SWT.FLAT);
 	removeEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.removeEditor")); //$NON-NLS-1$
 	removeEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
@@ -221,7 +221,7 @@ protected Control createContents(Composite parent) {
 	data.widthHint = Math.max(widthHint, removeEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	removeEditorButton.setLayoutData(data);
 	
-	defaultEditorButton= new Button(groupComponent, SWT.PUSH);
+	defaultEditorButton= new Button(groupComponent, SWT.PUSH | SWT.FLAT);
 	defaultEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.default")); //$NON-NLS-1$
 	defaultEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
@@ -286,7 +286,7 @@ protected void fillEditorTable() {
 		IEditorDescriptor[] array = resourceType.getEditors();
 		for (int i=0;i < array.length; i++) { 
 			IEditorDescriptor editor = array[i];
-			TableItem item = new TableItem(editorTable, SWT.NULL);
+			TableItem item = new TableItem(editorTable, SWT.FLAT);
 			item.setData(editor);
 			item.setText(editor.getLabel());
 			item.setImage(getImage(editor));
@@ -304,13 +304,13 @@ protected void fillResourceTypeTable() {
 
 	ColumnLayoutData layoutData = new ColumnPixelData(20, false);
 	tableLayout.addColumnData(layoutData);
-	TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
+	TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.FLAT);
 	tableCol.setResizable(false);
 	tableCol.setText(""); // no label for icon column//$NON-NLS-1$
 
 	layoutData = new ColumnWeightData(40, false);
 	tableLayout.addColumnData(layoutData);
-	tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
+	tableCol = new TableColumn(resourceTypeTable, SWT.FLAT);
 	tableCol.setResizable(false);
 	tableCol.setText(WorkbenchMessages.getString("FileEditorPreference.type")); //$NON-NLS-1$
 
@@ -385,7 +385,7 @@ protected TableItem newResourceTableItem(IFileEditorMapping mapping, int index, 
 	if (image != null)
 		imagesToDispose.add(image);
 	
-	TableItem item = new TableItem(resourceTypeTable, SWT.NULL, index);
+	TableItem item = new TableItem(resourceTypeTable, SWT.FLAT, index);
 	item.setImage(0, image);
 	item.setText(1, mapping.getLabel());
 	item.setData(mapping);
@@ -418,7 +418,7 @@ public void promptForEditor() {
 		EditorDescriptor editor = (EditorDescriptor)dialog.getSelectedEditor();
 		if (editor != null && !hasEditor(getSelectedResourceType(), editor)) {
 			int i = editorTable.getItemCount();
-			TableItem item = new TableItem(editorTable, SWT.NULL, i);
+			TableItem item = new TableItem(editorTable, SWT.FLAT, i);
 			item.setData(editor);
 			item.setText(editor.getLabel());
 			item.setImage(getImage(editor));
@@ -466,7 +466,7 @@ public void setSelectedEditorAsDefault() {
 		EditorDescriptor editor = (EditorDescriptor)items[0].getData();
 		getSelectedResourceType().setDefaultEditor(editor);
 		items[0].dispose();  //Table is single selection
-		TableItem item = new TableItem(editorTable, SWT.NULL, 0);
+		TableItem item = new TableItem(editorTable, SWT.FLAT, 0);
 		item.setData(editor);
 		item.setText(editor.getLabel());
 		item.setImage(getImage(editor));

@@ -79,7 +79,7 @@ protected Control createControl(Composite parent) {
 				
 	// category tree pane...create SWT tree directly to
 	// get single selection mode instead of multi selection.
-	Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FLAT);
 	categoryTreeViewer = new TreeViewer(tree);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = SIZING_LISTS_WIDTH;
@@ -93,7 +93,7 @@ protected Control createControl(Composite parent) {
 
 	// wizard actions pane...create SWT table directly to
 	// get single selection mode instead of multi selection.
-	Table table = new Table(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	Table table = new Table(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FLAT);
 	wizardSelectionViewer = new TableViewer(table);
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = SIZING_LISTS_WIDTH;
@@ -126,7 +126,7 @@ protected Control createControl(Composite parent) {
  *	@param height int
  */
 protected Composite createViewPane(Composite parent, int width,int height) {
-	Composite paneWindow = new Composite(parent, SWT.BORDER);
+	Composite paneWindow = new Composite(parent, SWT.FLAT);
 	GridData spec = new GridData(GridData.FILL_BOTH);
 	spec.widthHint = width;
 	spec.heightHint = height;

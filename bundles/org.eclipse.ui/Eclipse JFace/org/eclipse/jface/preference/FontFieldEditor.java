@@ -54,7 +54,7 @@ public class FontFieldEditor extends FieldEditor {
 		private Font font;
 		public DefaultPreviewer(String s, Composite parent) {
 			string= s;
-			text= new Text(parent, SWT.READ_ONLY | SWT.BORDER);
+			text= new Text(parent, SWT.READ_ONLY | SWT.FLAT);
 			text.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					if (font != null)
@@ -184,7 +184,7 @@ protected void doStore() {
  */
 protected Button getChangeControl(Composite parent) {
 	if (changeFontButton == null) {
-		changeFontButton= new Button(parent, SWT.PUSH);
+		changeFontButton= new Button(parent, SWT.PUSH | SWT.FLAT);
 		if(changeButtonText != null)
 			changeFontButton.setText(changeButtonText);
 		changeFontButton.addSelectionListener(new SelectionAdapter() {

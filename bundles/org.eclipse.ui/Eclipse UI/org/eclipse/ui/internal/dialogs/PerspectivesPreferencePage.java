@@ -61,7 +61,7 @@ protected Control createContents(Composite parent) {
 	label.setLayoutData(data);
 		
 	// Add perspective list.
-	list = new List(pageComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	list = new List(pageComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FLAT);
 	list.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			updateButtons();
@@ -109,7 +109,7 @@ protected Control createContents(Composite parent) {
  *   default button, and <code>false</code> otherwise
  */
 protected Button createVerticalButton(Composite parent, String label, boolean defaultButton) {
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 
 	button.setText(label);
 	GridData data = new GridData();

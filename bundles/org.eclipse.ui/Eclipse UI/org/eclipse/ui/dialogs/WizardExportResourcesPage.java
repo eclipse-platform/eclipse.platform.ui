@@ -121,7 +121,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	// increment the number of columns in the button bar
 	((GridLayout)parent.getLayout()).numColumns++;
 
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -282,7 +282,7 @@ protected final void createResourcesGroup(Composite parent) {
 			new WorkbenchLabelProvider(),
 			getResourceProvider(IResource.FILE),
 			new WorkbenchLabelProvider(),
-			SWT.NONE,
+			SWT.FLAT,
 			SIZING_SELECTION_WIDGET_WIDTH,
 			SIZING_SELECTION_WIDGET_HEIGHT);
 

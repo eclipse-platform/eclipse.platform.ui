@@ -157,23 +157,23 @@ protected final void createSourceGroup(Composite parent) {
 	sourceGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 	// resource label
-	new Label(sourceGroup, SWT.NONE).setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
+	new Label(sourceGroup, SWT.FLAT).setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
 
 	// resource name entry field
-	resourceNameField = new Text(sourceGroup, SWT.SINGLE | SWT.BORDER);
+	resourceNameField = new Text(sourceGroup, SWT.FLAT);
 	resourceNameField.addListener(SWT.KeyDown, this);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	resourceNameField.setLayoutData(data);
 
 	// resource browse button
-	resourceBrowseButton = new Button(sourceGroup, SWT.PUSH);
+	resourceBrowseButton = new Button(sourceGroup, SWT.PUSH | SWT.FLAT);
 	resourceBrowseButton.setText(WorkbenchMessages.getString("WizardExportPage.browse")); //$NON-NLS-1$
 	resourceBrowseButton.addListener(SWT.Selection, this);
 	resourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// export all types radio	
-	exportAllTypesRadio = new Button(sourceGroup, SWT.RADIO);
+	exportAllTypesRadio = new Button(sourceGroup, SWT.RADIO | SWT.FLAT);
 	exportAllTypesRadio.setText(WorkbenchMessages.getString("WizardExportPage.allTypes")); //$NON-NLS-1$
 	exportAllTypesRadio.addListener(SWT.Selection, this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -181,26 +181,26 @@ protected final void createSourceGroup(Composite parent) {
 	exportAllTypesRadio.setLayoutData(data);
 
 	// export specific types radio
-	exportSpecifiedTypesRadio = new Button(sourceGroup, SWT.RADIO);
+	exportSpecifiedTypesRadio = new Button(sourceGroup, SWT.RADIO | SWT.FLAT);
 	exportSpecifiedTypesRadio.setText(WorkbenchMessages.getString("WizardExportPage.specificTypes")); //$NON-NLS-1$
 	exportSpecifiedTypesRadio.addListener(SWT.Selection, this);
 
 	// types combo
-	typesToExportField = new Combo(sourceGroup, SWT.NONE);
+	typesToExportField = new Combo(sourceGroup, SWT.FLAT);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	typesToExportField.setLayoutData(data);
 	typesToExportField.addListener(SWT.Modify, this);
 
 	// types edit button
-	typesToExportEditButton = new Button(sourceGroup, SWT.PUSH);
+	typesToExportEditButton = new Button(sourceGroup, SWT.PUSH | SWT.FLAT);
 	typesToExportEditButton.setText(WorkbenchMessages.getString("WizardExportPage.edit")); //$NON-NLS-1$
 	typesToExportEditButton.setLayoutData(new GridData(
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 	typesToExportEditButton.addListener(SWT.Selection, this);
 
 	// details button
-	resourceDetailsButton = new Button(sourceGroup, SWT.PUSH);
+	resourceDetailsButton = new Button(sourceGroup, SWT.PUSH | SWT.FLAT);
 	resourceDetailsButton.setText(WorkbenchMessages.getString("WizardExportPage.details")); //$NON-NLS-1$
 	resourceDetailsButton.addListener(SWT.Selection,this);
 

@@ -209,7 +209,7 @@ public void createControl(Composite parent) {
 		String[] labels= JFaceResources.getStrings(new String[] {"defaults", "apply"});//$NON-NLS-2$//$NON-NLS-1$
 		int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	    int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		defaultsButton= new Button(buttonBar, SWT.PUSH);
+		defaultsButton= new Button(buttonBar, SWT.PUSH | SWT.FLAT);
 		defaultsButton.setFont(font);
 		defaultsButton.setText(labels[0]);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -225,7 +225,7 @@ public void createControl(Composite parent) {
 		);
 
 	
-		applyButton= new Button(buttonBar, SWT.PUSH);
+		applyButton= new Button(buttonBar, SWT.PUSH | SWT.FLAT);
 		applyButton.setFont(font);
 		applyButton.setText(labels[1]);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

@@ -83,15 +83,15 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// overwrite... checkbox
-	overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+	overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	overwriteExistingFileCheckbox.setText(DataTransferMessages.getString("ZipExport.overwriteFile")); //$NON-NLS-1$
 
 	// create directory structure checkbox
-	createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+	createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
 
 	// compress... checkbox
-	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
 
 	// initial setup

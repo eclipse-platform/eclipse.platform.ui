@@ -103,14 +103,14 @@ protected Control createContents(Composite parent) {
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	autoBuildButton = new Button(composite, SWT.CHECK);
+	autoBuildButton = new Button(composite, SWT.CHECK | SWT.FLAT);
 	autoBuildButton.setText(WorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
 
-	autoSaveAllButton = new Button(composite, SWT.CHECK);
+	autoSaveAllButton = new Button(composite, SWT.CHECK | SWT.FLAT);
 	autoSaveAllButton.setText(
 		WorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
 
-	linkButton = new Button(composite, SWT.CHECK);
+	linkButton = new Button(composite, SWT.CHECK | SWT.FLAT);
 	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 
 	createSpace(composite);
@@ -161,7 +161,7 @@ private void createPerspectiveGroup(Composite composite) {
 		}
 	});
 
-	this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
+	this.openInNewPageText = new Text(buttonComposite, SWT.FLAT);
 	this.openInNewPageText.setEditable(false);
 
 	//Open New Window button
@@ -179,7 +179,7 @@ private void createPerspectiveGroup(Composite composite) {
 		}
 	});
 
-	this.openInNewWindowText = new Text(buttonComposite, SWT.NONE);
+	this.openInNewWindowText = new Text(buttonComposite, SWT.FLAT);
 	this.openInNewWindowText.setEditable(false);
 
 
@@ -197,7 +197,7 @@ private void createPerspectiveGroup(Composite composite) {
 		}
 	});
 
-	this.replaceText = new Text(buttonComposite, SWT.NONE);
+	this.replaceText = new Text(buttonComposite, SWT.FLAT);
 	this.replaceText.setEditable(false);
 
 	setTextValuesForPerspective();
@@ -287,7 +287,7 @@ private void createProjectPerspectiveGroup(Composite composite) {
  * @return the newly-created button
  */
 private Button createRadioButton(Composite parent, String label) {
-	Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
+	Button button = new Button(parent, SWT.RADIO | SWT.LEFT | SWT.FLAT);
 	button.setText(label);
 	button.addListener(SWT.Selection, this);
 	GridData data = new GridData();
@@ -300,7 +300,7 @@ private Button createRadioButton(Composite parent, String label) {
  * @param parent  the parent in which the tab should be created
  */
 private void createSpace(Composite parent) {
-	Label vfiller = new Label(parent, SWT.LEFT);
+	Label vfiller = new Label(parent, SWT.LEFT | SWT.FLAT);
 	GridData gridData = new GridData();
 	gridData = new GridData();
 	gridData.horizontalAlignment = GridData.BEGINNING;

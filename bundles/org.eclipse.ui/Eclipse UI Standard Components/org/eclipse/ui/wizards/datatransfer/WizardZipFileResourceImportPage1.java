@@ -110,7 +110,7 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// overwrite... checkbox
-	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
+	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.FLAT);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 }
 /**

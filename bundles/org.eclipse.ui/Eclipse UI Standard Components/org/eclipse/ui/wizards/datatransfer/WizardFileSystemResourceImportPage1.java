@@ -99,7 +99,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	// increment the number of columns in the button bar
 	((GridLayout)parent.getLayout()).numColumns++;
 
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -216,11 +216,11 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// overwrite... checkbox
-	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
+	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.FLAT);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 	// create containers checkbox
-	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK);
+	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.FLAT);
 	createContainerStructureCheckbox.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
 }
 /**
@@ -237,7 +237,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 	new Label(sourceContainerGroup, SWT.NONE).setText(getSourceLabel());
 
 	// source name entry field
-	sourceNameField = new Combo(sourceContainerGroup, SWT.BORDER | SWT.READ_ONLY);
+	sourceNameField = new Combo(sourceContainerGroup, SWT.FLAT | SWT.READ_ONLY);
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
@@ -252,7 +252,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 	});
 
 	// source browse button
-	sourceBrowseButton = new Button(sourceContainerGroup, SWT.PUSH);
+	sourceBrowseButton = new Button(sourceContainerGroup, SWT.PUSH | SWT.FLAT);
 	sourceBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	sourceBrowseButton.addListener(SWT.Selection, this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));

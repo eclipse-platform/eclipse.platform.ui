@@ -273,7 +273,7 @@ protected Text getTextControl() {
  */
 public Text getTextControl(Composite parent) {
 	if (textField == null) {
-		textField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		textField = new Text(parent, SWT.SINGLE | SWT.FLAT);
 		switch (validateStrategy) {
 			case VALIDATE_ON_KEY_STROKE :
 				textField.addKeyListener(new KeyAdapter() {

@@ -82,10 +82,10 @@ protected void createDestinationGroup(Composite parent) {
 	destinationSelectionGroup.setLayout(layout);
 	destinationSelectionGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
-	new Label(destinationSelectionGroup, SWT.NONE).setText(getDestinationLabel());
+	new Label(destinationSelectionGroup, SWT.FLAT).setText(getDestinationLabel());
 
 	// destination name entry field
-	destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE | SWT.BORDER);
+	destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE | SWT.FLAT);
 	destinationNameField.addListener(SWT.Modify, this);
 	destinationNameField.addListener(SWT.Selection, this);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -93,7 +93,7 @@ protected void createDestinationGroup(Composite parent) {
 	destinationNameField.setLayoutData(data);
 
 	// destination browse button
-	destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
+	destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH | SWT.FLAT);
 	destinationBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	destinationBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	destinationBrowseButton.addListener(SWT.Selection, this);
@@ -114,16 +114,16 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// overwrite... checkbox
-	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
+	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	overwriteExistingFilesCheckbox.setText(DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
 
 	// create directory structure checkbox
-	createDirectoryStructureCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
+	createDirectoryStructureCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
 	createDirectoryStructureCheckbox.addListener(SWT.Selection,this);
 
 	// create directory for container checkbox
-	createDirectoriesForSelectedContainersCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
+	createDirectoriesForSelectedContainersCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.LEFT | SWT.FLAT);
 	createDirectoriesForSelectedContainersCheckbox.setText(DataTransferMessages.getString("ExportFile.createDirectoriesForSelected")); //$NON-NLS-1$
 
 	// initial setup

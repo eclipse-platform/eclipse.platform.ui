@@ -196,7 +196,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	// increment the number of columns in the button bar
 	((GridLayout)parent.getLayout()).numColumns++;
 
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH | SWT.FLAT);
 
 	button.setText(label);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

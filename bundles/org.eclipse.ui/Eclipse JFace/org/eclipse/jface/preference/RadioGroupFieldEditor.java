@@ -168,7 +168,7 @@ public Composite getRadioBoxControl(Composite parent) {
 
 		radioButtons = new Button[labelsAndValues.length];
 		for (int i = 0; i < labelsAndValues.length; i++) {
-			Button radio = new Button(radioBox, SWT.RADIO | SWT.LEFT);
+			Button radio = new Button(radioBox, SWT.RADIO | SWT.LEFT | SWT.FLAT);
 			radioButtons[i] = radio;
 			String[] labelAndValue = labelsAndValues[i];
 			radio.setText(labelAndValue[0]);

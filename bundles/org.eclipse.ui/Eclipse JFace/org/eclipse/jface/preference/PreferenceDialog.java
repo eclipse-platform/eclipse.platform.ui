@@ -269,7 +269,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	createTitleArea(titleComposite);
 
-	Label titleBarSeparator = new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	Label titleBarSeparator = new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR | SWT.FLAT);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	titleBarSeparator.setLayoutData(gd);
 
@@ -279,7 +279,7 @@ protected Control createDialogArea(Composite parent) {
 	pageContainer.setFont(parent.getFont());
 
 	// Build the separator line
-	Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR | SWT.FLAT);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.horizontalSpan = 2;
 	separator.setLayoutData(gd);
@@ -328,14 +328,14 @@ private Composite createTitleArea(Composite parent) {
 	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
 
 	// Message label
-	messageLabel = new CLabel(titleArea, SWT.LEFT);
+	messageLabel = new CLabel(titleArea, SWT.LEFT | SWT.FLAT);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" ");//$NON-NLS-1$
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	messageLabel.setLayoutData(gd);
 
 	// Title image
-	titleImage = new Label(titleArea, SWT.LEFT);
+	titleImage = new Label(titleArea, SWT.LEFT | SWT.FLAT);
 	titleImage.setBackground(bg);
 	titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
 	gd = new GridData(); 
@@ -351,7 +351,7 @@ private void createTree(Composite parent) {
 	if (tree != null)
 		tree.dispose();
 
-	tree = new Tree(parent, SWT.BORDER);
+	tree = new Tree(parent, SWT.FLAT);
 
 	tree.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(final SelectionEvent event) {
@@ -393,9 +393,9 @@ private void createTree(Composite parent) {
 private void createTreeItemFor(Widget parent, IPreferenceNode node) {
 	TreeItem item = null;
 	if (parent instanceof Tree)
-		item = new TreeItem((Tree) parent, SWT.DEFAULT);
+		item = new TreeItem((Tree) parent, SWT.DEFAULT | SWT.FLAT);
 	else
-		item = new TreeItem((TreeItem) parent, SWT.DEFAULT);
+		item = new TreeItem((TreeItem) parent, SWT.DEFAULT | SWT.FLAT);
 
 	item.setData(node);
 	item.setText(node.getLabelText());

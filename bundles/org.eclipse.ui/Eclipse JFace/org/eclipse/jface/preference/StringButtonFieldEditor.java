@@ -85,7 +85,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
  */
 protected Button getChangeControl(Composite parent) {
 	if (changeButton == null) {
-		changeButton = new Button(parent, SWT.PUSH);
+		changeButton = new Button(parent, SWT.PUSH | SWT.FLAT);
 		if (changeButtonText == null)
 			changeButtonText = JFaceResources.getString("openChange");//$NON-NLS-1$
 		changeButton.setText(changeButtonText);

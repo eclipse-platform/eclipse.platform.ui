@@ -131,7 +131,7 @@ protected Button getChangeControl(Composite parent) {
 		extent= computeImageSize(parent);
 		image= new Image(parent.getDisplay(), extent.x, extent.y);
 		
-		colorButton= new Button(parent, SWT.PUSH);
+		colorButton= new Button(parent, SWT.PUSH | SWT.FLAT);
 
 		GC gc= new GC(image);
 		gc.setBackground(colorButton.getBackground());

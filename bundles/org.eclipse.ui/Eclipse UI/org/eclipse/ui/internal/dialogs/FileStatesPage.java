@@ -62,7 +62,7 @@ private Text addLabelAndText(String labelString, String textValue, Composite par
 	Label label = new Label(parent,SWT.LEFT);
 	label.setText(labelString);
 	
-	Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
+	Text text = new Text(parent, SWT.LEFT | SWT.FLAT);
 	GridData data = new GridData();
 	text.addListener(SWT.Modify, this);
 	data.horizontalAlignment = GridData.FILL;

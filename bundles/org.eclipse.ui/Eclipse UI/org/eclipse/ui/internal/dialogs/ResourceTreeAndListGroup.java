@@ -174,7 +174,7 @@ protected void createContents(Composite parent, int width, int height, int style
  *	Create this group's list viewer.
  */
 protected void createListViewer(Composite parent, int width, int height) {
-	listViewer = new CheckboxTableViewer(parent, SWT.BORDER);
+	listViewer = new CheckboxTableViewer(parent, SWT.FLAT);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = width;
 	data.heightHint = height;
@@ -187,7 +187,7 @@ protected void createListViewer(Composite parent, int width, int height) {
  *	Create this group's tree viewer.
  */
 protected void createTreeViewer(Composite parent, int width, int height) {
-	Tree tree = new Tree(parent, SWT.CHECK | SWT.BORDER);
+	Tree tree = new Tree(parent, SWT.CHECK | SWT.FLAT);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = width;
 	data.heightHint = height;

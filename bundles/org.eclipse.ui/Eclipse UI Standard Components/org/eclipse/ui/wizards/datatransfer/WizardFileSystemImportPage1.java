@@ -96,11 +96,11 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// overwrite... checkbox
-	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
+	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.FLAT);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 	// create containers checkbox
-	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK);
+	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK | SWT.FLAT);
 	createContainerStructureCheckbox.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
 }
 /**
@@ -117,7 +117,7 @@ protected void createSourceGroup(Composite parent) {
 	new Label(sourceContainerGroup,SWT.NONE).setText(getSourceLabel());
 
 	// source name entry field
-	sourceNameField = new Combo(sourceContainerGroup,SWT.BORDER);
+	sourceNameField = new Combo(sourceContainerGroup,SWT.FLAT);
 	sourceNameField.addListener(SWT.Modify,this);
 	sourceNameField.addListener(SWT.Selection,this);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -125,7 +125,7 @@ protected void createSourceGroup(Composite parent) {
 	sourceNameField.setLayoutData(data);
 
 	// source browse button
-	sourceBrowseButton = new Button(sourceContainerGroup,SWT.PUSH);
+	sourceBrowseButton = new Button(sourceContainerGroup,SWT.PUSH | SWT.FLAT);
 	sourceBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	sourceBrowseButton.addListener(SWT.Selection,this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -134,7 +134,7 @@ protected void createSourceGroup(Composite parent) {
 	Label label = createBoldLabel(parent,DataTransferMessages.getString("FileImport.whichTypesImport")); //$NON-NLS-1$
 
 	// source types group
-	Composite sourceTypesGroup = new Composite(parent,SWT.NONE);
+	Composite sourceTypesGroup = new Composite(parent,SWT.FLAT);
 	layout = new GridLayout();
 	layout.numColumns = 3;
 	sourceTypesGroup.setLayout(layout);
@@ -142,7 +142,7 @@ protected void createSourceGroup(Composite parent) {
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// all types radio
-	importAllResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO);
+	importAllResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO | SWT.FLAT);
 	importAllResourcesRadio.setText(DataTransferMessages.getString("DataTransfer.allTypes")); //$NON-NLS-1$
 	importAllResourcesRadio.addListener(SWT.Selection,this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -150,19 +150,19 @@ protected void createSourceGroup(Composite parent) {
 	importAllResourcesRadio.setLayoutData(data);
 
 	// import specific types radio
-	importTypedResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO);
+	importTypedResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO | SWT.FLAT);
 	importTypedResourcesRadio.setText(DataTransferMessages.getString("FileImport.filesofType")); //$NON-NLS-1$
 	importTypedResourcesRadio.addListener(SWT.Selection,this);
 
 	// types combo
-	typesToImportField = new Combo(sourceTypesGroup, SWT.NONE);
+	typesToImportField = new Combo(sourceTypesGroup, SWT.FLAT);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	typesToImportField.setLayoutData(data);
 	typesToImportField.addListener(SWT.Modify, this);
 
 	// types edit button
-	typesToImportEditButton = new Button(sourceTypesGroup, SWT.PUSH);
+	typesToImportEditButton = new Button(sourceTypesGroup, SWT.PUSH | SWT.FLAT);
 	typesToImportEditButton.setText(DataTransferMessages.getString("FileImport.edit")); //$NON-NLS-1$
 	typesToImportEditButton.setLayoutData(new GridData(
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_END));
@@ -176,12 +176,12 @@ protected void createSourceGroup(Composite parent) {
 	fileDetailsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// details button
-	detailsButton = new Button(fileDetailsGroup,SWT.PUSH);
+	detailsButton = new Button(fileDetailsGroup,SWT.PUSH | SWT.FLAT);
 	detailsButton.setText(DataTransferMessages.getString("DataTransfer.details")); //$NON-NLS-1$
 	detailsButton.addListener(SWT.Selection,this);
 
 	// details label
-	detailsDescriptionLabel = new Label(fileDetailsGroup,SWT.NONE);
+	detailsDescriptionLabel = new Label(fileDetailsGroup,SWT.FLAT);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	detailsDescriptionLabel.setLayoutData(data);
 

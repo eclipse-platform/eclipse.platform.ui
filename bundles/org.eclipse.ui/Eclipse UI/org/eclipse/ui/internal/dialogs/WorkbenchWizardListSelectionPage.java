@@ -60,7 +60,7 @@ public void createControl(Composite parent) {
 	new Label(outerContainer,SWT.NONE).setText(message);
 
 	//Create a table for the list
-	Table table = new Table(outerContainer, SWT.BORDER);
+	Table table = new Table(outerContainer, SWT.FLAT);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = SIZING_LISTS_WIDTH;
 	data.heightHint = SIZING_LISTS_HEIGHT;
@@ -69,7 +69,7 @@ public void createControl(Composite parent) {
 	// Add a table column.
 	TableLayout tableLayout = new TableLayout();
 	tableLayout.addColumnData(new ColumnPixelData(200, false));
-	TableColumn tc = new TableColumn(table, SWT.NONE, 0);
+	TableColumn tc = new TableColumn(table, SWT.FLAT, 0);
 	tc.setResizable(false);
 	table.setLayout(tableLayout);
 

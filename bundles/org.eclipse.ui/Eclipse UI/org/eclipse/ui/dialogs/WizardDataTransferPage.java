@@ -91,7 +91,7 @@ protected abstract boolean allowNewContainerName();
  * @return the new label control
  */
 protected Label createBoldLabel(Composite parent, String text) {
-	Label label = new Label(parent, SWT.NONE);
+	Label label = new Label(parent, SWT.FLAT);
 	label.setFont(JFaceResources.getBannerFont());
 	label.setText(text);
 	GridData data = new GridData();
@@ -120,7 +120,7 @@ protected void createOptionsGroup(Composite parent) {
  * @return the new label control
  */
 protected Label createPlainLabel(Composite parent, String text) {
-	Label label = new Label(parent, SWT.NONE);
+	Label label = new Label(parent, SWT.FLAT);
 	label.setText(text);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -134,7 +134,7 @@ protected Label createPlainLabel(Composite parent, String text) {
  * @param parent the parent control
  */
 protected void createSpacer(Composite parent) {
-	Label spacer = new Label(parent, SWT.NONE);
+	Label spacer = new Label(parent, SWT.FLAT);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.verticalAlignment = GridData.BEGINNING;
