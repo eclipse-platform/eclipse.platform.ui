@@ -24,8 +24,8 @@ public final class OperationHistoryEvent {
 	/**
 	 * ABOUT_TO_EXECUTE indicates that an operation is about to execute.
 	 * Listeners should prepare for the execution as appropriate. Listeners will
-	 * receive a done notification if the operation is successful, or an
-	 * operationNotCompleted notification if the execution is cancelled or
+	 * receive a DONE notification if the operation is successful, or an
+	 * OPERATION_NOT_OK notification if the execution is cancelled or
 	 * otherwise fails. This notification is only received for those operations
 	 * executed by the operation history. Operations that are added to the
 	 * history after execution do not trigger these notifications.
@@ -39,8 +39,8 @@ public final class OperationHistoryEvent {
 	/**
 	 * ABOUT_TO_REDO indicates that an operation is about to be redone.
 	 * Listeners should prepare for the redo as appropriate. Listeners will
-	 * receive a redone notification if the operation is successful, or an
-	 * operationNotCompleted notification if the redo is cancelled or otherwise
+	 * receive a REDONE notification if the operation is successful, or an
+	 * OPERATION_NOT_OK notification if the redo is cancelled or otherwise
 	 * fails.
 	 */
 	public static final int ABOUT_TO_REDO = 2;
@@ -48,8 +48,8 @@ public final class OperationHistoryEvent {
 	/**
 	 * ABOUT_TO_UNDO indicates that an operation is about to be undone.
 	 * Listeners should prepare for the undo as appropriate. Listeners will
-	 * receive an undone notification if the operation is successful, or an
-	 * operationNotCompleted notification if the undo is cancelled or otherwise
+	 * receive an UNDONE notification if the operation is successful, or an
+	 * OPERATION_NOT_OK notification if the undo is cancelled or otherwise
 	 * fails.
 	 */
 	public static final int ABOUT_TO_UNDO = 3;
@@ -65,9 +65,6 @@ public final class OperationHistoryEvent {
 	 * added to the history.
 	 */
 	public static final int DONE = 4;
-
-	// constants are bit masked in case there are overlapping events in the
-	// future
 
 	/**
 	 * OPERATION_ADDED indicates an operation was added to the history.
@@ -96,7 +93,8 @@ public final class OperationHistoryEvent {
 	/**
 	 * OPERATION_REMOVED indicates an operation was removed from the history.
 	 * Listeners typically remove any record of the operation that they may have
-	 * kept in their own state.
+	 * kept in their own state.  The operation has been disposed by the time
+	 * listeners receive this notification.
 	 */
 	public static final int OPERATION_REMOVED = 8;
 

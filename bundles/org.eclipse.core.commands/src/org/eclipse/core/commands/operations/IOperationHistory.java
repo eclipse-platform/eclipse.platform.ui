@@ -114,10 +114,12 @@ public interface IOperationHistory {
 			"Operation is not valid"); //$NON-NLS-1$
 
 	/**
+	 * <p>
 	 * Add the specified operation to the history without executing it. The
 	 * operation should have already been executed by the time it is added to
 	 * the history. Listeners will be notified that the operation was added to
-	 * the history (<code>OPERATION_ADDED</code).
+	 * the history (<code>OPERATION_ADDED</code>).
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            the operation to be added to the history
@@ -125,8 +127,10 @@ public interface IOperationHistory {
 	void add(IUndoableOperation operation);
 
 	/**
+	 * <p>
 	 * Add the specified approver to the list of operation approvers consulted
 	 * by the operation history before an undo or redo is allowed to proceed.
+	 * </p>
 	 * 
 	 * @param approver -
 	 *            the IOperationApprover to be added as an approver.
@@ -136,9 +140,11 @@ public interface IOperationHistory {
 	void addOperationApprover(IOperationApprover approver);
 
 	/**
+	 * <p>
 	 * Add the specified listener to the list of operation history listeners
 	 * that are notified about changes in the history or operations that are
 	 * executed, undone, or redone.
+	 * </p>
 	 * 
 	 * @param listener -
 	 *            the IOperationHistoryListener to be added as a listener.
@@ -187,8 +193,10 @@ public interface IOperationHistory {
 	void closeOperation(boolean operationOK, boolean addToHistory, int mode);
 
 	/**
+	 * <p>
 	 * Return whether there is a redoable operation available in the given
 	 * context.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context to be checked
@@ -199,8 +207,10 @@ public interface IOperationHistory {
 	boolean canRedo(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Return whether there is an undoable operation available in the given
 	 * context
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context to be checked
@@ -210,9 +220,13 @@ public interface IOperationHistory {
 	boolean canUndo(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Dispose of the specified context in the history. All operations that have
 	 * only the given context will be disposed. References to the context in
 	 * operations that have more than one context will also be removed.
+	 * A history notification for the removal of each operation being
+	 * disposed will be sent.  
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context to be disposed
@@ -230,16 +244,19 @@ public interface IOperationHistory {
 			boolean flushContext);
 
 	/**
+	 * <p>
 	 * Execute the specified operation and add it to the operations history if
 	 * successful. This method is used by clients who wish operation history
 	 * listeners to receive notifications before and after the execution of the
 	 * operation. Listeners will be notified before (
 	 * <code>ABOUT_TO_EXECUTE</code>) and after (<code>DONE</code> or
 	 * <code>OPERATION_NOT_OK</code>).
-	 * 
+	 * </p>
+	 * <p>
 	 * If the operation successfully executes, an additional notification that
 	 * the operation has been added to the history (<code>OPERATION_ADDED</code>)
 	 * will be sent.
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            the operation to be executed and then added to the history
@@ -257,13 +274,15 @@ public interface IOperationHistory {
 	 * 
 	 * @return the IStatus indicating whether the execution succeeded.
 	 * 
+	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it was added to the history. <code>OK</code>
 	 * severity indicates that the execute operation was successful and that the
 	 * operation has been added to the history. Listeners will receive
 	 * notifications about the operation's success (<code>DONE</code>) and
 	 * about the operation being added to the history (<code>OPERATION_ADDED</code>).
-	 * 
+	 * </p>
+	 * <p>
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation was not added to the history.
 	 * <code>ERROR</code> severity indicates that the operation did not
@@ -273,6 +292,7 @@ public interface IOperationHistory {
 	 * <code>OK</code>, listeners will receive the
 	 * <code>OPERATION_NOT_OK</code> notification instead of the
 	 * <code>DONE</code> notification.
+	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during execution.
@@ -282,7 +302,9 @@ public interface IOperationHistory {
 			IAdaptable info) throws ExecutionException;
 
 	/**
+	 * <p>
 	 * Return the limit on the undo and redo history for a particular context.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context whose limit is requested
@@ -293,9 +315,11 @@ public interface IOperationHistory {
 	int getLimit(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Get the array of operations in the redo history for a given context. The
 	 * operations are in the order that they would be redone if successive
 	 * "Redo" commands were invoked.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context for the redo
@@ -304,7 +328,9 @@ public interface IOperationHistory {
 	IUndoableOperation[] getRedoHistory(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Get the operation that will next be redone in the given context.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context for the redo
@@ -315,9 +341,11 @@ public interface IOperationHistory {
 	IUndoableOperation getRedoOperation(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Get the array of operations that can be undone in the specified context.
 	 * The operations are in the order that they would be undone if successive
 	 * "Undo" commands were invoked.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context for the undo
@@ -330,10 +358,11 @@ public interface IOperationHistory {
 	 * Open this composite operation and consider it an operation that contains
 	 * other related operations. Consider all operations that are subsequently
 	 * executed or added to be part of this operation. When an operation is
-	 * opened, listeners will immediately receive a notification depending on
-	 * the mode in which the operation is opened. (<code>ABOUT_TO_EXECUTE</code>,
-	 * <code>ABOUT_TO_UNDO</code>, <code>ABOUT_TO_REDO</code>) for the
-	 * opened operation. Notifications for any other execute or add while this
+	 * opened, listeners will immediately receive a notification for the opened
+	 * operation.  The specific notification depends on
+	 * the mode in which the operation is opened (<code>ABOUT_TO_EXECUTE</code>,
+	 * <code>ABOUT_TO_UNDO</code>, <code>ABOUT_TO_REDO</code>).
+	 * Notifications for any other execute or add while this
 	 * operation is open will not occur. Instead, those operations will be added
 	 * to the current operation.
 	 * </p>
@@ -381,7 +410,9 @@ public interface IOperationHistory {
 	void operationChanged(IUndoableOperation operation);
 
 	/**
+	 * <p>
 	 * Get the operation that will next be undone in the given context.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context for the undo
@@ -392,7 +423,9 @@ public interface IOperationHistory {
 	IUndoableOperation getUndoOperation(IUndoContext context);
 
 	/**
+	 * <p>
 	 * Redo the most recently undone operation in the given context
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context to be redone
@@ -407,12 +440,14 @@ public interface IOperationHistory {
 	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus indicating whether the redo succeeded.
 	 * 
+	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the redo operation was successful and that the
 	 * operation has been placed on the undo history. Listeners will receive the
 	 * <code>REDONE</code> notification.
-	 * 
+	 * </p>
+	 * <p>
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation remains in the redo history.
 	 * <code>ERROR</code> severity indicates that the operation could not
@@ -423,6 +458,7 @@ public interface IOperationHistory {
 	 * <code>OK</code>, listeners will receive the
 	 * <code>OPERATION_NOT_OK</code> notification instead of the
 	 * <code>REDONE</code> notification.
+	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
@@ -432,7 +468,9 @@ public interface IOperationHistory {
 			throws ExecutionException;
 
 	/**
+	 * <p>
 	 * Redo the specified operation
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            the operation to be redone
@@ -448,12 +486,14 @@ public interface IOperationHistory {
 	 * 
 	 * @return the IStatus indicating whether the redo succeeded.
 	 * 
+	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the redo operation was successful and that the
 	 * operation has been placed on the undo history. Listeners will receive the
 	 * <code>REDONE</code> notification.
-	 * 
+	 * </p>
+	 * <p>
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation remains in the redo history. <code>ERROR</code>
 	 * severity indicates that the operation could not successfully be redone.
@@ -463,6 +503,7 @@ public interface IOperationHistory {
 	 * For all severities other than <code>OK</code>, listeners will receive
 	 * the <code>OPERATION_NOT_OK</code> notification instead of the <code>REDONE</code>
 	 * notification.
+	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
@@ -472,8 +513,10 @@ public interface IOperationHistory {
 			throws ExecutionException;
 
 	/**
+	 * <p>
 	 * Remove the specified operation approver from the list of operation
 	 * approvers that are consulted before an operation is undone or redone.
+	 * </p>
 	 * 
 	 * @param approver -
 	 *            the IOperationApprover to be removed
@@ -481,8 +524,10 @@ public interface IOperationHistory {
 	void removeOperationApprover(IOperationApprover approver);
 
 	/**
+	 * <p>
 	 * Remove the specified listener from the list of operation history
 	 * listeners.
+	 * </p>
 	 * 
 	 * @param listener -
 	 *            The IOperationHistoryListener to be removed
@@ -490,12 +535,14 @@ public interface IOperationHistory {
 	void removeOperationHistoryListener(IOperationHistoryListener listener);
 
 	/**
+	 * <p>
 	 * Replace the specified operation in the undo or redo history with the
 	 * provided list of replacements. This protocol is typically used when a
 	 * composite is broken up into its atomic parts. The replacements will be
 	 * inserted so that the first replacement will be the first of the
 	 * replacements to be undone or redone. Listeners will be notified about the
 	 * removal of the replaced element and the addition of each replacement.
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            The IUndoableOperation to be replaced
@@ -506,7 +553,9 @@ public interface IOperationHistory {
 			IUndoableOperation[] replacements);
 
 	/**
+	 * <p>
 	 * Set the limit on the undo and redo history for a particular context.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context whose limit is being set.
@@ -519,7 +568,9 @@ public interface IOperationHistory {
 	void setLimit(IUndoContext context, int limit);
 
 	/**
+	 * <p>
 	 * Undo the most recently undone operation in the given context
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context to be undone
@@ -535,12 +586,14 @@ public interface IOperationHistory {
 	 * 
 	 * @return the IStatus indicating whether the undo succeeded.
 	 * 
+	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the undo operation was successful and that the
 	 * operation has been placed on the redo history. Listeners will receive the
 	 * <code>UNDONE</code> notification.
-	 * 
+	 * </p>
+	 * <p>
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation remains in the undo history.
 	 * <code>ERROR</code> severity indicates that the operation could not
@@ -550,6 +603,7 @@ public interface IOperationHistory {
 	 * back to the caller. For all severities other than <code>OK</code>,
 	 * listeners will receive the <code>OPERATION_NOT_OK</code> notification
 	 * instead of the <code>UNDONE</code> notification.
+	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during undo.
@@ -559,7 +613,9 @@ public interface IOperationHistory {
 			throws ExecutionException;
 
 	/**
+	 * <p>
 	 * Undo the specified operation
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            the operation to be undone
@@ -575,12 +631,14 @@ public interface IOperationHistory {
 	 * 
 	 * @return the IStatus indicating whether the undo succeeded.
 	 * 
+	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the undo operation was successful and that the
 	 * operation has been placed on the redo history. Listeners will receive the
 	 * <code>UNDONE</code> notification.
-	 * 
+	 * </p>
+	 * <p>
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation remains in the undo history.
 	 * <code>ERROR</code> severity indicates that the operation could not
@@ -590,6 +648,7 @@ public interface IOperationHistory {
 	 * passed back to the caller. For all severities other than <code>OK</code>,
 	 * listeners will receive the <code>OPERATION_NOT_OK</code> notification
 	 * instead of the <code>UNDONE</code> notification.
+	 * </p>
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during undo.
