@@ -102,7 +102,7 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 * <p>
 	 * An instance of this plug-in runtime class is automatically created 
 	 * when the facilities provided by the Ant Core plug-in are required.
-	 * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
+	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
 	 * @param pluginDescriptor the plug-in descriptor for the
