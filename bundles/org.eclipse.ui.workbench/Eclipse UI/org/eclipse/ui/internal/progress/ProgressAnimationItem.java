@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -140,13 +141,13 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		for (int i= jobTreeElements.length-1; i >= 0; i--) {
 			if (jobTreeElements[i] instanceof JobInfo) {
 				JobInfo ji= (JobInfo) jobTreeElements[i];
-	    		lastJobInfo= ji;
+				lastJobInfo= ji;
 				Job job= ji.getJob();
 				if (job != null) {
 				    IStatus status= job.getResult();
 				    if (status != null && status.getSeverity() == IStatus.ERROR) {
-				    	// green arrow with error overlay
-				    	initButton(errorImage, ProgressMessages.format("ProgressAnimationItem.error", new Object[] { job.getName() } )); //$NON-NLS-1$
+				    		// green arrow with error overlay
+				    		initButton(errorImage, ProgressMessages.format("ProgressAnimationItem.error", new Object[] { job.getName() } )); //$NON-NLS-1$
 				        return;
 				    }
 					IAction action= getAction(job);
@@ -156,18 +157,18 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 						if (tt == null || tt.trim().length() == 0)
 							tt= ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } );
 						initButton(okImage, tt); //$NON-NLS-1$
-			    		return;			
+						return;			
 					}
 					// just the green arrow
 					initButton(noneImage, ProgressMessages.getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
-		    		return;
+					return;
 				}
 			}
 		}
 		
 		if (animationRunning) {			
 			initButton(noneImage, ProgressMessages.getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
-    		return;			
+    			return;
 		}
 		
 		// if nothing found hide tool item
@@ -197,16 +198,18 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		
 		top = new Composite(parent, SWT.NULL);
 		top.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
+		    public void widgetDisposed(DisposeEvent e) {
         	    FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
-                noneImage.dispose();
+            noneImage.dispose();
     	   		okImage.dispose();
-     	        errorImage.dispose();
+     	    errorImage.dispose();
            }
 		});
-		//top.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+		
+		boolean isCarbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+		
 		GridLayout gl= new GridLayout();
-		gl.numColumns= 2;
+		gl.numColumns= isCarbon ? 3 : 2;
 		gl.marginHeight= 0;
 		gl.marginWidth= 0;
 		gl.horizontalSpacing= 2;
@@ -221,14 +224,17 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		
 		toolbar= new ToolBar(top, SWT.FLAT);
 		toolbar.setVisible(false);
-		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		toolButton= new ToolItem(toolbar, SWT.NONE);
-		refresh();
 		toolButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-            	doAction();
-           }
+            		doAction();
+            }
         });
+		
+		if (isCarbon) // prevent that Mac growbox overlaps with toolbar item
+		    new Label(top, SWT.NONE).setLayoutData(new GridData(4, 4));
+
+		refresh();
 
 		return top;
 	}
