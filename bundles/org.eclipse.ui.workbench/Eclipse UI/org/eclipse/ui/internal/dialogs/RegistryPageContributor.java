@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -17,18 +18,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This property page contributor is created from page entry
@@ -87,13 +85,34 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
 	ppage = (IWorkbenchPropertyPage)WorkbenchPlugin.createExtension(
 		pageElement, PropertyPagesRegistryReader.ATT_CLASS);
 
-	Class resourceClass = LegacyResourceSupport.getResourceClass();
-	if (isResourceContributor && resourceClass != null) {
-		ppage.setElement((IAdaptable) element.getAdapter(resourceClass));
-	} else {
+	ppage.setTitle(pageName);
+	
+	if (isResourceContributor) {
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
+		IAdaptable resource =  resourceClass != null ? (IAdaptable) element.getAdapter(resourceClass) : null;
+		if (resource == null) {
+			resourceClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
+			if (resourceClass != null) {
+				Object resourceAdapter = element.getAdapter(resourceClass);
+				if (resourceAdapter != null) {
+					try {
+						Method m = resourceClass.getMethod("getAdaptedResource", new Class[] {IAdaptable.class}); //$NON-NLS-1$
+						resource = (IAdaptable) m.invoke(resourceAdapter, new Object[] {element});
+					} catch (Exception e) {
+						// shouldn't happen.				
+					} 
+				}				
+			}
+		}
+		
+		if (resource != null)
+			ppage.setElement(resource);			
+	} 
+	
+	if (ppage.getElement() == null) {	
 		ppage.setElement(element);
 	}
-	ppage.setTitle(pageName);
+	
 	return ppage;
 }
 /**
