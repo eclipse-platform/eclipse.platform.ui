@@ -28,21 +28,21 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class DecorationScheduler {
 
 	// When decorations are computed they are added to this cache via decorated() method
-	private Map resultCache = new HashMap();
+	Map resultCache = new HashMap();
 
 	// Objects that need an icon and text computed for display to the user
-	private List awaitingDecoration = new ArrayList();
+	List awaitingDecoration = new ArrayList();
 
 	// Objects that are awaiting a label update.
-	private Set pendingUpdate = new HashSet();
+	Set pendingUpdate = new HashSet();
 
-	private Object resultLock = new Object();
+	Object resultLock = new Object();
 
-	private Map awaitingDecorationValues = new HashMap();
+	Map awaitingDecorationValues = new HashMap();
 
-	private DecoratorManager decoratorManager;
+	DecoratorManager decoratorManager;
 
-	private boolean shutdown = false;
+	boolean shutdown = false;
 
 	Job decorationJob;
 	UIJob updateJob;
