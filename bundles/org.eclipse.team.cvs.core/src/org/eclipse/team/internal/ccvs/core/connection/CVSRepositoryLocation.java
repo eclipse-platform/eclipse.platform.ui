@@ -270,7 +270,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			} catch (CVSException e) {
 				throw e;
 			} catch (OperationCanceledException e) {
-				throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message == null ? Policy.bind("error") : message));
+				throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message == null ? Policy.bind("CVSRepositoryLocation.authenticationCanceled") : message));
 			}
 			try {
 				// The following will throw an exception if authentication fails
