@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -28,19 +29,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.SystemMenuClose;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuFastViewOrientation;
-import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
-import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
-import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
-import org.eclipse.ui.internal.presentations.SystemMenuRestore;
 import org.eclipse.ui.internal.presentations.SystemMenuSizeFastView;
+import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -142,59 +137,30 @@ public class FastViewPane {
             DragUtil.performDrag(pane, bounds,
                     initialPosition, !keyboard);
 		}
+
+		public IPresentablePart getSelectedPart() {
+			if (currentPane == null) {
+				return null;
+			}
+			return currentPane.getPresentablePart();
+		}
+		
+		public void addSystemActions(IMenuManager menuManager) {
+			appendToGroupIfPossible(menuManager, "misc", new SystemMenuFastViewOrientation(currentPane));
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction));
+			appendToGroupIfPossible(menuManager, "size", new SystemMenuSizeFastView(FastViewPane.this));
+		}
 		
 	};
-		
-    private class SystemMenuContribution extends ContributionItem {
-        
-    	private SystemMenuFastViewOrientation orientation;
-    	private SystemMenuFastView systemMenuFastView;
-        private SystemMenuClose systemMenuClose;
-        private SystemMenuMaximize systemMenuMaximize;
-        private SystemMenuMinimize systemMenuMinimize;
-        private SystemMenuMoveView systemMenuMoveView;
-        private SystemMenuRestore systemMenuRestore;
-        private SystemMenuSizeFastView systemMenuSizeFastView;
-        
-        SystemMenuContribution(IStackPresentationSite stackPresentationSite, FastViewPane fastViewPane) {
-        	orientation = new SystemMenuFastViewOrientation(fastViewPane.getCurrentPane());
-        	systemMenuFastView = new SystemMenuFastView(fastViewPane.getCurrentPane());
-            systemMenuClose = new SystemMenuClose(fastViewPane.getCurrentPane().getPresentablePart(), stackPresentationSite);
-            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
-            systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
-            systemMenuMoveView = new SystemMenuMoveView(fastViewPane.getCurrentPane().getPresentablePart(), stackPresentationSite);
-            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
-            systemMenuSizeFastView = new SystemMenuSizeFastView(fastViewPane);            
-        }
-        
-        public void fill(Menu menu, int index) {
-        	orientation.fill(menu, index);
-        	systemMenuFastView.fill(menu, index);
-            systemMenuRestore.fill(menu, index);
-            systemMenuMoveView.fill(menu, index);
-            systemMenuSizeFastView.fill(menu, index);
-            systemMenuMinimize.fill(menu, index);
-            systemMenuMaximize.fill(menu, index);
-            new MenuItem(menu, SWT.SEPARATOR);
-            systemMenuClose.fill(menu, index);
-        }
-        
-        public void dispose() {
-        	orientation.dispose();
-        	systemMenuFastView.dispose();
-            systemMenuClose.dispose();
-            systemMenuMaximize.dispose();
-            systemMenuMinimize.dispose();
-            systemMenuMoveView.dispose();
-            systemMenuRestore.dispose();
-            systemMenuSizeFastView.dispose();
-        }
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
-		 */
-		public boolean isDynamic() {
-			return true;
-		}
+
+	private SystemMenuFastView fastViewAction = new SystemMenuFastView(site);
+	
+    private static void appendToGroupIfPossible(IMenuManager m, String groupId, ContributionItem item) {
+    	try {
+    		m.appendToGroup(groupId, item);
+    	} catch (IllegalArgumentException e) {
+    		m.add(item);
+    	}
     }
     
     private Listener mouseDownListener = new Listener() {
@@ -365,6 +331,7 @@ public class FastViewPane {
 	
 		currentPane = pane;
 		
+		fastViewAction.setPane(currentPane);
 		clientComposite = newClientComposite;
 	
 		clientComposite.addListener(SWT.Resize, resizeListener);
@@ -383,10 +350,7 @@ public class FastViewPane {
 		AbstractPresentationFactory factory = ((WorkbenchWindow) pane.getWorkbenchWindow())
         	.getWindowConfigurer().getPresentationFactory();
 		StackPresentation presentation = factory.createPresentation(newClientComposite,
-				site, AbstractPresentationFactory.ROLE_DOCKED_VIEW,
-				SWT.MIN | SWT.MAX, pane.getPage().getPerspective().getId(), pane.getID());
-
-		//StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX);
+				site, AbstractPresentationFactory.ROLE_DOCKED_VIEW, pane.getPage().getPerspective().getId(), pane.getID());
 		
 		site.setPresentation(presentation);
 		site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
@@ -394,9 +358,6 @@ public class FastViewPane {
 		presentation.selectPart(pane.getPresentablePart());
 		presentation.setActive(true);
 		presentation.setVisible(true);
-
-		systemMenuContribution = new SystemMenuContribution(site, this);
-		presentation.getSystemMenuManager().add(systemMenuContribution);
 
 		// Show pane fast.
 		ctrl.setEnabled(true); // Add focus support.

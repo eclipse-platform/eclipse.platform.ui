@@ -17,21 +17,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -39,14 +34,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.presentations.SystemMenuClose;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseAllEditors;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseOtherEditors;
-import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
-import org.eclipse.ui.internal.presentations.SystemMenuMoveEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
-import org.eclipse.ui.internal.presentations.SystemMenuRestore;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
+import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -71,17 +63,23 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
     private WorkbenchPage page;  
     
+    private SystemMenuSize sizeItem = new SystemMenuSize(null);
+    private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
+    private SystemMenuCloseAllEditors closeAllItem = new SystemMenuCloseAllEditors(null);
+    private SystemMenuCloseOtherEditors closeAllOthersItem = new SystemMenuCloseOtherEditors(null);
+	
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
         public void selectPart(IPresentablePart toSelect) {
             presentationSelectionChanged(toSelect);
         }
 
-        public void setPresentation(StackPresentation newPresentation) {
-            super.setPresentation(newPresentation);
-
-            updateSystemMenu();
-        }
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
+    	 */
+    	public boolean supportsState(int state) {
+    		return state == IStackPresentationSite.STATE_MAXIMIZED || state == IStackPresentationSite.STATE_RESTORED;
+    	}
 
         public void setState(int newState) {
             EditorWorkbook.this.setState(newState);
@@ -101,6 +99,14 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
             EditorWorkbook.this.close(part);
         }
 
+    	public IPresentablePart getSelectedPart() {
+    		if (current == null) {
+    			return null;
+    		}
+    		
+    		return current.getPresentablePart();
+    	}
+        
         public boolean isCloseable(IPresentablePart part) {
             return true;
 
@@ -126,8 +132,19 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         public boolean isMoveable(IPresentablePart part) {
         	return true;
         }
+        
+		public void addSystemActions(IMenuManager menuManager) {
+			pinEditorItem = new SystemMenuPinEditor((EditorPane)current);
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem));
+			sizeItem = new SystemMenuSize((PartPane)current);
+			appendToGroupIfPossible(menuManager, "size", sizeItem);
+			closeAllOthersItem = new SystemMenuCloseOtherEditors((EditorPane)current);
+			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllOthersItem));
+			closeAllItem = new SystemMenuCloseAllEditors((EditorPane)current);
+			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllItem));
+		}
     };
-
+    
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
     private LayoutPart current;
@@ -136,79 +153,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
     private boolean active = false;
 
-    private int flags;
-
     private List children = new ArrayList(3);
-
-    private class SystemMenuContribution extends ContributionItem {
-        
-        private SystemMenuClose systemMenuClose;
-        private SystemMenuCloseAllEditors systemMenuCloseAllEditors;
-        private SystemMenuCloseOtherEditors systemMenuCloseOtherEditors;
-        private SystemMenuMaximize systemMenuMaximize;
-        private SystemMenuMoveEditor systemMenuMoveEditor;
-        private SystemMenuPinEditor systemMenuPinEditor;
-        private SystemMenuRestore systemMenuRestore;
-        private SystemMenuSize systemMenuSize;
-        
-        SystemMenuContribution(IStackPresentationSite stackPresentationSite, EditorPane editorPane) {
-            systemMenuClose = new SystemMenuClose(editorPane.getPresentablePart(), stackPresentationSite);
-            systemMenuCloseAllEditors = new SystemMenuCloseAllEditors(editorPane);
-            systemMenuCloseOtherEditors = new SystemMenuCloseOtherEditors(editorPane);
-            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
-            systemMenuMoveEditor = new SystemMenuMoveEditor(editorPane.getPresentablePart(), stackPresentationSite);
-            systemMenuPinEditor = new SystemMenuPinEditor(editorPane);
-            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
-            systemMenuSize = new SystemMenuSize(editorPane);            
-        }
-        
-        public void fill(Menu menu, int index) {
-            systemMenuPinEditor.fill(menu, index);
-            systemMenuRestore.fill(menu, index);
-            systemMenuMoveEditor.fill(menu, index);
-            systemMenuSize.fill(menu, index);
-            systemMenuMaximize.fill(menu, index);
-            new MenuItem(menu, SWT.SEPARATOR);
-            systemMenuClose.fill(menu, index);
-            systemMenuCloseOtherEditors.fill(menu, index);
-            systemMenuCloseAllEditors.fill(menu, index);
-        }
-        
-        public void dispose() {
-            systemMenuClose.dispose();
-            systemMenuMaximize.dispose();
-            systemMenuMoveEditor.dispose();
-            systemMenuRestore.dispose();
-            systemMenuSize.dispose();
-        }
-        
-        public boolean isDynamic() {
-        	return true;
-        }
-    }
-    
-    private IContributionItem systemMenuContribution;
-    
-    /**
-     * EditorWorkbook constructor comment.
-     */
-    public EditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
-        this(editorArea, page, SWT.MAX);
-    }
-
-    /**
-     * Returns the current presentable part, or null if there is no current
-     * selection
-     * 
-     * @return the current presentable part, or null if there is no current
-     *         selection
-     */
-    /*
-     * not used private IPresentablePart getCurrentPresentablePart() { if
-     * (current != null) { return current.getPresentablePart(); }
-     * 
-     * return null; }
-     */
 
     private void presentationSelectionChanged(IPresentablePart newSelection) {
         setSelection(getLayoutPart(newSelection));
@@ -244,7 +189,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         return null;
     }
 
-    public EditorWorkbook(EditorArea editorArea, WorkbenchPage page, int flags) {
+    public EditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
         super("editor workbook"); //$NON-NLS-1$
         this.editorArea = editorArea;
         setID(this.toString());
@@ -254,9 +199,16 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         //I think so since a PartTabFolder is
         //not used on more than one page.
         this.page = page;
-        this.flags = flags;
     }
 
+    private static void appendToGroupIfPossible(IMenuManager m, String groupId, ContributionItem item) {
+    	try {
+    		m.appendToGroup(groupId, item);
+    	} catch (IllegalArgumentException e) {
+    		m.add(item);
+    	}
+    }
+    
     /**
      * Add a part at a particular position
      */
@@ -369,7 +321,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
                 .getPresentationFactory();
         presentationSite.setPresentation(factory.createPresentation(parent,
                 presentationSite,
-                AbstractPresentationFactory.ROLE_EDITOR_WORKBOOK, flags, page
+                AbstractPresentationFactory.ROLE_EDITOR_WORKBOOK, page
                         .getPerspective().getId(), getID()));
 
         active = true;
@@ -498,8 +450,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         }
 
         active = false;
-
-        updateSystemMenu();
     }
 
     private StackPresentation getPresentation() {
@@ -762,7 +712,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         setSelection(getLayoutPart((IPresentablePart) getPresentableParts()
                 .get(index)));
     }
-
+    
     private void setSelection(LayoutPart part) {
         // TODO stefan: ok that i comment this out?
         //		if (current == part) {
@@ -771,7 +721,12 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
         current = part;
 
-        updateSystemMenu();
+        EditorPane pane = (EditorPane)part;
+        
+        sizeItem.setPane(pane);
+        pinEditorItem.setPane(pane);
+        closeAllItem.setPane(pane);
+        closeAllOthersItem.setPane(pane);
 
         if (part != null) {
             IPresentablePart presentablePart = part.getPresentablePart();
@@ -1041,33 +996,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         if (parent != null && !parent.allowsAutoFocus()) { return false; }
 
         return true;
-    }
-
-    private void updateSystemMenu() {
-        StackPresentation presentation = getPresentation();
-
-        if (presentation == null) {
-            if (systemMenuContribution != null) {
-                // TODO spec says not to call this directly
-                systemMenuContribution.dispose();
-                systemMenuContribution = null;
-            }
-        } else {	
-	        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
-	                
-	        if (systemMenuContribution != null) {
-	            systemMenuManager.remove(systemMenuContribution);
-                // TODO spec says not to call this directly
-	            systemMenuContribution.dispose();
-	            systemMenuContribution = null;
-	        }
-	
-	        if (current != null && current instanceof EditorPane) {
-	            systemMenuContribution = new SystemMenuContribution(
-	                    presentationSite, (EditorPane) current);
-	            systemMenuManager.add(systemMenuContribution);
-	        }
-        }     
     }
 
 	/**
