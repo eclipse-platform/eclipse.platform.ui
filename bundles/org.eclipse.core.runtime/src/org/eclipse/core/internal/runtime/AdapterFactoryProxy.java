@@ -10,6 +10,7 @@
 package org.eclipse.core.internal.runtime;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 /**
  * Instances of this class represent adapter factories that have been
  * contributed via the adapters extension point. The concrete factory is not
@@ -81,7 +82,8 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	IAdapterFactory loadFactory(boolean force) {
 		if (factory != null || factoryLoaded)
 			return factory;
-		if (!force && !element.getDeclaringExtension().getDeclaringPluginDescriptor().isPluginActivated())
+		String bundleId = element.getDeclaringExtension().getNamespace();
+		if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
 			return null;
 		//set to true to prevent repeated attempts to load a broken factory
 		factoryLoaded = true;
