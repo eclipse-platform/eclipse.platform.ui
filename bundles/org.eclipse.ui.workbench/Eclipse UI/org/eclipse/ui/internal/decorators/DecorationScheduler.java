@@ -83,7 +83,8 @@ public class DecorationScheduler {
 		//We do not support decoration of null
 		if (element == null)
 			return text;
-
+		
+		
 		DecorationResult decoration =
 			(DecorationResult) resultCache.get(element);
 
@@ -111,7 +112,14 @@ public class DecorationScheduler {
 		boolean forceUpdate,
 		String undecoratedText) {
 
-		if (!awaitingDecorationValues.containsKey(element)) {
+		if (awaitingDecorationValues.containsKey(element)) {
+			if(forceUpdate){//Make sure we don't loose a force
+				DecorationReference reference = 
+					(DecorationReference) awaitingDecorationValues.get(element);
+				reference.setForceUpdate(forceUpdate);
+			}			
+		}		
+		else{
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
 			reference.setForceUpdate(forceUpdate);
@@ -122,6 +130,9 @@ public class DecorationScheduler {
 				return;
 			decorationJob.schedule();
 		}
+		
+		
+			
 
 	}
 
@@ -225,6 +236,7 @@ public class DecorationScheduler {
 					//Don't decorate if there is already a pending result
 					Object element = reference.getElement();
 					Object adapted = reference.getAdaptedElement();
+					
 					boolean elementIsCached = true;
 					DecorationResult adaptedResult = null;
 
@@ -271,12 +283,12 @@ public class DecorationScheduler {
 							.getDecorations(
 							element,
 							cacheResult,
-							false);
+							false);	
 
 						//If we should update regardless then put a result anyways
 						if (cacheResult.hasValue()
 							|| reference.shouldForceUpdate()) {
-
+							
 							//Synchronize on the result lock as we want to
 							//be sure that we do not try and decorate during
 							//label update servicing.
