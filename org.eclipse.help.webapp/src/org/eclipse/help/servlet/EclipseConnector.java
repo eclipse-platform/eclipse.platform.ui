@@ -201,8 +201,7 @@ public class EclipseConnector {
 					return new IFilter[] {
 						new FramesetFilter(req),
 						cssFilter,
-						new HighlightFilter(
-							UrlUtil.getRequestParameter(req, "resultof"))};
+						new HighlightFilter(req)};
 				else
 					return new IFilter[] { new FramesetFilter(req), cssFilter};
 			} else
@@ -212,8 +211,7 @@ public class EclipseConnector {
 				if (UrlUtil.getRequestParameter(req, "resultof") != null)
 					return new IFilter[] {
 						new FramesetFilter(req),
-						new HighlightFilter(
-							UrlUtil.getRequestParameter(req, "resultof"))};
+						new HighlightFilter(req)};
 				else
 					return new IFilter[] { new FramesetFilter(req) };
 			} else
