@@ -13,8 +13,8 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.core.variables.ILaunchVariableConstants;
 import org.eclipse.debug.core.variables.VariableUtil;
-import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
@@ -41,7 +41,7 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 			return;
 		}
 		StringBuffer buf = new StringBuffer();
-		VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+		VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 		String text= buf.toString();
 		if (text != null) {
 			locationField.setText(text);

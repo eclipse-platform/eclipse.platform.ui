@@ -22,7 +22,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.variables.ILaunchVariableConstants;
 import org.eclipse.debug.core.variables.VariableUtil;
-import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
