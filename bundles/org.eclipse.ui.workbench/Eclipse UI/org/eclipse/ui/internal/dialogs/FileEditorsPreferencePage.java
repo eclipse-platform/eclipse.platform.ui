@@ -139,8 +139,11 @@ protected Control createContents(Composite parent) {
 	resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
 	resourceTypeTable.addListener(SWT.Selection, this);
 	resourceTypeTable.addListener(SWT.DefaultSelection, this);
-	data = new GridData(GridData.FILL_BOTH);
-	data.heightHint = resourceTypeTable.getItemHeight()*12;
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	
+	int availableRows = DialogUtil.availableRows(pageComponent);
+		
+	data.heightHint = resourceTypeTable.getItemHeight()* (availableRows / 8);
 	resourceTypeTable.setLayoutData(data);
 	resourceTypeTable.setFont(font);
 
