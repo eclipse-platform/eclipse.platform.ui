@@ -173,13 +173,7 @@ public class Utilities {
 			return null;
 		
 		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException x) {
-					// silently ignored
-				}
-			}
+			Utilities.close(in);
 			try {
 				bos.close();
 			} catch (IOException x) {
@@ -382,8 +376,7 @@ public class Utilities {
 	 * Status constant indicating that an validateEdit call has changed the
 	 * content of a file on disk.
 	 */
-	private static final int VALIDATE_EDIT_PROBLEM= 10004;
-	
+	private static final int VALIDATE_EDIT_PROBLEM= 10004;	
 	
 	/**
 	 * Makes the given resources committable. Committable means that all
@@ -578,5 +571,15 @@ public class Utilities {
 		if (encoding == null)
 			encoding= ResourcesPlugin.getEncoding();
 		return Utilities.readString(is, encoding);
+	}
+
+	public static void close(InputStream is) {
+		if (is != null) {
+			try {
+				is.close();
+			} catch (IOException ex) {
+				// silently ignored
+			}
+		}
 	}
 }

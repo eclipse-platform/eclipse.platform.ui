@@ -98,20 +98,8 @@ public class BinaryCompareViewer extends AbstractViewer {
 			} catch (IOException ex) {
 				message= Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
 			} finally {
-				if (left != null) {
-					try {
-						left.close();
-					} catch (IOException ex) {
-						// silently ignored
-					}
-				}
-				if (right != null) {
-					try {
-						right.close();
-					} catch (IOException ex) {
-						// silently ignored
-					}
-				}			
+				Utilities.close(left);
+				Utilities.close(right);			
 			}
 			if (message != null)
 				fControl.setText(message);				
