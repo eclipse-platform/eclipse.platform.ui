@@ -37,6 +37,11 @@ public class AntThread extends AntDebugElement implements IThread {
 	private List fFrames= new ArrayList(1);
 	
 	/**
+	 * The stackframes to be reused on suspension
+	 */
+	private List fOldFrames;
+	
+	/**
 	 * Whether this thread is stepping
 	 */
 	private boolean fStepping = false;
@@ -70,7 +75,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
-	public synchronized IStackFrame[] getStackFrames() throws DebugException {
+	public IStackFrame[] getStackFrames() {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
@@ -85,9 +90,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * possibly waiting until the frames are populated
      * 
 	 * @return the current stack frames in the thread
-	 * @throws DebugException if unable to perform the request
 	 */
-	private void getStackFrames0() {
+	private synchronized void getStackFrames0() {
 		fTarget.getStackFrames();
         if (fFrames.size() > 0) {
             //frames set..no need to wait
@@ -116,11 +120,13 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
-	public IStackFrame getTopStackFrame() throws DebugException {
-		IStackFrame[] frames = getStackFrames();
-		if (frames != null && frames.length > 0) {
-			return frames[0];
-		}
+	public IStackFrame getTopStackFrame() {
+		if (isSuspended()) {
+			if (fFrames.size() == 0) {
+				getStackFrames0();
+				return (IStackFrame)fFrames.get(0);
+			}
+		} 
 		return null;
 	}
 	
@@ -226,6 +232,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	
 	private void aboutToResume(int detail, boolean stepping) {
 	    fRefreshProperties= true;
+	    fOldFrames= new ArrayList(fFrames);
         fFrames.clear();
 	    setStepping(stepping);
 	    setBreakpoints(null);
@@ -285,21 +292,49 @@ public class AntThread extends AntDebugElement implements IThread {
 		//3 filePath
 		//4 lineNumber
 		//5 ...
-		fFrames.clear();
+		if (fOldFrames != null && (strings.length - 1)/ 4 != fOldFrames.size()) {
+			fOldFrames= null; //stack size changed..do not preserve
+		}
 		String name;
 		String filePath;
 		int lineNumber;
-		AntStackFrame frame;
 		int stackFrameId= 0;
 		for (int i = 1; i < strings.length; i++) {
-		    name= strings[i] + ": " + strings[++i]; //$NON-NLS-1$
+			if (strings[i].length() > 0) {
+				name= strings[i] + ": " + strings[++i]; //$NON-NLS-1$
+			} else {
+				name= strings[++i];
+			}
 			filePath= strings[++i];
 			lineNumber= Integer.parseInt(strings[++i]);
-			frame= new AntStackFrame(this, stackFrameId++, name, filePath, lineNumber);
-			fFrames.add(frame);
+			addFrame(stackFrameId++, name, filePath, lineNumber);
 		}
 		//wake up the call from getStackFrames
 		notifyAll();
+    }
+    
+    private void addFrame(int stackFrameId, String name, String filePath, int lineNumber) {
+    	AntStackFrame frame= getOldFrame();
+    	if (frame == null) {
+    		frame= new AntStackFrame(this, stackFrameId, name, filePath, lineNumber);
+    	} else {
+    		frame.setFilePath(filePath);
+    		frame.setId(stackFrameId);
+    		frame.setLineNumber(lineNumber);
+    		frame.setName(name);
+    	}
+		fFrames.add(frame);
+    }
+    
+    private AntStackFrame getOldFrame() {
+    	if (fOldFrames == null) {
+    		return null;
+    	}
+    	AntStackFrame frame= (AntStackFrame) fOldFrames.remove(0);
+    	if (fOldFrames.isEmpty()) {
+    		fOldFrames= null;
+    	}
+    	return frame;
     }
     
     public synchronized void newProperties(String data) {
@@ -360,7 +395,6 @@ public class AntThread extends AntDebugElement implements IThread {
 			case DebugMessageIds.PROPERTY_USER:
 				userProperties.add(property);
 				break;
-
 			case DebugMessageIds.PROPERTY_RUNTIME:
 				runtimeProperties.add(property);
 				break;
