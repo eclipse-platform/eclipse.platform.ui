@@ -12,7 +12,7 @@
 	}
 
 	RequestData data = new RequestData(application,request);
-	if(data.isIE() || data.isMozilla()){
+	if(data.isIE() || (data.isMozilla() && data.isGecko()) ){
 		request.getRequestDispatcher("/advanced/index.jsp").forward(request, response);
 	}else{
 		request.getRequestDispatcher("/basic/index.jsp").forward(request, response);

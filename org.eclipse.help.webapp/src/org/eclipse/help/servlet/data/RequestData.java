@@ -46,12 +46,24 @@ public class RequestData {
 		return preferences;
 	}
 
+	public boolean isGecko() {
+		return UrlUtil.isGecko(request);
+	}
+
 	public boolean isIE() {
 		return UrlUtil.isIE(request);
 	}
 
+	public boolean isKonqueror() {
+		return UrlUtil.isKonqueror(request);
+	}
+
 	public boolean isMozilla() {
 		return UrlUtil.isMozilla(request);
+	}
+	
+	public boolean isOpera() {
+		return UrlUtil.isOpera(request);
 	}
 	
 	public String getLocale() {

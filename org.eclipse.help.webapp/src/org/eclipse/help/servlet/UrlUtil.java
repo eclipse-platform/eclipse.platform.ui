@@ -210,15 +210,30 @@ public class UrlUtil {
 			url = "../content/help:" + url;
 		return url;
 	}
+
+	public static boolean isGecko(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		return agent.indexOf("gecko") >= 0;
+	}
+	
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
-		boolean opera = (agent.indexOf("opera") >= 0);
-		return (agent.indexOf("msie") >= 0) && !opera;
+		return (agent.indexOf("msie") >= 0);
 	}
 
+	public static boolean isKonqueror(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		return agent.indexOf("konqueror") >=0;
+	}
+	
 	public static boolean isMozilla(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
-		boolean opera = (agent.toLowerCase().indexOf("opera") >= 0);
-		return !isIE(request) && (agent.indexOf("mozilla/5") >= 0) && !opera;
+		return agent.indexOf("mozilla/5") >= 0;
 	}
+
+	public static boolean isOpera(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		return agent.indexOf("opera") >= 0;
+	}
+
 }
