@@ -122,7 +122,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			String oldKey = (String) objectStack.pop();
 			String newKey = charBuffer.toString();
 			if (oldKey != null && oldKey.length() != 0) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_whichKey, oldKey, newKey));
+				parseProblem(Messages.bind(Messages.projRead_whichKey, oldKey, newKey));
 				objectStack.push(oldKey);
 			} else {
 				objectStack.push(newKey);
@@ -139,7 +139,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// There is a value place holder on the top of the stack
 			String oldValue = (String) objectStack.pop();
 			if (oldValue != null && oldValue.length() != 0) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_whichValue, oldValue, newValue));
+				parseProblem(Messages.bind(Messages.projRead_whichValue, oldValue, newValue));
 				objectStack.push(oldValue);
 			} else {
 				objectStack.push(newValue);
@@ -315,15 +315,15 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			int type = link.getType();
 			IPath location = link.getLocation();
 			if ((name == null) || name.length() == 0) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_emptyLinkName, Integer.toString(type), location));
+				parseProblem(Messages.bind(Messages.projRead_emptyLinkName, Integer.toString(type), location));
 				return;
 			}
 			if (type == -1) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_badLinkType, name, location));
+				parseProblem(Messages.bind(Messages.projRead_badLinkType, name, location));
 				return;
 			}
 			if (location.isEmpty()) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_badLinkLocation, name, Integer.toString(type)));
+				parseProblem(Messages.bind(Messages.projRead_badLinkLocation, name, Integer.toString(type)));
 				return;
 			}
 
@@ -340,7 +340,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
 			IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
 			if (!oldLocation.isEmpty()) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_badLocation, oldLocation, newLocation));
+				parseProblem(Messages.bind(Messages.projRead_badLocation, oldLocation, newLocation));
 			} else {
 				((LinkDescription) objectStack.peek()).setLocation(Path.fromPortableString(newLocation));
 			}
@@ -357,7 +357,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// on this LinkDescription.
 			String oldName = ((LinkDescription) objectStack.peek()).getName();
 			if (oldName.length() != 0) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_badLinkName, oldName, newName));
+				parseProblem(Messages.bind(Messages.projRead_badLinkName, oldName, newName));
 			} else {
 				((LinkDescription) objectStack.peek()).setName(newName);
 			}
@@ -382,7 +382,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// on this LinkDescription.
 			int oldType = ((LinkDescription) objectStack.peek()).getType();
 			if (oldType != -1) {
-				parseProblem(Messages.bind(Messages.projectDescriptionReader_badLinkType2, Integer.toString(oldType), Integer.toString(newType)));
+				parseProblem(Messages.bind(Messages.projRead_badLinkType2, Integer.toString(oldType), Integer.toString(newType)));
 			} else {
 				((LinkDescription) objectStack.peek()).setType(newType);
 			}
@@ -493,7 +493,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	public ProjectDescription read(InputSource input) {
-		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projectDescriptionReader_failureReadingProjectDesc, null);
+		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projRead_failureReadingProjectDesc, null);
 		objectStack = new Stack();
 		state = S_INITIAL;
 		try {
@@ -565,7 +565,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_PROJECT_DESC;
 					projectDescription = new ProjectDescription();
 				} else {
-					throw (new SAXException(Messages.bind(Messages.projectDescriptionReader_notProjectDescription, elementName)));
+					throw (new SAXException(Messages.bind(Messages.projRead_notProjectDescription, elementName)));
 				}
 				break;
 			case S_PROJECT_DESC :

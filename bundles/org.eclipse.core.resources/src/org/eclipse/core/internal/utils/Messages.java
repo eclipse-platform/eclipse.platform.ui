@@ -208,16 +208,16 @@ public class Messages extends PlatformMessages {
 	public static String preferences_saveProblems;
 	public static String preferences_syncException;
 
-	public static String projectDescriptionReader_badLinkLocation;
-	public static String projectDescriptionReader_badLinkName;
-	public static String projectDescriptionReader_badLinkType;
-	public static String projectDescriptionReader_badLinkType2;
-	public static String projectDescriptionReader_badLocation;
-	public static String projectDescriptionReader_emptyLinkName;
-	public static String projectDescriptionReader_failureReadingProjectDesc;
-	public static String projectDescriptionReader_notProjectDescription;
-	public static String projectDescriptionReader_whichKey;
-	public static String projectDescriptionReader_whichValue;
+	public static String projRead_badLinkLocation;
+	public static String projRead_badLinkName;
+	public static String projRead_badLinkType;
+	public static String projRead_badLinkType2;
+	public static String projRead_badLocation;
+	public static String projRead_emptyLinkName;
+	public static String projRead_failureReadingProjectDesc;
+	public static String projRead_notProjectDescription;
+	public static String projRead_whichKey;
+	public static String projRead_whichValue;
 
 	public static String properties_couldNotClose;
 	public static String properties_couldNotDeleteProp;
