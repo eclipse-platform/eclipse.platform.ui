@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -38,7 +38,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 /**
- *
+ * @since 3.0
  */
 public class TextFileBufferManager implements ITextFileBufferManager {	
 		
@@ -107,8 +107,15 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @return the workspace file at the location or <code>null</code>
 	 */
 	public IFile getWorkspaceFileAtLocation(IPath location) {
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		return workspace.getRoot().getFileForLocation(location);		
+		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+		IPath workspacePath= workspaceRoot.getLocation();
+		if (workspacePath.isPrefixOf(location)) {
+			IPath fileLocation= location.removeFirstSegments(workspacePath.segmentCount());
+			IFile file= workspaceRoot.getFile(fileLocation);
+			if  (file != null && file.exists())
+				return file;
+		}
+		return null;		
 	}
 	
 	private boolean isWorkspaceResource(IPath location) {

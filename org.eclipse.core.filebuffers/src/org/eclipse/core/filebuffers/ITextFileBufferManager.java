@@ -27,6 +27,16 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	/**
 	 * Returns the text file buffer managed for the file at the given location
 	 * or <code>null</code> if either there is no such text file buffer.
+	 * <p>
+	 * The provided location must fulfill the following requirements:
+	 * </p>
+	 * <ul>
+	 * <li>It is given as an absolute path in the locale file system.</li>
+	 * <li>If the location is the location of a workspace resource, the
+	 * location describes the location inside the workspace. I.e. for linked
+	 * resources the location is the unresolved location and the not the
+	 * resolved location to the lnked resource's local content.</li>
+	 * </ul>
 	 * 
 	 * @param location the location
 	 * @return the text file buffer managed for that location or <code>null</code>
@@ -42,8 +52,18 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	String getDefaultEncoding();
 	
 	/**
-	 * Creates a new empty document . The document is set up in the same way as it would
-	 * be used in a text file buffer for a file at the given location.
+	 * Creates a new empty document . The document is set up in the same way as
+	 * it would be used in a text file buffer for a file at the given location.
+	 * <p>
+	 * The provided location must fulfill the following requirements:
+	 * </p>
+	 * <ul>
+	 * <li>It is given as an absolute path in the locale file system.</li>
+	 * <li>If the location is the location of a workspace resource, the
+	 * location describes the location inside the workspace. I.e. for linked
+	 * resources the location is the unresolved location and the not the
+	 * resolved location to the lnked resource's local content.</li>
+	 * </ul>
 	 * 
 	 * @param location the location used to set up the newly created document
 	 * @return a new empty document
