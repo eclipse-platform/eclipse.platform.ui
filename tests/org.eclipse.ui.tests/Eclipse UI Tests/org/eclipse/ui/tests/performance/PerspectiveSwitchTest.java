@@ -77,7 +77,9 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         // Open both perspective outside the loop so as not to include
         // the initial time to open, just switching.        
         activePage.setPerspective(perspective1);
+        activePage.resetPerspective();
         activePage.setPerspective(perspective2);
+        activePage.resetPerspective();
 
         for (int i = 0; i < 20; i++) {
             processEvents();

@@ -20,6 +20,7 @@ import org.eclipse.ui.tests.performance.layout.LayoutTest;
 import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
+import org.eclipse.ui.tests.performance.layout.RecursiveTrimLayoutWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 
 /**
@@ -37,8 +38,14 @@ class WorkbenchPerformanceSuite extends TestSuite {
     
     public static final String [][] PERSPECTIVE_SWITCH_PAIRS = {
         {"org.eclipse.ui.tests.dnd.dragdrop", "org.eclipse.ui.tests.fastview_perspective", "1.perf_basic"},
-        {"org.eclipse.ui.resourcePerspective", "org.eclipse.jdt.ui.JavaPerspective", "1.java"},
-        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"}};
+        
+        // Test switching between a perspective with lots of actions and a perspective with none
+        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.ui.tests.util.EmptyPerspective", "1.perf_basic"},
+        
+        // Test switching between two perspectives with lots of actions but some commonality
+        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"},
+        {"org.eclipse.ui.resourcePerspective", "org.eclipse.jdt.ui.JavaPerspective", "1.java"} 
+    };
     
     public static final String[] VIEW_IDS = {
         "org.eclipse.ui.views.ProblemView",
@@ -57,6 +64,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      * 
      */
     public WorkbenchPerformanceSuite() {
+        addLayoutScenarios();
         addResizeScenarios();
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
@@ -119,6 +127,10 @@ class WorkbenchPerformanceSuite extends TestSuite {
         
         // Test resizing
         addTest(new ResizeTest(factory));
+    }
+
+    private void addLayoutScenarios() {
+        addLayoutScenarios(new RecursiveTrimLayoutWidgetFactory());
     }
     
     /**

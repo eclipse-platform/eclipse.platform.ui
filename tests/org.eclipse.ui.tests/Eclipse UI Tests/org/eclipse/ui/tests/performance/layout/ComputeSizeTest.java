@@ -57,6 +57,10 @@ public class ComputeSizeTest extends BasicPerformanceTest {
             
             processEvents();
             
+            // Place some bogus size queries to reduce the chance of a cached value being returned
+            widget.computeSize(100, SWT.DEFAULT, false);
+            widget.computeSize(SWT.DEFAULT, 100, false);
+            
             performanceMeter.start();
             
             widget.computeSize(xHint, yHint, flushState);
