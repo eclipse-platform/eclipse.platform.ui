@@ -652,15 +652,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info == null)
 			return;
 
-		try {
-			doValidateState(element, computationContext);
-
-		} catch (ValidateStateException e) {
-			doUpdateStateCache(element);
-			info.fIsStateValidated= true;
-			fireElementStateValidationChanged(element, true);
-			throw e;
-		}
+		doValidateState(element, computationContext);
 
 		doUpdateStateCache(element);
 		info.fIsStateValidated= true;

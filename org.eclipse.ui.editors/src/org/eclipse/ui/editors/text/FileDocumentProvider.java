@@ -47,7 +47,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-import org.eclipse.ui.texteditor.ValidateStateException;
 
 
 
@@ -644,11 +643,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				IFile file= input.getFile();
 				if (file.isReadOnly()) { // do not use cached state here
 					IWorkspace workspace= file.getWorkspace();
-					IStatus status= workspace.validateEdit(new IFile[] { file }, computationContext);
-					if (!status.isOK()) {
-						super.doValidateState(element, computationContext);
-						throw new ValidateStateException(status);
-					}
+					workspace.validateEdit(new IFile[] { file }, computationContext);
 				}
 			}
 		}

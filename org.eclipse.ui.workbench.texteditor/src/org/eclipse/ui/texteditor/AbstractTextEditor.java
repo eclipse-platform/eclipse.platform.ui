@@ -1164,8 +1164,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
-//		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, ST.DELETE_PREVIOUS_WORD),
-//		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, ST.DELETE_NEXT_WORD),
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, ST.DELETE_WORD_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, ST.DELETE_WORD_NEXT),
 		// miscellaneous
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};
@@ -2809,21 +2809,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 			
 		IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;	
-		boolean wasReadOnly= isEditorInputReadOnly();
 				
 		try {
 			extension.validateState(input, getSite().getShell());	
 		} catch (CoreException exception) {
-
-			// for backward compatibility only
-			if (exception instanceof ValidateStateException) {
-				if (fSourceViewer != null)
-					fSourceViewer.setEditable(isEditable());
-					
-				if (wasReadOnly != isEditorInputReadOnly())
-					updateStateDependentActions();
-			}
-									
+		
 			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 			log.log(exception.getStatus());
 
@@ -2838,8 +2828,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer != null)
 			fSourceViewer.setEditable(isEditable());
 
-		if (wasReadOnly != isEditorInputReadOnly())
-			updateStateDependentActions();
+		updateStateDependentActions();
 	}
 
 	/*
