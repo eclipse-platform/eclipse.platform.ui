@@ -159,7 +159,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         ProgressManager.shutdownProgressManager();
 
         themeRegistry = null;
-        workingSetManager = null;
+        if (workingSetManager != null) {
+        	workingSetManager.dispose();
+        	workingSetManager = null;
+        }
         workingSetRegistry = null;
 
         preferenceManager = null;
