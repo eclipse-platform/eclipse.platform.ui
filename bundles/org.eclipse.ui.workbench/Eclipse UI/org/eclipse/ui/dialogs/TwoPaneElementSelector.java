@@ -186,7 +186,6 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 	 * @see AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */	
 	protected void handleSelectionChanged() {
-		super.handleSelectionChanged();
 		handleUpperSelectionChanged();
 	}
 
@@ -204,11 +203,11 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		else
 			updateLowerListWidget(fQualifierElements);
 
-		updateOkState();		
+		validateCurrentSelection();
 	}
 
 	private void handleLowerSelectionChanged() {
-		updateOkState();
+		validateCurrentSelection();
 	}
 
 	/**
