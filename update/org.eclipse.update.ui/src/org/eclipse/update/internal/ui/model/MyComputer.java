@@ -10,17 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.io.File;
-import java.util.Vector;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.search.*;
 
 public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	private static final String KEY_LABEL = "MyComputer.label";
@@ -88,58 +82,5 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	 */
 	public Object getParent(Object arg0) {
 		return null;
-	}
-
-	public void collectSites(
-		Vector sites,
-		MyComputerSearchSettings settings,
-		IProgressMonitor monitor) {
-		IVolume[] volumes = LocalSystemInfo.getVolumes();
-		for (int i = 0; i < volumes.length; i++) {
-			File drive = volumes[i].getFile();
-			if (monitor.isCanceled())
-				return;
-			DriveSearchSettings ds = settings.getDriveSettings(drive.getPath());
-			if (ds.isChecked()) {
-				collectSites(drive, true, sites, ds, monitor);
-			}
-		}
-	}
-
-	private void collectSites(
-		File dir,
-		boolean root,
-		Vector sites,
-		DriveSearchSettings driveSettings,
-		IProgressMonitor monitor) {
-			
-		if (root) {
-			// See if the root itself is the site.
-			SiteBookmark rootSite = MyComputerDirectory.createSite(dir, true);
-			if (rootSite!=null) {
-				sites.add(rootSite);
-				return;
-			}
-		}
-
-		File[] children = dir.listFiles();
-		if (children == null)
-			return;
-
-		for (int i = 0; i < children.length; i++) {
-			File child = children[i];
-			if (monitor.isCanceled())
-				return;
-			if (child.isDirectory()) {
-				monitor.subTask(child.getPath());
-				SiteBookmark bookmark = MyComputerDirectory.createSite(child, false);
-				if (bookmark != null) {
-					ISite site = bookmark.getSite(false, null);
-					if (site != null)
-						sites.add(bookmark);
-				} else
-					collectSites(child, false, sites, driveSettings, monitor);
-			}
-		}
 	}
 }

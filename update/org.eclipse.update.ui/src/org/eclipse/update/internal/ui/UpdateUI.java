@@ -10,30 +10,30 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.appserver.*;
-import org.eclipse.help.internal.browser.*;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.program.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.model.SiteLocalModel;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
-import org.eclipse.update.internal.ui.security.*;
+import org.eclipse.update.internal.ui.security.UpdateManagerAuthenticator;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -430,10 +430,14 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (restart)
 			PlatformUI.getWorkbench().restart();
 	}
-	
-	public static void showURL(String url) {
 
-		url = WebInstallHandler.getEncodedURLName(url);
+	public static void showURL(String url) {
+		showURL(url, false);
+	}
+	
+	public static void showURL(String url, boolean encodeHostAndPort) {
+		if (encodeHostAndPort)
+			url = encodeHostAndPort(url);
 
 		if (SWT.getPlatform().equals("win32")) {
 			Program.launch(url);
@@ -444,6 +448,35 @@ public class UpdateUI extends AbstractUIPlugin {
 			} catch (Exception e) {
 				UpdateUI.logException(e);
 			}
+		}
+	}
+
+	private static String encodeHostAndPort(String urlName) {
+		String callbackURL = getCallbackURLAsString();
+		if (callbackURL == null)
+			return urlName;
+		String callbackParameter = "updateURL=" + callbackURL;
+		if (urlName.indexOf('?') != -1)
+			return urlName + "&" + callbackParameter;
+		else
+			return urlName + "?" + callbackParameter;
+	}
+	
+	private static String getCallbackURLAsString() {
+		String host = getDefault().getAppServerHost();
+		int port = getDefault().getAppServerPort();
+		if (host == null || port == 0)
+			return null;
+		else {
+			String value =
+				"http://"
+					+ host
+					+ ":"
+					+ port
+					+ "/"
+					+ WEB_APP_ID
+					+ "/install";
+			return URLEncoder.encode(value);
 		}
 	}
 

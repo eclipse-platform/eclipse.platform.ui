@@ -31,7 +31,7 @@ public class GoToWebsiteAction extends Action {
 	}
 	
 	private void showURL(String url) {
-		UpdateUI.showURL(url);
+		UpdateUI.showURL(url, true);
 	}
 
 }

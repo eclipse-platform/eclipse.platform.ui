@@ -15,9 +15,8 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.xerces.parsers.DOMParser;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.search.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -204,33 +203,7 @@ public class BookmarkUtil {
 				writeObject(indent2, children[i], writer);
 			}
 			writer.println(indent + "</folder>");
-		} else if (obj instanceof SearchObject) {
-			SearchObject search = (SearchObject) obj;
-			if (search.isPersistent() == false)
-				return;
-			String name = search.getName();
-			String categoryId = search.getCategoryId();
-			String fixed = search.isCategoryFixed() ? "true" : "false";
-			writer.println(
-				indent
-					+ "<search name=\""
-					+ name
-					+ "\" category=\""
-					+ categoryId
-					+ "\" fixed=\""
-					+ fixed
-					+ "\">");
-			Hashtable settings = search.getSettings();
-			String indent2 = indent + "   ";
-			for (Enumeration enum = settings.keys(); enum.hasMoreElements();) {
-				String key = (String) enum.nextElement();
-				String value = (String) settings.get(key);
-				writer.println(
-					indent2 + "<param name=\"" + key + "\" value=\"" + value + "\"/>");
-			}
-			writer.println(indent + "</search>");
 		}
-
 	}
 
 	private static String getAttribute(Node node, String name) {

@@ -26,7 +26,6 @@ public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
 
 	IWorkbenchWindow window;
-	SearchObject searchObject;
 	ISearchCategory category;
 	/**
 	 * The constructor.
