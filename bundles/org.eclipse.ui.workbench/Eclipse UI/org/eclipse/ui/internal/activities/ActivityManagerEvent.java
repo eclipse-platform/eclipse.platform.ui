@@ -23,7 +23,7 @@ final class ActivityManagerEvent implements IActivityManagerEvent {
 	ActivityManagerEvent(IActivityManager activityManager, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
-		
+
 		this.activityManager = activityManager;
 		this.definedActivityIdsChanged = definedActivityIdsChanged;
 		this.enabledActivityIdsChanged = enabledActivityIdsChanged;

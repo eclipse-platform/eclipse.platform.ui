@@ -36,7 +36,7 @@ final class Persistence {
 
 	static IActivityDefinition readActivityDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
-			throw new NullPointerException();			
+			throw new NullPointerException();
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
@@ -48,24 +48,24 @@ final class Persistence {
 
 	static List readActivityDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
+			throw new NullPointerException();
+
 		IMemento[] mementos = memento.getChildren(name);
-	
+
 		if (mementos == null)
 			throw new NullPointerException();
-	
+
 		List list = new ArrayList(mementos.length);
-	
+
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readActivityDefinition(mementos[i], pluginIdOverride));
-	
-		return list;				
-	}	
-	
+
+		return list;
+	}
+
 	static IPatternBindingDefinition readPatternBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
-			throw new NullPointerException();			
+			throw new NullPointerException();
 
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
 		boolean inclusive = Boolean.valueOf(memento.getString(TAG_INCLUSIVE)).booleanValue();
@@ -76,19 +76,19 @@ final class Persistence {
 
 	static List readPatternBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
+			throw new NullPointerException();
+
 		IMemento[] mementos = memento.getChildren(name);
-	
+
 		if (mementos == null)
 			throw new NullPointerException();
-	
+
 		List list = new ArrayList(mementos.length);
-	
+
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readPatternBindingDefinition(mementos[i], pluginIdOverride));
-	
-		return list;				
+
+		return list;
 	}
 
 	static void writeActivityDefinition(IMemento memento, IActivityDefinition activityDefinition) {
@@ -105,7 +105,7 @@ final class Persistence {
 	static void writeActivityDefinitions(IMemento memento, String name, List activityDefinitions) {
 		if (memento == null || name == null || activityDefinitions == null)
 			throw new NullPointerException();
-		
+
 		activityDefinitions = new ArrayList(activityDefinitions);
 		Iterator iterator = activityDefinitions.iterator();
 
@@ -114,10 +114,10 @@ final class Persistence {
 
 		iterator = activityDefinitions.iterator();
 
-		while (iterator.hasNext()) 
+		while (iterator.hasNext())
 			writeActivityDefinition(memento.createChild(name), (IActivityDefinition) iterator.next());
-	}	
-	
+	}
+
 	static void writePatternBindingDefinition(IMemento memento, IPatternBindingDefinition patternBindingDefinition) {
 		if (memento == null || patternBindingDefinition == null)
 			throw new NullPointerException();
@@ -131,7 +131,7 @@ final class Persistence {
 	static void writePatternBindingDefinitions(IMemento memento, String name, List patternBindingDefinitions) {
 		if (memento == null || name == null || patternBindingDefinitions == null)
 			throw new NullPointerException();
-		
+
 		patternBindingDefinitions = new ArrayList(patternBindingDefinitions);
 		Iterator iterator = patternBindingDefinitions.iterator();
 
@@ -140,10 +140,10 @@ final class Persistence {
 
 		iterator = patternBindingDefinitions.iterator();
 
-		while (iterator.hasNext()) 
+		while (iterator.hasNext())
 			writePatternBindingDefinition(memento.createChild(name), (IPatternBindingDefinition) iterator.next());
 	}
 
 	private Persistence() {
-	}	
+	}
 }

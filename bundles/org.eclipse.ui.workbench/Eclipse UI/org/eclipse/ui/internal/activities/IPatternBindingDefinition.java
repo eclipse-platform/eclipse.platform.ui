@@ -18,7 +18,6 @@ public interface IPatternBindingDefinition extends Comparable {
 	String getPattern();
 
 	String getPluginId();
-	
+
 	boolean isInclusive();
 }
-

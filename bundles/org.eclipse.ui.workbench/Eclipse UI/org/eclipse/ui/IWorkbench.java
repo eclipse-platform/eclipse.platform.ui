@@ -11,13 +11,11 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressService;
@@ -404,5 +402,5 @@ public IRoleManager getRoleManager();
  * @return
  * @since 3.0
  */
-public IActivationService getActivationService();
+public ICompoundActivityService getCompoundActivityService();
 }

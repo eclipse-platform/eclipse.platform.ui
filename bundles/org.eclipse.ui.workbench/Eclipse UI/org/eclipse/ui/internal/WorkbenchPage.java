@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,16 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -49,7 +38,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -76,11 +72,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.ActivationServiceFactory;
-import org.eclipse.ui.activities.DisposedException;
-import org.eclipse.ui.activities.IActivationService;
-import org.eclipse.ui.activities.IActivationServiceEvent;
-import org.eclipse.ui.activities.IActivationServiceListener;
+import org.eclipse.ui.activities.ActivityServiceFactory;
+import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
@@ -390,39 +383,10 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	init(w, null, input);
 }
 
-private final HashSet activationServices = new HashSet();
-private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
+private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 
-private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
-	public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
-		Set activeActivityIds = new HashSet();
-		
-		for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
-			IActivationService activationService = (IActivationService) iterator.next();
-			
-			try {
-				activeActivityIds.addAll(activationService.getActiveActivityIds());					
-			} catch (DisposedException eDisposed) {
-				iterator.remove();
-			}
-		}
-		
-		try {
-			compositeActivationService.setActiveActivityIds(activeActivityIds);
-		} catch (DisposedException eDisposed) {			
-		}
-	}
-};
-
-public IActivationService getActivationService() {
-	IActivationService activationService = ActivationServiceFactory.getActivationService();
-	activationServices.add(activationService);	
-	activationService.addActivationServiceListener(activationServiceListener);
-	return activationService;	
-}
-
-public IActivationService getCompositeActivationService() {
-	return compositeActivationService;
+public ICompoundActivityService getCompoundActivityService() {
+	return compoundActivityService;
 }
 
 private IActionService actionService;

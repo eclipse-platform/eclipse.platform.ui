@@ -7,40 +7,33 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.ui.activities;
 
 /**
  * <p>
- * Signals that an attempt was made to access the attributes of an disposed
- * object.
+ * TODO javadoc
  * </p>
  * <p>
- * This class is not intended to be extended by clients.
- * </p> 
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IActivityServiceListener
  */
-public class DisposedException extends Exception {
+public interface ICompoundActivityService extends IActivityService {
 
 	/**
-	 * Constructs a <code>DisposedException</code> with no specified detail 
-	 * message. 
-	 */	
-	public DisposedException() {
-	}
+	 * TODO javadoc
+	 */
+	void addActivityService(IActivityService activityService);
 
 	/**
-	 * Constructs a <code>DisposedException</code> with the specified detail 
-	 * message. 
-	 *
-	 * @param s	the detail message.
-	 */	
-	public DisposedException(String s) {
-		super(s);
-	}
+	 * TODO javadoc
+	 */
+	void removeActivityService(IActivityService activityService);
 }

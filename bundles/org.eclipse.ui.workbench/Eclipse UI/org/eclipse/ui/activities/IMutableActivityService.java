@@ -11,10 +11,11 @@
 
 package org.eclipse.ui.activities;
 
+import java.util.Set;
+
 /**
  * <p>
- * An instance of <code>IActivationServiceEvent</code> describes changes to an 
- * instance of <code>IActivationService</code>. 
+ * TODO javadoc
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -24,26 +25,17 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IActivationService
- * @see IActivationServiceListener#activationServiceChanged
+ * @see IActivityServiceListener
  */
-public interface IActivationServiceEvent {
+public interface IMutableActivityService extends IActivityService {
 
 	/**
-	 * Returns the instance of <code>IActivationService</code> that has changed.
-	 *
-	 * @return the instance of <code>IActivationService</code> that has changed. 
-	 * 		   Guaranteed not to be <code>null</code>.
+	 * Sets the set of identifiers to active activities.
+	 * 
+	 * @param activeActivityIds
+	 *            the set of identifiers to active activities. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
-	IActivationService getActivationService();
-	
-	/**
-	 * TODO javadoc
-	 */		
-	boolean haveActiveActivityIdsChanged();
-	
-	/**
-	 * TODO javadoc
-	 */
-	boolean isDisposed();
+	void setActiveActivityIds(Set activeActivityIds);
 }

@@ -15,10 +15,10 @@ import java.util.Set;
 
 /**
  * <p>
- * An instance of <code>IActivityManager</code> can be used to obtain instances
- * of <code>IActivity</code>, as well as manage whether or not those instances
- * are enabled or disabled.
- * </p> 
+ * An instance of <code>IActivityManager</code> can be used to obtain
+ * instances of <code>IActivity</code>, as well as manage whether or not
+ * those instances are enabled or disabled.
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -34,26 +34,25 @@ import java.util.Set;
 public interface IActivityManager {
 
 	/**
-	 * Registers an instance of <code>IActivityManagerListener</code> to listen 
-	 * for changes to attributes of this instance.
-	 *
-	 * @param activityManagerListener the instance of 
-	 *                                <code>IActivityManagerListener</code> to 
-	 * 						          register. Must not be <code>null</code>. 
-	 *                                If an attempt is made to register an 
-	 *                                instance of 
-	 *                                <code>IActivityManagerListener</code> 
-	 *                                which is already registered with this 
-	 *                                instance, no operation is performed.
-	 */		
+	 * Registers an instance of <code>IActivityManagerListener</code> to
+	 * listen for changes to attributes of this instance.
+	 * 
+	 * @param activityManagerListener
+	 *            the instance of <code>IActivityManagerListener</code> to
+	 *            register. Must not be <code>null</code>. If an attempt is
+	 *            made to register an instance of <code>IActivityManagerListener</code>
+	 *            which is already registered with this instance, no operation
+	 *            is performed.
+	 */
 	void addActivityManagerListener(IActivityManagerListener activityManagerListener);
 
 	/**
 	 * Returns a handle to an activity given an identifier.
-	 *
-	 * @param activityId an identifier. Must not be <code>null</code>
-	 * @return           a handle to an activity.
-	 */	
+	 * 
+	 * @param activityId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to an activity.
+	 */
 	IActivity getActivity(String activityId);
 
 	/**
@@ -61,67 +60,64 @@ public interface IActivityManager {
 	 * Returns the set of identifiers to defined activities.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
+	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
-	 *
-	 * @return the set of identifiers to defined activities. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
+	 * 
+	 * @return the set of identifiers to defined activities. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
-	 */	
+	 */
 	Set getDefinedActivityIds();
 
 	/**
 	 * <p>
-	 * Returns the set of identifiers to enabled activities. This set is not 
+	 * Returns the set of identifiers to enabled activities. This set is not
 	 * necessarily a subset of the set of identifiers to defined activities.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
+	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
-	 *
-	 * @return the set of identifiers to enabled activities. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
+	 * 
+	 * @return the set of identifiers to enabled activities. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
-	 */	
-	Set getEnabledActivityIds();	
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean match(String string, Set activityIds);	
+	 */
+	Set getEnabledActivityIds();
 
 	/**
 	 * TODO javadoc
-	 */	
-	Set matches(String string, Set activityIds);
-	
+	 */
+	boolean match(String string, Set activityIds);
+
 	/**
-	 * Unregisters an instance of <code>IActivityManagerListener</code> 
+	 * TODO javadoc
+	 */
+	Set matches(String string, Set activityIds);
+
+	/**
+	 * Unregisters an instance of <code>IActivityManagerListener</code>
 	 * listening for changes to attributes of this instance.
-	 *
-	 * @param activityManagerListener the instance of 
-	 *                                <code>IActivityManagerListener</code> to 
-	 * 						          unregister. Must not be <code>null</code>. 
-	 *                                If an attempt is made to unregister an 
-	 *                                instance of 
-	 *                                <code>IActivityManagerListener</code> 
-	 *                                which is not already registered with this 
-	 *                                instance, no operation is performed.
+	 * 
+	 * @param activityManagerListener
+	 *            the instance of <code>IActivityManagerListener</code> to
+	 *            unregister. Must not be <code>null</code>. If an attempt
+	 *            is made to unregister an instance of <code>IActivityManagerListener</code>
+	 *            which is not already registered with this instance, no
+	 *            operation is performed.
 	 */
 	void removeActivityManagerListener(IActivityManagerListener activityManagerListener);
-	
+
 	/**
-	 * Sets the set of identifiers to enabled activities. 
-	 *
-	 * @param enabledActivityIds the set of identifiers to enabled activities. 
-	 *                           This set may be empty, but it must not be 
-	 *                           <code>null</code>. If this set is not empty, it 
-	 *                           must only contain instances of 
-	 *                           <code>String</code>.	
+	 * Sets the set of identifiers to enabled activities.
+	 * 
+	 * @param enabledActivityIds
+	 *            the set of identifiers to enabled activities. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
-	void setEnabledActivityIds(Set enabledActivityIds);		
+	void setEnabledActivityIds(Set enabledActivityIds);
 }

@@ -41,8 +41,8 @@ final class Activity implements IActivity {
 	private transient boolean hashCodeComputed;
 	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
-	
-	Activity(ActivityManager activityManager, String id) {	
+
+	Activity(ActivityManager activityManager, String id) {
 		if (activityManager == null || id == null)
 			throw new NullPointerException();
 
@@ -53,51 +53,51 @@ final class Activity implements IActivity {
 	public void addActivityListener(IActivityListener activityListener) {
 		if (activityListener == null)
 			throw new NullPointerException();
-		
+
 		if (activityListeners == null)
 			activityListeners = new ArrayList();
-		
+
 		if (!activityListeners.contains(activityListener))
 			activityListeners.add(activityListener);
-		
+
 		activityManager.getActivitiesWithListeners().add(this);
 	}
 
 	public int compareTo(Object object) {
 		Activity castedObject = (Activity) object;
 		int compareTo = Util.compare(defined, castedObject.defined);
-			
+
 		if (compareTo == 0) {
 			compareTo = Util.compare(description, castedObject.description);
 
 			if (compareTo == 0) {
 				compareTo = Util.compare(enabled, castedObject.enabled);
-							
-				if (compareTo == 0) {		
-					compareTo = Util.compare(id, castedObject.id);			
-				
+
+				if (compareTo == 0) {
+					compareTo = Util.compare(id, castedObject.id);
+
 					if (compareTo == 0) {
 						compareTo = Util.compare(name, castedObject.name);
 
 						if (compareTo == 0) {
 							compareTo = Util.compare(parentId, castedObject.parentId);
 
-							if (compareTo == 0) 
-								compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray); 
+							if (compareTo == 0)
+								compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray);
 						}
 					}
 				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof Activity))
 			return false;
 
-		Activity castedObject = (Activity) object;	
+		Activity castedObject = (Activity) object;
 		boolean equals = true;
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
@@ -105,46 +105,43 @@ final class Activity implements IActivity {
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		equals &= Util.equals(parentId, castedObject.parentId);
-		equals &= Util.equals(patternBindings, castedObject.patternBindings);		
+		equals &= Util.equals(patternBindings, castedObject.patternBindings);
 		return equals;
 	}
 
-	public String getDescription()
-		throws NotDefinedException {
+	public String getDescription() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
-			
-		return description;	
+
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
-	public String getName()
-		throws NotDefinedException {
+
+	public String getName() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
 
 		return name;
-	}	
+	}
 
-	public String getParentId()
-		throws NotDefinedException {
+	public String getParentId() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
 
 		return parentId;
-	}			
-	
+	}
+
 	public List getPatternBindings() {
 		return patternBindings;
-	}		
-	
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
@@ -153,10 +150,10 @@ final class Activity implements IActivity {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(patternBindings);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
-	
+
 	public boolean isDefined() {
 		return defined;
 	}
@@ -167,11 +164,11 @@ final class Activity implements IActivity {
 
 	public boolean match(String string) {
 		boolean match = false;
-			
+
 		if (isDefined())
 			for (Iterator iterator = patternBindings.iterator(); iterator.hasNext();) {
 				IPatternBinding patternBinding = (IPatternBinding) iterator.next();
-			
+
 				if (patternBinding.isInclusive() && !match)
 					match = patternBinding.getPattern().matcher(string).matches();
 				else if (!patternBinding.isInclusive() && match)
@@ -180,14 +177,14 @@ final class Activity implements IActivity {
 
 		return match;
 	}
-	
+
 	public void removeActivityListener(IActivityListener activityListener) {
 		if (activityListener == null)
 			throw new NullPointerException();
 
 		if (activityListeners != null)
 			activityListeners.remove(activityListener);
-		
+
 		if (activityListeners.isEmpty())
 			activityManager.getActivitiesWithListeners().remove(this);
 	}
@@ -212,19 +209,19 @@ final class Activity implements IActivity {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
-	
+
 	void fireActivityChanged(IActivityEvent activityEvent) {
 		if (activityEvent == null)
 			throw new NullPointerException();
-		
+
 		if (activityListeners != null)
 			for (int i = 0; i < activityListeners.size(); i++)
-				((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
+				 ((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
 	}
-	
+
 	boolean setDefined(boolean defined) {
 		if (defined != this.defined) {
 			this.defined = defined;
@@ -232,7 +229,7 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
+		}
 
 		return false;
 	}
@@ -244,7 +241,7 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
+		}
 
 		return false;
 	}
@@ -256,7 +253,7 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
+		}
 
 		return false;
 	}
@@ -268,7 +265,7 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
+		}
 
 		return false;
 	}
@@ -280,14 +277,14 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
+		}
 
 		return false;
-	}	
-	
+	}
+
 	boolean setPatternBindings(List patternBindings) {
 		patternBindings = Util.safeCopy(patternBindings, IPatternBinding.class);
-		
+
 		if (!Util.equals(patternBindings, this.patternBindings)) {
 			this.patternBindings = patternBindings;
 			this.patternBindingsAsArray = (IPatternBinding[]) this.patternBindings.toArray(new IPatternBinding[this.patternBindings.size()]);
@@ -295,8 +292,8 @@ final class Activity implements IActivity {
 			hashCode = 0;
 			string = null;
 			return true;
-		}		
-	
+		}
+
 		return false;
-	}	
+	}
 }

@@ -17,6 +17,7 @@ import java.util.Collection;
  * 
  * Example of populating the IObjectActivityManager for an extension point:
  * 
+ * <code>
  * //add all contributions to the manager
  * 	ObjectActivityManager objectManager =
  * 		getWorkspace().getActivityManager(CONTRIBUTION_ID, true);
@@ -27,6 +28,7 @@ import java.util.Collection;
  * 		}
  * 	}
  * 	objectManager.applyPatternBindings();
+ * </code>
  * 
  * Example of lookup of mappings:
  * 

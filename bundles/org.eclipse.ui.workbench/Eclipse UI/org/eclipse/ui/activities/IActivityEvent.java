@@ -13,8 +13,8 @@ package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityEvent</code> describes changes to an instance 
- * of <code>IActivity</code>. 
+ * An instance of <code>IActivityEvent</code> describes changes to an
+ * instance of <code>IActivity</code>.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -31,39 +31,39 @@ public interface IActivityEvent {
 
 	/**
 	 * Returns the instance of <code>IActivity</code> that has changed.
-	 *
-	 * @return the instance of <code>IActivity</code> that has changed. 
+	 * 
+	 * @return the instance of <code>IActivity</code> that has changed.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IActivity getActivity();
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	boolean hasDefinedChanged();
-	
+
 	/**
 	 * TODO javadoc
-	 */	
-	boolean hasDescriptionChanged();	
-	
+	 */
+	boolean hasDescriptionChanged();
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	boolean hasEnabledChanged();
 
 	/**
 	 * TODO javadoc
-	 */		
+	 */
 	boolean hasNameChanged();
 
 	/**
 	 * TODO javadoc
-	 */	
-	boolean hasParentIdChanged();	
-	
+	 */
+	boolean hasParentIdChanged();
+
 	/**
 	 * TODO javadoc
-	 */		
-	boolean havePatternBindingsChanged();		
+	 */
+	boolean havePatternBindingsChanged();
 }

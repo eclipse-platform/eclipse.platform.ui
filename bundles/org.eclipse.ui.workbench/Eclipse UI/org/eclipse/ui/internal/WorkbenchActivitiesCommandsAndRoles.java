@@ -570,13 +570,17 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		// activeWorkbenchWindow).getContextActivationService() : null;
 
 		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
+		
 		IActionService activeWorkbenchPageActionService =
 			activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getActionService() : null;
+		
 		IContextActivationService activeWorkbenchPageContextActivationService =
 			activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;
+		
 		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
 		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
 		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		
 		IActionService activeWorkbenchPartActionService =
 			activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getActionService() : null;
 		IContextActivationService activeWorkbenchPartContextActivationService =

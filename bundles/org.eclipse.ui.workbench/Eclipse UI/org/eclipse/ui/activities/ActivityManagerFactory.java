@@ -15,8 +15,7 @@ import org.eclipse.ui.internal.activities.ActivityManager;
 
 /**
  * <p>
- * This class allows clients to broker instances of 
- * <code>IActivityManager</code>.
+ * This class allows clients to broker instances of <code>IActivityManager</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -33,19 +32,19 @@ public final class ActivityManagerFactory {
 	/**
 	 * Creates a new instance of IActivityManager.
 	 * 
-	 * @return a new instance of IActivityManager. Clients should not make 
-	 *         assumptions about the concrete implementation outside the 
-	 *         contract of <code>IActivityManager</code>. Guaranteed not to be 
-	 *         <code>null</code>.
+	 * @return a new instance of IActivityManager. Clients should not make
+	 *         assumptions about the concrete implementation outside the
+	 *         contract of <code>IActivityManager</code>. Guaranteed not to
+	 *         be <code>null</code>.
 	 */
 	public static IActivityManager getActivityManager() {
 		return new ActivityManager();
 	}
 
 	/**
-	 * Private constructor to ensure that <code>ActivityManagerFactory</code> 
-	 * can not be instantiated. 
-	 */	
-	private ActivityManagerFactory() {		
+	 * Private constructor to ensure that <code>ActivityManagerFactory</code>
+	 * can not be instantiated.
+	 */
+	private ActivityManagerFactory() {
 	}
 }

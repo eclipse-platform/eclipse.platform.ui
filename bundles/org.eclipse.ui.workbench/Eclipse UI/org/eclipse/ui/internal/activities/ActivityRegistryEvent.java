@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.activities;
 
-
 final class ActivityRegistryEvent implements IActivityRegistryEvent {
 
 	private IActivityRegistry activityRegistry;
@@ -19,7 +18,7 @@ final class ActivityRegistryEvent implements IActivityRegistryEvent {
 	ActivityRegistryEvent(IActivityRegistry activityRegistry) {
 		if (activityRegistry == null)
 			throw new NullPointerException();
-		
+
 		this.activityRegistry = activityRegistry;
 	}
 

@@ -19,20 +19,20 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 
 	private IActivityRegistryEvent activityRegistryEvent;
 	private List activityRegistryListeners;
-	
+
 	protected List activityDefinitions = Collections.EMPTY_LIST;
-	protected List patternBindingDefinitions = Collections.EMPTY_LIST;	
-	
+	protected List patternBindingDefinitions = Collections.EMPTY_LIST;
+
 	protected AbstractActivityRegistry() {
 	}
 
 	public void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {
 		if (activityRegistryListener == null)
 			throw new NullPointerException();
-			
+
 		if (activityRegistryListeners == null)
 			activityRegistryListeners = new ArrayList();
-		
+
 		if (!activityRegistryListeners.contains(activityRegistryListener))
 			activityRegistryListeners.add(activityRegistryListener);
 	}
@@ -43,12 +43,12 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 
 	public List getPatternBindingDefinitions() {
 		return patternBindingDefinitions;
-	}	
-	
+	}
+
 	public void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {
 		if (activityRegistryListener == null)
 			throw new NullPointerException();
-			
+
 		if (activityRegistryListeners != null)
 			activityRegistryListeners.remove(activityRegistryListener);
 	}
@@ -58,9 +58,9 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 			for (int i = 0; i < activityRegistryListeners.size(); i++) {
 				if (activityRegistryEvent == null)
 					activityRegistryEvent = new ActivityRegistryEvent(this);
-							
+
 				((IActivityRegistryListener) activityRegistryListeners.get(i)).activityRegistryChanged(activityRegistryEvent);
-			}				
-		}	
+			}
+		}
 	}
-}	
+}

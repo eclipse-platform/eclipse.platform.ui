@@ -11,10 +11,8 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
-
-import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.ICompoundActivityService;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -564,5 +562,5 @@ public INavigationHistory getNavigationHistory();
  * @return
  * @since 3.0
  */
-public IActivationService getActivationService();
+public ICompoundActivityService getCompoundActivityService();
 }

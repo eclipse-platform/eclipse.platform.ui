@@ -14,12 +14,12 @@ package org.eclipse.ui.internal.activities;
 public interface IActivityDefinition extends Comparable {
 
 	String getDescription();
-		
+
 	String getId();
-	
+
 	String getName();
 
 	String getParentId();
-	
+
 	String getPluginId();
 }

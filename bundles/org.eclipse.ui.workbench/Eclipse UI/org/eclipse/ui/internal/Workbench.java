@@ -19,10 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -35,18 +33,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -65,7 +51,16 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -83,13 +78,10 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.ActivationServiceFactory;
 import org.eclipse.ui.activities.ActivityManagerFactory;
-import org.eclipse.ui.activities.DisposedException;
-import org.eclipse.ui.activities.IActivationService;
-import org.eclipse.ui.activities.IActivationServiceEvent;
-import org.eclipse.ui.activities.IActivationServiceListener;
+import org.eclipse.ui.activities.ActivityServiceFactory;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdviser;
@@ -311,39 +303,10 @@ public final class Workbench implements IWorkbench {
 		return roleManager;
 	}		
 
-	private final HashSet activationServices = new HashSet();
-	private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
+	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 
-	private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
-		public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
-			Set activeActivityIds = new HashSet();
-			
-			for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
-				IActivationService activationService = (IActivationService) iterator.next();
-				
-				try {
-					activeActivityIds.addAll(activationService.getActiveActivityIds());					
-				} catch (DisposedException eDisposed) {
-					iterator.remove();
-				}
-			}
-			
-			try {
-				compositeActivationService.setActiveActivityIds(activeActivityIds);
-			} catch (DisposedException eDisposed) {			
-			}
-		}
-	};
-
-	public IActivationService getActivationService() {
-		IActivationService activationService = ActivationServiceFactory.getActivationService();
-		activationServices.add(activationService);	
-		activationService.addActivationServiceListener(activationServiceListener);
-		return activationService;	
-	}
-
-	public IActivationService getCompositeActivationService() {
-		return compositeActivationService;
+	public ICompoundActivityService getCompoundActivityService() {
+		return compoundActivityService;
 	}
 	
 	public final void disableKeyFilter() {

@@ -24,17 +24,24 @@ final class ActivityEvent implements IActivityEvent {
 	private boolean parentIdChanged;
 	private boolean patternBindingsChanged;
 
-	ActivityEvent(IActivity activity, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean nameChanged, boolean parentIdChanged, boolean patternBindingsChanged) {
+	ActivityEvent(
+		IActivity activity,
+		boolean definedChanged,
+		boolean descriptionChanged,
+		boolean enabledChanged,
+		boolean nameChanged,
+		boolean parentIdChanged,
+		boolean patternBindingsChanged) {
 		if (activity == null)
 			throw new NullPointerException();
-		
+
 		this.activity = activity;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.enabledChanged = enabledChanged;
 		this.nameChanged = nameChanged;
-		this.parentIdChanged = parentIdChanged;		
-		this.patternBindingsChanged = patternBindingsChanged;		
+		this.parentIdChanged = parentIdChanged;
+		this.patternBindingsChanged = patternBindingsChanged;
 	}
 
 	public IActivity getActivity() {
@@ -43,12 +50,12 @@ final class ActivityEvent implements IActivityEvent {
 
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}	
-	
+	}
+
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
-	
+
 	public boolean hasEnabledChanged() {
 		return enabledChanged;
 	}
@@ -60,7 +67,7 @@ final class ActivityEvent implements IActivityEvent {
 	public boolean hasParentIdChanged() {
 		return parentIdChanged;
 	}
-	
+
 	public boolean havePatternBindingsChanged() {
 		return patternBindingsChanged;
 	}

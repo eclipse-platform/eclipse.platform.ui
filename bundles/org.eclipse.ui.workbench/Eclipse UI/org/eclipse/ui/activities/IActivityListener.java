@@ -13,9 +13,8 @@ package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityListener</code> can be used by clients to 
- * receive notification of changes to one or more instances of 
- * <code>IActivity</code>.
+ * An instance of <code>IActivityListener</code> can be used by clients to
+ * receive notification of changes to one or more instances of <code>IActivity</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -32,12 +31,11 @@ package org.eclipse.ui.activities;
 public interface IActivityListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of 
-	 * <code>IActivity</code> have changed. Specific details are described in 
-	 * the <code>IActivityEvent</code>.
-	 *
-	 * @param activityEvent the activity event. Guaranteed not to be 
-	 *                      <code>null</code>.
+	 * Notifies that one or more attributes of an instance of <code>IActivity</code>
+	 * have changed. Specific details are described in the <code>IActivityEvent</code>.
+	 * 
+	 * @param activityEvent
+	 *            the activity event. Guaranteed not to be <code>null</code>.
 	 */
 	void activityChanged(IActivityEvent activityEvent);
 }
