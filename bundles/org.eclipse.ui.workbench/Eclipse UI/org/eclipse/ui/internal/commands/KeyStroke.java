@@ -39,8 +39,9 @@ public final class KeyStroke implements Comparable {
 		
 		int value = Action.convertAccelerator(string);
 		
-		if (value == 0)
-			throw new IllegalArgumentException();
+		//TODO uncomment
+		//if (value == 0)
+		//	throw new IllegalArgumentException();
 			
 		return create(value);
 	}

@@ -42,7 +42,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		private final static String DEPRECATED_TAG_CONFIGURATION_ID = "configurationId"; //$NON-NLS-1$		
 		private final static String DEPRECATED_TAG_KEY = "key"; //$NON-NLS-1$
 		private final static String DEPRECATED_TAG_SCOPE_ID = "scopeId"; //$NON-NLS-1$	
-		private final static String TAG_ROOT = Persistence.TAG_PACKAGE_BASE;
+		private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 		
 		private List activeGestureConfigurations;
 		private List activeKeyConfigurations;		

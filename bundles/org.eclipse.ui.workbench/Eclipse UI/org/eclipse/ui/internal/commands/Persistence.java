@@ -19,6 +19,8 @@ import org.eclipse.ui.IMemento;
 
 final class Persistence {
 
+	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
+	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
 	final static String TAG_ACTIVE_GESTURE_CONFIGURATION = "activeGestureConfiguration"; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
@@ -37,8 +39,6 @@ final class Persistence {
 	final static String TAG_KEY_STROKE = "keyStroke"; //$NON-NLS-1$
 	final static String TAG_LOCALE = "locale"; //$NON-NLS-1$		
 	final static String TAG_NAME = "name"; //$NON-NLS-1$
-	final static String TAG_PACKAGE_BASE = "commands"; //$NON-NLS-1$
-	final static String TAG_PACKAGE_FULL = "org.eclipse.ui." + TAG_PACKAGE_BASE; //$NON-NLS-1$
 	final static String TAG_PARENT = "parent"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$		
 	final static String TAG_PLUGIN = "plugin"; //$NON-NLS-1$

@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class PreferenceRegistry extends AbstractMutableRegistry {
 
-	private final static String DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATION = "acceleratorConfigurationId"; //$NON-NLS-1$
+	private final static String DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATIONS = "acceleratorConfigurationId"; //$NON-NLS-1$
 	private final static String DEPRECATED_KEY_KEY_BINDINGS = "org.eclipse.ui.keybindings"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_BINDING = "binding"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_BINDINGS = "bindings"; //$NON-NLS-1$
@@ -41,8 +41,8 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	private final static String DEPRECATED_TAG_PLUGIN = "plugin"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_RANK = "rank"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_SCOPE = "scope"; //$NON-NLS-1$
-	private final static String KEY = Persistence.TAG_PACKAGE_FULL;
-	private final static String TAG_ROOT = Persistence.TAG_PACKAGE_FULL;
+	private final static String KEY = Persistence.PACKAGE_FULL;
+	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 
 	public static PreferenceRegistry instance;
 	
@@ -61,7 +61,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		throws IOException {
 		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 
-		String deprecatedActiveKeyConfigurationsString = preferenceStore.getString(DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATION);
+		String deprecatedActiveKeyConfigurationsString = preferenceStore.getString(DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATIONS);
 		List deprecatedActiveKeyConfigurations = Collections.EMPTY_LIST;
 	
 		if (deprecatedActiveKeyConfigurationsString != null && deprecatedActiveKeyConfigurationsString.length() != 0)		

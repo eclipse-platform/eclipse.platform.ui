@@ -29,8 +29,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class LocalRegistry extends AbstractMutableRegistry {
 
-	private final static String PATH = Persistence.TAG_PACKAGE_FULL + ".xml"; //$NON-NLS-1$
-	private final static String TAG_ROOT = Persistence.TAG_PACKAGE_FULL;
+	private final static String PATH = Persistence.PACKAGE_FULL + ".xml"; //$NON-NLS-1$
+	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 	
 	public static LocalRegistry instance;
 	
