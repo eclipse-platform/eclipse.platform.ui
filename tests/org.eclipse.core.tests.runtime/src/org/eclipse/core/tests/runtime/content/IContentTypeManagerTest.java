@@ -15,6 +15,7 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
+import org.eclipse.core.internal.resources.CharsetDeltaJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
@@ -790,6 +791,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		}
 		assertTrue("6.1", !tracer.isOnlyChange(myType));
 
+	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
+		// ensure none is left running after we finish
+		Platform.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
 }
