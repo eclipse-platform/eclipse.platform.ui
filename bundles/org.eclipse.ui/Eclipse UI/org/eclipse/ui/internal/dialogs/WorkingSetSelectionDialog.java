@@ -53,18 +53,28 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	private Button detailsButton;
 	private Button removeButton;
 	private IWorkingSet[] result;
+	private boolean multiSelect;
 
 	/**
 	 * Creates a working set selection dialog.
 	 *
 	 * @param parentShell the parent shell
+	 * @param multiSelect true=more than one working set can be selected 
+	 * 	in the dialog. false=only one working set can be selected
 	 */
-	public WorkingSetSelectionDialog(Shell parentShell) {
+	public WorkingSetSelectionDialog(Shell parentShell, boolean multiSelect) {
 		super(parentShell);
-		setTitle(WorkbenchMessages.getString("WorkingSetSelectionDialog.title")); //$NON-NLS-1$;
 		contentProvider = new ListContentProvider();
 		labelProvider = new WorkingSetLabelProvider();
-		setMessage(WorkbenchMessages.getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
+		this.multiSelect = multiSelect;		
+		if (multiSelect) {
+			setTitle(WorkbenchMessages.getString("WorkingSetSelectionDialog.title.multiSelect")); //$NON-NLS-1$;
+			setMessage(WorkbenchMessages.getString("WorkingSetSelectionDialog.message.multiSelect")); //$NON-NLS-1$
+		}
+		else {
+			setTitle(WorkbenchMessages.getString("WorkingSetSelectionDialog.title")); //$NON-NLS-1$;
+			setMessage(WorkbenchMessages.getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
+		}
 	}
 	/**
 	 * Adds the modify buttons to the dialog.
@@ -122,29 +132,29 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		Composite composite = (Composite) super.createDialogArea(parent);
 
 		createMessageArea(composite);
-
-		listViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
+		int tableStyle = SWT.BORDER;
+		if (multiSelect) {
+			tableStyle |= SWT.MULTI;
+		}
+		listViewer = new TableViewer(composite, tableStyle);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		listViewer.getTable().setLayoutData(data);
-
+		
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(contentProvider);
 		listViewer.setSorter(new WorkbenchViewerSorter());
-
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged();
 			}
 		});
-
 		listViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
-
 		addModifyButtons(composite);
 		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSets()));
 

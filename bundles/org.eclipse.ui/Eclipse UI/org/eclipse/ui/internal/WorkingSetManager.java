@@ -67,12 +67,18 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		return new WorkingSet(name, elements);
 	}
 	/**
+	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
+	 */
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent) {
+		return createWorkingSetSelectionDialog(parent, true);
+	}
+	/**
 	 * Implements IWorkingSetManager.
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(Shell)
 	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent) {
-		return new WorkingSetSelectionDialog(parent);
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multiSelect) {
+		return new WorkingSetSelectionDialog(parent, multiSelect);
 	}
 	/**
 	 * Tests the receiver and the object for equality

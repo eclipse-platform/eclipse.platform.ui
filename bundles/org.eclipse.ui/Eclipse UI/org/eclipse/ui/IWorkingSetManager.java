@@ -60,6 +60,10 @@ public interface IWorkingSetManager {
 	 */
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
 	/**
+	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
+	 */
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent);
+	/**
 	 * Creates a working set selection dialog that lists all working 
 	 * sets and allows the user to add, remove and edit working sets.
 	 * The caller is responsible for opening the dialog with 
@@ -68,9 +72,11 @@ public interface IWorkingSetManager {
 	 * <code>IWorkingSetSelectionDialog#getSelection</code>.
 	 * 
 	 * @param shell the parent of the working set selection dialog
+	 * @param multiSelect true=more than one working set can be selected 
+	 * 	in the dialog. false=only one working set can be selected
 	 * @return a working set selection dialog
 	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent);
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multiSelect);
 	/**
 	 * Returns the working set with the specified name.
 	 * Returns null if there is no working set with that name.

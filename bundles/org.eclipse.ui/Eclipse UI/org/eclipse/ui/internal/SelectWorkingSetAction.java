@@ -39,7 +39,7 @@ public SelectWorkingSetAction(IWorkbenchWindow window) {
 public void run() {
 	if (window != null) {
 		IWorkbenchPage page = window.getActivePage();
-		IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(window.getShell());
+		IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(window.getShell(), false);
 		IWorkingSet workingSet = page.getWorkingSet();
 		if (workingSet != null) {
 			dialog.setSelection(new IWorkingSet[]{workingSet});
