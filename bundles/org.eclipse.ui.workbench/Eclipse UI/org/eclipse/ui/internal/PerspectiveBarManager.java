@@ -121,7 +121,14 @@ public class PerspectiveBarManager extends ToolBarManager {
             MenuItem menuItem = new MenuItem(popup, SWT.NONE);
             if (tool.getSelection())
                 menuItem.setEnabled(false);
-            menuItem.setText(tool.getText());
+            
+            // Show the full text of the perspective name in the chevron menu.
+			if (tool.getData() instanceof PerspectiveBarContributionItem) {
+				menuItem.setText(((PerspectiveBarContributionItem) tool
+						.getData()).getPerspective().getLabel());
+			} else {
+				menuItem.setText(tool.getText());
+			}
             menuItem.setImage(tool.getImage());
 
             menuItem.setData("IContributionItem", tool.getData()); //$NON-NLS-1$
