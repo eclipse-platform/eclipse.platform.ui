@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -204,7 +205,8 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		WorkbenchPlugin.getDefault().getDialogSettings().put(SAVE_SETTING, filename);
 		
 		// See if the file already exists
-		if(path.toFile().exists()) {
+		File file = path.toFile();
+		if(file.exists()) {
 			if(!MessageDialog.openConfirm(
 				getShell(),
 				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
@@ -223,6 +225,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 			}
 		}
 
+		long lastModified = file.lastModified();
 		// Save to file
 		try {
 			Preferences.exportPreferences(path); 
@@ -234,11 +237,20 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 				e.getStatus());
 				return;
 		}
-		MessageDialog.openInformation(
-			getShell(),
-			WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("WorkbenchPreferenceDialog.saveMessage", new Object[]{filename})); //$NON-NLS-1$
-			
+		// See if we actually created a file (there where preferences to export).
+		if(file.exists() && file.lastModified() != lastModified) {
+			MessageDialog.openInformation(
+				getShell(),
+				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("WorkbenchPreferenceDialog.saveMessage", new Object[]{filename})); //$NON-NLS-1$
+		} else {
+			MessageDialog.openError(
+				getShell(),
+				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("WorkbenchPreferenceDialog.noPreferencesMessage")); //$NON-NLS-1$
+		}			
+		
+		
 		// Close since we have "performed Ok" and cancel is no longer valid
 		close();	
 	}
