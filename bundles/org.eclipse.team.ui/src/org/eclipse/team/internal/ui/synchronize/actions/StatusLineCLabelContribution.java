@@ -13,9 +13,11 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 public class StatusLineCLabelContribution extends ContributionItem {
@@ -27,7 +29,8 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	private Image image;
 	private String text = ""; //$NON-NLS-1$
 	private int widthHint = -1;
-
+	private int heightHint = -1;
+	
 	private Listener listener;
 	private int eventType;
 	private String tooltip;
@@ -43,13 +46,16 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	}
 	
 	public void fill(Composite parent) {	
-		label = new CLabel(parent, SWT.SHADOW_IN);
+		Label sep = new Label(parent, SWT.SEPARATOR);
+		label = new CLabel(parent, SWT.SHADOW_NONE);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
 		
 		if (widthHint < 0) {
 			GC gc = new GC(parent);
 			gc.setFont(parent.getFont());
-			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
+			FontMetrics fm = gc.getFontMetrics();
+			widthHint = fm.getAverageCharWidth() * charWidth;
+			heightHint = fm.getHeight();
 			gc.dispose();
 		}
 		
@@ -62,7 +68,11 @@ public class StatusLineCLabelContribution extends ContributionItem {
 		}
 		if(tooltip != null) {
 			label.setToolTipText(tooltip);
-		}		
+		}
+		
+		statusLineLayoutData = new StatusLineLayoutData();
+		statusLineLayoutData.heightHint = heightHint;
+		sep.setLayoutData(statusLineLayoutData);
 	}
 	
 	public void addListener(int eventType, Listener listener) {
