@@ -60,7 +60,7 @@ public class DialogCheck {
 	 * @param assert this is the test case object, assertions will be
 	 * executed on this object.
 	 */
-	public static void assertDialog(Dialog dialog, Assert assert) {
+	public static void assertDialog(Dialog dialog, Assert assertion) {
 		Assert.assertNotNull(dialog);
 		if (_verifyDialog.getShell() == null) {
 			//force the creation of the verify dialog
@@ -81,12 +81,12 @@ public class DialogCheck {
 	 * @param assert this is the test case object, assertions will be
 	 * executed on this object.
 	 */
-	public static void assertDialogTexts(Dialog dialog, Assert assert) {
+	public static void assertDialogTexts(Dialog dialog, Assert assertion) {
 		Assert.assertNotNull(dialog);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		Shell shell = dialog.getShell();
-		verifyCompositeText(shell, assert);
+		verifyCompositeText(shell, assertion);
 		dialog.close();
 	}
 
@@ -118,7 +118,7 @@ public class DialogCheck {
 	 * @param composite The composite to look through
 	 * @param assert The object to invoke assertions on.
 	 */
-	private static void verifyCompositeText(Composite composite, Assert assert) {
+	private static void verifyCompositeText(Composite composite, Assert assertion) {
 		Control children[] = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof TabFolder) {
@@ -130,15 +130,15 @@ public class DialogCheck {
 			}
 			try {
 				//verify the text if the child is a button
-				verifyButtonText((Button) children[i], assert);
+				verifyButtonText((Button) children[i], assertion);
 			} catch (ClassCastException exNotButton) {
 				try {
 					//child is not a button, maybe a label
-					verifyLabelText((Label) children[i], assert);
+					verifyLabelText((Label) children[i], assertion);
 				} catch (ClassCastException exNotLabel) {
 					try {
 						//child is not a label, make a recursive call if it is a composite
-						verifyCompositeText((Composite) children[i], assert);
+						verifyCompositeText((Composite) children[i], assertion);
 					} catch (ClassCastException exNotComposite) {
 						//the child is not a button, label, or composite - ignore it.
 					}
@@ -152,7 +152,7 @@ public class DialogCheck {
 	 * @param button The button to verify,
 	 * @param assert The object to invoke assertions on.
 	 */
-	private static void verifyButtonText(Button button, Assert assert) {
+	private static void verifyButtonText(Button button, Assert assertion) {
 		String widget = button.toString();
 		Point size = button.getSize();
 
@@ -189,7 +189,7 @@ public class DialogCheck {
 	 * @param label The label to verify,
 	 * @param assert The object to invoke assertions on.
 	 */
-	private static void verifyLabelText(Label label, Assert assert) {
+	private static void verifyLabelText(Label label, Assert assertion) {
 		String widget = label.toString();
 		Point size = label.getSize();
 
