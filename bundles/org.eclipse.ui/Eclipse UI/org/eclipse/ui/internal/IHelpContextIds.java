@@ -122,6 +122,7 @@ public interface IHelpContextIds {
 	public static final String NEW_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "new_wizard_selection_wizard_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "export_wizard_selection_wizard_page_context"; //$NON-NLS-1$
 	public static final String IMPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "import_wizard_selection_wizard_page_context"; //$NON-NLS-1$
+	public static final String WORKING_SET_RESOURCE_PAGE = PREFIX + "working_set_resource_page"; //$NON-NLS-1$	
 
 	// Wizards
 	public static final String NEW_WIZARD = PREFIX + "new_wizard_context"; //$NON-NLS-1$
@@ -132,4 +133,6 @@ public interface IHelpContextIds {
 	public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context"; //$NON-NLS-1$
 	public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
 	public static final String UPDATE_CAPABILITY_WIZARD = PREFIX + "update_capability_wizard_context"; //$NON-NLS-1$
+	public static final String WORKING_SET_NEW_WIZARD = PREFIX + "working_set_new_wizard"; //$NON-NLS-1$	
+	public static final String WORKING_SET_EDIT_WIZARD = PREFIX + "working_set_edit_wizard"; //$NON-NLS-1$		
 }

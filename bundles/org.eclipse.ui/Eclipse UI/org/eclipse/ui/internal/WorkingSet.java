@@ -24,6 +24,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	
 	private String name;
 	private IAdaptable[] elements;
+	private String editPageId;
 	private ListenerList propertyChangeListeners = new ListenerList();
 
 	/**
@@ -94,6 +95,9 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	public String getName() {
 		return name;
 	}
+	public String getEditPageId() {
+		return editPageId;
+	}
 	/** 
 	 * Implements IWorkingSet
 	 * 
@@ -139,6 +143,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 */
 	public void saveState(IMemento memento) {
 		memento.putString(IWorkbenchConstants.TAG_NAME, name);
+		memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
 		for (int i = 0; i < elements.length; i++) {
 			IPersistableElement persistable = (IPersistableElement) elements[i].getAdapter(IPersistableElement.class);
 			if (persistable != null) {
@@ -174,6 +179,9 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		
 		this.elements = new IAdaptable[elements.length];
 		System.arraycopy(elements, 0, this.elements, 0, elements.length);
+	}
+	public void setEditPageId(String pageId) {
+		editPageId = pageId;
 	}
 	/** 
 	 * Implements IWorkingSet

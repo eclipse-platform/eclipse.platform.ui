@@ -47,7 +47,7 @@ public void run() {
 		if (dialog.open() == Window.OK && page instanceof WorkbenchPage) {
 			WorkbenchPage workbenchPage = (WorkbenchPage) page;
 			IWorkingSet[] result = dialog.getSelection();
-			if (result.length > 0) {
+			if (result != null && result.length > 0) {
 				workbenchPage.setWorkingSet(result[0]);
 			}
 			else {

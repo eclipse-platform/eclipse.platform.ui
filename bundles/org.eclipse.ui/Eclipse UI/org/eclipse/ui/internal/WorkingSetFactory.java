@@ -25,7 +25,8 @@ public class WorkingSetFactory implements IElementFactory {
 	 */
 	public IAdaptable createElement(IMemento memento) {
 		String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);
-
+		String workingSetEditPageId = memento.getString(IWorkbenchConstants.TAG_EDIT_PAGE_ID);
+		
 		if (workingSetName == null)
 			return null;
 
@@ -52,6 +53,9 @@ public class WorkingSetFactory implements IElementFactory {
 			items.add(item);
 		}
 		WorkingSet workingSet = new WorkingSet(workingSetName, (IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
+		if (workingSetEditPageId != null) {
+			workingSet.setEditPageId(workingSetEditPageId);
+		}
 		return workingSet;
 	}
 }
