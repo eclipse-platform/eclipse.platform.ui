@@ -895,6 +895,15 @@ public class EclipseTest extends ResourceTest {
 		}
 	}
 	
+	protected static void indent(OutputStream output, int indent) {
+		for (int i = 0; i < indent; i++)
+			try {
+				output.write("  ".getBytes());
+			} catch (IOException e) {
+				// ignore
+			}
+	}
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#runBare()
 	 */
