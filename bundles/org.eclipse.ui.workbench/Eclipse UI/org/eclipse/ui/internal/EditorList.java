@@ -94,6 +94,7 @@ public class EditorList {
 	private IPartListener partListener = new IPartListener() {
 		private void updateEditorList(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) { 
+				updateItems();
 				notifyEditorListViews();
 			}
 		}
@@ -233,7 +234,9 @@ public int getItemCount() {
 private void notifyEditorListViews() {
 	for (Iterator iterator = editorListViews.iterator(); iterator.hasNext();) {
 		EditorList editorList = (EditorList) iterator.next();
-		editorList.updateItems();
+		if (editorList != this) {
+			editorList.updateItems();
+		}
 	}
 }
 
