@@ -61,7 +61,7 @@ public class RemoteAntBuildListener {
 	 * Reads the message stream from the RemoteTestRunner
 	 */
 	private class ServerConnection extends Thread {
-		int fPort;
+		private int fPort;
 		
 		public ServerConnection(int port) {
 			super("ServerConnection"); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class RemoteAntBuildListener {
 			String location= message.substring(message.indexOf(',') + 1, message.length());
 	
 			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
-			int offset = Math.max(size, 0) - 2;
+			int offset = Math.max(size - 2, 1);
 			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
 			IConsoleHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
 			if (taskLink != null) {
