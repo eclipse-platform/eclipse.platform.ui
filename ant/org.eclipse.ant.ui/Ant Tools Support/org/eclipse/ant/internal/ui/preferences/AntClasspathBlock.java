@@ -222,9 +222,6 @@ public class AntClasspathBlock {
 	
 	private void handleMoveDown() {
 		List targets = getOrderedSelection(currentParent);
-		if (targets.isEmpty()) {
-			return;
-		}
 		List list= new ArrayList(Arrays.asList(currentParent.getEntries()));
 		int bottom = list.size() - 1;
 		int index = 0;
@@ -239,12 +236,17 @@ public class AntClasspathBlock {
 			}
 			bottom = index;
 		} 
+		finishMove(list);
+	}
+	
+	private void finishMove(List list) {
 		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
 		viewerContentProvider.setEntries(currentParent, list);
 		treeViewer.refresh();
 		treeViewer.setSelection(treeViewer.getSelection());
 		updateContainer();
 	}
+
 	private void handleMoveUp() {
 		List targets = getOrderedSelection(currentParent);
 		int top = 0;
@@ -263,11 +265,7 @@ public class AntClasspathBlock {
 			top = index;
 		}
 		
-		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
-		viewerContentProvider.setEntries(currentParent, list);
-		treeViewer.refresh();
-		treeViewer.setSelection(treeViewer.getSelection());
-		updateContainer();
+		finishMove(list);
 	}
 
 	private void remove(TreeViewer viewer) {
