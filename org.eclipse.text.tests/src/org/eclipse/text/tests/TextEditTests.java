@@ -1153,6 +1153,60 @@ public class TextEditTests extends TestCase {
 		assertEquals("Buffer content", result, document.get());
 	}	
 	
+	public void testMoveTree1() {
+		TextEdit root= new MultiTextEdit();
+		TextEdit e1= new ReplaceEdit(0, 1, "");
+		root.addChild(e1);
+		TextEdit e2= new ReplaceEdit(2, 2, "");
+		root.addChild(e2);
+		root.moveTree(3);
+		assertEquals(3, root.getOffset());
+		assertEquals(4, root.getLength());
+		assertEquals(3, e1.getOffset());
+		assertEquals(1, e1.getLength());
+		assertEquals(5, e2.getOffset());
+		assertEquals(2, e2.getLength());
+	}
+	
+//	public void testMoveTree2() {
+//		TextEdit root= new MultiTextEdit();
+//		TextEdit e1= new ReplaceEdit(3, 1, "");
+//		root.addChild(e1);
+//		TextEdit e2= new ReplaceEdit(5, 2, "");
+//		root.addChild(e2);
+//		root.moveTree(-3);
+//		assertEquals(0, root.getOffset());
+//		assertEquals(4, root.getLength());
+//		assertEquals(0, e1.getOffset());
+//		assertEquals(1, e1.getLength());
+//		assertEquals(2, e2.getOffset());
+//		assertEquals(2, e2.getLength());
+//	}
+	
+	public void testMoveTree3() {
+		boolean exception= false;
+		try {
+			TextEdit root= new ReplaceEdit(0, 1, "");
+			root.moveTree(-1);
+		} catch (Exception e) {
+			exception= true;
+		}
+		assertTrue(exception);
+	}
+	
+	public void testMoveTree4() {
+		boolean exception= false;
+		try {
+			TextEdit root= new MultiTextEdit();
+			TextEdit e1= new ReplaceEdit(0, 1, "");
+			root.addChild(e1);
+			e1.moveTree(1);
+		} catch (Exception e) {
+			exception= true;
+		}
+		assertTrue(exception);
+	}
+	
 	private void doUndoRedo(UndoEdit undo, String redoResult) throws Exception {
 		UndoEdit redo= undo.apply(fDocument);
 		assertBufferContent();
