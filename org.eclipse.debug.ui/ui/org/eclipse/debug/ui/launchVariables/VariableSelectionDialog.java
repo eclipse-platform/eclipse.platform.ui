@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -50,7 +51,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
 		
-		final Button contextVariables= createRadioButton(parent, "Context variables");
+		final Button contextVariables= createRadioButton(composite, "Context variables");
 		contextVariables.setSelection(true);
 		contextVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -59,7 +60,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 				}
 			}
 		});
-		final Button simpleVariables= createRadioButton(parent, "Simple variables");
+		final Button simpleVariables= createRadioButton(composite, "Simple variables");
 		simpleVariables.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (simpleVariables.getSelection()) {
@@ -90,7 +91,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 	protected Button createRadioButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.RADIO);
 		button.setText(label);
-		button.setLayoutData(new GridLayout());
+		button.setLayoutData(new GridData());
 		return button;
 	}
 	
@@ -103,6 +104,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 	
 	protected void createVariableFormComposite(Composite parent) {
 		contextVariableComposite= new Composite(parent, SWT.NONE);
+		contextVariableComposite.setLayout(new GridLayout());
 		IContextLaunchVariable[] variables= DebugPlugin.getDefault().getContextVariableRegistry().getVariables();
 		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
 		form.createContents(contextVariableComposite, new IVariableComponentContainer() {
