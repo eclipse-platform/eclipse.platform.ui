@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,8 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.IFileTypeRegistry;
-import org.eclipse.team.core.ITeamNature;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -89,7 +88,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * We currently write the files to disk and do a refreshLocal to
  * have them appear in Eclipse. This may be changed in the future.
  */
-public class CVSTeamProvider implements ITeamNature, ITeamProvider {
+public class CVSTeamProvider extends RepositoryProvider {
 	private static final int CR_BYTE = 0x0D;
 	private static final int LF_BYTE = 0x0A;
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
@@ -106,11 +105,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public CVSTeamProvider() {
 	}
 	
-	/**
-	 * @see IProjectNature#configure()
-	 */
-	public void configure() throws CoreException {
-	}
+
 
 	/**
 	 * @see IProjectNature#deconfigure()
@@ -125,11 +120,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return project;
 	}
 	
-	/**
-	 * @see ITeamNature#configureProvider(Properties)
-	 */
-	public void configureProvider(Properties configuration) throws TeamException {
-	}
+
 
 	/**
 	 * @see IProjectNature#setProject(IProject)
@@ -148,15 +139,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 
-	/**
-	 * @see ITeamNature#getProvider()
-	 */
-	public ITeamProvider getProvider() throws TeamException {
-		if (workspaceRoot == null) {
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.initializationFailed", new Object[]{project.getName()}), null)); //$NON-NLS-1$
-		}
-		return this;
-	}
+
 
 	/**
 	 * Add the given resources to the project. 
@@ -422,12 +405,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, options);
 
-		IStatus status;
 		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			s.open(Policy.subMonitorFor(progress, 20));
-			status = Command.DIFF.execute(s,
+			Command.DIFF.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
 				options,
 				arguments,
@@ -979,7 +961,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// and creating an array of IStatus!
 		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, getMessageFor(e), e);
 	}
-
+	
+	public RepositoryProviderType getProviderType() {
+		return CVSRepositoryProviderType.getInstance();
+	}	
+	
+	public void configureProject() throws CoreException {
+	}
 	/**
 	 * Sets the keyword substitution mode for the specified resources.
 	 * <p>

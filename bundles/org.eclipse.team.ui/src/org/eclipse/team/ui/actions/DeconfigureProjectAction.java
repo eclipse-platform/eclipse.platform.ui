@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -26,8 +26,8 @@ public class DeconfigureProjectAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					IProject project = getSelectedProjects()[0];
-					TeamPlugin.getManager().removeProvider(project, monitor);
+					// should we use the id for the provider type and remove from the nature. Or would
+					// this operation be provider specific?
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				}
@@ -40,7 +40,7 @@ public class DeconfigureProjectAction extends TeamAction {
 	protected boolean isEnabled() {
 		IProject[] selectedProjects = getSelectedProjects();
 		if (selectedProjects.length != 1) return false;
-		if (TeamPlugin.getManager().getProvider(selectedProjects[0]) == null) return false;
+		if (RepositoryProviderType.getProvider(selectedProjects[0]) != null) return false;
 		return true;
 	}
 }

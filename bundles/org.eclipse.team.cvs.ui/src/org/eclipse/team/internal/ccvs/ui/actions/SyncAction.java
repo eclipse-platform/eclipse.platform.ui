@@ -7,14 +7,10 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.team.ui.sync.SyncView;
@@ -28,7 +24,6 @@ public class SyncAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		String title = Policy.bind("SyncAction.sync");
 		IResource[] resources = getSelectedResources();
 		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
 		if (view == null) {

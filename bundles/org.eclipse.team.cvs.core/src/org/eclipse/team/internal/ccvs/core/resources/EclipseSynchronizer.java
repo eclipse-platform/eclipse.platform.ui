@@ -156,7 +156,7 @@ public class EclipseSynchronizer {
 		// broadcast changes to unmanaged children - they are the only candidates for being ignored
 		List possibleIgnores = new ArrayList();
 		accumulateNonManagedChildren(resource, possibleIgnores);
-		TeamPlugin.getManager().broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
+		CVSProviderPlugin.broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 	}
 	
 	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
@@ -265,7 +265,7 @@ public class EclipseSynchronizer {
 					changedResources.addAll(changedFolders);				
 					IResource[] resources = (IResource[]) changedResources.toArray(
 						new IResource[changedResources.size()]);
-					TeamPlugin.getManager().broadcastResourceStateChanges(resources);
+					CVSProviderPlugin.broadcastResourceStateChanges(resources);
 					changedResources.clear();
 					changedFolders.clear();									
 				} finally {

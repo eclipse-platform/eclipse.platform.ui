@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.StandardOperations;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -50,10 +50,10 @@ public class DeleteAction extends TeamAction {
 						Iterator iterator = keySet.iterator();
 						while (iterator.hasNext()) {
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-							ITeamProvider provider = (ITeamProvider)iterator.next();
+							RepositoryProvider provider = (RepositoryProvider)iterator.next();
 							List list = (List)table.get(provider);
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-							provider.delete(providerResources, subMonitor);
+							provider.getStandardOperations().delete(providerResources, subMonitor);
 							for (int i = 0; i < providerResources.length; i++) {
 								providerResources[i].delete(true, monitor);
 							}							
@@ -75,11 +75,12 @@ public class DeleteAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = manager.getProvider(resources[i].getProject());
-			if (provider == null) return false;
-			if (!provider.hasRemote(resources[i])) return false;
+			IResource resource = resources[i];
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
+			StandardOperations stdOps = provider.getStandardOperations();
+			if (provider == null || stdOps == null) return false;
+			if (!stdOps.hasRemote(resource)) return false;
 		}
 		return true;
 	}

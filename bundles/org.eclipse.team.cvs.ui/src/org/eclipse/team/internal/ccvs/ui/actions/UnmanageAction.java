@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -34,9 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -163,7 +161,7 @@ public class UnmanageAction extends TeamAction {
 							if(deleteContent) {
 								folder.unmanage();
 							}
-							TeamPlugin.getManager().removeProvider((IProject)resource, Policy.subMonitorFor(subMonitor, 10));							
+							TeamPlugin.removeNatureFromProject((IProject)resource, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(subMonitor, 10));							
 							CVSDecorator.refresh(resource);
 						}											
 					}										
@@ -195,10 +193,9 @@ public class UnmanageAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
 			if(resources[i].getType()!=IResource.PROJECT) return false;
-			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resources[i].getProject());
 			if (provider == null) return false;
 			ICVSFolder project = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resources[i]);
 			if (!project.isCVSFolder()) return false;

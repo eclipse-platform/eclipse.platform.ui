@@ -11,16 +11,13 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -35,7 +32,6 @@ public class CompareWithRevisionAction extends TeamAction {
 		if (resources.length != 1) return null;
 		if (!(resources[0] instanceof IFile)) return null;
 		IFile file = (IFile)resources[0];
-		CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(file.getProject());
 		try {
 			return (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
 		} catch (TeamException e) {

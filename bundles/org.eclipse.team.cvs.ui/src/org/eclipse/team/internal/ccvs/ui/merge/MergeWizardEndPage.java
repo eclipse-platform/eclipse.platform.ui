@@ -19,10 +19,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
@@ -34,7 +32,6 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	TreeViewer tree;
 	CVSTag result;
 	ICVSRemoteFolder remote;
-	CVSTeamProvider provider;
 	
 	/**
 	 * MergeWizardEndPage constructor.
@@ -97,7 +94,6 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	public void setProject(IProject project) {
 		this.project = project;
 		try {
-			this.provider = ((CVSTeamProvider)TeamPlugin.getManager().getProvider(project));
 			this.remote = (ICVSRemoteFolder) CVSWorkspaceRoot.getRemoteResourceFor(project);
 		} catch (TeamException e) {
 			// To do

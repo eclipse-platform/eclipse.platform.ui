@@ -16,13 +16,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -36,7 +32,6 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					List targetResources = new ArrayList();
 					for (int i = 0; i < candidateResources.length; i++) {
 						IResource resource = candidateResources[i];
-						CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
 						if (isDirty(resource) && getConfirmOverwrite()) {
 							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) {
 								targetResources.add(resource);
@@ -53,7 +48,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						ITeamProvider provider = (ITeamProvider)iterator.next();
+						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 						provider.get(providerResources, IResource.DEPTH_INFINITE, subMonitor);
@@ -69,9 +64,8 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[i].getProject());
 			if (provider == null) return false;
 			if (!provider.hasRemote(resources[i])) return false;
 		}

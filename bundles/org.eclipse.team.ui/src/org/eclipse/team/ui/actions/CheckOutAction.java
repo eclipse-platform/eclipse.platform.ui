@@ -15,10 +15,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.StandardOperations;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -40,10 +40,10 @@ public class CheckOutAction extends TeamAction {
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						ITeamProvider provider = (ITeamProvider)iterator.next();
+						RepositoryProvider provider = (RepositoryProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.checkout(providerResources, IResource.DEPTH_ZERO, subMonitor);
+						provider.getStandardOperations().checkout(providerResources, IResource.DEPTH_ZERO, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -59,11 +59,12 @@ public class CheckOutAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = manager.getProvider(resources[i].getProject());
-			if (provider == null) return false;
-			if (provider.isCheckedOut(resources[i])) return false;
+			IResource resource = resources[i];
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
+			StandardOperations stdOps = provider.getStandardOperations();
+			if (provider == null || stdOps == null) return false;
+			if (stdOps.isCheckedOut(resource)) return false;
 		}
 		return true;
 	}

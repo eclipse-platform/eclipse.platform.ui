@@ -28,10 +28,11 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.IResourceStateChangeListener;
-import org.eclipse.team.core.ITeamProvider;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.ccvs.core.IResourceStateChangeListener;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -95,9 +96,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		// thread that calculates the decoration for a resource
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
-		
-		// listener for cvs state change (e.g. any sync info changes)
-		TeamPlugin.getManager().addResourceStateChangeListener(this);
+		CVSProviderPlugin.addResourceStateChangeListener(this);
 		
 		// listener for workspace resource changes
 		changeListener = new ChangeListener();
@@ -292,7 +291,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 					return true;
 				}
 			});
-			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));	
+			CVSProviderPlugin.broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));	
 		} catch (CoreException e) {
 		}
 	}
@@ -326,8 +325,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 * will be ignored by the decorator.
 	 */
 	private static CVSTeamProvider getCVSProviderFor(IResource resource) {
-		ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
-		if (p == null || !(p instanceof CVSTeamProvider)) {
+		RepositoryProvider p = RepositoryProviderType.getProvider(resource.getProject());
+		if (p == null || !p.isOfType(CVSProviderPlugin.getTypeId())) {
 			return null;
 		}
 		return (CVSTeamProvider) p;
@@ -392,7 +391,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		
 		// unregister change listeners
 		changeListener.deregister();
-		TeamPlugin.getManager().removeResourceStateChangeListener(this);
+		CVSProviderPlugin.removeResourceStateChangeListener(this);
 		
 		// dispose of images created as overlays
 		decoratorNeedsUpdating.clear();

@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -62,7 +63,7 @@ public class UpdateWizard extends Wizard {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						CVSTeamProvider provider = ((CVSTeamProvider)TeamPlugin.getManager().getProvider(project));	
+						CVSTeamProvider provider = ((CVSTeamProvider)RepositoryProviderType.getProvider(project));	
 						provider.update(new IResource[] {project}, updatePage.getLocalOptions(), updatePage.getTag(), null, monitor);
 						result[0] = true;
 					} catch (TeamException e) {

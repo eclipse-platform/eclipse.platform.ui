@@ -23,10 +23,9 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -81,10 +80,9 @@ public class RemoveRootAction extends TeamAction {
 						// Check if any projects are shared with the repository
 						boolean shared = false;
 						IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-						ITeamManager manager = TeamPlugin.getManager();
 						for (int j = 0; j < projects.length; j++) {
-							ITeamProvider teamProvider = manager.getProvider(projects[j]);
-							if (teamProvider instanceof CVSTeamProvider) {
+							RepositoryProvider teamProvider = RepositoryProviderType.getProvider(projects[j]);
+							if (teamProvider.isOfType(CVSProviderPlugin.getTypeId())) {
 								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
 								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(roots[i])) {
 									shared = true;

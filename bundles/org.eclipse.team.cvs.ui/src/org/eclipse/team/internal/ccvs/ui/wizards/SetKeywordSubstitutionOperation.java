@@ -22,7 +22,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -115,7 +116,7 @@ public class SetKeywordSubstitutionOperation implements IRunnableWithProgress {
 	protected Hashtable getProviderMapping(IResource[] resources) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i].getProject());
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resources[i].getProject());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();

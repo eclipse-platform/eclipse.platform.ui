@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.internal.Assert;
 
 /**
  * A standard abstract class that provides implementations for interesting 
@@ -369,25 +368,25 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(getName() + "[");
+		buffer.append(getName() + "["); //$NON-NLS-1$
 		int kind = getSyncKind(GRANULARITY_TIMESTAMP, null);
 		if(kind==IN_SYNC) {
-			buffer.append("in-sync");
+			buffer.append("in-sync"); //$NON-NLS-1$
 		} else {
 			switch(kind & DIRECTION_MASK) {
-				case CONFLICTING: buffer.append("conflicting"); break;
-				case OUTGOING: buffer.append("outgoing"); break;
-				case INCOMING: buffer.append("incoming"); break;
+				case CONFLICTING: buffer.append("conflicting"); break; //$NON-NLS-1$
+				case OUTGOING: buffer.append("outgoing"); break; //$NON-NLS-1$
+				case INCOMING: buffer.append("incoming"); break; //$NON-NLS-1$
 			}		
 			switch(kind & DIRECTION_MASK) {
-				case CHANGE: buffer.append("change"); break;
-				case ADDITION: buffer.append("addition"); break;
-				case DELETION: buffer.append("deletion"); break;
+				case CHANGE: buffer.append("change"); break; //$NON-NLS-1$
+				case ADDITION: buffer.append("addition"); break; //$NON-NLS-1$
+				case DELETION: buffer.append("deletion"); break; //$NON-NLS-1$
 			}
-			if((kind & MANUAL_CONFLICT) != 0) buffer.append("{manual}");
-			if((kind & AUTOMERGE_CONFLICT) != 0) buffer.append("{auto}");
+			if((kind & MANUAL_CONFLICT) != 0) buffer.append("{manual}"); //$NON-NLS-1$
+			if((kind & AUTOMERGE_CONFLICT) != 0) buffer.append("{auto}"); //$NON-NLS-1$
 		}
-		buffer.append("]");
+		buffer.append("]"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }

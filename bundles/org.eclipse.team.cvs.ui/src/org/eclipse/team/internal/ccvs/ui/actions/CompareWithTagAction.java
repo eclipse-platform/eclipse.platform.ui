@@ -47,8 +47,6 @@ public class CompareWithTagAction extends TeamAction {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
 				resource[0] = resources[0];
-	
-				CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource[0].getProject());
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource[0]);
 				dialog.setBlockOnOpen(true);
 				int result = dialog.open();

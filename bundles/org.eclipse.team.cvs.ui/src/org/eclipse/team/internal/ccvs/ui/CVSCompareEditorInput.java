@@ -32,9 +32,7 @@ import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -311,15 +309,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		try {
 			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30);
-			
-			// get the CVS provider if one exists
-			if (left instanceof ResourceNode) {
-				IResource resource = ((ResourceNode)left).getResource();
-				ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
-				if(p != null && p instanceof CVSTeamProvider) {
-					cvsProvider = (CVSTeamProvider)p;
-				}
-			}
 			
 			// do the diff	
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);

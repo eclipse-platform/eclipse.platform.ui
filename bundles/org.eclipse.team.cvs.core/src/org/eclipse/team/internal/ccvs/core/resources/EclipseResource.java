@@ -123,7 +123,7 @@ abstract class EclipseResource implements ICVSResource {
 		} catch(CVSException e) {
 			cvsIgnorePatterns = null;
 		}
-		IIgnoreInfo[] ignorePatterns = TeamPlugin.getManager().getGlobalIgnore();
+		IIgnoreInfo[] ignorePatterns = TeamPlugin.getPlugin().getGlobalIgnore();
 		for (int i = 0; i < ignorePatterns.length; i++) {
 			IIgnoreInfo info = ignorePatterns[i];
 			if(info.getEnabled()) {

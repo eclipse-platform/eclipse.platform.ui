@@ -26,10 +26,9 @@ import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -114,10 +113,9 @@ public class TagAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			ITeamProvider provider = manager.getProvider(resource.getProject());
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
 			if (provider == null) return false;
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (resource.getType()!=IResource.PROJECT&&!cvsResource.isManaged()) return false;

@@ -566,8 +566,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		try {
 			children = new ICVSRemoteResource[] {child};
 			
-			final IProgressMonitor progress = Policy.monitorFor(monitor);
-			
 			// Create the listener for remote files and folders
 			final boolean[] exists = new boolean[] {true};
 			IUpdateMessageListener listener = new IUpdateMessageListener() {
@@ -601,7 +599,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			s.open(monitor);
 			try {
 				// Perform a "cvs -n update -d -r tagName fileName" with custom message and error handlers
-				IStatus status = Command.UPDATE.execute(s,
+				Command.UPDATE.execute(s,
 					new GlobalOption[] { Command.DO_NOT_CHANGE },
 					(LocalOption[]) localOptions.toArray(new LocalOption[localOptions.size()]), 
 					new String[] { child.getName() },

@@ -28,7 +28,10 @@ import org.eclipse.team.core.TeamPlugin;
  */
 public class FileTypeRegistry implements IFileTypeRegistry {
 	// Constant for the saved state file name
-	private static final String STATE_FILE = ".fileTypes";
+	private static final String STATE_FILE = ".fileTypes"; //$NON-NLS-1$
+	
+	// The id of the file types extension point
+	private static final String FILE_TYPES_EXTENSION = "fileTypes"; //$NON-NLS-1$
 
 	// Keys: file extensions. Values: Integers
 	private Hashtable table;
@@ -90,20 +93,20 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 	private void initializePluginPatterns() {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
-			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.FILE_TYPES_EXTENSION);
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(FILE_TYPES_EXTENSION);
 			if (extension != null) {
 				IExtension[] extensions =  extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
-						String ext = configElements[j].getAttribute("extension");
+						String ext = configElements[j].getAttribute("extension"); //$NON-NLS-1$
 						if (ext != null) {
-							String type = configElements[j].getAttribute("type");
+							String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
 							// If the extension doesn't already exist, add it.
 							if (!containsExtension(ext)) {
-								if (type.equals("text")) {
+								if (type.equals("text")) { //$NON-NLS-1$
 									setValue(ext, TEXT);
-								} else if (type.equals("binary")) {
+								} else if (type.equals("binary")) { //$NON-NLS-1$
 									setValue(ext, BINARY);
 								}
 							}
@@ -176,7 +179,7 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 	 */
 	private void savePluginState() {
 		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile();
+		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile(); //$NON-NLS-1$
 		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));

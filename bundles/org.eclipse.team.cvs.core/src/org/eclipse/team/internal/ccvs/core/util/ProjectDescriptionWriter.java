@@ -70,7 +70,7 @@ public class ProjectDescriptionWriter {
 
 		String[] natures = desc.getNatureIds();
 		for (int i = 0; i < natures.length; i++) {
-			if ( ! natures[i].equals(CVSProviderPlugin.NATURE_ID))
+			if ( ! natures[i].equals(CVSProviderPlugin.getTypeId()))
 				writer.println("\t<nature id=\"" + getEscaped(natures[i]) + "\"/>"); //$NON-NLS-1$  //$NON-NLS-2$
 		}
 

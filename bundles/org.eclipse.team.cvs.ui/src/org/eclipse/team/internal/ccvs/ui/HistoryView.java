@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -58,15 +57,17 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput.HistoryLabelProvider;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
@@ -639,8 +640,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		if (resource instanceof IFile) {
 			IFile file = (IFile)resource;
 			this.file = file;
-			ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(file.getProject());
-			if (teamProvider != null && teamProvider instanceof CVSTeamProvider) {
+			RepositoryProvider teamProvider = RepositoryProviderType.getProvider(file.getProject());
+			if (teamProvider != null && teamProvider.isOfType(CVSProviderPlugin.getTypeId())) {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
 					ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(file);

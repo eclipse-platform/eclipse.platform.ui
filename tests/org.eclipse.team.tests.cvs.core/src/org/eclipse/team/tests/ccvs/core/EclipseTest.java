@@ -6,8 +6,6 @@ package org.eclipse.team.tests.ccvs.core;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,8 +34,8 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -224,9 +222,6 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * Checkout a copy of the project into a project with the given postfix
 	 */
 	 protected IProject checkoutCopy(IProject project, String postfix) throws TeamException {
-	 	// Get the provider and remote module so we can get the proper path for the module
-		CVSTeamProvider provider = getProvider(project);
-		
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + postfix);
 		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
@@ -234,9 +229,6 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 }
 	 
 	 protected IProject checkoutCopy(IProject project, CVSTag tag) throws TeamException {
-	 	// Get the provider and remote module so we can get the proper path for the module
-		CVSTeamProvider provider = getProvider(project);
-		
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + tag.getName());
 		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, 
@@ -258,7 +250,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	protected IProject createProject(String prefix, String[] resources) throws CoreException, TeamException {
 		IProject project = getUniqueTestProject(prefix);
-		IResource[] result = buildResources(project, resources, true);
+		buildResources(project, resources, true);
 		shareProject(project);
 		assertValidCheckout(project);
 		return project;
@@ -438,7 +430,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	
 	protected void assertValidCheckout(IProject project) {
 		// NOTE: Add code to ensure that the project was checkout out properly
-		CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(project);
 		assertNotNull(provider);
 	}
 	protected InputStream getContents(ICVSFile file) throws CVSException, IOException {
@@ -465,7 +457,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return target;
 	}
 	protected CVSTeamProvider getProvider(IResource resource) throws TeamException {
-		return (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
+		return (CVSTeamProvider)RepositoryProviderType.getProvider(resource.getProject());
 	}
 	protected static InputStream getRandomContents(int sizeAtLeast) {
 		StringBuffer randomStuff = new StringBuffer(sizeAtLeast + 100);

@@ -62,7 +62,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
 	IFile resource;
-	CVSTeamProvider provider;
 	ICVSRemoteFile currentEdition;
 	ILogEntry[] editions;
 	TableViewer viewer;
@@ -200,7 +199,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	public CVSCompareRevisionsInput(IFile resource, ILogEntry[] editions) {
 		super(new CompareConfiguration());
 		this.resource = resource;
-		this.provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
 		this.editions = editions;
 		updateCurrentEdition();
 		initializeActions();

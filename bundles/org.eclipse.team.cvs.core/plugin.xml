@@ -40,8 +40,10 @@
 	</extension>
 
 	<!-- *************** Team Provider **************** -->
-	<extension id="CVSProvider" point="org.eclipse.team.core.providers">
-		<providers natureId="org.eclipse.team.cvs.core.cvsnature"/>
+	<extension point="org.eclipse.team.core.repository-provider-type" id="cvs-provider-type">
+		<repository>
+			<provider-type class="org.eclipse.team.ccvs.core.CVSRepositoryProviderType"/> 
+		</repository>
 	</extension>
 
 	<!-- *************** Project Nature **************** -->

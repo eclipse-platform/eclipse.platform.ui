@@ -16,8 +16,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -68,7 +68,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource[0].getProject());
+					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resource[0].getProject());
 					monitor.beginTask(null, 100);
 					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName()));
 					provider.get(resource, IResource.DEPTH_INFINITE, tag[0], Policy.subMonitorFor(monitor, 100));

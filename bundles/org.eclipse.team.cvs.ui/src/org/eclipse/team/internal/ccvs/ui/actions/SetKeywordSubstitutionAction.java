@@ -8,10 +8,11 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamManager;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -50,15 +51,13 @@ public class SetKeywordSubstitutionAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
-		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			// resource must be local
 			if (! resource.isAccessible()) return false;
 			// provider must be CVS
-			ITeamProvider provider = manager.getProvider(resource.getProject());
-			if (provider == null) return false;
-			if (! (provider instanceof CVSTeamProvider)) return false;
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
+			if (provider == null || !provider.isOfType(CVSProviderPlugin.getTypeId())) return false;
 			// resource must either be a project, or it must be managed
 			if (resource.getType() != IResource.PROJECT) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);

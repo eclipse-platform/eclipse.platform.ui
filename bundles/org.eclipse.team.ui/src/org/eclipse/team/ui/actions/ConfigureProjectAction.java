@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ui.ConfigureProjectWizard;
 import org.eclipse.team.internal.ui.Policy;
@@ -47,7 +48,7 @@ public class ConfigureProjectAction extends TeamAction {
 		IProject[] selectedProjects = getSelectedProjects();
 		if (selectedProjects.length != 1) return false;
 		if (!selectedProjects[0].isAccessible()) return false;
-		if (TeamPlugin.getManager().getProvider(selectedProjects[0]) == null) return true;
+		if (RepositoryProviderType.getProvider(selectedProjects[0]) == null) return true;
 		return false;
 	}
 }

@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -24,10 +23,9 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
@@ -55,11 +53,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	 * @see IRunnableWithProgress#run(IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		MultiStatus result = new MultiStatus(CVSUIPlugin.ID, 1, Policy.bind("GenerateCVSDiff.error"), null);
 		try {
-			if (resources == null)
-				return;
-
 			monitor.beginTask("", resources.length * 500);
 			monitor.setTaskName(
 			Policy.bind("GenerateCVSDiff.working"));
@@ -73,7 +67,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			try {
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
+					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resource.getProject());
 					provider.diff(new IResource[] {resource}, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
 				}
 			} finally {

@@ -10,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -19,9 +18,8 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -52,9 +50,6 @@ public class CompareWithRemoteAction extends TeamAction {
 					IResource[] resources = getSelectedResources();
 					if (resources.length != 1) return;
 					resource[0] = resources[0];
-					
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[0].getProject());
-		
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource[0]);
 					if (cvsResource.isFolder()) {
 						FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
@@ -104,8 +99,8 @@ public class CompareWithRemoteAction extends TeamAction {
 	protected boolean isEnabled() {
 		IResource[] resources = getSelectedResources();
 		if (resources.length != 1) return false;
-		ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[0].getProject());
-		if (provider == null) return false;
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[0].getProject());
+		if(provider==null) return false;
 		return provider.hasRemote(resources[0]);
 	}
 }

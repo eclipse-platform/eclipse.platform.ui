@@ -36,9 +36,9 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -496,7 +496,7 @@ public class RepositoryManager {
 	private Hashtable getProviderMapping(IResource[] resources) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i].getProject());
+			RepositoryProvider provider = RepositoryProviderType.getProvider(resources[i].getProject());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();
@@ -513,7 +513,7 @@ public class RepositoryManager {
 	private Hashtable getProviderMapping(IRemoteSyncElement[] elements) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < elements.length; i++) {
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(elements[i].getLocal().getProject());
+			RepositoryProvider provider = RepositoryProviderType.getProvider(elements[i].getLocal().getProject());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();

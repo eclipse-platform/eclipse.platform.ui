@@ -159,7 +159,6 @@ public class UpdateSyncAction extends MergeAction {
 			}
 			ITeamNode changedNode = changed[i];
 			int kind = changedNode.getKind();
-			IResource resource = changedNode.getResource();
 			switch (kind & Differencer.DIRECTION_MASK) {
 				case ITeamNode.INCOMING:
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
@@ -237,6 +236,7 @@ public class UpdateSyncAction extends MergeAction {
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
 				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
+				element.makeIncoming(monitor);
 			}
 			// Outgoing additions must be unmanaged (if necessary) and locally deleted.
 			it = deletions.iterator();

@@ -1,54 +1,17 @@
-package org.eclipse.team.core;
-
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
- import org.eclipse.core.resources.IFile;
+package org.eclipse.team.core;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-/**
- * The <code>ITeamProvider</code> interface exposes a basic team model that
- * providers should implement to allow third-party plug-ins to perform team operations
- * programmatically. For example, a code generation tool may want to get source
- * files before generating the code, and check-in the results.  If a team plugin does
- * not adhere to the <i>semantics</i> of the <code>ITeamProvider</code> interface
- * as described below, the provider will not be useable programmatically by other
- * third-party plug-ins.
- * <p>
- * All the methods take a <code>IProgressMonitor</code> parameter that allows the
- * implementation to provide feedback on long running operations (e.g., those involving
- * large resources, multiple resources or numerous server round-trips).  Cancellation is
- * provided by the progress monitor. When a user cancels an operation the resources
- * <em>must</em> be left in a consistent state, even when the operations has not
- * been fully completed.  Implementations should throw the
- * <code>org.eclipse.core.runtime.OperationCanceledException</code> after ensuring
- * the consistent state of the workspace.</p>
- * <p>
- * A number of methods also take a '<code>depth</code>' parameter.  In these methods
- * the <code>depth</code> parameter applies independently to each element of the
- * <code>resources</code> array.  It is used to optimise the case of applying a method to
- * numerous container resources in the same hierarchy.  If the <code>depth</code> value
- * is <code>IResource.DEPTH_ZERO</code> the method is only applied to the given
- * container (and not any resources in that container).  If the depth value is
- * <code>IResource.DEPTH_ONE </code> then the method is applied to all non-container
- * resources in the given container.  If the depth parameter value is
- * <code>IResource.DEPTH_INFINITE</code> then the method is applied to all file
- * resources in the given container and all sub-containers of the given container.</p>
- * <p>
- * <em>Note:</em> The depth parameter values are consistent with their definition in <code>
- * IResource</code>, however, <i>there are currently no API calls that apply to containers, so
- * specifying an operation to <code>IResource.DEPTH_ZERO</code> will not have an effect
- * on any resources.</i>
- * 
- * @see ITeamNature
- * @see ITeamManager
- */
-public interface ITeamProvider {
 
-	/**
+public class StandardOperations {
+/**
 	 * Updates the local resource to have the same content as the corresponding remote
 	 * resource. Where the local resource does not exist, this method will create it.
 	 * <p>
@@ -77,7 +40,8 @@ public interface ITeamProvider {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */
-	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
+	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	}
 
 	/**
 	 * Changes the state of the local resource from checked-in to checked-out and transfers the content
@@ -111,7 +75,8 @@ public interface ITeamProvider {
 	 * </ul>
 	 * @see checkin(IResource[], int, IProgressMonitor)
 	 */
-	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
+	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	}
 
 	/**
 	 * Transfers the content of the local resource to the corresponding remote resource, and changes the
@@ -144,7 +109,8 @@ public interface ITeamProvider {
 	 * </ul>
 	 * @see checkout(IResource[], int, IProgressMonitor)
 	 */
-	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
+	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	}
 
 	/**
 	 * Changes the state of the local resource from checked-out to checked-in without updating the contents
@@ -176,7 +142,8 @@ public interface ITeamProvider {
 	 * @see checkin(IResource)
 	 * @see uncheckout(IResource)
 	 */
-	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
+	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	}
 
 	/**
 	 * Deletes the remote resource corresponding to the given local resource.
@@ -206,7 +173,8 @@ public interface ITeamProvider {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */
-	public void delete(IResource[] resources, IProgressMonitor progress) throws TeamException;
+	public void delete(IResource[] resources, IProgressMonitor progress) throws TeamException {
+	}
 
 	/**
 	 * Informs the provider that a local resource's name or path has changed.
@@ -229,7 +197,8 @@ public interface ITeamProvider {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */	
-	public void moved(IPath source, IResource target, IProgressMonitor progress) throws TeamException;
+	public void moved(IPath source, IResource target, IProgressMonitor progress) throws TeamException {
+	}
 	
 	/*
 	 * Implementor's Note:
@@ -253,7 +222,9 @@ public interface ITeamProvider {
 	 * @see checkout(IResource[], int, IProgressMonitor)
 	 * @see refreshState(IResource[], int, IProgressMonitor)
 	 */
-	public boolean isCheckedOut(IResource resource);
+	public boolean isCheckedOut(IResource resource) {
+		return false;
+	}
 
 	/**
 	 * Answers whether the resource has a corresponding remote resource.
@@ -269,7 +240,9 @@ public interface ITeamProvider {
 	 * @see checkin(IResource[], int, IProgressMonitor)
 	 * @see refreshState(IResource[], int, IProgressMonitor)
 	 */
-	public boolean hasRemote(IResource resource);
+	public boolean hasRemote(IResource resource) {
+		return false;
+	}
 
 	/**
 	 * Answer if the local resource currently has a different timestamp to the base timestamp
@@ -279,13 +252,17 @@ public interface ITeamProvider {
 	 * @return <code>true</code> if the resource has a different modification
 	 * timestamp, and <code>false</code> otherwise.
 	 */
-	public boolean isDirty(IResource resource);
+	public boolean isDirty(IResource resource) {
+		return false;
+	}
 	
 	/**
 	 * Answers true if the base of the given resource is different to the
 	 * released state of the given resource.
 	 */
-	public boolean isOutOfDate(IResource resource);
+	public boolean isOutOfDate(IResource resource) {
+		return false;
+	}
 	
 	/**
 	 * Allows the provider to refresh resource state information for a resource.
@@ -309,14 +286,6 @@ public interface ITeamProvider {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */
-	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
-	
-	/*
-	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
-	 */
-	public IStatus validateEdit(IFile[] files, Object context);
-	/*
-	 * @see IFileModificationValidator#validateSave(IFile)
-	 */
-	public IStatus validateSave(IFile file);
+	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	}
 }

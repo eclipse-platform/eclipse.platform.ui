@@ -12,9 +12,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -32,9 +31,10 @@ public class GenerateDiffFileAction extends TeamAction {
 	 */
 	protected boolean checkSharing(IResource[] resources) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i]);
-			if (!(provider instanceof CVSTeamProvider))
+			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[i].getProject());
+			if (provider==null) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -43,7 +43,6 @@ public class GenerateDiffFileAction extends TeamAction {
 	 */
 	public void run(IAction action) {
 		final String title = Policy.bind("GenerateCVSDiff.title");
-		final String message = Policy.bind("GenerateCVSDiff.pageTitle");
 		try {
 			final IResource[] resources = getSelectedResources();
 			if (!checkSharing(resources)) {

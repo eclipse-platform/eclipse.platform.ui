@@ -17,11 +17,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.core.ITeamProvider;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -196,16 +195,16 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 						for (int i = 0; i < projectDeltas.length; i++) {							
 							IResourceDelta delta = projectDeltas[i];
 							IResource resource = delta.getResource();
-							ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
+							RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());	
 
 							// if a project is moved the originating project will not be associated with the CVS provider
 							// however listeners will probably still be interested in the move delta.	
 							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
 								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-								provider = TeamPlugin.getManager().getProvider(destination);
+								provider = RepositoryProviderType.getProvider(destination.getProject());
 							}
 							
-							if (provider instanceof CVSTeamProvider) {
+							if(provider!=null && provider.isOfType(CVSProviderPlugin.getTypeId())) {
 								delta.accept(visitor);
 							}
 						}
