@@ -195,4 +195,24 @@ public abstract class TargetProvider {
 	 * compare the state of the local and remote resources.
 	 */
 	public abstract IRemoteSyncElement getRemoteSyncElement(IResource resource);
+	
+	/**
+	 * @see java.lang.Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj.getClass().equals(this.getClass())) {
+			return this.getURL().toExternalForm().equals(((TargetProvider)obj).getURL().toExternalForm());
+		}
+		return super.equals(obj);
+	}
+
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getURL().toExternalForm().hashCode();
+	}
+
 }

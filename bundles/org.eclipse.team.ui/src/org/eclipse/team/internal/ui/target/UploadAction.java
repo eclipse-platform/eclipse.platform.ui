@@ -68,6 +68,7 @@ public class UploadAction extends TargetAction {
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
+					boolean hasOutgoing = false;
 					while (iterator.hasNext()) {					
 						IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1024);
 						final TargetProvider provider = (TargetProvider)iterator.next();
@@ -75,35 +76,36 @@ public class UploadAction extends TargetAction {
 						
 						IResource[] providerResources = (IResource[])((List)table.get(provider)).toArray(new IResource[0]);
 						IResource[] outgoingChanges = findResourcesWithOutgoingChanges(providerResources);
-						if (outgoingChanges.length == 0) {
-							getShell().getDisplay().syncExec(
-								new Runnable() {
-									public void run() {
-										MessageDialog.openInformation(getShell(), 
-											Policy.bind("UploadAction.noDirtyTitle"),  //$NON-NLS-1$
-											Policy.bind("UploadAction.noDirtyMessage")); //$NON-NLS-1$
+						if (outgoingChanges.length > 0) {
+							// Prompt for any outgoing deletions
+							PromptingDialog prompt = new PromptingDialog(
+								getShell(), 
+								outgoingChanges,
+								new IPromptCondition() {
+									public boolean needsPrompt(IResource resource) {
+										return ! resource.exists();
 									}
-								});
-							return;
-						};
-						
-						// Prompt for any outgoing deletions
-						PromptingDialog prompt = new PromptingDialog(
-							getShell(), 
-							outgoingChanges,
-							new IPromptCondition() {
-								public boolean needsPrompt(IResource resource) {
-									return ! resource.exists();
-								}
-								public String promptMessage(IResource resource) {
-									return Policy.bind("UploadAction.confirmFileDeletionMessage", resource.getFullPath().toString()); //$NON-NLS-1$
-								}
-							}, 
-							Policy.bind("UploadAction.confirmDeletionTitle"));//$NON-NLS-1$
-						
-						// Put the resources that were selected
-						provider.put(prompt.promptForMultiple(), subMonitor);
+									public String promptMessage(IResource resource) {
+										return Policy.bind("UploadAction.confirmFileDeletionMessage", resource.getFullPath().toString()); //$NON-NLS-1$
+									}
+								}, 
+								Policy.bind("UploadAction.confirmDeletionTitle"));//$NON-NLS-1$
+							
+							// Put the resources that were selected
+							hasOutgoing = true;
+							provider.put(prompt.promptForMultiple(), subMonitor);
+						}
 					}
+					if (!hasOutgoing) {
+						getShell().getDisplay().syncExec(
+							new Runnable() {
+								public void run() {
+									MessageDialog.openInformation(getShell(), 
+										Policy.bind("UploadAction.noDirtyTitle"),  //$NON-NLS-1$
+										Policy.bind("UploadAction.noDirtyMessage")); //$NON-NLS-1$
+								}
+							});
+					};
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (TeamException e) {
