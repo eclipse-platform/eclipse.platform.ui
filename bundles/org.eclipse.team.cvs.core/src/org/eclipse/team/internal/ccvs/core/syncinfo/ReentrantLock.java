@@ -38,15 +38,15 @@ public class ReentrantLock {
 		if (thread != thisThread) {
 			while (nestingCount != 0) {
 				try {
-					if(DEBUG) System.out.println("["+ thisThread.getName() + "] waiting for CVS synchronizer lock");
+					if(DEBUG) System.out.println("["+ thisThread.getName() + "] waiting for CVS synchronizer lock"); //$NON-NLS-1$ //$NON-NLS-2$
 					wait();
 				} catch(InterruptedException e) {
 					// keep waiting for the lock
-					if(DEBUG) System.out.println("["+ thisThread.getName() + "] interrupted in CVS synchronizer lock");
+					if(DEBUG) System.out.println("["+ thisThread.getName() + "] interrupted in CVS synchronizer lock"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			thread = thisThread;
-			if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS synchronizer lock");
+			if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS synchronizer lock"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		nestingCount++;
 	}
@@ -54,9 +54,9 @@ public class ReentrantLock {
 	public synchronized void release() {
 		Thread thisThread = Thread.currentThread();
 		Assert.isLegal(thread == thisThread,
-			"Thread attempted to release a lock it did not own");
+			"Thread attempted to release a lock it did not own"); //$NON-NLS-1$
 		if (--nestingCount == 0) {
-			if(DEBUG) System.out.println("[" + thread.getName() + "] released CVS synchronizer lock");
+			if(DEBUG) System.out.println("[" + thread.getName() + "] released CVS synchronizer lock"); //$NON-NLS-1$ //$NON-NLS-2$
 			thread = null;
 			notifyAll();
 		}
@@ -65,7 +65,7 @@ public class ReentrantLock {
 	public int getNestingCount() {
 		Thread thisThread = Thread.currentThread();
 		Assert.isLegal(thread == thisThread,
-			"Thread attempted to read nesting count of a lock it did not own");
+			"Thread attempted to read nesting count of a lock it did not own"); //$NON-NLS-1$
 		return nestingCount;
 	}
 }
