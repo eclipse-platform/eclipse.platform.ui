@@ -171,23 +171,34 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 */
 	protected IDebugModelPresentation getPresentation() {
 		if (fPresentation == null) {
-			try {
-				fPresentation= (IDebugModelPresentation) DebugUIPlugin.createExtension(fConfig, "class"); //$NON-NLS-1$
-				// configure it
-				if (fListeners != null) {
-					Object[] list = fListeners.getListeners();
-					for (int i= 0; i < list.length; i++) {
-						fPresentation.addListener((ILabelProviderListener)list[i]);
+		    synchronized (this) {
+		        if (fPresentation != null) {
+		            // In the case that the synchronization is enforced, the "blocked" thread
+		            // should return the presentation configured by the "owning" thread.
+		            return fPresentation;
+		        }
+				try {
+					IDebugModelPresentation tempPresentation= (IDebugModelPresentation) DebugUIPlugin.createExtension(fConfig, "class"); //$NON-NLS-1$
+					// configure it
+					if (fListeners != null) {
+						Object[] list = fListeners.getListeners();
+						for (int i= 0; i < list.length; i++) {
+							fPresentation.addListener((ILabelProviderListener)list[i]);
+						}
 					}
+					Iterator keys= fAttributes.keySet().iterator();
+					while (keys.hasNext()) {
+						String key= (String)keys.next();
+						fPresentation.setAttribute(key, fAttributes.get(key));
+					}
+					// Only assign to the instance variable after it's been configured. Otherwise,
+					// the synchronization is defeated (a thread could return the presentation before
+					// it's been configured).
+					fPresentation= tempPresentation;
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
 				}
-				Iterator keys= fAttributes.keySet().iterator();
-				while (keys.hasNext()) {
-					String key= (String)keys.next();
-					fPresentation.setAttribute(key, fAttributes.get(key));
-				}
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
+		    }
 		}
 		return fPresentation;
 	}
