@@ -890,7 +890,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// note that the prefix still 
 		StringBuffer prefix= null; // the common prefix
 		boolean isCaseCompatible= true;
-		IDocument document= fViewer.getDocument();
+		IDocument document= fContentAssistSubjectAdapter.getDocument();
 		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an ident)
 		String currentPrefix= null; // the prefix already in the document
 		int currentPrefixLen= -1; // the length of the current prefix
@@ -950,8 +950,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 			document.replace(replaceOffset, replaceLen, remainingPrefix);
 			
-			fViewer.setSelectedRange(replaceOffset + remainingLen, 0);
-			fViewer.revealRange(replaceOffset + remainingLen, 0);
+			fContentAssistSubjectAdapter.setSelectedRange(replaceOffset + remainingLen, 0);
+			fContentAssistSubjectAdapter.revealRange(replaceOffset + remainingLen, 0);
 			
 			return true;
 		} catch (BadLocationException e) {
