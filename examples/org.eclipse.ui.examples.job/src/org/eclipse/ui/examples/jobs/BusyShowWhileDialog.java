@@ -1,14 +1,15 @@
 package org.eclipse.ui.examples.jobs;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IconAndMessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.dialogs.IconAndMessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.ProgressManager;
 /**
  *BusyShowWhileDialog is a test of busyShowWhile in a modal dialog.
@@ -47,8 +48,8 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException,
 								InterruptedException {
 							long time = System.currentTimeMillis();
-							long end = time + ProgressManager.LONG_OPERATION_MILLISECONDS
-									+ ProgressManager.LONG_OPERATION_MILLISECONDS;
+							long delay = PlatformUI.getWorkbench().getProgressService().getLongOperationTime();
+							long end = time + delay + delay;
 							while (end > System.currentTimeMillis()) {
 								final Shell myShell = BusyShowWhileDialog.this.getShell();
 								myShell.getDisplay().asyncExec(new Runnable() {

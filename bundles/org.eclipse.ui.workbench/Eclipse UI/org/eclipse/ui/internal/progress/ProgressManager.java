@@ -823,7 +823,7 @@ public class ProgressManager extends ProgressProvider
 						int style = shells[i].getStyle();
 						if ((style & modal) != 0) {
 							//try again in a few seconds
-							schedule(LONG_OPERATION_MILLISECONDS);
+							schedule(getLongOperationTime());
 							return Status.CANCEL_STATUS;
 						}
 					}
@@ -832,7 +832,7 @@ public class ProgressManager extends ProgressProvider
 				return Status.OK_STATUS;
 			}
 		};
-		updateJob.schedule(LONG_OPERATION_MILLISECONDS);
+		updateJob.schedule(getLongOperationTime());
 	}
 	/**
 	 * Shutdown the receiver.
@@ -995,5 +995,12 @@ public class ProgressManager extends ProgressProvider
 			throw invokes[0];
 		if (interrupt[0] != null)
 			throw interrupt[0];
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
+	 */
+	public int getLongOperationTime() {
+		return 5000;
 	}
 }

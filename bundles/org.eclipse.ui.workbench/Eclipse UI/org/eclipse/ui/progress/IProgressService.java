@@ -17,27 +17,30 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
- * workbench. <b>NOTE: This is experimental API and subject to change at any
- * time</b>.
+ * workbench.
  * 
  * @since 3.0
  */
 public interface IProgressService extends IRunnableContext {
 
 	/**
-	 * The time at which the busy cursor will be replaced with a progress
-	 * monitor.
+	 * The time at which an operation becomes considered a long
+	 * operation. Used to determine when the busy cursor will 
+	 * be replaced with a progress monitor.
+	 * @return int 
+	 * @see busyCursorWhile(IRunnableWithProgress)
 	 */
-	public int LONG_OPERATION_MILLISECONDS = 5000;
+	public int getLongOperationTime();
 
 	/**
 	 * Set the cursor to busy and run runnable within the UI Thread. After the
-	 * cursor has been running for LONG_OPERATION_MILLISECONDS replace it with
+	 * cursor has been running for <code>getLongOperationTime()<code> replace it with
 	 * a ProgressMonitorDialog so that the user may cancel.
 	 * Do not open the ProgressMonitorDialog if there is already a modal
 	 * dialog open.
 	 * 
 	 * @param runnable
+	 * @see getLongOperationTime()
 	 */
 	public void busyCursorWhile(IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException;

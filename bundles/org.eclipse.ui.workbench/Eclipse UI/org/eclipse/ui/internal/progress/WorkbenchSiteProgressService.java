@@ -29,6 +29,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.PartSite;
@@ -134,8 +135,7 @@ public class WorkbenchSiteProgressService
 	 */
 	public void busyCursorWhile(IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		site.getWorkbenchWindow().getWorkbench().getProgressService()
-				.busyCursorWhile(runnable);
+		getWorkbenchProgressService().busyCursorWhile(runnable);
 	}
 	/*
 	 * (non-Javadoc)
@@ -267,8 +267,15 @@ public class WorkbenchSiteProgressService
 	 *      org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void showInDialog(Shell shell, Job job) {
-		site.getWorkbenchWindow().getWorkbench().getProgressService()
-				.showInDialog(shell, job);
+		getWorkbenchProgressService().showInDialog(shell, job);
+	}
+	/**
+	 * Get the progress service for the workbnech,
+	 * 
+	 * @return IProgressService
+	 */
+	private IProgressService getWorkbenchProgressService() {
+		return site.getWorkbenchWindow().getWorkbench().getProgressService();
 	}
 	/*
 	 * (non-Javadoc)
@@ -279,7 +286,13 @@ public class WorkbenchSiteProgressService
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
-		site.getWorkbenchWindow().getWorkbench().getProgressService().run(fork,
-				cancelable, runnable);
+		getWorkbenchProgressService().run(fork, cancelable, runnable);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
+	 */
+	public int getLongOperationTime() {
+		return getWorkbenchProgressService().getLongOperationTime();
 	}
 }
