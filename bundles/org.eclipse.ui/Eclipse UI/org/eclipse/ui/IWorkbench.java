@@ -242,12 +242,10 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
  * <li>
  * If the specified window has the requested perspective open, then the window
  * is given focus and the perspective is shown. Page's input is ignored.
- * </li>
- * <li>
+ * </li><li>
  * If another window that has the workspace root as input and the requested
  * perpective open and active, then the window is given focus.
- * </li>
- * <li>
+ * </li><li>
  * Otherwise the requested perspective is opened and shown in the specified
  * window, and the window is given focus.
  * </li>
@@ -280,12 +278,13 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * <li>
  * If the specified window has the requested perspective open and the same requested
  * input, then the window is given focus and the perspective is shown.
- * </li>
- * <li>
- * If another window that has the requested input and the requested
- * perpective open and active, then the window is given focus.
- * </li>
- * <li>
+ * </li><li>
+ * If another window has the requested input and the requested
+ * perpective open and active, then that window is given focus.
+ * </li><li>
+ * If the specified window has the same requested input but not the requested
+ * perspective, then the window is given focus and the perspective is opened and shown.
+ * </li><li>
  * Otherwise the requested perspective is opened and shown in a new window, and the
  * window is given focus.
  * </li>
