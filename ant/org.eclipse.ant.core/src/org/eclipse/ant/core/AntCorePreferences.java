@@ -614,9 +614,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
 			String javaHome= null;
 			try {
-				javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
-				path= new Path(javaHome);
-				entry= getToolsJarEntry(path);
+				if (variable != null) {
+					javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
+				}
+				if (javaHome != null) {
+					path= new Path(javaHome);
+					entry= getToolsJarEntry(path);
+				}
 			} catch (CoreException e) {
 			}
 		}
@@ -640,9 +644,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
 			String javaHome= null;
 			try {
-				javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
-				path= new Path(javaHome);
-				entry= getToolsJarEntry(path);
+				if (variable != null) {
+					javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
+				}
+				if (javaHome != null) {
+					path= new Path(javaHome);
+					entry= getToolsJarEntry(path);
+				}
 			} catch (CoreException e) {
 			}
 		}
