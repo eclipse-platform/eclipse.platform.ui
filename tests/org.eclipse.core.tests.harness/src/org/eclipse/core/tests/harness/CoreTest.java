@@ -14,8 +14,6 @@ import java.io.*;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * @since 3.1
@@ -24,39 +22,6 @@ public class CoreTest extends TestCase {
 
 	// plug-in identified for the core.tests.harness plug-in.
 	public static final String PI_HARNESS = "org.eclipse.core.tests.harness";
-
-	public class CorePerformanceTest {
-		protected void setup() {
-			// subclasses to override
-		}
-
-		protected void operation() {
-			// subclasses to override
-		}
-
-		protected void teardown() {
-			// subclasses to override
-		}
-
-		public void run(TestCase testCase, int outer, int inner) {
-			Performance perf = Performance.getDefault();
-			PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
-			try {
-				for (int i = 0; i < outer; i++) {
-					setup();
-					meter.start();
-					for (int j = 0; j < inner; j++)
-						operation();
-					meter.stop();
-					teardown();
-				}
-				meter.commit();
-				perf.assertPerformance(meter);
-			} finally {
-				meter.dispose();
-			}
-		}
-	}
 
 	/** counter for generating unique random filesystem locations */
 	protected static int nextLocationCounter = 0;

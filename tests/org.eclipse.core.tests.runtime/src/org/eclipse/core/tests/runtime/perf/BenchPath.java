@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class BenchPath extends RuntimeTest {
@@ -44,8 +45,8 @@ public class BenchPath extends RuntimeTest {
 		for (int i = 0; i < paths.length; i++)
 			map.put(paths[i], "");
 		final int numPaths = paths.length;
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				for (int p = 0; p < numPaths; p++)
 					map.get(paths[p]);
 			}
@@ -57,8 +58,8 @@ public class BenchPath extends RuntimeTest {
 	 */
 	public void testPathCreation() {
 		final int REPEAT = 50000;
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				//folders (5)
 				new Path("/");
 				new Path("/Foo");
@@ -92,8 +93,8 @@ public class BenchPath extends RuntimeTest {
 	public void testToOSString() {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toOSString();
 			}
@@ -106,8 +107,8 @@ public class BenchPath extends RuntimeTest {
 	public void testToString() {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
-		new CorePerformanceTest() {
-			protected void operation() {
+		new PerformanceTestRunner() {
+			protected void test() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toString();
 			}
