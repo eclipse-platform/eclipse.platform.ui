@@ -43,7 +43,7 @@ public class ResourcePropertySource implements IPropertySource {
     static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[7];
 
     static protected IPropertyDescriptor[] propertyDescriptorsLinkVariable = new IPropertyDescriptor[8];
-    {
+    static {
         PropertyDescriptor descriptor;
 
         // resource name
@@ -137,9 +137,10 @@ public class ResourcePropertySource implements IPropertySource {
     }
 
     /**
-     * Return the value for the date String for the timestamp of the supplied resource.
-     * @return String
-     * @param IResource - the resource to query
+     * Return the value for the date string for the timestamp of the supplied resource.
+     * 
+     * @param resource the resource to query
+     * @return the date string for the resource 
      */
     private String getDateStringValue(IResource resource) {
 
