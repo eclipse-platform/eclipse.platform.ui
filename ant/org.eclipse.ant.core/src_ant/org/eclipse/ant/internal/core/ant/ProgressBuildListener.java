@@ -103,9 +103,6 @@ public class ProgressBuildListener implements BuildListener {
 	}
 
 	protected int countTarget(Target target) {
-		if (target == null) {
-			return 0;
-		}
 		int result = 1;
 		Project project = target.getProject();
 		for (Enumeration dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
