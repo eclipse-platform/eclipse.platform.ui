@@ -32,6 +32,9 @@ public class AntUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
+		
+		prefs.setDefault(IAntUIPreferenceConstants.DOCUMENTATION_URL, "http://ant.apache.org/manual"); //$NON-NLS-1$
+		
 		EditorsUI.useAnnotationsPreferencePage(prefs);
 		EditorsUI.useQuickDiffPreferencePage(prefs);
 		if (AntUIPlugin.isMacOS()) {

@@ -17,6 +17,7 @@ import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
@@ -25,6 +26,7 @@ import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -115,9 +117,9 @@ public class OpenExternalDocAction extends Action implements IEditorActionDelega
 	}
 
 	private URL getBaseLocation() throws MalformedURLException {
-		// TODO allow user to set location
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=77386
-		return new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
+		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
+		String base= prefs.getString(IAntUIPreferenceConstants.DOCUMENTATION_URL);
+		return new URL(base);
 	}
 	
 	private String getTitle() {

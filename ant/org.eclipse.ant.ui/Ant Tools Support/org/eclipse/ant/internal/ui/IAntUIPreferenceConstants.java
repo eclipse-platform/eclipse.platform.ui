@@ -72,4 +72,10 @@ public interface IAntUIPreferenceConstants {
 	 * links its selection to the active Ant editor.
 	 */
 	public static final String OUTLINE_LINK_WITH_EDITOR= "outline.linkWithEditor"; //$NON-NLS-1$
+	
+	/**
+	 * String preference identifier constant which specifies the URL for the location of the 
+	 * Ant documentation.
+	 */
+	public static final String DOCUMENTATION_URL = "documentation.url"; //$NON-NLS-1$
 }
