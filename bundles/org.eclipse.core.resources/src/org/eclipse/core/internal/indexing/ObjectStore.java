@@ -272,27 +272,31 @@ public class ObjectStore implements Observer {
 	 * the modified set or the acquired set.
 	 */
 	protected void addToCache(StoredObject object) {
-		if (acquiredObjects.containsKey(object.getAddress())) return;
-		if (modifiedObjects.containsKey(object.getAddress())) return;
-		cachedObjects.addFirst(object);
-		if (cachedObjects.size() <= 50) return;
-		cachedObjects.removeLast();
+		synchronized (cachedObjects) {
+			if (acquiredObjects.containsKey(object.getAddress())) return;
+			if (modifiedObjects.containsKey(object.getAddress())) return;
+			cachedObjects.addFirst(object);
+			if (cachedObjects.size() <= 50) return;
+			cachedObjects.removeLast();
+		}
 	}
 	
 	/**
 	 * Removes an object from the backing cache given its address.
 	 */
 	protected StoredObject removeFromCache(ObjectAddress address) {
-		StoredObject object = null;
-		for (Iterator z = cachedObjects.iterator(); z.hasNext();) {
-			StoredObject o = (StoredObject) z.next();
-			if (o.getAddress().equals(address)) {
-				z.remove();
-				object = o;
-				break;
+		synchronized (cachedObjects) {
+			StoredObject object = null;
+			for (Iterator z = cachedObjects.iterator(); z.hasNext();) {
+				StoredObject o = (StoredObject) z.next();
+				if (o.getAddress().equals(address)) {
+					z.remove();
+					object = o;
+					break;
+				}
 			}
+			return object;
 		}
-		return object;
 	}
 	
 	/**
