@@ -1,31 +1,53 @@
 package org.eclipse.ui.internal;
 
-/*
- * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
- 
+
 /**
- * Provides part selection tracking for a part with a specific id in all pages of a specific workbench
- * window. This tracker shields clients from a part opening and closing, and still provides selection
- * notification/information even when the part is not active..
- */ 
-public class WindowPartSelectionTracker extends AbstractPartSelectionTracker implements IPageListener, ISelectionListener {
-	
+ * Provides part selection tracking for a part with a specific id
+ * in all pages of a specific workbench window. This tracker shields
+ * clients from a part opening and closing, and still provides selection
+ * notification/information even when the part is not active.
+ */
+public class WindowPartSelectionTracker extends AbstractPartSelectionTracker implements IPageListener {
 	/**
 	 * The window this selection tracker is working in
 	 */
 	private IWorkbenchWindow fWindow;
-			
+
+	/**
+	 * Part selection listener.
+	 */
+	private final INullSelectionListener selListener = new INullSelectionListener() {
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			fireSelection(part, selection);
+		}
+	};
+
+	/**
+	 * Part post selection listener
+	 */
+	private final INullSelectionListener postSelListener = new INullSelectionListener() {
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			firePostSelection(part, selection);
+		}
+	};
+
 	/**
 	 * Constructs a new selection tracker for the given window and part id.
 	 * 
@@ -52,24 +74,18 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
+		page.removeSelectionListener(getPartId(), selListener);
+		page.removePostSelectionListener(getPartId(), postSelListener);
 	}
-	
+
 	/*
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-		page.addSelectionListener(getPartId(), new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				fireSelection(part, selection);
-			}
-		});
-		page.addPostSelectionListener(getPartId(), new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				firePostSelection(part, selection);
-			}
-		});				
+		page.addSelectionListener(getPartId(), selListener);
+		page.addPostSelectionListener(getPartId(), postSelListener);
 	}
-	
+
 	/**
 	 * Sets the window this tracker is working in.
 	 * 
@@ -78,7 +94,7 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 	private void setWindow(IWorkbenchWindow window) {
 		fWindow = window;
 	}
-	
+
 	/**
 	 * Returns the window this tracker is working in.
 	 * 
@@ -86,8 +102,8 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 	 */
 	protected IWorkbenchWindow getWindow() {
 		return fWindow;
-	}	
-	
+	}
+
 	/**
 	 * @see AbstractPartSelectionTracker#dispose()
 	 */
@@ -95,7 +111,7 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 		super.dispose();
 		fWindow = null;
 	}
-	
+
 	/*
 	 * @see AbstractPartSelectionTracker#getSelection()
 	 */
@@ -106,12 +122,4 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 		}
 		return null;
 	}
-
-	/*
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		fireSelection(part, selection);
-	}
-
 }
