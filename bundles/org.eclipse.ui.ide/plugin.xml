@@ -761,4 +761,13 @@
             <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.activitySupport">
+      <triggerPoint id="org.eclipse.ui.ide.natures">
+         <hint
+               id="interactive"
+               value="false"/>
+      </triggerPoint>
+   </extension>
 </plugin>

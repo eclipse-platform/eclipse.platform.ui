@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
@@ -51,7 +52,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     public NewWizardSelectionPage(IWorkbench workbench,
 			IStructuredSelection selection, IWizardCategory root,
 			IWizardDescriptor[] primary, boolean projectsOnly) {
-        super("newWizardSelectionPage", workbench, selection, null);//$NON-NLS-1$
+        super("newWizardSelectionPage", workbench, selection, null, WorkbenchTriggerPoints.NEW_WIZARDS);//$NON-NLS-1$
         
         setTitle(WorkbenchMessages.NewWizardSelectionPage_description); 
         wizardCategories = root;

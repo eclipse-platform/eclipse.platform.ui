@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
@@ -33,16 +34,20 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
     public TableViewer wizardSelectionViewer;
 
     protected IStructuredSelection currentResourceSelection;
+    
+    protected String triggerPointId;
 
     /**
      *	Create an instance of this class
      */
     public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench,
-            IStructuredSelection currentSelection, AdaptableList elements) {
+            IStructuredSelection currentSelection, AdaptableList elements, 
+            String triggerPointId) {
         super(name);
         this.wizardElements = elements;
         this.currentResourceSelection = currentSelection;
         this.workbench = aWorkbench;
+        this.triggerPointId = triggerPointId;
         setTitle(WorkbenchMessages.Select);
     }
 
@@ -87,8 +92,10 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
      */
-    public IWizardPage getNextPage() {
-        if (WorkbenchActivityHelper.allowUseOf(getSelectedNode()))
+    public IWizardPage getNextPage() { 
+        ITriggerPoint triggerPoint = getWorkbench().getActivitySupport()
+        .getTriggerPointManager().getTriggerPoint(triggerPointId);
+        if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode()))
             return super.getNextPage();
         return null;
     }

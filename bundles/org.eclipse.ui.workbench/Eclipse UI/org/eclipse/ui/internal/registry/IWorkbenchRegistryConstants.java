@@ -23,6 +23,11 @@ public interface IWorkbenchRegistryConstants {
 	 * Id attribute.  Value <code>id</code>.
 	 */
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
+    
+    /**
+     * Value attribute.  Value <code>value</code>.
+     */
+    public static final String ATT_VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * Class attribute.  Value <code>class</code>.
@@ -55,4 +60,14 @@ public interface IWorkbenchRegistryConstants {
 	 * Advisor to product binding element.  Value <code>triggerPointAdvisorProductBinding</code>. 
 	 */
 	public static final String TAG_ADVISORPRODUCTBINDING = "triggerPointAdvisorProductBinding"; //$NON-NLS-1$
+    
+    /**
+     * Trigger point tag.  Value <code>triggerPoint</code>.
+     */
+    public static final String TAG_TRIGGERPOINT = "triggerPoint"; //$NON-NLS-1$
+    
+    /**
+     * Trigger point hint tag.  Value <code>hint</code>.
+     */
+    public static final String TAG_HINT = "hint"; //$NON-NLS-1$
 }

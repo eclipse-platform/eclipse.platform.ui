@@ -11,9 +11,7 @@
 package org.eclipse.ui.internal.ide;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,8 +27,7 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -41,6 +38,8 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class IDEWorkbenchActivityHelper {
 
+    private static final String NATURE_POINT = "org.eclipse.ui.ide.natures"; //$NON-NLS-1$
+    
     /**
      * Resource listener that reacts to new projects (and associated natures) 
      * coming into the workspace.
@@ -130,7 +129,7 @@ public class IDEWorkbenchActivityHelper {
     /**
      * Get a change listener for listening to resource changes.
      * 
-     * @return
+     * @return the resource change listeners
      */
     private IResourceChangeListener getChangeListener() {
         return new IResourceChangeListener() {
@@ -182,27 +181,20 @@ public class IDEWorkbenchActivityHelper {
             throws CoreException {
         if (!project.isOpen())
             return;
-        IActivityManager activityManager = workbenchActivitySupport
-                .getActivityManager();
         String[] ids = project.getDescription().getNatureIds();
         if (ids.length == 0)
             return;
-        Set activities = new HashSet(activityManager.getEnabledActivityIds());
-        boolean changed = false;
+        
         for (int j = 0; j < ids.length; j++) {
             IPluginContribution contribution = (IPluginContribution) natureMap
                     .get(ids[j]);
             if (contribution == null)
                 continue; //bad nature ID.
-            IIdentifier identifier = activityManager
-                    .getIdentifier(WorkbenchActivityHelper
-                            .createUnifiedId(contribution));
-            if (activities.addAll(identifier.getActivityIds())) {
-                changed = true;
-            }
+            ITriggerPoint triggerPoint = workbenchActivitySupport
+                    .getTriggerPointManager().getTriggerPoint(NATURE_POINT); 
+            //consult the advisor - if the activities need enabling, they will be
+            WorkbenchActivityHelper.allowUseOf(triggerPoint, contribution);
         }
-        if (changed)
-            workbenchActivitySupport.setEnabledActivityIds(activities);
     }
 
     /**

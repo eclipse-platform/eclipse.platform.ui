@@ -33,11 +33,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
+import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
@@ -253,7 +255,10 @@ public class SelectPerspectiveDialog extends Dialog implements
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     protected void okPressed() {
-        if (WorkbenchActivityHelper.allowUseOf(getSelection()))
+        ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
+                .getActivitySupport().getTriggerPointManager().getTriggerPoint(
+                        WorkbenchTriggerPoints.OPEN_PERSPECITVE_DIALOG);
+        if (WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelection()))
             super.okPressed();
     }
 }

@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -38,7 +39,7 @@ public class ImportWizard extends Wizard {
     class SelectionPage extends WorkbenchWizardListSelectionPage {
         SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e,
                 String s) {
-            super(w, ss, e, s);
+            super(w, ss, e, s, WorkbenchTriggerPoints.IMPORT_WIZARDS);
         }
 
         public void createControl(Composite parent) {
@@ -57,6 +58,8 @@ public class ImportWizard extends Wizard {
                 }
             };
         }
+        
+        
     }
 
     private IStructuredSelection selection;

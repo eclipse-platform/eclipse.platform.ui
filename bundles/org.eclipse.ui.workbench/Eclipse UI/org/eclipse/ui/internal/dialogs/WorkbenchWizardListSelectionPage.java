@@ -63,12 +63,13 @@ public abstract class WorkbenchWizardListSelectionPage extends
      * @param wizardElements the collection of <code>WorkbenchWizardElements</code>
      *            to display for selection
      * @param message the message to display above the selection list
+     * @param triggerPointId the trigger point id
      */
     protected WorkbenchWizardListSelectionPage(IWorkbench aWorkbench,
             IStructuredSelection currentSelection,
-            AdaptableList wizardElements, String message) {
+            AdaptableList wizardElements, String message, String triggerPointId) {
         super(
-                "singleWizardSelectionPage", aWorkbench, currentSelection, wizardElements); //$NON-NLS-1$
+                "singleWizardSelectionPage", aWorkbench, currentSelection, wizardElements, triggerPointId); //$NON-NLS-1$
         setDescription(WorkbenchMessages.WizardList_description);
         this.message = message;
     }
