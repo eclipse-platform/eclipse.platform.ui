@@ -19,13 +19,12 @@ int WINXP = 4;
 int FLOPPY_3 = 0;
 int FLOPPY_5 = 1;
 
+// set to 1 for DEBUG
 int DEBUG = 0;
 
-typedef BOOL(WINAPI * P_GDFSE) 
-		(LPCTSTR,
-		PULARGE_INTEGER,
-		PULARGE_INTEGER,
-		PULARGE_INTEGER);
+// set to 0 to run on Windows 95 *Unsupported*
+int NOWIN95 = 1;
+
 
 // GLOBAL METHODS
 // ---------------
@@ -125,44 +124,39 @@ int getFloppy(char driveLetter[]){
 	DWORD dw;
 	int UNKNOWN = -1;
 
-	if ((int)getWindowsVersion()<0){
-		// windows 95 or other
+	sprintf(floppyPath, "\\\\.\\%c:", driveLetter[0]);
+	if (DEBUG)
+		printf("Path %s\n",floppyPath);
+	handle=CreateFile(floppyPath,
+		0,FILE_SHARE_WRITE,0,OPEN_EXISTING,0,0);
+	if (handle==INVALID_HANDLE_VALUE){
+		if (DEBUG)
+			printf("Invalid Handle %s\n",floppyPath);
 		return UNKNOWN;
 	} else {
-		sprintf(floppyPath, "\\\\.\\%c:", driveLetter[0]);
-		if (DEBUG)
-			printf("Path %s\n",floppyPath);
-		handle=CreateFile(floppyPath,
-			0,FILE_SHARE_WRITE,0,OPEN_EXISTING,0,0);
-		if (handle==INVALID_HANDLE_VALUE){
-			if (DEBUG)
-				printf("Invalid Handle %s\n",floppyPath);
-			return UNKNOWN;
-		} else {
-			if(DeviceIoControl(handle,
-				IOCTL_DISK_GET_MEDIA_TYPES,0,0,
-				geometry,sizeof(geometry),&dw,0) 
-				&& dw>0) {
-				switch(geometry[0].MediaType){
-				 case F5_160_512:
-				 case F5_180_512:
-				 case F5_320_512:
-				 case F5_320_1024:
-				 case F5_360_512:
-				 case F5_1Pt2_512:
-					if (DEBUG)
-						printf("Found 5 1/4 Drive\n");				 	
-				 	return FLOPPY_5;
-				 case F3_720_512:			 				 				 				 				 
-				 case F3_1Pt44_512:
-				 case F3_2Pt88_512:
-				 case F3_20Pt8_512:				 				 				 
-					if (DEBUG)
-						printf("Found 3 1/2 Drive\n");				 	
-				 	return FLOPPY_3;
-				 default:
-				 	return UNKNOWN;
-				}
+		if(DeviceIoControl(handle,
+			IOCTL_DISK_GET_MEDIA_TYPES,0,0,
+			geometry,sizeof(geometry),&dw,0) 
+			&& dw>0) {
+			switch(geometry[0].MediaType){
+			 case F5_160_512:
+			 case F5_180_512:
+			 case F5_320_512:
+			 case F5_320_1024:
+			 case F5_360_512:
+			 case F5_1Pt2_512:
+				if (DEBUG)
+					printf("Found 5 1/4 Drive\n");				 	
+			 	return FLOPPY_5;
+			 case F3_720_512:			 				 				 				 				 
+			 case F3_1Pt44_512:
+			 case F3_2Pt88_512:
+			 case F3_20Pt8_512:				 				 				 
+				if (DEBUG)
+					printf("Found 3 1/2 Drive\n");				 	
+			 	return FLOPPY_3;
+			 default:
+			 	return UNKNOWN;
 			}
 		}
 	}
@@ -218,7 +212,6 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	__int64 i64FreeBytesAvailableToCaller;
 	__int64 i64TotalNumberOfBytes;
 	__int64 i64TotalNumberOfFreeBytes;
-	P_GDFSE pFunction = NULL; // pointer to function if it exists
 
 	// the result
 	jlong result = org_eclipse_update_configuration_LocalSystemInfo_SIZE_UNKNOWN;
@@ -229,29 +222,22 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 
-	/*
-	Not available on early version of Win95
-	GetDiskFreeSpaceEx(
-			IN LPCSTR lpDirectoryName,
-			OUT PULARGE_INTEGER lpFreeBytesAvailableToCaller,
-			OUT PULARGE_INTEGER lpTotalNumberOfBytes,
-			OUT PULARGE_INTEGER lpTotalNumberOfFreeBytes);*/
+	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
+		// windows 95 or other
+		if (DEBUG)
+			printf("Unsupported Windows: %i\n",win);		
+		return result;
+	}
 
-	pFunction =
-		(P_GDFSE) GetProcAddress(GetModuleHandle("kernel32.dll"),
-			"GetDiskFreeSpaceExA");
-
-	if (pFunction) {
-		int err =
-			GetDiskFreeSpaceEx(
-				lpDirectoryName,
-				(PULARGE_INTEGER) & i64FreeBytesAvailableToCaller,
-				(PULARGE_INTEGER) & i64TotalNumberOfBytes,
-				(PULARGE_INTEGER) & i64TotalNumberOfFreeBytes);
-
-		if (err) {
-			result = (jlong) i64FreeBytesAvailableToCaller;
-		}
+	int err =
+		GetDiskFreeSpaceEx(
+			lpDirectoryName,
+			(PULARGE_INTEGER) & i64FreeBytesAvailableToCaller,
+			(PULARGE_INTEGER) & i64TotalNumberOfBytes,
+			(PULARGE_INTEGER) & i64TotalNumberOfFreeBytes);
+			
+	if (err) {
+		result = (jlong) i64FreeBytesAvailableToCaller;
 	}
 
 	return result;
@@ -285,6 +271,13 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	jstring result = NULL;
 	int floppy;
 	
+	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
+		// windows 95 or other
+		if (DEBUG)
+			printf("Unsupported Windows: %i\n",win);		
+		return result;
+	}
+		
 	// Make sure we have a String of the Form: <letter>:
 	if (':' == lpDirectoryName[1]) {
 		char driveLetter[4]; // i.e. -> C:\\
@@ -340,7 +333,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 
-	int result;
+	int result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_UNKNOWN;
+	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
+		// windows 95 or other
+		if (DEBUG)
+			printf("Unsupported Windows: %i\n",win);		
+		return result;
+	}
+	
 	// Make sure we have a String of the Form: <letter>:
 	if (':' == lpDirectoryName[1]) {
 		char driveLetter[4]; //C:\\
@@ -400,6 +400,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_update_configuration_LocalSystem
 	int index = 0;
 	jobject str;
 
+
 	logDrives = GetLogicalDrives();
 	for (drive = 0; drive < 32; drive++) {
 		if (logDrives & (1 << drive)) {
@@ -410,6 +411,13 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_update_configuration_LocalSystem
 	stringClass = jnienv -> FindClass("java/lang/String");
 	empty = jnienv -> NewStringUTF("");
 	returnArray = jnienv -> NewObjectArray(nDrive, stringClass, empty);
+
+	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
+		// windows 95 or other
+		if (DEBUG)
+			printf("Unsupported Windows: %i\n",win);		
+		return returnArray;
+	}
 
 	for (drive = 0; drive < 32; drive++) {
 		if (logDrives & (1 << drive)) {
