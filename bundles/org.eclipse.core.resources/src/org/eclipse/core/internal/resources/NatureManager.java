@@ -1,8 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
+
 import java.util.*;
 
 import org.eclipse.core.internal.utils.Policy;
@@ -14,12 +21,15 @@ import org.eclipse.core.runtime.*;
  * nature-related algorithms provided by the workspace.
  */
 public class NatureManager {
-	//maps nature ids -> descriptor objects
+	//maps String (nature ID) -> descriptor objects
 	protected Map descriptors;
 	
 	//maps IProject -> String[] of enabled natures for that project
 	protected Map natureEnablements;
 	
+	//maps String (builder ID) -> String (nature ID)
+	protected Map buildersToNatures = null
+	;
 	//colour constants used in cycle detection algorithm
 	private static final byte WHITE = 0;
 	private static final byte GREY = 1;
@@ -28,7 +38,8 @@ public class NatureManager {
 protected NatureManager() {
 }
 public void changing(IProject project) {
-	//do nothing now, because we know exactly when natures are changing
+	//enablements can change even if new natures aren't configured/deconfigured
+	flushEnablements(project);
 }
 public void closing(IProject project) {
 	flushEnablements(project);
@@ -255,6 +266,25 @@ protected void detectCycles() {
  */
 protected IStatus failure(String reason) {
 	return new ResourceStatus(IResourceStatus.INVALID_NATURE_SET, reason);
+}
+/**
+ * Returns the ID of the project nature that claims ownership of the
+ * builder with the given ID.  Returns null if no nature owns that builder.
+ */
+public String findNatureForBuilder(String builderID) {
+	if (buildersToNatures == null) {
+		buildersToNatures = new HashMap(10);
+		IProjectNatureDescriptor[] descriptors = getNatureDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
+			String natureId = descriptors[i].getNatureId();
+			String[] builders = ((ProjectNatureDescriptor)descriptors[i]).getBuilderIds();
+			for (int j = 0; j < builders.length; j++) {
+				//FIXME: how to handle multiple natures specifying same builder
+				buildersToNatures.put(builders[j], natureId);
+			}
+		}
+	}
+	return (String)buildersToNatures.get(builderID);
 }
 protected void flushEnablements(IProject project) {
 	if (natureEnablements != null) {

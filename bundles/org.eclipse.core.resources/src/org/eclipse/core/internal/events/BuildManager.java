@@ -1,21 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.events;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import java.util.*;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.ElementTree;
-import java.util.*;
-import java.util.Map;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class BuildManager implements ICoreConstants, IManager {
 	protected Workspace workspace;
@@ -70,23 +72,23 @@ public class BuildManager implements ICoreConstants, IManager {
 	 */
 	class MissingBuilder extends IncrementalProjectBuilder {
 		private String name;
-		private IStatus status;
+		private boolean hasBeenBuilt = false;
 		MissingBuilder(String name) {
 			this.name = name;
 		}
 		/**
-		 * Throw an exception the first time this is called, and just log subsequent attempts.
+		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-			if (status == null) {
-				String msg = Policy.bind("events.missing", new String[] {name, getProject().getName()});
-				status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
-				throw new CoreException(status);
+			if (!hasBeenBuilt) {
+				hasBeenBuilt = true;
+				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()});
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
+				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
-			ResourcesPlugin.getPlugin().getLog().log(status);
 			return null;
 		}
-}
+	}
 	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
@@ -105,7 +107,15 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			//short-circuit if none of the projects this builder cares about have changed.
 			if (!fullBuild && !needsBuild(currentBuilder))
 				return;
+			String name = currentBuilder.getLabel();
+			String message;
+			if (name != null)
+				message = Policy.bind("events.invoking.2", name, builder.getProject().getFullPath().toString());
+			else
+				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString());
+			monitor.subTask(message);
 			if (Policy.DEBUG_BUILD_INVOKING) hookStartBuild(builder);
+			//do the build
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
 			if (Policy.DEBUG_BUILD_INVOKING) hookEndBuild(builder);
@@ -150,27 +160,16 @@ protected void basicBuild(IProject project, int trigger, String builderName, Map
 	IncrementalProjectBuilder builder = null;
 	try {
 		builder = getBuilder(builderName, project);
+		if (!validateNature(builder, builderName)) {
+			//skip this builder and null its last built tree because it is invalid
+			//if the nature gets added or re-enabled a full build will be triggered
+			((InternalBuilder)builder).setLastBuiltTree(null);
+			return;
+		}
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 		return;
 	}
-	if (builder == null) {
-		String message = Policy.bind("events.instantiate.1", builderName);
-		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), message));
-		return;
-	}
-	// get the builder name to be used as a progress message
-	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
-	String message = null;
-	if (extension != null) {
-		String name = extension.getLabel();
-		if (name != null) {
-			message = Policy.bind("events.invoking.2", name, project.getFullPath().toString());
-		}
-	}
-	if (message == null)
-		message = Policy.bind("events.invoking.1", project.getFullPath().toString());
-	monitor.subTask(message);
 	basicBuild(trigger, builder, args, status, monitor);
 }
 protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
@@ -272,8 +271,6 @@ public void closing(IProject project) {
 public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	/* get the old builder map */
 	Map oldInfos = getBuildersPersistentInfo(project);
-	/* nuke the old builder map */
-//	setBuildersPersistentInfo(project, null);
 
 	ICommand[] buildCommands = ((Project) project).internalGetDescription().getBuildSpec(false);
 	if (buildCommands.length == 0)
@@ -290,7 +287,7 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 			// if the builder was not instantiated, use the old info if any.
 			if (oldInfos != null) 
 				info = (BuilderPersistentInfo) oldInfos.get(builderName);
-		} else {
+		} else if (!(builder instanceof MissingBuilder)) {
 			// if the builder was instantiated, construct a memento with the important info
 			info = new BuilderPersistentInfo();
 			info.setProjectName(project.getName());
@@ -318,7 +315,7 @@ protected IncrementalProjectBuilder getBuilder(String builderName, IProject proj
 	IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
 	if (result != null)
 		return result;
-	result = instantiateBuilder(builderName, project);
+	result = initializeBuilder(builderName, project);
 	builders.put(builderName, result);
 	((InternalBuilder) result).setProject(project);
 	result.startupOnInitialize();
@@ -341,34 +338,6 @@ protected Hashtable getBuilders(IProject project) {
  */
 public Map getBuildersPersistentInfo(IProject project) throws CoreException {
 	return (Map) project.getSessionProperty(K_BUILD_MAP);
-}
-/**
- * Returns the safe runnable instance for invoking a builder
- */
-protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
-	return new ISafeRunnable() {
-		public void run() throws Exception {
-			IProject[] builders = currentBuilder.build(trigger, args, monitor);
-			if (builders == null)
-				builders = new IProject[0];
-			currentBuilder.setInterestingProjects((IProject[]) builders.clone());
-		}
-		public void handleException(Throwable e) {
-			if (e instanceof OperationCanceledException)
-				throw (OperationCanceledException) e;
-			//ResourceStats.buildException(e);
-			// don't log the exception....it is already being logged in Platform#run
-			if (e instanceof CoreException)
-				status.add(((CoreException) e).getStatus());
-			else {
-				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
-				String message = e.getMessage();
-				if (message == null)
-					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
-				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
-			}
-		}
-	};
 }
 protected IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
@@ -406,6 +375,34 @@ protected IResourceDelta getDelta(IProject project) {
 	return result;
 }
 /**
+ * Returns the safe runnable instance for invoking a builder
+ */
+protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
+	return new ISafeRunnable() {
+		public void run() throws Exception {
+			IProject[] builders = currentBuilder.build(trigger, args, monitor);
+			if (builders == null)
+				builders = new IProject[0];
+			currentBuilder.setInterestingProjects((IProject[]) builders.clone());
+		}
+		public void handleException(Throwable e) {
+			if (e instanceof OperationCanceledException)
+				throw (OperationCanceledException) e;
+			//ResourceStats.buildException(e);
+			// don't log the exception....it is already being logged in Platform#run
+			if (e instanceof CoreException)
+				status.add(((CoreException) e).getStatus());
+			else {
+				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
+				String message = e.getMessage();
+				if (message == null)
+					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
+				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
+			}
+		}
+	};
+}
+/**
  * Hook for adding trace options and debug information at the start of a build.
  */
 private void hookStartBuild(IncrementalProjectBuilder builder) {
@@ -422,6 +419,66 @@ private void hookEndBuild(IncrementalProjectBuilder builder) {
 	ResourceStats.endBuild();
 	System.out.println("Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms");
 	timeStamp = -1;
+}
+/**
+ * Instantiates the builder with the given name.  If the builder, its plugin, or its nature
+ * is missing, create a placeholder builder to takes its place.  This is needed to generate 
+ * appropriate exceptions when somebody tries to invoke the builder, and to
+ * prevent trying to instantiate it every time a build is run.
+ * This method NEVER returns null.
+ */
+protected IncrementalProjectBuilder initializeBuilder(String builderName, IProject project) throws CoreException {
+	try {
+		IncrementalProjectBuilder builder = instantiateBuilder(builderName);
+		if (builder == null) {
+			//unable to create the builder, so create a placeholder to fill in for it
+			builder = new MissingBuilder(builderName);
+		}
+		// get the map of builders to get the last built tree
+		Map infos = getBuildersPersistentInfo(project);
+		if (infos != null) {
+			BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
+			if (info != null) {
+				ElementTree tree = info.getLastBuiltTree();
+				if (tree != null) 
+					((InternalBuilder) builder).setLastBuiltTree(tree);
+				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
+			}
+			// delete the build map if it's now empty 
+			if (infos.size() == 0)
+				setBuildersPersistentInfo(project, null);
+		}
+		return builder;
+	} catch (CoreException e) {
+		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e);
+	}
+}
+/**
+ * Instantiates and returns the builder with the given name.  If the builder, its plugin, or its nature
+ * is missing, returns null.
+ */
+protected IncrementalProjectBuilder instantiateBuilder(String builderName) throws CoreException {
+	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
+	if (extension == null)
+		return null;
+	IConfigurationElement[] configs = extension.getConfigurationElements();
+	if (configs.length == 0)
+		return null;
+	String hasNature = configs[0].getAttribute("hasNature");
+	String natureId = null;
+	if (hasNature != null && hasNature.equalsIgnoreCase(Boolean.TRUE.toString())) {
+		//find the nature that owns this builder
+		String builderId = extension.getUniqueIdentifier();
+		natureId = workspace.getNatureManager().findNatureForBuilder(builderId);
+		if (natureId == null)
+			return null;
+	}
+	//The nature exists, or this builder doesn't specify a nature
+	InternalBuilder builder = (InternalBuilder) configs[0].createExecutableExtension("run");
+	builder.setPluginDescriptor(extension.getDeclaringPluginDescriptor());
+	builder.setLabel(extension.getLabel());
+	builder.setNatureId(natureId);
+	return (IncrementalProjectBuilder)builder;
 }
 /**
  * Returns true if the current builder is interested in changes
@@ -473,48 +530,38 @@ protected boolean needsBuild(InternalBuilder builder) {
 	}
 	return false;	
 }
-/**
- * Instantiates the builder with the given name.  If the builder or its plugin is missing, 
- * create a placeholder builder to takes its place.  This is needed to carry forward persistent
- * builder info, and to generate appropriate exceptions when somebody tries to invoke the builder.
- * This method NEVER returns null.
- */
-protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProject project) throws CoreException {
-	try {
-		IncrementalProjectBuilder builder = null;
-		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
-		if (extension != null) {
-			IConfigurationElement[] configs = extension.getConfigurationElements();
-			if (configs.length != 0) {
-				builder = (IncrementalProjectBuilder) configs[0].createExecutableExtension("run");
-				((InternalBuilder) builder).setPluginDescriptor(configs[0].getDeclaringExtension().getDeclaringPluginDescriptor());
-			}
-		}
-		if (builder == null) {
-			//unable to create the builder, so create a placeholder to fill in for it
-			builder = new MissingBuilder(builderName);
-		}
-		// get the map of builders to get the last built tree
-		Map infos = getBuildersPersistentInfo(project);
-		if (infos != null) {
-			BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
-			if (info != null) {
-				ElementTree tree = info.getLastBuiltTree();
-				if (tree != null) 
-					((InternalBuilder) builder).setLastBuiltTree(tree);
-				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
-			}
-			// delete the build map if it's now empty 
-			if (infos.size() == 0)
-				setBuildersPersistentInfo(project, null);
-		}
-		return builder;
-	} catch (CoreException e) {
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e);
-	}
-}
 public void opening(IProject project) {
 }
+/**
+ * Removes all builders with the given ID from the build spec.
+ * Does nothing if there were no such builders in the spec
+ */
+protected void removeBuilders(IProject project, String builderId) throws CoreException {
+	IProjectDescription desc = project.getDescription();
+	ICommand[] oldSpec = desc.getBuildSpec();
+	int oldLength = oldSpec.length;
+	if (oldLength == 0)
+		return;
+	int remaining = 0;
+	//null out all commands that match the builder to remove
+	for (int i = 0; i < oldSpec.length; i++) {
+		if (oldSpec[i].getBuilderName().equals(builderId))
+			oldSpec[i] = null;
+		else
+			remaining++;
+	}
+	//check if any were actually removed
+	if (remaining == oldSpec.length)
+		return;
+	ICommand[] newSpec = new ICommand[remaining];
+	for (int i = 0, newIndex = 0; i < oldLength; i++) {
+		if (oldSpec[i] != null)
+			newSpec[newIndex++] = oldSpec[i];
+	}
+	desc.setBuildSpec(newSpec);
+	project.setDescription(desc, IResource.NONE, null);
+}
+
 /**
  * Sets the builder map for the given project.  The builder map is
  * a Map mapping String(builder name) -> BuilderPersistentInfo.
@@ -537,5 +584,33 @@ protected String toString(InternalBuilder builder) {
 	String name = builder.getClass().getName();
 	name = name.substring(name.lastIndexOf('.') + 1);
 	return name + "(" + builder.getProject().getName() + ")";
+}
+/**
+ * Returns true if the nature membership rules are satisifed for the given
+ * builder extension on the given project, and false otherwise.  A builder that 
+ * does not specify that it belongs to a nature is always valid.  A builder 
+ * extension that belongs to a nature can be invalid for the following reasons:
+ * <ul>
+ * <li>The nature that owns the builder does not exist on the given project</li>
+ * <li>The nature that owns the builder is disabled on the given project</li>
+ * </ul>
+ * Furthermore, if the nature that owns the builder does not exist on the project,
+ * that builder will be removed from the build spec.
+ * 
+ * Note: This method only validates nature constraints that can vary at runtime.
+ * Additional checks are done in the instantiateBuilder method for constraints
+ * that cannot vary once the plugin registry is initialized.
+ */
+protected boolean validateNature(InternalBuilder builder, String builderId) throws CoreException {
+	String nature = builder.getNatureId();
+	if (nature == null)
+		return true;
+	IProject project = builder.getProject();
+	if (!project.hasNature(nature)) {
+		//remove this builder from the build spec
+		removeBuilders(project, builderId);
+		return false;
+	}
+	return project.isNatureEnabled(nature);
 }
 }
