@@ -8,6 +8,7 @@ import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -32,10 +33,10 @@ class DiffStructureVisitor extends FileStructureVisitor {
 		Policy.checkCanceled(monitor);
 
 		if (mFile.isManaged()) {
-			session.sendEntry(mFile.getSyncInfo().getEntryLine(false));
+			session.sendEntry(mFile.getSyncInfo().getServerEntryLine(null /*don't send merged timestamps*/));
 		} else {
-			ResourceSyncInfo info = new ResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION, null, null, null, null);
-			session.sendEntry(info.getEntryLine(false));
+			MutableResourceSyncInfo info = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);
+			session.sendEntry(info.getServerEntryLine(null));
 			newFile = true;
 		}
 

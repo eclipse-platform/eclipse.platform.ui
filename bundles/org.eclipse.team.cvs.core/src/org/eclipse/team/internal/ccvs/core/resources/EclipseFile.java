@@ -5,13 +5,8 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.ParseException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -19,16 +14,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 
 /**
  * Represents handles to CVS resource on the local file system. Synchronization
@@ -37,7 +29,6 @@ import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 class EclipseFile extends EclipseResource implements ICVSFile {
 
 	private static final String TEMP_FILE_EXTENSION = ".tmp";//$NON-NLS-1$
-	
 	private static final IPath PROJECT_META_DATA_PATH = new Path(".project");//$NON-NLS-1$
 	
 	/**
@@ -71,52 +62,23 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  	}
 	
 	/*
-	 * @see ICVSFile#getAppendingOutputStream()
-	 */
-	public OutputStream getAppendingOutputStream() throws CVSException {
-		return new ByteArrayOutputStream() {
-			public void close() throws IOException {
-				try {
-					IFile file = getIFile();
-					if(resource.exists()) {
-						file.appendContents(new ByteArrayInputStream(toByteArray()), false /*force*/, true /*keep history*/, null);
-					} else {
-						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
-					}
-				} catch(CoreException e) {
-					throw new IOException(Policy.bind("EclipseFile_Problem_appending_to_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
-				} finally {
-					super.close();
-				}
-			}
-		};
-	}
-	
-	/*
 	 * @see ICVSFile#getTimeStamp()
 	 */
-	public String getTimeStamp() {						
-		EntryFileDateFormat timestamp = new EntryFileDateFormat();		
-		return timestamp.format(new Date(getIOFile().lastModified()));
+	public Date getTimeStamp() {						
+		return new Date(getIOFile().lastModified());
 	}
  
 	/*
 	 * @see ICVSFile#setTimeStamp(String)
 	 */
-	public void setTimeStamp(String date) throws CVSException {
-		long millSec;		
-		if (date==null) {
-			// get the current time
-			millSec = new Date().getTime();
+	public void setTimeStamp(Date date) throws CVSException {
+		long time;
+		if (date == null) {
+			time = System.currentTimeMillis();
 		} else {
-			try {
-				EntryFileDateFormat timestamp = new EntryFileDateFormat();
-				millSec = timestamp.toDate(date).getTime();
-			} catch (ParseException e) {
-				throw new CVSException(Policy.bind("LocalFile.invalidDateFormat", date), e); //$NON-NLS-1$
-			}
-		}		
-		getIOFile().setLastModified(millSec);
+			time = date.getTime();
+		}
+		getIOFile().setLastModified(time);
 		try {
 			// Needed for workaround to Platform Core Bug #
 			resource.refreshLocal(IResource.DEPTH_ZERO, null);
@@ -142,6 +104,8 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 			ResourceSyncInfo info = getSyncInfo();
 			if (info.isAdded()) return false;
 			if (info.isDeleted()) return true;
+			// consider a merged file as always modified.
+			if(info.isMerged()) return true;
 			return !getTimeStamp().equals(info.getTimeStamp());
 		}
 	}
@@ -154,6 +118,8 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 			return true;
 		} else {
 			ResourceSyncInfo info = getSyncInfo();
+			// consider a merged file as always modified.
+			if(info.isMerged()) return true;
 			return !getTimeStamp().equals(info.getTimeStamp());
 		}
 	}

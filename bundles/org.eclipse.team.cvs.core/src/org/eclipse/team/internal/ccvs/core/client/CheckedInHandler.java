@@ -43,33 +43,18 @@ class CheckedInHandler extends ResponseHandler {
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		
-		// Set the entry and do not change the permissions
-		// CheckIn can be an response on adding a new file,
-		// so we can not rely on having a fileInfo ...
+		ResourceSyncInfo newInfo = mFile.getSyncInfo();
 		
-		// In this case we do not save permissions, but as we
-		// haven't got anything from the server we do not need
-		// to. Saveing permissions is only cashing information
-		// from the server.
-		boolean changeFile = mFile.getSyncInfo() == null;
-		
-		// If the file is not on disk then we have got an removed
-		// file and therefore a file that is dirty after the check-in
-		// as well
-		changeFile = changeFile || !mFile.exists();
-		ResourceSyncInfo newInfo;
-		
-		if (changeFile) {
-			newInfo = new ResourceSyncInfo(entryLine, null, ResourceSyncInfo.DUMMY_TIMESTAMP);
+		if (newInfo==null) {
+			// cvs add of a file
+			newInfo = new ResourceSyncInfo(entryLine, null, null);
 		} else {
+			// commit of a changed file
 			ResourceSyncInfo fileInfo = mFile.getSyncInfo();
 			newInfo = new ResourceSyncInfo(entryLine, fileInfo.getPermissions(), mFile.getTimeStamp());
 		}
 
 		mFile.setSyncInfo(newInfo);
-		
-		// This doesn't work with remote files.
-		//Assert.isTrue(changeFile == mFile.isModified());
 	}
 }
 

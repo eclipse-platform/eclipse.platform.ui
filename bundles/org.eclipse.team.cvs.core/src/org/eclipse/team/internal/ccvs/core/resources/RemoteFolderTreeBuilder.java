@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /*
@@ -235,8 +236,11 @@ public class RemoteFolderTreeBuilder {
 			if (info.isAdded())
 				continue;
 			// If the file was deleted locally, we need to generate a new sync info without the delete flag
-			if (info.isDeleted())
-				info = new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
+			if (info.isDeleted()) {
+				MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
+				undeletedInfo.setDeleted(false);
+				info = undeletedInfo;
+			}
 			children.add(new RemoteFile(remote, info));
 			monitor.worked(1);
 		}

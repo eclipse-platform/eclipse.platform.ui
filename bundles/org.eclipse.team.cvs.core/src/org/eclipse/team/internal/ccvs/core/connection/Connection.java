@@ -34,9 +34,6 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  * </ul>
  */
 public class Connection {
-	private static final boolean DEBUG =
-		(System.getProperty("eclipse.cvs.debug") == null) ? false : //$NON-NLS-1$
-		(new Boolean(System.getProperty("eclipse.cvs.debug")).booleanValue());//$NON-NLS-1$
 	private static final byte NEWLINE= 0xA;
 	
 	private IServerConnection serverConnection;
@@ -147,7 +144,7 @@ public class Connection {
 				readLineBuffer = append(readLineBuffer, index++, (byte) r);
 			}
 			String result = new String(readLineBuffer, 0, index);
-			if (DEBUG) System.out.println(result);
+			if (Policy.DEBUG_CVS_PROTOCOL) System.out.println(result);
 			return result;
 		} catch (IOException e) {
 			throw new CVSCommunicationException(e);
@@ -164,7 +161,7 @@ static String readLine(InputStream in) throws IOException {
 		buffer = append(buffer, index++, (byte) r);
 	}
 	String result = new String(buffer, 0, index);
-	if (DEBUG)
+	if (Policy.DEBUG_CVS_PROTOCOL)
 		System.out.println(result);
 	return result;
 }
@@ -217,7 +214,7 @@ static String readLine(InputStream in) throws IOException {
 		if (!isEstablished())
 			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
 			
-		if (DEBUG)
+		if (Policy.DEBUG_CVS_PROTOCOL)
 			System.out.print(s + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
 	
 		try {

@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,12 +16,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSFile;
-import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -31,7 +45,10 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * provides a bridge between the CVS metafile formats and location to the
  * Eclipse CVS client ResourceSyncInfo and FolderSyncInfo types.
  */
-public class SyncFileWriter {
+public class SyncFileWriter implements IResourceChangeListener {
+
+	// the famous CVS meta directory name
+	private static final String CVS_DIRNAME = "CVS"; //$NON-NLS-1$
 
 	// CVS meta files located in the CVS subdirectory
 	private static final String REPOSITORY = "Repository"; //$NON-NLS-1$
@@ -51,7 +68,7 @@ public class SyncFileWriter {
 	
 	// Command characters found in the Entries.log file
 	private static final String ADD_TAG="A "; //$NON-NLS-1$
-	private static final String REMOVE_TAG="R "; //$NON-NLS-1$
+	private static final String REMOVE_TAG="R "; //$NON-NLS-1$	
 
 	// file and folder patterns that are ignored by default by the CVS server on import.
 	public static final String[] PREDEFINED_IGNORE_PATTERNS = {
@@ -63,13 +80,74 @@ public class SyncFileWriter {
 	// file and folder patterns that are ignored by default by the CVS server on import.
 	public static final String[] BASIC_IGNORE_PATTERNS = {"CVS", ".#*"}; //$NON-NLS-1$ //$NON-NLS-2$
 
+	// key for saving the mod stamp for each writen meta file
+	private static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	public static void startup() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new SyncFileWriter(), IResourceChangeEvent.POST_CHANGE);
+	}
+			
+	/**
+	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
+	 * by a 3rd party. For example, if the command line tool was run and then the user refreshed from local. To
+	 * distinguish changes made by this class and thoses made by others a modification stamp is persisted with each
+	 * metafile.
+	 * 
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		try {
+			final List changedContainers = new ArrayList();
+			event.getDelta().accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					IResource resource = delta.getResource();
+					if(resource.exists()) {
+						IContainer parent = resource.getParent();
+						boolean isCVSMetaFile = parent != null && parent.getName().equals(CVS_DIRNAME);
+						boolean isIgnoreFile = resource.getName().equals(IGNORE_FILE);
+						if(isCVSMetaFile || isIgnoreFile) {
+							long modStamp = resource.getModificationStamp();
+							Long whenWeWrote;
+							try {
+								whenWeWrote = (Long)resource.getSessionProperty(MODSTAMP_KEY);
+							} catch(CoreException e) {
+								CVSProviderPlugin.log(e.getStatus());
+								whenWeWrote = null;
+							}
+							if(whenWeWrote==null || whenWeWrote.longValue() != modStamp) {
+								if(Policy.DEBUG_METAFILE_CHANGES) {
+									System.out.println("CVS metaFile changed by 3rd party: " + resource.getFullPath()); //$NON-NLS-1$
+								}
+								IResource changedContainer = parent;
+								if(isCVSMetaFile) {
+									changedContainer = parent.getParent();
+								}
+								if(!changedContainers.contains(changedContainer)) {
+									changedContainers.add(changedContainer);									
+								}
+							}
+						}
+						return true;
+					}
+					return false;
+				}}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			if(!changedContainers.isEmpty()) {
+				EclipseSynchronizer.getInstance().syncFilesChanged((IContainer[])changedContainers.toArray(new IContainer[changedContainers.size()]));
+			}			
+		} catch(CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		} catch(CVSException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		}
+	}
+	
 	/**
 	 * Reads the CVS/Entries, CVS/Entries.log and CVS/Permissions files from the
 	 * specified folder and returns ResourceSyncInfo instances for the data stored therein.
 	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static ResourceSyncInfo[] readAllResourceSync(ICVSFolder parent) throws CVSException {
-		ICVSFolder cvsSubDir = getCVSSubdirectory(parent);
+	public static ResourceSyncInfo[] readAllResourceSync(IContainer parent) throws CVSException {
+		IFolder cvsSubDir = getCVSSubdirectory(parent);
 		if (! cvsSubDir.exists()) return null;
 
 		// process Entries file contents
@@ -111,24 +189,25 @@ public class SyncFileWriter {
 	 * specified folder using the data contained in the specified ResourceSyncInfo instance.
 	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static void writeAllResourceSync(ICVSFolder parent, ResourceSyncInfo[] infos) throws CVSException {
-		ICVSFolder cvsSubDir = getCVSSubdirectory(parent);
-		if (!cvsSubDir.exists()) cvsSubDir.mkdir();
-		
-		// format file contents
-		String[] entries = new String[infos.length];
-		for (int i = 0; i < infos.length; i++) {
-			ResourceSyncInfo info = infos[i];
-			entries[i] = info.getEntryLine(true);
+	public static void writeAllResourceSync(IContainer parent, ResourceSyncInfo[] infos) throws CVSException {
+		try {
+			IFolder cvsSubDir = createCVSSubdirectory(parent);
+			
+			// format file contents
+			String[] entries = new String[infos.length];
+			for (int i = 0; i < infos.length; i++) {
+				ResourceSyncInfo info = infos[i];
+				entries[i] = info.getEntryLine();
+			}
+	
+			// write Entries
+			writeLines(cvsSubDir.getFile(ENTRIES), entries);
+			
+			// delete Entries.log
+			cvsSubDir.getFile(ENTRIES_LOG).delete(IResource.NONE, null);
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
 		}
-
-		// write Entries
-		writeLines(cvsSubDir.getFile(ENTRIES), entries);
-		
-		// delete Entries.log
-		cvsSubDir.getFile(ENTRIES_LOG).delete();
-
-		// XXX does not write CVS/Permissions -- should we?
 	}
 		
 	/**
@@ -136,8 +215,8 @@ public class SyncFileWriter {
 	 * the specified folder and returns a FolderSyncInfo instance for the data stored therein.
 	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static FolderSyncInfo readFolderSync(ICVSFolder folder) throws CVSException {
-		ICVSFolder cvsSubDir = getCVSSubdirectory(folder);
+	public static FolderSyncInfo readFolderSync(IContainer folder) throws CVSException {
+		IFolder cvsSubDir = getCVSSubdirectory(folder);
 		if (! cvsSubDir.exists()) return null;
 		
 		// read CVS/Root
@@ -164,42 +243,46 @@ public class SyncFileWriter {
 	 * Writes the CVS/Root, CVS/Repository, CVS/Tag, and CVS/Entries.static files to the
 	 * specified folder using the data contained in the specified FolderSyncInfo instance.
 	 */
-	public static void writeFolderSync(ICVSFolder folder, FolderSyncInfo info) throws CVSException {
-		ICVSFolder cvsSubDir = createCVSSubdirectory(folder);
-
-		// write CVS/Root
-		writeLines(cvsSubDir.getFile(ROOT), new String[] {info.getRoot()});
-		
-		// write CVS/Repository
-		writeLines(cvsSubDir.getFile(REPOSITORY), new String[] {info.getRepository()});
-		
-		// write CVS/Tag
-		ICVSFile tagFile = cvsSubDir.getFile(TAG);
-		if (info.getTag() != null) {
-			writeLines(tagFile, new String[] {info.getTag().toEntryLineFormat(false)});
-		} else {
-			if(tagFile.exists()) {
-				tagFile.delete();
+	public static void writeFolderSync(IContainer folder, FolderSyncInfo info) throws CVSException {
+		try {
+			IFolder cvsSubDir = createCVSSubdirectory(folder);
+	
+			// write CVS/Root
+			writeLines(cvsSubDir.getFile(ROOT), new String[] {info.getRoot()});
+			
+			// write CVS/Repository
+			writeLines(cvsSubDir.getFile(REPOSITORY), new String[] {info.getRepository()});
+			
+			// write CVS/Tag
+			IFile tagFile = cvsSubDir.getFile(TAG);
+			if (info.getTag() != null) {
+				writeLines(tagFile, new String[] {info.getTag().toEntryLineFormat(false)});
+			} else {
+				if(tagFile.exists()) {
+					tagFile.delete(IResource.NONE, null);
+				}
 			}
-		}
-		
-		// write CVS/Entries.Static
-		ICVSFile staticFile = cvsSubDir.getFile(STATIC);
-		if(info.getIsStatic()) {
-			// the existance of the file is all that matters
-			writeLines(staticFile, new String[] {""}); //$NON-NLS-1$
-		} else {
-			if(staticFile.exists()) {
-				staticFile.delete();
+			
+			// write CVS/Entries.Static
+			IFile staticFile = cvsSubDir.getFile(STATIC);
+			if(info.getIsStatic()) {
+				// the existance of the file is all that matters
+				writeLines(staticFile, new String[] {""}); //$NON-NLS-1$
+			} else {
+				if(staticFile.exists()) {
+					staticFile.delete(IResource.NONE, null);
+				}
 			}
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 
 	/**
 	 * Returns all .cvsignore entries for the specified folder.
 	 */
-	public static String[] readCVSIgnoreEntries(ICVSFolder folder) throws CVSException {
-		ICVSFile ignoreFile = folder.getFile(IGNORE_FILE);
+	public static String[] readCVSIgnoreEntries(IContainer folder) throws CVSException {
+		IFile ignoreFile = folder.getFile(new Path(IGNORE_FILE));
 		if (ignoreFile != null) {
 			return readLines(ignoreFile);
 		}
@@ -209,37 +292,53 @@ public class SyncFileWriter {
 	/**
 	 * Adds a .cvsignore entry to the folder for the specified file.
 	 */
-	public static void addCVSIgnoreEntries(ICVSFolder folder, String[] patterns) throws CVSException {
-		ICVSFile ignoreFile = folder.getFile(IGNORE_FILE);
+	public static void addCVSIgnoreEntries(IContainer folder, String[] patterns) throws CVSException {
+		IFile ignoreFile = folder.getFile(new Path(IGNORE_FILE));
 		writeLines(ignoreFile, patterns);
 	}	
 
 	/**
-	 * Returns the CVS subdirectory for this folder.
+	 * Delete folder sync is equilavent to removing the CVS subdir.
 	 */
-	public static ICVSFolder getCVSSubdirectory(ICVSFolder folder) throws CVSException {
-		return folder.getFolder("CVS"); //$NON-NLS-1$
+	public static void deleteFolderSync(IContainer folder) throws CVSException {		
+		try {
+			getCVSSubdirectory(folder).delete(IResource.NONE, null);
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/**
-	 * Creates and returns a CVS subdirectory in this folder.
+	 * Returns the CVS subdirectory for this folder.
 	 */
-	public static ICVSFolder createCVSSubdirectory(ICVSFolder folder) throws CVSException {
-		ICVSFolder cvsSubDir = getCVSSubdirectory(folder);
-		if (! cvsSubDir.exists()) {
-			cvsSubDir.mkdir();
+	private static IFolder getCVSSubdirectory(IContainer folder) throws CVSException {
+		return folder.getFolder(new Path(CVS_DIRNAME));
+	}
+	
+	/**
+	 * Creates and makes team-private and returns a CVS subdirectory in this folder.
+	 */
+	private static IFolder createCVSSubdirectory(IContainer folder) throws CVSException {
+		try {
+			IFolder cvsSubDir = getCVSSubdirectory(folder);
+			if (! cvsSubDir.exists()) {
+				cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
+				//cvsSubDir.setTeamPrivateMember(true);
+			}
+			return cvsSubDir;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
-		return cvsSubDir;
 	}
 
 	/*
 	 * Reads the first line of the specified file.
 	 * Returns null if the file does not exist, or the empty string if it is blank.
 	 */
-	private static String readFirstLine(ICVSFile file) throws CVSException {
+	private static String readFirstLine(IFile file) throws CVSException {
 		if (! file.exists()) return null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 			try {
 				String line = reader.readLine();
 				if (line == null) return ""; //$NON-NLS-1$
@@ -249,6 +348,8 @@ public class SyncFileWriter {
 			}
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 	
@@ -256,10 +357,10 @@ public class SyncFileWriter {
 	 * Reads all lines of the specified file.
 	 * Returns null if the file does not exist.
 	 */
-	private static String[] readLines(ICVSFile file) throws CVSException {
+	private static String[] readLines(IFile file) throws CVSException {
 		if (! file.exists()) return null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 			List fileContentStore = new ArrayList();
 			try {
 				String line;
@@ -272,6 +373,8 @@ public class SyncFileWriter {
 			}
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
+		}  catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 	
@@ -279,14 +382,35 @@ public class SyncFileWriter {
 	 * Writes all lines to the specified file, using linefeed terminators for
 	 * compatibility with other CVS clients.
 	 */
-	private static void writeLines(ICVSFile file, String[] contents) throws CVSException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		writeLinesToStreamAndClose(os, contents);
-		file.setContents(new ByteArrayInputStream(os.toByteArray()), ICVSFile.UPDATED, false, Policy.monitorFor(null));
+	private static void writeLines(final IFile file, final String[] contents) throws CVSException {
+		try {
+			// The creation of sync files has to be in a runnable in order for the resulting delta
+			// to include the MODSTAMP value. If not in a runnable then create/setContents
+			// will trigger a delta and the SyncFileWriter change listener won't know that the delta
+			// was a result of our own creation.
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						ByteArrayOutputStream os = new ByteArrayOutputStream();
+						writeLinesToStreamAndClose(os, contents);
+						if(!file.exists()) {
+							file.create(new ByteArrayInputStream(os.toByteArray()), IResource.NONE /*don't keep history and don't force*/, null);
+						} else {
+							file.setContents(new ByteArrayInputStream(os.toByteArray()), IResource.NONE /*don't keep history and don't force*/, null);
+						}			
+						// this is where we could save the timestamp
+						file.setSessionProperty(MODSTAMP_KEY, new Long(file.getModificationStamp()));
+					} catch(CVSException e) {
+						throw new CoreException(e.getStatus());
+					}
+				}
+			}, null);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
-	private static void writeLinesToStreamAndClose(OutputStream os, String[] contents)
-		throws CVSException {
+	private static void writeLinesToStreamAndClose(OutputStream os, String[] contents) throws CVSException {
 		try {
 			try {
 				for (int i = 0; i < contents.length; i++) {
@@ -299,13 +423,5 @@ public class SyncFileWriter {
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
-	}
-
-	/*
-	 * Appends lines to the specified file, using linefeed terminators.
-	 */
-	private static void appendLines(ICVSFile file, String[] contents) throws CVSException {
-		OutputStream os = new BufferedOutputStream(file.getAppendingOutputStream());
-		writeLinesToStreamAndClose(os, contents);
-	}
+	}	
 }

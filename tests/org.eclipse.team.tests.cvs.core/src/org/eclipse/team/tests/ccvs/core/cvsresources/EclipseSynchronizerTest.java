@@ -27,6 +27,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -417,7 +418,10 @@ public class EclipseSynchronizerTest extends EclipseTest {
 
 	private ResourceSyncInfo dummyResourceSync(IResource resource) {
 		if (resource.getType() == IResource.FILE) {
-			return new ResourceSyncInfo(resource.getName(), "1.1", ResourceSyncInfo.DUMMY_TIMESTAMP, "", CVSTag.DEFAULT, "");
+			MutableResourceSyncInfo info = new MutableResourceSyncInfo(resource.getName(), "1.1");
+			info.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
+			info.setTag(CVSTag.DEFAULT);
+			return info;
 		} else {
 			return new ResourceSyncInfo(resource.getName());
 		}

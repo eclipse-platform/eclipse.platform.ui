@@ -31,7 +31,7 @@ public class BasicTest extends JUnitTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BasicTest.class);
 		return new CompatibleTestSetup(suite);
-		//return new CompatibleTestSetup(new BasicTest("testDate"));
+		//return new CompatibleTestSetup(new BasicTest("testBranchingWithLocalChanges"));
 	}
 	public void setUp() throws Exception {
 		env1.setUp();

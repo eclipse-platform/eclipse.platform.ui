@@ -323,8 +323,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			assertTrue("Resource Sync info differs for " + path.toString(), info2 == null);
 			return;
 		}
-		String line1 = info1.getEntryLine(includeTimestamp);
-		String line2 = info2.getEntryLine(includeTimestamp);
+		String line1;
+		String line2;
+		if(includeTimestamp) {
+			line1 = info1.getEntryLine();
+			line2 = info2.getEntryLine();
+		} else {
+			line1 = info1.getServerEntryLine(null);
+			line2 = info2.getServerEntryLine(null);
+		}
 		if (!includeTag) {
 			// Strip everything past the last slash
 			line1 = line1.substring(0, line1.lastIndexOf('/'));

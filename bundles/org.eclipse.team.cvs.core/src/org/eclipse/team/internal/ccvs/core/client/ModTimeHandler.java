@@ -6,12 +6,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import java.text.ParseException;
-import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 /**
  * Handles a "Mod-time" response from the CVS server.
@@ -28,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
  * </p>
  */
 class ModTimeHandler extends ResponseHandler {
-	private static final ServerDateFormat dateFormatter = new ServerDateFormat();
 	public String getResponseID() {
 		return "Mod-time"; //$NON-NLS-1$
 	}
@@ -36,7 +34,7 @@ class ModTimeHandler extends ResponseHandler {
 	public void handle(Session session, String timeStamp,
 		IProgressMonitor monitor) throws CVSException {
 		try {
-			session.setModTime(dateFormatter.toDate(timeStamp));
+			session.setModTime(CVSDateFormatter.serverStampToDate(timeStamp));
 		} catch (ParseException e) {
 			throw new CVSException(Policy.bind("ModTimeHandler.invalidFormat", timeStamp), e); //$NON-NLS-1$
 		}

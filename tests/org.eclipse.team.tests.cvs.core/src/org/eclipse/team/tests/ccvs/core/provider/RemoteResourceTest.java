@@ -50,7 +50,7 @@ public class RemoteResourceTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RemoteResourceTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testVersionTag"));
+		//return new CVSTestSetup(new RemoteResourceTest("testFileRevisions"));
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {

@@ -15,6 +15,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -66,9 +67,8 @@ public class AdminKSubstListener implements ICommandOutputListener {
 				ResourceSyncInfo info = file.getSyncInfo();
 				if (info != null) {
 					// only update sync info if we have it locally
-					ResourceSyncInfo newInfo = new ResourceSyncInfo(
-						info.getName(), info.getRevision(), info.getTimeStamp(),
-						ksubstMode, info.getTag(), info.getPermissions());
+					MutableResourceSyncInfo newInfo = info.cloneMutable();
+					newInfo.setKeywordMode(ksubstMode);
 					file.setSyncInfo(newInfo);
 				}
 			} catch (CVSException e) {

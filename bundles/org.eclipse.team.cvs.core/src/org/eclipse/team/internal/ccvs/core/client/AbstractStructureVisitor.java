@@ -139,7 +139,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		boolean isManaged = mFile.isManaged();
 		if (isManaged) {
 			info = mFile.getSyncInfo();
-			session.sendEntry(info.getEntryLine(false, mFile.getTimeStamp()));
+			session.sendEntry(info.getServerEntryLine(mFile.getTimeStamp()));
 		} else {
 			// If the file is not managed, send a questionable to the server if the file exists locally
 			// A unmanaged, locally non-existant file results from the explicit use of the file name as a command argument

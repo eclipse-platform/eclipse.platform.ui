@@ -12,11 +12,25 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.util.InfiniteSubProgressMonitor;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;
+	
+	//debug constants
+	public static boolean DEBUG_METAFILE_CHANGES = false;
+	public static boolean DEBUG_CVS_PROTOCOL = false;
+
+	static {
+		//init debug options
+		if (CVSProviderPlugin.getPlugin().isDebugging()) {
+			DEBUG_METAFILE_CHANGES = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/metafiles"));
+			DEBUG_CVS_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/cvsprotocol"));
+		}
+	}
 
 	/**
 	 * Creates a NLS catalog for the given locale.

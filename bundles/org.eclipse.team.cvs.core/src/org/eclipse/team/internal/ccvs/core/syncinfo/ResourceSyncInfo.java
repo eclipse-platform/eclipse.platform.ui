@@ -5,78 +5,111 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  * All Rights Reserved.
  */
  
+import java.text.ParseException;
+import java.util.Date;
+
+import javax.swing.text.MutableAttributeSet;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
+import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
 
 /**
  * Value (immutable) object that represents workspace state information about a resource contained in
  * a CVS repository. It is a specialized representation of a line in the CVS/Entry file with the addition of 
  * file permissions.
+ * <p>
+ * ResourceSyncInfo instances are created from entry lines from the CVS server and from the CVS/Entries
+ * file. Although both entry lines have slightly different formats (e.g. timestamps) they can safely be passed
+ * to the constructor.</p>
+ * <p>
+ * A class named <code>MutableResourceSyncInfo</code> can be used to modify an existing resource
+ * sync or create sync info without an entry line.</p>
  * 
  * Example entry line from the CVS/Entry file:
  * 
- * /new.java/1.2/Fri Dec 07 00:17:52 2001/-kb/
+ * /new.java/1.2/Fri Dec  7 00:17:52 2001/-kb/
  * D/src////
  *  
+ * @see MutableResourceSyncInfo
  * @see ICVSResource#getSyncInfo()
  */
 public class ResourceSyncInfo {
-	
-	// a directory sync info will have nothing more than a name
-	private boolean isDirectory = false;
-	
-	// utility constants
-	private static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
-	public static final String USE_SERVER_MODE = ""; //$NON-NLS-1$
-	private static final String SEPERATOR = "/"; //$NON-NLS-1$
-	
-	// Timestamp constants used to identify special cases
-	public static final String DUMMY_TIMESTAMP = "dummy timestamp"; //$NON-NLS-1$
-	public static final String RESULT_OF_MERGE = "Result of merge"; //$NON-NLS-1$
-	public static final String RESULT_OF_MERGE_CONFLICT = RESULT_OF_MERGE + "+"; //$NON-NLS-1$
-	public static final String MERGE_MODIFIED = "+modified"; //$NON-NLS-1$
-	public static final String MERGE_UNMODIFIED = "+="; //$NON-NLS-1$
+		
+	public static final Date DUMMY_DATE = new Date(0);
 	
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
 	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
+
+	// use the server's default keyword substitution mode
+	public static final String USE_SERVER_MODE = ""; //$NON-NLS-1$
 	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
 	// XXX Should this be private
 	public static final String DELETED_PREFIX = "-"; //$NON-NLS-1$
-	private boolean isDeleted = false;
 	
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo. Is visible so that clients can create sync infos
 	// for new files.
 	public static final String ADDED_REVISION = "0"; //$NON-NLS-1$
 	
+	// Timestamp constants used to identify special cases
+	protected static final int TYPE_REGULAR = 1;
+	protected static final int TYPE_MERGED = 2;
+	protected static final int TYPE_MERGED_WITH_CONFLICTS = 3;
+	
+	protected static final String TIMESTAMP_DUMMY = "dummy timestamp"; //$NON-NLS-1$
+	protected static final String TIMESTAMP_MERGED = "Result of merge"; //$NON-NLS-1$
+	protected static final String TIMESTAMP_MERGED_WITH_CONFLICT = TIMESTAMP_MERGED + "+"; //$NON-NLS-1$
+	
+	protected static final String TIMESTAMP_SERVER_MERGED = "+modified"; //$NON-NLS-1$
+	protected static final String TIMESTAMP_SERVER_MERGED_WITH_CONFLICT = "+="; //$NON-NLS-1$
+	
+	// a directory sync info will have nothing more than a name
+	protected boolean isDirectory = false;
+	protected boolean isDeleted = false;
+	
+	// utility constants
+	protected static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
+	protected static final String SEPERATOR = "/"; //$NON-NLS-1$
+	
 	// fields describing the synchronization of a resource in CVS parlance
-	private String name;
-	private String revision;
-	private String timeStamp;
-	private String keywordMode;
-	private CVSEntryLineTag tag;
-	private String permissions;
+	protected String name;
+	protected String revision;
+	protected Date timeStamp;
+	protected String keywordMode;
+	protected CVSEntryLineTag tag;
+	protected String permissions;
+	
+	// type of sync
+	protected int syncType = TYPE_REGULAR;
+
+	protected ResourceSyncInfo() {
+	}
 
 	/**
 	 * Constructor to create a sync object from entry line formats. The entry lines are parsed by this class.
+	 * The constructor can handle parsing entry lines from the server or from an entry file.
 	 * 
 	 * @param entryLine the entry line (e.g.  /new.java/1.2/Fri Dec 07 00:17:52 2001/-kb/)
 	 * @param permissions the file permission (e.g. u=rw,g=rw,o=r). May be <code>null</code>.
-	 * @param timestamp if not included in the entry line. Will overide the value in the entry line. The
-	 * timestamp should be in the format specified in ICVSFile#getTimestamp(). May be <code>null</code>.
+	 * @param timestamp if not included in the entry line. May be <code>null</code>.
 	 * 
 	 * @exception CVSException is thrown if the entry cannot be parsed.
 	 */
-	public ResourceSyncInfo(String entryLine, String permissions, String timestamp) throws CVSException {
+	public ResourceSyncInfo(String entryLine, String permissions, Date timestamp) throws CVSException {
 		Assert.isNotNull(entryLine);
-		
+
 		setEntryLine(entryLine);
 		
 		if (permissions != null)  {
@@ -84,36 +117,13 @@ public class ResourceSyncInfo {
 		}
 		// override the timestamp that may of been in entryLine. In some cases the timestamp is not in the
 		// entry line (e.g. receiving entry lines from the server versus reading them from the Entry file).
-		if (isAdded()) {
-			this.timeStamp = DUMMY_TIMESTAMP;
-		} else if(timestamp!=null) {
+		if(timestamp!=null) {
 			this.timeStamp = timestamp;
 		}
 	}
 	
 	/**
-	 * Constructor to create a sync object from predefined values.
-	 * 
-	 * @param name of the resource for which this sync state is associated, cannot be <code>null</code>.
-	 * @param revision of the resource, cannot be <code>null</code>.
-	 * @param timestamp can be <code>null</code>.
-	 * @param keywordMode can be <code>null</code>
-	 * @param tag can be <code>null</code>
-	 * @param permissions can be <code>null</code>
-	 */
-	public ResourceSyncInfo(String name, String revision, String timestamp, String keywordMode, CVSTag tag, String permissions) {
-		Assert.isNotNull(name);
-		Assert.isNotNull(revision);		
-		this.name = name;
-		this.timeStamp = timestamp;		
-		this.keywordMode = keywordMode;
-		this.permissions = permissions;
-		setRevision(revision);
-		setTag(tag);
-	}
-	
-	/**
-	 * Constructor to create a folder sync object.
+	 * Constructor to create a resource sync object for a folder.
 	 * 
 	 * @param name of the resource for which this sync state is associatied, cannot be <code>null</code>.
 	 */
@@ -136,29 +146,24 @@ public class ResourceSyncInfo {
 	
 	/**
 	 * Answers if this sync information is for a resource that has been merged by the cvs server with
-	 * conflicts.
+	 * conflicts and has not been modified yet relative to the given timestamp.
 	 * 
+	 * @param otherTimestamp is the timestamp of the file associated with this resource sync
 	 * @return <code>true</code> if the sync information is for a file that has been merged and
 	 * <code>false</code> for folders and for files that have not been merged.
 	 */
-	public boolean isNeedsMerge(String fileTimestamp) {
-		if(timeStamp.indexOf(RESULT_OF_MERGE_CONFLICT) != -1) {
-			String t = timeStamp.substring(timeStamp.indexOf("+") + 1); //$NON-NLS-1$
-			return t.equals(fileTimestamp);
-		} else {
-			return false;
-		}
+	public boolean isNeedsMerge(Date otherTimestamp) {
+		return syncType == TYPE_MERGED_WITH_CONFLICTS && timeStamp.equals(otherTimestamp);
 	}
 	
 	/**
-	 * Answers if this sync information is for a resource that has been merged by the cvs server with
-	 * conflicts.
+	 * Answers if this sync information is for a resource that has been merged by the cvs server.
 	 * 
 	 * @return <code>true</code> if the sync information is for a file that has been merged and
 	 * <code>false</code> for folders and for files that have not been merged.
 	 */
 	public boolean isMerged() {
-		return timeStamp.indexOf(RESULT_OF_MERGE) != -1;
+		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
 	}
 		
 	/**
@@ -189,75 +194,38 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
-	 * Answers a CVS compatible entry line. The client can use this line to store in the CVS/Entry file or
-	 * sent it to the server.
-	 * 
-	 * @param includeTimeStamp determines if the timestamp will be included in the returned entry line. In 
-	 * some usages the timestamp should not be included in entry lines, for example when sending the entries 
-	 * to the server.
+	 * Returns an entry line that can be saved in the CVS/Entries file. For sending entry lines to the
+	 * server use <code>getServerEntryLine</code>.
 	 * 
 	 * @return a file or folder entry line reflecting the state of this sync object.
 	 */
-	public String getEntryLine(boolean includeTimeStamp) {
-		
-		StringBuffer result = new StringBuffer();
-		
-		if(isDirectory) {
-			result.append(DIRECTORY_PREFIX);
-			result.append(name + "////"); //$NON-NLS-1$
-		} else {
-			result.append(SEPERATOR);
-			result.append(name);
-			result.append(SEPERATOR);
-			
-			if(isDeleted){
-				result.append(DELETED_PREFIX); 
-			}
-				
-			result.append(revision);
-			result.append(SEPERATOR);
-
-			if(includeTimeStamp) {
-				result.append(timeStamp);
-			}
-			result.append(SEPERATOR);
-			result.append(keywordMode == null ? "" : keywordMode); //$NON-NLS-1$
-			result.append(SEPERATOR);
-			if (tag != null) {
-				result.append(tag.toEntryLineFormat(true));
-			}
-		}
-
-		return result.toString();
+	public String getEntryLine() {
+		return getEntryLine(true /*include timestamps*/, null /*no timestamp override*/);
 	}
-	
+		
 	/**
-	 * Same as <code>getEntryLine</code> except it considers merged files in entry line format. This is only 
-	 * valid for sending the file to the server.
+	 * Same as <code>getEntryLine</code> except it considers merged files in entry line timestamp format. 
+	 * This is only valid for sending the file to the server.
 	 * 
-	 * @param includeTimeStamp determines if the timestamp will be included in the returned entry line. In 
-	 * some usages the timestamp should not be included in entry lines, for example when sending the entries 
-	 * to the server.
-	 * @param isModified is the resource associated with this sync info modified.
-	 * 
+	 * @param fileTimestamp is timestamp of the resource associated with this sync info.
 	 * @return a file or folder entry line reflecting the state of this sync object.
 	 */
-	public String getEntryLine(boolean includeTimeStamp, String fileTimestamp) {
+	public String getServerEntryLine(Date fileTimestamp) {
 		String serverTimestamp;
-		if(isMerged()) {
+		if(fileTimestamp != null && isMerged()) {
 			if(isNeedsMerge(fileTimestamp)) {
-				serverTimestamp = MERGE_UNMODIFIED;
+				serverTimestamp = TIMESTAMP_SERVER_MERGED_WITH_CONFLICT;
 			} else {
-				serverTimestamp = MERGE_MODIFIED;
+				serverTimestamp = TIMESTAMP_SERVER_MERGED;
 			}
-			return new ResourceSyncInfo(getName(), getRevision(), serverTimestamp, getKeywordMode(), getTag(), getPermissions()).getEntryLine(true);
+			return getEntryLine(true, serverTimestamp);
 		} else {
-			return getEntryLine(includeTimeStamp);
+			return getEntryLine(false, null);
 		}		
 	}
 	
 	/**
-	 * Anwsers the a compatible permissions line for files.
+	 * Anwsers a compatible permissions line for files.
 	 * 
 	 * @return a permission line for files and <code>null</code> if this sync object is
 	 * a directory.
@@ -302,9 +270,9 @@ public class ResourceSyncInfo {
 	/**
 	 * Gets the timeStamp or <code>null</code> if a timestamp is not available.
 	 * 
-	 * @return a string of the format "Thu Oct 18 20:21:13 2001"
+	 * @return a date instance representing the timestamp
 	 */
-	public String getTimeStamp() {
+	public Date getTimeStamp() {
 		return timeStamp;
 	}
 
@@ -356,10 +324,23 @@ public class ResourceSyncInfo {
 		return getName().hashCode();
 	}
 	
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		return getEntryLine(true, null /*no timestamp override*/);
+	}
+
+	public MutableResourceSyncInfo cloneMutable() {
+		MutableResourceSyncInfo newSync = new MutableResourceSyncInfo(this);
+		newSync.setResourceInfoType(syncType);
+		return newSync;
+	}
+
 	/**
 	 * Sets the tag for the resource.
 	 */
-	private void setTag(CVSTag tag) {
+	protected void setTag(CVSTag tag) {
 		if(tag!=null) {
 			this.tag = new CVSEntryLineTag(tag);
 		} else {
@@ -367,6 +348,25 @@ public class ResourceSyncInfo {
 		}					
 	}
 
+	/**
+	 * Sets the version and decides if the revision is for a deleted resource the revision field
+	 * will not include the deleted prefix '-'.
+	 * 
+	 * @param version the version to set
+	 */
+	protected void setRevision(String revision) {
+		if(revision.startsWith(DELETED_PREFIX)) {
+			this.revision = revision.substring(DELETED_PREFIX.length());
+			isDeleted = true;
+		} else {
+			if(revision.equals(ADDED_REVISION)) {
+				this.timeStamp = DUMMY_DATE;
+			}
+			this.revision = revision;
+			isDeleted = false;
+		}
+	}
+	
 	/**
 	 * Set the entry line 
 	 * 
@@ -400,7 +400,47 @@ public class ResourceSyncInfo {
 			setRevision(rev);
 		}
 	
-		timeStamp = tokenizer.nextToken();
+		String date = tokenizer.nextToken();
+		
+		// possible timestamps are:
+		// from server: "+=" and "+modified"
+		// from entry line: "Result of Merge+Thu May 25 12:33:33 2002"
+		//							 "Result of Merge"
+		//							"Thu May 25 12:33:33 2002"
+		//
+		// The server will send a timestamp of "+=" if
+		// the file was merged with conflicts. The '+' indicates that there are conflicts and the
+		// '=' indicate that the timestamp for the file should be used. If the merge does not
+		// have conflicts, simply add a text only timestamp and the file will be regarded as
+		// having outgoing changes.
+		// The purpose for having the two different timestamp options for merges is to 
+		// dissallow commit of files that have conflicts until they have been manually edited.			
+		if(date.indexOf(ResourceSyncInfo.TIMESTAMP_SERVER_MERGED) != -1) {
+			syncType = TYPE_MERGED;
+			date = null;
+		} else if(date.indexOf(ResourceSyncInfo.TIMESTAMP_SERVER_MERGED_WITH_CONFLICT) != -1) {
+			syncType = TYPE_MERGED_WITH_CONFLICTS;
+			date = null;
+		} else if(date.indexOf(TIMESTAMP_MERGED_WITH_CONFLICT)!=-1) {
+			date = date.substring(date.indexOf("+") + 1); //$NON-NLS-1$
+			syncType = TYPE_MERGED_WITH_CONFLICTS;
+		} else if(date.indexOf(TIMESTAMP_MERGED)!=-1) {
+			syncType = TYPE_MERGED;
+			date = null;
+		}
+		
+		if(date==null || "".equals(date)) { //$NON-NLS-1$
+			timeStamp = null;	
+		} else {
+			try {	
+				timeStamp = CVSDateFormatter.entryLineToDate(date);
+			} catch(ParseException e) {
+				// something we don't understand, just make this sync have no timestamp and
+				// never be in sync with the server.
+				timeStamp = DUMMY_DATE;
+			}
+		}
+
 		keywordMode = tokenizer.nextToken();
 		String tagEntry = tokenizer.nextToken();
 						
@@ -411,26 +451,51 @@ public class ResourceSyncInfo {
 		}
 	}
 	
-	/**
-	 * Sets the version and decides if the revision is for a deleted resource the revision field
-	 * will not include the deleted prefix '-'.
-	 * 
-	 * @param version the version to set
-	 */
-	private void setRevision(String revision) {
-		if(revision.startsWith(DELETED_PREFIX)) {
-			this.revision = revision.substring(DELETED_PREFIX.length());
-			isDeleted = true;
+	private String getEntryLine(boolean includeTimeStamp, String timestampOverride) {
+		StringBuffer result = new StringBuffer();
+		
+		if(isDirectory) {
+			result.append(DIRECTORY_PREFIX);
+			result.append(name + "////"); //$NON-NLS-1$
 		} else {
-			this.revision = revision;
-			isDeleted = false;
+			result.append(SEPERATOR);
+			result.append(name);
+			result.append(SEPERATOR);
+			
+			if(isDeleted){
+				result.append(DELETED_PREFIX); 
+			}
+
+			result.append(revision);
+			result.append(SEPERATOR);
+
+			if(includeTimeStamp) {
+				String entryLineTimestamp = ""; //$NON-NLS-1$
+				if(timestampOverride!=null) {
+					entryLineTimestamp = timestampOverride;
+				} else {					
+					switch(syncType) {
+						case TYPE_REGULAR:
+							if(timeStamp==DUMMY_DATE || timeStamp==null) {
+								entryLineTimestamp = TIMESTAMP_DUMMY;
+							} else {
+								entryLineTimestamp = CVSDateFormatter.dateToEntryLine(timeStamp);
+							} break;
+						case TYPE_MERGED:
+							entryLineTimestamp = TIMESTAMP_MERGED; break;
+						case TYPE_MERGED_WITH_CONFLICTS:
+							entryLineTimestamp = TIMESTAMP_MERGED_WITH_CONFLICT + CVSDateFormatter.dateToEntryLine(timeStamp); break;
+					}						
+				}
+				result.append(entryLineTimestamp);
+			}
+			result.append(SEPERATOR);
+			result.append(keywordMode == null ? "" : keywordMode); //$NON-NLS-1$
+			result.append(SEPERATOR);
+			if (tag != null) {
+				result.append(tag.toEntryLineFormat(true));
+			}
 		}
-	}
-	
-	/*
-	 * @see Object#toString()
-	 */
-	public String toString() {
-		return getEntryLine(true);
+		return result.toString();
 	}
 }

@@ -59,6 +59,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -118,7 +119,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// we no longer need the sync info cached. This does not affect the actual CVS
 		// meta directories on disk, and will remain unless a client calls unmanage().
 		try {
-			EclipseSynchronizer.getInstance().flush(getProject(), true, null);
+			EclipseSynchronizer.getInstance().flush(getProject(), true, IResource.DEPTH_INFINITE, null);
 		} catch(CVSException e) {
 			throw new CoreException(e.getStatus());
 		}
@@ -699,9 +700,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 								ResourceSyncInfo info = file.getSyncInfo();
 								if (info != null) {
 									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", info.getName())); //$NON-NLS-1$
-									file.setSyncInfo(new ResourceSyncInfo(info.getName(), 
-									(info.isDeleted() ? info.DELETED_PREFIX : "") + info.getRevision(), //$NON-NLS-1$
-									info.getTimeStamp(), info.getKeywordMode(), tag, info.getPermissions()));
+									MutableResourceSyncInfo newInfo = info.cloneMutable();
+									newInfo.setTag(tag);
+									file.setSyncInfo(newInfo);
 								}
 							};
 							public void visitFolder(ICVSFolder folder) throws CVSException {
@@ -1026,9 +1027,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 					
 					// change resource sync info immediately for an outgoing addition
 					if (info.isAdded()) {
-						ResourceSyncInfo newInfo = new ResourceSyncInfo(
-							info.getName(), info.getRevision(), info.getTimeStamp(), toKSubst.toMode(),
-							info.getTag(), info.getPermissions());
+						MutableResourceSyncInfo newInfo = info.cloneMutable();
+						newInfo.setKeywordMode(toKSubst.toMode());
 						mFile.setSyncInfo(newInfo);
 						continue;
 					}
@@ -1177,7 +1177,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	private static void makeDirty(IFile file) throws CVSException {
 		ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(file);
-		mFile.setTimeStamp(null);
+		mFile.setTimeStamp(null /*set the timestamp to current time*/);
 	}
 	
 	/*

@@ -38,7 +38,7 @@ public class CVSTestSetup extends TestSetup {
 	}
 
 	public static void loadProperties() {
-		String propertiesFile = System.getProperty("eclipse.cvs.properties");
+		String propertiesFile = "e:/repository.properties";
 		if (propertiesFile == null) return;
 		File file = new File(propertiesFile);
 		if (file.isDirectory()) file = new File(file, "repository.properties");

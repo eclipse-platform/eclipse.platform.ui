@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,9 +38,9 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -120,18 +121,23 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
-		this(parent, workspaceSyncState, new ResourceSyncInfo(name, revision, ResourceSyncInfo.DUMMY_TIMESTAMP, ResourceSyncInfo.USE_SERVER_MODE, tag, ResourceSyncInfo.DEFAULT_PERMISSIONS));
+		this(parent, workspaceSyncState, null);
+		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);
+		newInfo.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
+		newInfo.setKeywordMode(ResourceSyncInfo.USE_SERVER_MODE);
+		newInfo.setTag(tag);
+		newInfo.setPermissions(ResourceSyncInfo.DEFAULT_PERMISSIONS);
+		info = newInfo;
 	}
 	
 	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {
 		this(parent, Update.STATE_NONE, info);
 	}
 	
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, ResourceSyncInfo info) {
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, ResourceSyncInfo newInfo) {
 		this.parent = parent;
-		this.info = info;
+		info = newInfo;
 		setWorkspaceSyncState(workspaceSyncState);
-		Assert.isTrue(!info.isDirectory());
 	}
 
 	/**
@@ -145,7 +151,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @see ICVSRemoteFile#getContents()
 	 */
 	public InputStream getContents(final IProgressMonitor monitor) {
-		
 		try {
 			if (contents == null) {
 				IStatus status;
@@ -165,9 +170,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
+				// If the update succeeded but no contents were retreived from the server
+				// than we can assume that the remote file has no contents.
+				if (contents == null)
+					contents = new byte[0];
 			}
-			if (contents == null)
-				throw new CVSException(Policy.bind("RemoteFile.noContentsReceived", getRemoteLocation(null))); //$NON-NLS-1$
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
 			return null;
@@ -276,16 +283,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	
 	/**
 	 * @see IManagedFile#setFileInfo(FileProperties)
-	 * 
-	 * This method will either be invoked from the updated handler 
-	 * after the contents have been set or from the checked-in handler
-	 * which indicates that the remote file is empty.
 	 */
 	public void setSyncInfo(ResourceSyncInfo fileInfo) {
 		info = fileInfo;
-		// If the contents is null, the remote file is empty
-		if (contents == null)
-			contents = new byte[0];
 	}
 
 	/**
@@ -294,7 +294,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @param revision to associated with this remote file
 	 */
 	public void setRevision(String revision) {
-		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
+		MutableResourceSyncInfo newInfo = getSyncInfo().cloneMutable();
+		newInfo.setRevision(revision);
+		info = newInfo;
 	}		
 	
 	/*
@@ -322,38 +324,39 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		}
 	}
  
+	/*
+	 * @see ICVSFile#setReadOnly(boolean)
+	 */
 	public void setReadOnly(boolean readOnly) throws CVSException {
  	}
 
+	/*
+	 * @see ICVSFile#isReadOnly()
+	 */
 	public boolean isReadOnly() throws CVSException {
 		return true;
 	}
 	
-	/**
-	 * @see IManagedFile#getTimeStamp()
+	/*
+	 * @see ICVSFile#getTimeStamp()
 	 */
-	public String getTimeStamp() {
+	public Date getTimeStamp() {
 		return info.getTimeStamp();
 	}
 
-	/**
-	 * @see IManagedFile#setTimeStamp(String)
+	/*
+	 * @see ICVSFile#setTimeStamp(Date)
 	 */
-	public void setTimeStamp(String date) throws CVSException {
+	public void setTimeStamp(Date date) throws CVSException {
 	}
 
-	/**
-	 * @see IManagedFile#isDirty()
-	 * 
-	 * A remote file is never dirty
+	/*
+	 * @see ICVSFile#isDirty()
 	 */
 	public boolean isDirty() throws CVSException {
 		return false;
 	}
 	
-	/**
-	 * @see IManagedFile#isModified()
-	 */
 	public boolean isModified() throws CVSException {
 		// it is safe to always consider a remote file handle as modified. This will cause any
 		// CVS command to fetch new contents from the server.

@@ -52,7 +52,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testRenameProject"));
+		//return new CVSTestSetup(new SyncElementTest("testAdditionConflicts"));
 	}
 	
 	/*

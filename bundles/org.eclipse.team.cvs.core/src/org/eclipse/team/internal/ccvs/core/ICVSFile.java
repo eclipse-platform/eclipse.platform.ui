@@ -7,9 +7,9 @@ package org.eclipse.team.ccvs.core;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
@@ -27,7 +27,6 @@ public interface ICVSFile extends ICVSResource {
 	public static final int UPDATE_EXISTING = 3;
 	public static final int CREATED = 4;
 	
-	
 	/**
 	 * Answers the size of the file. 
 	 */
@@ -39,12 +38,6 @@ public interface ICVSFile extends ICVSResource {
  	 */
 	InputStream getInputStream() throws CVSException;
 	
-	/**
-	 * Gets an appending output stream for writing to the file.
-	 * It is the responsibility of the caller to close the stream when finished.
- 	 */
-	OutputStream getAppendingOutputStream() throws CVSException;
-
 	/**
 	 * Set the contents of the file to the contents of the provided input stream
 	 * 
@@ -74,25 +67,14 @@ public interface ICVSFile extends ICVSResource {
 	void copyTo(String filename) throws CVSException;
 	
 	/**
-	 * Answers the current timestamp for this file. The returned format must be in the
-	 * following format:
-	 *
-	 * E MMM dd HH:mm:ss yyyy
-	 * 
-	 * @throws CVSFileNotFoundException if exists() = false
+	 * Answers the current timestamp for this file.
 	 */
-	String getTimeStamp();
+	Date getTimeStamp();
 
 	/**
-	 * Sets the current timestamp for this file. The supplied date must be in the
-	 * following format:
-	 *
-	 * E MMM dd HH:mm:ss yyyy
-	 *
-	 * If the date is <code>null</code> then the current time is used as 
-	 * the timestamp.
+	 * If the date is <code>null</code> then the current time is used.
 	 */
-	void setTimeStamp(String date) throws CVSException;
+	void setTimeStamp(Date date) throws CVSException;
 	
 	/**
 	 * Answers <code>true</code> if the file differs from its base. If the file has no

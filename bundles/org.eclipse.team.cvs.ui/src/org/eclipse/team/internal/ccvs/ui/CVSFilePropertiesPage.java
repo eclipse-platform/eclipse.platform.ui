@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.util.Date;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
@@ -19,6 +21,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class CVSFilePropertiesPage extends PropertyPage {
@@ -53,7 +56,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision"));
 			createLabel(composite, syncInfo.getRevision());
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp"));
-			createLabel(composite, syncInfo.getTimeStamp());
+			createLabel(composite, CVSDateFormatter.dateToEntryLine(syncInfo.getTimeStamp()));
 			
 			// Dirty and Modified
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.dirty"));

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -62,6 +62,7 @@ public class EclipseSynchronizer {
 	static public void startup() {
 		Assert.isTrue(instance==null);
 		instance = new EclipseSynchronizer();	
+		SyncFileWriter.startup();
 	}
 	
 	static public void shutdown() {
@@ -86,7 +87,7 @@ public class EclipseSynchronizer {
 		Assert.isNotNull(info); // enforce the use of deleteFolderSync
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				"Cannot set folder sync info on " + folder.getFullPath());
+				Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
 		try {
 			beginOperation(null);
@@ -162,7 +163,7 @@ public class EclipseSynchronizer {
 		IContainer parent = resource.getParent();
 		if (parent == null || ! parent.exists() || parent.getType() == IResource.ROOT) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				"Cannot set resource sync info on " + resource.getFullPath());
+				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
 		}
 		try {
 			beginOperation(null);
@@ -238,7 +239,7 @@ public class EclipseSynchronizer {
 	public void addIgnored(IContainer folder, String pattern) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				"Cannot set ignored pattern on " + folder.getFullPath());
+				Policy.bind("EclipseSynchronizer.ErrorSettingIgnorePattern", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
 		String[] ignores = cacheFolderIgnores(folder);
 		if (ignores != null) {
@@ -250,7 +251,7 @@ public class EclipseSynchronizer {
 			ignores = new String[] { pattern };
 		}
 		setCachedFolderIgnores(folder, ignores);
-		SyncFileWriter.addCVSIgnoreEntries(CVSWorkspaceRoot.getCVSFolderFor(folder), ignores);
+		SyncFileWriter.addCVSIgnoreEntries(folder, ignores);
 		// broadcast changes to unmanaged children - they are the only candidates for being ignored
 		List possibleIgnores = new ArrayList();
 		accumulateNonManagedChildren(folder, possibleIgnores);
@@ -345,16 +346,27 @@ public class EclipseSynchronizer {
 	 * @param purgeCache if true, purges the cache from memory as well
 	 * @param monitor the progress monitor, may be null
 	 */
-	public void flush(IContainer root, boolean purgeCache, IProgressMonitor monitor)
+	public void flush(IContainer root, boolean purgeCache, int depth, IProgressMonitor monitor)
 		throws CVSException {
 		// flush unwritten sync info to disk
 		if (nestingCount != 0) commitCache(monitor);
 		
 		// purge from memory too if we were asked to
-		if (purgeCache) purgeCache(root);
+		if (purgeCache) purgeCache(root, depth);
 
 		// prepare for the operation again if we cut the last one short
 		if (nestingCount != 0) prepareCache(monitor);
+	}
+	
+	public void syncFilesChanged(IContainer[] roots) throws CVSException {
+		try {
+			for (int i = 0; i < roots.length; i++) {
+				flush(roots[i], true, IResource.DEPTH_ONE, null);
+				CVSProviderPlugin.broadcastResourceStateChanges(roots[i].members());
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/**
@@ -396,12 +408,11 @@ public class EclipseSynchronizer {
 					FolderSyncInfo info = getCachedFolderSync(folder);
 					if (info == null) {
 						// deleted folder sync info since we loaded it
-						SyncFileWriter.getCVSSubdirectory(CVSWorkspaceRoot.getCVSFolderFor(folder)).delete();
+						SyncFileWriter.deleteFolderSync(folder);
 						dirtyParents.remove(folder);
 					} else {
 						// modified or created new folder sync info since we loaded it
-						ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-						SyncFileWriter.writeFolderSync(cvsFolder, info);
+						SyncFileWriter.writeFolderSync(folder, info);
 					}
 				}
 				Policy.checkCanceled(monitor);
@@ -417,8 +428,7 @@ public class EclipseSynchronizer {
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					// write sync info for all children in one go
 					Collection infos = getCachedResourceSyncForChildren(folder);
-					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-					SyncFileWriter.writeAllResourceSync(cvsFolder,
+					SyncFileWriter.writeAllResourceSync(folder,
 						(ResourceSyncInfo[]) infos.toArray(new ResourceSyncInfo[infos.size()]));
 				}
 				Policy.checkCanceled(monitor);
@@ -431,7 +441,7 @@ public class EclipseSynchronizer {
 				new IResource[changedResources.size()]);
 			CVSProviderPlugin.broadcastResourceStateChanges(resources);
 			changedResources.clear();
-			changedFolders.clear();									
+			changedFolders.clear();	
 		} finally {
 			monitor.done();
 		}
@@ -441,7 +451,7 @@ public class EclipseSynchronizer {
 	 * Purges the cache recursively for all resources beneath the container.
 	 * There must not be any pending uncommitted changes.
 	 */
-	private static void purgeCache(IContainer container) throws CVSException {
+	private static void purgeCache(IContainer container, int depth) throws CVSException {
 		if (! container.exists()) return;
 		try {
 			if (container.getType() != IResource.ROOT) {
@@ -449,11 +459,13 @@ public class EclipseSynchronizer {
 				container.setSessionProperty(IGNORE_SYNC_KEY, null);
 				container.setSessionProperty(FOLDER_SYNC_KEY, null);
 			}
-			IResource[] members = container.members();
-			for (int i = 0; i < members.length; i++) {
-				IResource resource = members[i];
-				if (resource.getType() != IResource.FILE) {
-					purgeCache((IContainer) resource);
+			if(depth!=IResource.DEPTH_ZERO) {
+				IResource[] members = container.members();
+				for (int i = 0; i < members.length; i++) {
+					IResource resource = members[i];
+					if (resource.getType() != IResource.FILE) {
+						purgeCache((IContainer) resource, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth );
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -473,7 +485,7 @@ public class EclipseSynchronizer {
 			HashMap children = (HashMap)container.getSessionProperty(RESOURCE_SYNC_KEY);
 			if (children == null) {
 				// load the sync info from disk
-				ResourceSyncInfo[] infos = SyncFileWriter.readAllResourceSync(CVSWorkspaceRoot.getCVSFolderFor(container));
+				ResourceSyncInfo[] infos = SyncFileWriter.readAllResourceSync(container);
 				if (infos != null) {
 					children = new HashMap(infos.length);
 					for (int i = 0; i < infos.length; i++) {
@@ -587,7 +599,7 @@ public class EclipseSynchronizer {
 			FolderSyncInfo info = (FolderSyncInfo)container.getSessionProperty(FOLDER_SYNC_KEY);
 			if (info == null) {
 				// read folder sync info and remember it
-				info = SyncFileWriter.readFolderSync(CVSWorkspaceRoot.getCVSFolderFor(container));
+				info = SyncFileWriter.readFolderSync(container);
 				if (info == null) {
 					container.setSessionProperty(FOLDER_SYNC_KEY, NULL_FOLDER_SYNC_INFO);
 				} else {
@@ -652,7 +664,7 @@ public class EclipseSynchronizer {
 			String[] ignores = (String[])container.getSessionProperty(IGNORE_SYNC_KEY);
 			if (ignores == null) {
 				// read folder ignores and remember it
-				ignores = SyncFileWriter.readCVSIgnoreEntries(CVSWorkspaceRoot.getCVSFolderFor(container));
+				ignores = SyncFileWriter.readCVSIgnoreEntries(container);
 				if (ignores == null) ignores = NULL_IGNORES;
 				container.setSessionProperty(IGNORE_SYNC_KEY, ignores);
 			}

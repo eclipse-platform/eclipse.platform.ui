@@ -521,8 +521,8 @@ public class Session {
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
-		InputStream in = file.getInputStream();
 		OutputStream out = connection.getOutputStream();
+		InputStream in = file.getInputStream();
 		try {
 			if (isBinary || PLATFORM_NEWLINE_BYTES.length == 1) {
 				writeLine(Long.toString(size));

@@ -23,6 +23,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -121,7 +122,9 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 				if (info.isAdded()) {
 					mFile.unmanage(null);
 				} else {
-					mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.DELETED_PREFIX + info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+					MutableResourceSyncInfo deletedInfo = info.cloneMutable();
+					deletedInfo.setDeleted(true);
+					mFile.setSyncInfo(deletedInfo);
 				}
 			}
 		} catch (CVSException e) {
@@ -139,7 +142,9 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 			if (mFile.isManaged()) {
 				ResourceSyncInfo info = mFile.getSyncInfo();
 				if (info.isDeleted()) {
-					mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
+					undeletedInfo.setDeleted(false);
+					mFile.setSyncInfo(undeletedInfo);
 				} else if (info.isDirectory()) {
 					// XXX This is a gender change against the server! We should prevent this creation.
 					mFile.unmanage(null);
@@ -165,7 +170,9 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 				if (fromInfo.isAdded()) {
 					fromFile.unmanage(null);
 				} else {
-					fromFile.setSyncInfo(new ResourceSyncInfo(fromInfo.getName(), fromInfo.DELETED_PREFIX + fromInfo.getRevision(), fromInfo.getTimeStamp(), fromInfo.getKeywordMode(), fromInfo.getTag(), fromInfo.getPermissions()));
+					MutableResourceSyncInfo deletedInfo = fromInfo.cloneMutable();
+					deletedInfo.setDeleted(true);
+					fromFile.setSyncInfo(deletedInfo);
 				}
 			}
 			
@@ -174,10 +181,17 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 			if (toFile.isManaged()) {
 				ResourceSyncInfo info = toFile.getSyncInfo();
 				if (info.isDeleted()) {
-					toFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
+					undeletedInfo.setDeleted(false);
+					toFile.setSyncInfo(undeletedInfo);
 				}
 			} else if (fromInfo != null) {
-				toFile.setSyncInfo(new ResourceSyncInfo(toFile.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, fromInfo.getKeywordMode(), fromInfo.getTag(), fromInfo.getPermissions()));
+				MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(toFile.getName(), ResourceSyncInfo.ADDED_REVISION);
+				newInfo.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
+				newInfo.setPermissions(fromInfo.getPermissions());
+				newInfo.setKeywordMode(fromInfo.getKeywordMode());
+				newInfo.setTag(fromInfo.getTag());
+				toFile.setSyncInfo(newInfo);
 			}
 			
 		} catch (CVSException e) {

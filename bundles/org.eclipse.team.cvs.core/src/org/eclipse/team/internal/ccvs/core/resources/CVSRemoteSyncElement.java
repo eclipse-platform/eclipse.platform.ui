@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -148,9 +149,12 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 
 		ICVSResource local = localSync.getCVSResource();
 		RemoteResource remote = (RemoteResource)getRemote();
-		ResourceSyncInfo info = local.getSyncInfo();
-		String revision = null;
-		
+		ResourceSyncInfo origInfo = local.getSyncInfo();
+		MutableResourceSyncInfo info = null;
+		if(origInfo!=null) {
+			info = origInfo.cloneMutable();			
+		}
+	
 		if (outgoing) {
 				// The sync info is alright, it's already outgoing!
 				return;
@@ -159,38 +163,32 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
-					String mode = KSubstOption.fromPattern(local.getName()).toMode();
-					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP,
-						mode, local.getParent().getFolderSyncInfo().getTag(), null);
-					revision = info.getRevision();
+					info.setRevision(ResourceSyncInfo.ADDED_REVISION);
+					info.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
 				} else {
-					info = remote.getSyncInfo();
 					// Otherwise change the revision to the remote revision
-					revision = info.getRevision();
-					// Use the local sync info for the other info
-					info = local.getSyncInfo();
+					info.setRevision(remote.getSyncInfo().getRevision());
 				}
 			} else {
 				// We have an incoming add, turn it around as an outgoing delete
-				info = remote.getSyncInfo();
-				revision = ResourceSyncInfo.DELETED_PREFIX + info.getRevision();
+				info = remote.getSyncInfo().cloneMutable();
+				info.setRevision(ResourceSyncInfo.DELETED_PREFIX + info.getRevision());
 			}
 		} else if (local.exists()) {
 			// We have a conflict and a local resource!
 			if (hasRemote()) {
 				if (hasBase()) {
 					// We have a conflicting change, Update the local revision
-					revision = remote.getSyncInfo().getRevision();
+					info.setRevision(remote.getSyncInfo().getRevision());
 				} else {
 					// We have conflictin additions.
 					// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
 					remote.getContents(Policy.monitorFor(monitor));
-					info = remote.getSyncInfo();
-					revision = info.getRevision();
+					info = remote.getSyncInfo().cloneMutable();
 				}
 			} else if (hasBase()) {
 				// We have a remote deletion. Make the local an addition
-				revision = ResourceSyncInfo.ADDED_REVISION;
+				info.setRevision(ResourceSyncInfo.ADDED_REVISION);
 			} else {
 				// There's a local, no base and no remote. We can't possible have a conflict!
 				Assert.isTrue(false);
@@ -199,14 +197,16 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			// We have a conflict and there is no local!
 			if (hasRemote()) {
 				// We have a local deletion that conflicts with remote changes.
-				revision = ResourceSyncInfo.DELETED_PREFIX + remote.getSyncInfo().getRevision();
+				info.setRevision(ResourceSyncInfo.DELETED_PREFIX + remote.getSyncInfo().getRevision());
 			} else {
 				// We have conflicting deletions. Clear the sync info
-				local.setSyncInfo(null);
+				info = null;
 				return;
 			}
 		}
-		info = new ResourceSyncInfo(info.getName(), revision, ResourceSyncInfo.DUMMY_TIMESTAMP, info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
+		if(info!=null) {
+			info.setTag(local.getParent().getFolderSyncInfo().getTag());
+		}
 		local.setSyncInfo(info);
 	}
 	
