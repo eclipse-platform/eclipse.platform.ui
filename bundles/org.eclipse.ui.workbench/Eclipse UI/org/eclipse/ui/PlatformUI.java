@@ -13,6 +13,8 @@ package org.eclipse.ui;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.testing.WorkbenchTestable;
+import org.eclipse.ui.testing.TestableObject;
 
 /**
  * The central class for access to the Eclipse Platform User Interface. 
@@ -118,5 +120,15 @@ public final class PlatformUI {
 	 */
 	public static int createAndRunWorkbench(WorkbenchAdviser adviser) {
 		return Workbench.createAndRunWorkbench(adviser);
+	}
+	
+	/**
+	 * Returns the testable object facade, for use by the test harness.
+	 * 
+	 * @return the testable object facade
+	 * @since 3.0
+	 */
+	public static TestableObject getTestableObject() {
+		return Workbench.getWorkbenchTestable();
 	}
 }

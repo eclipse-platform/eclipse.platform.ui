@@ -121,9 +121,11 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.testing.TestableObject;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. 
@@ -149,7 +151,14 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	 * Holds onto the only instance of Workbench.
 	 */
 	private static Workbench instance;
-	
+
+	/**
+	 * The testable object facade.
+	 * 
+	 * @since 3.0
+	 */
+	private static WorkbenchTestable testableObject;
+
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
@@ -227,6 +236,19 @@ public final class Workbench implements IWorkbench, IContextResolver {
 		Workbench workbench = new Workbench(adviser);
 		// run the workbench event loop
 		return workbench.runUI();
+	}
+	
+	/**
+	 * Returns the testable object facade, for use by the test harness.
+	 * 
+	 * @return the testable object facade
+	 * @since 3.0
+	 */
+	public static WorkbenchTestable getWorkbenchTestable() {
+		if (testableObject == null) {
+			testableObject = new WorkbenchTestable();
+		}
+		return testableObject;
 	}
 	
 	/* begin command and context support */
@@ -1724,6 +1746,8 @@ public final class Workbench implements IWorkbench, IContextResolver {
 						UIStats.end(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 					}
 				});
+				
+//				getWorkbenchTestable().init(display, this);
 				
 				// the event loop
 				runEventLoop(handler, display);
