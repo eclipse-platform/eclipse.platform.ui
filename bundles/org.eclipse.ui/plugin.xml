@@ -221,6 +221,9 @@
             id="org.eclipse.ui.edit.findIncremental">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.edit.findIncrementalReverse">
+      </actionDefinition>
+      <actionDefinition
             id="org.eclipse.ui.edit.revertToSaved">
       </actionDefinition>
       <actionDefinition
@@ -581,6 +584,10 @@
          <accelerator
                key="Ctrl+S"
                id="org.eclipse.ui.edit.findIncremental">
+         </accelerator>
+         <accelerator
+               key="Ctrl+R"
+               id="org.eclipse.ui.edit.findIncrementalReverse">
          </accelerator>
          <accelerator
                key=""
@@ -953,6 +960,10 @@
          <accelerator
                key="Ctrl+J"
                id="org.eclipse.ui.edit.findIncremental">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+J"
+               id="org.eclipse.ui.edit.findIncrementalReverse">
          </accelerator>
          <accelerator
                key=""
