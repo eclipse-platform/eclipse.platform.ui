@@ -118,8 +118,11 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
-			worked((int) work);
-
+			JobInfo info = getJobInfo(job);
+			if (info.hasTaskInfo()) {
+				info.addWork(work);
+				refresh(info);
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
@@ -171,12 +174,7 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-
-			JobInfo info = getJobInfo(job);
-			if (info.hasTaskInfo()) {
-				info.addWork(work);
-				refresh(info);
-			}
+			internalWorked((double) work);
 		}
 	}
 
