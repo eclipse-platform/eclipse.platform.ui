@@ -300,7 +300,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		setBreakpoints(new Vector(10));
 		try {
 			loadBreakpoints(getWorkspace().getRoot());
-			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_WORKSPACE_BUILD);
+			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));
