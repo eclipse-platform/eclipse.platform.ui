@@ -64,6 +64,13 @@ public abstract class ScriptedCommand implements IOperationListener {
 	 */
 	public abstract boolean run(IProgressMonitor monitor);
 
+	/**
+	 * Applies the changes made to the current configuration.
+	 */
+	public void applyChangesNow() {
+		InstallConfiguration.applyChanges();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
 	 */
