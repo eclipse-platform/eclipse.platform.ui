@@ -79,6 +79,49 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 */
 	public int getLineNumber() throws DebugException;
+	
+	/**
+	 * Returns the index of the first character in the associated source
+	 * element that corresponds to the current location of the instruction pointer
+	 * in this stack frame, or <code>-1</code> if the information is unavailable.
+	 * <p>
+	 * If a debug model supports expression level stepping, the start/end
+	 * character ranges are used to highlight the expression within a line
+	 * that is being executed.
+	 * </p>
+	 * @return index of the first character in the associated source
+	 * element that corresponds to the current location of the instruction pointer
+	 * in this stack frame, or <code>-1</code> if the information is unavailable
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * @since 2.0
+	 */
+	public int getCharStart() throws DebugException;
+	
+	/**
+	 * Returns the index of the last character in the associated source
+	 * element that corresponds to the current location of the instruction pointer
+	 * in this stack frame, or <code>-1</code> if the information is unavailable.
+	 * <p>
+	 * If a debug model supports expression level stepping, the start/end
+	 * character ranges are used to highlight the expression within a line
+	 * that is being executed.
+	 * </p>
+	 * @return index of the last character in the associated source
+	 * element that corresponds to the current location of the instruction pointer
+	 * in this stack frame, or <code>-1</code> if the information is unavailable
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * @since 2.0
+	 */
+	public int getCharEnd() throws DebugException;	
+		
 	/**
 	 * Returns the name of this stack frame. Name format is debug model
 	 * specific, and should be specified by a debug model.
