@@ -789,18 +789,18 @@ public final URL find(IPath path, Map override) {
 		// Watch for the root case.  It will produce a new
 		// URL which is only the root directory (and not the
 		// root of this plugin).	
-		result = findInPlugin(install, "");
+		result = findInPlugin(install, Path.EMPTY);
 		if (result == null)
-			result = findInFragments("");
+			result = findInFragments(Path.EMPTY);
 		return result;
 	}
 	
 	// Now check for paths without variable substitution
 	String first = path.segment(0);
 	if (first.charAt(0) != '$') {
-		result = findInPlugin(install, path.toString());
+		result = findInPlugin(install, path);
 		if (result == null)
-			result = findInFragments(path.toString());
+			result = findInFragments(path);
 		return result;	
 	}
 		
@@ -832,28 +832,41 @@ private URL findOS(URL install, IPath path, Map override) {
 		os = BootLoader.getOS();
 	if (os.length() == 0)
 		return null;
-	boolean done = false;
+		
+	// Now do the same for osarch
+	String osArch = null;
+	if (override != null)
+		try {
+			// check for override
+			osArch = (String) override.get("$arch$");
+		} catch (ClassCastException e) {
+			// just in case
+		}
+	if (osArch == null)
+		// use default
+		osArch = BootLoader.getOSArch();
+	if (osArch.length() == 0)
+		return null;
+
 	URL result = null;
-	while (!done) {
-		String filePath = "os/" + os + "/" + path.toString();	
+	IPath base = new Path("os").append(os).append(osArch);
+	// Keep doing this until all you have left is "os" as a path
+	while (base.segmentCount() != 1) {
+		IPath filePath = base.append(path);	
 		result = findInPlugin(install, filePath);
 		if (result != null)
 			return result;	
 		result = findInFragments(filePath);
 		if (result != null)
 			return result;
-		int i = os.lastIndexOf('/');
-		if (i < 0) 
-			done = true;
-		else
-			os = os.substring(0, i);
+		base = base.removeLastSegments(1);
 	}
 	// If we get to this point, we haven't found it yet.
 	// Look in the plugin and fragment root directories
-	result = findInPlugin(install, path.toString());
+	result = findInPlugin(install, path);
 	if (result != null)
 		return result;
-	return findInFragments(path.toString());
+	return findInFragments(path);
 }
 
 private URL findWS(URL install, IPath path, Map override) {
@@ -868,7 +881,7 @@ private URL findWS(URL install, IPath path, Map override) {
 	if (ws == null)
 		// use default
 		ws = BootLoader.getWS();
-	String filePath = "ws/" + ws + "/" + path.toString();
+	IPath filePath = new Path("ws").append(ws).append(path);
 	// We know that there is only one segment to the ws path
 	// e.g. ws/win32	
 	URL result = findInPlugin(install, filePath);
@@ -879,10 +892,10 @@ private URL findWS(URL install, IPath path, Map override) {
 		return result;
 	// If we get to this point, we haven't found it yet.
 	// Look in the plugin and fragment root directories
-	result = findInPlugin(install, path.toString());
+	result = findInPlugin(install, path);
 	if (result != null)
 		return result;
-	return findInFragments(path.toString());
+	return findInFragments(path);
 }
 
 private URL findNL(URL install, IPath path, Map override) {
@@ -901,45 +914,43 @@ private URL findNL(URL install, IPath path, Map override) {
 		return null;
 	nl = nl.replace('_', '/');
 	URL result = null;
-	boolean done = false;
 	
-	while (!done) {		
-		String filePath = "nl/" + nl + "/" + path.toString();
+	IPath base = new Path("nl").append(nl);
+	while (base.segmentCount() != 1) {		
+		IPath filePath = base.append(path);
 		result = findInPlugin(install, filePath);
 		if (result != null)
 			return result;
 		result = findInFragments(filePath);
 		if (result != null)
 			return result;
-		else {
-			int i = nl.lastIndexOf('/');
-			if (i < 0)
-				done = true;
-			else
-				nl = nl.substring(0, i);
-		}
+		base = base.removeLastSegments(1);
 	}
 	// If we get to this point, we haven't found it yet.
 	// Look in the plugin and fragment root directories
-	result = findInPlugin(install, path.toString());
+	result = findInPlugin(install, path);
 	if (result != null)
 		return result;
-	return findInFragments(path.toString());
+	return findInFragments(path);
 }
 
-private URL findInPlugin(URL install, String filePath) {
+private URL findInPlugin(URL install, IPath filePath) {
 	try {
-		URL location = new URL(install, filePath);
+		URL location = new URL(install, filePath.toString());
 		String file = getFileFromURL(location);
-		if (file != null && new File(file).exists())
-			return location;						
+		if (file != null && new File(file).exists()) {
+			Path pluginRootPath = new Path(install.getFile());
+			Path foundPath = new Path(file);
+			if (pluginRootPath.isPrefixOf(foundPath))
+				return location;
+		}						
 	} catch (IOException e) {
 		// ignore bad URLs
 	}
 	return null;
 }
 
-private URL findInFragments(String path) {
+private URL findInFragments(IPath filePath) {
 	// This method will return a 'real' URL (as opposed to a platform
 	// URL).
 	PluginFragmentModel[] fragments = getFragments();
@@ -948,10 +959,15 @@ private URL findInFragments(String path) {
 		
 	for (int i = 0; i < fragments.length; i++) {
 		try {
-			URL location = new URL(fragments[i].getLocation() + path);
+			URL fragmentRootURL = new URL(fragments[i].getLocation());
+			URL location = new URL(fragmentRootURL, filePath.toString());
 			String file = getFileFromURL(location);
-			if (file != null && new File(file).exists())
-				return location;
+			if (file != null && new File(file).exists()) {
+				Path fragmentRootPath = new Path(fragmentRootURL.getFile());
+				Path foundPath = new Path(file);
+				if (fragmentRootPath.isPrefixOf(foundPath))
+					return location;
+			}
 		} catch (IOException e) {
 			// skip malformed url and urls that cannot be resolved
 		}
