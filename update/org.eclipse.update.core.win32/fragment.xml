@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fragment
-   id="org.eclipse.swt.win32"
-   name="%fragmentName"
+   id="org.eclipse.update.core.win32"
+   name="Install/Update Manager for Windows fragment"
    version="1.9.0"
+   provider-name="International Business Machine Corp."
    plugin-id="org.eclipse.update.core"
-   plugin-version="1.9.0">
+   plugin-version="1.9.0"
+   match="perfect">
 
    <runtime>
    </runtime>

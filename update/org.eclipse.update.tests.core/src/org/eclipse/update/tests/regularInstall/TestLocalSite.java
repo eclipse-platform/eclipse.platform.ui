@@ -200,10 +200,16 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
-		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
-		IFeature feature2 = ref.getFeature();
-		//String configuredFeature = feature2.getLabel();
-		assertEquals(feature2.getVersionedIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
+		IFeatureReference[] refs = configSite2.getConfiguredFeatures();
+		boolean found = false;
+		IFeature feature2 = null;
+		for (int i = 0; i < refs.length; i++) {
+			IFeature feature3 = refs[i].getFeature();			
+			if ("org.eclipse.update.core.tests.feature3_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
+				feature2 = feature3;
+				found = true;
+			}		
+		}
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site
@@ -272,10 +278,20 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
-		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
-		IFeature feature2 = ref.getFeature();
+		
+		IFeatureReference[] refs = configSite2.getConfiguredFeatures();
+		boolean found = false;
+		IFeature feature2 = null;
+		for (int i = 0; i < refs.length; i++) {
+			IFeature feature3 = refs[i].getFeature();			
+			if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
+				feature2 = feature3;
+				found = true;
+			}		
+		}
+
 		//String configuredFeature = feature2.getLabel();
-		assertEquals(feature2.getVersionedIdentifier().toString(),"org.test1.ident1_1.0.0");
+		assertTrue("cannot find feature org.test1.ident1_1.0.0 in configured SIte",found);
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		
 		// test only 2 install config in local site
