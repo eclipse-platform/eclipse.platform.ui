@@ -166,6 +166,11 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 	 * @see ITableOfContentsNode.dispose()
 	 */
 	public void dispose() {
+		innerComposite.setVisible(false);
+		imageLabel.setVisible(false);
+		titleLabel.setVisible(false);
+		imageLabel.dispose();
+		titleLabel.dispose();
 		innerComposite.dispose();
 	}
 

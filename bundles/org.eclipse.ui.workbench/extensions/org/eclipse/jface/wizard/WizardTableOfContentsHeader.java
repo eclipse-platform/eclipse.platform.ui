@@ -65,6 +65,8 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 			mergeNodes[i + oldSize] = newNodes[i];
 		}
 		nodes = mergeNodes;
+		//Lay it out again as the children have changed.
+		inner.layout();
 		tableComposite.setMinWidth(inner.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
 		inner.pack();
 	}
@@ -102,6 +104,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 				}
 			}
 			addNodesForWizard(newWizard);
+			System.out.println(inner.getChildren().length);
 		}
 	}
 
