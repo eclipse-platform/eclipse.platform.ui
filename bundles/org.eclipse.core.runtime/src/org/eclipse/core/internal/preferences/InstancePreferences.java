@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.SafeFileInputStream;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -104,10 +102,10 @@ public class InstancePreferences extends EclipsePreferences {
 			Policy.debug("Loading legacy preferences from " + prefFile); //$NON-NLS-1$
 
 		// load preferences from file
-		SafeFileInputStream input = null;
+		InputStream input = null;
 		Properties values = new Properties();
 		try {
-			input = new SafeFileInputStream(prefFile);
+			input = new BufferedInputStream(new FileInputStream(prefFile));
 			values.load(input);
 		} catch (IOException e) {
 			// problems loading preference store - quietly ignore

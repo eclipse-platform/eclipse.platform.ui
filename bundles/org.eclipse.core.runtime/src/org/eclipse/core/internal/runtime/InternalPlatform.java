@@ -761,7 +761,7 @@ public final class InternalPlatform implements IPlatform {
 
 		// read the java.io.Properties file at the given URL
 		Properties overrides = new Properties();
-		SafeFileInputStream in = null;
+		InputStream in = null;
 
 		try {
 			File inFile = new File(propertiesURL.getFile());
@@ -772,7 +772,7 @@ public final class InternalPlatform implements IPlatform {
 				return;
 			}
 
-			in = new SafeFileInputStream(inFile);
+			in = new BufferedInputStream(new FileInputStream(inFile));
 			if (in == null) {
 				// fail quietly
 				if (DEBUG_PREFERENCES)
