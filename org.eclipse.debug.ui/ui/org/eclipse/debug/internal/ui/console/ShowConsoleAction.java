@@ -24,7 +24,11 @@ public class ShowConsoleAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		fView.display(fConsole);
+		if (!fConsole.equals(fView.getConsole())) {
+			// only change if required (and un-pin the console if pinned)
+			fView.pin(null);
+			fView.display(fConsole);
+		}
 	}
 
 	/**

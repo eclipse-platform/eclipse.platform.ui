@@ -37,7 +37,7 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 */
 	public void update() {
 		IConsole[] consoles = DebugUIPlugin.getDefault().getConsoleManager().getConsoles();
-		setEnabled(consoles.length > 0);
+		setEnabled(consoles.length > 1);
 	}
 
 	public ConsoleDropDownAction(IConsoleView view) {
