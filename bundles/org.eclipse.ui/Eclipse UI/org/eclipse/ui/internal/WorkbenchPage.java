@@ -1774,14 +1774,6 @@ private void setPerspective(Perspective newPersp) {
 	window.updateActionSets();
 	window.updateTitle();
 	window.getShortcutBar().update(true);
-	IToolBarManager mgr = window.getToolsManager();
-	if (mgr instanceof CoolBarManager) {
-		CoolBarManager cBarMgr = (CoolBarManager)mgr;
-		if (newPersp != null) {
-			CoolBarLayout layout = newPersp.getToolBarLayout();
-			cBarMgr.setLayout(newPersp.getToolBarLayout());
-		}
-	}
 	
 	// Reactivate active part.
 	if (oldActivePart != null) {
@@ -1791,6 +1783,17 @@ private void setPerspective(Perspective newPersp) {
 			String id = oldActivePart.getSite().getId();
 			if (findView(id) != null)
 				activate(oldActivePart);
+		}
+	}
+	
+	// Update the Coolbar layout.  Do this after the part is activated,
+	// since the layout may contain items associated to the part.
+	IToolBarManager mgr = window.getToolsManager();
+	if (mgr instanceof CoolBarManager) {
+		CoolBarManager cBarMgr = (CoolBarManager)mgr;
+		if (newPersp != null) {
+			CoolBarLayout layout = newPersp.getToolBarLayout();
+			cBarMgr.setLayout(newPersp.getToolBarLayout());
 		}
 	}
 }
