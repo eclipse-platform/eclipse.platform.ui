@@ -193,8 +193,8 @@ public class ResourceNode extends BufferedContent
 		return true;
 	}
 	
-	/**
-	 * FIXME: Really needed?
+	/* (non Javadoc)
+	 * This is just for testing.
 	 */
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
 		if (other == null) {

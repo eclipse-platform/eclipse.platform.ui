@@ -27,6 +27,12 @@ public class CompareAction implements IActionDelegate {
 		if (fInput == null) {
 			CompareConfiguration cc= new CompareConfiguration();
 			cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
+			
+			// PR 1GEY6GL: ITPJUI:ALL - Changes not saved when comparing project with another version
+			//cc.setLeftEditable(false);
+			//cc.setRightEditable(false);
+			// end workaraound
+			
 			fInput= new ResourceCompareInput(cc);
 		}
 		action.setEnabled(fInput.setSelection(selection));
