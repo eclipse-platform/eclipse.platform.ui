@@ -233,6 +233,14 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int VARIABLE_NOT_DEFINED = 379;
 	
+	/** Status code constant (value 380) indicating that an attempt was made to modify 
+	 * the workspace while it was locked.  Resource changes are disallowed
+	 * during certain types of resource change event notification. 
+	 * Severity: error. Category: workspace.
+	 * @see IResourceChangeEvent
+	 * @since 2.1
+	 */
+	public static final int WORKSPACE_LOCKED = 380;
 
 	// Internal constants [500-598]
 	// Information Only [500-532]

@@ -134,7 +134,7 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 		Assert.isTrue(false, "Operation was not prepared."); //$NON-NLS-1$
 	if (treeLocked && createNewTree) {
 		String message = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
+		throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, message, null);
 	}
 	if (workManager.getPreparedOperationDepth() > 1) {
 		if (createNewTree && tree.isImmutable())
