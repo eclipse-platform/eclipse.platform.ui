@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.ui.actions;
  */
  
 import org.eclipse.debug.internal.ui.LaunchHistoryElement;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,7 +30,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		setLaunchAction(launchAction);		
 	}
 
-	private void createMenuForAction(Menu parent, Action action, int count) {
+	private void createMenuForAction(Menu parent, IAction action, int count) {
 		if (count > 0) {
 			StringBuffer label= new StringBuffer();
 			if (count < 10) {
@@ -92,10 +91,10 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 	
 	/**
+	 * @see runWithEvent(IAction, Event)
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		getLaunchAction().run();
 	}
 	
 	/**
