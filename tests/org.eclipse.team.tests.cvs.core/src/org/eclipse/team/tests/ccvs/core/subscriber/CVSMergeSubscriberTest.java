@@ -69,20 +69,23 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	 * @param project
 	 * @param strings
 	 */
-	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException {
+	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths, boolean allowOverwrite) throws CoreException, TeamException {
 		IResource[] resources = getResources(project, resourcePaths);
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		mergeResources(subscriber, infos);
+		mergeResources(subscriber, infos, allowOverwrite);
 	}
 	
 	/**
 	 * @param syncResources
 	 */
-	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos) throws TeamException {
+	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos, final boolean allowOverwrite) throws TeamException {
 		MergeUpdateAction action = new MergeUpdateAction() {
 			protected boolean promptForOverwrite(SyncInfoSet syncSet) {
-				// Agree to overwrite any conflicting resources
-				return true;
+				if (allowOverwrite) return true;
+				if (syncSet.isEmpty()) return true;
+				IResource[] resources = syncSet.getResources();
+				fail(resources[0].getFullPath().toString() + " failed to merge properly");
+				return false;
 			}
 		};
 		action.setSubscriber(subscriber);
@@ -136,7 +139,8 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 			"folder1/a.txt", 
 			"addition.txt", 
 			"folderAddition/", 
-			"folderAddition/new.txt"});
+			"folderAddition/new.txt"}, 
+			false /* allow overwrite */);
 			
 		// check the sync states for the workspace subscriber
 		assertSyncEquals("testIncomingChanges", getWorkspaceSubscriber(), project, 
@@ -186,7 +190,8 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		// Perform a merge
 		mergeResources(subscriber, project, new String[] { 
 			"file1.txt",
-			"file2.txt"});
+			"file2.txt"}, 
+			false /* allow overwrite */);
 
 		// check the sync states for the workspace subscriber
 		assertSyncEquals("testMergableConflicts", getWorkspaceSubscriber(), project, 
@@ -257,7 +262,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.CONFLICTING | SyncInfo.CHANGE});
 				
 		// Perform a merge
-		mergeResources(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt", "folder1/b.txt"});
+		mergeResources(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt", "folder1/b.txt"}, true /* allow overwrite */);
 			
 		// check the sync states for the workspace subscriber
 		assertSyncEquals("testUnmergableConflicts", getWorkspaceSubscriber(), project, 
@@ -316,7 +321,15 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		}
 		
 		// update
-		mergeResources(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt", "folder1/b.txt"});
+		mergeResources(subscriber, project, 
+			new String[] { 
+				"delete.txt", 
+				"file1.txt", 
+				"file2.txt", 
+				"addition.txt", 
+			    "folder1/a.txt",
+				"folder1/b.txt"}, 
+			true /* allow overwrite */);
 		
 		// commit
 		commitProject(project);

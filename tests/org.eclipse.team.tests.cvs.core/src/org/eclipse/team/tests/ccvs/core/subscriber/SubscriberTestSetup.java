@@ -16,7 +16,7 @@ import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 public class SubscriberTestSetup extends CVSTestSetup {
 
-	private static SyncInfoSource syncInfoSource;
+	private static SyncInfoSource syncInfoSource = new SyncInfoSource();
 	
 	public static SyncInfoSource getSyncInfoSource() {
 		return syncInfoSource;
