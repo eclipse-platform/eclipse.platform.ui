@@ -270,7 +270,7 @@ public class CVSProvider implements ICVSProvider {
 						String extension = resource.getFileExtension();
 						if (extension == null) {
 							result.add(resource.getName());
-						} else if (!("true".equals(registry.getValue(extension, "isAscii")))) { //$NON-NLS-1$ //$NON-NLS-2$
+						} else if (!("true".equals(registry.getValue(extension, "isText")))) { //$NON-NLS-1$ //$NON-NLS-2$
 							result.add("*." + extension); //$NON-NLS-1$
 						}
 					}
@@ -423,7 +423,7 @@ public class CVSProvider implements ICVSProvider {
 		// Assume files with no extension are binary
 		if (lastDot == -1) return false;
 		String extension = filename.substring(lastDot + 1);
-		return ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii")))); //$NON-NLS-1$ //$NON-NLS-2$
+		return ((extension != null) && ("true".equals(registry.getValue(extension, "isText")))); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {

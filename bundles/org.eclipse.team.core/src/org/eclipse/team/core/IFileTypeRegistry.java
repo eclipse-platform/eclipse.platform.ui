@@ -16,7 +16,7 @@ public interface IFileTypeRegistry {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * String value = getValue("txt", "isAscii");
+	 * String value = getValue("txt", "isText");
 	 * 
 	 * @param extension  the extension
 	 * @param key  the key
@@ -28,7 +28,7 @@ public interface IFileTypeRegistry {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * String[] extensions = getValue("isAscii");
+	 * String[] extensions = getValue("isText");
 	 * 
 	 * @param key  the key
 	 * @return the extensions for which the given key is defined
@@ -40,7 +40,7 @@ public interface IFileTypeRegistry {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * setValue("txt", "isAscii", "true"); 
+	 * setValue("txt", "isText", "true"); 
 	 *
 	 * @param extension  the file extension
 	 * @param key  the key

@@ -217,7 +217,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 								String name = resource.getFullPath().removeFirstSegments(1).toString();
 								if (resource.getType() == IResource.FILE) {
 									String extension = resource.getFileExtension();
-									if ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))))   //$NON-NLS-1$ //$NON-NLS-2$
+									if ((extension != null) && ("true".equals(registry.getValue(extension, "isText"))))   //$NON-NLS-1$ //$NON-NLS-2$
 										textfiles.add(name);
 									else
 										binaryfiles.add(name);

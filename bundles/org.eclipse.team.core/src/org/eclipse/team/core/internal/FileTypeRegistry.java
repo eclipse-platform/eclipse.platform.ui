@@ -27,7 +27,7 @@ import org.eclipse.team.core.TeamPlugin;
 
 /**
  * This class is the temporary home of functionality to determine
- * whether a particular IResource should be treated as ASCII or Binary.
+ * whether a particular IResource should be treated as Text or Binary.
  */
 public class FileTypeRegistry implements IFileTypeRegistry {
 	// Constant for the saved state file name
@@ -94,7 +94,7 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 	}
 
 	/**
-	 * Reads the ASCII patterns currently defined by extensions.
+	 * Reads the text patterns currently defined by extensions.
 	 */
 	private void initializePluginPatterns() {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
