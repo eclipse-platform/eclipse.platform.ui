@@ -525,7 +525,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 *Displays this popup and install the additional info controller, so that additional info
+	 * Displays this popup and install the additional info controller, so that additional info
 	 * is displayed when a proposal is selected and additional info is available.
 	 */
 	private void displayProposals() {
@@ -925,13 +925,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 				break;
 		}
 		
-		if (prefix == null || prefix.toString().equals(currentPrefix))
+		if (prefix == null || currentPrefixLen > prefix.length() || prefix.toString().equals(currentPrefix))
 			return false;
 	
 		// 2: replace / insert the common prefix in the document
 		
 		try {
-			
 			String presentPart= prefix.substring(0, currentPrefixLen);
 			int replaceOffset;
 			int replaceLen;

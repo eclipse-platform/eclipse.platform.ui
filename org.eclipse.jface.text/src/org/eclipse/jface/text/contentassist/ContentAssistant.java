@@ -335,8 +335,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	class LayoutManager implements Listener {
 		
 		// Presentation types.
+		/** The presentation type for the proposal selection popup. */
 		public final static int LAYOUT_PROPOSAL_SELECTOR= 0;
+		/** The presentation type for the context selection popup. */
 		public final static int LAYOUT_CONTEXT_SELECTOR= 1;
+		/** The presentation type for the context information hover .*/
 		public final static int LAYOUT_CONTEXT_INFO_POPUP= 2;
 
 		int fContextType= LAYOUT_CONTEXT_SELECTOR;
@@ -1160,7 +1163,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			
 			fListeners[type]= listener;
 			
-			if (getNumberOfListeners() == 1) {
+			if (fCloser == null && getNumberOfListeners() == 1) {
 				fCloser= new Closer();
 				fCloser.install();
 				fContentAssistSubjectAdapter.setEventConsumer(fInternalListener);
