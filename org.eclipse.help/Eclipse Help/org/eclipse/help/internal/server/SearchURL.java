@@ -168,7 +168,7 @@ public class SearchURL extends HelpURL {
 					"<?xml version=\"1.0\"?>\n<topics/>".getBytes());
 			}
 			String results = searchManager.getSearchResults(infoSet, query.toString());
-			System.out.println("search results=" + results);
+			//System.out.println("search results=" + results);
 			String formattedResults = formatSearchResults(results);
 
 			InputStream is =
@@ -180,8 +180,7 @@ public class SearchURL extends HelpURL {
 			}
 			return is;
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			Logger.logError("", e);
 			return null;
 		}
 	}

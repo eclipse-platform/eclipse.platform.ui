@@ -85,7 +85,7 @@ public class RuntimeHelpStatus {
 		StringBuffer fullText = new StringBuffer();
 		if (!errorList.isEmpty()) {
 			fullText.append(Resources.getString("E006"));
-			fullText.append("***************************** \n");
+			fullText.append("******************** \n");
 			for (int i = 0; i < errorList.size(); i++) {
 				fullText.append(((Status) (errorList.get(i))).getMessage());
 				fullText.append("\n");
@@ -98,7 +98,7 @@ public class RuntimeHelpStatus {
 		if (!parserErrorMessagesList.isEmpty()) {
 			// display the files that failed to parse
 			fullText.append(Resources.getString("E007"));
-			fullText.append("*****************************  \n");
+			fullText.append("********************  \n");
 			for (int i = 0; i < badFilesList.size(); i++) {
 				fullText.append(((String) (badFilesList.get(i))));
 				fullText.append("\n");

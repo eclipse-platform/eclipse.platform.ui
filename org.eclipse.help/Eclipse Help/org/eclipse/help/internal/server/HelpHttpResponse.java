@@ -37,8 +37,6 @@ public class HelpHttpResponse {
 				else
 					out.write("Cache-Control: no-cache\r\n".getBytes());
 
-				//out.write(
-				//  ("Content-Length: " + request.getURL().getContentSize() + "\r\n").getBytes());
 				out.write(
 					("Content-Type: " + request.getURL().getContentType() + "\r\n\r\n").getBytes());
 			}

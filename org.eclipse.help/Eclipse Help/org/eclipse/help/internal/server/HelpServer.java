@@ -84,7 +84,7 @@ public class HelpServer extends Thread {
 			if (HelpServer.goodAddress != null) return;
 			*/
 		} catch (IOException e) {
-			System.out.println(Resources.getString("Error_1") + e);
+			Logger.logError(Resources.getString("Error_1"), e);
 		} finally {
 			// If all fails, use localhost
 			if (HelpServer.host == null)

@@ -47,7 +47,7 @@ public class HelpContribution implements Contribution {
 	 */
 	public void accept(Visitor visitor) {
 		// this should execute
-		System.out.println(Resources.getString("contribution_accept"));
+		//System.out.println(Resources.getString("contribution_accept"));
 	}
 	/**
 	 * Adds a child and returns it
