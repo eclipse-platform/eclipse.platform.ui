@@ -13,6 +13,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.workingsets.WorkingSetSelectionDialog;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -114,7 +115,7 @@ public final class SearchUI {
 	 * @return a new selection dialog or <code>null</code> if none available
 	 */
 	public static SelectionDialog createWorkingSetDialog(Shell parent) {
-		return SearchPlugin.createWorkingSetDialog(parent);
+		return new WorkingSetSelectionDialog(parent);
 	}
 
 	/**

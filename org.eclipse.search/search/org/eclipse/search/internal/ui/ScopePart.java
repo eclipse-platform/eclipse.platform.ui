@@ -15,10 +15,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
+import java.util.Arrays;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.internal.workingsets.WorkingSet;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
@@ -36,8 +38,8 @@ public class ScopePart {
 
 
 	private int			fScope;
-	private Text		fWorkingSet;
-	private IWorkingSet	fWorkingSetValue;
+	private Text		fWorkingSetText;
+	private IWorkingSet	fWorkingSet;
 	
 	/**
 	 * Returns a new scope part with workspace as initial scope.
@@ -69,7 +71,7 @@ public class ScopePart {
 	public ScopePart(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet);
 		fScope= WORKING_SET_SCOPE;
-		fWorkingSetValue= workingSet;
+		fWorkingSet= workingSet;
 	}
 
 	/**
@@ -108,27 +110,21 @@ public class ScopePart {
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(false);
 				fUseWorkingSet.setSelection(true);
+				fUseWorkingSet.setEnabled(true);
 				break;
 		}
 	}
 
 	/**
-	 * Returns the selected working of this part.
+	 * Returns the selected working set of this part.
 	 * 
-	 * @return the selected working set or null if the scope is not WORKING_SET_SCOPE
+	 * @return the selected working set or null
+	 * 			- if the scope is not WORKING_SET_SCOPE
+	 * 			- if there is no working set selected
 	 */
 	public IWorkingSet getSelectedWorkingSet() {
-		if (getSelectedScope() == WORKING_SET_SCOPE) {
-			return new IWorkingSet() {
-				public String getName() {
-					return "This is a Test Scope"; //$NON-NLS-1$
-				}
-
-				public IResource[] getResources() {
-					return new IResource[0];
-				}
-			};
-		}
+		if (getSelectedScope() == WORKING_SET_SCOPE)
+			return fWorkingSet;
 		else
 			return null;
 	}
@@ -140,10 +136,11 @@ public class ScopePart {
 	 * @param workingSet the working set to be selected
 	 */
 	public void setSelectedWorkingSet(IWorkingSet workingSet) {
-		Assert.isNotNull(fWorkingSet);
+		Assert.isNotNull(workingSet);
 		setSelectedScope(WORKING_SET_SCOPE);
-//		fWorkingSet= workingSet;
-		fWorkingSetValue= workingSet;
+		fWorkingSet= workingSet;
+		if (fWorkingSetText != null)
+			fWorkingSetText.setText(workingSet.getName());
 	}
 
 	/**
@@ -175,7 +172,8 @@ public class ScopePart {
 		fUseWorkingSet= new Button(group, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
-		fWorkingSet= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fUseWorkingSet.setEnabled(getSelectedWorkingSet() != null);
+		fWorkingSetText= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		Button chooseWorkingSet= new Button(group, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
 		chooseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetChooseButton.text")); //$NON-NLS-1$
@@ -183,17 +181,14 @@ public class ScopePart {
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (handleChooseWorkingSet()) {
-					fUseWorkspace.setSelection(false);
-					fUseSelection.setSelection(false);
-					fUseWorkingSet.setSelection(true);
-					fScope= WORKING_SET_SCOPE;
+					setSelectedScope(WORKING_SET_SCOPE);
 				}
 			}
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= 8;
-		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSet);
-		fWorkingSet.setLayoutData(gd);
+		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
+		fWorkingSetText.setLayoutData(gd);
 
 		// Add scope change listeners
 		SelectionAdapter scopeChangedLister= new SelectionAdapter() {
@@ -209,15 +204,9 @@ public class ScopePart {
 		setSelectedScope(fScope);
 		
 		// Set initial working set
-		if (fWorkingSetValue != null)
-			fWorkingSet.setText(fWorkingSetValue.getName());
+		if (fWorkingSet != null)
+			fWorkingSetText.setText(fWorkingSet.getName());
 
-
-		// disable working sets - not available yet
-		fUseWorkingSet.setVisible(false);
-		fWorkingSet.setVisible(false);
-		chooseWorkingSet.setVisible(false);
-		
 		return group;
 	}
 
@@ -232,7 +221,18 @@ public class ScopePart {
 
 	private boolean handleChooseWorkingSet() {
 		SelectionDialog dialog= SearchUI.createWorkingSetDialog(fUseSelection.getShell());
-		System.out.println("Choose working set. Scope is: " + fScope); //$NON-NLS-1$
-		return true;
+		if (fWorkingSet != null)
+			dialog.setInitialSelections(new IWorkingSet[] {fWorkingSet});
+		if (dialog.open() == dialog.OK) {
+			setSelectedWorkingSet((IWorkingSet)dialog.getResult()[0]);
+			return true;
+		} else {
+			// test if selected working set has been removed
+			if (!Arrays.asList(WorkingSet.getWorkingSets()).contains(fWorkingSet)) {
+				fWorkingSetText.setText("");
+				fWorkingSet= null;
+			}
+		}
+		return false;
 	}
 }
