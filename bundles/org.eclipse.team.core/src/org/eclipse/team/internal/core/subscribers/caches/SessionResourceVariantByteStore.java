@@ -20,47 +20,23 @@ import org.eclipse.team.internal.core.Assert;
 /**
  * A <code>ResourceVariantByteStore</code> that caches the variant bytes in memory 
  * and does not persist them over workbench invocations.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * 
+ * @since 3.0
  */
 public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 
 	private static final byte[] NO_REMOTE = new byte[0];
+	private Map membersCache = new HashMap();
 	
 	private Map syncBytesCache = new HashMap();
-	private Map membersCache = new HashMap();
 
-	private Map getSyncBytesCache() {
-		return syncBytesCache;
-	}
-	
-	private byte[] internalGetSyncBytes(IResource resource) {
-		return (byte[])getSyncBytesCache().get(resource);
-	}
-	
-	private void internalAddToParent(IResource resource) {
-		IContainer parent = resource.getParent();
-		if (parent == null) return;
-		List members = (List)membersCache.get(parent);
-		if (members == null) {
-			members = new ArrayList();
-			membersCache.put(parent, members);
-		}
-		members.add(resource);
-	}
-	
-	private void internalSetSyncInfo(IResource resource, byte[] bytes) {
-		getSyncBytesCache().put(resource, bytes);
-		internalAddToParent(resource);
-	}
-
-	private void internalRemoveFromParent(IResource resource) {
-		IContainer parent = resource.getParent();
-		List members = (List)membersCache.get(parent);
-		if (members != null) {
-			members.remove(resource);
-			if (members.isEmpty()) {
-				membersCache.remove(parent);
-			}
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
+	 */
+	public boolean deleteBytes(IResource resource) throws TeamException {
+		return flushBytes(resource, IResource.DEPTH_ZERO);
 	}
 	
 	/* (non-Javadoc)
@@ -69,30 +45,6 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	public void dispose() {
 		syncBytesCache.clear();
 		membersCache.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
-	 */
-	public byte[] getBytes(IResource resource) throws TeamException {
-		byte[] syncBytes = internalGetSyncBytes(resource);
-		if (syncBytes != null && equals(syncBytes, NO_REMOTE)) {
-			// If it is known that there is no remote, return null
-			return null;
-		}
-		return syncBytes;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
-	 */
-	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
-		Assert.isNotNull(bytes);
-		byte[] oldBytes = internalGetSyncBytes(resource);
-		if (oldBytes != null && equals(oldBytes, bytes)) return false;
-		internalSetSyncInfo(resource, bytes);
-		return true;
 	}
 
 	/* (non-Javadoc)
@@ -115,6 +67,26 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
+	 */
+	public byte[] getBytes(IResource resource) throws TeamException {
+		byte[] syncBytes = internalGetSyncBytes(resource);
+		if (syncBytes != null && equals(syncBytes, NO_REMOTE)) {
+			// If it is known that there is no remote, return null
+			return null;
+		}
+		return syncBytes;
+	}
+
+	/**
+	 * Return <code>true</code> if no bytes are contained in this tree.
+	 * @return <code>true</code> if no bytes are contained in this tree.
+	 */
+	public boolean isEmpty() {
+		return syncBytesCache.isEmpty();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) {
@@ -125,18 +97,50 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 		return (IResource[]) members.toArray(new IResource[members.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
-	public boolean deleteBytes(IResource resource) throws TeamException {
-		return flushBytes(resource, IResource.DEPTH_ZERO);
+	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
+		Assert.isNotNull(bytes);
+		byte[] oldBytes = internalGetSyncBytes(resource);
+		if (oldBytes != null && equals(oldBytes, bytes)) return false;
+		internalSetSyncInfo(resource, bytes);
+		return true;
+	}
+	
+	private Map getSyncBytesCache() {
+		return syncBytesCache;
+	}
+	
+	private void internalAddToParent(IResource resource) {
+		IContainer parent = resource.getParent();
+		if (parent == null) return;
+		List members = (List)membersCache.get(parent);
+		if (members == null) {
+			members = new ArrayList();
+			membersCache.put(parent, members);
+		}
+		members.add(resource);
+	}
+	
+	private byte[] internalGetSyncBytes(IResource resource) {
+		return (byte[])getSyncBytesCache().get(resource);
 	}
 
-	/**
-	 * Return <code>true</code> if no bytes are contained in this tree.
-	 * @return <code>true</code> if no bytes are contained in this tree.
-	 */
-	public boolean isEmpty() {
-		return syncBytesCache.isEmpty();
+	private void internalRemoveFromParent(IResource resource) {
+		IContainer parent = resource.getParent();
+		List members = (List)membersCache.get(parent);
+		if (members != null) {
+			members.remove(resource);
+			if (members.isEmpty()) {
+				membersCache.remove(parent);
+			}
+		}
+	}
+	
+	private void internalSetSyncInfo(IResource resource, byte[] bytes) {
+		getSyncBytesCache().put(resource, bytes);
+		internalAddToParent(resource);
 	}
 }

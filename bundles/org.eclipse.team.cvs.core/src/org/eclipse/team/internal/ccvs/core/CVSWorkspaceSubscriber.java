@@ -32,14 +32,12 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
-import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantTree;
+import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.core.subscribers.caches.DescendantResourceVariantByteStore;
+import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
 import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
 import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
 
 /**
  * CVSWorkspaceSubscriber
@@ -56,11 +54,21 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		
 		// install sync info participant
 		ResourceVariantByteStore baseSynchronizer = new CVSBaseResourceVariantTree();
-		baseTree = new CVSResourceVariantTree(baseSynchronizer, getBaseTag(), getCacheFileContentsHint());
-		CVSDescendantResourceVariantTree remoteSynchronizer = new CVSDescendantResourceVariantTree(
+		baseTree = new CVSResourceVariantTree(baseSynchronizer, null, getCacheFileContentsHint()) {
+			public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+				// TODO Ensure that file contents are cached for modified local files
+				try {
+					monitor.beginTask(null, 100);
+					return new IResource[0];
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		CVSDescendantResourceVariantByteStore remoteSynchronizer = new CVSDescendantResourceVariantByteStore(
 				baseSynchronizer, 
 				new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, REMOTE_RESOURCE_KEY)));
-		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, getRemoteTag(), getCacheFileContentsHint());
+		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, null, getCacheFileContentsHint());
 		
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
@@ -96,58 +104,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 
 	private void internalResourceSyncInfoChanged(IResource[] changedResources, boolean canModifyWorkspace) {
-		// IMPORTANT NOTE: This will throw exceptions if performed during the POST_CHANGE delta phase!!!
-		DescendantResourceVariantByteStore remoteByteStore = getRemoteByteStore();
-		for (int i = 0; i < changedResources.length; i++) {
-			IResource resource = changedResources[i];
-			try {
-				if (resource.getType() == IResource.FILE
-						&& (resource.exists() || resource.isPhantom())) {
-					byte[] remoteBytes = remoteByteStore.getBytes(resource);
-					if (remoteBytes == null) {
-						if (remoteByteStore.isVariantKnown(resource)) {
-							// The remote is known not to exist. If the local resource is
-							// managed then this information is stale
-							if (getBaseTree().hasResourceVariant(resource)) {
-								if (canModifyWorkspace) {
-									remoteByteStore.flushBytes(resource, IResource.DEPTH_ZERO);
-								} else {
-									// The revision  comparison will handle the stale sync bytes
-									// TODO: Unless the remote is known not to exist (see bug 52936)
-								}
-							}
-						}
-					} else {
-						byte[] localBytes = getBaseByteStore().getBytes(resource);
-						if (localBytes == null || !isLaterRevision(remoteBytes, localBytes)) {
-							if (canModifyWorkspace) {
-								remoteByteStore.flushBytes(resource, IResource.DEPTH_ZERO);
-							} else {
-								// The remote byte store handles the stale sync bytes
-							}
-						}
-					}
-				} else if (resource.getType() == IResource.FOLDER) {
-					// If the base has sync info for the folder, purge the remote bytes
-					if (getBaseTree().hasResourceVariant(resource) && canModifyWorkspace) {
-						remoteByteStore.flushBytes(resource, IResource.DEPTH_ZERO);
-					}
-				}
-			} catch (TeamException e) {
-				CVSProviderPlugin.log(e);
-			}
-		}		
-		
+		getRemoteByteStore().handleResourceChanges(changedResources, canModifyWorkspace);	
 		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
-	}
-
-	private boolean isLaterRevision(byte[] remoteBytes, byte[] localBytes) {
-		try {
-			return ResourceSyncInfo.isLaterRevisionOnSameBranch(remoteBytes, localBytes);
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
-			return false;
-		}
 	}
 
 	/* (non-Javadoc)
@@ -182,7 +140,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void projectDeconfigured(IProject project) {
 		try {
-			getRemoteTree().removeRoot(project);
+			getRemoteTree().flushVariants(project, IResource.DEPTH_INFINITE);
 		} catch (TeamException e) {
 			CVSProviderPlugin.log(e);
 		}
@@ -198,42 +156,18 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
 		}
 	}
-	
-	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		// TODO Ensure that file contents are cached for modified local files
-		try {
-			monitor.beginTask(null, 100);
-			return new IResource[0];
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteTag()
-	 */
-	protected CVSTag getRemoteTag() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseTag()
-	 */
-	protected CVSTag getBaseTag() {
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantTree getBaseTree() {
+	protected IResourceVariantTree getBaseTree() {
 		return baseTree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantTree getRemoteTree() {
+	protected IResourceVariantTree getRemoteTree() {
 		return remoteTree;
 	}
 	
@@ -312,14 +246,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	/*
 	 * TODO: Should not need to access this here
 	 */
-	private CVSDescendantResourceVariantTree getRemoteByteStore() {
-		return (CVSDescendantResourceVariantTree)((CVSResourceVariantTree)getRemoteTree()).getByteStore();
+	private CVSDescendantResourceVariantByteStore getRemoteByteStore() {
+		return (CVSDescendantResourceVariantByteStore)((CVSResourceVariantTree)getRemoteTree()).getByteStore();
 	}
 
-	/*
-	 * TODO: Should not need to access this here
-	 */
-	private ResourceVariantByteStore getBaseByteStore() {
-		return ((CVSResourceVariantTree)getBaseTree()).getByteStore();
-	}
 }

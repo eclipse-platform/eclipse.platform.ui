@@ -38,8 +38,8 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
 import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
 
 /**
  * A CVSMergeSubscriber is responsible for maintaining the remote trees for a merge into
@@ -90,9 +90,54 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		QualifiedName id = getId();
 		String syncKeyPrefix = id.getLocalName();
 		PersistantResourceVariantByteStore remoteSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + end.getName()));
-		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, getRemoteTag(), getCacheFileContentsHint());
+		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, getEndTag(), getCacheFileContentsHint()) {
+			public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+				// Override refresh to compare file contents
+				monitor.beginTask(null, 100);
+				try {
+					IResource[] refreshed = super.refresh(resources, depth, monitor);
+					compareWithRemote(refreshed, Policy.subMonitorFor(monitor, 50));
+					return refreshed;
+				} finally {
+					monitor.done();
+				}
+			}
+		};
 		PersistantResourceVariantByteStore baseSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + start.getName()));
-		baseTree = new CVSResourceVariantTree(baseSynchronizer, getBaseTag(), getCacheFileContentsHint());
+		baseTree = new CVSResourceVariantTree(baseSynchronizer, getStartTag(), getCacheFileContentsHint()) {
+			public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+				// Only refresh the base of a resource once as it should not change
+				List unrefreshed = new ArrayList();
+				for (int i = 0; i < resources.length; i++) {
+					IResource resource = resources[i];
+					if (!getBaseByteStore().isVariantKnown(resource)) {
+						unrefreshed.add(resource);
+					}
+				}
+				if (unrefreshed.isEmpty()) {
+					monitor.done();
+					return new IResource[0];
+				}
+				IResource[] refreshed = super.refresh((IResource[]) unrefreshed.toArray(new IResource[unrefreshed.size()]), depth, monitor);
+				return refreshed;
+			}
+			public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
+				// Use the merged bytes for the base if there are some
+				byte[] mergedBytes = mergedSynchronizer.getBytes(resource);
+				if (mergedBytes != null) {
+					byte[] parentBytes = getBaseByteStore().getBytes(resource.getParent());
+					if (parentBytes != null) {
+						return RemoteFile.fromBytes(resource, mergedBytes, parentBytes);
+					}
+				} else {
+					// A deletion was merged so return null for the base
+					if (mergedSynchronizer.isVariantKnown(resource)) {
+						return null;
+					}
+				}
+				return super.getResourceVariant(resource);
+			}
+		};
 		mergedSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + "0merged")); //$NON-NLS-1$
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -238,69 +283,21 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteTag()
-	 */
-	protected CVSTag getRemoteTag() {
-		return getEndTag();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseTag()
-	 */
-	protected CVSTag getBaseTag() {
-		return getStartTag();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantTree getBaseTree() {
+	protected IResourceVariantTree getBaseTree() {
 		return baseTree;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantTree getRemoteTree() {
+	protected IResourceVariantTree getRemoteTree() {
 		return remoteTree;
 	}
 	
 	protected  boolean getCacheFileContentsHint() {
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#refreshBase(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		// Only refresh the base of a resource once as it should not change
-		List unrefreshed = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (!getBaseByteStore().isVariantKnown(resource)) {
-				unrefreshed.add(resource);
-			}
-		}
-		if (unrefreshed.isEmpty()) {
-			monitor.done();
-			return new IResource[0];
-		}
-		IResource[] refreshed = super.refreshBase((IResource[]) unrefreshed.toArray(new IResource[unrefreshed.size()]), depth, monitor);
-		return refreshed;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#refreshRemote(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(null, 100);
-		try {
-			IResource[] refreshed = super.refreshRemote(resources, depth, Policy.subMonitorFor(monitor, 50));
-			compareWithRemote(refreshed, Policy.subMonitorFor(monitor, 50));
-			return refreshed;
-		} finally {
-			monitor.done();
-		}
 	}
 
 	/*
@@ -331,26 +328,6 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		monitor.done();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.utils.SyncTreeSubscriber#getBaseResource(org.eclipse.core.resources.IResource)
-	 */
-	public IResourceVariant getBaseResource(IResource resource) throws TeamException {
-		// Use the merged bytes for the base if there are some
-		byte[] mergedBytes = mergedSynchronizer.getBytes(resource);
-		if (mergedBytes != null) {
-			byte[] parentBytes = getBaseByteStore().getBytes(resource.getParent());
-			if (parentBytes != null) {
-				return RemoteFile.fromBytes(resource, mergedBytes, parentBytes);
-			}
-		} else {
-			// A deletion was merged so return null for the base
-			if (mergedSynchronizer.isVariantKnown(resource)) {
-				return null;
-			}
-		}
-		return super.getBaseResource(resource);
-	}
-	
 	/*
 	 * TODO: Should not need to access this here
 	 */
@@ -372,7 +349,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		if(this == other) return true;
 		if(! (other instanceof CVSMergeSubscriber)) return false;
 		CVSMergeSubscriber s = (CVSMergeSubscriber)other;
-		return getRemoteTag().equals(s.getRemoteTag()) && 
-			   getBaseTag().equals(s.getBaseTag()) && rootsEqual(s);		
+		return getEndTag().equals(s.getEndTag()) && 
+			   getStartTag().equals(s.getStartTag()) && rootsEqual(s);		
 	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber;
 
 /**
  * CVSSyncInfo
@@ -40,7 +40,7 @@ public class CVSSyncInfo extends SyncInfo {
 	private Subscriber subscriber;
 
 	public CVSSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote, Subscriber subscriber) {
-		super(local, base, remote, ((SyncTreeSubscriber)subscriber).getResourceComparator());
+		super(local, base, remote, ((ResourceVariantTreeSubscriber)subscriber).getResourceComparator());
 		this.subscriber = subscriber;
 	}
 

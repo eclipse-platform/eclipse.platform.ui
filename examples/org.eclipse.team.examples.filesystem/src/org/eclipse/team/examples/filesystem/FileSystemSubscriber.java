@@ -11,43 +11,25 @@
 package org.eclipse.team.examples.filesystem;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.core.synchronize.IResourceVariantComparator;
-import org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber;
+import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber;
 
-
-public class FileSystemSubscriber extends SyncTreeSubscriber {
+public class FileSystemSubscriber extends ResourceVariantTreeSubscriber {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber#getRemoteResource(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber#getBaseTree()
 	 */
-	public IResourceVariant getRemoteResource(IResource resource) throws TeamException {
+	protected IResourceVariantTree getBaseTree() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber#getBaseResource(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber#getRemoteTree()
 	 */
-	public IResourceVariant getBaseResource(IResource resource) throws TeamException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber#hasRemote(org.eclipse.core.resources.IResource)
-	 */
-	protected boolean hasRemote(IResource resource) throws TeamException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber#getResourceComparator()
-	 */
-	public IResourceVariantComparator getResourceComparator() {
+	protected IResourceVariantTree getRemoteTree() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -77,10 +59,12 @@ public class FileSystemSubscriber extends SyncTreeSubscriber {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.Subscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getResourceComparator()
 	 */
-	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+	public IResourceVariantComparator getResourceComparator() {
 		// TODO Auto-generated method stub
-		
-	}	
+		return null;
+	}
+
+
 }

@@ -30,14 +30,16 @@ import org.eclipse.team.core.TeamException;
  * This is necessary because it is possible for the base tree to change in ways that 
  * invalidate the stored remote variants. For example, if the local resources are moved
  * from the main trunck to a branch, any cached remote resource variants would be stale.
-
+ *
+ * @since 3.0
  */
 public abstract class DescendantResourceVariantByteStore extends ResourceVariantByteStore {
-	ResourceVariantByteStore baseCache, remoteCache;
+	
+	ResourceVariantByteStore baseStore, remoteStore;
 
 	public DescendantResourceVariantByteStore(ResourceVariantByteStore baseCache, ResourceVariantByteStore remoteCache) {
-		this.baseCache = baseCache;
-		this.remoteCache = remoteCache;
+		this.baseStore = baseCache;
+		this.remoteStore = remoteCache;
 	}
 	
 	/**
@@ -45,15 +47,15 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
-		remoteCache.dispose();
+		remoteStore.dispose();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
-		byte[] remoteBytes = remoteCache.getBytes(resource);
-		byte[] baseBytes = baseCache.getBytes(resource);
+		byte[] remoteBytes = remoteStore.getBytes(resource);
+		byte[] baseBytes = baseStore.getBytes(resource);
 		if (baseBytes == null) {
 			// There is no base so use the remote bytes
 			return remoteBytes;
@@ -82,12 +84,12 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
-		byte[] baseBytes = baseCache.getBytes(resource);
+		byte[] baseBytes = baseStore.getBytes(resource);
 		if (baseBytes != null && equals(baseBytes, bytes)) {
 			// Remove the existing bytes so the base will be used (thus saving space)
-			return remoteCache.flushBytes(resource, IResource.DEPTH_ZERO);
+			return remoteStore.flushBytes(resource, IResource.DEPTH_ZERO);
 		} else {
-			return remoteCache.setBytes(resource, bytes);
+			return remoteStore.setBytes(resource, bytes);
 		}	
 	}
 
@@ -95,7 +97,7 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
 	 */
 	public boolean flushBytes(IResource resource, int depth) throws TeamException {
-		return remoteCache.flushBytes(resource, depth);
+		return remoteStore.flushBytes(resource, depth);
 	}
 
 	/**
@@ -128,15 +130,15 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
 	 */
 	public boolean deleteBytes(IResource resource) throws TeamException {
-		return remoteCache.deleteBytes(resource);
+		return remoteStore.deleteBytes(resource);
 	}
 
 	/**
 	 * Return the base tree from which the remote is descendant.
 	 * @return Returns the base tree.
 	 */
-	protected ResourceVariantByteStore getBaseTree() {
-		return baseCache;
+	protected ResourceVariantByteStore getBaseStore() {
+		return baseStore;
 	}
 
 	/**
@@ -144,23 +146,23 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	 * that differ from those in the base tree.
 	 * @return Returns the remote tree.
 	 */
-	protected ResourceVariantByteStore getRemoteTree() {
-		return remoteCache;
+	protected ResourceVariantByteStore getRemoteStore() {
+		return remoteStore;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) throws TeamException {
-		IResource[] remoteMembers = getRemoteTree().members(resource);
-		IResource[] baseMembers = getBaseTree().members(resource);
+		IResource[] remoteMembers = getRemoteStore().members(resource);
+		IResource[] baseMembers = getBaseStore().members(resource);
 		Set members = new HashSet();
 		for (int i = 0; i < remoteMembers.length; i++) {
 			members.add(remoteMembers[i]);
 		}
 		for (int i = 0; i < baseMembers.length; i++) {
 			IResource member = baseMembers[i];
-			// Add the base only inf the remote does not know about it
+			// Add the base only if the remote does not know about it
 			// (i.e. hasn't marked it as deleted
 			if (!isVariantKnown(member)) {
 				members.add(member);
@@ -168,5 +170,4 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 		}
 		return (IResource[]) members.toArray(new IResource[members.size()]);
 	}
-
 }

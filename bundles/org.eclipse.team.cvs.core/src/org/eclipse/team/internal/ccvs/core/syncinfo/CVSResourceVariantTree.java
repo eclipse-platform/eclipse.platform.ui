@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -37,14 +42,13 @@ import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
  */
 public class CVSResourceVariantTree extends ResourceVariantTree {
 
-	private ResourceVariantByteStore cache;
 	private CVSTag tag;
 	private boolean cacheFileContentsHint;
 	private CVSSyncTreeSubscriber subscriber;
 
 	public CVSResourceVariantTree(ResourceVariantByteStore cache, CVSTag tag, boolean cacheFileContentsHint) {
+		super(cache);
 		this.tag = tag;
-		this.cache = cache;
 		this.cacheFileContentsHint = cacheFileContentsHint;
 	}
 
@@ -52,7 +56,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * @see org.eclipse.team.core.subscribers.RefreshOperation#getSynchronizationCache()
 	 */
 	public ResourceVariantByteStore getByteStore() {
-		return cache;
+		return super.getByteStore();
 	}
 
 	/* (non-Javadoc)
@@ -101,9 +105,9 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#getRoots()
+	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#roots()
 	 */
-	public IResource[] getRoots() {
+	public IResource[] roots() {
 		return subscriber.roots();
 	}
 
@@ -111,7 +115,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#getResourceVariant(org.eclipse.core.resources.IResource)
 	 */
 	public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
-		byte[] remoteBytes = cache.getBytes(resource);
+		byte[] remoteBytes = getByteStore().getBytes(resource);
 		if (remoteBytes == null) {
 			// There is no remote handle for this resource
 			return null;
@@ -122,7 +126,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 					IProject project = resource.getProject();
 					if (project.exists() && RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
 						CVSProviderPlugin.log(new CVSException( 
-								Policy.bind("ResourceSynchronizer.missingParentBytesOnGet", getSyncName(cache).toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
+								Policy.bind("ResourceSynchronizer.missingParentBytesOnGet", getSyncName(getByteStore()).toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
 						// Assume there is no remote and the problem is a programming error
 					}
 					return null;
@@ -144,7 +148,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	
 	private byte[] getParentBytes(IResource resource) throws TeamException {
 		IContainer parent = resource.getParent();
-		byte[] bytes =  cache.getBytes(parent);
+		byte[] bytes =  getByteStore().getBytes(parent);
 		if (bytes == null ) {
 			bytes = getBaseBytes(parent, getTag(resource));
 		}
@@ -193,5 +197,55 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	private boolean parentHasSyncBytes(IResource resource) throws TeamException {
 		if (resource.getType() == IResource.PROJECT) return true;
 		return getParentBytes(resource) != null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.AbstractResourceVariantTree#collectedMembers(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IResource[])
+	 */
+	protected IResource[] collectedMembers(IResource local, IResource[] members) throws TeamException {
+		// Look for resources that have sync bytes but are not in the resources we care about
+		IResource[] resources = getStoredMembers(local);
+		List children = new ArrayList();
+		List changedResources = new ArrayList();
+		children.addAll(Arrays.asList(members));
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (!children.contains(resource)) {
+				// These sync bytes are stale. Purge them
+				flushVariants(resource, IResource.DEPTH_INFINITE);
+				changedResources.add(resource);
+			}
+		}
+		return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
+	}
+	
+	/**
+	 * Return all the members of that have resource variant information associated with them,
+	 * such as members that are explicitly flagged as not having a resource variant. This list
+	 * is used by the collection algorithm to flush variants for which there is no local and
+	 * no remote.
+	 * @param local the locla resource
+	 * @return the local children that have resource variant information cached
+	 * @throws TeamException
+	 */
+	private IResource[] getStoredMembers(IResource local) throws TeamException {			
+		try {
+			if (local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
+				// TODO: Not very generic! 
+				IResource[] allChildren = ((IContainer)local).members(true /* include phantoms */);
+				List childrenWithSyncBytes = new ArrayList();
+				for (int i = 0; i < allChildren.length; i++) {
+					IResource resource = allChildren[i];
+					if (getByteStore().getBytes(resource) != null) {
+						childrenWithSyncBytes.add(resource);
+					}
+				}
+				return (IResource[]) childrenWithSyncBytes.toArray(
+						new IResource[childrenWithSyncBytes.size()]);
+			}
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+		return new IResource[0];
 	}
 }

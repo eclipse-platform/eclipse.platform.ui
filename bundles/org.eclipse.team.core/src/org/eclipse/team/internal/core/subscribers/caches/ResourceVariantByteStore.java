@@ -27,6 +27,8 @@ import org.eclipse.team.core.TeamException;
  * The potential children of a resource variant are also accessed
  * by using the local handle that corresponds to the resource variant 
  * (using the <code>members</code> method).
+ * 
+ * @since 3.0
  */
 public abstract class ResourceVariantByteStore {
 

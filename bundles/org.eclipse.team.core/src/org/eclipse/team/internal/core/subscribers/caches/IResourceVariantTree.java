@@ -17,10 +17,21 @@ import org.eclipse.team.core.synchronize.IResourceVariant;
 /**
  * A handle that provides access to locally cached resource variants that 
  * represent a resource line-up such as a project version or branch.
+ * <p>
+ * This interface is not intended to be implemented by clients. However,
+ * clients may subclass {@link AbstractResourceVariantTree} or {@link ResourceVariantTree}.
+ * </p>
+ * 
+ * @since 3.0
  */
 public interface IResourceVariantTree {
 	
-	public abstract IResource[] getRoots();
+	/**
+	 * Returns the list of root resources for which this tree may have resource
+	 * variants.
+	 * @return the list of root resources.
+	 */
+	public abstract IResource[] roots();
 	
 	/**
 	 * Returns the members of the local resource that have resource variants in this tree.
@@ -32,8 +43,21 @@ public interface IResourceVariantTree {
 	 */
 	public abstract IResource[] members(IResource resource) throws TeamException;
 	
+	/**
+	 * Return the resource variant corresponding to the local resource. Return
+	 * <code>null</code> if there is no variant for the resource.
+	 * @param resource the local resource
+	 * @return the resource's variant in this tree
+	 * @throws TeamException
+	 */
 	public abstract IResourceVariant getResourceVariant(IResource resource) throws TeamException;
 	
+	/**
+	 * Return whether the local resource has a variant in this tree.
+	 * @param resource the local resource
+	 * @return <code>true</code> if the tree contains a variant for the resource
+	 * @throws TeamException
+	 */
 	public boolean hasResourceVariant(IResource resource) throws TeamException;
 	
 	/**
@@ -47,8 +71,17 @@ public interface IResourceVariantTree {
 	 * as a result of the refresh
 	 * @throws TeamException
 	 */
-	public abstract IResource[] refresh(
+	public IResource[] refresh(
 			IResource[] resources, 
 			int depth,
 			IProgressMonitor monitor) throws TeamException;
+
+	/**
+	 * Flush any variants in the tree for the given resource to the depth
+	 * specified.
+	 * @param resource the resource
+	 * @param depth the flush depth (one of <code>IResource.DEPTH_ZERO</code>,
+	 * <code>IResource.DEPTH_ONE</code>, or <code>IResource.DEPTH_INFINITE</code>)
+	 */
+	public void flushVariants(IResource resource, int depth) throws TeamException;
 }

@@ -34,8 +34,16 @@ import org.eclipse.team.internal.core.Policy;
 
 
 /**
- * This class provides the logic for refreshing and collecting the changes in 
- * a resource variant tree.
+ * An implemenation of <code>IResourceVariantTree</code> that provides the logic for
+ * refreshing the tree and collecting the results so they can be cached locally.
+ * This class does not perform the caching but relies on subclasses to do that by
+ * overriding the <code>setVariant</code> method. The subclass 
+ * {@link ResourceVariantTree} does provide caching.
+ * 
+ * @see IResourceVariantTree
+ * @see ResourceVariantTree
+ * 
+ * @since 3.0
  */
 public abstract class AbstractResourceVariantTree implements IResourceVariantTree {
 
@@ -168,6 +176,30 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	 * @return the resource variant corresponding to the given local resource
 	 */
 	protected abstract IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException;
+	/**
+	 * Method that is invoked during collection to let subclasses know which members
+	 * were collected for the given resource. Implementors should purge any cached 
+	 * state for children of the local resource that are no longer members. Any such resources
+	 * should be returned.
+	 * @param local the local resource
+	 * @param members the collected members
+	 * @return any resources that were previously collected whose state has been flushed
+	 */
+	protected IResource[] collectedMembers(IResource local, IResource[] members) throws TeamException {
+		return new IResource[0];
+	}
+
+	/**
+	 * Set the variant associated with the local resource to the newly fetched resource
+	 * variant. 
+	 * This method is invoked during change collection and should return whether
+	 * the variant associated with the lcoal resource has changed
+	 * @param local the local resource
+	 * @param remote the newly fetched resoure variant
+	 * @return <code>true</code> if the resource variant changed
+	 * @throws TeamException
+	 */
+	protected abstract boolean setVariant(IResource local, IResourceVariant remote) throws TeamException;
 
 	private void collectChanges(IResource local, IResourceVariant remote, Collection changedResources, int depth, IProgressMonitor monitor) throws TeamException {
 		boolean changed = setVariant(local, remote);
@@ -187,29 +219,6 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 		IResource[] cleared = collectedMembers(local, (IResource[]) children.keySet().toArray(new IResource[children.keySet().size()]));
 		changedResources.addAll(Arrays.asList(cleared));
 	}
-
-	/**
-	 * Method that is invoked during collection to let subclasses know which memebers
-	 * were collected for the given resource. Implementors should purge any cached 
-	 * state for children of the local resource that are no longer members. any such resources
-	 * should be returned.
-	 * @param local the local resource
-	 * @param members the collected members
-	 * @return any resources that were previously collected whose state has been flushed
-	 */
-	protected abstract IResource[] collectedMembers(IResource local, IResource[] members) throws TeamException;
-
-	/**
-	 * Set the variant associated with the local resource to the newly fetched resource
-	 * variant. 
-	 * This method is invoked during change collection and should return whether
-	 * the variant associated with the lcoal resource has changed
-	 * @param local the local resource
-	 * @param remote the newly fetched resoure variant
-	 * @return <code>true</code> if the resource variant changed
-	 * @throws TeamException
-	 */
-	protected abstract boolean setVariant(IResource local, IResourceVariant remote) throws TeamException;
 
 	private Map mergedMembers(IResource local, IResourceVariant remote, IProgressMonitor progress) throws TeamException {
 		

@@ -25,7 +25,7 @@ import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
 import org.eclipse.team.internal.core.subscribers.caches.SessionResourceVariantByteStore;
 
 /**
@@ -75,7 +75,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantTree getBaseTree() {
+	protected IResourceVariantTree getBaseTree() {
 		// No base cache needed since it's a two way compare
 		return null;
 	}
@@ -83,7 +83,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantTree getRemoteTree() {
+	protected IResourceVariantTree getRemoteTree() {
 		return tree;
 	}
 	
@@ -136,7 +136,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 				// The root is no longer managed by CVS
 				removals.add(root);
 				try {
-					tree.removeRoot(root);
+					tree.flushVariants(root, IResource.DEPTH_INFINITE);
 				} catch (TeamException e) {
 					CVSProviderPlugin.log(e);
 				}

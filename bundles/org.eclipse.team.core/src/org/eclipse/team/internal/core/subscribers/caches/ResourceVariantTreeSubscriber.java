@@ -1,0 +1,181 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.internal.core.subscribers.caches;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
+
+/**
+ * A specialization of Subscriber that provides some additional logic for creating
+ * <code>SyncInfo</code> from <code>IResourceVariant</code> instances. 
+ * The <code>members()</code> also assumes that remote 
+ * instances are stored in the <code>ISynchronizer</code>.
+ */
+public abstract class ResourceVariantTreeSubscriber extends Subscriber {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getSyncInfo(org.eclipse.core.resources.IResource)
+	 */
+	public SyncInfo getSyncInfo(IResource resource) throws TeamException {
+		if (!isSupervised(resource)) return null;
+		IResourceVariant remoteResource = getRemoteTree().getResourceVariant(resource);
+		IResourceVariant baseResource;
+		if (getResourceComparator().isThreeWay()) {
+			baseResource= getBaseTree().getResourceVariant(resource);
+		} else {
+			baseResource = null;
+		}
+		return getSyncInfo(resource, baseResource, remoteResource);
+	}
+
+	/**
+	 * Method that creates an instance of SyncInfo for the provider local, base and remote
+	 * resource variants.
+	 * Can be overiden by subclasses.
+	 * @param local the local resource
+	 * @param base the base resource variant or <code>null</code>
+	 * @param remote the remote resource variant or <code>null</code>
+	 * @return the <code>SyncInfo</code> containing the provided resources
+	 */
+	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
+		SyncInfo info = new SyncInfo(local, base, remote, this.getResourceComparator());
+		info.init();
+		return info;
+	}
+
+	public IResource[] members(IResource resource) throws TeamException {
+		if(resource.getType() == IResource.FILE) {
+			return new IResource[0];
+		}	
+		try {
+			Set allMembers = new HashSet();
+			try {
+				allMembers.addAll(Arrays.asList(((IContainer)resource).members()));
+			} catch (CoreException e) {
+				if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+					// The resource is no longer exists so ignore the exception
+				} else {
+					throw e;
+				}
+			}
+			allMembers.addAll(Arrays.asList(internalMembers(getRemoteTree(), resource)));
+			if (getResourceComparator().isThreeWay()) {
+				allMembers.addAll(Arrays.asList(internalMembers(getBaseTree(), resource)));
+			}
+			for (Iterator iterator = allMembers.iterator(); iterator.hasNext();) {
+				IResource member = (IResource) iterator.next();
+				if(!member.exists() && !getRemoteTree().hasResourceVariant(member)) {
+					// Remove deletion conflicts
+					iterator.remove();
+				} else if (!isSupervised(resource)) {
+					// Remove unsupervised resources
+					iterator.remove();
+				}
+			}
+			return (IResource[]) allMembers.toArray(new IResource[allMembers.size()]);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		monitor = Policy.monitorFor(monitor);
+		List errors = new ArrayList();
+		try {
+			monitor.beginTask(null, 100 * resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 100));
+				if (!status.isOK()) {
+					errors.add(status);
+				}
+			}
+		} finally {
+			monitor.done();
+		} 
+		if (!errors.isEmpty()) {
+			throw new TeamException(new MultiStatus(TeamPlugin.ID, 0, 
+					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
+					Policy.bind("ResourceVariantTreeSubscriber.1", getName()), null)); //$NON-NLS-1$
+		}
+	}
+
+	protected IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+			Set allChanges = new HashSet();
+			IResource[] remoteChanges = getRemoteTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+			allChanges.addAll(Arrays.asList(remoteChanges));
+			if (getResourceComparator().isThreeWay()) {
+				IResource[] baseChanges = getBaseTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+				allChanges.addAll(Arrays.asList(baseChanges));
+			}
+			IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
+			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
+			return Status.OK_STATUS;
+		} catch (TeamException e) {
+			return new TeamStatus(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("ResourceVariantTreeSubscriber.2", resource.getFullPath().toString(), e.getMessage()), e, resource); //$NON-NLS-1$
+		} finally {
+			monitor.done();
+		} 
+	}
+	
+	/**
+	 * Return the base resource variant tree.
+	 */
+	protected abstract IResourceVariantTree getBaseTree();
+
+	/**
+	 * Return the remote resource variant tree.
+	 */
+	protected abstract IResourceVariantTree getRemoteTree();
+	
+	private IResource[] internalMembers(IResourceVariantTree tree, IResource resource) throws TeamException, CoreException {
+		// Filter and return only phantoms associated with the remote synchronizer.
+		IResource[] members;
+		try {
+			members = tree.members(resource);
+		} catch (CoreException e) {
+			if (!isSupervised(resource) || e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				// The resource is no longer supervised or doesn't exist in any form
+				// so ignore the exception and return that there are no members
+				return new IResource[0];
+			}
+			throw e;
+		}
+		return members;
+	}
+}

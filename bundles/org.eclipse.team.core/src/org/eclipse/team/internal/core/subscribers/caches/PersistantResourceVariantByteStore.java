@@ -23,6 +23,10 @@ import org.eclipse.team.internal.core.Assert;
  * A <code>ResourceVariantByteStore</code> that caches the variant bytes using 
  * the <code>org.eclipse.core.resources.ISynchronizer</code> so that
  * the tree is cached accross workbench invocations.
+ * <p>
+ * This class is not intended to be subclassed by clients
+ * 
+ * @since 3.0
  */
 public class PersistantResourceVariantByteStore extends ResourceVariantByteStore {
 
@@ -50,13 +54,6 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 
 	/**
-	 * Convenience method that returns the Core <code>ISynchronizer</code>.
-	 */
-	protected ISynchronizer getSynchronizer() {
-		return ResourcesPlugin.getWorkspace().getSynchronizer();
-	}
-
-	/**
 	 * Return the qualified name that uniquely identifies this tree.
 	 * @return the qwualified name that uniquely identifies this tree.
 	 */
@@ -74,14 +71,6 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 			return null;
 		}
 		return syncBytes;
-	}
-
-	private byte[] internalGetSyncBytes(IResource resource) throws TeamException {
-		try {
-			return getSynchronizer().getSyncInfo(getSyncName(), resource);
-		} catch (CoreException e) {
-			throw TeamException.asTeamException(e);
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -157,4 +146,15 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 		}
 	}
 
+	private ISynchronizer getSynchronizer() {
+		return ResourcesPlugin.getWorkspace().getSynchronizer();
+	}
+	
+	private byte[] internalGetSyncBytes(IResource resource) throws TeamException {
+		try {
+			return getSynchronizer().getSyncInfo(getSyncName(), resource);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+	}
 }
