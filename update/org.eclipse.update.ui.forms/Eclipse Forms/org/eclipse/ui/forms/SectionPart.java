@@ -10,29 +10,40 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 
 /**
  * Section part implements IFormPart interface based on the Section widget.
+ * 
  * @see Section
  */
 public class SectionPart implements IFormPart {
 	private IManagedForm managedForm;
 	private Section section;
 
-/**
- * Creates a new section part based on the provided section.
- * @param section the section to use
- */	
+	/**
+	 * Creates a new section part based on the provided section.
+	 * 
+	 * @param section
+	 *            the section to use
+	 */
 	public SectionPart(Section section) {
 		this.section = section;
 		initialize();
 	}
+	
+	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
+		this(toolkit.createSection(parent, style));
+	}
+	
+	/**
+	 * Initializes the section.
+	 */
 
 	protected void initialize() {
-		if ((section.getExpansionStyle()& Section.NONE)==0) {
+		if ((section.getExpansionStyle() & Section.NONE) == 0) {
 			section.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanging(ExpansionEvent e) {
 					SectionPart.this.expansionStateChanging(e.getState());
@@ -44,63 +55,74 @@ public class SectionPart implements IFormPart {
 		}
 	}
 
-/**
- * Returns the section widget used in this part.
- * @return the section widget
- */
+	/**
+	 * Returns the section widget used in this part.
+	 * 
+	 * @return the section widget
+	 */
 	public Section getSection() {
 		return section;
 	}
-	
+
 	protected void expansionStateChanging(boolean expanding) {
 	}
-	
+
 	protected void expansionStateChanged(boolean expanded) {
 		managedForm.getForm().reflow(false);
 	}
 
-	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
-		this(toolkit.createSection(parent, style));
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.ManagedForm)
 	 */
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
-		initialize();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
 	 */
 	public void setFormInput(Object input) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#setFocus()
 	 */
 	public void setFocus() {
+		Control client = section.getClient();
+		if (client != null)
+			client.setFocus();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#refresh()
 	 */
 	public void refresh() {
 	}
-	
+
 	public boolean isDirty() {
 		return false;
 	}

@@ -9,7 +9,7 @@ import org.eclipse.ui.forms.widgets.*;
  * participates in form life cycle events. 
  * <p>There is no 1/1 mapping between widgets and form parts.
  * A widget like Section can be a part by itself, but a number
- * of widgets can join around one form part.
+ * of widgets can gather around one form part.
  * 
  * @since 3.0
  */
@@ -36,7 +36,7 @@ public interface IManagedForm {
 	
 /**
  * Returns all the parts currently managed by this form.
- * @return
+ * @return the managed parts
  */	
 	IFormPart [] getParts();
 }

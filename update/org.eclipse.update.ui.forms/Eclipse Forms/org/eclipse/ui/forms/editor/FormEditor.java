@@ -14,31 +14,44 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This class forms a base of multi-page form editors that typically use one or
+ * more pages with forms and one page for raw source of the editor input.
+ * 
+ * @since 3.0
  */
+
 public abstract class FormEditor extends MultiPageEditorPart {
 	private FormToolkit toolkit;
-	
+
+	/**
+	 * The constructor.
+	 */
+
 	public FormEditor() {
 	}
 
-/**
- * Creates the common toolkit for this editor. Subclasses should
- * override this method to create pages but must call 'super'
- * before attempting to use the toolkit.
- */
+	/**
+	 * Creates the common toolkit for this editor. Subclasses should override
+	 * this method to create pages but must call 'super' before attempting to
+	 * use the toolkit.
+	 */
 	protected void createPages() {
 		toolkit = new FormToolkit(getContainer().getDisplay());
 	}
 
+	/**
+	 * Disposes the toolkit after disposing the editor itself.
+	 */
 	public void dispose() {
 		super.dispose();
 		toolkit.dispose();
 	}
-	
+
+	/**
+	 * Returns the toolkit owned by this editor.
+	 * 
+	 * @return the toolkit object
+	 */
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
