@@ -23,6 +23,7 @@ public class UpdateManagerPlugin extends Plugin {
 	public static boolean DEBUG_SHOW_CONFIGURATION = false;
 	public static boolean DEBUG_SHOW_TYPE = false;
 	public static boolean DEBUG_SHOW_WEB = false;
+	public static boolean DEBUG_SHOW_IHANDLER = false;
 
 	//The shared instance.
 	private static UpdateManagerPlugin plugin;
@@ -75,6 +76,7 @@ public class UpdateManagerPlugin extends Plugin {
 			DEBUG_SHOW_CONFIGURATION = getBooleanDebugOption("org.eclipse.update.core/debug/configuration", false); //$NON-NLS-1$
 			DEBUG_SHOW_TYPE = getBooleanDebugOption("org.eclipse.update.core/debug/type", false); //$NON-NLS-1$
 			DEBUG_SHOW_WEB = getBooleanDebugOption("org.eclipse.update.core/debug/web", false); //$NON-NLS-1$
+			DEBUG_SHOW_IHANDLER = getBooleanDebugOption("org.eclipse.update.core/debug/installhandler", false); //$NON-NLS-1$
 		}
 
 //		startupWebInstallHandler();

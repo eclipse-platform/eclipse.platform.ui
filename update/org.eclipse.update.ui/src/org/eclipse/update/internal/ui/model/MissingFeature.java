@@ -5,17 +5,18 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IFeatureContentProvider;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IURLEntry; 
+import org.eclipse.update.core.IInstallHandlerEntry;
+import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IVerificationListener;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.*;
 
 public class MissingFeature implements IFeature {
 
@@ -278,6 +279,13 @@ public class MissingFeature implements IFeature {
 	 */
 	public int getNonPluginEntryCount() {
 		return 0;
+	}
+
+	/*
+	 * @see IFeature#getInstallHandlerEntry()
+	 */
+	public IInstallHandlerEntry getInstallHandlerEntry() {
+		return null;
 	}
 
 	}

@@ -5,10 +5,20 @@ package org.eclipse.update.core;
  */
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.model.ContentEntryModel;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.InstallHandlerProxy;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -105,6 +115,13 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/*
+	 * @see IFeature#getInstallHandlerEntry()
+	 */
+	public IInstallHandlerEntry getInstallHandlerEntry() {
+		return (IInstallHandlerEntry) getInstallHandlerModel();
+	}
+
+	/*
 	 * @see IFeature#getDescription()
 	 */
 	public IURLEntry getDescription() {
@@ -137,9 +154,18 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING;
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.SiteAlreadySet", featureURLString), null); //$NON-NLS-1$
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			String featureURLString =
+				(getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING;
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("Feature.SiteAlreadySet", featureURLString),
+					null);
+			//$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		this.site = site;
@@ -158,7 +184,9 @@ public class Feature extends FeatureModel implements IFeature {
 	*/
 	public long getDownloadSize() {
 		try {
-			return getFeatureContentProvider().getDownloadSizeFor(getPluginEntries(), getNonPluginEntries());
+			return getFeatureContentProvider().getDownloadSizeFor(
+				getPluginEntries(),
+				getNonPluginEntries());
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
@@ -177,7 +205,9 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public long getInstallSize() {
 		try {
-			return getFeatureContentProvider().getInstallSizeFor(getPluginEntries(), getNonPluginEntries());
+			return getFeatureContentProvider().getInstallSizeFor(
+				getPluginEntries(),
+				getNonPluginEntries());
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
@@ -188,7 +218,11 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#install(IFeature,IVerificationListener, IProgressMonitor) throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature, IVerificationListener verificationListener, IProgressMonitor progress) throws CoreException {
+	public IFeatureReference install(
+		IFeature targetFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor progress)
+		throws CoreException {
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -199,44 +233,88 @@ public class Feature extends FeatureModel implements IFeature {
 		else
 			monitor = new InstallMonitor(progress);
 
-		// do the install
-		IFeatureContentConsumer consumer = targetFeature.getFeatureContentConsumer();
-		IVerifier verifier = getFeatureContentProvider().getVerifier();
+		// Setup optional install handler
+		InstallHandlerProxy handler =
+			new InstallHandlerProxy(
+				IInstallHandler.HANDLER_ACTION_INSTALL,
+				this,
+				this.getInstallHandlerEntry(),
+				monitor);
+
+		// Get source feature provider and verifier. Initialize target variables.
+		IFeatureContentProvider provider = getFeatureContentProvider();
+		IVerifier verifier = provider.getVerifier();
+		IFeatureReference result = null;
+		IFeatureContentConsumer consumer = null;
+		boolean success = false;
 
 		try {
 			// determine list of plugins to install
-			// find the intersection between the two arrays of IPluginEntry...
-			// The one the site contains and the one the feature contains
+			// find the intersection between the plugin entries already contained
+			// on the target site, and plugin entries packaged in source feature
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
-			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
-			IPluginEntry[] pluginsToInstall = UpdateManagerUtils.diff(sourceFeaturePluginEntries, targetSitePluginEntries);
+			IPluginEntry[] targetSitePluginEntries =
+				(targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
+			IPluginEntry[] pluginsToInstall =
+				UpdateManagerUtils.diff(sourceFeaturePluginEntries, targetSitePluginEntries);
+			INonPluginEntry[] nonPluginsToInstall = getNonPluginEntries();
 
 			// determine number of monitor tasks
-				int taskCount = 1 // one task for all feature files (already downloaded)
-		+pluginsToInstall.length // one task for each plugin to install
-	+getNonPluginEntries().length; // one task for each non-plugin file to install
-
+			//   2 tasks for the feature jar (download/verify + install)
+			// + 2*n tasks for plugin entries (download/verify + install for each)
+			// + 1*m tasks per non-plugin data entry (download for each)
+			// + 1 task for custom non-plugin entry handling (1 for all combined)
+			int taskCount =
+				2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1;
 			if (monitor != null)
 				monitor.beginTask(EMPTY_STRING, taskCount);
 
+			// Start the installation tasks			
+			handler.installInitiated();
+
+			// Download and verify feature archive(s)
+			ContentReference[] references =
+				provider.getFeatureEntryArchiveReferences(monitor);
 			if (verifier != null) {
-				ContentReference[] references = getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
-				for (int i = 0; i < references.length; i++) {
-					promptForVerification(verifier.verify(this, references[i], monitor), verificationListener);
-				}
-
+				promptForVerification(
+					verifier.verify(this, references, monitor),
+					verificationListener);
 			}
-
-			//finds the contentReferences for this IFeature
 			if (monitor != null)
-				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
-			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
-			if (verifier != null) {
-				for (int i = 0; i < references.length; i++) {
-					verifier.verify(this, references[i], monitor);
+				monitor.worked(1);
+
+			// Download and verify plugin archives
+			for (int i = 0; i < pluginsToInstall.length; i++) {
+				references =
+					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
+				if (verifier != null) {
+					promptForVerification(
+						verifier.verify(this, references, monitor),
+						verificationListener);
 				}
+				if (monitor != null)
+					monitor.worked(1);
 			}
+			handler.pluginsDownloaded(pluginsToInstall);
+
+			// Download non-plugin archives. Verification handled by optional install handler
+			for (int i = 0; i < nonPluginsToInstall.length; i++) {
+				references =
+					provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
+				if (monitor != null)
+					monitor.worked(1);
+			}
+			handler.nonPluginDataDownloaded(nonPluginsToInstall, verificationListener);
+
+			// All archives are downloaded and verified. Get ready to install
+			consumer = targetFeature.getFeatureContentConsumer();
+
+			//Install feature files
+			if (monitor != null)
+				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles"));
+			//$NON-NLS-1$
+			references = provider.getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
 				if (monitor != null)
 					monitor.subTask(references[i].getIdentifier());
@@ -245,27 +323,17 @@ public class Feature extends FeatureModel implements IFeature {
 			if (monitor != null)
 				monitor.worked(1);
 
-			// download and install plugin plugin files
-			for (int i = 0; i < pluginsToInstall.length; i++) {
-				// verification
-				if (verifier != null) {
-					references = getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-					if (references != null) {
-						for (int j = 0; j < references.length; j++) {
-							promptForVerification(verifier.verify(this, references[i], monitor), verificationListener);
-						}
-					}
-				}
-
-			}
-
+			// Install plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
-					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionedIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+					monitor.setTaskName(
+						Policy.bind(
+							"Feature.TaskInstallPluginFiles",
+							pluginsToInstall[i].getVersionedIdentifier().getIdentifier()));
+				//$NON-NLS-1$
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
-
-				// installation
-				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
+				references =
+					provider.getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
@@ -275,40 +343,32 @@ public class Feature extends FeatureModel implements IFeature {
 				if (monitor != null)
 					monitor.worked(1);
 			}
-
-			// download and install non plugins bundles
-			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
-			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
-				if (monitor != null)
-					monitor.setTaskName(Policy.bind("Feature.TaskInstallNonPluginsFiles")); //$NON-NLS-1$
-				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
-				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
-				if (verifier != null){
-					for (int j = 0; j < references.length; j++) {
-						promptForVerification(verifier.verify(this, references[i], monitor), verificationListener);						
-					}
-				}
-				for (int j = 0; j < references.length; j++) {
-					if (monitor != null)
-						monitor.subTask(references[j].getIdentifier());
-					nonPluginConsumer.store(references[j], monitor);
-				}
-				nonPluginConsumer.close();
-				if (monitor != null)
-					monitor.worked(1);
-			}
-		} catch (CoreException e) {
-			// an error occured, abort 
-			if (consumer != null)
-				consumer.abort();
-			throw e;
+			handler.completeInstall(consumer);
+			
+			// install handler processed any non-plugin entries
+			if (monitor != null)
+				monitor.worked(1);
+				
+			// indicate install success
+			success = true;			
+			
 		} finally {
+			// ensure we always cleanup
+			if (consumer != null)
+				if (success) {
+					// successful install
+					result = consumer.close();
+					handler.installCompleted(true);					
+				}
+				else {
+					// unsuccessful install
+					consumer.abort();
+					handler.installCompleted(false);		
+				}
 			if (monitor != null)
 				monitor.done();
 		}
-
-		return consumer.close();
-
+		return result;
 	}
 
 	/*
@@ -376,10 +436,19 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#getFeatureContentProvider(IFeatureContentConsumer)
 	 */
-	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
+	public IFeatureContentProvider getFeatureContentProvider()
+		throws CoreException {
 		if (featureContentProvider == null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()), null); //$NON-NLS-1$
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()),
+					null);
+			//$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return this.featureContentProvider;
@@ -388,7 +457,8 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#getContentConsumer()
 	 */
-	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
+	public IFeatureContentConsumer getFeatureContentConsumer()
+		throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -396,25 +466,38 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String URLString = (getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm(); //$NON-NLS-1$
-		return Policy.bind("Feature.FeatureVersionToString", URLString, getVersionedIdentifier().toString()); //$NON-NLS-1$ 
+		String URLString =
+			(getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm();
+		//$NON-NLS-1$
+		return Policy.bind(
+			"Feature.FeatureVersionToString",
+			URLString,
+			getVersionedIdentifier().toString());
+		//$NON-NLS-1$
 	}
 
 	/**
 	 * 
 	 */
-	private void promptForVerification(IVerificationResult verificationResult, IVerificationListener listener) throws CoreException {
+	private void promptForVerification(
+		IVerificationResult verificationResult,
+		IVerificationListener listener)
+		throws CoreException {
 
 		if (listener == null)
 			return;
 		int result = listener.prompt(verificationResult);
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
-			throw Utilities.newCoreException(Policy.bind("JarVerificationService.CancelInstall"), //$NON-NLS-1$
+			throw Utilities
+				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
+			//$NON-NLS-1$
 			verificationResult.getResultException());
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
-			throw Utilities.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"), //$NON-NLS-1$
+			throw Utilities
+				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
+			//$NON-NLS-1$
 			verificationResult.getResultException());
 		}
 

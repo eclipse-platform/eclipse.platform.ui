@@ -124,6 +124,13 @@ public interface IFeature {
 	String getProvider() ;
 	
 	/**
+	 * Returns feature install handler entry.
+	 * @return install handler entry, or <code>null</code> if
+	 * none was specified
+	 */
+	IInstallHandlerEntry getInstallHandlerEntry();
+	
+	/**
 	 * Returns the description of the DefaultFeature.
 	 * The description can be a short text and/or a
 	 * URL pointing to a file.

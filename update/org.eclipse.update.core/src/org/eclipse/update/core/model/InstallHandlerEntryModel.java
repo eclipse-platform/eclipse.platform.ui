@@ -73,7 +73,7 @@ public class InstallHandlerEntryModel extends ModelObject {
 	 * @return url or <code>null</code>
 	 * @since 2.0
 	 */
-	public String getClassName() {
+	public String getHandlerName() {
 		return clazz;
 	}
 	
@@ -111,7 +111,7 @@ public class InstallHandlerEntryModel extends ModelObject {
 	 * 		May be <code>null</code>.
 	 * @since 2.0
 	 */	
-	public void setClassName(String clazz) {
+	public void setHandlerName(String clazz) {
 		assertIsWriteable();
 		this.clazz = clazz;
 	}

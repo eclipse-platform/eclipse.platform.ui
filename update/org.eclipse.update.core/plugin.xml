@@ -17,10 +17,10 @@
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.boot"/>
    </requires>
-
-
+   
    <extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory"/>
    <extension-point id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
+   <extension-point id="installHandlers" name="Install/Update Global Install Handlers"/>
 
    <extension
          id="packaged"
@@ -29,6 +29,7 @@
             class="org.eclipse.update.internal.core.FeaturePackagedFactory">
       </feature-factory>
    </extension>
+   
    <extension
          id="installed"
          point="org.eclipse.update.core.featureTypes">
@@ -36,6 +37,7 @@
             class="org.eclipse.update.internal.core.FeatureExecutableFactory">
       </feature-factory>
    </extension>
+   
    <extension
          id="http"
          point="org.eclipse.update.core.siteTypes">
@@ -43,12 +45,21 @@
             class="org.eclipse.update.internal.core.SiteURLFactory">
       </site-factory>
    </extension>
+   
    <extension
          id="file"
          point="org.eclipse.update.core.siteTypes">
       <site-factory
             class="org.eclipse.update.internal.core.SiteFileFactory">
       </site-factory>
+   </extension>
+   
+   <extension
+         id="DefaultInstallHandler"
+         point="org.eclipse.update.core.installHandlers">
+      <install-handler
+            class="org.eclipse.update.internal.core.DefaultInstallHandler">
+      </install-handler>
    </extension>
 
 </plugin>

@@ -18,8 +18,6 @@ import org.eclipse.update.core.model.*;
  */
 public class SiteFile extends Site {
 
-
-
 	/**
 	 * plugin entries 
 	 */
@@ -99,41 +97,61 @@ public class SiteFile extends Site {
 			monitor = (InstallMonitor) progress;
 		else
 			monitor = new InstallMonitor(progress);
+			
+		// Setup optional install handler
+		InstallHandlerProxy handler =
+			new InstallHandlerProxy(
+				IInstallHandler.HANDLER_ACTION_UNINSTALL,
+				feature,
+				feature.getInstallHandlerEntry(),
+				monitor);
+		boolean success = false;
 
-		// remove the feature and the plugins if they are not used and not activated
-		// get the plugins from the feature
-		IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
+		try {
+			handler.uninstallInitiated();
+			
+			// remove the feature and the plugins if they are not used and not activated
+			// get the plugins from the feature
+			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
 
-		//finds the contentReferences for this IPluginEntry
-		for (int i = 0; i < pluginsToRemove.length; i++) {
-			remove(feature, pluginsToRemove[i], monitor);
-		}
-
-		// remove the feature content
-		ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
-		for (int i = 0; i < references.length; i++) {
-			try {
-				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e); //$NON-NLS-1$
-				throw new CoreException(status);
+			//finds the contentReferences for this IPluginEntry
+			for (int i = 0; i < pluginsToRemove.length; i++) {
+				remove(feature, pluginsToRemove[i], monitor);
 			}
-		}
 
-		// remove feature reference from the site
-		IFeatureReference[] featureReferences = getFeatureReferences();
-		if (featureReferences != null) {
-			for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
-				IFeatureReference element = featureReferences[indexRef];
-				if (element.equals(feature)) {
-					removeFeatureReferenceModel((FeatureReferenceModel) element);
-					break;
+			// remove the feature content
+			ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
+			for (int i = 0; i < references.length; i++) {
+				try {
+					UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+				} catch (IOException e) {
+					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e); //$NON-NLS-1$
+					throw new CoreException(status);
 				}
 			}
+			
+			handler.completeUninstall();
+
+			// remove feature reference from the site
+			IFeatureReference[] featureReferences = getFeatureReferences();
+			if (featureReferences != null) {
+				for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
+					IFeatureReference element = featureReferences[indexRef];
+					if (element.equals(feature)) {
+						removeFeatureReferenceModel((FeatureReferenceModel) element);
+						break;
+					}
+				}
+			}
+			
+			success = true;
+		} finally {
+			handler.uninstallCompleted(success);
+			IStatus status = handler.getCompletionStatus();
+			if (success && status!=null)
+				throw new CoreException(status); // report handler problem detected earlier
 		}
-
-
 	}
 
 	/**

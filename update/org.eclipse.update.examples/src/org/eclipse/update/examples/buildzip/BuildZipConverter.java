@@ -34,14 +34,14 @@ public class BuildZipConverter {
 			return;
 		}
 		try {
-			URL buildzip = new URL("file:"+args[0]);
+			URL buildzip = new URL(("file:"+args[0]).replace(File.separatorChar, '/'));
 			BuildZipFeatureFactory factory = new BuildZipFeatureFactory();
 			IFeature feature = factory.createFeature(buildzip, null);
 			IFeatureContentProvider provider = feature.getFeatureContentProvider();
 			
 			ContentReference[] refs = provider.getFeatureEntryContentReferences(null);
 			
-			File site = new File((new File(args[0])).getParentFile(),".DefaultSite");
+			File site = new File((args[0]+".packaged/").replace('/',File.separatorChar));
 			site.mkdirs();
 			File featuresDir = new File(site,"features");
 			featuresDir.mkdirs();
@@ -77,11 +77,22 @@ public class BuildZipConverter {
 		try {
 			os = new FileOutputStream(jarFile);
 			jos = new JarOutputStream(os);
+			JarEntry entry = null;
+			String buf = null;
+			StringBufferInputStream sbis = null;
+			
+			// write jar manifest (first entry in output stream)
+			buf = "Manifest-Version: 1.0\nCreated-By: 2.0.0 (www.eclipse.org Feature Packager)\n";
+			sbis = new StringBufferInputStream(buf);
+			entry = new JarEntry("META-INF/MANIFEST.MF");
+			jos.putNextEntry(entry);
+			Utilities.copy(sbis,jos,null);
+			sbis.close();
 			
 			// jar up the references
 			for (int i=0; i<refs.length; i++) {
 				String id = refs[i].getIdentifier();
-				JarEntry entry = new JarEntry(id);
+				entry = new JarEntry(id);
 				jos.putNextEntry(entry);
 				is = refs[i].getInputStream();
 				Utilities.copy(is,jos,null);
@@ -96,9 +107,9 @@ public class BuildZipConverter {
 					if (value.equals("HEAD")) {
 						value += "-" + feature.getVersionedIdentifier().getVersion().getMajorComponent();
 					}
-					String buf = key + "=" + value;
-					StringBufferInputStream sbis = new StringBufferInputStream(buf);
-					JarEntry entry = new JarEntry("buildmanifest.properties");
+					buf = key + "=" + value;
+					sbis = new StringBufferInputStream(buf);
+					entry = new JarEntry("buildmanifest.properties");
 					jos.putNextEntry(entry);
 					Utilities.copy(sbis,jos,null);
 					sbis.close();

@@ -460,8 +460,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String library = attributes.getValue("library"); //$NON-NLS-1$
 		handler.setLibrary(library);
 
-		String clazz = attributes.getValue("class"); //$NON-NLS-1$
-		handler.setClassName(clazz);
+		String clazz = attributes.getValue("handler"); //$NON-NLS-1$
+		handler.setHandlerName(clazz);
 
 		objectStack.push(handler);
 

@@ -20,41 +20,45 @@ public class InstallMonitor implements IProgressMonitor {
 
 	private IProgressMonitor monitor;
 	private Stack tasks;
-	
+
 	private String taskString;
 	private String subTaskString;
 	private boolean showDetails;
 	private long totalCopyCount;
-	
+
 	private class MonitorState {
-		
+
 		private String taskString;
 		private String subTaskString;
 		private boolean showDetails;
 		private long totalCopyCount;
-		
-		public MonitorState(String taskString, String subTaskString, boolean showDetails, long totalCopyCount) {
+
+		public MonitorState(
+			String taskString,
+			String subTaskString,
+			boolean showDetails,
+			long totalCopyCount) {
 			this.taskString = taskString;
 			this.subTaskString = subTaskString;
 			this.showDetails = showDetails;
 			this.totalCopyCount = totalCopyCount;
 		}
-		
+
 		public String getTaskString() {
 			return this.taskString;
 		}
-		
+
 		public String getSubTaskString() {
 			return this.subTaskString;
 		}
-		
+
 		public boolean getShowDetails() {
 			return this.showDetails;
 		}
-		
+
 		public long getTotalCopyCount() {
 			return this.totalCopyCount;
-		}		
+		}
 	}
 
 	public InstallMonitor(IProgressMonitor monitor) {
@@ -65,7 +69,7 @@ public class InstallMonitor implements IProgressMonitor {
 		this.showDetails = false;
 		this.totalCopyCount = 0;
 	}
-	
+
 	/*
 	 * @see IProgressMonitor#beginTask(String, int)
 	 */
@@ -130,34 +134,42 @@ public class InstallMonitor implements IProgressMonitor {
 	public void worked(int work) {
 		monitor.worked(work);
 	}
-		
+
 	public void saveState() {
-		tasks.push(new MonitorState(taskString, subTaskString, showDetails, totalCopyCount));
+		tasks.push(
+			new MonitorState(taskString, subTaskString, showDetails, totalCopyCount));
 	}
-		
+
 	public void restoreState() {
-		if (tasks.size()>0) {
-			MonitorState state = (MonitorState)tasks.pop();
+		if (tasks.size() > 0) {
+			MonitorState state = (MonitorState) tasks.pop();
 			setTaskName(state.getTaskString());
 			subTask(state.getSubTaskString());
 			this.showDetails = state.getShowDetails();
 			this.totalCopyCount = state.getTotalCopyCount();
 		}
 	}
-	
+
 	public void showCopyDetails(boolean setting) {
 		this.showDetails = setting;
 	}
-	
+
 	public void setTotalCount(long count) {
 		this.totalCopyCount = count;
 	}
-	
+
 	public void setCopyCount(long count) {
 		if (showDetails && count > 0) {
 			long countK = count / 1024;
 			long totalK = totalCopyCount / 1024;
-			String msg = "(" + countK + Policy.bind("InstallMonitor.Kilo") + ((totalK <= 0) ? Policy.bind("InstallMonitor.bytes") : Policy.bind("InstallMonitor.of") + totalK + Policy.bind("InstallMonitor.KiloBytes")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			String msg =
+				(totalK <= 0)
+					? Policy.bind("InstallMonitor.DownloadSize", Long.toString(countK))
+					: Policy.bind(
+						"InstallMonitor.DownloadSizeLong",
+						Long.toString(countK),
+						Long.toString(totalK));
+			//$NON-NLS-1$ //$NON-NLS-2$
 			monitor.subTask(subTaskString + msg);
 		}
 	}

@@ -3,16 +3,25 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.*;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.Utilities;
 
 /**
  * 
@@ -201,46 +210,50 @@ public class UpdateManagerUtils {
 		return resultEntry;
 	}
 
-/**
- * Returns the parent URL of the given URL, or <code>null</code> if the
- * given URL is the root.
- * <table>
- * <caption>Example</caption>
- * <tr>
- *   <th>Given URL</th>
- *   <th>Parent URL</th>
- * <tr>
- *   <td>"http://hostname/"</td>
- *   <td>null</td>
- * <tr>
- *   <td>"http://hostname/folder/file</td>
- *   <td>"http://hostname/folder/</td>
- * </table>
- *
- * @param url a URL
- * @return    the parent of the given URL
- */
-public static URL getParent(URL url) {
-	String file = url.getFile();
-	int len = file.length();
-	if (len == 0 || len == 1 && file.charAt(0) == '/')
-		return null;
-	int lastSlashIndex = -1;
-	for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
-		if (file.charAt(i) == '/')
-			lastSlashIndex = i;
+	/**
+	 * Returns the parent URL of the given URL, or <code>null</code> if the
+	 * given URL is the root.
+	 * <table>
+	 * <caption>Example</caption>
+	 * <tr>
+	 *   <th>Given URL</th>
+	 *   <th>Parent URL</th>
+	 * <tr>
+	 *   <td>"http://hostname/"</td>
+	 *   <td>null</td>
+	 * <tr>
+	 *   <td>"http://hostname/folder/file</td>
+	 *   <td>"http://hostname/folder/</td>
+	 * </table>
+	 *
+	 * @param url a URL
+	 * @return    the parent of the given URL
+	 */
+	public static URL getParent(URL url) {
+		String file = url.getFile();
+		int len = file.length();
+		if (len == 0 || len == 1 && file.charAt(0) == '/')
+			return null;
+		int lastSlashIndex = -1;
+		for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
+			if (file.charAt(i) == '/')
+				lastSlashIndex = i;
+		}
+		if (lastSlashIndex == -1)
+			file = "";
+		else
+			file = file.substring(0, lastSlashIndex + 1);
+	
+		try {
+			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
+		} catch(MalformedURLException e){
+			Assert.isTrue(false, e.getMessage());
+		}
+		return url;
 	}
-	if (lastSlashIndex == -1)
-		file = "";
-	else
-		file = file.substring(0, lastSlashIndex + 1);
 
-	try {
-		url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-	} catch(MalformedURLException e){
-		Assert.isTrue(false, e.getMessage());
+	public static CoreException newCoreException(String s, Throwable e) throws CoreException {
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
 	}
-	return url;
-}
-
 }
