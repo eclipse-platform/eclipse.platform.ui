@@ -175,10 +175,8 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 			retargetAction = null;
 		}
 		window.getSelectionService().removeSelectionListener(this);
-		if (getDelegate() instanceof IWorkbenchWindowActionDelegate) {
-			IWorkbenchWindowActionDelegate winDelegate = (IWorkbenchWindowActionDelegate) getDelegate();
-			winDelegate.dispose();
-		}
+		if (getDelegate() != null)
+			((IWorkbenchWindowActionDelegate)getDelegate()).dispose();
 	}
 	/**
 	 * Returns the action set id.

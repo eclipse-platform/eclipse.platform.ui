@@ -899,6 +899,7 @@ private boolean hardClose() {
 	try {
 		closing = true;
 		updateDisabled = true;
+		actionPresentation.clearActionSets(); // fix for bug 27416
 		closeAllPages();
 		builder.dispose();
 		if(keyBindingService != null)
