@@ -976,7 +976,9 @@ public class EclipseSynchronizer {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			folders.add(resource.getProject());
-			folders.add(resource.getParent());
+			if (resource.getType() != IResource.PROJECT) {
+				folders.add(resource.getParent());
+			}
 			// use the depth to gather child folders when appropriate
 			try {
 				resource.accept(new IResourceVisitor() {
