@@ -22,7 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * This CVS runnable context blocks the UI and can therfore have a shell assigned to
@@ -52,7 +52,7 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 			return new IRunnableContext() {
 				public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 						throws InvocationTargetException, InterruptedException {
-					IProgressManager manager = PlatformUI.getWorkbench().getProgressManager();
+					IProgressService manager = PlatformUI.getWorkbench().getProgressManager();
 					manager.busyCursorWhile(runnable);
 				}
 			};

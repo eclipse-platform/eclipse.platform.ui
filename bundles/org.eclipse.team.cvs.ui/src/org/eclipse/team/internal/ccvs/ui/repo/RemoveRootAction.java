@@ -23,18 +23,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.RepositoryLocationSchedulingRule;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.progress.IProgressManager;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.ui.progress.IProgressService;
 
 
 /**
@@ -115,7 +112,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 						}
 					});
 				} else {
-					IProgressManager manager = PlatformUI.getWorkbench().getProgressManager();
+					IProgressService manager = PlatformUI.getWorkbench().getProgressManager();
 					try {
 						manager.busyCursorWhile(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
