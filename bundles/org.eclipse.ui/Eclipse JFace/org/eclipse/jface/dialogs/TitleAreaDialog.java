@@ -232,8 +232,6 @@ private Control createTitleArea(Composite parent) {
 	// Message image @ bottom, left
 	messageImageLabel = new Label(parent, SWT.CENTER);
 	messageImageLabel.setBackground(background);
-	
-	
 
 	// Message label @ bottom, center
 	messageLabel = new Label(parent, SWT.WRAP);
@@ -364,6 +362,9 @@ public void setErrorMessage(String newErrorMessage) {
 		messageLabel.setToolTipText(message);
 
 	} else {
+		
+		//Add in a space for layout purposes
+		errorMessage = " " + errorMessage;
 		updateMessage(errorMessage);
 		messageLabel.setToolTipText(errorMessage);
 		if (!showingError) {
@@ -394,14 +395,23 @@ private void layoutForNewMessage(){
 	int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 	int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 	
-	if (errorMessage == null) {
+	//If there are no images then layout as normal
+	if (errorMessage == null && messageImage == null) {
 		setImageLabelVisible(false);
-		setLayoutsForNormalMessage(verticalSpacing,horizontalSpacing);	
+		
+		setLayoutsForNormalMessage(verticalSpacing,horizontalSpacing);
 		
 	} else {
-		messageImageLabel.setImage(errorMsgImage);
 		messageImageLabel.setVisible(true);
 		fillerLabel.setVisible(true);
+		
+		/**
+		 * Note that we do not use horizontalSpacing here 
+		 * as when the background of the messages changes
+		 * there will be gaps between the icon label and the
+		 * message that are the background color of the shell.
+		 * We add a leading space elsewhere to compendate for this.
+		 */
 
 		FormData data = new FormData();
 		data.left = new FormAttachment(0, 0);
@@ -426,11 +436,7 @@ private void layoutForNewMessage(){
 		messageLabel.setLayoutData(messageLabelData);
 		
 		}
-		
-	//Do not layout before the dialog area has been created
-	//to avoid incomplete calculations.
-	if(dialogArea != null)
-		getShell().layout(true);
+	getShell().layout(true);
 	
 }
 
@@ -501,6 +507,12 @@ private void showMessage(String newMessage, Image newImage) {
 	message = newMessage;
 	if (message == null)
 		message = "";//$NON-NLS-1$
+
+	//If there is an image then add in a space to the message
+	//for layout purposes
+	if(newImage != null)
+		message = " " + message; //$NON-NLS-1$
+		
 	messageImage = newImage;
 
 	if (!showingError) {
