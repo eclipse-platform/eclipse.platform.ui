@@ -558,16 +558,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			String label = ((LaunchGroupExtension)element).getLabel();
-			// strip out any '&' (accelerators)
-			int index = label.indexOf('&');
-			if (index == 0) {
-				label = label.substring(1);
-			} else if (index > 0 && index < (label.length() - 1)){
-				String first = label.substring(0, index);
-				String last = label.substring(index + 1);
-				label = first + last;
-			}
-			return label;
+			return DebugUIPlugin.removeAccelerators(label);
 		}
 
 		/**
