@@ -31,7 +31,11 @@ public class BranchWizardPage extends CVSWizardPage {
 	
 	public BranchWizardPage(String pageName,String title,  boolean allStickyResources, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(Policy.bind("BranchWizardPage.pageDescription"));
+		if(allStickyResources) {
+			setDescription(Policy.bind("BranchWizardPage.pageDescriptionVersion"));
+		} else {
+			setDescription(Policy.bind("BranchWizardPage.pageDescription"));
+		}
 		this.allStickyResources = allStickyResources;
 	}
 	

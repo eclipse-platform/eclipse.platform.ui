@@ -32,6 +32,7 @@ public class MergeWizard extends Wizard {
 			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask(Policy.bind("MergeWizard.preparing"), 100);
+					setWindowTitle(Policy.bind("MergeWizard.title"));
 					ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
 					startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
 					monitor.subTask(Policy.bind("MergeWizard.preparingStart"));

@@ -48,6 +48,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	 */
 	public MergeWizardStartPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
+		setDescription(Policy.bind("MergeWizardStartPage.description"));
 	}
 	protected TableViewer createTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
@@ -69,13 +70,6 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 2);
 		// set F1 help
 		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer (this, ITeamHelpContextIds.REPO_CONNECTION_MAIN_PAGE));
-		
-		Label description = new Label(composite, SWT.WRAP);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		data.widthHint = 350;
-		description.setLayoutData(data);
-		description.setText(Policy.bind("MergeWizardStartPage.description"));
 		
 		table = createTable(composite);
 		table.setContentProvider(new WorkbenchContentProvider());
