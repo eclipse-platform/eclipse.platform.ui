@@ -7,15 +7,7 @@ package org.eclipse.ui.editors.text;
 
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
-
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Document;
-
-import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -23,16 +15,19 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceStatus;import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -41,7 +36,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 
 
 /**
@@ -183,22 +183,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * Bundle of all required informations to allow files as 
 	 * underlying document resources. 
 	 */
-	protected class FileInfo extends ElementInfo {
+	protected class FileInfo extends StorageInfo {
 		
 		/** The file synchronizer */
 		public FileSynchronizer fFileSynchronizer;
 		/** The time stamp at which this provider changed the file */
 		public long fModificationStamp= IResource.NULL_STAMP;
-		/** The flag representing the cached state whether the file is modifiable */
-		public boolean fIsModifiable;
-		/** The flag representing whether the cached state is invalid */
-		public boolean fComputeModifiable;
 		
 		public FileInfo(IDocument document, IAnnotationModel model, FileSynchronizer fileSynchronizer) {
 			super(document, model);
 			fFileSynchronizer= fileSynchronizer;
-			fIsModifiable= true;
-			fComputeModifiable= false;
 		}
 	};
 	
@@ -469,21 +463,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		fireElementDeleted(fileEditorInput);
 	}
 	
-	/**
-	 * Defines the standard procedure to handle CoreExceptions.
-	 *
-	 * @param exception the exception to be logged
-	 * @param message the message to be logged
-	 */
-	protected void handleCoreException(CoreException exception, String message) {
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
-		
-		if (message != null)
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null));
-		
-		log.log(exception.getStatus());
-	}
-	
 	/*
 	 * @see AbstractDocumentProvider#getElementInfo(Object)
 	 * It's only here to circumvent visibility issues with certain compilers.
@@ -492,28 +471,32 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.getElementInfo(element);
 	}
 	
-	/** 
-	 * Computes whether the resource described by the given element
-	 * info is modifiable or not and updates the element info accordingly.
-	 * 
-	 * @param info the element info
+	/*
+	 * @see IDocumentProviderExtension#validateState(Object, Object)
 	 */
-	protected void computeModifiable(FileInfo info) {
-		// work in progress
+	public void validateState(Object element, Object computationContext) throws CoreException {
+		
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			FileInfo info= (FileInfo) getElementInfo(input);
+			if (info != null && info.fIsReadOnly) {
+				IFile file= input.getFile();
+				IWorkspace workspace= file.getWorkspace();
+				workspace.validateEdit(new IFile[] { file }, computationContext);
+				if (false)
+					new MessageDialog((Shell) computationContext, "ReadOnly", null, "Is read only", 0, new String[] { "OK" }, 0).open();
+			}
+		}
+		
+		super.validateState(element, computationContext);
 	}
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
-	public boolean isModifiable(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			FileInfo info= (FileInfo) getElementInfo(element);
-			if (info != null) {
-				if (info.fComputeModifiable)
-					computeModifiable(info);
-				return info.fIsModifiable;
-			}
-		}
+	public boolean isModifiable(Object element) {
+		if (element instanceof IFileEditorInput)
+			return true;
 		return super.isModifiable(element);
 	}
 }

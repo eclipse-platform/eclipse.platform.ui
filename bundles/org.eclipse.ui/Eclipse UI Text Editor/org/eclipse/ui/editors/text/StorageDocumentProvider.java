@@ -12,19 +12,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-
-import org.eclipse.jface.text.source.IAnnotationModel;
-
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 
@@ -32,7 +34,26 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 /**
  * Shareable document provider specialized for <code>IStorage</code>s.
  */
-public class StorageDocumentProvider extends AbstractDocumentProvider {	
+public class StorageDocumentProvider extends AbstractDocumentProvider {
+	
+	
+	/**
+	 * Bundle of all required informations to allow <code>IStorage</code>
+	 * as underlying document resources. 
+	 */
+	protected class StorageInfo extends ElementInfo {
+		
+		/** The flag representing the cached state whether the storage is modifiable */
+		public boolean fIsModifiable= false;
+		/** The flag representing the cached state whether the storage is read-only */
+		public boolean fIsReadOnly= true;
+		/** The flag representing the need to update the cached flag */
+		public boolean fUpdateCache= true;
+		
+		public StorageInfo(IDocument document, IAnnotationModel model) {
+			super(document, model);
+		}
+	};
 	
 	/**
 	 * Intitializes the given document with the given stream.
@@ -110,34 +131,101 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	/*
+	 * @see AbstractDocumentProvider#createElementInfo(Object)
+	 */
+	protected ElementInfo createElementInfo(Object element) throws CoreException {
+		if (element instanceof IStorageEditorInput)
+			return new StorageInfo(createDocument(element), createAnnotationModel(element));
+		return super.createElementInfo(element);
+	}
+	
+	/*
 	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 	}
 	
+	/**
+	 * Defines the standard procedure to handle CoreExceptions.
+	 *
+	 * @param exception the exception to be logged
+	 * @param message the message to be logged
+	 */
+	protected void handleCoreException(CoreException exception, String message) {
+		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
+		
+		if (message != null)
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null));
+		
+		log.log(exception.getStatus());
+	}
+	
+	protected void updateCache(IStorageEditorInput input) throws CoreException {
+		StorageInfo info= (StorageInfo) getElementInfo(input);
+		if (info != null) {
+			try {
+				IStorage storage= input.getStorage();
+				if (storage != null) {
+					boolean readOnly= storage.isReadOnly();
+					info.fIsReadOnly=  readOnly;
+					info.fIsModifiable= !readOnly;
+				}
+			} catch (CoreException x) {
+				handleCoreException(x, "StorageDocumentProvider.updateCache");
+			}
+			info.fUpdateCache= false;
+		}
+	}
+	
 	/*
 	 * @see IDocumentProviderExtension#isReadOnly(Object)
 	 */
-	public boolean isReadOnly(Object element) throws CoreException {
+	public boolean isReadOnly(Object element) {
 		if (element instanceof IStorageEditorInput) {
-			IStorageEditorInput input= (IStorageEditorInput) element;
-			IStorage storage= input.getStorage();
-			if (storage != null)
-				return storage.isReadOnly();
+			StorageInfo info= (StorageInfo) getElementInfo(element);
+			if (info != null) {
+				if (info.fUpdateCache) {
+					try {
+						updateCache((IStorageEditorInput) element);
+					} catch (CoreException x) {
+						handleCoreException(x, "StorageDocumentProvider.isReadOnly");
+					}
+				}
+				return info.fIsReadOnly;
+			}
 		}
-		return super.isReadOnly(element);	
+		return super.isReadOnly(element);
 	}
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
-	public boolean isModifiable(Object element) throws CoreException {
+	public boolean isModifiable(Object element) {
 		if (element instanceof IStorageEditorInput) {
-			IStorageEditorInput input= (IStorageEditorInput) element;
-			IStorage storage= input.getStorage();
-			if (storage != null)
-				return !storage.isReadOnly();
+			StorageInfo info= (StorageInfo) getElementInfo(element);
+			if (info != null) {
+				if (info.fUpdateCache) {
+					try {
+						updateCache((IStorageEditorInput) element);
+					} catch (CoreException x) {
+						handleCoreException(x, "StorageDocumentProvider.isModifiable");
+					}
+				}
+				return info.fIsModifiable;
+			}
 		}
-		return super.isModifiable(element);	
+		return super.isModifiable(element);
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#validateState(Object, Object)
+	 */
+	public void validateState(Object element, Object computationContext) throws CoreException {
+		if (element instanceof IStorageEditorInput) {
+			StorageInfo info= (StorageInfo) getElementInfo(element);
+			if (info != null)
+				info.fUpdateCache= true;
+		} else
+			super.validateState(element, computationContext);
 	}
 }

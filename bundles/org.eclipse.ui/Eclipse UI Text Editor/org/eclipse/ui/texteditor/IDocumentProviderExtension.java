@@ -23,20 +23,29 @@ public interface IDocumentProviderExtension {
 	 * 
 	 * @param element the element
 	 * @return <code>true</code> if the given element is read-only, <code>false</code> otherwise
-	 * @exception CoreException if retrieving the information fails
 	 */
-	boolean isReadOnly(Object element) throws CoreException;
+	boolean isReadOnly(Object element);
 	
 	/**
-	 * Returns whether the given element can persistently be modified. This method is
-	 * orthogonal to <code>isReadOnly</code>. Read-only elements could be modifiable,
-	 * and writable elements may not be modified. If the given element is not connected to this
-	 * document provider, the return value is undefined.
+	 * Returns whether the given element can persistently be modified.  This is orthogonal to
+	 * <code>isReadOnly</code> as read-only elements may be modifiable and writable 
+	 * elements may not be modifiable. If the given element is not connected to this document
+	 * provider, the result is undefined.
 	 * 
 	 * @param element the element
 	 * @return <code>true</code> if the given element is modifiable, <code>false</code> otherwise
-	 * @exception CoreException if retrieving the information fails
 	 */
-	boolean isModifiable(Object element) throws CoreException;
+	boolean isModifiable(Object element);
+	
+	/**
+	 * Validates the state of the given element. This method  may change the result returned by
+	 * <code>isReadOnly</code> and <code>isModifiable</code>. If the given element is not
+	 * connected to this document provider, the effect is undefined.
+	 * 
+	 * @param element the element
+	 * @param computationContext the context in which the computation is performed, e.g., a SWT shell
+	 * @exception CoreException if validating fails
+	 */
+	void validateState(Object element, Object computationContext) throws CoreException;
 }
 

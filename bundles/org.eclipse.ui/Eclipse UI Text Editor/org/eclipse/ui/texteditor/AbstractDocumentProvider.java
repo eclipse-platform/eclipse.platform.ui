@@ -498,14 +498,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/*
 	 * @see IDocumentProviderExtension#isReadOnly(Object)
 	 */
-	public boolean isReadOnly(Object element) throws CoreException {
+	public boolean isReadOnly(Object element) {
 		return true;
 	}
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
-	public boolean isModifiable(Object element) throws CoreException {
+	public boolean isModifiable(Object element) {
 		return false;
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#validateState(Object, Object)
+	 */
+	public void validateState(Object element, Object computationContext) throws CoreException {
 	}
 }

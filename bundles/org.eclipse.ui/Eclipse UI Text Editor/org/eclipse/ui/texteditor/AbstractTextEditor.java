@@ -41,7 +41,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IElementStateListener#elementDirtyStateChanged
 		 */
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
+			
 			if (element != null && element.equals(getEditorInput())) {
+				
+				if (isDirty) {
+					validateState((IEditorInput) element);
+					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+				}							
 				firePropertyChange(PROP_DIRTY);
 				if (!isDirty && fSourceViewer != null)
 					fSourceViewer.resetPlugins();
@@ -95,8 +101,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					
 				setInput((IEditorInput) movedElement);
 				
-				if (changed != null)
+				if (changed != null) {
 					d.getDocument(getEditorInput()).set(changed.get());
+					validateState(getEditorInput());
+					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+				}					
 					
 				restoreSelection();
 			}
@@ -525,12 +534,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-			try {
-				return extension.isModifiable(getEditorInput());
-			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
-				log.log(x.getStatus());
-			}
+			return extension.isModifiable(getEditorInput());
 		}
 		return false;
 	}
@@ -1321,6 +1325,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Validates the state of the given editor input. The predominate intent
+	 * of this method is to take any action propably necessary to ensure that
+	 * the input can persistently be changed.
+	 * 
+	 * @param input the input to be validated
+	 */
+	protected void validateState(IEditorInput input) {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+			try {
+				extension.validateState(input, getSite().getShell());
+			} catch (CoreException x) {
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				log.log(x.getStatus());
+			}
+		}
+	}
+	
+	/**
 	 * Creates a workspace modify operation which saves the content of the editor
 	 * to the editor's input element. <code>overwrite</code> indicates whether
 	 * the editor input element may be overwritten if necessary. Clients may
@@ -1332,7 +1356,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
 		return new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
-				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()), overwrite);
+				IEditorInput input= getEditorInput();
+				validateState(input);
+				getDocumentProvider().saveDocument(monitor, input, getDocumentProvider().getDocument(input), overwrite);
 			}
 		};
 	}
@@ -2118,12 +2144,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-			try {
-				return extension.isReadOnly(getEditorInput());
-			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
-				log.log(x.getStatus());
-			}
+			return extension.isReadOnly(getEditorInput());
 		}
 		return true;
 	}

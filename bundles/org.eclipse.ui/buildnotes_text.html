@@ -14,7 +14,37 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20011204
+<p><br>Eclipse SDK Build 20011206
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+Support for read-only but modifiable resources in editors. For this reason
+AbstractTextEditor now calls validateState if its document provider also
+implement IDocumentProviderExtension. The calls are issued:
+<ul>
+<li>
+when an editor is marked dirty</li>
+
+<li>
+when an editor saves its document to its input</li>
+
+<li>
+when a dirty resource is moved (if allowed)</li>
+</ul>
+Calling validateState may cause changes to the isModifiable and isReadOnly
+properties of the editor's input.
+<br>FileDocumentProvider implements validateState by calling IWorkspace.validateEdit
+on the input file.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 20011204
 <h2>
 Breaking API changes</h2>
 
