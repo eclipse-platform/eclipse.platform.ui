@@ -18,8 +18,9 @@ import java.util.*;
 public class GotoResourceAction extends ResourceNavigatorAction {
 /**
  * Creates a new instance of the class.
+ * @since 2.0
  */
-/*package */ GotoResourceAction(IResourceNavigatorPart navigator, String label) {
+public GotoResourceAction(IResourceNavigatorPart navigator, String label) {
 	super(navigator, label);
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_ACTION});
 }

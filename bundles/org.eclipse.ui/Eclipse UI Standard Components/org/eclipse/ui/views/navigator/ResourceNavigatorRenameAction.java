@@ -19,9 +19,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the
  * ResourceNavigator that also allows updating after rename.
+ * @since 2.0
  */
-/* package */
-class ResourceNavigatorRenameAction
+public class ResourceNavigatorRenameAction
 	extends RenameResourceAction
 	implements KeyListener {
 	private TreeViewer viewer;

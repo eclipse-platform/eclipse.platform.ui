@@ -13,9 +13,10 @@ import java.util.Iterator;
  * <p>
  * This class provides static methods only; it is not intended to be instantiated
  * or subclassed.
+ * @since 2.0
  * </p>
  */
-/* package */ class SelectionUtil {
+public class SelectionUtil {
 /* (non-Javadoc)
  * Private constructor to block instantiation.
  */

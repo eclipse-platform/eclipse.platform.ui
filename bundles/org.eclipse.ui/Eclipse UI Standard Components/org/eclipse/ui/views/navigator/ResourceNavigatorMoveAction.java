@@ -19,8 +19,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
  * to show the result of the move.
+ * @since 2.0
  */
-/* package */ class ResourceNavigatorMoveAction extends MoveResourceAction {
+public class ResourceNavigatorMoveAction extends MoveResourceAction {
 	private StructuredViewer viewer;
 /**
  * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.

@@ -8,8 +8,9 @@ import org.eclipse.ui.help.*;
 
 /**
  * Implementation of the view sorting actions.
+ * @since 2.0
  */
-/* package */ class SortViewAction extends ResourceNavigatorAction {
+public class SortViewAction extends ResourceNavigatorAction {
 	private boolean sort = true;
 /**
  * Creates the action.
