@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Implementation of the UI plugin's preference extension's customization
@@ -30,8 +34,8 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public void initializeDefaultPreferences() {
 
-		IEclipsePreferences node = new DefaultScope().getNode(UIPlugin.getDefault().getBundle()
-				.getSymbolicName());
+		IEclipsePreferences node = new DefaultScope().getNode(UIPlugin
+				.getDefault().getBundle().getSymbolicName());
 		node.put(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
@@ -48,16 +52,22 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// setting, it remains as a preference to allow product overrides of the
 		//initial state of linking in the Navigator. By default, linking is
 		// off.
-		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
+		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
+				false);
 
 		//Appearance / Presentation preferences
 		node.put(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 				"org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, true);
+		node
+				.putBoolean(
+						IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+						true);
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
 		node.put(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
 				IWorkbenchPreferenceConstants.TOP_LEFT);
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, true);
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
+				true);
 
 		//the fast view bar should be on the bottom of a fresh workspace
 		node.put(IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
@@ -71,13 +81,56 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				"org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
 
 		//The default character width is undefined (i.e., -1)
-		node.putInt(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS, -1);
+		node
+				.putInt(
+						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
+						-1);
 
 		//Set the workspace selection dialog to open by default
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG, true);
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
+				true);
 
-		new InstanceScope().getNode(UIPlugin.getDefault().getBundle().getSymbolicName())
-				.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
+				.getPreferencesService().getRootNode()
+				.node(InstanceScope.SCOPE);
+
+		final String uiName = UIPlugin.getDefault().getBundle()
+				.getSymbolicName();
+		try {
+			if (rootNode.nodeExists(uiName))
+				((IEclipsePreferences) rootNode.node(uiName)).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault().getBundle().getSymbolicName(),IStatus.ERROR,e.getLocalizedMessage(),e);
+			UIPlugin.getDefault().getLog().log(status);
+		}
+
+		rootNode
+				.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void added(NodeChangeEvent event) {
+						if (!event.getChild().name().equals(uiName))
+							return;
+						((IEclipsePreferences) event.getChild())
+								.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+
+					}
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void removed(NodeChangeEvent event) {
+						// Nothing to do here
+
+					}
+
+				});
 	}
 
 }

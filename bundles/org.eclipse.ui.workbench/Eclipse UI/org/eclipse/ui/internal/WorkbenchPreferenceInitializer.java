@@ -10,17 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import org.eclipse.swt.SWT;
-
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Implementation of the workbench plugin's preferences extension's
@@ -31,17 +33,23 @@ import org.eclipse.ui.themes.IThemeManager;
  * 
  * @since 3.0
  */
-public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitializer {
+public class WorkbenchPreferenceInitializer extends
+		AbstractPreferenceInitializer {
+	
+	
 
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = new DefaultScope().getNode(WorkbenchPlugin.getDefault()
-				.getBundle().getSymbolicName());
+		IEclipsePreferences node = new DefaultScope().getNode(WorkbenchPlugin
+				.getDefault().getBundle().getSymbolicName());
 
 		node.putBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
-		node.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
+		node
+				.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
+						true);
 
 		node.putBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
-		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
+		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME,
+				false);
 		node.putBoolean(IPreferenceConstants.STICKY_CYCLE, false);
 		node.putBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		node.putBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
@@ -57,12 +65,14 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
-		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
-		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
+		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE,
+				IPreferenceConstants.OVM_EMBED);
+		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE,
+				IPreferenceConstants.OPM_ACTIVE_PAGE);
 		node.put(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		node.putInt(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE,
 				IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current
-		// Window
+																 // Window
 		node.putInt(IPreferenceConstants.EDITORLIST_SORT_CRITERIA,
 				IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
 		node.putBoolean(IPreferenceConstants.COLOR_ICONS, true);
@@ -88,12 +98,55 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
 		//Set the default theme.
-		node.put(IPreferenceConstants.CURRENT_THEME_ID, IThemeManager.DEFAULT_THEME);
+		node.put(IPreferenceConstants.CURRENT_THEME_ID,
+				IThemeManager.DEFAULT_THEME);
 
-		JFacePreferences.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		new InstanceScope().getNode(WorkbenchPlugin.getDefault().getBundle().getSymbolicName())
-				.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
+				.getPreferencesService().getRootNode()
+				.node(InstanceScope.SCOPE);
 
+		final String workbenchName = WorkbenchPlugin.getDefault().getBundle()
+				.getSymbolicName();
+		try {
+			if (rootNode.nodeExists(workbenchName))
+				((IEclipsePreferences) rootNode.node(workbenchName))
+						.addPreferenceChangeListener(PlatformUIPreferenceListener
+								.getSingleton());
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin
+					.getDefault().getBundle().getSymbolicName(), IStatus.ERROR,
+					e.getLocalizedMessage(), e);
+			WorkbenchPlugin.getDefault().getLog().log(status);
+		}
+
+		rootNode
+				.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void added(NodeChangeEvent event) {
+						if (!event.getChild().name().equals(workbenchName))
+							return;
+						JFacePreferences.setPreferenceStore(WorkbenchPlugin
+								.getDefault().getPreferenceStore());
+						((IEclipsePreferences) event.getChild())
+								.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+
+					}
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 */
+					public void removed(NodeChangeEvent event) {
+						// Nothing to do here
+
+					}
+
+				});
 	}
 
 }
