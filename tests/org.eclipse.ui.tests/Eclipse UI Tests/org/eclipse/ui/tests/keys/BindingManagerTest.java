@@ -216,9 +216,46 @@ public final class BindingManagerTest extends UITestCase {
 		assertTrue("The active bindings should start empty", activeBindings
 				.isEmpty());
 	}
-	
-	public final void testGetActiveBindingsFor() {
-		// TODO Implement this test case.
+
+	/**
+	 * Tests whether the method works with a null argument. Tests that it works
+	 * in a simple case.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public final void testGetActiveBindingsFor() throws NotDefinedException {
+		// Test with a null argument.
+		final Collection activeBindingsForNull = bindingManager
+				.getActiveBindingsFor(null);
+		assertNotNull("The active bindings for a command should never be null",
+				activeBindingsForNull);
+		assertTrue(
+				"The active binding for a null command should always be empty",
+				activeBindingsForNull.isEmpty());
+
+		// Test a simple case.
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final String commandId = "commandId";
+		final Binding binding = new TestBinding(commandId, "na", "na", null,
+				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding);
+
+		final Collection bindings = bindingManager
+				.getActiveBindingsFor(commandId);
+		assertEquals("There should be one binding", 1, bindings.size());
+		assertSame("The binding should match", TestBinding.TRIGGER_SEQUENCE,
+				bindings.iterator().next());
 	}
 
 	/**
