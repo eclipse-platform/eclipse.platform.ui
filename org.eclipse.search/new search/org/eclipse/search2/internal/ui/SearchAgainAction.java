@@ -36,7 +36,7 @@ class SearchAgainAction extends Action {
 	public void run() {
 		final ISearchResult search= fView.getCurrentSearchResult();
 		if (search != null) {
-			InternalSearchUI.getInstance().cancelSearch(search.getQuery());;
+			InternalSearchUI.getInstance().cancelSearch(search.getQuery());
 			InternalSearchUI.getInstance().runAgain(search.getQuery(), search);
 		}
 	}
