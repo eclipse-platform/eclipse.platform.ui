@@ -286,7 +286,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     }
 
     private Control getStandbyControl() {
-        // the Containet top control may have only one child if the stanndby
+        // the Container top control may have only one child if the standby
         // part is not created yet. This happens if the intro never goes into
         // standby. Doing this for performance.
         if (standbyPart != null)
@@ -313,6 +313,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             standbyPart.dispose();
         // clear all loaded models since we are disposing of the Intro Part.
         IntroPlugin.getDefault().getExtensionPointManager().clear();
+        ContentProviderManager.getInst().clear();
         // clean platform adapter.
         Platform.getAdapterManager().unregisterAdapters(factory,
                 CustomizableIntroPart.class);
@@ -394,8 +395,9 @@ public final class CustomizableIntroPart extends IntroPart implements
 
             public void run() {
                 String currentPageId = model.getCurrentPageId();
-                // clear model
+                // clear model, including content providers.
                 ExtensionPointManager.getInst().clear();
+                ContentProviderManager.getInst().clear();
                 // refresh to new model.
                 model = ExtensionPointManager.getInst().getCurrentModel();
                 // reuse existing presentation, since we just nulled it.
@@ -409,7 +411,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         });
 
     }
-
 }
 
 

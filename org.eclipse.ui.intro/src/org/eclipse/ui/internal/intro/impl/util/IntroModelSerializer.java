@@ -145,6 +145,10 @@ public class IntroModelSerializer {
             case AbstractIntroElement.ANCHOR:
                 printAnchor(text, (IntroAnchor) children[i], indent);
                 break;
+            case AbstractIntroElement.CONTENT_PROVIDER:
+                printContentProvidor(text, (IntroContentProvider) children[i],
+                        indent);
+                break;
 
             }
         }
@@ -220,6 +224,17 @@ public class IntroModelSerializer {
         text.append(indent + "ANCHOR: id = " + anchor.getId()); //$NON-NLS-1$
     }
 
+    private void printContentProvidor(StringBuffer text,
+            IntroContentProvider provider, String indent) {
+        text.append(indent + "CONTENT PROVIDER: id = " + provider.getId()); //$NON-NLS-1$
+        indent = indent + "\t\t"; //$NON-NLS-1$
+        text.append(indent + "class = " + provider.getClassName()); //$NON-NLS-1$
+        text.append(indent + "pluginId = " + provider.getPluginId()); //$NON-NLS-1$
+        if (provider.getIntroText() != null)
+            printText(text, provider.getIntroText(), indent + "\t\t"); //$NON-NLS-1$
+
+    }
+
     /**
      * Appends a given page's categories to the Text buffer.
      * 
@@ -291,6 +306,14 @@ public class IntroModelSerializer {
                 .append("\n\t\t\tAll Pages: " //$NON-NLS-1$
                         + firstPage
                                 .getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE).length);
+        text
+                .append("\n\t\t\tAnchors: " //$NON-NLS-1$
+                        + firstPage
+                                .getChildrenOfType(AbstractIntroElement.ANCHOR).length);
+        text
+                .append("\n\t\t\tContent providers: " //$NON-NLS-1$
+                        + firstPage
+                                .getChildrenOfType(AbstractIntroElement.CONTENT_PROVIDER).length);
         text
                 .append("\n\t\t\tElements with Text child(AbstractTextElemets): " //$NON-NLS-1$
                         + firstPage

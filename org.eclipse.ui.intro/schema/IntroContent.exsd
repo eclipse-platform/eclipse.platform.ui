@@ -53,6 +53,7 @@ The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt
             <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="title" minOccurs="0" maxOccurs="1"/>
             <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentProvider" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="url" type="string">
             <annotation>
@@ -130,6 +131,7 @@ This seperation of pages can be used when performance is an issue, as the conten
             <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentProvider" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -149,6 +151,63 @@ This seperation of pages can be used when performance is an issue, as the conten
             <annotation>
                <documentation>
                   A means to classifiy this group into a given category so that a common style may be applied.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="head">
+      <annotation>
+         <documentation>
+            Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets.
+This markup is only to be used with an HTML based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared across all pages).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  relative or absolute URL to a file containing HTML to include directly into the HTML head section.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="title">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It is only used as a Page Title, and so a given page can have a maximum of one title element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this title.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classifiy this element into a given category so that a common style may be applied
                </documentation>
             </annotation>
          </attribute>
@@ -288,6 +347,99 @@ no parameters required&lt;br&gt;
       </complexType>
    </element>
 
+   <element name="text">
+      <annotation>
+         <documentation>
+            a snippet of text that can optionally contain escaped HTML tags. It can include b and li tags. It can also contain anchors for urls. 
+If multiple paragraphs are needed, then the text can be divided into multiple sections each begining and ending with the p tag.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this text.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classifiy this element into a given category so that a common style may be applied
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="img">
+      <annotation>
+         <documentation>
+            An image that represents intro content and not presentation (as opposed to decoration images defined in styles).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier of this image
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the file to load the image from
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alt" type="string">
+            <annotation>
+               <documentation>
+                  the alternative text to use when the image can not be loaded and as tooltip text for the image.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classifiy this image into a given category so that a common style may be applied.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="html">
       <annotation>
          <documentation>
@@ -357,85 +509,6 @@ Inclusion allows for including an html snippet directly from a file into the dyn
       </complexType>
    </element>
 
-   <element name="title">
-      <annotation>
-         <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It is only used as a Page Title, and so a given page can have a maximum of one title element.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  unique identifier of this title.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="style-id" type="string">
-            <annotation>
-               <documentation>
-                  A means to classifiy this element into a given category so that a common style may be applied
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="filteredFrom">
-            <annotation>
-               <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="swt">
-                  </enumeration>
-                  <enumeration value="html">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="text">
-      <annotation>
-         <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It can include b and li tags. It can also contain anchors for urls. 
-If multiple paragraphs are needed, then the text can be divided into multiple sections each begining and ending with the p tag.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  unique identifier of this text.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="style-id" type="string">
-            <annotation>
-               <documentation>
-                  A means to classifiy this element into a given category so that a common style may be applied
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="filteredFrom">
-            <annotation>
-               <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="swt">
-                  </enumeration>
-                  <enumeration value="html">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="include">
       <annotation>
          <documentation>
@@ -467,73 +540,19 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
       </complexType>
    </element>
 
-   <element name="head">
+   <element name="anchor">
       <annotation>
          <documentation>
-            Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets.
-This markup is only to be used with an HTML based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared across all pages).
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="src" type="string" use="required">
-            <annotation>
-               <documentation>
-                  relative or absolute URL to a file containing HTML to include directly into the HTML head section.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="img">
-      <annotation>
-         <documentation>
-            An image that represents intro content and not presentation (as opposed to decoration images defined in styles).
+            an anchor is the element used to declare extensibility. It is a location in the configurtaion that allows for external contributions. Only anchors are valid target values for the path attribute in an extensionContent
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  unique identifier of this image
+                  unique id to identify this anchor.
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="src" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the file to load the image from
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="alt" type="string">
-            <annotation>
-               <documentation>
-                  the alternative text to use when the image can not be loaded and as tooltip text for the image.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="style-id" type="string">
-            <annotation>
-               <documentation>
-                  A means to classifiy this image into a given category so that a common style may be applied.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="filteredFrom">
-            <annotation>
-               <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="swt">
-                  </enumeration>
-                  <enumeration value="html">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>
@@ -576,17 +595,36 @@ This markup is only to be used with an HTML based intro part implementation. It 
       </complexType>
    </element>
 
-   <element name="anchor">
+   <element name="contentProvider">
       <annotation>
          <documentation>
-            an anchor is the element used to declare extensibility. It is a location in the configurtaion that allows for external contributions. Only anchors are valid target values for the path attribute in an extensionContent
+            A proxy for an intro content provider, which allows an intro page to dynamically pull data from various sources (e.g., the web, eclipse, etc) and provide content at runtime based on this dynamic data.  If the IIntroContentProvider class that is specified in the class attribute can not be loaded, then the contents of the text element will be rendered instead. 
+This is a dynamic version of the html intro tag. While the html tag allows for embedding or inlining a static html content into the generated html intro page, the contentProvider tag allows for dynamic creation of that content at runtime. 
+Another difference between the tags is that the html tag is only supported for the HTML presentation, while this contentProvider tag is supported for both the HTML and SWT presentations.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="id" type="string">
+         <all>
+            <element ref="text" minOccurs="0" maxOccurs="1"/>
+         </all>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  unique id to identify this anchor.
+                  unique identifier of this HTML element
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pluginId" type="string">
+            <annotation>
+               <documentation>
+                  The id of the plugin that contains the IContentProvider class specified by the class attribute.  This is an optional attribute that should be used if the class doesn&apos;t come from the same plugin that defined the markup.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that implements the IContentProvider interface
                </documentation>
             </annotation>
          </attribute>

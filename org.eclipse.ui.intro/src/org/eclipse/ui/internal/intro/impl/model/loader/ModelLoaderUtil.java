@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model.loader;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
@@ -260,13 +261,35 @@ public class ModelLoaderUtil {
             aObject = aClass.newInstance();
             return aObject;
         } catch (Exception e) {
-            Log
-                    .error(
-                            "Intro Could not instantiate: " + className + " in " + pluginId, //$NON-NLS-1$ //$NON-NLS-2$
-                            e);
+            Log.error("Intro Could not instantiate: " + className + " in " //$NON-NLS-1$ //$NON-NLS-2$
+                    + pluginId, e);
             return null;
         }
     }
 
 
+
+    /**
+     * Creates a key for the given element. Returns null if any id is null along
+     * the path.
+     * 
+     * @param element
+     * @return
+     */
+    public static StringBuffer createPathToElementKey(
+            AbstractIntroIdElement element) {
+        if (element.getId() == null)
+            return null;
+        StringBuffer buffer = new StringBuffer(element.getId());
+        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
+                .getParent();
+        while (parent != null
+                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
+            if (parent.getId() == null)
+                return null;
+            buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
+            parent = (AbstractBaseIntroElement) parent.getParent();
+        }
+        return buffer;
+    }
 }

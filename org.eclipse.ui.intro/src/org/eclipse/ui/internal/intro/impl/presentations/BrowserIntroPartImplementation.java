@@ -19,9 +19,11 @@ import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.html.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.intro.config.*;
 
 public class BrowserIntroPartImplementation extends
-        AbstractIntroPartImplementation implements IPropertyListener {
+        AbstractIntroPartImplementation implements IPropertyListener,
+        IIntroContentProviderSite {
 
 
     // the browser widget that will display the intro content
@@ -145,7 +147,7 @@ public class BrowserIntroPartImplementation extends
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
 
-        HTMLElement html = getHTMLGenerator().generateHTMLforPage(page);
+        HTMLElement html = getHTMLGenerator().generateHTMLforPage(page, this);
 
         if (html == null) {
             // there was an error generating the html. log an error
@@ -213,7 +215,7 @@ public class BrowserIntroPartImplementation extends
             standbyPage = homePage;
 
         if (standby) {
-            generateDynamicContentForPage(getModel().getStandbyPage());
+            generateDynamicContentForPage(standbyPage);
         } else {
             // REVISIT: If cached page is the standby page and we are not
             // initially in standby mode, it means standby was forced on
@@ -239,7 +241,8 @@ public class BrowserIntroPartImplementation extends
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
                 // page ID was not set properly. exit.
                 return;
-            generateDynamicContentForPage(getModel().getCurrentPage());
+            // update the presentation's content based on the model changes
+            updateContent();
         }
     }
 
@@ -249,6 +252,22 @@ public class BrowserIntroPartImplementation extends
 
     public void dispose() {
         browser.dispose();
+    }
+
+    /**
+     * Regenerate the dynamic content for the current page
+     */
+    protected void updateContent() {
+        generateDynamicContentForPage(getModel().getCurrentPage());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
+     */
+    public void reflow(IIntroContentProvider provider, boolean incremental) {
+        updateContent();
     }
 
     /**
@@ -377,7 +396,8 @@ public class BrowserIntroPartImplementation extends
         if (getModel().isDynamic()) {
             // null generator first.
             htmlGenerator = null;
-            // Add this presentation as a listener to mode only in dynamic case.
+            // Add this presentation as a listener to model only in dynamic
+            // case.
             getModel().addPropertyListener(this);
             getModel().firePropertyChange(
                     IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);

@@ -424,7 +424,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * @return Returns the standby Page.
+     * @return Returns the standby Page. May return null if standby page is not
+     *         defined.
      */
     public IntroHomePage getStandbyPage() {
         return standbyPage;

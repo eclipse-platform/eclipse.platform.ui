@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model.viewer;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.intro.config.*;
 
 public class IntroModelContentProvider implements ITreeContentProvider {
 
@@ -61,7 +62,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * @see IContentProvider#dispose()
+     * @see IIntroContentProvider#dispose()
      */
     public void dispose() {
     }
@@ -69,7 +70,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+     * @see org.eclipse.jface.viewers.IIntroContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
      *      java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

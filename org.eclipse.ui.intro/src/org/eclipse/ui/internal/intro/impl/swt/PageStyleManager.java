@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 
@@ -176,7 +177,7 @@ public class PageStyleManager extends SharedStyleManager {
 
     private int getIntProperty(AbstractBaseIntroElement element,
             String qualifier, int defaultValue) {
-        StringBuffer buff = createPathToElementKey(element);
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element);
         if (buff == null)
             return defaultValue;
         String key = buff.append(qualifier).toString();
@@ -209,7 +210,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     public String getDescription(IntroGroup group) {
-        StringBuffer buff = createPathToElementKey(group);
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(group);
         if (buff == null)
             return null;
         String key = buff.append(".description-id").toString(); //$NON-NLS-1$
@@ -327,7 +328,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = page.getId() + ".show-link-description"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null) {
-            key = ".show-link-description";
+            key = ".show-link-description"; //$NON-NLS-1$
             value = getProperty(key);
         }
         if (value == null)
@@ -339,7 +340,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = page.getId() + ".show-home-page-navigation"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null) {
-            key = ".show-home-page-navigation";
+            key = ".show-home-page-navigation"; //$NON-NLS-1$
             value = getProperty(key);
         }
         if (value == null)
@@ -349,7 +350,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     public Color getColor(FormToolkit toolkit, AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathToElementKey(element);
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element);
         if (buff == null)
             return null;
         String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
@@ -358,7 +359,7 @@ public class PageStyleManager extends SharedStyleManager {
 
     public boolean isBold(IntroText text) {
         String value = null;
-        StringBuffer buff = createPathToElementKey(text);
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(text);
         if (buff != null) {
             String key = buff.append(".font.bold").toString(); //$NON-NLS-1$
             value = getProperty(key);
@@ -411,7 +412,7 @@ public class PageStyleManager extends SharedStyleManager {
             String qualifier) {
         StringBuffer buff = null;
         if (link != null) {
-            buff = createPathToElementKey(link);
+            buff = ModelLoaderUtil.createPathToElementKey(link);
             if (buff == null)
                 return ""; //$NON-NLS-1$
         } else {
@@ -425,7 +426,8 @@ public class PageStyleManager extends SharedStyleManager {
 
     public Image getImage(IntroImage introImage) {
         String imageLocation = introImage.getSrcAsIs();
-        String key = createPathToElementKey(introImage).toString();
+        String key = ModelLoaderUtil.createPathToElementKey(introImage)
+                .toString();
         if (ImageUtil.hasImage(key))
             return ImageUtil.getImage(key);
         // key not already registered.
@@ -434,28 +436,6 @@ public class PageStyleManager extends SharedStyleManager {
         return image;
     }
 
-    /**
-     * Creates a key for the given element. Returns null if any id is null along
-     * the path.
-     * 
-     * @param element
-     * @return
-     */
-    private StringBuffer createPathToElementKey(AbstractIntroIdElement element) {
-        if (element.getId() == null)
-            return null;
-        StringBuffer buffer = new StringBuffer(element.getId());
-        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
-                .getParent();
-        while (parent != null
-                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
-            if (parent.getId() == null)
-                return null;
-            buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
-            parent = (AbstractBaseIntroElement) parent.getParent();
-        }
-        return buffer;
-    }
 
 }
 

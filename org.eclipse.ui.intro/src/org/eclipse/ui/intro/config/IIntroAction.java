@@ -33,6 +33,6 @@ public interface IIntroAction {
      * @param site
      * @param params
      */
-    void run(IIntroSite site, Properties params);
+    public void run(IIntroSite site, Properties params);
 
 }

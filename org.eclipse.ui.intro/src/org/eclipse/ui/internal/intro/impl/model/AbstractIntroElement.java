@@ -85,11 +85,6 @@ public abstract class AbstractIntroElement implements Cloneable {
     public static final int LINK = 1 << 6;
 
     /**
-     * Type constant which identifies the AbstractText element.
-     */
-    public static final int ABSTRACT_TEXT = HTML | LINK;
-
-    /**
      * Type constant which identifies the IntroImage element.
      */
     public static final int IMAGE = 1 << 7;
@@ -124,6 +119,15 @@ public abstract class AbstractIntroElement implements Cloneable {
      */
     public static final int ANCHOR = 1 << 13;
 
+    /**
+     * Type constant which identifies the IntroContentProvider element.
+     */
+    public static final int CONTENT_PROVIDER = 1 << 14;
+
+    /**
+     * Type constant which identifies the AbstractText element.
+     */
+    public static final int ABSTRACT_TEXT = HTML | LINK | CONTENT_PROVIDER;
 
     /**
      * Type constant which identifies the AbstractCommonIntroElement element.
@@ -284,7 +288,7 @@ public abstract class AbstractIntroElement implements Cloneable {
 
 
     /**
-     * Returns whether the element is among the specified element types.An
+     * Returns whether the element is among the specified element types. An
      * example of an element mask is as follows:
      * <p>
      * <code>
@@ -330,11 +334,10 @@ public abstract class AbstractIntroElement implements Cloneable {
     }
 
     /**
-     * Shallow copy. Note, not all parents are cloned. One parent has many
-     * children. The design of cloning this model assumes that when a container
-     * is cloned, all its children must be cloned and reparented to it, hence
-     * one clone of this container object. This is why we have a shallow copy
-     * here.
+     * Shallow copy. The design of cloning this model assumes that when a
+     * container is cloned, all its children must be cloned and reparented to
+     * it, hence one clone of this container object. This is why we have a
+     * shallow copy here.
      */
     public Object clone() throws CloneNotSupportedException {
         return super.clone();

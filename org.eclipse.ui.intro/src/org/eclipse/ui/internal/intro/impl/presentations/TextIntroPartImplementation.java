@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * This is an Text based implementation of an Intro Part. It simply walks the
@@ -76,5 +77,6 @@ public class TextIntroPartImplementation extends
         return false;
     }
 
-
+    public void reflow(IIntroContentProvider provider, boolean incremental) {
+    }
 }

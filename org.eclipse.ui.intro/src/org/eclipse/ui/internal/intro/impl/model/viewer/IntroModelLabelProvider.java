@@ -94,6 +94,10 @@ public class IntroModelLabelProvider extends LabelProvider {
                     + ((IntroPartPresentation) introElement)
                             .getImplementationKind();
             break;
+        case AbstractIntroElement.CONTENT_PROVIDER:
+            label = "CONTENT PROVIDER: " //$NON-NLS-1$
+                    + ((IntroContentProvider) introElement).getClassName();
+            break;
         case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: " //$NON-NLS-1$
                     + ((IntroExtensionContent) introElement).getPath();

@@ -16,7 +16,9 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * Factory to create all UI forms widgets for the Forms intro presentation.
@@ -51,6 +53,7 @@ public class PageWidgetFactory {
 
     protected FormToolkit toolkit;
     protected PageStyleManager styleManager;
+    protected IIntroContentProviderSite site;
 
 
     /*
@@ -62,6 +65,9 @@ public class PageWidgetFactory {
         this.styleManager = styleManager;
     }
 
+    public void setContentProviderSite(IIntroContentProviderSite site) {
+        this.site = site;
+    }
 
     public void createIntroElement(Composite parent,
             AbstractIntroElement element) {
@@ -127,6 +133,11 @@ public class PageWidgetFactory {
             }
             if (c != null)
                 updateLayoutData(c, element);
+            break;
+        case AbstractIntroElement.CONTENT_PROVIDER:
+            IntroContentProvider provider = (IntroContentProvider) element;
+            c = createContentProvider(parent, provider);
+            updateLayoutData(c, element);
             break;
         default:
             break;
@@ -228,7 +239,7 @@ public class PageWidgetFactory {
             ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
                     SWT.WRAP | SWT.CENTER);
             imageLink.setImage(linkImage);
-            imageLink.setHoverImage(styleManager.getImage(link, "hover-icon",
+            imageLink.setHoverImage(styleManager.getImage(link, "hover-icon", //$NON-NLS-1$
                     null));
             TableWrapData td = new TableWrapData();
             td.grabHorizontal = true;
@@ -307,6 +318,33 @@ public class PageWidgetFactory {
         return ilabel;
     }
 
+
+    protected Control createContentProvider(Composite parent,
+            IntroContentProvider provider) {
+        // If we've already loaded the content provider for this element,
+        // retrieve it, otherwise load the class.
+        // Create parent composite to hold daynamic content, and set layout
+        // accordingly.
+        Composite container = toolkit.createComposite(parent);
+        TableWrapLayout layout = new TableWrapLayout();
+        layout.topMargin = 0;
+        layout.bottomMargin = 0;
+        layout.leftMargin = 0;
+        layout.rightMargin = 0;
+        container.setLayout(layout);
+
+        IIntroContentProvider providerClass = ContentProviderManager.getInst()
+                .getContentProvider(provider);
+        if (providerClass == null)
+            // content provider never created before, create it.
+            providerClass = ContentProviderManager.getInst()
+                    .createContentProvider(provider, site);
+
+        if (providerClass != null) {
+            providerClass.createContent(provider.getId(), container, toolkit);
+        }
+        return container;
+    }
 
     private void colorControl(Control elementControl,
             AbstractBaseIntroElement element) {

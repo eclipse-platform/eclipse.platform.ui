@@ -62,6 +62,7 @@ public interface IIntroHTMLConstants {
 	String DIV_ID_PRESENTATION_HEADER = "presentation-header"; //$NON-NLS-1$
 	String DIV_ID_PAGE = "page"; //$NON-NLS-1$
 	String DIV_CLASS_INLINE_HTML = "inline-html"; //$NON-NLS-1$
+	String DIV_CLASS_PROVIDED_CONTENT = "provided-content"; //$NON-NLS-1$
 	
 	String ANCHOR_CLASS_LINK = "link"; //$NON-NLS-1$
 	String IMAGE_SRC_BLANK = "icons/blank.gif"; //$NON-NLS-1$

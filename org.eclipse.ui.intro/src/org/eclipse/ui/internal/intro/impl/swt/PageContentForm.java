@@ -15,16 +15,20 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * A Composite that represents the content of an Intro Page. It is swapped in
  * the categories page book in the PageForm class.
  */
-public class PageContentForm implements IIntroConstants {
+public class PageContentForm implements IIntroConstants,
+        IIntroContentProviderSite {
 
     private FormToolkit toolkit;
     private IntroModelRoot model;
     private PageStyleManager styleManager;
+    // composite to control reflow.
+    private Composite contentComposite;
 
     // the page we are modeling here.
     private AbstractIntroPage page;
@@ -90,6 +94,7 @@ public class PageContentForm implements IIntroConstants {
     private void createPageChildren(AbstractIntroPage page, Composite parent) {
         // setup page composite/layout
         PageWidgetFactory factory = new PageWidgetFactory(toolkit, styleManager);
+        factory.setContentProviderSite(this);
         Composite pageComposite = createPageTableComposite(factory, parent);
         // now add all children
         AbstractIntroElement[] children = page.getChildren();
@@ -126,6 +131,17 @@ public class PageContentForm implements IIntroConstants {
         td.grabHorizontal = true;
         client.setLayoutData(td);
         return client;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
+     *      boolean)
+     */
+    public void reflow(IIntroContentProvider provider, boolean incremental) {
+        contentComposite.layout(true);
     }
 
 }

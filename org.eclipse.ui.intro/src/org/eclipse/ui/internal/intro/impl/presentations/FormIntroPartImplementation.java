@@ -73,7 +73,6 @@ public class FormIntroPartImplementation extends
     }
 
     public void createPartControl(Composite container) {
-
         if (getModel().isDynamic())
             dynamicCreatePartControl(container);
         else {
@@ -281,7 +280,7 @@ public class FormIntroPartImplementation extends
         boolean pageisCached = showExistingPage(pageToShow);
 
         if (!pageisCached) {
-            // page has not been show before.
+            // page has not been shown before.
             // load style manager here to test for navigation.
             PageStyleManager styleManager = new PageStyleManager(pageToShow,
                     sharedStyleManager.getProperties());
@@ -477,4 +476,6 @@ public class FormIntroPartImplementation extends
             welcomeLink.setToolTipText(homePage.getUrl());
         }
     }
+
+
 }

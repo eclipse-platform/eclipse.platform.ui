@@ -168,10 +168,16 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         case AbstractIntroElement.PAGE_TITLE:
             src = new IntroPageTitle[size];
             break;
+        case AbstractIntroElement.ANCHOR:
+            src = new IntroAnchor[size];
+            break;
+        case AbstractIntroElement.CONTENT_PROVIDER:
+            src = new IntroContentProvider[size];
+            break;
 
         default:
             // now handle left over abstract types. Vector is not homogenous.
-            src = src = new AbstractIntroElement[size];
+            src = new AbstractIntroElement[size];
             break;
         }
         if (src == null)
@@ -205,7 +211,6 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         loaded = true;
         // free DOM model for memory performance.
         element = null;
-
     }
 
     /**
@@ -275,6 +280,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroAnchor.TAG_ANCHOR))
             child = new IntroAnchor(childElement, bundle);
+        else if (childElement.getNodeName().equalsIgnoreCase(
+                IntroContentProvider.TAG_CONTENT_PROVIDER))
+            child = new IntroContentProvider(childElement, bundle);
         return child;
     }
 

@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 /**
  * A Form that represents an Intro Page. It is swapped in the main page book in
  * the FormIntroPartImplementation class. It has a page book for swapping in
- * categories of Intro Pages.
+ * categories (content) of Intro Pages.
  */
 public class PageForm implements IIntroConstants {
 

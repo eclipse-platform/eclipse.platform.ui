@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 /**
  * Base class for handling Intro Extensions.
  */
-
 public class BaseExtensionPointManager {
 
     // the config extension id
@@ -51,12 +50,12 @@ public class BaseExtensionPointManager {
         registry = Platform.getExtensionRegistry();
     }
 
-    protected IntroModelRoot loadModel(String attrributeName,
+    protected IntroModelRoot loadModel(String attributeName,
             String attributeValue) {
         // get all Config extension point contributions. There could be more
         // than one config contribution, but there should only be one that maps
         // to the cached intro part id.
-        IConfigurationElement introConfig = getIntroConfig(attrributeName,
+        IConfigurationElement introConfig = getIntroConfig(attributeName,
                 attributeValue);
 
         // load model with the config elements of the correct contribution. If

@@ -160,7 +160,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Sets the into part to standby, and shows the passed standby part, with
-     * the given input.
+     * the given input. Forces the Intro view to open, if not yet created.
      * 
      * @param partId
      * @param input
@@ -189,7 +189,8 @@ public class IntroURL implements IIntroURL {
     }
 
     /**
-     * Set the Workbench Intro Part state.
+     * Set the Workbench Intro Part state. Forces the Intro view to open, if not
+     * yet created.
      * 
      * @param state
      */
@@ -294,8 +295,7 @@ public class IntroURL implements IIntroURL {
     }
 
     /**
-     * Display an Intro Page. Take a flag to enable to disable redrawing.
-     * Default is setting redraw to of.
+     * Display an Intro Page.
      * <p>
      * REVISIT: revisit picking first page.
      */
