@@ -118,7 +118,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		AdaptableList input = new AdaptableList(locations);
 		table.setInput(input);
 		if (locations.length == 0) {
-			useExistingRepo.setSelection(false);	
+			useNewRepo.setSelection(true);	
 		} else {
 			useExistingRepo.setSelection(true);	
 			table.setSelection(new StructuredSelection(locations[0]));
