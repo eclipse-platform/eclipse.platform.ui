@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -60,6 +61,9 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		return getPresentation().getText(element);
 	}
 	
+	public String getDetail(IValue value) {
+		return getPresentation().getDetail(value);
+	}	
 	/**
 	 * @see IDebugModelPresentaion
 	 */

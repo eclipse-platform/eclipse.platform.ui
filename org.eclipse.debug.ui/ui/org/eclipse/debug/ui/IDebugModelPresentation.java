@@ -6,6 +6,7 @@ package org.eclipse.debug.ui;
  */
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -156,5 +157,19 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * @return an editor id, or <code>null</code> if none
 	 */
 	String getEditorId(IEditorInput input, Object element);
+	
+	/**
+	 * Returns a detailed description of the given value. This allows
+	 * a presentation to provide extra details about a selected value
+	 * in the variable detail portion of the variable view. If <code>null</code>
+	 * is returned, the value's value string is displayed
+	 * (<code>IValue.getValueString()</code>).
+	 * 
+	 * @param value the value for which a detailed description
+	 * 	is required
+	 * @return detailed description, or <code>null</code> if none
+	 *  is available
+	 */
+	String getDetail(IValue value);	
 
 }

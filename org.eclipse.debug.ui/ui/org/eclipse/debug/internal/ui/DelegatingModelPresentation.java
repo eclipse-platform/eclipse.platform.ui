@@ -346,6 +346,25 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			return label;
 		}
 	}
+	
+	/**
+	 * @see IDebugModelPresentation#getDetail(IValue)
+	 */
+	public String getDetail(IValue value) {
+		IDebugModelPresentation lp= getConfiguredPresentation(value);
+		if (lp != null) {
+			String detail= lp.getDetail(value);
+			if (detail != null) {
+				return detail;
+			} else {
+				detail = lp.getText(value);
+			}
+			if (detail != null) {
+				return detail;
+			}
+		}
+		return getText(value);
+	}	
 
 	/**
 	 * InspectItems have their left halves rendered here, and their
