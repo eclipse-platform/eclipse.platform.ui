@@ -268,7 +268,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="platform" type="string">
             <annotation>
                <documentation>
-                  An optional attribute indicating that this key binding is only defined for the specified platform. The possible values of the &lt;code&gt;platform&lt;/code&gt; attribute are the set of the possible values returned by &lt;code&gt;org.eclipse.swt.SWT.getPlatform()&lt;code&gt;.
+                  An optional attribute indicating that this key binding is only defined for the specified platform. The possible values of the &lt;code&gt;platform&lt;/code&gt; attribute are the set of the possible values returned by &lt;code&gt;org.eclipse.swt.SWT.getPlatform()&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -369,7 +369,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends &lt;parent&gt;)&quot; to the name. This will be automatically added by the UI where necessary.
+                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
                </documentation>
             </annotation>
          </attribute>
