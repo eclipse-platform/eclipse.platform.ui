@@ -23,29 +23,29 @@ public class Address implements IPropertySource {
 	private StreetAddress street;
 
 	//Property unique keys
-	public static final String P_ID_STREET = "Address.Street";
-	public static final String P_ID_CITY = "Address.City";
-	public static final String P_ID_PROVINCE = "Address.Province";
-	public static final String P_ID_POSTALCODE = "Address.PostalCode";
+	public static final String P_ID_STREET = "Address.Street"; //$NON-NLS-1$
+	public static final String P_ID_CITY = "Address.City"; //$NON-NLS-1$
+	public static final String P_ID_PROVINCE = "Address.Province"; //$NON-NLS-1$
+	public static final String P_ID_POSTALCODE = "Address.PostalCode"; //$NON-NLS-1$
 
 	//Property display keys
-	public static final String P_STREET = "Street";
-	public static final String P_CITY = "City";
-	public static final String P_PROVINCE = "Province";
-	public static final String P_POSTALCODE = "PostalCode";
-	public static final String P_DESCRIPTORS = "properties";
+	public static final String P_STREET = MessageUtil.getString("Street"); //$NON-NLS-1$
+	public static final String P_CITY = MessageUtil.getString("City"); //$NON-NLS-1$
+	public static final String P_PROVINCE = MessageUtil.getString("Province"); //$NON-NLS-1$
+	public static final String P_POSTALCODE = MessageUtil.getString("PostalCode"); //$NON-NLS-1$
+	public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 
 
 	//default values	
 	private static final StreetAddress STREET_DEFAULT = new StreetAddress();
-	private static final String CITY_DEFAULT = "unspecified city";
+	private static final String CITY_DEFAULT = MessageUtil.getString("unspecified_city"); //$NON-NLS-1$
 	private static final Integer PROVINCE_DEFAULT = new Integer(0);
-	private static final String POSTALCODE_DEFAULT = "A1B2C3";
+	private static final String POSTALCODE_DEFAULT = "A1B2C3"; //$NON-NLS-1$
 
 	//
 	static private class ProvinceLabelProvider extends LabelProvider {
 		public String getText(Object element) {
-			String[] provinceValues = new String[] {"British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Newfoundland", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Yukon", "North West Territories", "Nunavut"};
+			String[] provinceValues = new String[] {MessageUtil.getString("British_Columbia"), MessageUtil.getString("Alberta"), MessageUtil.getString("Saskatchewan"), MessageUtil.getString("Manitoba"), MessageUtil.getString("Ontario"), MessageUtil.getString("Quebec"), MessageUtil.getString("Newfoundland"), MessageUtil.getString("Prince_Edward_Island"), MessageUtil.getString("Nova_Scotia"), MessageUtil.getString("New_Brunswick"), MessageUtil.getString("Yukon"), MessageUtil.getString("North_West_Territories"), MessageUtil.getString("Nunavut")}; //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 			return provinceValues[((Integer)element).intValue()];
 		}
 	}
@@ -55,7 +55,7 @@ public class Address implements IPropertySource {
 	private static String[] provinceValues;
 	static {
 		descriptors = new Vector();
-		provinceValues = new String[] {"British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Newfoundland", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Yukon", "North West Territories", "Nunavut"};
+		provinceValues = new String[] {MessageUtil.getString("British_Columbia"), MessageUtil.getString("Alberta"), MessageUtil.getString("Saskatchewan"), MessageUtil.getString("Manitoba"), MessageUtil.getString("Ontario"), MessageUtil.getString("Quebec"), MessageUtil.getString("Newfoundland"), MessageUtil.getString("Prince_Edward_Island"), MessageUtil.getString("Nova_Scotia"), MessageUtil.getString("New_Brunswick"), MessageUtil.getString("Yukon"), MessageUtil.getString("North_West_Territories"), MessageUtil.getString("Nunavut")}; //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		descriptors.addElement(new PropertyDescriptor(P_ID_STREET, P_STREET));
 		descriptors.addElement(new TextPropertyDescriptor(P_ID_CITY, P_CITY));
 
@@ -67,7 +67,7 @@ public class Address implements IPropertySource {
 		propertyDescriptor.setValidator(new ICellEditorValidator() {
 			public String isValid(Object value) {
 				if (value == null)
-					return "postal code is incomplete";
+					return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
 
 				//
 				String testPostalCode = ((String) value).toUpperCase();
@@ -87,7 +87,7 @@ public class Address implements IPropertySource {
 				//check for proper length
 				if (testPostalCode.length() != 6) {
 					//fail	
-					return testPostalCode + " is an invalid format for a postal code";
+					return MessageUtil.format("_is_an_invalid_format_for_a_postal_code", new Object[] {testPostalCode}); //$NON-NLS-1$
 				}
 
 				//check for proper format
@@ -100,7 +100,7 @@ public class Address implements IPropertySource {
 					testPostalCode.charAt(4) < 'A' || testPostalCode.charAt(4) > 'Z'
 				) {
 					//fail
-					return testPostalCode + " is an invalid format for a postal code";
+					return MessageUtil.format("_is_an_invalid_format_for_a_postal_code", new Object[] {testPostalCode}); //$NON-NLS-1$
 				}
 
 				//all pass
@@ -293,8 +293,8 @@ private void setStreet(StreetAddress newStreet) {
  */
 public String toString() {
 	StringBuffer outStringBuffer = new StringBuffer();
-	final String comma_space = ", ";
-	final String space = " ";
+	final String comma_space = ", "; //$NON-NLS-1$
+	final String space = " "; //$NON-NLS-1$
 	if (!getStreet().equals(STREET_DEFAULT)) {
 		outStringBuffer.append(getStreet());
 		outStringBuffer.append(comma_space);

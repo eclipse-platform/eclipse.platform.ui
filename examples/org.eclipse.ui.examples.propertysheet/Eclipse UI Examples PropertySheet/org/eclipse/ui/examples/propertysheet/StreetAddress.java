@@ -20,18 +20,18 @@ public class StreetAddress implements IPropertySource {
 
 	//default property values
 	private static final Integer BUILD_NO_DEFAULT = new Integer(0);
-	private static final String APTBOX_DEFAULT = "unspecified";
-	private static final String STREETNAME_DEFAULT = "unspecified";
+	private static final String APTBOX_DEFAULT = MessageUtil.getString("unspecified"); //$NON-NLS-1$
+	private static final String STREETNAME_DEFAULT = MessageUtil.getString("unspecified"); //$NON-NLS-1$
 
 	//property unique keys
-	public static final String P_ID_BUILD_NO = "Street.buildingNo";
-	public static final String P_ID_APTBOX = "Street.aptNo";
-	public static final String P_ID_STREET = "Street.street";
+	public static final String P_ID_BUILD_NO = "Street.buildingNo"; //$NON-NLS-1$
+	public static final String P_ID_APTBOX = "Street.aptNo"; //$NON-NLS-1$
+	public static final String P_ID_STREET = "Street.street"; //$NON-NLS-1$
 	
 	//property display keys
-	public static final String P_BUILD_NO = "building number";
-	public static final String P_APTBOX = "apt.no or box.no";
-	public static final String P_STREET = "street";
+	public static final String P_BUILD_NO = MessageUtil.getString("building_number"); //$NON-NLS-1$
+	public static final String P_APTBOX = MessageUtil.getString("apt.no_or_box.no"); //$NON-NLS-1$
+	public static final String P_STREET = MessageUtil.getString("street"); //$NON-NLS-1$
 
 	//
 	private static Vector descriptors;
@@ -212,11 +212,11 @@ public String toString() {
 	StringBuffer outStringBuffer = new StringBuffer();
 	if (!getAptBox().equals(APTBOX_DEFAULT)) {
 		outStringBuffer.append(getAptBox());
-		outStringBuffer.append(", ");
+		outStringBuffer.append(", "); //$NON-NLS-1$
 	}
 	if (!getBuildNo().equals(BUILD_NO_DEFAULT)) {
 		outStringBuffer.append(getBuildNo());
-		outStringBuffer.append(" ");
+		outStringBuffer.append(" "); //$NON-NLS-1$
 	}
 	if (!getStreetName().equals(STREETNAME_DEFAULT)) {
 		outStringBuffer.append(getStreetName());

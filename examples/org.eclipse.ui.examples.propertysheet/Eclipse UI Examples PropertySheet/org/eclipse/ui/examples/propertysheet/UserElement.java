@@ -30,7 +30,7 @@ public class UserElement extends OrganizationElement {
 	// Property default values
 	private Name fullName_Default;
 	private Address address_Default;
-	private String phoneNumber_Default= "555-1111";
+	private String phoneNumber_Default= "555-1111"; //$NON-NLS-1$
 	private EmailAddress emailAddress_Default;
 	private Boolean coop_Default;
 	private Birthday birthday_Default;
@@ -39,48 +39,48 @@ public class UserElement extends OrganizationElement {
 	private RGB eyeColor_Default;
 
 	// Property unique keys
-	public static final String P_ID_PHONENUMBER = "User.phonenumber";
-	public static final String P_ID_ADDRESS = "User.address";
-	public static final String P_ID_FULLNAME = "User.fullname";
-	public static final String P_ID_EMAIL = "User.email";
-	public static final String P_ID_COOP = "User.coop student";
-	public static final String P_ID_BDAY = "User.birthday";
-	public static final String P_ID_SALARY = "User.salary";
-	public static final String P_ID_HAIRCOLOR = "User.haircolor";
-	public static final String P_ID_EYECOLOR = "User.eyecolor";
+	public static final String P_ID_PHONENUMBER = "User.phonenumber"; //$NON-NLS-1$
+	public static final String P_ID_ADDRESS = "User.address"; //$NON-NLS-1$
+	public static final String P_ID_FULLNAME = "User.fullname"; //$NON-NLS-1$
+	public static final String P_ID_EMAIL = "User.email"; //$NON-NLS-1$
+	public static final String P_ID_COOP = "User.coop student"; //$NON-NLS-1$
+	public static final String P_ID_BDAY = "User.birthday"; //$NON-NLS-1$
+	public static final String P_ID_SALARY = "User.salary"; //$NON-NLS-1$
+	public static final String P_ID_HAIRCOLOR = "User.haircolor"; //$NON-NLS-1$
+	public static final String P_ID_EYECOLOR = "User.eyecolor"; //$NON-NLS-1$
 
 	// Property display keys
-	public static final String P_PHONENUMBER = "phonenumber";
-	public static final String P_ADDRESS = "address";
-	public static final String P_FULLNAME = "fullname";
-	public static final String P_EMAIL = "email";
-	public static final String P_COOP = "coop student";
-	public static final String P_BDAY = "birthday";
-	public static final String P_SALARY = "salary";
-	public static final String P_HAIRCOLOR = "haircolor";
-	public static final String P_EYECOLOR = "eyecolor";
+	public static final String P_PHONENUMBER = MessageUtil.getString("phonenumber"); //$NON-NLS-1$
+	public static final String P_ADDRESS = MessageUtil.getString("address"); //$NON-NLS-1$
+	public static final String P_FULLNAME = MessageUtil.getString("fullname"); //$NON-NLS-1$
+	public static final String P_EMAIL = MessageUtil.getString("email"); //$NON-NLS-1$
+	public static final String P_COOP = MessageUtil.getString("coop_student"); //$NON-NLS-1$
+	public static final String P_BDAY = MessageUtil.getString("birthday"); //$NON-NLS-1$
+	public static final String P_SALARY = MessageUtil.getString("salary"); //$NON-NLS-1$
+	public static final String P_HAIRCOLOR = MessageUtil.getString("haircolor"); //$NON-NLS-1$
+	public static final String P_EYECOLOR = MessageUtil.getString("eyecolor"); //$NON-NLS-1$
 
 	// Help context ids
-	private static final String PHONE_NUMBER_CONTEXT ="org.eclipse.ui.examples.propertysheet.phone_number_context";
-	private static final String ADDRESS_CONTEXT ="org.eclipse.ui.examples.propertysheet.address_context";
-	private static final String FULL_NAME_CONTEXT ="org.eclipse.ui.examples.propertysheet.full_name_context";
-	private static final String EMAIL_CONTEXT ="org.eclipse.ui.examples.propertysheet.email_context";
-	private static final String COOP_CONTEXT ="org.eclipse.ui.examples.propertysheet.coop_context";
-	private static final String BIRTHDAY_CONTEXT ="org.eclipse.ui.examples.propertysheet.birthday_context";
-	private static final String SALARY_CONTEXT ="org.eclipse.ui.examples.propertysheet.salary_context";
-	private static final String HAIR_COLOR__CONTEXT ="org.eclipse.ui.examples.propertysheet.hair_color_context";
-	private static final String EYE_COLOR_CONTEXT ="org.eclipse.ui.examples.propertysheet.eye_color_context";
+	private static final String PHONE_NUMBER_CONTEXT ="org.eclipse.ui.examples.propertysheet.phone_number_context"; //$NON-NLS-1$
+	private static final String ADDRESS_CONTEXT ="org.eclipse.ui.examples.propertysheet.address_context"; //$NON-NLS-1$
+	private static final String FULL_NAME_CONTEXT ="org.eclipse.ui.examples.propertysheet.full_name_context"; //$NON-NLS-1$
+	private static final String EMAIL_CONTEXT ="org.eclipse.ui.examples.propertysheet.email_context"; //$NON-NLS-1$
+	private static final String COOP_CONTEXT ="org.eclipse.ui.examples.propertysheet.coop_context"; //$NON-NLS-1$
+	private static final String BIRTHDAY_CONTEXT ="org.eclipse.ui.examples.propertysheet.birthday_context"; //$NON-NLS-1$
+	private static final String SALARY_CONTEXT ="org.eclipse.ui.examples.propertysheet.salary_context"; //$NON-NLS-1$
+	private static final String HAIR_COLOR__CONTEXT ="org.eclipse.ui.examples.propertysheet.hair_color_context"; //$NON-NLS-1$
+	private static final String EYE_COLOR_CONTEXT ="org.eclipse.ui.examples.propertysheet.eye_color_context"; //$NON-NLS-1$
 
 	// Property Category
-	public static final String P_CONTACTINFO = "contact";
-	public static final String P_PERSONELINFO = "personel";
-	public static final String P_PERSONALINFO = "personal";
+	public static final String P_CONTACTINFO = MessageUtil.getString("contact"); //$NON-NLS-1$
+	public static final String P_PERSONELINFO = MessageUtil.getString("personel"); //$NON-NLS-1$
+	public static final String P_PERSONALINFO = MessageUtil.getString("personal"); //$NON-NLS-1$
 
 	// Property Values
 	public static final Integer P_VALUE_TRUE = new Integer(0);
 	public static final Integer P_VALUE_FALSE = new Integer(1);
-	public static final String P_VALUE_TRUE_LABEL = "true";
-	public static final String P_VALUE_FALSE_LABEL = "false";
+	public static final String P_VALUE_TRUE_LABEL = MessageUtil.getString("true"); //$NON-NLS-1$
+	public static final String P_VALUE_FALSE_LABEL = MessageUtil.getString("false"); //$NON-NLS-1$
 
 
 	static private class BooleanLabelProvider extends LabelProvider {
@@ -145,16 +145,16 @@ public class UserElement extends OrganizationElement {
 			new ICellEditorValidator(){
 				public String isValid(Object value){
 					if(value == null)
-						return "salary is invalid";
+						return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
 					//
 					Float trySalary;
 					try {
 						trySalary = new Float(Float.parseFloat((String)value));
 					} catch (NumberFormatException e) {
-						return "salary is invalid";
+						return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
 					}
 					if(trySalary.floatValue() < 0.0)
-						return "salary must be greator than zero";
+						return MessageUtil.getString("salary_must_be_greator_than_zero"); //$NON-NLS-1$
 					return null;
 				}	
 		});			

@@ -13,21 +13,21 @@ import org.eclipse.ui.views.properties.*;
  */
 public class Name implements IPropertySource
 {
-	private String firstName = "";
-	private String lastName = "";
-	private String initial = "";
+	private String firstName = ""; //$NON-NLS-1$
+	private String lastName = ""; //$NON-NLS-1$
+	private String initial = ""; //$NON-NLS-1$
 	
 	// property unique keys
-	public static String P_ID_FIRSTNAME = "Name.FirstName";
-	public static String P_ID_LASTNAME = "Name.LastName";
-	public static String P_ID_MIDDLENAME = "Name.Middle";
+	public static String P_ID_FIRSTNAME = "Name.FirstName"; //$NON-NLS-1$
+	public static String P_ID_LASTNAME = "Name.LastName"; //$NON-NLS-1$
+	public static String P_ID_MIDDLENAME = "Name.Middle"; //$NON-NLS-1$
 
 	// property display keys
-	public static String P_FIRSTNAME = "FirstName";
-	public static String P_LASTNAME = "LastName";
-	public static String P_MIDDLENAME = "Middle";
+	public static String P_FIRSTNAME = MessageUtil.getString("FirstName"); //$NON-NLS-1$
+	public static String P_LASTNAME = MessageUtil.getString("LastName"); //$NON-NLS-1$
+	public static String P_MIDDLENAME = MessageUtil.getString("Middle"); //$NON-NLS-1$
 	
-	public static final String P_DESCRIPTORS = "properties";
+	public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 	static private Vector descriptors;	
 	static
 	{
@@ -188,10 +188,10 @@ public String toString(){
 	StringBuffer outStringBuffer = new StringBuffer();
 	if(getFirstName()!=null)
 	{	outStringBuffer.append(getFirstName());
-		outStringBuffer.append(" ");
+		outStringBuffer.append(" "); //$NON-NLS-1$
 		if(getInitial()!=null)
 		{	outStringBuffer.append(getInitial());
-			outStringBuffer.append(" ");
+			outStringBuffer.append(" "); //$NON-NLS-1$
 		}
 	}
 	if(getLastName()!=null)

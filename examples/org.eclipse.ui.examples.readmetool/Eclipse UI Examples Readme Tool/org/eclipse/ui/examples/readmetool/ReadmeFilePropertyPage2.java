@@ -124,7 +124,7 @@ protected void createPageTwo(Composite panel) {
 	GridData gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, MessageUtil.getString("Had_it_been_less_than_256_bytes,_this_page_would_be_a_placeholder_page.")); //$NON-NLS-1$
+	l = createLabel(panel, MessageUtil.getString("Had_it_been_less_than_256_bytes_this_page_would_be_a_placeholder_page.")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;

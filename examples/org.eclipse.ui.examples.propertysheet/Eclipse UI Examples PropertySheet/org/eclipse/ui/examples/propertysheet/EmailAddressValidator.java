@@ -17,7 +17,7 @@ public class EmailAddressValidator implements ICellEditorValidator {
  */
 public String isValid(Object value) {
 	if (value == null) {
-		return "email address is incomplete";
+		return MessageUtil.getString("email_address_is_incomplete"); //$NON-NLS-1$
 	}
 	String emailAddress = (String)value;
 	int index = emailAddress.indexOf('@');
@@ -25,6 +25,6 @@ public String isValid(Object value) {
 	if (index > 0 && index < length) {
 		return null;
 	}
-	return "email address does not have a valid format";
+	return MessageUtil.getString("email_address_does_not_have_a_valid_format"); //$NON-NLS-1$
 }
 }

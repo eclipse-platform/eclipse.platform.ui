@@ -28,7 +28,7 @@ public UserEditor() {
  */
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
-	getSourceViewer().setDocument(new Document("Click on the items in the content outline\nto see their properties"));
+	getSourceViewer().setDocument(new Document(MessageUtil.getString("Editor_instructions"))); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IAdaptable

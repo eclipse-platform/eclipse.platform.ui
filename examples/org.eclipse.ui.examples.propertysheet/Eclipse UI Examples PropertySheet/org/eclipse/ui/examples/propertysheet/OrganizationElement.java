@@ -25,7 +25,7 @@ public abstract class OrganizationElement implements IAdaptable, IPropertySource
 	private static Vector descriptors;
 	static {
 		descriptors = new Vector();
-		PropertyDescriptor name = new TextPropertyDescriptor(IBasicPropertyConstants.P_TEXT, "name");
+		PropertyDescriptor name = new TextPropertyDescriptor(IBasicPropertyConstants.P_TEXT, MessageUtil.getString("name")); //$NON-NLS-1$
 		descriptors.addElement(name);
 	}
 /**

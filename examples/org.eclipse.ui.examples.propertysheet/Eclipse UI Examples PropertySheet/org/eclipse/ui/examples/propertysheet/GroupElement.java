@@ -10,9 +10,9 @@ import java.util.Vector;
  * A Group Element
  */
 public class GroupElement extends OrganizationElement {
-	public static String P_USERS = "users";
-	public static String P_SUBGROUPS = "subgroups";
-	public static String P_CONTENTS = "contents";
+	public static String P_USERS = "users"; //$NON-NLS-1$
+	public static String P_SUBGROUPS = "subgroups"; //$NON-NLS-1$
+	public static String P_CONTENTS = "contents"; //$NON-NLS-1$
 	private Vector subGroups;
 	private Vector users;
 	// must be synchronized to contain both the references of subGroups and users

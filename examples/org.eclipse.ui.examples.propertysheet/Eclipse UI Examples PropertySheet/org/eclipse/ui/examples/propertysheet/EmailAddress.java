@@ -19,16 +19,16 @@ public class EmailAddress implements IPropertySource {
 	private String domain;
 
 	//Default Property-Value
-	private static final String USERID_DEFAULT = "unknownUser";
-	private static final String DOMAIN_DEFAULT = "unknownDomain";
+	private static final String USERID_DEFAULT = MessageUtil.getString("unknownUser"); //$NON-NLS-1$
+	private static final String DOMAIN_DEFAULT = MessageUtil.getString("unknownDomain"); //$NON-NLS-1$
 	
 	//Property unique keys
-	public static final String P_ID_USERID = "EmailAddress.userid";
-	public static final String P_ID_DOMAIN = "EmailAddress.domain";
+	public static final String P_ID_USERID = "EmailAddress.userid"; //$NON-NLS-1$
+	public static final String P_ID_DOMAIN = "EmailAddress.domain"; //$NON-NLS-1$
 	
 	//Property display keys
-	public static final String P_USERID = "userid";
-	public static final String P_DOMAIN = "domain";
+	public static final String P_USERID = MessageUtil.getString("userid"); //$NON-NLS-1$
+	public static final String P_DOMAIN = MessageUtil.getString("domain"); //$NON-NLS-1$
 
 	//Property-Descriptors
 	private static Vector descriptors;
@@ -142,7 +142,7 @@ private void setDomain(java.lang.String newDomain) {
  */
 private void setEmailAddress(String emailAddress) throws IllegalArgumentException {
 	if(emailAddress == null)
-		throw new IllegalArgumentException("emailaddress cannot be set to null");
+		throw new IllegalArgumentException(MessageUtil.getString("emailaddress_cannot_be_set_to_null")); //$NON-NLS-1$
 	int index = emailAddress.indexOf('@');
 	int length = emailAddress.length();
 	if (index > 0 && index < length) {
@@ -150,7 +150,7 @@ private void setEmailAddress(String emailAddress) throws IllegalArgumentExceptio
 		setDomain(emailAddress.substring(index + 1));
 		return;
 	}
-	throw new IllegalArgumentException("invalid email address format, should have been validated");
+	throw new IllegalArgumentException(MessageUtil.getString("invalid_email_address_format_should_have_been_validated")); //$NON-NLS-1$
 }
 /** 
  * The <code>Address</code> implementation of this
