@@ -73,9 +73,9 @@
             </div>
             <div id="page-content">
 	            <text
-	                  class-id="page-title">OVERVIEW</text>
+	                  class-id="page-title" id="page-title">OVERVIEW</text>
 	            <text
-	                  class-id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
+	                  class-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
 	            <div
 	                  id="overview-links">
 	               <link
@@ -112,9 +112,9 @@
             <div
             	  id="page-content">
 	           <text
-	                 class-id="page-title">TUTORIALS</text>
+	                 class-id="page-title" id="page-title">TUTORIALS</text>
 	           <text
-	                 class-id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
+	                 class-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
             </div>
          </page>
          <page
@@ -136,9 +136,9 @@
             <div
             	  id="page-content">
 	            <text
-	                  class-id="page-title">SAMPLES</text>
+	                  class-id="page-title" id="page-title" >SAMPLES</text>
 	            <text
-	                  class-id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
+	                  class-id="page-description" id="page-description" >Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
 	            <div
 	                  label="SWT"
 	                  id="swt"
@@ -209,7 +209,7 @@
             <div
             	  id="page-content">
 	            <text
-	                  class-id="page-title">WHAT&apos;S NEW</text>
+	                  class-id="page-title" id="page-title">WHAT&apos;S NEW</text>
 	            <div
 	                  id="news-links">
 	               <link
