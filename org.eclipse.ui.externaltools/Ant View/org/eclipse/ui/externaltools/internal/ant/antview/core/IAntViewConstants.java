@@ -18,7 +18,7 @@ public interface IAntViewConstants {
 	public static final String IMAGE_TARGET_SELECTED   = "ant_tsk_check.gif";
 	public static final String IMAGE_TARGET_DESELECTED = "ant_tsk_arrow.gif";
 	public static final String IMAGE_RUN               = "ant_run.gif";
-	public static final String IMAGE_REMOVE               = "remove_co.gif";
+	public static final String IMAGE_REMOVE            = "remove_co.gif";
 	public static final String IMAGE_CLEAR             = "clear_co.gif";
 	public static final String IMAGE_REFRESH           = "refresh_nav.gif";
 	public static final String IMAGE_ELEMENT           = "element.gif";
