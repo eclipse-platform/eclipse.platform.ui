@@ -162,4 +162,14 @@ public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
  */
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	throws WorkbenchException;
+	
+/**
+ * Notifies the workbench that a plugin has been loaded.  
+ * <p>
+ * In response to this notification, the workbench will instantiate any
+ * outstanding action delegates for the plugin.
+ * </p>
+ * @param pluginId the plugin id.
+ */
+public void refreshPluginActions(String pluginId);
 }

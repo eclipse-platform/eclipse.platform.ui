@@ -967,4 +967,11 @@ private boolean asyncRestoreSnapshot(final File stateFile) {
 	}
 }
 
+	/*
+	 * @see IWorkbench#refreshPluginActions(String)
+	 */
+	public void refreshPluginActions(String pluginId) {
+		WWinPluginAction.refreshActionList();
+	}
+
 }
