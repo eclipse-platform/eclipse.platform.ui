@@ -21,6 +21,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class HelpPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, Listener {
+	private Label labelServerAddr;
+	private Label labelServerPort;
 	private Text textServerAddr;
 	private Text textServerPort;
 	private Button radioButtonError;
@@ -136,6 +138,8 @@ public class HelpPreferencePage
 		radioButtonLocalServerAutomatic.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent event) {
 				if (((Button) event.widget).getSelection()) {
+					labelServerAddr.setEnabled(false);
+					labelServerPort.setEnabled(false);
 					textServerAddr.setEnabled(false);
 					textServerPort.setEnabled(false);
 				}
@@ -152,6 +156,8 @@ public class HelpPreferencePage
 		radioButtonLocalServerManual.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent event) {
 				if (((Button) event.widget).getSelection()) {
+					labelServerAddr.setEnabled(true);
+					labelServerPort.setEnabled(true);
 					textServerAddr.setEnabled(true);
 					textServerPort.setEnabled(true);
 				}
@@ -160,13 +166,13 @@ public class HelpPreferencePage
 				widgetSelected(event);
 			}
 		});
-		Label label_textField =
+		labelServerAddr =
 			createLabel(
 				composite_radioButton3,
 				WorkbenchResources.getString("Server_address"),
 				1);
 		textServerAddr = createTextField(composite_radioButton3);
-		label_textField =
+		labelServerPort =
 			createLabel(
 				composite_radioButton3,
 				WorkbenchResources.getString("Server_port"),
@@ -268,6 +274,8 @@ public class HelpPreferencePage
 		// Local Help Server Configuration
 		radioButtonLocalServerAutomatic.setSelection(false);
 		radioButtonLocalServerManual.setSelection(false);
+		labelServerAddr.setEnabled(false);
+		labelServerPort.setEnabled(false);
 		textServerAddr.setEnabled(false);
 		textServerPort.setEnabled(false);
 		int serverConfigChoice =
@@ -278,6 +286,8 @@ public class HelpPreferencePage
 				break;
 			case 1 :
 				radioButtonLocalServerManual.setSelection(true);
+				labelServerAddr.setEnabled(true);
+				labelServerPort.setEnabled(true);
 				textServerAddr.setEnabled(true);
 				textServerPort.setEnabled(true);
 				break;
@@ -314,6 +324,8 @@ public class HelpPreferencePage
 		// Local Help Server Configuration
 		radioButtonLocalServerAutomatic.setSelection(false);
 		radioButtonLocalServerManual.setSelection(false);
+		labelServerAddr.setEnabled(false);
+		labelServerPort.setEnabled(false);
 		textServerAddr.setEnabled(false);
 		textServerPort.setEnabled(false);
 		int serverConfigChoice = store.getInt(HelpPreferences.LOCAL_SERVER_CONFIG);
@@ -323,6 +335,8 @@ public class HelpPreferencePage
 				break;
 			case 1 :
 				radioButtonLocalServerManual.setSelection(true);
+				labelServerAddr.setEnabled(true);
+				labelServerPort.setEnabled(true);
 				textServerAddr.setEnabled(true);
 				textServerPort.setEnabled(true);
 				break;
