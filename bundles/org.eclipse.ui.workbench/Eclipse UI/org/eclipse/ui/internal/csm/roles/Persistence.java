@@ -23,7 +23,6 @@ final class Persistence {
 	final static String PACKAGE_BASE = "roles"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$	
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
-	final static String TAG_ACTIVITY_BINDING = "activityBinding"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
@@ -31,6 +30,7 @@ final class Persistence {
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	final static String TAG_ROLE = "role"; //$NON-NLS-1$	
 	final static String TAG_ROLE_ID = "roleId"; //$NON-NLS-1$	
+	final static String TAG_ROLE_ACTIVITY_BINDING = "roleActivityBinding"; //$NON-NLS-1$	
 
 	static IRoleActivityBindingDefinition readRoleActivityBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)

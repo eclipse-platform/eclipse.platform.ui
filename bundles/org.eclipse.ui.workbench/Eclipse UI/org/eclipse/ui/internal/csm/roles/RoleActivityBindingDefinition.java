@@ -24,7 +24,7 @@ final class RoleActivityBindingDefinition implements IRoleActivityBindingDefinit
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = RoleActivityBindingDefinition.class.getName().hashCode();
 
-	static Map roleActivityBindingDefinitionsByRoleId(Collection roleActivityBindingDefinitions, boolean allowNullNames) {
+	static Map roleActivityBindingDefinitionsByRoleId(Collection roleActivityBindingDefinitions) {
 		if (roleActivityBindingDefinitions == null)
 			throw new NullPointerException();
 
@@ -37,7 +37,7 @@ final class RoleActivityBindingDefinition implements IRoleActivityBindingDefinit
 			IRoleActivityBindingDefinition roleActivityBindingDefinition = (IRoleActivityBindingDefinition) object;
 			String roleId = roleActivityBindingDefinition.getRoleId();
 			
-			if (allowNullNames || roleId != null) {
+			if (roleId != null) {
 				Collection roleActivityBindingDefinitions2 = (Collection) map.get(roleId);
 					
 				if (roleActivityBindingDefinitions2 == null) {

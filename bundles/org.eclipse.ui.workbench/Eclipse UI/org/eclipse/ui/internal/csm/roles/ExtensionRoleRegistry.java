@@ -72,7 +72,7 @@ final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 			IConfigurationElement configurationElement = configurationElements[i];			
 			String name = configurationElement.getName();
 
-			if (Persistence.TAG_ACTIVITY_BINDING.equals(name))
+			if (Persistence.TAG_ROLE_ACTIVITY_BINDING.equals(name))
 				readRoleActivityBindingDefinition(configurationElement);
 			else if (Persistence.TAG_ROLE.equals(name))
 				readRoleDefinition(configurationElement);			

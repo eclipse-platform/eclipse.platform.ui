@@ -25,13 +25,13 @@ final class Persistence {
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
 	final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
+	final static String TAG_ACTIVITY_PATTERN_BINDING = "activityPatternBinding"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_INCLUSIVE = "inclusive"; //$NON-NLS-1$
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
-	final static String TAG_PATTERN_BINDING = "patternBinding"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
 	static IActivityDefinition readActivityDefinition(IMemento memento, String pluginIdOverride) {

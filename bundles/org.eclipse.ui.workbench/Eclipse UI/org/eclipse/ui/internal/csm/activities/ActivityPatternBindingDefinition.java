@@ -24,7 +24,7 @@ final class ActivityPatternBindingDefinition implements IActivityPatternBindingD
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityPatternBindingDefinition.class.getName().hashCode();
 
-	static Map activityPatternBindingDefinitionsByActivityId(Collection activityPatternBindingDefinitions, boolean allowNullNames) {
+	static Map activityPatternBindingDefinitionsByActivityId(Collection activityPatternBindingDefinitions) {
 		if (activityPatternBindingDefinitions == null)
 			throw new NullPointerException();
 
@@ -37,7 +37,7 @@ final class ActivityPatternBindingDefinition implements IActivityPatternBindingD
 			IActivityPatternBindingDefinition activityPatternBindingDefinition = (IActivityPatternBindingDefinition) object;
 			String activityId = activityPatternBindingDefinition.getActivityId();
 			
-			if (allowNullNames || activityId != null) {
+			if (activityId != null) {
 				Collection activityPatternBindingDefinitions2 = (Collection) map.get(activityId);
 					
 				if (activityPatternBindingDefinitions2 == null) {

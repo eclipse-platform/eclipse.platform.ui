@@ -74,7 +74,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 			if (Persistence.TAG_ACTIVITY.equals(name))
 				readActivityDefinition(configurationElement);
-			else if (Persistence.TAG_PATTERN_BINDING.equals(name))
+			else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
 				readActivityPatternBindingDefinition(configurationElement);			
 		}
 
@@ -89,7 +89,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			super.activityPatternBindingDefinitions = Collections.unmodifiableList(activityPatternBindingDefinitions);		
 			activityRegistryChanged = true;
 		}		
-		
+
 		if (activityRegistryChanged)
 			fireActivityRegistryChanged();
 	}

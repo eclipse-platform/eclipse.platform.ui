@@ -122,6 +122,9 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.ActivityManagerFactory;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
@@ -158,6 +161,9 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.roles.IRole;
+import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.RoleManagerFactory;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -421,6 +427,9 @@ public class Workbench
 		}
 	};
 
+	private IActivityManager activityManager;
+	private IRoleManager roleManager;	
+	
 	private CommandManager commandManager;
 	private ContextManager contextManager;
 	private volatile boolean keyFilterDisabled;
@@ -1000,6 +1009,29 @@ public class Workbench
 	}
 
 	private void initializeCommandsAndContexts(final Display display) {
+		activityManager = ActivityManagerFactory.getActivityManager();
+		roleManager = RoleManagerFactory.getRoleManager();		
+		
+		/* TODO remove
+		Set definedActivityIds = activityManager.getDefinedActivityIds();
+		System.out.println(definedActivityIds);
+		
+		for (Iterator iterator = definedActivityIds.iterator(); iterator.hasNext();) {
+			String activityId = (String) iterator.next();
+			IActivity activity = activityManager.getActivity(activityId);
+			System.out.println(activity.getId() + ": " + activity.getPatternBindings());
+		}
+
+		Set definedRoleIds = roleManager.getDefinedRoleIds();
+		System.out.println(definedRoleIds);
+
+		for (Iterator iterator = definedRoleIds.iterator(); iterator.hasNext();) {
+			String roleId = (String) iterator.next();
+			IRole role = roleManager.getRole(roleId);
+			System.out.println(role.getId() + ": " + role.getActivityBindings());
+		}
+		*/		
+		
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 			public String guessCommandIdFromActionId(String actionId) {
 				// TODO bad cast
