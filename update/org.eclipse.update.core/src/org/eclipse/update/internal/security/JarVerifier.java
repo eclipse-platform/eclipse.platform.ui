@@ -119,11 +119,8 @@ public class JarVerifier implements IVerifier {
 	 * initialize instance variables
 	 */
 	private void initializeVariables(File jarFile, IFeature feature, ContentReference contentRef) throws IOException {
-		result = new JarVerificationResult();
-		result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
-		result.setResultException(null);
-		result.setFeature(feature);
-		result.setContentReference(contentRef);
+		// initialize verification result
+		initializeResult(feature, contentRef);
 		
 		// # of entries
 		JarFile jar = new JarFile(jarFile);
@@ -134,6 +131,16 @@ public class JarVerifier implements IVerifier {
 			// unchecked
 		}
 		jarFileName = jarFile.getName();
+	}
+	/**
+	 * initialize verification result 
+	 */
+	private void initializeResult(IFeature feature, ContentReference contentRef) {
+		result = new JarVerificationResult();
+		result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
+		result.setResultException(null);
+		result.setFeature(feature);
+		result.setContentReference(contentRef);
 	}
 	/**
 	 * Returns true if one of the certificate exists in the keystore
@@ -204,17 +211,18 @@ public class JarVerifier implements IVerifier {
 			return result;
 
 		setMonitor(monitor);
-			if (reference instanceof JarContentReference) {
-				JarContentReference jarReference = (JarContentReference) reference;
-				try {
-					File jarFile = jarReference.asFile(); 
-					initializeVariables(jarFile, feature, reference);
-					return verify(jarFile.getAbsolutePath());
-				} catch (IOException e){
-					throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
-				}
+		if (reference instanceof JarContentReference) {
+			JarContentReference jarReference = (JarContentReference) reference;
+			try {
+				File jarFile = jarReference.asFile(); 
+				initializeVariables(jarFile, feature, reference);
+				return verify(jarFile.getAbsolutePath());
+			} catch (IOException e){
+				throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
 			}
-	
+		} else
+			initializeResult(feature, reference);
+			
 		result.setVerificationCode(IVerificationResult.TYPE_ENTRY_UNRECOGNIZED);
 		return result;
 	}

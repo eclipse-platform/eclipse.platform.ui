@@ -48,7 +48,19 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 				provider.getNonPluginEntryArchiveReferences(nonPluginEntries[i], this.monitor);
 			IVerificationResult result;
 			for (int j = 0; j < archives.length; j++) {
-				result = verifier.verify(this.feature, archives[j], this.monitor);
+
+				// see if the data entry is a jar
+				ContentReference archive = archives[j];
+				if (!(archives[j] instanceof JarContentReference)
+					&& archives[j].getIdentifier().endsWith(".jar")) {
+					try {
+						archive =
+							new JarContentReference(archives[j].getIdentifier(), archives[j].asFile());
+					} catch (IOException e) {
+					}
+				}
+
+				result = verifier.verify(this.feature, archive, this.monitor);
 				if (result != null)
 					promptForVerification(result, listener);
 			}
