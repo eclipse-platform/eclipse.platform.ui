@@ -34,6 +34,7 @@ class ChooseMatcherDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void dispose() {
+		// nothing to do
 	}
 
 	public Menu getMenu(Menu parent) {

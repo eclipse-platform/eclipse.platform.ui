@@ -35,7 +35,7 @@ public class MessageLine extends CLabel {
 	private RGB fErrorRGB;
 	private Color fErrorColor;
 
-	/**
+	/*
 	 * Creates a new message line as a child of the given parent.
 	 * Error message will be shown in <code>RED</code>.
 	 */
@@ -43,7 +43,7 @@ public class MessageLine extends CLabel {
 		this(parent, SWT.LEFT);
 	}
 
-	/**
+	/*
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
 	 * Error message will be shown in  <code>RED</code>.
 	 */
@@ -53,7 +53,7 @@ public class MessageLine extends CLabel {
 		fErrorRGB= fgDefaultErrorRGB;
 	}
 
-	/**
+	/*
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
 	 * Error message will be shown with in the given rgb color.
 	 */
@@ -94,7 +94,7 @@ public class MessageLine extends CLabel {
 		return fMessageText;
 	}
 
-	/**
+	/*
 	 * Sets the default error color used by all message lines.
 	 * Note: a call to this method only affects newly created MessageLines not existing ones. 
 	 */
@@ -102,7 +102,7 @@ public class MessageLine extends CLabel {
 		fgDefaultErrorRGB= color;
 	}
 
-	/**
+	/*
 	 * Display the given error message. A currently displayed message
 	 * is saved and will be redisplayed when the error message is cleared.
 	 */
@@ -125,7 +125,7 @@ public class MessageLine extends CLabel {
 		}
 	}
 
-	/**
+	/*
 	 * Set the message text. If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
 	 */

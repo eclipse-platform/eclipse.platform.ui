@@ -76,15 +76,17 @@ public abstract class AbstractMatching {
 
 	/* returns index of node x in fNLeft */
 	protected int indexOfLN (XMLNode x) {
-		int i;
-		for (i=0; (i<fNLeft.size()) && (fNLeft.elementAt(i) != x); i++);
+		int i= 0;
+		while ((i<fNLeft.size()) && (fNLeft.elementAt(i) != x))
+			i++;
 		return i;
 	}
 	
 	/* returns index of node y in fNRight */
 	protected int indexOfRN (XMLNode y) {
-		int j;
-		for (j=0; (j<fNRight.size()) && (fNRight.elementAt(j) != y); j++);
+		int j= 0;
+		while ((j<fNRight.size()) && (fNRight.elementAt(j) != y))
+			j++;
 		return j;
 	}
 
@@ -264,49 +266,45 @@ public abstract class AbstractMatching {
 				if ( x.getSignature().equals(y.getSignature()) ) {
 					ret= 0;
 					fDT[index_x][index_y] = ret;
-					return ret;
 				} else {
 					ret= 2;
 					fDT[index_x][index_y] = ret;
-					return ret;
 				}
+				return ret;
 			} else if (x.getXMLType() == XMLStructureCreator.TYPE_ATTRIBUTE || x.getXMLType() == XMLStructureCreator.TYPE_TEXT) {
 				if ( x.getSignature().equals(y.getSignature()) ) {
 					if (x.getValue().equals(y.getValue())) {
 						ret= 0;
 						fDT[index_x][index_y] = ret;
-						return ret;
 					} else {
 						ret= 1;
 						fDT[index_x][index_y] = ret;
-						return ret;
 					}
-				}
-				else {
+				} else {
 					ret= 2;
 					fDT[index_x][index_y] = ret;
-					return ret;
 				}
+				return ret;
 			}
 		} else {//x or y are not leaves
 			if ( !x.getSignature().equals(y.getSignature()) ) {
 				ret= countNodes(x) + countNodes(y);
 				fDT[index_x][index_y] = ret;
 				return ret;
-			} else {//x.getSignature().equals(y.getSignature())
-				if (isLeaf(x)) {
-					ret= countNodes(y)-1;
-					fDT[index_x][index_y] = ret;
-					return ret;
-				}
-				if (isLeaf(y)) {
-					ret= countNodes(x)-1;
-					fDT[index_x][index_y] = ret;
-					return ret;
-				}
-				//both x and y have children
-				return handleXandYnotLeaves(x,y);
 			}
+			//x.getSignature().equals(y.getSignature())
+			if (isLeaf(x)) {
+				ret= countNodes(y)-1;
+				fDT[index_x][index_y] = ret;
+				return ret;
+			}
+			if (isLeaf(y)) {
+				ret= countNodes(x)-1;
+				fDT[index_x][index_y] = ret;
+				return ret;
+			}
+			//both x and y have children
+			return handleXandYnotLeaves(x,y);
 		}
 		return ret;
 	}

@@ -33,7 +33,7 @@ import org.eclipse.jface.util.Assert;
  */
 public class SWTUtil {
 	
-	/**
+	/*
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated disaply. If so, this
 	 * display is returned. Otherwise the method returns the default display.
@@ -46,7 +46,7 @@ public class SWTUtil {
 		return display;		
 	}
 	
-	/**
+	/*
 	 * Returns the shell for the given widget. If the widget doesn't represent
 	 * a SWT object that manage a shell, <code>null</code> is returned.
 	 * 
@@ -64,12 +64,10 @@ public class SWTUtil {
 		if (widget instanceof Menu)
 			return ((Menu)widget).getParent().getShell();
 		if (widget instanceof ScrollBar)
-			return ((ScrollBar)widget).getParent().getShell();
-							
+			return ((ScrollBar)widget).getParent().getShell();			
 		return null;	
 	}
 	
-		
 	private static double getVerticalDialogUnitSize(Control control) {
 		GC gc= new GC(control);
 		try {
@@ -90,36 +88,35 @@ public class SWTUtil {
 		}
 	}	
 	
-	
-	/**
+	/*
 	 * @see DialogPage#convertHeightInCharsToPixels
 	 */
 	public static int convertHeightInCharsToPixels(int chars, Control control) {
 		return convertVerticalDLUsToPixels(chars * 8, control);
 	}
 
-	/**
+	/*
 	 * @see DialogPage#convertHorizontalDLUsToPixels
 	 */
 	public static int convertHorizontalDLUsToPixels(int dlus, Control control) {
 		return (int)Math.round(dlus * getHorizontalDialogUnitSize(control));
 	}
 
-	/**
+	/*
 	 * @see DialogPage#convertVerticalDLUsToPixels
 	 */
 	public static int convertVerticalDLUsToPixels(int dlus, Control control) {
 		return (int)Math.round(dlus * getVerticalDialogUnitSize(control));
 	}
 	
-	/**
+	/*
 	 * @see DialogPage#convertWidthInCharsToPixels
 	 */
 	public static int convertWidthInCharsToPixels(int chars, Control control) {
 		return convertHorizontalDLUsToPixels(chars * 4, control);
 	}
 	
-	/**
+	/*
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
@@ -127,14 +124,14 @@ public class SWTUtil {
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
-	/**
+	/*
 	 * Returns a height hint for a button control.
 	 */		
-	public static int getButtonHeigthHint(Button button) {
-		return convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT, button);
-	}		
+//	public static int getButtonHeigthHint(Button button) {
+//		return convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT, button);
+//	}		
 
-	/**
+	/*
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
@@ -145,7 +142,7 @@ public class SWTUtil {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).heightHint= getButtonHeigthHint(button);
+			//((GridData)gd).heightHint= getButtonHeigthHint(button);
 			((GridData)gd).widthHint= getButtonWidthHint(button);		 
 		}
 	}

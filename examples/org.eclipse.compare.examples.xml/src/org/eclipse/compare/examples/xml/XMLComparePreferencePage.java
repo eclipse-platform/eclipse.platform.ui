@@ -162,7 +162,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		});
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, fAddIdMapButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		fAddIdMapButton.setLayoutData(data);
@@ -176,7 +176,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		});
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, fAddIdMapButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		fRenameIdMapButton.setLayoutData(data);
@@ -190,7 +190,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		});
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 			widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, fRemoveIdMapButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		fRemoveIdMapButton.setLayoutData(data);
@@ -206,7 +206,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		});
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, fEditIdMapButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		fEditIdMapButton.setLayoutData(data);
@@ -373,8 +373,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	private static GridData getButtonGridData(Button button) {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint= SWTUtil.getButtonWidthHint(button);
-		data.heightHint= SWTUtil.getButtonHeigthHint(button);
-	
+		//data.heightHint= SWTUtil.getButtonHeigthHint(button);
 		return data;
 	}
 	
@@ -383,6 +382,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	}
 
 	public void handleEvent(Event event) {
+		// empty implementation
 	}
 
 	private void addIdMap(Shell shell) {
@@ -618,9 +618,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	protected TableItem newIdMapsTableItem(IdMap idmap, boolean selected) {
 		//find index where to insert table entry
 		TableItem[] items = fIdMapsTable.getItems();
-		int i;
-		for (i=0; i<items.length && idmap.getName().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
-			/*empty*/ ;
+		int i= 0;
+		while (i<items.length && idmap.getName().compareToIgnoreCase(items[i].getText(0)) > 0)
+			i++;
 		TableItem item = new TableItem(fIdMapsTable, SWT.NULL, i);
 		String[] values = new String[] {idmap.getName(), (idmap.isInternal())?XMLCompareMessages.getString("XMLComparePreference.topTableColumn2internal"):XMLCompareMessages.getString("XMLComparePreference.topTableColumn2user"),idmap.getExtension()}; //$NON-NLS-2$ //$NON-NLS-1$
 		item.setText(values);
@@ -635,9 +635,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	
 	protected TableItem newMappingsTableItem(Mapping mapping, boolean selected) {
 		TableItem[] items = fMappingsTable.getItems();
-		int i;
-		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
-			/*empty*/ ;
+		int i= 0;
+		while (i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0)
+			i++;
 		TableItem item = new TableItem(fMappingsTable, SWT.NULL, i);
 		String idtext = mapping.getIdAttribute();
 		String idtype;
@@ -658,9 +658,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 	protected TableItem newOrderedTableItem(Mapping mapping, boolean selected) {
 		TableItem[] items = fOrderedTable.getItems();
-		int i;
-		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
-			/*empty*/ ;
+		int i= 0;
+		while (i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0)
+			i++;
 
 		TableItem item = new TableItem(fOrderedTable, SWT.NULL, i);
 		
@@ -755,7 +755,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		idmap.setOrdered(Ordered);
 	}
 
-	/**
+	/*
 	 * @see IWorkbenchPreferencePage#performDefaults
 	 */	
 	public boolean performOk() {

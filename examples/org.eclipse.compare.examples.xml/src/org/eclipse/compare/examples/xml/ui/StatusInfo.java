@@ -42,42 +42,42 @@ public class StatusInfo implements IStatus {
 		fSeverity= severity;
 	}		
 	
-	/**
+	/*
 	 *  Returns if the status' severity is OK.
 	 */
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
 
-	/**
+	/*
 	 *  Returns if the status' severity is WARNING.
 	 */	
 	public boolean isWarning() {
 		return fSeverity == IStatus.WARNING;
 	}
 
-	/**
+	/*
 	 *  Returns if the status' severity is INFO.
 	 */	
 	public boolean isInfo() {
 		return fSeverity == IStatus.INFO;
 	}	
 
-	/**
+	/*
 	 *  Returns if the status' severity is ERROR.
 	 */	
 	public boolean isError() {
 		return fSeverity == IStatus.ERROR;
 	}
 	
-	/**
+	/*
 	 * @see IStatus#getMessage
 	 */
 	public String getMessage() {
 		return fStatusMessage;
 	}
 	
-	/**
+	/*
 	 * Sets the status to ERROR.
 	 * @param The error message (can be empty, but not null)
 	 */	
@@ -87,7 +87,7 @@ public class StatusInfo implements IStatus {
 		fSeverity= IStatus.ERROR;
 	}
 
-	/**
+	/*
 	 * Sets the status to WARNING.
 	 * @param The warning message (can be empty, but not null)
 	 */		
@@ -97,7 +97,7 @@ public class StatusInfo implements IStatus {
 		fSeverity= IStatus.WARNING;
 	}
 
-	/**
+	/*
 	 * Sets the status to INFO.
 	 * @param The info message (can be empty, but not null)
 	 */		
@@ -107,7 +107,7 @@ public class StatusInfo implements IStatus {
 		fSeverity= IStatus.INFO;
 	}	
 
-	/**
+	/*
 	 * Sets the status to OK.
 	 */		
 	public void setOK() {

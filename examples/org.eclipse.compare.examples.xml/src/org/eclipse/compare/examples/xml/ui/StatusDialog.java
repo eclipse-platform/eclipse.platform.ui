@@ -38,14 +38,14 @@ public abstract class StatusDialog extends Dialog {
 	private String fTitle;
 	private Image fImage;
 	
-	/**
+	/*
 	 * Creates an instane of a status dialog.
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
 	}
 	
-	/**
+	/*
 	 * Specifies whether status line appears to the left of the buttons (default)
 	 * or above them.
 	 *
@@ -53,9 +53,10 @@ public abstract class StatusDialog extends Dialog {
 	 * 	<code>false</code> to the right
 	 */
 	public void setStatusLineAboveButtons(boolean aboveButtons) {
+		// empty default implementation
 	}	
 	
-	/**
+	/*
 	 * Update the dialog's status line to reflect the given status.
 	 * It is save to call this method before the dialog has been opened.
 	 */
@@ -67,8 +68,7 @@ public abstract class StatusDialog extends Dialog {
 		}
 	}
 	
-	// 1GFCRWW: ITPJUI:ALL - Compile errors in VA/Java
-	/**
+	/*
 	 * Returns the last status.
 	 */
 	public IStatus getStatus() {

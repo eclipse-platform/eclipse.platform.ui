@@ -29,12 +29,12 @@ public class AttributesImpl implements Attributes {
 	private int fLength;
 
 
-	/** Returns the number of attributes. */
+	/* Returns the number of attributes. */
 	public int getLength() {
 		return fLength;
 	}
 
-	/** Returns the index of the specified attribute. */
+	/* Returns the index of the specified attribute. */
 	public int getIndex(String raw) {
 		ListNode place= fHead;
 		int index= 0;
@@ -48,7 +48,7 @@ public class AttributesImpl implements Attributes {
 		return -1;
 	}
 
-	/** Returns the index of the specified attribute. */
+	/* Returns the index of the specified attribute. */
 	public int getIndex(String uri, String local) {
 		ListNode place= fHead;
 		int index= 0;
@@ -62,21 +62,21 @@ public class AttributesImpl implements Attributes {
 		return -1;
 	}
 
-	/** Returns the attribute URI by index. */
+	/* Returns the attribute URI by index. */
 	public String getURI(int index) {
 
 		ListNode node= getListNodeAt(index);
 		return node != null ? node.uri : null;
 	}
 
-	/** Returns the attribute local name by index. */
+	/* Returns the attribute local name by index. */
 	public String getLocalName(int index) {
 
 		ListNode node= getListNodeAt(index);
 		return node != null ? node.local : null;
 	}
 
-	/** Returns the attribute raw name by index. */
+	/* Returns the attribute raw name by index. */
 	public String getQName(int index) {
 
 		ListNode node= getListNodeAt(index);
@@ -84,14 +84,14 @@ public class AttributesImpl implements Attributes {
 
 	}
 
-	/** Returns the attribute type by index. */
+	/* Returns the attribute type by index. */
 	public String getType(int index) {
 
 		ListNode node= getListNodeAt(index);
 		return (node != null) ? node.type : null;
 	}
 
-	/** Returns the attribute type by uri and local. */
+	/* Returns the attribute type by uri and local. */
 	public String getType(String uri, String local) {
 
 		ListNode node= getListNode(uri, local);
@@ -99,40 +99,40 @@ public class AttributesImpl implements Attributes {
 
 	}
 
-	/** Returns the attribute type by raw name. */
+	/* Returns the attribute type by raw name. */
 	public String getType(String raw) {
 
 		ListNode node= getListNode(raw);
 		return (node != null) ? node.type : null;
 	}
 
-	/** Returns the attribute value by index. */
+	/* Returns the attribute value by index. */
 	public String getValue(int index) {
 
 		ListNode node= getListNodeAt(index);
 		return (node != null) ? node.value : null;
 	}
 
-	/** Returns the attribute value by uri and local. */
+	/* Returns the attribute value by uri and local. */
 	public String getValue(String uri, String local) {
 
 		ListNode node= getListNode(uri, local);
 		return (node != null) ? node.value : null;
 	}
 
-	/** Returns the attribute value by raw name. */
+	/* Returns the attribute value by raw name. */
 	public String getValue(String raw) {
 
 		ListNode node= getListNode(raw);
 		return (node != null) ? node.value : null;
 	}
 
-	/** Adds an attribute. */
+	/* Adds an attribute. */
 	public void addAttribute(String raw, String type, String value) {
 		addAttribute(null, null, raw, type, value);
 	}
 
-	/** Adds an attribute. */
+	/* Adds an attribute. */
 	public void addAttribute(
 		String uri,
 		String local,
@@ -150,7 +150,7 @@ public class AttributesImpl implements Attributes {
 		fLength++;
 	}
 
-	/** Inserts an attribute. */
+	/* Inserts an attribute. */
 	public void insertAttributeAt(
 		int index,
 		String raw,
@@ -159,7 +159,7 @@ public class AttributesImpl implements Attributes {
 		insertAttributeAt(index, null, null, raw, type, value);
 	}
 
-	/** Inserts an attribute. */
+	/* Inserts an attribute. */
 	public void insertAttributeAt(
 		int index,
 		String uri,
@@ -187,7 +187,7 @@ public class AttributesImpl implements Attributes {
 		fLength++;
 	}
 
-	/** Removes an attribute. */
+	/* Removes an attribute. */
 	public void removeAttributeAt(int index) {
 
 		if (fLength == 0)
@@ -212,17 +212,17 @@ public class AttributesImpl implements Attributes {
 		}
 	}
 
-	/** Removes the specified attribute. */
+	/* Removes the specified attribute. */
 	public void removeAttribute(String raw) {
 		removeAttributeAt(getIndex(raw));
 	}
 
-	/** Removes the specified attribute. */
+	/* Removes the specified attribute. */
 	public void removeAttribute(String uri, String local) {
 		removeAttributeAt(getIndex(uri, local));
 	}
 
-	/** Returns the node at the specified index. */
+	/* Returns the node at the specified index. */
 	private ListNode getListNodeAt(int i) {
 
 		for (ListNode place= fHead; place != null; place= place.next) {
@@ -233,7 +233,7 @@ public class AttributesImpl implements Attributes {
 		return null;
 	}
 
-	/** Returns the first node with the specified uri and local. */
+	/* Returns the first node with the specified uri and local. */
 	public ListNode getListNode(String uri, String local) {
 
 		if (uri != null && local != null) {
@@ -251,7 +251,7 @@ public class AttributesImpl implements Attributes {
 		return null;
 	}
 
-	/** Returns the first node with the specified raw name. */
+	/* Returns the first node with the specified raw name. */
 	private ListNode getListNode(String raw) {
 
 		if (raw != null) {
@@ -265,7 +265,7 @@ public class AttributesImpl implements Attributes {
 		return null;
 	}
 
-	/** Returns a string representation of this object. */
+	/* Returns a string representation of this object. */
 	public String toString() {
 		StringBuffer str= new StringBuffer();
 
@@ -284,7 +284,7 @@ public class AttributesImpl implements Attributes {
 		return str.toString();
 	}
 
-	/**
+	/*
 	 * An attribute node.
 	 */
 	static class ListNode {
@@ -307,7 +307,7 @@ public class AttributesImpl implements Attributes {
 		/** Next node. */
 		public ListNode next;
 
-		/** Constructs a list node. */
+		/* Constructs a list node. */
 		public ListNode(
 			String uri0,
 			String local0,
@@ -323,7 +323,7 @@ public class AttributesImpl implements Attributes {
 
 		}
 
-		/** Returns string representation of this object. */
+		/* Returns string representation of this object. */
 		public String toString() {
 			return raw != null ? raw : local;
 		}

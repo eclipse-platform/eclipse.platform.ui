@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.examples.xml;
 
-/** This class is used to represent a particular id mapping or ordered entry in the XML Compare preference page
+/**
+ * This class is used to represent a particular id mapping or ordered entry in the XML Compare preference page
  */
 public class Mapping {
 
@@ -85,7 +86,6 @@ public class Mapping {
 	public static String getKey(String signature, String element) {
 		if (signature == "") //$NON-NLS-1$
 			return XMLStructureCreator.ROOT_ID + XMLStructureCreator.SIGN_SEPARATOR + element + XMLStructureCreator.SIGN_SEPARATOR;
-		else
-			return XMLStructureCreator.ROOT_ID + XMLStructureCreator.SIGN_SEPARATOR + signature + XMLStructureCreator.SIGN_SEPARATOR + element + XMLStructureCreator.SIGN_SEPARATOR;
+		return XMLStructureCreator.ROOT_ID + XMLStructureCreator.SIGN_SEPARATOR + signature + XMLStructureCreator.SIGN_SEPARATOR + element + XMLStructureCreator.SIGN_SEPARATOR;
 	}
 }

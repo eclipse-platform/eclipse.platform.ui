@@ -37,7 +37,7 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 	private Button fIdTypeAttributeButton;
 	private Button fIdTypeChildBodyButton;
 	
-	/**
+	/*
 	 * Constructs a new edit mapping dialog.
 	 */		
 	public XMLCompareEditMappingDialog(Shell parent, Mapping mapping, HashMap idmapHM, boolean edit) {
@@ -63,7 +63,7 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 	 *
 	 * Subclasses should override.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param ancestor the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */	
 	protected Control createDialogArea(Composite ancestor) {

@@ -17,10 +17,10 @@ public class XMLCompareMessages {
 
 	private static final String BUNDLE_NAME= "org.eclipse.compare.examples.xml.xmlcompare"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private XMLCompareMessages() {
+		// nothing to do
 	}
 
 	public static String getString(String key) {

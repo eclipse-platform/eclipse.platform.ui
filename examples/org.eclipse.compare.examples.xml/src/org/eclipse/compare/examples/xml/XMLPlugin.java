@@ -25,6 +25,7 @@ import org.eclipse.jface.util.ListenerList;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.BundleContext;
 
 /**
  * This class is the plug-in runtime class for the 
@@ -33,8 +34,6 @@ import org.eclipse.core.runtime.*;
  */
 public final class XMLPlugin extends AbstractUIPlugin {
 	
-	private ListenerList fViewers;
-
 	public static final String PLUGIN_ID= "org.eclipse.compare.examples.xml"; //$NON-NLS-1$
 
 	private static final String ID_MAPPING_EXTENSION_POINT= "idMapping"; //$NON-NLS-1$
@@ -67,6 +66,9 @@ public final class XMLPlugin extends AbstractUIPlugin {
 	private HashMap fIdExtensionToName;
 	private HashMap fOrderedElementsInternal;
 	private HashMap fOrderedElements;
+	
+	private ListenerList fViewers= new ListenerList();
+
 
 	/**
 	 * Creates the <code>XMLPlugin</code> object and registers all
@@ -75,15 +77,16 @@ public final class XMLPlugin extends AbstractUIPlugin {
 	 * <p>
 	 * Note that instances of plug-in runtime classes are automatically created 
 	 * by the platform in the course of plug-in activation.
-	 * </p>
-	 *
-	 * @param descriptor the plug-in descriptor
 	 */
-	public XMLPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public XMLPlugin() {
+		super();
+		Assert.isTrue(fgXMLPlugin == null);
 		fgXMLPlugin= this;
-		fViewers = new ListenerList();
-
+	}
+	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		
 		CompareUI.removeAllStructureViewerAliases(DEFAULT_PREFIX);
 		initPrefStore();
 		CompareUI.registerImageDescriptor(IMAGE_TYPE_PREFIX + XMLStructureCreator.TYPE_ELEMENT, getImageDescriptor("obj16/element_obj.gif")); //$NON-NLS-1$
@@ -95,7 +98,9 @@ public final class XMLPlugin extends AbstractUIPlugin {
 		
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
 		
-		URL installURL= getDescriptor().getInstallURL();
+		//URL installURL= getDescriptor().getInstallURL();
+		
+		URL installURL= fgXMLPlugin.getBundle().getEntry("/"); //$NON-NLS-1$
 		if (installURL != null) {
 			try {
 				URL url= new URL(installURL, "icons/full/" + relativePath); //$NON-NLS-1$
@@ -176,7 +181,7 @@ public final class XMLPlugin extends AbstractUIPlugin {
 
 	}
 	
-	/**
+	/*
 	 * Updates the user Id Mappings, the IdExtensionToName mappings and refreshes the preference store.
 	 * @param IdMap the new Id Mappings
 	 * @param IdExtensionToName the new IdExtensionToName mappings
@@ -268,7 +273,7 @@ public final class XMLPlugin extends AbstractUIPlugin {
 	 * that are found in plugin.xml files.
 	 */
 	private void registerExtensions() {
-		IPluginRegistry registry= Platform.getPluginRegistry();
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		
 		// collect all Id Mappings
 		IConfigurationElement[] idmaps= registry.getConfigurationElementsFor(PLUGIN_ID, ID_MAPPING_EXTENSION_POINT);
@@ -348,8 +353,7 @@ public final class XMLPlugin extends AbstractUIPlugin {
 			});
 			return windowRef.window;
 		}
-		else
-			return window;
+		return window;
 	}
 
 	private static class WindowRef {
@@ -389,7 +393,6 @@ public final class XMLPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
-
 }

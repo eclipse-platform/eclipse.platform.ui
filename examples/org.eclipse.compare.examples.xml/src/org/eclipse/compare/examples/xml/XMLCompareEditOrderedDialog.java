@@ -37,7 +37,7 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 	private Text fElementText;
 	private Text fSignatureText;
 
-	/**
+	/*
 	 * Constructs a new edit mapping dialog.
 	 */		
 	public XMLCompareEditOrderedDialog(Shell parent, Mapping mapping, ArrayList idmapAL, boolean edit) {
@@ -63,7 +63,7 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 	 *
 	 * Subclasses should override.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param ancestor the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */	
 	protected Control createDialogArea(Composite ancestor) {

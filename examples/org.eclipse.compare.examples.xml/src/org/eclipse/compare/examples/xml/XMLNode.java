@@ -53,7 +53,7 @@ public class XMLNode extends DocumentRangeNode implements ITypedElement {
 		return fValue;
 	}
 
-	/**
+	/*
 	 * @see ITypedElement#getName
 	 */
 	public String getName() {
@@ -66,7 +66,7 @@ public class XMLNode extends DocumentRangeNode implements ITypedElement {
 		fName= name;
 	}
 
-	/**
+	/*
 	 * Every xml node is of type "txt" so that the builtin TextMergeViewer is used automatically.
 	 * @see ITypedElement#getType
 	 */
@@ -77,18 +77,14 @@ public class XMLNode extends DocumentRangeNode implements ITypedElement {
 	public void setIsOrderedChild(boolean isOrderedChild) {
 		fOrderedChild= isOrderedChild;
 	}
-	/**
+	
+	/*
 	 * @see ITypedElement#getImage
 	 */
 	public Image getImage() {
 		if (fOrderedChild)
-			return CompareUI.getImage(
-				XMLPlugin.IMAGE_TYPE_PREFIX
-					+ XMLStructureCreator.TYPE_ELEMENT
-					+ XMLPlugin.IMAGE_TYPE_ORDERED_SUFFIX);
-		else
-			return CompareUI.getImage(
-				XMLPlugin.IMAGE_TYPE_PREFIX + getXMLType());
+			return CompareUI.getImage(XMLPlugin.IMAGE_TYPE_PREFIX + XMLStructureCreator.TYPE_ELEMENT + XMLPlugin.IMAGE_TYPE_ORDERED_SUFFIX);
+		return CompareUI.getImage(XMLPlugin.IMAGE_TYPE_PREFIX + getXMLType());
 	}
 
 	public void setParent(XMLNode parent0) {
@@ -135,7 +131,7 @@ public class XMLNode extends DocumentRangeNode implements ITypedElement {
 		return false;
 	}
 
-	/**
+	/*
 	 * Returns true if the subtree rooted at this node is equals to the subtree rooted at <code>obj</code>
 	 */
 	public boolean subtreeEquals(Object obj) {

@@ -58,7 +58,7 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 	 *
 	 * Subclasses should override.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param ancestor the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */		
 	protected Control createDialogArea(Composite ancestor) {

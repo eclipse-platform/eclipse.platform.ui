@@ -107,7 +107,7 @@ public class XMLStructureCreator implements IStructureCreator {
 
         // DocumentHandler methods
         
-        /** Processing instruction. */
+        /* Processing instruction. */
         public void processingInstruction(String target, String data) {
 
             //    	System.out.println("target: " + target);
@@ -128,7 +128,7 @@ public class XMLStructureCreator implements IStructureCreator {
             prevlocator= new LocatorImpl(locator);
         }
 
-        /** Start element. */
+        /* Start element. */
         public void startElement(String uri, String local, String raw, Attributes attrs) {
             XMLNode currentElement;
 
@@ -309,7 +309,7 @@ public class XMLStructureCreator implements IStructureCreator {
             prevlocator= new LocatorImpl(locator);
         }
 
-        /** Characters. */
+        /* Characters. */
         public void characters(char ch[], int start, int length) {
             if (!ignoreBodies) {
                 //			String chars = (new String(ch, start, length)).trim();
@@ -368,7 +368,7 @@ public class XMLStructureCreator implements IStructureCreator {
             prevlocator= new LocatorImpl(locator);
         }
 
-        /** Ignorable whitespace. */
+        /* Ignorable whitespace. */
         public void ignorableWhitespace(char ch[], int start, int length) {
             //
             //// characters(ch, start, length);
@@ -377,7 +377,7 @@ public class XMLStructureCreator implements IStructureCreator {
             prevlocator= new LocatorImpl(locator);
         }
 
-        /** End element. */
+        /* End element. */
         public void endElement(String uri, String local, String raw) {
             if (XMLStructureCreator.DEBUG_MODE)
                 System.out.println("\nExiting element " + fcurrentParent.getId()); //$NON-NLS-1$
@@ -452,21 +452,21 @@ public class XMLStructureCreator implements IStructureCreator {
         // ErrorHandler methods
         //
 
-        /** Warning. */
+        /* Warning. */
         public void warning(SAXParseException ex) {
             System.err.println("[Warning] " + //$NON-NLS-1$
                     getLocationString(ex) + ": " + //$NON-NLS-1$
                     ex.getMessage());
         }
 
-        /** Error. */
+        /* Error. */
         public void error(SAXParseException ex) {
             System.err.println("[Error] " + //$NON-NLS-1$
                     getLocationString(ex) + ": " + //$NON-NLS-1$
                     ex.getMessage());
         }
 
-        /** Fatal error. */
+        /* Fatal error. */
         public void fatalError(SAXParseException ex) throws SAXException {
             System.err.println("[Fatal Error] " + //$NON-NLS-1$
                     getLocationString(ex) + ": " + //$NON-NLS-1$
@@ -475,7 +475,7 @@ public class XMLStructureCreator implements IStructureCreator {
             //throw ex;
         }
 
-        /** Returns a string of the location. */
+        /* Returns a string of the location. */
         private String getLocationString(SAXParseException ex) {
             StringBuffer str= new StringBuffer();
 
@@ -512,14 +512,14 @@ public class XMLStructureCreator implements IStructureCreator {
         fRemoveWhiteSpace= false;
     }
 
-    /**
+    /*
      * This title will be shown in the title bar of the structure compare pane.
      */
     public String getName() {
         return DEFAULT_NAME;
     }
 
-    /**
+    /*
      * Set File extension of the parsed file. This extension will be used to choose an Id Map scheme.
      */
     public void setFileExtension(String ext) {
@@ -554,7 +554,7 @@ public class XMLStructureCreator implements IStructureCreator {
             fOrdered= (ArrayList) fOrderedElementsInternal.get(fIdMapToUse);
     }
 
-    /**
+    /*
      * Returns the XML parse tree of the input.
      */
     public IStructureComparator getStructure(Object input) {
@@ -629,6 +629,7 @@ public class XMLStructureCreator implements IStructureCreator {
     }
 
     public void rewriteTree(Differencer differencer, IDiffContainer root) {
+    		// nothing to do
     }
 
     public void save(IStructureComparator structure, Object input) {
@@ -678,7 +679,7 @@ public class XMLStructureCreator implements IStructureCreator {
         return readString(is, encoding);
     }
 
-    /**
+    /*
      * Returns null if an error occurred.
      */
     private static String readString(InputStream is, String encoding) {
@@ -710,8 +711,8 @@ public class XMLStructureCreator implements IStructureCreator {
         return null;
     }
 
-    /** Returns a sorted list of attributes. */
-    /* Taken from SAX2Writer sample of xerces */
+    /* Returns a sorted list of attributes.
+     */
     protected Attributes sortAttributes(Attributes attrs) {
 
         AttributesImpl attributes= new AttributesImpl();
@@ -721,9 +722,8 @@ public class XMLStructureCreator implements IStructureCreator {
             int count= attributes.getLength();
             int j= 0;
             while (j < count) {
-                if (name.compareTo(attributes.getQName(j)) < 0) {
+                if (name.compareTo(attributes.getQName(j)) < 0)
                     break;
-                }
                 j++;
             }
             attributes.insertAttributeAt(j, name, attrs.getType(i), attrs.getValue(i));
@@ -737,7 +737,8 @@ public class XMLStructureCreator implements IStructureCreator {
         fIdMapToUse= idmap_name;
     }
 
-    /** Returns the name of the IdMap Scheme that will be used to set ids.
+    /*
+     * Returns the name of the IdMap Scheme that will be used to set ids.
      */
     public String getIdMap() {
         return fIdMapToUse;

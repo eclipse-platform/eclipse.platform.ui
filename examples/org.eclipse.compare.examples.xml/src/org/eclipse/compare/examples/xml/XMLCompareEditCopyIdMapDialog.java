@@ -33,7 +33,7 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 	private Text fIdMapText;
 	private String fResult;
 
-	/**
+	/*
 	 * Constructs a new edit copy mapping dialog.
 	 */	
 	public XMLCompareEditCopyIdMapDialog(Shell parent, IdMap idmap, HashMap idmaps, HashMap idmapsInternal) {
@@ -55,7 +55,7 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 	 *
 	 * Subclasses should override.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param ancestor the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */		
 	protected Control createDialogArea(Composite ancestor) {

@@ -51,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
  * this package.
  * </p>
  *
- * @see IStructureCreator
  * @see ICompareInput
  */
 public class XMLStructureViewer extends StructureDiffViewer {
@@ -66,12 +65,6 @@ public class XMLStructureViewer extends StructureDiffViewer {
 	protected static final char SIGN_SEPARATOR=
 		XMLStructureCreator.SIGN_SEPARATOR;
 
-	/**
-	 * Creates a new viewer for the given SWT tree control with the specified configuration.
-	 *
-	 * @param tree the tree control
-	 * @param configuration the configuration for this viewer
-	 */
 	class XMLSorter extends ViewerSorter {
 
 		ArrayList fOrdered;
@@ -147,11 +140,16 @@ public class XMLStructureViewer extends StructureDiffViewer {
 			int index_b= originalTree.indexOf(b.getId());
 			if (index_a < index_b)
 				return -1;
-			else
-				return 1;
+			return 1;
 		}
 	}
 
+	/**
+	 * Creates a new viewer for the given SWT tree control with the specified configuration.
+	 *
+	 * @param tree the tree control
+	 * @param configuration the configuration for this viewer
+	 */
 	public XMLStructureViewer(Tree tree, CompareConfiguration configuration) {
 		super(tree, configuration);
 		initialize();
@@ -203,7 +201,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 		super.handleDispose(event);
 	}
 
-	/**
+	/*
 	 * Recreates the comparable structures for the input sides.
 	 */
 	protected void compareInputChanged(ICompareInput input) {
@@ -336,7 +334,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 	 * Overriden to create buttons in the viewer's pane control bar.
 	 * <p>
 	 *
-	 * @param toolbarManager the toolbar manager for which to add the buttons
+	 * @param toolBarManager the toolbar manager for which to add the buttons
 	 */
 	protected void createToolItems(ToolBarManager toolBarManager) {
 		super.createToolItems(toolBarManager);
@@ -471,7 +469,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 		}
 	}
 
-	/**
+	/*
 	 * Returns true if the current Id Map scheme has been removed.
 	 */
 	private boolean isIdMapRemoved() {
@@ -586,7 +584,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 		getXMLStructureCreator().updateIdMaps();
 	}
 
-	/**
+	/*
 	 * Tracks property changes of the configuration object.
 	 * Clients may override to track their own property changes.
 	 * In this case they must call the inherited method.
@@ -598,7 +596,5 @@ public class XMLStructureViewer extends StructureDiffViewer {
 				!getXMLStructureCreator().getRemoveWhiteSpace());
 			contentChanged();
 		}
-		//		else
-		//			super.propertyChange(event);
 	}
 }
