@@ -275,6 +275,9 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Not to be called by clients.
 	 */
 	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+		if (refreshSchedule != null) {
+			refreshSchedule.dispose();
+		}
 		this.refreshSchedule = schedule;
 	}
 	
