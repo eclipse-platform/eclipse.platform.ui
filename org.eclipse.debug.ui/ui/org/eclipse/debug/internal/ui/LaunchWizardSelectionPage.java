@@ -238,6 +238,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			projectName= DebugUIUtils.getResourceString(UNKNOWN);
 		}
 		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
+		fSetAsDefaultLauncher.pack();
 	}
 	
 	public void setVisible(boolean visible) {
