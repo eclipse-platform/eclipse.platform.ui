@@ -732,7 +732,7 @@ public class ProjectionDocument extends AbstractDocument {
 			fragment.segment= segment;
 			fMasterDocument.addPosition(fFragmentsCategory, fragment);
 			addPosition(fSegmentsCategory, segment);
-			segment.setLength(lengthInMaster);
+//			segment.setLength(lengthInMaster);
 			
 			
 			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, previousLength, fMasterDocument.get(offsetInMaster, lengthInMaster));
