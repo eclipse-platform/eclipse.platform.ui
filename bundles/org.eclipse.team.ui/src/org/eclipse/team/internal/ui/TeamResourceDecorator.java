@@ -33,12 +33,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.ui.ITeamDecorator;
 import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * TeamResourceDecorator is a general decorator for team items in a view.
@@ -49,9 +51,6 @@ public class TeamResourceDecorator extends LabelProvider implements ILabelDecora
 	protected final static String ATT_CLASS = "class";
 	protected final static String ATT_NATUREID = "natureId";
 
-	// The shell this decorator is in
-	private Shell shell;
-	
 	// The decorator registry.
 	// key = natureId
 	// value = decorator instance
@@ -275,7 +274,14 @@ public class TeamResourceDecorator extends LabelProvider implements ILabelDecora
 	 */
 	protected void postLabelEvents(final LabelProviderChangedEvent[] events) {
 		// now post the change events to the UI thread
-		fireLabelUpdates(events);		
+		// now post the change events to the UI thread
+		if (events.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					fireLabelUpdates(events);
+				}
+			});
+		}
 	} 
 	
 	/**
