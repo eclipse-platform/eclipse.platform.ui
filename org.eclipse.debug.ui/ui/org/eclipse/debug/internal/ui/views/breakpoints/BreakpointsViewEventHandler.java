@@ -76,10 +76,10 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                         }
 						viewer.getControl().setRedraw(false);
 						try {
-							for (int i = 0; i < breakpoints.length; i++) {
-							    viewer.reveal(breakpoints[i]); // Workaround to platform bug 77075
+							// This code is left in as a test case for platform bug 77075
+							//for (int i = 0; i < breakpoints.length; i++) { 
 								//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
-							}
+							//}
 							viewer.setSelection(new StructuredSelection(breakpoints));
 						} finally {
 							viewer.getControl().setRedraw(true);
