@@ -71,7 +71,11 @@ public class HelpDisplay {
 						"contextId="))) { // assume it is a query string
 			displayHelpURL(href);
 		} else // assume this is a topic
-			displayHelpURL("topic=" + URLEncoder.encode(href));
+			if (getNoframesURL(href) == null) {
+				displayHelpURL("topic=" + URLEncoder.encode(href));
+			} else {
+				displayHelpURL(getNoframesURL(href));
+			}
 	}
 
 	/**
@@ -82,13 +86,18 @@ public class HelpDisplay {
 	public void displayHelp(IContext context, IHelpResource topic) {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
-		String url =
-			"tab=links"
-				+ "&contextId="
-				+ URLEncoder.encode(getContextID(context))
-				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic.getHref()));
-		displayHelpURL(url);
+		String topicURL = getTopicURL(topic.getHref());
+		if (getNoframesURL(topicURL) == null) {
+			String url =
+				"tab=links"
+					+ "&contextId="
+					+ URLEncoder.encode(getContextID(context))
+					+ "&topic="
+					+ URLEncoder.encode(topicURL);
+			displayHelpURL(url);
+		} else {
+			displayHelpURL(getNoframesURL(topicURL));
+		}
 	}
 	/**
 	 * Display help to search view for given query
@@ -99,12 +108,16 @@ public class HelpDisplay {
 	public void displaySearch(String searchQuery, String topic) {
 		if (searchQuery == null || topic == null)
 			return;
-		String url =
-			"tab=search&"
-				+ searchQuery
-				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic));
-		displayHelpURL(url);
+		if (getNoframesURL(topic) == null) {
+			String url =
+				"tab=search&"
+					+ searchQuery
+					+ "&topic="
+					+ URLEncoder.encode(getTopicURL(topic));
+			displayHelpURL(url);
+		} else {
+			displayHelpURL(getNoframesURL(topic));
+		}
 	}
 	/**
 	 * Displays the specified url.
@@ -160,4 +173,32 @@ public class HelpDisplay {
 		*/
 		return topic;
 	}
+
+	/**
+	 * If href contains URL parameter noframes=true
+	 * return href with that paramter removed, otherwise returns null
+	 * @param href
+	 * @return String or null
+	 */
+	private String getNoframesURL(String href) {
+		if (href == null) {
+			return null;
+		}
+		int ix = href.indexOf("?noframes=true&");
+		if (ix >= 0) {
+			//remove noframes=true&
+			return href.substring(0, ix + 1)
+				+ href.substring(ix + "?noframes=true&".length());
+
+		}
+		ix = href.indexOf("noframes=true");
+		if (ix > 0) {
+			//remove &noframes=true
+			return href.substring(0, ix - 1)
+				+ href.substring(ix + "noframes=true".length());
+		}
+		// can be displayed in frames
+		return null;
+	}
+
 }
