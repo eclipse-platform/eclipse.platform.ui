@@ -93,6 +93,15 @@ public class CVSFilePropertiesPage extends PropertyPage {
 						break;
 				}
 			}
+			
+			// Permissions
+			createLabel(composite, Policy.bind("CVSFilePropertiesPage.permissions"));
+			String permissions = syncInfo.getPermissions();
+			if (permissions == null) {
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.notAvailable"));
+			} else {
+				createLabel(composite, syncInfo.getPermissions());
+			}
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 			// Display error text
