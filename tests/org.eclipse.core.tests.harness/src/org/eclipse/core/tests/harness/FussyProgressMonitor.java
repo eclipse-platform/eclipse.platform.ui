@@ -20,23 +20,24 @@ import junit.framework.AssertionFailedError;
  * Call sanityCheck() after the operation whose progress monitoring
  * you are testing.
  */
-
 public class FussyProgressMonitor extends TestProgressMonitor {
-	private static final double EPS_FACTOR = 0.01;
-	private String taskName;
-	private int totalWork;
-	private double workedSoFar = 0;
-	private boolean beginTaskCalled = false;
-	private long beginTime;
-	private static final long NOTICEABLE_DELAY = 1000; // milliseconds
-	private int doneCalls = 0;
-	private boolean sanityCheckCalled = true;
-	private boolean hasFailed = false;
 	public class FussyProgressAssertionFailed extends AssertionFailedError {
 		FussyProgressAssertionFailed(String name) {
 			super(name);
 		}
 	}
+	private static final double EPS_FACTOR = 0.01;
+	private static final long NOTICEABLE_DELAY = 1000; // milliseconds
+	private boolean beginTaskCalled = false;
+	private long beginTime;
+	private boolean canceled = false;
+	private int doneCalls = 0;
+	private boolean hasFailed = false;
+	private boolean sanityCheckCalled = true;
+	private String taskName;
+	private int totalWork;
+	private double workedSoFar = 0;
+	
 public FussyProgressMonitor() {
 	prepare();
 }
@@ -69,6 +70,7 @@ public void beginTask(String name, int totalWork) {
 	taskName = name;
 	assert("total work must be positive or UNKNOWN", totalWork > 0 || totalWork == UNKNOWN);
 	this.totalWork = totalWork;
+	beginTime = System.currentTimeMillis();
 }
 /**
  * @see IProgressMonitor#done
@@ -92,7 +94,7 @@ public void internalWorked(double work) {
  * @see IProgressMonitor#isCanceled
  */
 public boolean isCanceled() {
-	return false;
+	return canceled;
 }
 /**
  * should be called before every use of a FussyProgressMonitor
@@ -107,7 +109,6 @@ public void prepare() {
 	beginTaskCalled = false;
 	doneCalls = 0;
 	hasFailed = false;
-	beginTime = System.currentTimeMillis();
 }
 /**
  *  should be called after every use of a FussyProgressMonitor
@@ -126,7 +127,7 @@ public void sanityCheck() {
  * @see IProgressMonitor#setCanceled
  */
 public void setCanceled(boolean b) {
-	assert("1FV0BJL: Who might be calling this method?", false);
+	canceled = b;
 }
 /**
  * @see IProgressMonitor#setTaskName
