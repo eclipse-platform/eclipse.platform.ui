@@ -13,12 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
- 
- 
 /**
  * The ICVSProvider interface provides access to CVS operations that create repository locations,
  * support retrieval of repository information and import and checkout CVS modules
@@ -50,32 +44,8 @@ public interface ICVSProvider {
 	public void checkout(ICVSRepositoryLocation repository, IProject project, String sourceModule, CVSTag tag, IProgressMonitor monitor) throws TeamException;
 
 	/**
-	 * Checkout a CVS module.
-	 * 
-	 * The provided project represents the target project. Any existing contents
-	 * may or may not get overwritten. If project is <code>null</code> then a project
-	 * will be created based on the provided "module" property. If there is no
-	 * "module" property, then the project name will be used as the module to
-	 * check out. If both are absent, an exception is thrown.
-	 * 
-	 * After the successful completion of this method, the project will exist
-	 * and be open.
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 *   module The name of the module to be checked out (optional)
-	 *   tag The tag to be used in the checkout request (optional)
-	 */
-	public void checkout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
-		
-	/**
 	 * Checkout the remote resources into the local workspace. Each resource will 
-	 * be checked out into the corresponding project. If teh corresponding project is
+	 * be checked out into the corresponding project. If the corresponding project is
 	 * null or if projects is null, the name of the remote resource is used as the name of the project.
 	 */
 	public void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;

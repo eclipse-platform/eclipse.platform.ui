@@ -131,20 +131,24 @@ public class Client {
 		RequestSender requestSender = new RequestSender(connection);
 		CommandDispatcher commandDispatcher = new CommandDispatcher(responseDispatcher, requestSender);
 		
+		monitor.beginTask(null, 100);
+		
+		// Guess initialize will take 5 percent
 		if (firstTime) {
-			initialize(responseDispatcher, requestSender, connection, mRoot, monitor, messageOut);
+			initialize(responseDispatcher, requestSender, connection, mRoot, Policy.subMonitorFor(monitor, 5), messageOut);
 		}
 		
 		// register a null copy handler for silent update
 		if (Util.isOption(globalOptions, "-n"))
 			responseDispatcher.registerResponseHandler(new NullCopyHandler());
 		
+		// Guess execute will take 95 percent
 		commandDispatcher.execute(request,
 								globalOptions,
 								localOptions,
 								arguments,
 								mRoot,
-								monitor,
+								Policy.subMonitorFor(monitor, 95),
 								messageOut);
 	}
 

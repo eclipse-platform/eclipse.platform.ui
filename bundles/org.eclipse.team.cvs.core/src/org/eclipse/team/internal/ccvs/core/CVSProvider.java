@@ -171,63 +171,41 @@ public class CVSProvider implements ICVSProvider {
 				}
 			}
 			
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100);
+			
 			// Perform a checkout
+			// Checkout will take 93% of the time
 			Client.execute(
 					Client.CHECKOUT,
 					getDefaultGlobalOptions(),
 					(String[])localOptions.toArray(new String[localOptions.size()]),
 					new String[]{module},
 					root,
-					monitor,
+					Policy.subMonitorFor(monitor, 93),
 					getPrintStream(),
 					(CVSRepositoryLocation)repository,
 					null);
 					
 			// Create, open and/or refresh the project
 			if (!project.exists())
-				project.create(monitor);
+				project.create(Policy.subMonitorFor(monitor, 1));
 			if (!project.isOpen())
-				project.open(monitor);
+				project.open(Policy.subMonitorFor(monitor, 5));
 			else
-				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				project.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 5));
 						
 			// Register the project with Team
 			// (unless the project already has the proper nature from the project meta-information)
 			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
-				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
+				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, Policy.subMonitorFor(monitor, 1));
 			}
 			
 		} catch (CoreException e) {
 			throw wrapException(e);
+		} finally {
+			monitor.done();
 		}
-	}
-
-	/**
-	 * @see ICVSProvider#checkout(IProject, Properties, IProgressMonitor)
-	 */
-	public void checkout(
-		IProject project,
-		Properties configuration,
-		IProgressMonitor monitor)
-		throws TeamException {
-			
-		CVSRepositoryLocation location = buildRepository(configuration, false);
-		boolean alreadyExists = isCached(location);
-		addToCache(location);
-		try {
-			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor); //$NON-NLS-1$
-		} catch (TeamException e) {
-			// The checkout may have triggered password caching
-			// Therefore, if this is a newly created location, we want to clear its cache
-			if ( ! alreadyExists)
-				disposeRepository(location);
-			throw e;
-		}
-		// We succeeded so we should cache the password ...
-		location.updateCache();
-		// and notify listeners if the location wasn't cached before
-		if (! alreadyExists)
-			repositoryAdded(location);
 	}
 
 	/**
