@@ -78,7 +78,12 @@ public class SearchIndex {
 			doc.add(Field.Keyword("name", name));
 
 			try {
-				parser.openDocument(url);
+				try {
+					parser.openDocument(url);
+				} catch (IOException ioe) {
+					Logger.logError(Resources.getString("ES25", name), null);
+					return false;
+				}
 				ParsedDocument parsed =
 					new ParsedDocument(parser.getContentReader());
 
