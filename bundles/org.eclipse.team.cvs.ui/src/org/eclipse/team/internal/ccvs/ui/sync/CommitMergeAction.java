@@ -108,8 +108,12 @@ public class CommitMergeAction extends MergeAction {
 				}
 				manager.commit(changedResources, comment, getShell(), monitor);
 			}
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), null, null, e.getStatus());
+		} catch (final TeamException e) {
+			getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				}
+			});
 			return null;
 		}
 		return syncSet;
