@@ -82,4 +82,11 @@ public interface IFormPage extends IEditorPart {
  * <samp>false</samp> if this is a form page.
  */
 	boolean isSource();
+/**
+ * A hint to bring the provided object into focus. If the object
+ * is in a tree or table control, select it. If it is shown 
+ * on a scrollable page, ensure that it is visible.
+ * @param object object to bring into focus
+ */
+	void focusOn(Object object);
 }

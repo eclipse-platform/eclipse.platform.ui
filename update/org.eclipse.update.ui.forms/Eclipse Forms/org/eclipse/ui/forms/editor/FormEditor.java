@@ -96,7 +96,9 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		super.dispose();
 		for (int i = 0; i < pages.size(); i++) {
 			IFormPage page = (IFormPage) pages.get(i);
-			page.dispose();
+			// don't dispose source pages because they will
+			// be disposed as nested editors by the superclass
+			if (!page.isSource()) page.dispose();
 		}
 		pages = null;
 		toolkit.dispose();

@@ -70,6 +70,10 @@ public class SectionPart implements IFormPart {
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
+	
+	public IManagedForm getForm() {
+		return managedForm;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
