@@ -588,10 +588,13 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     public void setConsoleWidth(int width) {
         consoleWidth = width;
-        if (documentAdapter != null) {
-            documentAdapter.setWidth(consoleWidth);
-
-        }
+        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                if (documentAdapter != null) {
+                    documentAdapter.setWidth(consoleWidth);
+                }
+            }
+        });
     }
 
     /*
