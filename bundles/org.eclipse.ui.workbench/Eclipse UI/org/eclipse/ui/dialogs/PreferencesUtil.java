@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 /**
  * The PreferencesUtil class is the class that opens a properties or preference
  * dialog on a set of ids.
+ * @since 3.1
  */
 public final class PreferencesUtil {
 

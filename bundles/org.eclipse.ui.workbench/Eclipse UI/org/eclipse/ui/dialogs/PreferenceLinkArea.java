@@ -27,6 +27,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * The PreferenceLinkArea is the link area used to open a specific preference
  * page.
+ * @since 3.1
  */
 public class PreferenceLinkArea extends Object {
 	
