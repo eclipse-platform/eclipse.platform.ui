@@ -50,8 +50,8 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
-			if (url.toLowerCase().startsWith("file:/") //$NON-NLS-1$
-					|| url.toLowerCase().startsWith("jar:file:/")) { //$NON-NLS-1$
+			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:/") //$NON-NLS-1$
+					|| url.toLowerCase(Locale.ENGLISH).startsWith("jar:file:/")) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -86,8 +86,8 @@ public class EclipseConnector {
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-				if (url.toLowerCase().endsWith("htm") //$NON-NLS-1$
-						|| url.toLowerCase().endsWith("html")) { //$NON-NLS-1$
+				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
+						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
 					String error = errorPageBegin
 							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
 							+ errorPageEnd;

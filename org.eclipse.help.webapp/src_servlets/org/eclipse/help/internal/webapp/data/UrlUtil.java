@@ -124,7 +124,7 @@ public class UrlUtil {
         String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
         if (agent==null)
 		    return false;
-        agent=agent.toLowerCase();
+        agent=agent.toLowerCase(Locale.ENGLISH);
 		// sample substring Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
 		return agent.indexOf("bot") >= 0 || agent.indexOf("crawl") >= 0//$NON-NLS-1$ //$NON-NLS-2$
                 || request.getParameter("bot") != null;//$NON-NLS-1$
@@ -134,7 +134,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		// sample substring Gecko/20020508
 		// search for "gecko/" not to react to "like Gecko"
 		return agent.indexOf("gecko/") >= 0; //$NON-NLS-1$
@@ -144,7 +144,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 
 		// When accessing with Bobby identified Bobby return 5.5 to allow
 		// testing advanced UI as bobby cannot identifiy as IE >=5.5
@@ -161,7 +161,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return "0";
 
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		// When accessing with Bobby identified Bobby return 5.5 to allow
 		// testing advanced UI as bobby cannot identifiy as IE >=5.5
 		if (agent.startsWith("bobby/")) { //$NON-NLS-1$
@@ -182,7 +182,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase(); 
+		agent=agent.toLowerCase(Locale.ENGLISH); 
 		return agent.indexOf("konqueror") >= 0; //$NON-NLS-1$
 	}
 
@@ -190,7 +190,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		return agent.indexOf("mozilla/5") >= 0; //$NON-NLS-1$
 	}
 
@@ -198,7 +198,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return "0";
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		if (agent.indexOf("mozilla/5") < 0) //$NON-NLS-1$
 			return "0"; //$NON-NLS-1$
 		int start = agent.indexOf("rv:") + "rv:".length(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -214,7 +214,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		return agent.indexOf("opera") >= 0; //$NON-NLS-1$
 	}
 
@@ -222,7 +222,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		return agent.indexOf("safari/") >= 0; //$NON-NLS-1$
 	}
 
@@ -231,7 +231,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
 		if (agent==null)
 		    return version;
-		agent=agent.toLowerCase();
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		Matcher m = safariPatern.matcher(agent);
 		boolean matched = m.find();
 		if (matched) {
@@ -433,11 +433,11 @@ public class UrlUtil {
 			for (Iterator it = infocenterLocales.iterator(); it.hasNext();) {
 				String locale = (String) it.next();
 				if (locale.length() >= 5) {
-					locales.add(locale.substring(0, 2).toLowerCase() + "_" //$NON-NLS-1$
-							+ locale.substring(3, 5).toUpperCase());
+					locales.add(locale.substring(0, 2).toLowerCase(Locale.ENGLISH) + "_" //$NON-NLS-1$
+							+ locale.substring(3, 5).toUpperCase(Locale.ENGLISH));
 
 				} else if (locale.length() >= 2) {
-					locales.add(locale.substring(0, 2).toLowerCase());
+					locales.add(locale.substring(0, 2).toLowerCase(Locale.ENGLISH));
 				}
 			}
 		}

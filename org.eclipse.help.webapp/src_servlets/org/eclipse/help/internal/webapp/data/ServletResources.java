@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
+import java.util.*;
+
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.webapp.*;
@@ -115,7 +117,7 @@ public class ServletResources {
 		if (amp <0 || amp >= property.length() - 1) {
             return null;
         }
-		return ("" + property.charAt(amp +1)).toLowerCase(); //$NON-NLS-1$
+		return ("" + property.charAt(amp +1)).toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 	}
 
 }

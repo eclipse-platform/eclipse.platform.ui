@@ -268,7 +268,7 @@ class IndexingOperation {
 	 * @return URL to obtain document content or null
 	 */
 	private URL getIndexableURL(String url) {
-		String fileName = url.toLowerCase();
+		String fileName = url.toLowerCase(Locale.ENGLISH);
 		if (fileName.endsWith(".htm") //$NON-NLS-1$
 				|| fileName.endsWith(".html") //$NON-NLS-1$
 				|| fileName.endsWith(".txt") //$NON-NLS-1$

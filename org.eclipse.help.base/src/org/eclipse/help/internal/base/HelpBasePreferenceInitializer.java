@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 
@@ -26,7 +28,7 @@ public class HelpBasePreferenceInitializer extends
 	public void initializeDefaultPreferences() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
-		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 
 		if (os.indexOf("windows") != -1) { //$NON-NLS-1$
 			prefs

@@ -368,7 +368,7 @@ public class HTMLDocParser {
 		StringTokenizer t = new StringTokenizer(contentValue, ";"); //$NON-NLS-1$
 		while (t.hasMoreTokens()) {
 			String parameter = t.nextToken().trim();
-			if (parameter.toLowerCase().startsWith("charset=")) { //$NON-NLS-1$
+			if (parameter.toLowerCase(Locale.ENGLISH).startsWith("charset=")) { //$NON-NLS-1$
 				String charset = parameter
 						.substring("charset=".length()).trim(); //$NON-NLS-1$
 				if (charset.length() > 0) {
