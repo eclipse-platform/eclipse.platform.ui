@@ -8,8 +8,7 @@ Bundle-Activator: org.eclipse.ant.core.AntCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ant.core,
- org.eclipse.ant.internal.core,
- org.eclipse.ant.internal.core.ant
+ org.eclipse.ant.internal.core
 Require-Bundle: org.eclipse.core.variables,
  org.eclipse.core.runtime
 Eclipse-AutoStart: true

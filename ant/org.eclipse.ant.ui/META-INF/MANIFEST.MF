@@ -8,11 +8,6 @@ Bundle-Activator: org.eclipse.ant.internal.ui.AntUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ant.internal.ui,
- org.eclipse.ant.internal.ui.antsupport,
- org.eclipse.ant.internal.ui.antsupport.inputhandler,
- org.eclipse.ant.internal.ui.antsupport.logger,
- org.eclipse.ant.internal.ui.antsupport.logger.debug,
- org.eclipse.ant.internal.ui.antsupport.logger.util,
  org.eclipse.ant.internal.ui.console,
  org.eclipse.ant.internal.ui.datatransfer,
  org.eclipse.ant.internal.ui.debug,
