@@ -7,32 +7,22 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * Reports progress and checks for cancelation of a script execution.
  */
 public class ProgressBuildListener implements BuildListener {
 
-	protected Map fProjects;
-	protected Project fMainProject;
-	protected Project fParentProject;
+	protected Map projects;
+	protected Project mainProject;
+	protected Project parentProject;
 
 	/**
 	 *  Contains the progress monitor instances for the various	 *	projects in a chain.
@@ -40,58 +30,58 @@ public class ProgressBuildListener implements BuildListener {
 	protected class ProjectMonitors {
 		/**
 		 *  This field is null for the main project		 */
-		private Target fMainTarget;
-		private IProgressMonitor fMainMonitor;
-		private IProgressMonitor fTargetMonitor;
-		private IProgressMonitor fTaskMonitor;
+		private Target mainTarget;
+		private IProgressMonitor mainMonitor;
+		private IProgressMonitor targetMonitor;
+		private IProgressMonitor taskMonitor;
 		
 		protected IProgressMonitor getMainMonitor() {
-			return fMainMonitor;
+			return mainMonitor;
 		}
 
 		protected Target getMainTarget() {
-			return fMainTarget;
+			return mainTarget;
 		}
 
 		protected IProgressMonitor getTargetMonitor() {
-			return fTargetMonitor;
+			return targetMonitor;
 		}
 
 		protected IProgressMonitor getTaskMonitor() {
-			return fTaskMonitor;
+			return taskMonitor;
 		}
 
 		protected void setMainMonitor(IProgressMonitor mainMonitor) {
-			fMainMonitor = mainMonitor;
+			this.mainMonitor = mainMonitor;
 		}
 
 		protected void setMainTarget(Target mainTarget) {
-			fMainTarget = mainTarget;
+			this.mainTarget = mainTarget;
 		}
 
 		protected void setTargetMonitor(IProgressMonitor targetMonitor) {
-			fTargetMonitor = targetMonitor;
+			this.targetMonitor = targetMonitor;
 		}
 
 		protected void setTaskMonitor(IProgressMonitor taskMonitor) {
-			fTaskMonitor = taskMonitor;
+			this.taskMonitor = taskMonitor;
 		}
 
 	}
 
 	public ProgressBuildListener(Project project, List targetNames, IProgressMonitor monitor) {
-		fProjects = new HashMap();
-		fMainProject = project;
+		projects = new HashMap();
+		mainProject = project;
 		ProjectMonitors monitors = new ProjectMonitors();
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
 		monitors.setMainMonitor(monitor);
-		fProjects.put(fMainProject, monitors);
+		projects.put(mainProject, monitors);
 		Target[] targets = new Target[targetNames.size()];
 		for (int i = 0; i < targetNames.size(); i++) {
 			String targetName = (String) targetNames.get(i);
-			targets[i] = (Target) fMainProject.getTargets().get(targetName);
+			targets[i] = (Target) mainProject.getTargets().get(targetName);
 		}
 		int work = computeWork(targets);
 		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
@@ -142,7 +132,7 @@ public class ProgressBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(fMainProject);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
 		monitors.getMainMonitor().done();
 	}
 
@@ -156,7 +146,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		Target target = event.getTarget();
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(currentProject);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
 
 		// if monitors is null we are in a new script
 		if (monitors == null) {
@@ -174,16 +164,16 @@ public class ProgressBuildListener implements BuildListener {
 		monitors.setMainTarget(target);
 		int work = computeWork(new Target[] { target });
 		ProjectMonitors parentMonitors = null;
-		if (fParentProject == null) {
-			parentMonitors = (ProjectMonitors) fProjects.get(fMainProject);
+		if (parentProject == null) {
+			parentMonitors = (ProjectMonitors) projects.get(mainProject);
 			monitors.setMainMonitor(subMonitorFor(parentMonitors.getMainMonitor(), 1));
 		} else {
-			parentMonitors = (ProjectMonitors) fProjects.get(fParentProject);
-			fParentProject = null;
+			parentMonitors = (ProjectMonitors) projects.get(parentProject);
+			parentProject = null;
 			monitors.setMainMonitor(subMonitorFor(parentMonitors.getTaskMonitor(), 1));
 		}
 		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
-		fProjects.put(currentProject, monitors);
+		projects.put(currentProject, monitors);
 		return monitors;
 	}
 
@@ -196,15 +186,15 @@ public class ProgressBuildListener implements BuildListener {
 		if (currentProject == null) {
 			return;
 		}
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(currentProject);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
 		if (monitors == null) {
 			return;
 		}
 		monitors.getTargetMonitor().done();
 		// if this is not the main project test if we are done with this project
-		if ((currentProject != fMainProject) && (monitors.getMainTarget() == event.getTarget())) {
+		if ((currentProject != mainProject) && (monitors.getMainTarget() == event.getTarget())) {
 			monitors.getMainMonitor().done();
-			fProjects.remove(currentProject);
+			projects.remove(currentProject);
 		}
 	}
 
@@ -218,7 +208,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		currentProject.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(currentProject);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
 		if (monitors == null) {
 			return;
 		}
@@ -230,7 +220,7 @@ public class ProgressBuildListener implements BuildListener {
 		monitors.getTaskMonitor().beginTask("", 1);  //$NON-NLS-1$
 		// If this script is calling another one, track the project chain.
 		if (task instanceof Ant) {
-			fParentProject = currentProject;
+			parentProject = currentProject;
 		} else {
 			currentProject.addReference(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR, monitors.getTaskMonitor());
 		}
@@ -246,7 +236,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		project.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(project);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(project);
 		if (monitors == null) {
 			return;
 		}
@@ -260,7 +250,7 @@ public class ProgressBuildListener implements BuildListener {
 	}
 
 	protected void checkCanceled() {
-		ProjectMonitors monitors = (ProjectMonitors) fProjects.get(fMainProject);
+		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
 		if (monitors.getMainMonitor().isCanceled()) {
 			throw new OperationCanceledException(InternalAntMessages.getString("ProgressBuildListener.Build_cancelled._5")); //$NON-NLS-1$
 		}

@@ -14,17 +14,17 @@ import java.security.Permission;
 import org.eclipse.ant.core.AntSecurityException;
 
 /**
- * A security manager that always throws a <code>AntSecurityException</code>
+ * A security manager that always throws an <code>AntSecurityException</code>
  * if the calling thread attempts to cause the Java Virtual Machine to 
  * exit/halt.
  * Otherwise this manager just delegates to the pre-existing manager
  * passed in the constructor. */
 public class AntSecurityManager extends SecurityManager {
 
-	protected SecurityManager fSecurityManager= null;
+	protected SecurityManager securityManager= null;
 	
 	protected AntSecurityManager(SecurityManager securityManager) {
-		fSecurityManager= securityManager;
+		this.securityManager= securityManager;
 	}
 	/**
 	 * @see java.lang.SecurityManager#checkExit(int)
@@ -41,8 +41,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkAccept(java.lang.String, int)
 	 */
 	public void checkAccept(String host, int port) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkAccept(host, port);
+		if (securityManager != null) {
+			securityManager.checkAccept(host, port);
 		}
 	}
 
@@ -50,8 +50,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.Thread)
 	 */
 	public void checkAccess(Thread t) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkAccess(t);
+		if (securityManager != null) {
+			securityManager.checkAccess(t);
 		}
 	}
 
@@ -59,8 +59,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
 	 */
 	public void checkAccess(ThreadGroup g) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkAccess(g);
+		if (securityManager != null) {
+			securityManager.checkAccess(g);
 		}
 	}
 
@@ -68,8 +68,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkAwtEventQueueAccess()
 	 */
 	public void checkAwtEventQueueAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkAwtEventQueueAccess();
+		if (securityManager != null) {
+			securityManager.checkAwtEventQueueAccess();
 		}
 	}
 
@@ -77,8 +77,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int, java.lang.Object)
 	 */
 	public void checkConnect(String host, int port, Object context) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkConnect(host, port, context);
+		if (securityManager != null) {
+			securityManager.checkConnect(host, port, context);
 		}
 	}
 
@@ -86,8 +86,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int)
 	 */
 	public void checkConnect(String host, int port) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkConnect(host, port);
+		if (securityManager != null) {
+			securityManager.checkConnect(host, port);
 		}
 	}
 
@@ -95,8 +95,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkCreateClassLoader()
 	 */
 	public void checkCreateClassLoader() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkCreateClassLoader();
+		if (securityManager != null) {
+			securityManager.checkCreateClassLoader();
 		}
 	}
 
@@ -104,8 +104,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkDelete(java.lang.String)
 	 */
 	public void checkDelete(String file) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkDelete(file);
+		if (securityManager != null) {
+			securityManager.checkDelete(file);
 		}
 	}
 
@@ -113,8 +113,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkExec(java.lang.String)
 	 */
 	public void checkExec(String cmd) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkExec(cmd);
+		if (securityManager != null) {
+			securityManager.checkExec(cmd);
 		}
 	}
 
@@ -122,8 +122,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkLink(java.lang.String)
 	 */
 	public void checkLink(String lib) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkLink(lib);
+		if (securityManager != null) {
+			securityManager.checkLink(lib);
 		}
 	}
 
@@ -131,8 +131,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkListen(int)
 	 */
 	public void checkListen(int port) {
-				if (fSecurityManager != null) {
-			fSecurityManager.checkListen(port);
+				if (securityManager != null) {
+			securityManager.checkListen(port);
 		}
 
 	}
@@ -141,8 +141,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkMemberAccess(java.lang.Class, int)
 	 */
 	public void checkMemberAccess(Class clazz, int which) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkMemberAccess(clazz, which);
+		if (securityManager != null) {
+			securityManager.checkMemberAccess(clazz, which);
 		}
 
 	}
@@ -152,8 +152,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	public void checkMulticast(InetAddress maddr, byte ttl) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkMulticast(maddr, ttl);
+		if (securityManager != null) {
+			securityManager.checkMulticast(maddr, ttl);
 		}
 	}
 
@@ -161,8 +161,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress)
 	 */
 	public void checkMulticast(InetAddress maddr) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkMulticast(maddr);
+		if (securityManager != null) {
+			securityManager.checkMulticast(maddr);
 		}
 
 	}
@@ -171,8 +171,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPackageAccess(java.lang.String)
 	 */
 	public void checkPackageAccess(String pkg) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPackageAccess(pkg);
+		if (securityManager != null) {
+			securityManager.checkPackageAccess(pkg);
 		}
 	}
 
@@ -180,8 +180,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPackageDefinition(java.lang.String)
 	 */
 	public void checkPackageDefinition(String pkg) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPackageDefinition(pkg);
+		if (securityManager != null) {
+			securityManager.checkPackageDefinition(pkg);
 		}
 	}
 
@@ -189,8 +189,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
 	 */
 	public void checkPermission(Permission perm, Object context) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPermission(perm, context);
+		if (securityManager != null) {
+			securityManager.checkPermission(perm, context);
 		}
 	}
 
@@ -198,8 +198,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
 	public void checkPermission(Permission perm) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPermission(perm);
+		if (securityManager != null) {
+			securityManager.checkPermission(perm);
 		}
 	}
 
@@ -207,8 +207,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPrintJobAccess()
 	 */
 	public void checkPrintJobAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPrintJobAccess();
+		if (securityManager != null) {
+			securityManager.checkPrintJobAccess();
 		}
 	}
 
@@ -216,8 +216,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPropertiesAccess()
 	 */
 	public void checkPropertiesAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPropertiesAccess();
+		if (securityManager != null) {
+			securityManager.checkPropertiesAccess();
 		}
 	}
 
@@ -225,8 +225,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
 	 */
 	public void checkPropertyAccess(String key) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPropertyAccess(key);
+		if (securityManager != null) {
+			securityManager.checkPropertyAccess(key);
 		}
 	}
 
@@ -234,8 +234,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkRead(java.io.FileDescriptor)
 	 */
 	public void checkRead(FileDescriptor fd) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkRead(fd);
+		if (securityManager != null) {
+			securityManager.checkRead(fd);
 		}
 	}
 
@@ -243,8 +243,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String, java.lang.Object)
 	 */
 	public void checkRead(String file, Object context) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkRead(file, context);
+		if (securityManager != null) {
+			securityManager.checkRead(file, context);
 		}
 	}
 
@@ -252,8 +252,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String)
 	 */
 	public void checkRead(String file) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkRead(file);
+		if (securityManager != null) {
+			securityManager.checkRead(file);
 		}
 	}
 
@@ -261,8 +261,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkSecurityAccess(java.lang.String)
 	 */
 	public void checkSecurityAccess(String target) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkSecurityAccess(target);
+		if (securityManager != null) {
+			securityManager.checkSecurityAccess(target);
 		}
 	}
 
@@ -270,8 +270,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkSetFactory()
 	 */
 	public void checkSetFactory() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkSetFactory();
+		if (securityManager != null) {
+			securityManager.checkSetFactory();
 		}
 	}
 
@@ -279,8 +279,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkSystemClipboardAccess()
 	 */
 	public void checkSystemClipboardAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkSystemClipboardAccess();
+		if (securityManager != null) {
+			securityManager.checkSystemClipboardAccess();
 		}
 	}
 
@@ -288,8 +288,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
 	 */
 	public boolean checkTopLevelWindow(Object window) {
-		if (fSecurityManager != null) {
-			return fSecurityManager.checkTopLevelWindow(window);
+		if (securityManager != null) {
+			return securityManager.checkTopLevelWindow(window);
 		}
 		return false;
 	}
@@ -298,8 +298,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
 	 */
 	public void checkWrite(FileDescriptor fd) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkWrite(fd);
+		if (securityManager != null) {
+			securityManager.checkWrite(fd);
 		}
 	}
 
@@ -307,8 +307,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkWrite(java.lang.String)
 	 */
 	public void checkWrite(String file) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkWrite(file);
+		if (securityManager != null) {
+			securityManager.checkWrite(file);
 		}
 	}
 
@@ -356,8 +356,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	public boolean getInCheck() {
-		if (fSecurityManager != null) {
-			return fSecurityManager.getInCheck();
+		if (securityManager != null) {
+			return securityManager.getInCheck();
 		}
 		return false;
 	}
@@ -366,8 +366,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#getSecurityContext()
 	 */
 	public Object getSecurityContext() {
-		if (fSecurityManager != null) {
-			return fSecurityManager.getSecurityContext();
+		if (securityManager != null) {
+			return securityManager.getSecurityContext();
 		}
 		return null;
 	}
@@ -376,8 +376,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#getThreadGroup()
 	 */
 	public ThreadGroup getThreadGroup() {
-		if (fSecurityManager != null) {
-			fSecurityManager.getThreadGroup();
+		if (securityManager != null) {
+			securityManager.getThreadGroup();
 		}
 		return null;
 	}
