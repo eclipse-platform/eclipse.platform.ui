@@ -57,8 +57,10 @@ public class ListenerRegistry {
 		void put(String key, ListenerList value) {
 			if (key == null)
 				throw new NullPointerException();
-			if (value == null)
+			if (value == null) {
 				remove(key);
+				return;
+			}
 			// replace if exists, keeping track of an empty position
 			int emptyIndex = -1;
 			for (int i = 0; i < keys.length; i++) {
@@ -145,6 +147,13 @@ public class ListenerRegistry {
 		list.remove(listener);
 		if (list.isEmpty())
 			registry.remove(path);
+	}
+	
+	/**
+	 * Remove all of the listeners registered under the given path.
+	 */
+	public synchronized void clear(String path) {
+		registry.remove(path);
 	}
 
 }
