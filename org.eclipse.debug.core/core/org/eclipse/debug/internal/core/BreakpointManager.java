@@ -358,7 +358,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	class BreakpointManagerVisitor implements IResourceDeltaVisitor {
 		/**
-		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
@@ -394,14 +394,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
-				// this breakpoint has actually been moved - remove from the Breakpoint manager and delete
+				// This breakpoint has actually been moved - already removed
+				// from the Breakpoint manager during the remove callback
+				// Delete the marker associated with the new resource
 				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {
-							IBreakpoint breakpoint= getBreakpoint(marker);
-							if (breakpoint != null) {
-								breakpoint.delete();
-							}
+							marker.delete();
 						} catch (CoreException ce) {
 							logError(ce);
 						}
