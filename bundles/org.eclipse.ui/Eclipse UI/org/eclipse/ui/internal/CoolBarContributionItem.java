@@ -4,9 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.ui.actions.RetargetAction;
@@ -83,7 +86,23 @@ public CoolBarContributionItem(CoolBarManager parent, String id) {
 	if (parentControl != null) createControl(parentControl);
 	parent.add(this);
 }
-
+public ToolBar createControl(Composite parent) {
+	ToolBar tBar = super.createControl(parent);
+	// add support for popup menu
+	tBar.addMouseListener(new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			getParent().popupCoolBarMenu(e);
+		}
+	});
+	return tBar;
+}
+public boolean equals(Object object) {
+	if (object instanceof CoolBarContributionItem) {
+		CoolBarContributionItem item = (CoolBarContributionItem) object;
+		return id.equals(item.id);
+	}
+	return false;
+}
 /**
  * Fills the given composite control with controls representing this 
  * contribution item.  Used by <code>StatusLineManager</code>.
@@ -135,6 +154,9 @@ public IContributionManagerOverrides getOverrides() {
  */
 public CoolBarManager getParent() {
 	return parent;
+}
+public int hashCode() {
+	return id.hashCode();
 }
 /**
  * Returns whether this contribution item is allowed to be enabled 
