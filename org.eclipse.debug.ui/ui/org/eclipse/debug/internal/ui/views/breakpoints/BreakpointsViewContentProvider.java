@@ -70,7 +70,7 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof String) {
-			List list= (List) elements.get((String) parentElement);
+			List list= (List) elements.get(parentElement);
 			if (list != null) {
 				return list.toArray();
 			}
