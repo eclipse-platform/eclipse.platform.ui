@@ -71,7 +71,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private CLabel titleLabel;
 
 	private boolean fast = false;
-		private boolean showFocus = false;
+	private boolean showFocus = false;
 	// toolbars can be locked (i.e. part of the view form and 
 	// positioned inside it, or not locked (embedded in a floating
 	// toolbar that is not part of the view form
@@ -107,6 +107,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		}
 
 		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
+			toolBarResized(toolBar, newCount);
+			
 			toolBar.layout();
 			Composite parent = toolBar.getParent();
 			parent.layout();
@@ -219,7 +221,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				});
 			}
 
-			if (isCloseable()) {
+//			TODO: RCP will need a close button when views have a titlebar and no tabs etc..
+//			need to figure out how to query this combination			
+/*			if (isCloseable()) {
 				ToolItem closeButton = new ToolItem(toolbar, SWT.PUSH, index++);
 				// Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
 				Image hoverImage =
@@ -232,9 +236,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				closeButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						doHide();
-		}
+					}
 				});
-	}
+			}*/
 		}
 	}
 
@@ -445,6 +449,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	
 	}
 	
+	private void toolBarResized(ToolBar toolBar, int newSize) {
+		if (locked) {
+			if (toolBar == viewToolBar) {
+				((ViewForm2)control).setTopRight(newSize == 0 ? null :viewToolBar);
+			} else if (toolBar == isvToolBar) {
+				((ViewForm2)control).setTopCenter(newSize == 0 ? null : isvToolBar);
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 */
@@ -459,7 +473,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// View toolbar
 		viewToolBar = new ToolBar(parentControl, barStyle);
 		if (locked) {
-			((ViewForm2)parentControl).setTopRight(viewToolBar);
+			//((ViewForm2)parentControl).setTopRight(viewToolBar);
 			viewToolBar.addMouseListener(new MouseAdapter() {
 				public void mouseDoubleClick(MouseEvent event) {
 					if (viewToolBar.getItem(new Point(event.x, event.y)) == null)
@@ -489,7 +503,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		//			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
 		isvToolBar = new ToolBar(parentControl, barStyle);
 		if (locked) {
-			((ViewForm2)control).setTopCenter(isvToolBar);	
+			//((ViewForm2)control).setTopCenter(isvToolBar);	
 			isvToolBar.addMouseListener(new MouseAdapter(){
 				public void mouseDoubleClick(MouseEvent event) {
 					if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
@@ -511,6 +525,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 		}
 		setTabList();
+		// only do this once for the non-floating toolbar case.  Otherwise update colors
+		// whenever updating the tab colors
+		setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
 	}
 	
 	public void dispose() {
@@ -545,11 +562,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	/* package */
 	void drawGradient(boolean active) {
-		if (active) {
+/*		if (active) {
 			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
 		} else {
 			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
-		}
+		}*/
 		
 		if (titleLabel == null || viewToolBar == null || isvToolBar == null)
 			return;
@@ -689,16 +706,17 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	void setActive(boolean active){
 		hasFocus = active;
 		
-		if(getContainer() instanceof PartTabFolder){
-			((PartTabFolder) getContainer()).setActive(active);
-		}
-		if (active) {
+/*		if (active) {
 			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
 		} else {
 			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
-		}
+		}*/
 /*		showFloatingWindow(active, false);
-*/	}
+*/			
+		if(getContainer() instanceof PartTabFolder){
+			((PartTabFolder) getContainer()).setActive(active);
+		}
+	}
 
 	/**
 	 * @param color

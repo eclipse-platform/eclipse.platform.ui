@@ -19,8 +19,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.ColorSchemeService;
 
-import org.eclipse.jface.window.ColorSchemeService;
 
 /**
  * Class to encapsulate the set of widgets that will be used to indicate 

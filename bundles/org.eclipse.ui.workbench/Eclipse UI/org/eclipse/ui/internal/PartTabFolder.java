@@ -51,7 +51,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;
@@ -357,6 +356,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
 		ColorSchemeService.setTabColors(tabFolder);
+
 		// draw a gradient for the selected tab
 		drawGradient(false);
 		

@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.window;
+package org.eclipse.ui.internal;
+
+import java.util.List;
 
 import org.eclipse.jface.resource.JFaceColors;
 
@@ -16,8 +18,6 @@ import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
@@ -84,11 +84,9 @@ public class ColorSchemeService {
 //	}
 
 	public static void setTabColors(CTabFolder2 control) {
-		Display d = control.getDisplay();
-		control.setBackground(JFaceColors.getTabFolderBackground(d));
-		control.setForeground(JFaceColors.getTabFolderForeground(d));
-		control.setSelectionBackground(JFaceColors.getTabFolderSelectionBackground(d));
-		control.setSelectionForeground(JFaceColors.getTabFolderSelectionForeground(d));
+		control.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents(), true); 
+		control.setForeground(WorkbenchColors.getActiveViewForeground());
+			
 	}
 
 	static void setCompositeColors(Composite control) {

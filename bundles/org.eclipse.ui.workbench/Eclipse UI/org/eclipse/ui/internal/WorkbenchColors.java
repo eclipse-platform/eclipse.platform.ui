@@ -338,7 +338,11 @@ static public void startup() {
 	red = blend(base.getRed(), clr3.getRed());
 	green = blend(base.getGreen(), clr3.getGreen());
 	blue = blend(base.getBlue(), clr3.getBlue());
-	inactiveGradientBlend = new Color(display, red, green, blue);
+	// TODO: 
+	// temporarily experiment with brighter color here
+	//inactiveGradientBlend = new Color(display, red, green, blue);
+	inactiveGradientBlend = new Color(display, base.getRed(), base.getGreen(), base.getBlue()); 
+	
 		
 	systemColorMap.put(CLR_VIEW_GRAD_START, activeGradientBlend);
 	systemColorMap.put(CLR_VIEW_GRAD_END, clr2);
@@ -349,19 +353,19 @@ static public void startup() {
 
 	systemColorMap.put(CLR_NOFOCUS_EDITOR_GRAD_END, clr3);
 
-	activeEditorGradient = new Color[] {activeGradientBlend, activeGradientBlend, clr2, clr2};
-	activeEditorPercentages = new int[] {33, 66, 100};
+	activeEditorGradient = new Color[] {activeGradientBlend, clr2};
+	activeEditorPercentages = new int[] {100};
 
 	// Define active editor foreground color
 	activeEditorForeground = JFaceColors.getTabFolderSelectionForeground(Display.getDefault());
 	
 	// Define active no focus editor gradient
-	activeNoFocusEditorGradient = new Color[] {inactiveGradientBlend, inactiveGradientBlend, clr3, clr3};
+	activeNoFocusEditorGradient = new Color[] {inactiveGradientBlend, clr3};
 	activeNoFocusEditorPercentages = activeEditorPercentages;
 	
 	// Define editor gradient for deactivated window using same OS title gradient colors.
-	deactivatedEditorGradient = new Color[] {inactiveGradientBlend, clr2, null, null};
-	deactivatedEditorPercentages = new int[] {33, 66, 100};
+	deactivatedEditorGradient = new Color[] {clr3, inactiveGradientBlend};
+	deactivatedEditorPercentages = new int[] {100};
 	
 	// Define view gradient for deactivated window using same OS title gradient colors.
 	activeViewGradient = activeEditorGradient;
