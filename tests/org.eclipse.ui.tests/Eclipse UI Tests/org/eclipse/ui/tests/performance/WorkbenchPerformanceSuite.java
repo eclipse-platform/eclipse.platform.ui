@@ -36,12 +36,14 @@ class WorkbenchPerformanceSuite extends TestSuite {
 	// fingerprint test for performance that releys on this not changing.
     public static final String [] PERSPECTIVE_IDS = {
         EmptyPerspective.PERSP_ID2,
-        UIPerformanceTestSetup.PERSPECTIVE, 
+        UIPerformanceTestSetup.PERSPECTIVE1, 
         RESOURCE_PERSPID,
         "org.eclipse.jdt.ui.JavaPerspective", 
         "org.eclipse.debug.ui.DebugPerspective"};
     
     public static final String [][] PERSPECTIVE_SWITCH_PAIRS = {
+    	{UIPerformanceTestSetup.PERSPECTIVE1, UIPerformanceTestSetup.PERSPECTIVE2, "1.perf_basic"},
+		
         {"org.eclipse.ui.tests.dnd.dragdrop", "org.eclipse.ui.tests.fastview_perspective", "1.perf_basic"},
         
         // Test switching between a perspective with lots of actions and a perspective with none
@@ -82,7 +84,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addWindowOpenCloseScenarios() {
         for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {
-            addTest(new OpenCloseWindowTest(PERSPECTIVE_IDS[i]));
+            addTest(new OpenCloseWindowTest(PERSPECTIVE_IDS[i], i == 0 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));
         }        
     }
 
@@ -92,7 +94,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveOpenCloseScenarios() {
         for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {
-            addTest(new OpenClosePerspectiveTest(PERSPECTIVE_IDS[i]));
+            addTest(new OpenClosePerspectiveTest(PERSPECTIVE_IDS[i], i == 0 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));
         }
     }
     
@@ -101,11 +103,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveSwitchScenarios() {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
-        	//only fingerprint the first test. 
-        	//TODO this seems wrong! We should decide on an actual pair to 
-        	//fingerprint rather than just the first on in the array 
-        	//(it's not the most interesting at the moment)
-            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0));            
+            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0 ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE));            
         }   
     }
     
@@ -116,7 +114,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
     	if (PERSPECTIVE_IDS.length == 0)
     		return;
     	
-        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}, true));
+        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}, BasicPerformanceTest.GLOBAL));
     }
     
     /**

@@ -17,7 +17,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 /**
  * @since 3.1
  */
-public class PerformancePerspective implements IPerspectiveFactory {
+public class PerformancePerspective1 implements IPerspectiveFactory {
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)

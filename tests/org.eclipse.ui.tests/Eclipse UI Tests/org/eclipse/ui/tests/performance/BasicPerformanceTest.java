@@ -25,20 +25,26 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public abstract class BasicPerformanceTest extends UITestCase {
 
+	public static final int NONE = 0;
+	public static final int LOCAL = 1;
+	public static final int GLOBAL = 2;	
+	
 	private PerformanceTester tester;
     private IProject testProject;
     final private boolean tagAsGlobalSummary;
+    final private boolean tagAsSummary;
 
     public BasicPerformanceTest(String testName) {
-    	this(testName, false);
+    	this(testName, NONE);
     }
     
     /**
      * @param testName
      */
-    public BasicPerformanceTest(String testName, boolean tagAsGlobalSummary) {
+    public BasicPerformanceTest(String testName, int tagging) {
         super(testName);
-        this.tagAsGlobalSummary = tagAsGlobalSummary;
+        tagAsGlobalSummary = ((tagging & GLOBAL) != 0);
+        tagAsSummary = ((tagging & LOCAL) != 0);
     }
     
     /**
@@ -46,8 +52,17 @@ public abstract class BasicPerformanceTest extends UITestCase {
      * 
      * @return whether this test should be tagged globally
      */
-    protected boolean shouldGloballyTag() {
+    private boolean shouldGloballyTag() {
     	return tagAsGlobalSummary;
+    }
+    
+    /**
+     * Answers whether this test should be tagged locally.
+     * 
+     * @return whether this test should be tagged locally
+     */
+    private boolean shouldLocallyTag() {
+    	return tagAsSummary;
     }
     
 	/* (non-Javadoc)
@@ -58,7 +73,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	    
 	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
                 fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
-                        UIPerformanceTestSetup.PERSPECTIVE));
+                        UIPerformanceTestSetup.PERSPECTIVE1));
 	    
 	    tester = new PerformanceTester(this);
 	}
@@ -140,7 +155,8 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * @param dimension
 	 *            the dimension to show in the summary
 	 */
-	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
+	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
+		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
@@ -155,8 +171,37 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * @param dimensions
 	 *            an array of dimensions to show in the summary
 	 */
-	public void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
+	private void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
+		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimensions);
+	}
+	
+	private void tagAsSummary(String shortName, Dimension[] dimensions) {
+		System.out.println("LOCAL " + shortName);
+		tester.tagAsSummary(shortName, dimensions);
+	}
+	
+	private void tagAsSummary(String shortName, Dimension dimension) {
+		System.out.println("LOCAL " + shortName);
+		tester.tagAsSummary(shortName, dimension);
+	}
+	
+	public void tagIfNecessary(String shortName, Dimension dimension) {
+		if (shouldGloballyTag()) {
+			tagAsGlobalSummary(shortName, dimension);
+		}
+		if (shouldLocallyTag()) {
+			tagAsSummary(shortName, dimension);
+		}
+	}
+	
+	public void tagIfNecessary(String shortName, Dimension [] dimensions) {
+		if (shouldGloballyTag()) {
+			tagAsGlobalSummary(shortName, dimensions);
+		}
+		if (shouldLocallyTag()) {
+			tagAsSummary(shortName, dimensions);
+		}
 	}
 	
 }

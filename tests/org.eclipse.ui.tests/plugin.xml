@@ -1798,9 +1798,13 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.eclipse.ui.tests.performance.PerformancePerspective"
-            name="org.eclipse.ui.tests.PerformancePerspective"
-            id="org.eclipse.ui.tests.performancePerspective"/>
+            class="org.eclipse.ui.tests.performance.PerformancePerspective1"
+            name="org.eclipse.ui.tests.PerformancePerspective1"
+            id="org.eclipse.ui.tests.performancePerspective1"/>
+      <perspective
+            class="org.eclipse.ui.tests.performance.PerformancePerspective2"
+            name="org.eclipse.ui.tests.PerformancePerspective2"
+            id="org.eclipse.ui.tests.performancePerspective2"/>            
    </extension>
    <!-- part of test for bug 75118 -->
    <extension
@@ -1819,4 +1823,12 @@
          point="org.eclipse.ui.encodings">
       <encoding name="Blorf"/>
    </extension>
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             icon="icons/anything.gif"
+             class="org.eclipse.ui.tests.performance.parts.PerformanceViewPart"
+             name="Basic Performance View"
+             id="org.eclipse.ui.tests.perf_basic"/>
+    </extension>
 </plugin>            

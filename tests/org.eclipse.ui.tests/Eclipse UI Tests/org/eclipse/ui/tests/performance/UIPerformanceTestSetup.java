@@ -28,7 +28,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class UIPerformanceTestSetup extends TestSetup {
 
-	public static final String PERSPECTIVE= "org.eclipse.ui.tests.performancePerspective";
+	public static final String PERSPECTIVE1= "org.eclipse.ui.tests.performancePerspective1";
+	public static final String PERSPECTIVE2= "org.eclipse.ui.tests.performancePerspective2";
 
 	public static final String PROJECT_NAME = "Performance Project";
 
@@ -50,7 +51,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 		
 		activePage.hideView(activePage.findViewReference(INTRO_VIEW));
 		
-		workbench.showPerspective(PERSPECTIVE, activeWindow);
+		workbench.showPerspective(PERSPECTIVE1, activeWindow);
 		
 		boolean wasAutobuilding= ResourceTestHelper.disableAutoBuilding();
 		setUpProject();

@@ -34,8 +34,8 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
      * 
      * @param id
      */
-    public PerspectiveSwitchTest(String [] ids, boolean tagAsGlobalSummary) {
-        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2], tagAsGlobalSummary);
+    public PerspectiveSwitchTest(String [] ids, int tagging) {
+        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2], tagging);
         this.id1 = ids[0];
         this.id2 = ids[1];
         this.activeEditor = ids[2];
@@ -81,9 +81,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         activePage.setPerspective(perspective2);
         activePage.resetPerspective();
 
-        if (shouldGloballyTag()) {
-        	tagAsGlobalSummary("Perspective Switch", Dimension.CPU_TIME);
-        }
+       	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
         
         for (int i = 0; i < 20; i++) {
             processEvents();

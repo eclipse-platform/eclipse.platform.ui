@@ -31,8 +31,8 @@ public class WindowResizeTest extends BasicPerformanceTest {
      * 
      * @param id  the perspective ID to use
      */
-    public WindowResizeTest(String [] ids, boolean tagAsGlobalSummary) {
-        super("testWindowResize:" + ids[0], tagAsGlobalSummary);
+    public WindowResizeTest(String [] ids, int tagging) {
+        super("testWindowResize:" + ids[0], tagging);
         
     	if (ids == null || ids.length == 0) {
     		ids[0] = "org.eclipse.ui.resourcePerspective";
@@ -66,8 +66,7 @@ public class WindowResizeTest extends BasicPerformanceTest {
         activePage.setPerspective(perspective1);
         activePage.resetPerspective();
   
-        if (shouldGloballyTag())
-        	tagAsGlobalSummary("Window Resize", new Dimension[] {Dimension.ELAPSED_PROCESS , Dimension.CPU_TIME});
+        tagIfNecessary("Window Resize", new Dimension[] {Dimension.ELAPSED_PROCESS , Dimension.CPU_TIME});
 
         activePage.setPerspective(perspective1);
         Shell shell = activePage.getWorkbenchWindow().getShell();

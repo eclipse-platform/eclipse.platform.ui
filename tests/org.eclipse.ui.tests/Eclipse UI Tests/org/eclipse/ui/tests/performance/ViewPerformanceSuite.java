@@ -22,7 +22,8 @@ import junit.framework.TestSuite;
  */
 public class ViewPerformanceSuite extends TestSuite {
 
-    public static final String [] VIEW_IDS = {IPageLayout.ID_RES_NAV, MockViewPart.ID};
+	public static final String BASIC_VIEW = "org.eclipse.ui.tests.perf_basic";
+    public static final String [] VIEW_IDS = {BASIC_VIEW, IPageLayout.ID_RES_NAV, MockViewPart.ID};
     
     public static final int ITERATIONS = 100;
     
@@ -45,7 +46,8 @@ public class ViewPerformanceSuite extends TestSuite {
      */
     private void addOpenCloseScenarios() {
         for (int i = 0; i < VIEW_IDS.length; i++) {
-            addTest(new OpenCloseViewTest(VIEW_IDS[i]));            
+        	//tag
+            addTest(new OpenCloseViewTest(VIEW_IDS[i], i == 0 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));            
         }         
     }
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.performance;
 
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -21,14 +22,17 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     private String id;
 
     /**
+     * @param tagging
      * @param testName
      */
-    public OpenCloseWindowTest(String id) {
-        super("testOpenCloseWindows:" + id);
+    public OpenCloseWindowTest(String id, int tagging) {
+        super("testOpenCloseWindows:" + id, tagging);
         this.id = id;
     }
     
     protected void runTest() throws Throwable {
+    	
+    	tagIfNecessary("Open/Close Window", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
         for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
             processEvents();
             EditorTestHelper.calmDown(500, 30000, 500);
@@ -40,6 +44,7 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
             processEvents(); 
             stopMeasuring();
         }
+        
         commitMeasurements();
         assertPerformance();
     }

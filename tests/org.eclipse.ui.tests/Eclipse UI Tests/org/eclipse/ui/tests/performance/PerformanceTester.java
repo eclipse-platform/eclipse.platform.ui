@@ -10,39 +10,36 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import junit.framework.TestCase;
+
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.test.performance.PerformanceTestCase;
 
-import junit.framework.TestCase;
-
 /**
  * @since 3.1
  */
-public final class PerformanceTester {
+final class PerformanceTester {
 
-	protected PerformanceMeter performanceMeter;
+	protected PerformanceMeter fPerformanceMeter;
 
 	/**
-	 *  
+	 * @param testCase
 	 */
 	public PerformanceTester(TestCase testCase) {
-		Performance performance = Performance.getDefault();
-		performanceMeter = performance.createPerformanceMeter(performance
-				.getDefaultScenarioId(testCase));
-
+		Performance performance= Performance.getDefault();
+		fPerformanceMeter= performance.createPerformanceMeter(performance.getDefaultScenarioId(testCase));
 	}
 
 	/**
 	 * Asserts default properties of the measurements captured for this test
 	 * case.
 	 * 
-	 * @throws RuntimeException
-	 *             if the properties do not hold
+	 * @throws RuntimeException if the properties do not hold
 	 */
 	public void assertPerformance() {
-		Performance.getDefault().assertPerformance(performanceMeter);
+		Performance.getDefault().assertPerformance(fPerformanceMeter);
 	}
 
 	/**
@@ -59,20 +56,18 @@ public final class PerformanceTester {
 	 *            a positive number indicating the percentage the measured value
 	 *            is allowed to be greater than some reference value
 	 * @throws RuntimeException
-	 *             if the properties do not hold
+	 *            if the properties do not hold
 	 */
-	public void assertPerformanceInRelativeBand(Dimension dim,
-			int lowerPercentage, int upperPercentage) {
-		Performance.getDefault().assertPerformanceInRelativeBand(
-				performanceMeter, dim, lowerPercentage, upperPercentage);
+	public void assertPerformanceInRelativeBand(Dimension dim, int lowerPercentage, int upperPercentage) {
+		Performance.getDefault().assertPerformanceInRelativeBand(fPerformanceMeter, dim, lowerPercentage, upperPercentage);
 	}
 
 	public void commitMeasurements() {
-		performanceMeter.commit();
+		fPerformanceMeter.commit();
 	}
 
 	public void dispose() {
-		performanceMeter.dispose();
+		fPerformanceMeter.dispose();
 	}
 
 	/**
@@ -82,45 +77,66 @@ public final class PerformanceTester {
 	 * this method or {@link PerformanceTestCase#commitMeasurements()}.
 	 */
 	public void startMeasuring() {
-		performanceMeter.start();
+		fPerformanceMeter.start();
 	}
 
 	public void stopMeasuring() {
-		performanceMeter.stop();
+		fPerformanceMeter.stop();
 	}
 
 	/**
-	 * Mark the scenario of this test case to be included into the global
-	 * performance summary. The summary shows the given dimension of the
+	 * Mark the scenario of this test case to be included both into the global
+	 * and the local (component) performance summary. The summary shows the given dimension of the
 	 * scenario and labels the scenario with the short name.
 	 * 
 	 * @param shortName
-	 *            a short (shorter than 40 characters) descritive name of the
-	 *            scenario
+	 *            a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimension
 	 *            the dimension to show in the summary
 	 */
 	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		Performance performance = Performance.getDefault();
-		performance.tagAsGlobalSummary(performanceMeter, shortName,
-				new Dimension[] { dimension });
+		Performance.getDefault().tagAsGlobalSummary(fPerformanceMeter, shortName, new Dimension[] { dimension });
 	}
 
 	/**
 	 * Mark the scenario represented by the given PerformanceMeter to be
-	 * included into the global performance summary. The summary shows the given
+	 * included into the global and the local (component) performance summary. The summary shows the given
 	 * dimensions of the scenario and labels the scenario with the short name.
 	 * 
 	 * @param shortName
-	 *            a short (shorter than 40 characters) descritive name of the
-	 *            scenario
+	 *            a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimensions
 	 *            an array of dimensions to show in the summary
 	 */
 	public void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
-		Performance performance = Performance.getDefault();
-		performance
-				.tagAsGlobalSummary(performanceMeter, shortName, dimensions);
+		Performance.getDefault().tagAsGlobalSummary(fPerformanceMeter, shortName, dimensions);
 	}
 
+	/**
+	 * Mark the scenario of this test case to be included into the local (component)
+	 * performance summary. The summary shows the given dimension of the
+	 * scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName
+	 *            a short (shorter than 40 characters) descriptive name of the scenario
+	 * @param dimension
+	 *            the dimension to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension dimension) {
+		Performance.getDefault().tagAsSummary(fPerformanceMeter, shortName, new Dimension[] { dimension });
+	}
+
+	/**
+	 * Mark the scenario represented by the given PerformanceMeter to be
+	 * included into the local (component) performance summary. The summary shows the given
+	 * dimensions of the scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName
+	 *            a short (shorter than 40 characters) descriptive name of the scenario
+	 * @param dimensions
+	 *            an array of dimensions to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension[] dimensions) {
+		Performance.getDefault().tagAsSummary(fPerformanceMeter, shortName, dimensions);
+	}
 }

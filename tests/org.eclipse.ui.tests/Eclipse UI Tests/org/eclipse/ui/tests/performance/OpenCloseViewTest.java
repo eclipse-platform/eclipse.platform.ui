@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -24,8 +25,8 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 
     private String viewId;
 
-    public OpenCloseViewTest(String viewId) {
-        super("showView:" + viewId);
+    public OpenCloseViewTest(String viewId, int tagging) {
+        super("showView:" + viewId, tagging);
         this.viewId = viewId;
     }
 
@@ -37,6 +38,8 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         IViewPart view = page.showView(viewId);
         page.hideView(view);
         processEvents();
+        
+       	tagIfNecessary("Open/Close View", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
                 
         for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
             startMeasuring();

@@ -12,6 +12,7 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
@@ -27,14 +28,16 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
     /**
      * @param testName
      */
-    public OpenMultipleEditorTest(String extension, boolean closeAll) {
-        super ("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"));
+    public OpenMultipleEditorTest(String extension, boolean closeAll, int tagging) {
+        super ("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"), tagging);
         this.extension = extension;        
         this.closeAll = closeAll;
     }
     
     protected void runTest() throws Throwable {
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        
+        tagIfNecessary("Open Multiple Editors", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
         
         startMeasuring();            
         for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.performance;
 
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
@@ -28,10 +29,11 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
     private String id;
 
     /**
+     * @param tagging
      * @param testName
      */
-    public OpenClosePerspectiveTest(String id) {
-        super("testOpenClosePerspectives:" + id);
+    public OpenClosePerspectiveTest(String id, int tagging) {
+        super("testOpenClosePerspectives:" + id, tagging);
         this.id = id;
     }
     
@@ -68,6 +70,8 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             activePage.showView(ids[i]);
         }      
 
+        tagIfNecessary("Open/Close Perspective", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+        
         for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
             processEvents();
             EditorTestHelper.calmDown(500, 30000, 500);
@@ -79,7 +83,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             closePerspective(activePage);
             processEvents(); 
             stopMeasuring();
-        }
+        }        
         commitMeasurements();
         assertPerformance();
     }

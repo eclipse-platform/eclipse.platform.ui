@@ -12,6 +12,7 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
@@ -24,10 +25,11 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
     private String extension;
 
     /**
+     * @param tagging
      * @param testName
      */
-    public OpenCloseEditorTest(String extension) {
-        super ("testOpenAndCloseEditors:" + extension);
+    public OpenCloseEditorTest(String extension, int tagging) {
+        super ("testOpenAndCloseEditors:" + extension, tagging);
         this.extension = extension;    
     }
     
@@ -45,6 +47,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
             processEvents();
             stopMeasuring();
         }
+        tagIfNecessary("Open/Close Editor", Dimension.CPU_TIME);
         commitMeasurements();
         assertPerformance();        
     }
