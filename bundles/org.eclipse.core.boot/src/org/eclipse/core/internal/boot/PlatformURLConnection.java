@@ -281,12 +281,12 @@ private String resolvePath(String spec) {
 
 protected String getId(String spec) {
 	int i = spec.lastIndexOf('_');
-	return i >= 0 ? spec.substring(i) : spec;
+	return i >= 0 ? spec.substring(0, i) : spec;
 }
 
 protected String getVersion(String spec) {
 	int i = spec.lastIndexOf('_');
-	return i >= 0 ? spec.substring(i, spec.length() - i) : "";
+	return i >= 0 ? spec.substring(i + 1, spec.length()) : "";
 }
 
 void setResolvedURL(URL url) throws IOException {

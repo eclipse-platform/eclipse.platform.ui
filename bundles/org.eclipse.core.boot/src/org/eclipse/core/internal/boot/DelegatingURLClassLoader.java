@@ -341,14 +341,25 @@ protected URL findClassResource(String name) {
  * @param      libname   the library name
  * @return     the absolute path of the native library
  */
-protected String findLibrary(String libname) {
-	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libname))
-		debug("findLibrary(" + libname + ")");
-
+protected String basicFindLibrary(String libName) {
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
+		debug("findLibrary(" + libName + ")");
 	if (base == null)
 		return null;
+
+	// wrap the last segment of the name with OS appropriate decorations
+	int i = libName.lastIndexOf('/');
+	String first = "";
+	String rest = "";
+	if (i == -1)
+		first = libName;
+	else {	
+		first = libName.substring(0, i + 1);
+		rest = libName.substring(i + 1);
+	}
+	String osLibFileName = first + libPrefix + rest + libSuffix;
+
 	File libFile = null;
-	String osLibFileName = libPrefix + libname + libSuffix;
 	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
 		// directly access library	
 		String libFileName = (base.getFile() + osLibFileName).replace('/', File.separatorChar);
@@ -361,16 +372,62 @@ protected String findLibrary(String libname) {
 	if (libFile == null)
 		return null;
 	if (!libFile.exists()) {
-		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libname))
-			debug("not found " + libname);
+		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libName))
+			debug("not found " + libName);
 		return null; // can't find the file
 	}
 
-	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libname))
-		debug("found " + libname + " as " + libFile.getAbsolutePath());
+	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libName))
+		debug("found " + libName + " as " + libFile.getAbsolutePath());
 
 	return libFile.getAbsolutePath();
 }
+
+protected String findLibrary(String libName) {
+	if (libName.length() == 0)
+		return null;
+	if (libName.charAt(0) != '$')
+		return basicFindLibrary(libName);
+	int i = libName.indexOf('/', 1);
+	String first = "";
+	String rest = "";
+	String result = null;
+	if (i == -1)
+		first = libName;
+	else {	
+		first = libName.substring(0, i);
+		rest = libName.substring(i);
+	}
+	if (first.equalsIgnoreCase("$ws$")) 
+		result = basicFindLibrary("ws/" + InternalBootLoader.getWS() + rest);
+	else 
+		if (first.equalsIgnoreCase("$os$"))
+			result = basicFindLibrary("os/" + InternalBootLoader.getOS() + rest);
+		else
+			if (first.equalsIgnoreCase("$nl$"))
+				result = findLibraryNL(rest);
+	return result != null ? result : basicFindLibrary(rest);
+}
+
+/**
+ * Scan all the possible NL-based locations in which there might be a 
+ * requested library.
+ */
+private String findLibraryNL(String libName) {
+	String nl = InternalBootLoader.getNL();
+	String result = null;
+	while (result == null && nl.length() > 0) {
+		String location = "nl/" + nl + libName;
+		result = basicFindLibrary(location);
+		int i = nl.lastIndexOf('_');
+		if (i < 0)
+			nl = "";
+		else
+			nl = nl.substring(0, i);
+	}
+	return result;
+}
+
 /**
  * Finds the resource with the specified name on the URL search path.
  * Returns a URL for the resource. If resource is not found in own 
