@@ -390,7 +390,7 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
-	 * Sets the unresolver URL for the feature image.
+	 * Sets the unresolved URL for the feature image.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
 	 * @param imageURLString unresolved URL string
@@ -480,6 +480,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the custom install handler for the feature.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param installHandler install handler entry
 	 * @since 2.0
 	 */
 	public void setInstallHandlerModel(InstallHandlerEntryModel installHandler) {
@@ -488,6 +492,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature description information.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param description feature description information
 	 * @since 2.0
 	 */
 	public void setDescriptionModel(URLEntryModel description) {
@@ -496,6 +504,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature copyright information.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param copyright feature copyright information
 	 * @since 2.0
 	 */
 	public void setCopyrightModel(URLEntryModel copyright) {
@@ -504,6 +516,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature license information.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param license feature license information
 	 * @since 2.0
 	 */
 	public void setLicenseModel(URLEntryModel license) {
@@ -512,6 +528,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature update site reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param updateSiteInfo feature update site reference
 	 * @since 2.0
 	 */
 	public void setUpdateSiteEntryModel(URLEntryModel updateSiteInfo) {
@@ -520,6 +540,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets additional update site references.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param discoverySiteInfo additional update site references
 	 * @since 2.0
 	 */
 	public void setDiscoverySiteEntryModels(URLEntryModel[] discoverySiteInfo) {
@@ -531,6 +555,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature plug-in dependency information.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param imports feature plug-in dependency information
 	 * @since 2.0
 	 */
 	public void setImportModels(ImportModel[] imports) {
@@ -542,6 +570,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature plug-in references.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param pluginEntries feature plug-in references
 	 * @since 2.0
 	 */
 	public void setPluginEntryModels(PluginEntryModel[] pluginEntries) {
@@ -553,6 +585,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature non-plug-in data references.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param nonPluginEntries feature non-plug-in data references
 	 * @since 2.0
 	 */
 	public void setNonPluginEntryModels(NonPluginEntryModel[] nonPluginEntries) {
@@ -564,6 +600,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Adds an additional update site reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param discoverySiteInfo update site reference
 	 * @since 2.0
 	 */
 	public void addDiscoverySiteEntryModel(URLEntryModel discoverySiteInfo) {
@@ -575,6 +615,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Adds a plug-in dependency entry.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param importEntry plug-in dependency entry
 	 * @since 2.0
 	 */
 	public void addImportModel(ImportModel importEntry) {
@@ -586,6 +630,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Adds a plug-in reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param pluginEntry plug-in reference
 	 * @since 2.0
 	 */
 	public void addPluginEntryModel(PluginEntryModel pluginEntry) {
@@ -597,6 +645,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Adds a non-plug-in data reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param nonPluginEntry non-plug-in data reference
 	 * @since 2.0
 	 */
 	public void addNonPluginEntryModel(NonPluginEntryModel nonPluginEntry) {
@@ -608,6 +660,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Removes an update site reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param discoverySiteInfo update site reference
 	 * @since 2.0
 	 */
 	public void removeDiscoverySiteEntryModel(URLEntryModel discoverySiteInfo) {
@@ -617,6 +673,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Removes a plug-in dependency entry.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param importEntry plug-in dependency entry
 	 * @since 2.0
 	 */
 	public void removeImportModel(ImportModel importEntry) {
@@ -626,6 +686,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Removes a plug-in reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param pluginEntry plug-in reference
 	 * @since 2.0
 	 */
 	public void removePluginEntryModel(PluginEntryModel pluginEntry) {
@@ -635,6 +699,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Removes a non-plug-in data reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param nonPluginEntry non-plug-in data reference
 	 * @since 2.0
 	 */
 	public void removeNonPluginEntryModel(NonPluginEntryModel nonPluginEntry) {
@@ -644,6 +712,8 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Marks the model object as read-only.
+	 * 
 	 * @since 2.0
 	 */
 	public void markReadOnly() {
@@ -659,6 +729,15 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Resolve the model object.
+	 * Any URL strings in the model are resolved relative to the 
+	 * base URL argument. Any translatable strings in the model that are
+	 * specified as translation keys are localized using the supplied 
+	 * resource bundle.
+	 * 
+	 * @param base URL
+	 * @param bundle resource bundle
+	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
 	public void resolve(URL base, ResourceBundle bundle)
