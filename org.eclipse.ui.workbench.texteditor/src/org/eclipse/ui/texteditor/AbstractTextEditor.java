@@ -1543,8 +1543,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	protected void restoreSelection() {
-		doSetSelection(fRememberedSelection);
+		if (fRememberedSelection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection)fRememberedSelection;
+			if (isValidSelection(textSelection.getOffset(), textSelection.getLength()))
+				doSetSelection(fRememberedSelection);
+		}
 		fRememberedSelection= null;
+	}
+	
+	private boolean isValidSelection(int offset, int length) {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider != null) {
+			IDocument document= provider.getDocument(getEditorInput());
+			if (document != null) {
+				int end= offset + length;
+				int documentLength= document.getLength();
+				return 0 <= offset  && offset <= documentLength && 0 <= end && end <= documentLength;
+			}
+		}
+		return false;
 	}
 	
 	/**
