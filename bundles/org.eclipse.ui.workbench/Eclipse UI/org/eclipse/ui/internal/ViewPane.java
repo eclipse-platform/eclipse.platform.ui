@@ -308,6 +308,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// View toolbar
 		viewToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 		control.setTopRight(viewToolBar);
+		viewToolBar.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
+		control.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
+		
 		viewToolBar.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent event) {
 				// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
@@ -394,6 +397,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	// ISV toolbar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	control.setTopCenter(isvToolBar);
+	isvToolBar.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
 	isvToolBar.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
 			if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
