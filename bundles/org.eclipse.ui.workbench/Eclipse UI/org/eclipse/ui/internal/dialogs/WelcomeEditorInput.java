@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 /**

@@ -121,6 +121,15 @@ public boolean close() {
 	return true;
 }
 /**
+ * Returns this window manager's number of windows
+ * 
+ * @return the number of windows
+ * @since 3.0
+ */
+public int getWindowCount() {
+	return windows.size();
+}
+/**
  * Returns this window manager's set of windows.
  *
  * @return a possibly empty list of window

@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -293,7 +295,7 @@ public abstract class WorkbenchAdviser {
 	 * @param configurer an object for configuring the particular workbench
 	 * window just restored
 	 */
-	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) {
+	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
 		// do nothing
 	}
 
@@ -376,6 +378,24 @@ public abstract class WorkbenchAdviser {
 	 */
 	public IAdaptable getDefaultWindowInput() {
 		// default: no input
+		return null;
+	}
+	
+	/**
+	 * Returns the initial perspective for the workbench window page
+	 * during startup of the workbench.
+	 * <p>
+	 * This method is called during startup when the workbench is restoring
+	 * the window(s) or creating a new window. The default implementation
+	 * returns <code>null</code>. Subclasses may override.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the workbench window
+	 * @return the intial perspective for the workbench window page, or
+	 * <code>null</code> if none
+	 */
+	public IPerspectiveDescriptor getInitialWindowPerspective(IWorkbenchWindowConfigurer configurer) {
+		// default: no initial perspective
 		return null;
 	}
 }

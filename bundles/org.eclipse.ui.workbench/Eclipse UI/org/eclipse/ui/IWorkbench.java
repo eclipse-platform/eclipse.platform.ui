@@ -118,6 +118,15 @@ public ISharedImages getSharedImages();
  */
 public IMarkerHelpRegistry getMarkerHelpRegistry();
 /**
+ * Returns the number of open main windows associated with this workbench.
+ * Note that wizards and dialogs are not included in this list since they
+ * are not considered main windows.
+ * 
+ * @return the number of open windows
+ * @since 3.0
+ */
+public int getWorkbenchWindowCount();
+/**
  * Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.

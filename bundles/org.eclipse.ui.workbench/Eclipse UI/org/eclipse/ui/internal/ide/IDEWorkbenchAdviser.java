@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.ide;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -25,6 +27,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -39,6 +42,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
@@ -46,6 +50,7 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -63,6 +68,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.core.SiteManager;
 
@@ -77,6 +83,7 @@ import org.eclipse.update.core.SiteManager;
  */
 class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
+	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	
 	/**
 	 * Special object for configuring the workbench.
@@ -98,6 +105,12 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * argument is specified, or <code>null</code> if not specified.
 	 */
 	private String workspaceLocation = null;
+
+	/**
+	 * List of <code>AboutInfo</code> for all new installed
+	 * features that specify a welcome perspective.
+	 */
+	private ArrayList welcomePerspectiveInfos = null;
 	
 	/**
 	 * Preference change listener
@@ -169,6 +182,21 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	public void preStartup() {
 		disableAutoBuild();
+		
+		// collect the welcome perspectives of the new installed features
+		try {
+			AboutInfo[] infos = configurer.getNewFeaturesAboutInfo();
+			if (infos != null) {
+				welcomePerspectiveInfos = new ArrayList(infos.length);
+				for (int i = 0; i < infos.length; i++) {
+					if (infos[i].getWelcomePerspectiveId() != null && infos[i].getWelcomePageURL() != null) {
+						welcomePerspectiveInfos.add(infos[i]);
+					}
+				}
+			}
+		} catch (WorkbenchException e) {
+			IDEWorkbenchPlugin.log("Failed to load new installed features about info.", e.getStatus()); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)
@@ -180,9 +208,11 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		// listen for changes to IDE-specific preferences
 		// @issue must sure this is the correct preference store
 		PlatformUI.getWorkbench().getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
-		forceOpenPerspective();
-		// @issue opening welcome editors is split over restore wnd code and here. it can be combined there is a startup penalty (ie 2 perspective started instead of one)
-		//getConfigurationInfo().openWelcomeEditors(getWorkbench().getActiveWorkbenchWindow());
+		try {
+			openWelcomeEditors();
+		} catch (WorkbenchException e) {
+			IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
+		}
 		checkUpdates();
 	}
 
@@ -262,6 +292,40 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#postWindowRestore
+	 */
+	public void postWindowRestore(IWorkbenchWindowConfigurer windowConfigurer) throws WorkbenchException {
+		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
+		
+		if (index >=0 && welcomePerspectiveInfos != null && index < welcomePerspectiveInfos.size()) {
+			// find a page that exist in the window
+			IWorkbenchPage page = windowConfigurer.getWindow().getActivePage();
+			if (page == null) {
+				IWorkbenchPage pages[] = windowConfigurer.getWindow().getPages();
+				if (pages != null && pages.length > 0)
+					page = pages[0];
+			}
+
+			// if the window does not contain a page, create one
+			String perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
+			if (page == null) {
+				IAdaptable root = getDefaultWindowInput();
+				page = windowConfigurer.getWindow().openPage(perspectiveId, root);
+			} else {
+				IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+				IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspectiveId);
+				if (desc != null) {
+					page.setPerspective(desc);
+				}
+			}
+
+			// set the active page and open the welcome editor
+			windowConfigurer.getWindow().setActivePage(page);
+			page.openEditor(new WelcomeEditorInput((AboutInfo) welcomePerspectiveInfos.get(index)), WELCOME_EDITOR_ID, true);
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#postWindowClose
 	 */
 	public void postWindowClose(IWorkbenchWindowConfigurer windowConfigurer) {
@@ -304,8 +368,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 										}
 									}
 								} catch (PartInitException e) {
-									// @issue should not be using IDEWorkbenchPlugin to log error
-									WorkbenchPlugin.log("Error bringing problem view to front", e.getStatus()); //$NON-NLS$ //$NON-NLS-1$
+									IDEWorkbenchPlugin.log("Error bringing problem view to front", e.getStatus()); //$NON-NLS-1$
 								}
 							}
 						});
@@ -350,11 +413,10 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			try {
 				workspace.setDescription(description);
 			} catch (CoreException exception) { 
-				// @issue should not access IDEWorkbenchMessages
 				MessageDialog.openError(
 					null, 
-					WorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
-					WorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
 			}
 		}
 	}	
@@ -374,8 +436,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			try {
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 					protected void execute(IProgressMonitor monitor) throws CoreException {
-						// @issue should not be accessing WorkbenchMessages to access IDE-specific message
-						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
+						monitor.setTaskName(IDEWorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
 
 						IWorkspace workspace = ResourcesPlugin.getWorkspace();
 						IWorkspaceDescription description = workspace.getDescription();
@@ -390,11 +451,10 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 					new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException exception) {
-				// @issue should not access WorkbenchMessages for IDE-specific messages
 				MessageDialog.openError(
 					shell, 
-					WorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
-					WorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
 			}
 			// update the preference store so that property change listener
 			// get notified of preference change.
@@ -444,8 +504,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				try {
 					ResourcesPlugin.getWorkspace().setDescription(description);
 				} catch (CoreException e) {
-					// @issue should not be using IDEWorkbenchPlugin to log error
-					WorkbenchPlugin.log("Error changing auto build preference setting.", e.getStatus()); //$NON-NLS-1$
+					IDEWorkbenchPlugin.log("Error changing auto build preference setting.", e.getStatus()); //$NON-NLS-1$
 				}
 
 				// If auto build is turned on, then do a global incremental
@@ -490,18 +549,17 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				}
 			});
 			if (ex[0] != null) {
-				// @issue should not reference WorkbenchMessage directly
-				String errorTitle = WorkbenchMessages.getString("Workspace.problemsTitle"); //$NON-NLS-1$
-				// @issue should not reference WorkbenchMessage directly
-				String msg = WorkbenchMessages.getString("Workspace.problemMessage"); //$NON-NLS-1$
-				ErrorDialog.openError(shell, errorTitle, msg, ex[0].getStatus());
+				ErrorDialog.openError(
+					shell, 
+					IDEWorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$ 
+					IDEWorkbenchMessages.getString("Workspace.problemMessage"),  //$NON-NLS-1$
+					ex[0].getStatus());
 			}
 		} catch (InterruptedException e) {
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			// @issue should not be using WorkbenchPlugin to log error
-			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e.getTargetException()));
+			IDEWorkbenchPlugin.log(msg, new Status(Status.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, msg, e.getTargetException()));
 		}
 	}
 
@@ -510,8 +568,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private void disconnectFromWorkspace() {
 		// save the workspace
-		// @issue should not be accessing IDEWorkbenchMessages to access IDE-specific message
-		final MultiStatus status = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("ProblemSavingWorkbench"), null); //$NON-NLS-1$
+		final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("ProblemSavingWorkbench"), null); //$NON-NLS-1$
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
@@ -524,18 +581,18 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		try {
 			new ProgressMonitorDialog(null).run(false, false, runnable);
 		} catch (InvocationTargetException e) {
-			// @issue should not be accessing IDEWorkbenchMessages to access IDE-specific message
-			status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
+			status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {
-			// @issue should not be accessing IDEWorkbenchMessages to access IDE-specific message
-			status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("InternalError"), e)); //$NON-NLS-1$
+			status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("InternalError"), e)); //$NON-NLS-1$
 		}
-		// @issue should not be accessing IDEWorkbenchMessages to access IDE-specific message
-		ErrorDialog.openError(null, WorkbenchMessages.getString("ProblemsSavingWorkspace"), //$NON-NLS-1$
-		null, status, IStatus.ERROR | IStatus.WARNING);
+		ErrorDialog.openError(
+			null, 
+			IDEWorkbenchMessages.getString("ProblemsSavingWorkspace"), //$NON-NLS-1$
+			null, 
+			status, 
+			IStatus.ERROR | IStatus.WARNING);
 		if (!status.isOK()) {
-			// @issue should not be using IDEWorkbenchPlugin to log error
-			WorkbenchPlugin.log(WorkbenchMessages.getString("ProblemsSavingWorkspace"), status); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("ProblemsSavingWorkspace"), status); //$NON-NLS-1$
 		}
 	}
 
@@ -556,47 +613,9 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (newUpdates) {
 			try {
 				SiteManager.handleNewChanges();
-			} catch (CoreException ex) {
-				// @issue should not be using WorkbenchPlugin to log error
-				WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log("Problem opening update manager", e.getStatus()); //$NON-NLS-1$
 			}
-		}
-	}
-
-	private void forceOpenPerspective() {
-		String perspId = null;
-		String[] commandLineArgs = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length - 1; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
-				perspId = commandLineArgs[i + 1];
-				break;
-			}
-		}
-		if (perspId == null) {
-			return;
-		}
-		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspId);
-		if (desc == null) {
-			return;
-		}
-
-		IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (win == null) {
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			if (windows.length > 0) {
-				win = windows[0];
-			}
-		}
-		try {
-			if (win != null) {
-				PlatformUI.getWorkbench().showPerspective(perspId, win);
-			} else {
-				PlatformUI.getWorkbench().openWorkbenchWindow(perspId, getDefaultWindowInput());
-			}
-		} catch (WorkbenchException e) {
-			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
-			// @issue should not be using IDEWorkbenchPlugin to log error
-			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		}
 	}
 
@@ -609,29 +628,164 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#isWorkbenchCoolItemId
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#getDefaultWindowInput
 	 */
-	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer windowConfigurer, String id) {
-		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
-		return a.isWorkbenchCoolItemId(id);
-	}
-	
-	/**
-	 * Returns the about info.
-	 *
-	 * @return the about info
-	 * @issue WorkbenchConfigurationInfo needs to be moved to this package
-	 */
-/*	public WorkbenchConfigurationInfo getConfigurationInfo() {
-		if(configurationInfo == null)
-			configurationInfo = new WorkbenchConfigurationInfo();
-		return configurationInfo;
-	}
-*/	
 	public IAdaptable getDefaultWindowInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#getInitialWindowPerspective
+	 */
+	public IPerspectiveDescriptor getInitialWindowPerspective(IWorkbenchWindowConfigurer configurer) {
+		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
+		
+		if (index >=0 && welcomePerspectiveInfos != null && index < welcomePerspectiveInfos.size()) {
+			String perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
+			IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+			return reg.findPerspectiveWithId(perspectiveId);
+		} else {
+			return null;
+		}
+	}
+
+	/*
+	 * Open the welcome editor for the primary feature or for a new installed features
+	 */
+	private void openWelcomeEditors() throws WorkbenchException {
+		AboutInfo primaryInfo = configurer.getPrimaryFeatureAboutInfo();
+		AboutInfo[] newFeaturesInfo = configurer.getNewFeaturesAboutInfo();
+		
+		IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
+				window = configurer.getWorkbench().getWorkbenchWindows()[0];
+			} else {
+				return;
+			}
+		}
+
+		// @issue the preference WELCOME_DIALOG should be moved to the IDE preference store
+		if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
+			// Show the quick start wizard the first time the workbench opens.
+			URL url = primaryInfo.getWelcomePageURL();
+			if (url == null) {
+				return;
+			}
+			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+			openWelcomeEditor(window, new WelcomeEditorInput(primaryInfo), null);
+		} else {
+			// Show the welcome page for any newly installed features
+			ArrayList welcomeFeatures = new ArrayList();
+			for (int i = 0; i < newFeaturesInfo.length; i++) {
+				if (newFeaturesInfo[i].getWelcomePageURL() != null) {
+					if (newFeaturesInfo[i].getFeatureId() != null && newFeaturesInfo[i].getWelcomePerspectiveId() != null) {
+						IPluginDescriptor desc = newFeaturesInfo[i].getPluginDescriptor();
+						try {
+							// activate the feature plugin so it can run some install code.
+							if(desc != null) {
+								desc.getPlugin();
+							}
+						} catch (CoreException e) {
+						}
+					}
+					welcomeFeatures.add(newFeaturesInfo[i]);
+				}
+			}
+	
+			int wCount = configurer.getWorkbench().getWorkbenchWindowCount();
+			for (int i = 0; i < welcomeFeatures.size(); i++) {
+				AboutInfo newInfo = (AboutInfo) welcomeFeatures.get(i);
+				String id = newInfo.getWelcomePerspectiveId();
+				// Other editors were already opened in postWindowRestore(..)
+				if (id == null || i >= wCount) {
+					openWelcomeEditor(window, new WelcomeEditorInput(newInfo), id);
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Open a welcome editor for the given input
+	 */
+	private void openWelcomeEditor(IWorkbenchWindow window, WelcomeEditorInput input, String perspectiveId) {
+		if (configurer.getWorkbench().getWorkbenchWindowCount() == 0) {
+			// Something is wrong, there should be at least
+			// one workbench window open by now.
+			return;
+		}
+	
+		IWorkbenchWindow win = window;
+		if (perspectiveId != null) {
+			try {
+				win = configurer.getWorkbench().openWorkbenchWindow(perspectiveId, getDefaultWindowInput());
+				if (win == null) {
+					win = window;
+				}
+			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin.log("Error opening window with welcome perspective.", e.getStatus()); //$NON-NLS-1$
+				return;
+			}
+		}
+	
+		if (win == null) {
+			win = configurer.getWorkbench().getWorkbenchWindows()[0];
+		}
+			
+		IWorkbenchPage page = win.getActivePage();
+		String id = perspectiveId;
+		if (id == null) {
+			id = configurer.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
+		}
+	
+		if (page == null) {
+			try {
+				page = win.openPage(id, getDefaultWindowInput());
+			} catch (WorkbenchException e) {
+				ErrorDialog.openError(
+					win.getShell(), 
+					IDEWorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
+					e.getMessage(),
+					e.getStatus());
+			}
+		}
+		if (page == null)
+			return;
+	
+		if (page.getPerspective() == null) {
+			try {
+				page = configurer.getWorkbench().showPerspective(id, win);
+			} catch (WorkbenchException e) {
+				ErrorDialog.openError(
+					win.getShell(),
+					WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+					WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+					e.getStatus());
+				return;
+			}
+		}
+	
+		page.setEditorAreaVisible(true);
+	
+		// see if we already have an editor
+		IEditorPart editor = page.findEditor(input);
+		if (editor != null) {
+			page.activate(editor);
+			return;
+		}
+	
+		try {
+			page.openEditor(input, WELCOME_EDITOR_ID);
+		} catch (PartInitException e) {
+			ErrorDialog.openError(
+				win.getShell(),
+				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+				e.getStatus());
+		}
+		return;
+	}
+	
 	/**
 	 * Updates the window title. Format will be:
 	 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName

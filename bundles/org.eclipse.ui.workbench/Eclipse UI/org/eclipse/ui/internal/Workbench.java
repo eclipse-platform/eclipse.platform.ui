@@ -104,7 +104,6 @@ public final class Workbench implements IWorkbench {
 	private static final int RESTORE_CODE_OK = 0;
 	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
-	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 
 	/**
 	 * Holds onto the only instance of Workbench.
@@ -563,13 +562,11 @@ public final class Workbench implements IWorkbench {
 		return path.toFile();
 	}
 	
-	/**
-	 * Returns the workbench window count.
-	 * <p>
-	 * @return the workbench window count
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
-	protected int getWorkbenchWindowCount() {
-		return windowManager.getWindows().length;
+	public int getWorkbenchWindowCount() {
+		return windowManager.getWindowCount();
 	}
 	
 	/* (non-Javadoc)
@@ -647,7 +644,9 @@ public final class Workbench implements IWorkbench {
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 		}
-				
+
+		forceOpenPerspective();
+		
 		isStarting = false;
 		return true;
 	}
@@ -777,7 +776,45 @@ public final class Workbench implements IWorkbench {
  	private WorkbenchWindow newWorkbenchWindow() {
  		return new WorkbenchWindow(getNewWindowNumber());
 	}
-	
+
+	/*
+	 * If a perspective was specified on the command line (-perspective)
+	 * then force that perspective to open in the active window.
+	 */	
+	private void forceOpenPerspective() {
+		if (getWorkbenchWindowCount() == 0) {
+			// there should be an open window by now, bail out.
+			return;
+		}
+		
+		String perspId = null;
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < commandLineArgs.length - 1; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
+				perspId = commandLineArgs[i + 1];
+				break;
+			}
+		}
+		if (perspId == null) {
+			return;
+		}
+		IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspId);
+		if (desc == null) {
+			return;
+		}
+
+		IWorkbenchWindow win = getActiveWorkbenchWindow();
+		if (win == null) {
+			win = getWorkbenchWindows()[0];
+		}
+		try {
+			showPerspective(perspId, win);
+		} catch (WorkbenchException e) {
+			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
+			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
+		}
+	}
+
 	/*
 	 * Create the initial workbench window.
 	 */
@@ -790,9 +827,7 @@ public final class Workbench implements IWorkbench {
 
 		// Create the initial page.
 		try {
-			// @issue application-specific input for the page is missing
-			IAdaptable root = null;
-			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), root);
+			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), getAdviser().getDefaultWindowInput());
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
@@ -976,52 +1011,21 @@ public final class Workbench implements IWorkbench {
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 
-		// @issue Opening new installed features and welcome editors should be an IDE specific thing
-		//IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-		//AboutInfo newFeaturesWithPerspectives[] = getConfigurationInfo().collectNewFeaturesWithPerspectives();
-		
 		// Read the workbench windows.
 		for (int x = 0; x < children.length; x++) {
 			childMem = children[x];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
 
-			IPerspectiveDescriptor desc = null;
-			// @issue Opening new installed features and welcome editors should be an IDE specific thing
-			//if (x < newFeaturesWithPerspectives.length)
-				//desc = reg.findPerspectiveWithId(newFeaturesWithPerspectives[x].getWelcomePerspective());
-
+			// allow the application to specify an initial perspective to open
+			IPerspectiveDescriptor desc = getAdviser().getInitialWindowPerspective(newWindow.getWindowConfigurer());
 			result.merge(newWindow.restoreState(childMem, desc));
-			
-			// @issue Opening new installed features and welcome editors should be an IDE specific thing
-			//if (desc != null) {
-				//IWorkbenchPage page = newWindow.getActivePage();
-				//if (page == null) {
-					//IWorkbenchPage pages[] = newWindow.getPages();
-					//if (pages != null && pages.length > 0)
-						//page = pages[0];
-				//}
-				//if (page == null) {
-					// @issue application-specific input for the page is missing
-					//IAdaptable root = null;
-					//try {
-						//page = (WorkbenchPage) newWindow.openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);
-					//} catch (WorkbenchException e) {
-						//result.add(e.getStatus());
-					//}
-				//} else {
-					//page.setPerspective(desc);
-				//}
-				//newWindow.setActivePage(page);
-				//try {
-					//page.openEditor(new WelcomeEditorInput(newFeaturesWithPerspectives[x]), WELCOME_EDITOR_ID, true);
-				//} catch (PartInitException e) {
-					//result.add(e.getStatus());
-				//}
-			//}
-			
 			windowManager.add(newWindow);
-			getAdviser().postWindowRestore(newWindow.getWindowConfigurer());
+			try {
+				getAdviser().postWindowRestore(newWindow.getWindowConfigurer());
+			} catch (WorkbenchException e) {
+				result.add(e.getStatus());
+			}
 			newWindow.open();
 		}
 		return result;
