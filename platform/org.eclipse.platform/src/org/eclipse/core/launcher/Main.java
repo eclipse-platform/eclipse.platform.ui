@@ -572,22 +572,25 @@ public class Main {
 		return result;
 	}
 
-	private URL buildURL(String spec) {
+	private URL buildURL(String spec, boolean trailingSlash) {
 		if (spec == null)
 			return null;
 		// if the spec is a file: url then see if it is absolute.  If not, break it up
-		// and make it absolute.
+		// and make it absolute.  
 		if (spec.startsWith("file:")) {
 			File file = new File(spec.substring(5));
-			if (!file.isAbsolute())
+			if (!file.isAbsolute()) {
 				spec = "file:" + file.getAbsolutePath();
+				if (trailingSlash && !spec.endsWith("/"))
+					spec += "/";
+			}
 		}
 		try {
 			return new URL(spec);
 		} catch (MalformedURLException e) {
 			if (spec.startsWith("file:"))
 				return null;
-			return buildURL("file:" + spec);
+			return buildURL("file:" + spec, trailingSlash);
 		}
 	}
 
@@ -602,13 +605,13 @@ public class Main {
 		else if (location.equalsIgnoreCase(NONE))
 			return null;
 		else if (location.equalsIgnoreCase(NO_DEFAULT))
-			result = buildURL(location);
+			result = buildURL(location, true);
 		else {
 			if (location.equalsIgnoreCase(USER_HOME)) 
 				location = computeDefaultUserAreaLocation(userDefaultAppendage);
 			if (location.equalsIgnoreCase(USER_DIR)) 
 				location = new File(System.getProperty(PROP_USER_DIR), userDefaultAppendage).getAbsolutePath();
-			result = buildURL(location);
+			result = buildURL(location, true);
 		}
 		if (result != null)
 			System.getProperties().put(property, result.toExternalForm());
@@ -653,7 +656,7 @@ public class Main {
 		//    is unique for each local user, and <application-id> is the one 
 		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
 		//    exist, use "eclipse" as the application-id.
-		URL installURL = buildURL(getInstallLocation());
+		URL installURL = buildURL(getInstallLocation(), true);
 		if (installURL == null)
 			return null;
 		File installDir = new File(installURL.getPath());
@@ -829,7 +832,7 @@ public class Main {
 			// same value as each other.  
 			if (args[i - 1].equalsIgnoreCase(INSTALL)) {
 				found = true;
-				URL url = buildURL(arg);
+				URL url = buildURL(arg, true);
 				if (url == null)
 					continue;
 				System.getProperties().put(PROP_INSTALL_AREA, url.toExternalForm()); 
@@ -885,7 +888,7 @@ public class Main {
 			return configurationLocation;
 		URL result = buildLocation(PROP_CONFIG_AREA, null, CONFIG_DIR);
 		if (result == null)
-			result = buildURL(computeDefaultConfigurationLocation());
+			result = buildURL(computeDefaultConfigurationLocation(), true);
 		if (result == null)
 			return null;
 		// for backward compatibility, remove the filename if the location is a .cfg file.  config
@@ -906,7 +909,7 @@ public class Main {
 	private void processConfiguration() {
 		loadConfiguration(getConfigurationLocation());
 		if (!"false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) {
-			URL parentConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR);
+			URL parentConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR, true);
 			if (parentConfigurationLocation != null)
 				loadConfiguration(parentConfigurationLocation.toExternalForm());
 		}
@@ -935,6 +938,8 @@ public class Main {
 		if (installLocation == null)
 			installLocation = System.getProperty(PROP_INSTALL_LOCATION);			
 		if (installLocation != null) {
+			if (!installLocation.endsWith("/"))
+				installLocation += "/";
 			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
 			// TODO remove this set when we get off the old property
 			System.getProperties().put(PROP_INSTALL_LOCATION, installLocation); 
@@ -990,7 +995,7 @@ public class Main {
 
 	private Properties loadProperties(String location) throws IOException {
 		// try to load saved configuration file (watch for failed prior save())
-		URL url = buildURL(location);
+		URL url = buildURL(location, false);
 		if (url == null)
 			return null;
 		Properties result = null;
@@ -1334,7 +1339,7 @@ public class Main {
 		if (logFile != null)
 			return;
 		// compute the base location and then append the name of the log file
-		URL base = buildURL(System.getProperty(PROP_CONFIG_AREA));
+		URL base = buildURL(System.getProperty(PROP_CONFIG_AREA), false);
 		if (base == null)
 			return;
 		logFile = new File(base.getPath(), ".log"); //$NON-NLS-1$
