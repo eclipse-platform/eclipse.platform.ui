@@ -12,13 +12,21 @@ package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -47,16 +55,18 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -278,6 +288,59 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
+	}
+	
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.StatusTextEditor#createStatusControl(org.eclipse.swt.widgets.Composite, org.eclipse.core.runtime.IStatus)
+	 * @since 3.1
+	 */
+	protected Control createStatusControl(Composite parent, final IStatus status) {
+		Object adapter= (IEncodingSupport)getAdapter(IEncodingSupport.class);
+		DefaultEncodingSupport encodingSupport= null;
+		if (adapter instanceof DefaultEncodingSupport)
+			encodingSupport= (DefaultEncodingSupport)adapter;
+		
+		if (encodingSupport == null || !encodingSupport.isEncodingError(status))
+			return super.createStatusControl(parent, status);
+
+		Shell shell= getSite().getShell();
+		Display display= shell.getDisplay();
+		Color bgColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color fgColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+
+		Composite composite= new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		composite.setBackground(bgColor);
+		composite.setForeground(fgColor);
+		
+		Control control= super.createStatusControl(composite, status);
+		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Composite buttonComposite= new Composite(composite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout());
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		buttonComposite.setBackground(bgColor);
+		buttonComposite.setForeground(fgColor);
+		
+		encodingSupport.createStatusEncodingChangeControl(buttonComposite, status);
+//		
+//		Button button= new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
+//		button.setText(action.getText());
+//		button.addSelectionListener(new SelectionAdapter() {
+//			/*
+//			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+//			 */
+//			public void widgetSelected(SelectionEvent e) {
+//				action.run();
+//			}
+//		});
+//		
+//		Label filler= new Label(buttonComposite, SWT.NONE);
+//		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		filler.setBackground(bgColor);
+//		
+		return composite;
 	}
 	
 	/**

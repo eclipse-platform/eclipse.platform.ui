@@ -14,16 +14,30 @@ import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.StatusTextEditor;
+import org.eclipse.ui.texteditor.TextEditorAction;
 
 
 /**
@@ -211,5 +225,58 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns <code>true</code> if the given status is an
+	 * encoding error.
+	 * 
+	 * @param status the status to check
+	 * @return <code>true</code> if the given status is an encoding error
+	 * @since 3.1
+	 */
+	public boolean isEncodingError(IStatus status) {
+		if (status == null || status.getSeverity() != IStatus.ERROR)
+			return false;
+		
+		Throwable t= status.getException();
+		return t instanceof CharConversionException || t instanceof UnsupportedEncodingException;
+	}
+	
+	/**
+	 * Creates the control which allows to change the encoding.
+	 * In case of encoding errors this control will be placed below
+	 * the status of the status editor.
+	 * 
+	 * @param parent the parent control
+	 * @param status the status
+	 * @since 3.1
+	 */
+	public void createStatusEncodingChangeControl(Composite parent, final IStatus status) {
+		final IAction action= fTextEditor.getAction(ITextEditorActionConstants.CHANGE_ENCODING);
+		if (action instanceof TextEditorAction)
+			((TextEditorAction)action).update();
+
+		if (action == null && !action.isEnabled())
+			return;
+
+		Shell shell= parent.getShell();
+		Display display= shell.getDisplay();
+		Color bgColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+
+		Button button= new Button(parent, SWT.PUSH | SWT.FLAT);
+		button.setText(action.getText());
+		button.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				action.run();
+			}
+		});
+		
+		Label filler= new Label(parent, SWT.NONE);
+		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
+		filler.setBackground(bgColor);
 	}
 }
