@@ -16,6 +16,14 @@ with the Eclipse console.</p>
 <p>The Eclipse platform UI console plug-in provides a set of classes and interfaces to
 support a generic console. This package contains a generic abstract console that provides the common functionality
 for consoles. Clients implementing consoles should subclass this <b>AbstractConsole</b>.</p>
-<p>The classes <b>MessageConsole</b> and <b>MessageConsoleStream</b> provide an implementation of a message console and message console stream that enables logging of messages to a console.</p>
+<p>The classes <b>MessageConsole</b> and <b>MessageConsoleStream</b> provide an 
+  implementation of a message console and message console stream that enables 
+  logging of messages to a console.</p>
+<p>A console manager (<b>IConsoleManager</b>) manages all active consoles, and 
+  provides notification of consoles which are added and removed. Consoles are 
+  displayed in a page book view. Each console implementation is reponsible for 
+  creating its page (<b>IPageBookView</b>), which provides freedom of presentation 
+  to the console implementation. A single console may be displayed simaltaneously 
+  in multiple console views, in different workbench windows.</p>
 </body>
 </html>
