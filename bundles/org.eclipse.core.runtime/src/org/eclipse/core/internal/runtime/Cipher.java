@@ -1,12 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 
 /**
  * <P>Encrypts or decrypts a sequence of bytes. The bytes are decrypted
@@ -32,8 +37,15 @@ public class Cipher {
 	public static final int ENCRYPT_MODE = 1;
 
 	private int mode = 0;
-	private String password = null;
-	private SecureRandom secureRandom = null;
+	private byte[] password = null;
+	
+	//the following fields are used for generating a secure byte stream
+	//used by the decryption algorithm
+	private byte[] byteStream;
+	private int byteStreamOffset;
+	private long counter = 0;
+	private MessageDigest digest;
+	private byte[] toDigest;
 /**
  * Initializes the cipher with the given mode and password. This method
  * must be called first (before any encryption of decryption takes
@@ -43,10 +55,15 @@ public class Cipher {
  * @param mode
  * @param password
  */
-public Cipher (int mode, String password){
+public Cipher (int mode, String passwordString){
 	this.mode = mode;
-	this.password = password;
-	this.secureRandom = null;
+	try {
+		this.password = passwordString.getBytes("UTF8");//$NON-NLS-1$
+	} catch (UnsupportedEncodingException e) {
+	}
+	toDigest = new byte[password.length+8];
+	System.arraycopy(password, 0, toDigest, 8, password.length);
+
 }
 /**
  * Encrypts or decrypts (depending on which mode the cipher is in) the
@@ -83,17 +100,36 @@ public byte cipher(byte datum) throws Exception {
 	byte[] data = { datum };
 	return cipher(data)[0];
 }
-private byte[] getSeed() throws Exception {
-	MessageDigest messageDigest = MessageDigest.getInstance("SHA"); //$NON-NLS-1$
-	return messageDigest.digest(password.getBytes("UTF8")); //$NON-NLS-1$
-}
-private byte[] nextRandom(int length) throws Exception {
-	if (secureRandom == null) {
-		secureRandom = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
-		secureRandom.setSeed(getSeed());
+/**
+ * Generates a secure stream of bytes based on the input seed.
+ * This routine works by combining the input seed with a counter,
+ * and then computing the SHA-1 hash of those bytes.
+ */
+private byte[] generateBytes() throws Exception {
+	if (digest == null) {
+		digest = MessageDigest.getInstance("SHA"); //$NON-NLS-1$
 	}
+	//convert counter to bytes
+	for (int i = 0; i < 8; i++) {
+		toDigest[i] = (byte)((counter >> (8*i)) & 0x00000000000000FFL);
+	}
+	counter++;
+	return digest.digest(toDigest); 
+}
+/**
+ * Returns a stream of cryptographically secure bytes of the given length.
+ * The result is deterministically based on the input seed (password).
+ */
+private byte[] nextRandom(int length) throws Exception {
 	byte[] nextRandom = new byte[length];
-	secureRandom.nextBytes(nextRandom);
+	int nextRandomOffset = 0;
+	while (nextRandomOffset < length) {
+		if (byteStream == null || byteStreamOffset >= byteStream.length) {
+			byteStream = generateBytes();
+			byteStreamOffset = 0;
+		}
+		nextRandom[nextRandomOffset++] = byteStream[byteStreamOffset++];
+	}
 	return nextRandom;
 }
 private byte[] transform(byte[] data, int off, int len, int mode) throws Exception {

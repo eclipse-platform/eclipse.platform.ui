@@ -1,26 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     IBM - Initial implementation
  ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.plugins.*;
 import java.io.*;
-import java.io.FileOutputStream;
 import java.net.*;
 import java.util.*;
+
+import org.eclipse.core.boot.*;
+import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 
 /**
  * Bootstrap class for the platform. It is responsible for setting up the
@@ -584,12 +582,22 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
  * Opens the password database (if any) initally provided to the platform at startup.
  */
 private static void loadKeyring() {
-	if (keyringFile != null)
+	if (keyringFile != null) {
 		try {
 			keyring = new AuthorizationDatabase(keyringFile, password);
 		} catch (CoreException e) {
 			log(e.getStatus());
 		}
+		if (keyring == null) {
+			//try deleting the file and loading again - format may have changed
+			new java.io.File(keyringFile).delete();
+			try {
+				keyring = new AuthorizationDatabase(keyringFile, password);
+			} catch (CoreException e) {
+				//don't bother logging a second failure
+			}
+		}
+	}
 	if (keyring == null)
 		keyring = new AuthorizationDatabase();
 }
