@@ -76,6 +76,7 @@ public class Console extends ViewPart {
 				clearOutput();
 			}
 		};
+		clearOutputAction.setToolTipText(Policy.bind("Console.clearOutput"));
 		
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
