@@ -43,7 +43,6 @@ import org.eclipse.debug.core.model.IWatchpoint;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
