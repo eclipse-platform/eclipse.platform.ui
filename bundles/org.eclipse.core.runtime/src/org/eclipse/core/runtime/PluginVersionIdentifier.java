@@ -158,6 +158,39 @@ public int getServiceComponent() {
 	return service;
 }
 /**
+ * Compares two version identifiers to see if this one is
+ * greater than or equal to the argument.
+ * <p>
+ * A version identifier is considered to be greater than or equal
+ * if its major component is greater than the argument major 
+ * component, or the major components are equal and its minor component
+ * is greater than or equal to the argument minor component, or the
+ * major and minor components are equal and its service component is
+ * greater than the argument service component or all components are
+ * equal.
+ * </p>
+ *
+ * @param versionId the other version identifier
+ * @return <code>true</code> is this version identifier
+ *    is compatible with the given version identifier, and
+ *    <code>false</code> otherwise
+ */
+public boolean isGreaterOrEqualTo(PluginVersionIdentifier id) {
+	if (id == null)
+		return false;
+	if (major > id.getMajorComponent())
+		return true;
+	if ((major == id.getMajorComponent()) &&
+	    (minor > id.getMinorComponent()))
+		return true;
+	if ((major == id.getMajorComponent()) &&
+	    (minor == id.getMinorComponent()) &&
+	    (service >= id.getServiceComponent()))
+		return true;
+	else
+		return false;
+}
+/**
  * Compares two version identifiers for compatibility.
  * <p>
  * A version identifier is considered to be compatible if its major 
@@ -211,6 +244,28 @@ public boolean isEquivalentTo(PluginVersionIdentifier id) {
 		return true;
 	else
 		return false;
+}
+/**
+ * Compares two version identifiers for perfect equality.
+ * <p>
+ * Two version identifiers are considered to be perfectly equal if their
+ * major, minor and service components are equal
+ * </p>
+ *
+ * @param versionId the other version identifier
+ * @return <code>true</code> is this version identifier
+ *    is perfectly equal to the given version identifier, and
+ *    <code>false</code> otherwise
+ */
+public boolean isPerfect(PluginVersionIdentifier id) {
+	if (id == null)
+		return false;
+	if ( (major != id.getMajorComponent()) ||
+	     (minor != id.getMinorComponent()) ||
+         (service != id.getServiceComponent()) )
+		return false;
+	else
+		return true;
 }
 /**
  * Compares two version identifiers for order using multi-decimal

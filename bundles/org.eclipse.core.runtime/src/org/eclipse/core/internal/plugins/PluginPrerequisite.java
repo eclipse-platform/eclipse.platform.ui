@@ -38,14 +38,33 @@ public boolean isExported() {
 /**
  * @see IPluginPrerequisite
  */
+public boolean isMatchedAsGreaterOrEqual() {
+	return getMatch() == PREREQ_MATCH_GREATER_OR_EQUAL;
+}
+/**
+ * @see IPluginPrerequisite
+ */
 public boolean isMatchedAsCompatible() {
-	return !isMatchedAsExact();
+	return (getMatch() == PREREQ_MATCH_COMPATIBLE) ||
+	        ((getVersionIdentifier() != null) && (getMatch() == PREREQ_MATCH_UNSPECIFIED));
+}
+/**
+ * @see IPluginPrerequisite
+ */
+public boolean isMatchedAsEquivalent() {
+	return getMatch() == PREREQ_MATCH_EQUIVALENT;
+}
+/**
+ * @see IPluginPrerequisite
+ */
+public boolean isMatchedAsPerfect() {
+	return getMatch() == PREREQ_MATCH_PERFECT;
 }
 /**
  * @see IPluginPrerequisite
  */
 public boolean isMatchedAsExact() {
-	return getMatch();
+	return isMatchedAsEquivalent();
 }
 /**
  * @see IPluginPrerequisite

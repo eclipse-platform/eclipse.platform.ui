@@ -837,13 +837,17 @@ public void parsePluginRequiresImport(Attributes attributes) {
 					current.setOptional("true".equalsIgnoreCase(attrValue));
 				else
 					if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
-						if (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue))
-							current.setMatch(true);
+						if (PLUGIN_REQUIRES_MATCH_PERFECT.equals(attrValue))
+							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_PERFECT);
+						else if ((PLUGIN_REQUIRES_MATCH_EQUIVALENT.equals(attrValue)) ||
+						          (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue)))
+							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT);
+						else if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
+							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE);
+						else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
+							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
 						else
-							if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
-								current.setMatch(false);
-							else
-								internalError(Policy.bind("parse.validMatch", attrValue));
+							internalError(Policy.bind("parse.validMatch", attrValue));
 					} else
 						if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
 							if (TRUE.equals(attrValue))

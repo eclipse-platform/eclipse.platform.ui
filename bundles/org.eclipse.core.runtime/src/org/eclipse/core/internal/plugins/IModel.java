@@ -41,7 +41,10 @@ public interface IModel {
 	public static final String PLUGIN_REQUIRES_EXPORT = "export";
 	public static final String PLUGIN_REQUIRES_MATCH = "match";
 	public static final String PLUGIN_REQUIRES_MATCH_EXACT = "exact";
+	public static final String PLUGIN_REQUIRES_MATCH_PERFECT = "perfect";
+	public static final String PLUGIN_REQUIRES_MATCH_EQUIVALENT = "equivalent";
 	public static final String PLUGIN_REQUIRES_MATCH_COMPATIBLE = "compatible";
+	public static final String PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL = "greaterOrEqual";
 
 	public static final String PLUGIN_KEY_VERSION_SEPARATOR = "_";
 

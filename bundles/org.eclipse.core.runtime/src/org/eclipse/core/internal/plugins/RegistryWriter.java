@@ -260,10 +260,20 @@ public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, 
 		w.print(" " + IModel.PLUGIN_REQUIRES_EXPORT + "=\"" + IModel.TRUE + "\"");
 	if (req.getOptional())
 		w.print(" " + IModel.PLUGIN_REQUIRES_OPTIONAL + "=\"" + IModel.TRUE + "\"");
-	if (req.getMatch())
-		w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_EXACT + "\"");
-	else
-		w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_COMPATIBLE + "\"");
+	switch (req.getMatch()) {
+		case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT:
+			w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_PERFECT + "\"");
+			break;
+		case PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT:
+			w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_EQUIVALENT + "\"");
+			break;
+		case PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE:
+			w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_COMPATIBLE + "\"");
+			break;
+		case PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL:
+			w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL + "\"");
+			break;
+	}
 	w.println("/>");
 }
 public void writePluginRegistry(PluginRegistryModel registry, PrintWriter w, int indent) {

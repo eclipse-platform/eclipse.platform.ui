@@ -25,7 +25,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 2;
+	public static final byte REGISTRY_CACHE_VERSION = 3;
 
 	public static final byte NONLABEL = 0;
 
@@ -868,7 +868,7 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 					requires.setVersion(in.readUTF());
 					break;
 				case REQUIRES_MATCH_LABEL :
-					requires.setMatch(in.readBoolean());
+					requires.setMatch(in.readByte());
 					break;
 				case REQUIRES_EXPORT_LABEL :
 					requires.setExport(in.readBoolean());

@@ -58,6 +58,15 @@ public boolean isExported();
  * @return <code>true</code> if compatible match is allowed,
  *   <code>false</code> if exact match is required.
  */
+public boolean isMatchedAsGreaterOrEqual();
+/**
+ * Indicates that this plug-in prerequisite can be resolved
+ * against a configured plug-in with an identifier that is
+ * greater than or equal to it.
+ *
+ * @return <code>true</code> if greater or equal match is allowed,
+ *   <code>false</code> otherwise.
+ */
 public boolean isMatchedAsCompatible();
 /**
  * Indicates that this plug-in prerequisite can only be resolved
@@ -67,6 +76,25 @@ public boolean isMatchedAsCompatible();
  * @return <code>true</code> if only exact identifier match
  * satisfies this dependency, <code>false</code> if compatible
  * plug-in will satisfy this dependency.
+ */
+public boolean isMatchedAsEquivalent();
+/**
+ * Indicates that this plug-in prerequisite can only be resolved
+ * against a configured plug-in with an equivalent plug-in 
+ * identifier.
+ *
+ * @return <code>true</code> if only equivalent identifier match
+ * satisfies this dependency, <code>false</code> otherwise.
+ */
+public boolean isMatchedAsPerfect();
+/**
+ * Indicates that this plug-in prerequisite can only be resolved
+ * against a configured plug-in with a plug-in identifier that
+ * is perfectly equal.
+ *
+ * @return <code>true</code> if only perfectly equal
+ * identifier match satisfies this dependency,
+ * <code>false</code> otherwise.
  */
 public boolean isMatchedAsExact();
 /**

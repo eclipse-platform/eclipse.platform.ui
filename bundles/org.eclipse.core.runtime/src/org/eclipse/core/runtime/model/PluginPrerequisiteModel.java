@@ -5,7 +5,9 @@ package org.eclipse.core.runtime.model;
  * All Rights Reserved.
  */
 
- import org.eclipse.core.runtime.PluginVersionIdentifier;	// for javadoc
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.PluginVersionIdentifier;	// for javadoc
+
 /**
  * An object which represents the relationship between a plug-in and a
  * prerequisite plug-in in the dependent's plug-in manifest.
@@ -15,13 +17,20 @@ package org.eclipse.core.runtime.model;
  */
 public class PluginPrerequisiteModel extends PluginModelObject {
 
+	public static final byte PREREQ_MATCH_UNSPECIFIED = 0;
+	public static final byte PREREQ_MATCH_PERFECT = 1;
+	public static final byte PREREQ_MATCH_EQUIVALENT = 2;
+	public static final byte PREREQ_MATCH_COMPATIBLE = 3;
+	public static final byte PREREQ_MATCH_GREATER_OR_EQUAL = 4;
+
 	// DTD properties (included in plug-in manifest)
 	private String plugin = null;
 	private String version = null;
-	private boolean match = false;
+	private byte match = PREREQ_MATCH_UNSPECIFIED;
 	private boolean export = false;
 	private String resolvedVersion = null;
 	private boolean optional = false;
+
 /**
  * Creates a new plug-in prerequisite model in which all fields
  * are <code>null</code>.
@@ -38,11 +47,17 @@ public boolean getExport() {
 	return export;
 }
 /**
- * Returns whether or not this pre-requisite requires an exact match.
+ * Returns a byte code indicating the type of match this pre-requisite requires.
+ * The byte code can be any one of the following:
+ * PREREQ_MATCH_UNSPECIFIED			initial value
+ * PREREQ_MATCH_PERFECT				perfectly equal match
+ * PREREQ_MATCH_EQUIVALENT			equivalent match
+ * PREREQ_MATCH_COMPATIBLE			compatible match
+ * PREREQ_MATCH_GREATER_OR_EQUAL	greater than or equal to match
  *
- * @return whether or not this pre-requisite requires an exact match
+ * @return a byte code indicating the type of match this pre-requisite requires
  */
-public boolean getMatch() {
+public byte getMatch() {
 	return match;
 }
 /**
@@ -95,8 +110,12 @@ public void setExport(boolean value) {
  *
  * @param value whether or not this pre-requisite requires an exact match
  */
-public void setMatch(boolean value) {
+public void setMatch(byte value) {
 	assertIsWriteable();
+	Assert.isTrue ((value == PREREQ_MATCH_PERFECT) ||
+	               (value == PREREQ_MATCH_EQUIVALENT) ||
+	               (value == PREREQ_MATCH_COMPATIBLE) ||
+	               (value == PREREQ_MATCH_GREATER_OR_EQUAL));
 	match = value;
 }
 /**
