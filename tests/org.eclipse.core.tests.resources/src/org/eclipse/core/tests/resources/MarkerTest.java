@@ -16,7 +16,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import sun.security.action.GetPropertyAction;
 
 public class MarkerTest extends EclipseWorkspaceTest {
 
