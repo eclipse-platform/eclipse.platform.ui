@@ -81,10 +81,12 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		// Call commented out on WorkbenchPreferencePage. 
+		// Call commented out on WorkbenchPreferencePage.
+		createSpace(composite);
 		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
 		
 		// Temporary option to enable cool bars
+		createSpace(composite);
 		coolBarsButton =
 			createTempOption(
 				composite,
@@ -121,6 +123,9 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		createSingleClickButton(buttonComposite,1,WorkbenchMessages.getString("WorkInProgressPreference.fileExplorer"),OpenStrategy.FILE_EXPLORER); //$NON-NLS-1$
 		createSingleClickButton(buttonComposite,2,WorkbenchMessages.getString("WorkInProgressPreference.activeDesktop"),OpenStrategy.ACTIVE_DESKTOP); //$NON-NLS-1$
 		createSingleClickButton(buttonComposite,3,WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"),OpenStrategy.DOUBLE_CLICK); //$NON-NLS-1$
+		Label label = new Label(buttonComposite, SWT.NONE);
+		label.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
+		
 	}
 	
 	private void createSingleClickButton(Composite parent,int index,String label,final int method) {
