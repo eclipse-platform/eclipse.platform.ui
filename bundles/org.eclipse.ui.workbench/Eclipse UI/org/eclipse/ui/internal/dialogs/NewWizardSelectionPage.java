@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -38,6 +37,11 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 
     /**
      *	Create an instance of this class
+     *
+     * @param aWorkbench the workbench
+     * @param currentSelection the current selection
+     * @param elements the wizard elements
+     * @param primary the primary wizard elements
      */
     public NewWizardSelectionPage(IWorkbench aWorkbench,
             IStructuredSelection currentSelection,
@@ -67,8 +71,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
         newResourcePage.setDialogSettings(settings);
 
         Control control = newResourcePage.createControl(parent);
-        WorkbenchHelp.setHelp(control,
-                IWorkbenchHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
+        getWorkbench().getHelpSystem().setHelp(control,
+				IWorkbenchHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
         setControl(control);
     }
 

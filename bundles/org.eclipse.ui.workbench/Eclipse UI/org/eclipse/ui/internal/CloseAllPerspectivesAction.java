@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>CloseAllPerspectivesAction</code> is used to close all of 
@@ -44,7 +43,8 @@ public class CloseAllPerspectivesAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages
                 .getString("CloseAllPerspectivesAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
         setEnabled(false);
     }
 

@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action removes the selected task(s) from the task list.
@@ -30,10 +30,14 @@ class RemoveTaskAction extends TaskAction {
 
     /**
      * Creates the action.
+     * 
+     * @param tasklist the task list
+     * @param id the id
      */
     public RemoveTaskAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.REMOVE_TASK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				ITaskListHelpContextIds.REMOVE_TASK_ACTION);
     }
 
     /**
@@ -52,7 +56,7 @@ class RemoveTaskAction extends TaskAction {
         Table table = viewer.getTable();
         int focusIndex = table.getSelectionIndex();
         try {
-            List list = ((IStructuredSelection) selection).toList();
+            List list = selection.toList();
             IMarker[] markers = new IMarker[list.size()];
             list.toArray(markers);
             // be sure to only invoke one workspace operation

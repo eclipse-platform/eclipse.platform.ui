@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,7 +36,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -86,14 +86,15 @@ public class BuildAction extends WorkspaceAction {
             setToolTipText(IDEWorkbenchMessages
                     .getString("BuildAction.toolTip")); //$NON-NLS-1$
             setId(ID_BUILD);
-            WorkbenchHelp.setHelp(this,
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.INCREMENTAL_BUILD_ACTION);
         } else {
             setText(IDEWorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
             setToolTipText(IDEWorkbenchMessages
                     .getString("RebuildAction.tooltip")); //$NON-NLS-1$
             setId(ID_REBUILD_ALL);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.FULL_BUILD_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.FULL_BUILD_ACTION);
         }
 
         this.buildType = type;

@@ -45,8 +45,11 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
  * or subclassed.
  * </p>
  *
+ * @deprecated clients should use <code>IWorkbenchHelpSystem</code> instead
+ * 
  * @see org.eclipse.help.HelpSystem
  * @see org.eclipse.ui.help.IWorkbenchHelpSystem
+ * @see org.eclipse.ui.IWorkbench#getHelpSystem()
  */
 public class WorkbenchHelp {
 

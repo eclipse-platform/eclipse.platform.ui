@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -23,6 +22,8 @@ public class MinimizePartAction extends PageEventAction {
 
     /**
      * Creates a MaximizePartAction.
+     * 
+     * @param window the window
      */
     public MinimizePartAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("MinimizePartAction.text"), window); //$NON-NLS-1$
@@ -30,7 +31,8 @@ public class MinimizePartAction extends PageEventAction {
                 .getString("MinimizePartAction.toolTip")); //$NON-NLS-1$
         // @issue missing action id
         updateState();
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.MINIMIZE_PART_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.MINIMIZE_PART_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.minimizePart"); //$NON-NLS-1$
     }
 

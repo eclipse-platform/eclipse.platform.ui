@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Implementation of the view sorting actions.
@@ -39,7 +39,8 @@ public class SortViewAction extends ResourceNavigatorAction {
         }
         setEnabled(true);
         sortCriteria = sortByType ? ResourceSorter.TYPE : ResourceSorter.NAME;
-        WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.SORT_VIEW_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				INavigatorHelpContextIds.SORT_VIEW_ACTION);
     }
 
     public void run() {

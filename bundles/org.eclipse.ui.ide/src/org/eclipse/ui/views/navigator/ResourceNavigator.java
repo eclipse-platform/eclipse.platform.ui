@@ -40,7 +40,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -74,7 +73,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -282,7 +280,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         memento = null;
 
         // Set help for the view 
-        WorkbenchHelp.setHelp(viewer.getControl(), getHelpContextId());
+        getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
+				viewer.getControl(), getHelpContextId());
     }
 
     /**
@@ -563,6 +562,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Returns the tree viewer which shows the resource hierarchy.
+     * @return the tree viewer
      * @since 2.0
      */
     public TreeViewer getTreeViewer() {
@@ -573,6 +573,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Returns the shell to use for opening dialogs.
      * Used in this class, and in the actions.
      * 
+     * @return the shell
      * @deprecated use getViewSite().getShell()
      */
     public Shell getShell() {
@@ -737,8 +738,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 ResourceTransfer.getInstance(), FileTransfer.getInstance(),
                 PluginTransfer.getInstance() };
         TreeViewer viewer = getTreeViewer();
-        viewer.addDragSupport(ops, transfers, new NavigatorDragAdapter(
-                (ISelectionProvider) viewer));
+        viewer.addDragSupport(ops, transfers, new NavigatorDragAdapter(viewer));
         NavigatorDropAdapter adapter = new NavigatorDropAdapter(viewer);
         adapter.setFeedbackEnabled(false);
         viewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, adapter);

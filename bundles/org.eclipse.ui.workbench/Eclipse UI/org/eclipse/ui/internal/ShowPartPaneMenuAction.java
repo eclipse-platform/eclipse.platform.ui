@@ -16,7 +16,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Show the menu on top of the icon in the
@@ -35,7 +34,8 @@ public class ShowPartPaneMenuAction extends PartEventAction implements
 
     /**
      * Constructor for ShowPartPaneMenuAction.
-     * @param text
+     * 
+     * @param window the window
      */
     public ShowPartPaneMenuAction(IWorkbenchWindow window) {
         super(""); //$NON-NLS-1$
@@ -46,7 +46,8 @@ public class ShowPartPaneMenuAction extends PartEventAction implements
         // @issue missing action id
         initText();
         workbenchWindow.getPartService().addPartListener(this);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
+        workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.showSystemMenu"); //$NON-NLS-1$
     }
 

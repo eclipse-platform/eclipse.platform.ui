@@ -12,7 +12,7 @@
 package org.eclipse.ui.views.tasklist;
 
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action selects all tasks currently showing in the task list.
@@ -24,7 +24,7 @@ class SelectAllTasksAction extends TaskAction {
      */
     protected SelectAllTasksAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 ITaskListHelpContextIds.SELECT_ALL_TASKS_ACTION);
     }
 

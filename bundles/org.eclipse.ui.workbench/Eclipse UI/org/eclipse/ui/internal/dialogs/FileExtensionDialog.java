@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -40,6 +40,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
     /**
      * Constructs a new file extension dialog.
+     * @param parentShell the parent shell
      */
     public FileExtensionDialog(Shell parentShell) {
         super(parentShell);
@@ -52,7 +53,8 @@ public class FileExtensionDialog extends TitleAreaDialog {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.getString("FileExtension.shellTitle")); //$NON-NLS-1$
         //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
     }
 
     /**
@@ -61,7 +63,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
      *
      * Subclasses should overide.
      *
-     * @param the parent composite to contain the dialog area
+     * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -168,6 +170,11 @@ public class FileExtensionDialog extends TitleAreaDialog {
         return true;
     }
 
+    /**
+     * Get the extension.
+     * 
+     * @return the extension
+     */
     public String getExtension() {
         // We need kernel api to validate the extension or a filename
 
@@ -179,6 +186,11 @@ public class FileExtensionDialog extends TitleAreaDialog {
         return filename.substring(index + 1, filename.length());
     }
 
+    /**
+     * Get the name.
+     * 
+     * @return the name
+     */
     public String getName() {
         // We need kernel api to validate the extension or a filename
 

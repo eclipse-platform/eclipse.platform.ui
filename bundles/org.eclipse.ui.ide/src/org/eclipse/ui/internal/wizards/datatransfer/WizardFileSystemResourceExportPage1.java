@@ -37,8 +37,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 
 /**
@@ -81,7 +81,9 @@ public class WizardFileSystemResourceExportPage1 extends
     }
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class.
+     *
+     * @param selection the selection
      */
     public WizardFileSystemResourceExportPage1(IStructuredSelection selection) {
         this("fileSystemExportPage1", selection); //$NON-NLS-1$
@@ -105,7 +107,7 @@ public class WizardFileSystemResourceExportPage1 extends
     public void createControl(Composite parent) {
         super.createControl(parent);
         giveFocusToDestination();
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE);
     }
 

@@ -16,15 +16,14 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Launch the tips and tricks action.
@@ -38,7 +37,9 @@ public class TipsAndTricksAction extends PartEventAction implements
     private IWorkbenchWindow workbenchWindow;
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class.
+     * 
+     * @param window the window
      */
     public TipsAndTricksAction(IWorkbenchWindow window) {
         super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
@@ -47,7 +48,8 @@ public class TipsAndTricksAction extends PartEventAction implements
         }
         this.workbenchWindow = window;
         setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
         workbenchWindow.getPartService().addPartListener(this);
     }
@@ -90,7 +92,7 @@ public class TipsAndTricksAction extends PartEventAction implements
                         .getString("TipsAndTricksPageSelectionDialog.message"), //$NON-NLS-1$
                 IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
 
-        if (d.open() != Dialog.OK || d.getResult().length != 1)
+        if (d.open() != Window.OK || d.getResult().length != 1)
             return;
 
         AboutInfo feature = (AboutInfo) d.getResult()[0];
@@ -103,7 +105,8 @@ public class TipsAndTricksAction extends PartEventAction implements
             if (href != null) {
                 BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
                     public void run() {
-                        WorkbenchHelp.displayHelpResource(href);
+                        workbenchWindow.getWorkbench().getHelpSystem()
+								.displayHelpResource(href);
                     }
                 });
             } else {

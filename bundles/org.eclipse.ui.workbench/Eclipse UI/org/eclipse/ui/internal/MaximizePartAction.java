@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Toggles the maximize/restore state of the active part, if there is one.
@@ -22,6 +21,8 @@ public class MaximizePartAction extends PageEventAction {
 
     /**
      * Creates a MaximizePartAction.
+     * 
+     * @param window the window
      */
     public MaximizePartAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("MaximizePartAction.text"), window); //$NON-NLS-1$
@@ -29,7 +30,8 @@ public class MaximizePartAction extends PageEventAction {
                 .getString("MaximizePartAction.toolTip")); //$NON-NLS-1$
         // @issue missing action id
         updateState();
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.MAXIMIZE_PART_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.MAXIMIZE_PART_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.maximizePart"); //$NON-NLS-1$
     }
 

@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>ClosePerspectiveAction</code> is used to close the
@@ -45,7 +44,8 @@ public class ClosePerspectiveAction extends Action implements
         setToolTipText(WorkbenchMessages
                 .getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
     }
 
     /* (non-Javadoc)
@@ -79,6 +79,9 @@ public class ClosePerspectiveAction extends Action implements
     /**
      * Close the argument perspective in the argument page.  Do nothing if the page or
      * perspective are null.
+     * 
+     * @param page the page
+     * @param persp the perspective
 	 * @since 3.1
      */
     public static void closePerspective(WorkbenchPage page, Perspective persp) {

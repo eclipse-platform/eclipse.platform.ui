@@ -12,7 +12,6 @@ package org.eclipse.ui.views.framelist;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Generic "Up" action which goes to the parent frame for the current frame.
@@ -31,7 +30,8 @@ public class UpAction extends FrameAction {
         setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_UP_DISABLED));
-        WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.UP_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IFrameListHelpContextIds.UP_ACTION);
         update();
     }
 

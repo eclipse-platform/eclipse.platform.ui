@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -118,7 +117,7 @@ public class GlobalBuildAction extends Action implements
             setToolTipText(IDEWorkbenchMessages
                     .getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
             setId("build"); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this,
+            workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
             setImageDescriptor(IDEInternalWorkbenchImages
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC));
@@ -132,7 +131,7 @@ public class GlobalBuildAction extends Action implements
             setToolTipText(IDEWorkbenchMessages
                     .getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
             setId("rebuildAll"); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this,
+            workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                     IIDEHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
             setActionDefinitionId("org.eclipse.ui.project.rebuildAll"); //$NON-NLS-1$
             break;

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
@@ -99,7 +99,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp
+        PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(shell, IIDEHelpContextIds.CONTAINER_SELECTION_DIALOG);
     }
 

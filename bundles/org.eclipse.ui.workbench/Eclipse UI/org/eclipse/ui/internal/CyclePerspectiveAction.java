@@ -17,7 +17,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
@@ -28,13 +27,16 @@ public class CyclePerspectiveAction extends CyclePartAction implements
         IPerspectiveListener {
 
     private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
-            false);;
+            false);
 
     /**
      * Creates a CyclePerspectiveAction.
+     * 
+     * @param window the window
+     * @param forward if you are cycling forward
      */
     public CyclePerspectiveAction(IWorkbenchWindow window, boolean forward) {
-        super(window, forward); //$NON-NLS-1$
+        super(window, forward); 
         window.addPerspectiveListener(this);
         updateState();
     }
@@ -47,8 +49,8 @@ public class CyclePerspectiveAction extends CyclePartAction implements
             setToolTipText(WorkbenchMessages
                     .getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
         } else {
             setText(WorkbenchMessages
@@ -56,8 +58,8 @@ public class CyclePerspectiveAction extends CyclePartAction implements
             setToolTipText(WorkbenchMessages
                     .getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
         }
     }

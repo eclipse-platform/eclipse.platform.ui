@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.util.Util;
 
@@ -42,12 +41,6 @@ public final class OpenPerspectiveAction extends Action implements
     private final IPerspectiveDescriptor descriptor;
 
     /**
-     * The workbench window in which this action is created. This value should
-     * not be <code>null</code>.
-     */
-    private final IWorkbenchWindow window;
-
-    /**
      * Constructs a new instance of <code>OpenPerspectiveAction</code>
      * 
      * @param window
@@ -65,7 +58,6 @@ public final class OpenPerspectiveAction extends Action implements
             final PerspectiveMenu callback) {
         super(Util.ZERO_LENGTH_STRING); //$NON-NLS-1$
 
-        this.window = window;
         this.descriptor = descriptor;
         this.callback = callback;
 
@@ -74,7 +66,7 @@ public final class OpenPerspectiveAction extends Action implements
         setToolTipText(label);
         setImageDescriptor(descriptor.getImageDescriptor());
 
-        WorkbenchHelp.setHelp(this,
+        window.getWorkbench().getHelpSystem().setHelp(this,
                 IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_ACTION);
     }
 

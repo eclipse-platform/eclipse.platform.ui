@@ -18,7 +18,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
@@ -62,7 +61,8 @@ public class CreateFileAction extends SelectionListenerAction {
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
         setId(ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.CREATE_FILE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.CREATE_FILE_ACTION);
     }
 
     /**
@@ -78,7 +78,7 @@ public class CreateFileAction extends SelectionListenerAction {
         dialog.create();
         dialog.getShell().setText(
                 IDEWorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(dialog.getShell(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
                 IIDEHelpContextIds.NEW_FILE_WIZARD);
         dialog.open();
     }

@@ -45,8 +45,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
@@ -112,7 +112,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         super.configureShell(shell);
         shell.setText(IDEWorkbenchMessages
                 .getString("ProjectPerspectiveChoiceDialog.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
                 IIDEHelpContextIds.SHOW_PROJECT_PERSPECTIVE_DIALOG);
     }
 

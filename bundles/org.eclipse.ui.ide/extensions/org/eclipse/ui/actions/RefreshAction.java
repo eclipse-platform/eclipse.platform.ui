@@ -32,7 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -59,7 +58,8 @@ public class RefreshAction extends WorkspaceAction {
         super(shell, IDEWorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
         setToolTipText(IDEWorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.REFRESH_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.REFRESH_ACTION);
     }
 
     /**
@@ -162,6 +162,7 @@ public class RefreshAction extends WorkspaceAction {
 
     /**
      * Handle the key release.
+     * @param event the event
      */
     public void handleKeyReleased(KeyEvent event) {
 

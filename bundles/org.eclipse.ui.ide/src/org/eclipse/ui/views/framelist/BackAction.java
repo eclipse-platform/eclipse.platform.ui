@@ -12,7 +12,6 @@ package org.eclipse.ui.views.framelist;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Generic "Back" action which goes back one frame,
@@ -32,7 +31,8 @@ public class BackAction extends FrameAction {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
-        WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.BACK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IFrameListHelpContextIds.BACK_ACTION);
         update();
     }
 

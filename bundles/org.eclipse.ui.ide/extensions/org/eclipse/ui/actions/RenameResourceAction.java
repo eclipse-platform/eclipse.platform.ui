@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -113,13 +112,15 @@ public class RenameResourceAction extends WorkspaceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.RENAME_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.RENAME_RESOURCE_ACTION);
     }
 
     /**
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
+     * @param tree the tree
      */
     public RenameResourceAction(Shell shell, Tree tree) {
         this(shell);
@@ -173,8 +174,8 @@ public class RenameResourceAction extends WorkspaceAction {
             return MessageDialog.openQuestion(getShell(), CHECK_RENAME_TITLE,
                     MessageFormat.format(CHECK_RENAME_MESSAGE,
                             new Object[] { currentResource.getName() }));
-        else
-            return true;
+        
+        return true;
     }
 
     Composite createParent() {
@@ -356,9 +357,9 @@ public class RenameResourceAction extends WorkspaceAction {
                     }
                     monitor.worked(100);
                     return;
-                } else
-                    newResource.delete(IResource.KEEP_HISTORY,
-                            new SubProgressMonitor(monitor, 50));
+                } 
+                newResource.delete(IResource.KEEP_HISTORY,
+                        new SubProgressMonitor(monitor, 50));
             } else {
                 monitor.worked(100);
                 return;
@@ -418,7 +419,6 @@ public class RenameResourceAction extends WorkspaceAction {
      * if the query was canceled. Rename the currently selected resource using the table editor. 
      * Continue the action when the user is done.
      *
-     * @return java.lang.String
      * @param resource the resource to rename
      */
     private void queryNewResourceNameInline(final IResource resource) {
@@ -481,8 +481,9 @@ public class RenameResourceAction extends WorkspaceAction {
 
     }
 
-    /* (non-Javadoc)
-     * Run the action to completion using the supplied path.
+    /**
+     * @param path the path
+     * @param resource the resource
      */
     protected void runWithNewPath(IPath path, IResource resource) {
         this.newPath = path;
@@ -563,6 +564,11 @@ public class RenameResourceAction extends WorkspaceAction {
         return true;
     }
 
+    /**
+     * Set the text action handler.
+     * 
+     * @param actionHandler the action handler
+     */
     public void setTextActionHandler(TextActionHandler actionHandler) {
         textActionHandler = actionHandler;
     }

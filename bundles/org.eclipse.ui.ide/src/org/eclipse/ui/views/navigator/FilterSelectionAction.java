@@ -11,11 +11,11 @@
 
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The FilterSelectionAction opens the filters dialog.
@@ -39,7 +39,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
     public FilterSelectionAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
         setToolTipText(FILTER_TOOL_TIP);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
         setEnabled(true);
     }
@@ -60,7 +60,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
         dialog.setTitle(FILTER_TITLE_MESSAGE);
         dialog.setInitialSelections(contentProvider.getInitialSelections());
         dialog.open();
-        if (dialog.getReturnCode() == Dialog.OK) {
+        if (dialog.getReturnCode() == Window.OK) {
             Object[] results = dialog.getResult();
             String[] selectedPatterns = new String[results.length];
             System.arraycopy(results, 0, selectedPatterns, 0, results.length);

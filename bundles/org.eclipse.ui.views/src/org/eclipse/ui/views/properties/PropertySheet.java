@@ -17,7 +17,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -93,8 +92,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
      */
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
-        WorkbenchHelp.setHelp(getPageBook(),
-                IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
+        getSite().getPage().getWorkbenchWindow().getWorkbench().getHelpSystem()
+				.setHelp(getPageBook(),
+						IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
     }
 
     /* (non-Javadoc)
@@ -145,9 +145,8 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
         if (page != null) {
             bootstrapSelection = page.getSelection();
             return page.getActivePart();
-        } else {
-            return null;
-        }
+        } 
+        return null;
     }
 
     /* (non-Javadoc)

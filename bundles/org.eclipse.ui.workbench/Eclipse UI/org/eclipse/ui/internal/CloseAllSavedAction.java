@@ -20,7 +20,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  *	Closes all editors except ones with unsaved changes.
@@ -35,7 +34,8 @@ public class CloseAllSavedAction extends PageEventAction implements
     private List partsWithListeners = new ArrayList(1);
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class.
+     * @param window the window
      */
     public CloseAllSavedAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("CloseAllSavedAction.text"), window); //$NON-NLS-1$
@@ -44,7 +44,8 @@ public class CloseAllSavedAction extends PageEventAction implements
         // @issue Should create a ID in IWorkbenchActionConstants when it becames API?
         setId("closeAllSaved"); //$NON-NLS-1$
         updateState();
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_ALL_SAVED_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.CLOSE_ALL_SAVED_ACTION);
         setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
     }
 

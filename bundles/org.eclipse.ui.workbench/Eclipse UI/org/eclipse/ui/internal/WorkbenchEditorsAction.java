@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
 
 /**
@@ -32,7 +31,8 @@ public class WorkbenchEditorsAction extends Action implements
 
     /**
      * Constructor for NavigateWorkbenchAction.
-     * @param text
+     * 
+     * @param window the window
      */
     public WorkbenchEditorsAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
@@ -41,7 +41,8 @@ public class WorkbenchEditorsAction extends Action implements
         }
         this.workbenchWindow = window;
         // @issue missing action id
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.WORKBENCH_EDITORS_ACTION);
+        workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.WORKBENCH_EDITORS_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.switchToEditor"); //$NON-NLS-1$
     }
 

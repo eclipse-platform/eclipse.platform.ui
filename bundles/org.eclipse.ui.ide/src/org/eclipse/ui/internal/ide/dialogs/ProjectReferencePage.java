@@ -36,8 +36,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -72,7 +72,7 @@ public class ProjectReferencePage extends PropertyPage {
      */
     protected Control createContents(Composite parent) {
 
-        WorkbenchHelp.setHelp(getControl(),
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
         Font font = parent.getFont();
 

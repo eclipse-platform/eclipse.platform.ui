@@ -53,13 +53,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
-import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
-
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
@@ -237,13 +235,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     }
 
-    /** (non-Javadoc)
+    /* (non-Javadoc)
      * Method declared on IDialogPage.
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
         validateSourceGroup();
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.FILE_SYSTEM_IMPORT_WIZARD_PAGE);
     }
 
@@ -533,10 +531,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
                     if (element.isPopulated())
                         return getChildren(element).length > 0;
-                    else {
-                        //If we have not populated then wait until asked
-                        return true;
-                    }
+
+                    //If we have not populated then wait until asked
+                    return true;
                 }
                 return false;
             }
@@ -629,11 +626,10 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             if ((getSourceDirectory(selectedDirectory) == null)
                     || selectedDirectory.equals(currentSource))
                 return;
-            else { //If it is valid then proceed to populate
-                setErrorMessage(null);
-                setSourceName(selectedDirectory);
-                selectionGroup.setFocus();
-            }
+            //If it is valid then proceed to populate
+            setErrorMessage(null);
+            setSourceName(selectedDirectory);
+            selectionGroup.setFocus();
         }
     }
 
@@ -917,7 +913,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     /**
      * Check if widgets are enabled or disabled by a change in the dialog.
      * Provided here to give access to inner classes.
-     * @param event Event
      */
     protected void updateWidgetEnablements() {
 
@@ -959,16 +954,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         IContainer container = getSpecifiedContainer();
         if (container == null)
             return false;
-        else {
-            IPath destinationLocation = getSpecifiedContainer().getLocation();
-            if (destinationLocation != null) {
-                return destinationLocation.isPrefixOf(sourcePath);
-            } else {
-                // null destination location is handled in 
-                // WizardResourceImportPage 
-                return false;
-            }
+        
+        IPath destinationLocation = getSpecifiedContainer().getLocation();
+        if (destinationLocation != null) {
+            return destinationLocation.isPrefixOf(sourcePath);
         }
+        // null destination location is handled in 
+        // WizardResourceImportPage 
+        return false;
     }
 
 }

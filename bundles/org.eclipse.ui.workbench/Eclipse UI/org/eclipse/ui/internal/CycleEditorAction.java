@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This is the implementation for both NextEditorAction and PrevEditorAction.
@@ -24,6 +23,8 @@ public class CycleEditorAction extends CyclePartAction {
 
     /**
      * Creates a CycleEditorAction.
+     * @param window the window
+     * @param forward whether the editors will be cycled forward
      */
     public CycleEditorAction(IWorkbenchWindow window, boolean forward) {
         super(window, forward); //$NON-NLS-1$
@@ -37,16 +38,16 @@ public class CycleEditorAction extends CyclePartAction {
             setToolTipText(WorkbenchMessages
                     .getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextEditor"); //$NON-NLS-1$
         } else {
             setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.previousEditor"); //$NON-NLS-1$
         }
     }

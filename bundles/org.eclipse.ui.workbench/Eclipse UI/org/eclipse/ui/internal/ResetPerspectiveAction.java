@@ -17,7 +17,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Reset the layout within the active perspective.
@@ -39,7 +38,8 @@ public class ResetPerspectiveAction extends Action implements
     }
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class
+     * @param window the window
      */
     public ResetPerspectiveAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
@@ -51,7 +51,8 @@ public class ResetPerspectiveAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)

@@ -13,20 +13,16 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -40,6 +36,14 @@ public class PropertyDialog extends FilteredPreferenceDialog {
     private static String lastPropertyId = null;
 
     
+    /**
+     * Create a new property dialog.
+     * 
+     * @param shell the parent shell
+     * @param propertyPageId the property page id
+     * @param element the adaptable element
+     * @return the property dialog
+     */
     public static PropertyDialog createDialogOn(Shell shell,final String propertyPageId, IAdaptable element){
 
 		PropertyPageManager pageManager = new PropertyPageManager();
@@ -76,7 +80,8 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		propertyDialog.create();
 
 		propertyDialog.getShell().setText(title);
-		WorkbenchHelp.setHelp(propertyDialog.getShell(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				propertyDialog.getShell(),
 				IWorkbenchHelpContextIds.PROPERTY_DIALOG);
 
 		return propertyDialog;
@@ -112,6 +117,8 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
     /**
      * Returns selection in the "Properties" action context.
+     * 
+     * @return the selection
      */
     public ISelection getSelection() {
         return selection;
@@ -119,6 +126,8 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
     /**
      * Sets the selection that will be used to determine target object.
+     * 
+     * @param newSelection the new selection
      */
     public void setSelection(ISelection newSelection) {
         selection = newSelection;

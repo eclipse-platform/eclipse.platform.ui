@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.FeatureSelectionDialog;
@@ -66,6 +65,7 @@ public class QuickStartAction extends Action implements
 
     /**
      * Creates an instance of this action, for use in the given window.
+     * @param window the window
      */
     public QuickStartAction(IWorkbenchWindow window) {
         super(IDEWorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
@@ -74,7 +74,8 @@ public class QuickStartAction extends Action implements
         }
         this.workbenchWindow = window;
         setToolTipText(IDEWorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.QUICK_START_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.QUICK_START_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
     }
 
@@ -155,6 +156,7 @@ public class QuickStartAction extends Action implements
      * 
      * @param featureId the about info for the feature
      * @return <code>true</code> if successful, <code>false</code> otherwise
+     * @throws WorkbenchException 
      */
     public boolean openWelcomePage(String featureId) throws WorkbenchException {
         AboutInfo feature = findFeature(featureId);

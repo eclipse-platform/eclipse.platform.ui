@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
@@ -77,7 +76,8 @@ public class CopyProjectAction extends SelectionListenerAction {
      */
     public CopyProjectAction(Shell shell) {
         this(shell, COPY_TITLE);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.COPY_PROJECT_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.COPY_PROJECT_ACTION);
     }
 
     /**

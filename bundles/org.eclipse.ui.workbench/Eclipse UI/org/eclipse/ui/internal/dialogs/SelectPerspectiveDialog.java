@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
@@ -64,6 +64,9 @@ public class SelectPerspectiveDialog extends Dialog implements
 
     /**
      * PerspectiveDialog constructor comment.
+     * 
+     * @param parentShell the parent shell
+     * @param perspReg the perspective registry
      */
     public SelectPerspectiveDialog(Shell parentShell,
             IPerspectiveRegistry perspReg) {
@@ -91,7 +94,8 @@ public class SelectPerspectiveDialog extends Dialog implements
         super.configureShell(shell);
         shell.setText(WorkbenchMessages
                 .getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
     }
 
     /**
@@ -116,7 +120,7 @@ public class SelectPerspectiveDialog extends Dialog implements
      * Creates and returns the contents of the upper part of this dialog (above
      * the button bar).
      * 
-     * @param the parent composite to contain the dialog area
+     * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -190,6 +194,8 @@ public class SelectPerspectiveDialog extends Dialog implements
 
     /**
      * Returns the current selection.
+     * 
+     * @return the current selection
      */
     public IPerspectiveDescriptor getSelection() {
         return perspDesc;

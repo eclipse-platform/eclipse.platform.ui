@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
@@ -101,7 +101,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     private static Map featuresMap;
 
     /**
-     * Constructor for AboutFeaturesDialog
+     * Constructor for AboutFeaturesDialog.
+     * 
+     * @param parentShell the parent shell
+     * @param productName the product name
+     * @param bundleGroupInfos the bundle info
      */
     public AboutFeaturesDialog(Shell parentShell, String productName,
             AboutBundleGroupData[] bundleGroupInfos) {
@@ -189,7 +193,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                     "AboutFeaturesDialog.shellTitle", //$NON-NLS-1$
                     new Object[] { productName }));
 
-        WorkbenchHelp.setHelp(newShell, IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
     }
 
     /**
@@ -430,6 +435,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
     /**
      * Select the initial selection
+     * 
+     * @param info the info
      */
     public void setInitialSelection(AboutBundleGroupData info) {
         lastSelection = info;
@@ -472,14 +479,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             break;
         }
 
-        refreshTable(column);
+        refreshTable();
     }
 
     /**
      * Refresh the rows of the table based on the selected column. Maintain
      * selection from before sort action request.
      */
-    private void refreshTable(int col) {
+    private void refreshTable() {
         TableItem[] items = table.getItems();
 
         // create new order of table items

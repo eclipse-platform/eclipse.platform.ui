@@ -18,7 +18,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Copies a property to the clipboard.
@@ -31,11 +31,15 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
     /**
      * Creates the action.
+     * 
+     * @param viewer the viewer
+     * @param name the name
+     * @param clipboard the clipboard
      */
     public CopyPropertyAction(PropertySheetViewer viewer, String name,
             Clipboard clipboard) {
         super(viewer, name);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IPropertiesHelpContextIds.COPY_PROPERTY_ACTION);
         this.clipboard = clipboard;
     }
@@ -63,7 +67,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
     }
 
     /** 
-     * Updates enablement based on the current selection
+     * Updates enablement based on the current selection.
+     * 
+     * @param sel the selection
      */
     public void selectionChanged(IStructuredSelection sel) {
         setEnabled(!sel.isEmpty());

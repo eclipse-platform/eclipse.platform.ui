@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -114,7 +114,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
         initializeDialogUnits(parent);
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         composite.setLayout(new GridLayout());
@@ -215,7 +215,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
      * Creates the project location specification controls.
      *
      * @param projectGroup the parent composite
-     * @param boolean - the initial enabled state of the widgets created
+     * @param enabled the initial enabled state of the widgets created
      */
     private void createUserSpecifiedProjectLocationGroup(
             Composite projectGroup, boolean enabled) {
@@ -313,8 +313,8 @@ public class WizardNewProjectCreationPage extends WizardPage {
     private String getProjectNameFieldValue() {
         if (projectNameField == null)
             return ""; //$NON-NLS-1$
-        else
-            return projectNameField.getText().trim();
+
+        return projectNameField.getText().trim();
     }
 
     /**
@@ -326,8 +326,8 @@ public class WizardNewProjectCreationPage extends WizardPage {
     private String getProjectLocationFieldValue() {
         if (locationPathField == null)
             return ""; //$NON-NLS-1$
-        else
-            return locationPathField.getText().trim();
+
+        return locationPathField.getText().trim();
     }
 
     /**
@@ -381,10 +381,10 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
     /**
      * Get the defualt location for the provided name.
-     * @return String
-     * @param String
+     * 
+     * @param nameValue the name
+     * @return the location
      */
-
     private String getDefaultLocationForName(String nameValue) {
         IPath defaultPath = Platform.getLocation().append(nameValue);
         return defaultPath.toOSString();

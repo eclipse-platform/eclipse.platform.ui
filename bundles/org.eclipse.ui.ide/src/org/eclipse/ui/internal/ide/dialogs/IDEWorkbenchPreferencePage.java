@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -60,8 +60,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
      */
     protected Control createContents(Composite parent) {
 
-        WorkbenchHelp
-                .setHelp(parent, IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 
@@ -105,7 +105,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
     /**
      * Create a composite that contains entry fields specifying save interval
      * preference.
-     * @param composite. The Composite the group is created in.
+     * 
+     * @param composite the Composite the group is created in.
      */
     private void createSaveIntervalGroup(Composite composite) {
         Composite groupComposite = new Composite(composite, SWT.LEFT);

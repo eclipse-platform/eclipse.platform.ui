@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -52,7 +51,8 @@ public class MoveResourceAction extends CopyResourceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
         setId(MoveResourceAction.ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
     }
 
     /* (non-Javadoc)

@@ -15,7 +15,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Edit the action sets.
@@ -37,7 +36,9 @@ public class EditActionSetsAction extends Action implements
     }
 
     /**
+     * Create a new instance of this class.
      * 
+     * @param window the window
      */
     public EditActionSetsAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
@@ -50,7 +51,8 @@ public class EditActionSetsAction extends Action implements
         setToolTipText(WorkbenchMessages
                 .getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
     }
 
     /* (non-Javadoc)

@@ -69,7 +69,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -339,7 +338,8 @@ public abstract class MarkerView extends TableView {
                             + ".task_list_view_context"; //$NON-NLS-1$
                 }
 
-                WorkbenchHelp.displayHelp(contextId);
+                PlatformUI.getWorkbench().getHelpSystem()
+						.displayHelp(contextId);
             }
         });
     }

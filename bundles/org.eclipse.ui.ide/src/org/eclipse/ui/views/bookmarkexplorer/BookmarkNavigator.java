@@ -73,7 +73,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -163,6 +162,9 @@ public class BookmarkNavigator extends ViewPart {
 
         private int column;
 
+        /**
+         * @param column
+         */
         public SortByAction(int column) {
             this.column = column;
         }
@@ -184,6 +186,9 @@ public class BookmarkNavigator extends ViewPart {
 
         private int direction;
 
+        /**
+         * @param direction
+         */
         public ChangeSortDirectionAction(int direction) {
             this.direction = direction;
         }
@@ -325,7 +330,7 @@ public class BookmarkNavigator extends ViewPart {
             restoreState(memento);
         memento = null;
 
-        WorkbenchHelp.setHelp(viewer.getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(),
                 IBookmarkHelpContextIds.BOOKMARK_VIEW);
     }
 
@@ -490,7 +495,7 @@ public class BookmarkNavigator extends ViewPart {
                 for (int i = 0; i < markers.length; i++) {
                     if (i > 0)
                         buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-                    String text = provider.getText((IMarker) markers[i]);
+                    String text = provider.getText(markers[i]);
                     if(text != null)
                     	buffer.append(text);
                 }
@@ -668,45 +673,46 @@ public class BookmarkNavigator extends ViewPart {
         sortByDescriptionAction = new SortByAction(BookmarkSorter.DESCRIPTION);
         sortByDescriptionAction.setText(BookmarkMessages
                 .getString("ColumnDescription.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByDescriptionAction,
-                IBookmarkHelpContextIds.SORT_DESCRIPTION_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				sortByDescriptionAction,
+				IBookmarkHelpContextIds.SORT_DESCRIPTION_ACTION);
 
         sortByResourceAction = new SortByAction(BookmarkSorter.RESOURCE);
         sortByResourceAction.setText(BookmarkMessages
                 .getString("ColumnResource.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByResourceAction,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByResourceAction,
                 IBookmarkHelpContextIds.SORT_RESOURCE_ACTION);
 
         sortByFolderAction = new SortByAction(BookmarkSorter.FOLDER);
         sortByFolderAction.setText(BookmarkMessages
                 .getString("ColumnFolder.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByFolderAction,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByFolderAction,
                 IBookmarkHelpContextIds.SORT_FOLDER_ACTION);
 
         sortByLineAction = new SortByAction(BookmarkSorter.LOCATION);
         sortByLineAction.setText(BookmarkMessages
                 .getString("ColumnLocation.text"));//$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByLineAction,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByLineAction,
                 IBookmarkHelpContextIds.SORT_LOCATION_ACTION);
 
         sortByCreationTime = new SortByAction(BookmarkSorter.CREATION_TIME);
         sortByCreationTime.setText(BookmarkMessages
                 .getString("ColumnCreationTime.text"));//$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByCreationTime,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByCreationTime,
                 IBookmarkHelpContextIds.SORT_CREATION_TIME_ACTION);
 
         sortAscendingAction = new ChangeSortDirectionAction(
                 BookmarkSorter.ASCENDING);
         sortAscendingAction.setText(BookmarkMessages
                 .getString("SortDirectionAscending.text"));//$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortAscendingAction,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortAscendingAction,
                 IBookmarkHelpContextIds.SORT_ASCENDING_ACTION);
 
         sortDescendingAction = new ChangeSortDirectionAction(
                 BookmarkSorter.DESCENDING);
         sortDescendingAction.setText(BookmarkMessages
                 .getString("SortDirectionDescending.text"));//$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortDescendingAction,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortDescendingAction,
                 IBookmarkHelpContextIds.SORT_DESCENDING_ACTION);
     }
 

@@ -19,7 +19,6 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -56,7 +55,8 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
+        page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
         if (page == null) {
             throw new IllegalArgumentException();
         }

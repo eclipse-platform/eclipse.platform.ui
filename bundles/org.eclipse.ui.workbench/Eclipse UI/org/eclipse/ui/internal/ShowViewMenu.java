@@ -38,7 +38,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -93,11 +92,12 @@ public class ShowViewMenu extends ContributionItem {
      * Creates a Show View menu.
      * 
      * @param window the window containing the menu
+     * @param id the id
      */
     public ShowViewMenu(IWorkbenchWindow window, String id) {
         super(id);
         this.window = window;
-        WorkbenchHelp.setHelp(showDlgAction,
+        window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
                 IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
         // indicate that a show views submenu has been created
         ((WorkbenchWindow) window)

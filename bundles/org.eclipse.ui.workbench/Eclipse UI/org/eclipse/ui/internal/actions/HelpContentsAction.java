@@ -14,9 +14,8 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -42,6 +41,8 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
 
     /**
      * Constructor for use by ActionFactory.
+     * 
+     * @param window the window
      */
     public HelpContentsAction(IWorkbenchWindow window) {
         if (window == null) {
@@ -63,7 +64,8 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
         }
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS));
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
     }
 
     /* (non-Javadoc)
@@ -77,7 +79,7 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
         //This may take a while, so use the busy indicator
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
-                WorkbenchHelp.displayHelp();
+            	workbenchWindow.getWorkbench().getHelpSystem().displayHelp();
             }
         });
     }

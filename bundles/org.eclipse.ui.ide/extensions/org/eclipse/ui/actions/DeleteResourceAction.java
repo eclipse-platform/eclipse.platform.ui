@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -77,8 +76,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
             if (projects.length == 1)
                 return IDEWorkbenchMessages
                         .getString("DeleteResourceAction.titleProject1"); //$NON-NLS-1$
-            else
-                return IDEWorkbenchMessages
+            return IDEWorkbenchMessages
                         .getString("DeleteResourceAction.titleProjectN"); //$NON-NLS-1$
         }
 
@@ -88,11 +86,10 @@ public class DeleteResourceAction extends SelectionListenerAction {
                 return IDEWorkbenchMessages
                         .format(
                                 "DeleteResourceAction.confirmProject1", new Object[] { project.getName() }); //$NON-NLS-1$
-            } else {
-                return IDEWorkbenchMessages
-                        .format(
-                                "DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.length) }); //$NON-NLS-1$
             }
+            return IDEWorkbenchMessages
+                    .format(
+                            "DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.length) }); //$NON-NLS-1$
         }
 
         /* (non-Javadoc)
@@ -100,7 +97,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
          */
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
-            WorkbenchHelp.setHelp(newShell,
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
                     IIDEHelpContextIds.DELETE_PROJECT_DIALOG);
         }
 
@@ -184,7 +181,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
         super(IDEWorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
         setToolTipText(IDEWorkbenchMessages
                 .getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.DELETE_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.DELETE_RESOURCE_ACTION);
         setId(ID);
         if (shell == null) {
             throw new IllegalArgumentException();

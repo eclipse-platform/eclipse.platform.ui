@@ -28,7 +28,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
@@ -40,6 +39,12 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 public class ShowInNavigatorAction extends SelectionProviderAction {
     private IWorkbenchPage page;
 
+    /**
+     * Create a new instance of this class.
+     * 
+     * @param page the page
+     * @param viewer the viewer
+     */
     public ShowInNavigatorAction(IWorkbenchPage page, ISelectionProvider viewer) {
         super(viewer, ResourceNavigatorMessages
                 .getString("ShowInNavigator.text")); //$NON-NLS-1$
@@ -47,8 +52,8 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
         this.page = page;
         setDescription(ResourceNavigatorMessages
                 .getString("ShowInNavigator.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
-                INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION);
+        page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+				INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION);
     }
 
     /**

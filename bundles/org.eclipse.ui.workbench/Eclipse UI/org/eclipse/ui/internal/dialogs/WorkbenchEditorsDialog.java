@@ -52,10 +52,10 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -125,6 +125,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
     /**
      * Constructor for WorkbenchEditorsDialog.
+     * 
+     * @param window the window
      */
     public WorkbenchEditorsDialog(IWorkbenchWindow window) {
         super(window.getShell());
@@ -160,8 +162,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        WorkbenchHelp.setHelp(newShell,
-                IWorkbenchHelpContextIds.WORKBENCH_EDITORS_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				IWorkbenchHelpContextIds.WORKBENCH_EDITORS_DIALOG);
     }
 
     /*

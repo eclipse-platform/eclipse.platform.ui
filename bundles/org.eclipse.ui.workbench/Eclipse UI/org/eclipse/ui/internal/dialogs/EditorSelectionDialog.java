@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -88,6 +88,11 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         }
     }
 
+    /**
+     * Create an instance of this class.
+     * 
+     * @param parentShell the parent shell
+     */
     public EditorSelectionDialog(Shell parentShell) {
         super(parentShell);
     }
@@ -126,7 +131,8 @@ public class EditorSelectionDialog extends Dialog implements Listener {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.getString("EditorSelection.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
     }
 
     /**
@@ -135,7 +141,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      *
      * Subclasses should overide.
      *
-     * @param the parent composite to contain the dialog area
+     * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -276,7 +282,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      * Returns an array of editors which have been filtered according to 
      * the array of editors in the editorsToFilter instance variable.
      * 
-     * @param editorsToFilter an array of editors to filter 
+     * @param editors an array of editors to filter 
      * @return a filtered array of editors
      */
     protected IEditorDescriptor[] filterEditors(IEditorDescriptor[] editors) {
@@ -329,6 +335,8 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 
     /**
      * Return the editor the user selected
+     * 
+     * @return the selected editor
      */
     public IEditorDescriptor getSelectedEditor() {
         return selectedEditor;
@@ -422,6 +430,8 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 
     /**
      * Set the message displayed by this message dialog
+     * 
+     * @param aMessage the message
      */
     public void setMessage(String aMessage) {
         message = aMessage;
@@ -436,6 +446,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         editorsToFilter = editors;
     }
 
+    /**
+     * Update enabled state.
+     */
     public void updateEnableState() {
         boolean enableExternal = externalButton.getSelection();
         browseExternalEditorsButton.setEnabled(enableExternal);

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -121,7 +121,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         composite.setFont(parent.getFont());
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         createProjectNameGroup(composite);
@@ -229,7 +229,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      * Creates the project location specification controls.
      *
      * @param projectGroup the parent composite
-     * @param boolean - the initial enabled state of the widgets created
+     * @param enabled the initial enabled state of the widgets created
      */
     private void createUserSpecifiedProjectLocationGroup(
             Composite projectGroup, boolean enabled) {

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
@@ -69,6 +69,8 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
     /**
      * PerspectiveDialog constructor comment.
+     * @param parentShell the parent shell
+     * @param perspReg the perspective registry
      */
     public SavePerspectiveDialog(Shell parentShell, PerspectiveRegistry perspReg) {
         super(parentShell);
@@ -83,7 +85,8 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
         shell
                 .setText(WorkbenchMessages
                         .getString("SavePerspective.shellTitle")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
     }
 
     /**
@@ -104,7 +107,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
      * Creates and returns the contents of the upper part 
      * of this dialog (above the button bar).
      *
-     * @param the parent composite to contain the dialog area
+     * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -188,6 +191,8 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
     /**
      * Returns the target name.
+     * 
+     * @return the target name
      */
     public IPerspectiveDescriptor getPersp() {
         return persp;
@@ -195,6 +200,8 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
     /**
      * Returns the target name.
+     * 
+     * @return the target name
      */
     public String getPerspName() {
         return perspName;

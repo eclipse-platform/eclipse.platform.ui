@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -47,7 +47,8 @@ public class OpenWorkspaceFileAction extends Action implements
      */
     public OpenWorkspaceFileAction() {
         super();
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_WORKSPACE_FILE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.OPEN_WORKSPACE_FILE_ACTION);
     }
 
     /**

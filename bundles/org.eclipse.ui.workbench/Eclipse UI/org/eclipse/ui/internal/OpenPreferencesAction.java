@@ -12,12 +12,10 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.PreferenceDialog;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Open the preferences dialog
@@ -52,7 +50,8 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 		setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
 		// @issue action id not set
 		setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
+		window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}
 
 	/* (non-Javadoc)

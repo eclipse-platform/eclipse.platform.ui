@@ -18,7 +18,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 
@@ -31,10 +31,14 @@ class GotoTaskAction extends TaskAction {
 
     /**
      * Creates the action.
+     * 
+     * @param tasklist the task list
+     * @param id the id
      */
     public GotoTaskAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.GOTO_TASK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				ITaskListHelpContextIds.GOTO_TASK_ACTION);
     }
 
     /**

@@ -12,8 +12,8 @@ package org.eclipse.ui.views.navigator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Shows a list of resources to the user with a text entry field
@@ -29,7 +29,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
             int typesMask) {
         super(parentShell, container, typesMask);
         setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(parentShell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell,
                 INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
     }
 }

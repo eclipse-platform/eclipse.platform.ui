@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -141,10 +141,9 @@ public class FileStatesPage extends PreferencePage implements
      * @returns Control
      * @param parent Composite
      */
-
     protected Control createContents(Composite parent) {
 
-        WorkbenchHelp.setHelp(parent,
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
                 IIDEHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
 
         // button group

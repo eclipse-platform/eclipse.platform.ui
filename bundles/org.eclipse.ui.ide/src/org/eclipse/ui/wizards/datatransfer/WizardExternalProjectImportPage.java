@@ -43,9 +43,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
@@ -120,7 +119,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         Composite composite = new Composite(parent, SWT.NULL);
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         composite.setLayout(new GridLayout());
@@ -198,7 +197,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
      * Creates the project location specification controls.
      *
      * @param projectGroup the parent composite
-     * @param boolean - the initial enabled state of the widgets created
      */
     private void createUserSpecifiedProjectLocationGroup(Composite projectGroup) {
 
@@ -273,8 +271,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
     private String getProjectNameFieldValue() {
         if (projectNameField == null)
             return ""; //$NON-NLS-1$
-        else
-            return projectNameField.getText().trim();
+
+        return projectNameField.getText().trim();
     }
 
     /**
@@ -348,9 +346,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
                     "WizardExternalProjectImportPage.notAProject", //$NON-NLS-1$
                     new String[] { locationFieldContents }));
             return false;
-        } else {
-            setProjectName(projectFile);
         }
+        setProjectName(projectFile);
 
         if (getProjectHandle().exists()) {
             setErrorMessage(DataTransferMessages
@@ -418,8 +415,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
         File[] files = directory.listFiles(this.projectFilter);
         if (files != null && files.length == 1)
             return files[0];
-        else
-            return null;
+
+        return null;
     }
 
     /**

@@ -52,11 +52,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -261,8 +261,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell,
-                IWorkbenchHelpContextIds.WORKING_SET_SELECTION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.WORKING_SET_SELECTION_DIALOG);
     }
 
     /**
@@ -339,8 +339,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
 	    WizardDialog dialog = new WizardDialog(getShell(), wizard);
 	
 	    dialog.create();
-	    WorkbenchHelp.setHelp(dialog.getShell(),
-	            IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
 	    if (dialog.open() == Window.OK) {
 	        IWorkingSet workingSet = wizard.getSelection();
 	
@@ -378,8 +378,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
             editedWorkingSets.remove(editWorkingSet);
         }
         dialog.create();
-        WorkbenchHelp.setHelp(dialog.getShell(),
-                IWorkbenchHelpContextIds.WORKING_SET_EDIT_WIZARD);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IWorkbenchHelpContextIds.WORKING_SET_EDIT_WIZARD);
         if (dialog.open() == Window.OK) {
             editWorkingSet = wizard.getSelection();
             listViewer.update(editWorkingSet, null);

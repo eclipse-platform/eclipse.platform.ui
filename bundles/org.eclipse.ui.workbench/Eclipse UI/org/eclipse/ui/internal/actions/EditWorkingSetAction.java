@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
@@ -21,7 +22,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -39,6 +39,7 @@ public class EditWorkingSetAction extends Action {
      * Creates a new instance of the receiver.
      * 
      * @param actionGroup the action group this action is created in
+     * @param shell the parent shell
      */
     public EditWorkingSetAction(WorkingSetFilterActionGroup actionGroup,
             Shell shell) {
@@ -49,13 +50,14 @@ public class EditWorkingSetAction extends Action {
 
         this.shell = shell;
         this.actionGroup = actionGroup;
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EDIT_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.EDIT_WORKING_SET_ACTION);
     }
 
     /**
      * Overrides method from Action
      * 
-     * @see org.eclipse.jface.Action#run
+     * @see Action#run
      */
     public void run() {
         IWorkingSetManager manager = PlatformUI.getWorkbench()
@@ -78,7 +80,7 @@ public class EditWorkingSetAction extends Action {
         }
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
-        if (dialog.open() == WizardDialog.OK)
+        if (dialog.open() == Window.OK)
             actionGroup.setWorkingSet(wizard.getSelection());
     }
 }

@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -40,7 +39,8 @@ public class ShowInAction extends Action {
     protected ShowInAction(IWorkbenchWindow window, IViewDescriptor desc) {
         super(desc.getLabel());
         setImageDescriptor(desc.getImageDescriptor());
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_IN_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SHOW_IN_ACTION);
         this.window = window;
         this.desc = desc;
     }

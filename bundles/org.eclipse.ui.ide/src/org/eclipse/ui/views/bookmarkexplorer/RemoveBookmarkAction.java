@@ -19,17 +19,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action to remove the selected bookmarks.
  */
 class RemoveBookmarkAction extends BookmarkAction {
 
+    /**
+     * Create a new instance of this class.
+     * 
+     * @param view the view
+     */
     public RemoveBookmarkAction(BookmarkNavigator view) {
         super(view, BookmarkMessages.getString("RemoveBookmark.text")); //$NON-NLS-1$
         setToolTipText(BookmarkMessages.getString("RemoveBookmark.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.REMOVE_BOOKMARK_ACTION);
         setEnabled(false);
     }

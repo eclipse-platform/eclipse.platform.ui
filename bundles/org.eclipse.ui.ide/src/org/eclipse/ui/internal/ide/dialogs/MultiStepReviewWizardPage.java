@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
@@ -52,6 +52,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
      * Creates a new step review wizard page.
      *
      * @param pageName the name of this page
+     * @param stepWizard the wizard
      */
     public MultiStepReviewWizardPage(String pageName, MultiStepWizard stepWizard) {
         super(pageName);
@@ -76,7 +77,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_REVIEW_WIZARD_PAGE);
 
         createStepGroup(composite);
@@ -153,8 +154,8 @@ public class MultiStepReviewWizardPage extends WizardPage {
     /* package */WizardStep[] getSteps() {
         if (stepGroup != null)
             return stepGroup.getSteps();
-        else
-            return new WizardStep[0];
+
+        return new WizardStep[0];
     }
 
     /**

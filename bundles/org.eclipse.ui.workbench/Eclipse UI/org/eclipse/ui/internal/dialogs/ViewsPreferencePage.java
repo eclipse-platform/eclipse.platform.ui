@@ -42,10 +42,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -181,7 +180,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 
         Font font = parent.getFont();
 
-        WorkbenchHelp.setHelp(parent, IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
         IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
@@ -439,7 +439,6 @@ public class ViewsPreferencePage extends PreferencePage implements
      * Update this page's list of presentation factories.  This should only be used
      * when the presentation combo is refreshed, as this array will be used to set
      * the selection from the combo.
-     * @return
      */
     private void refreshPresentationFactories() {
         // update the current selection (used to look for changes on apply)
@@ -467,9 +466,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 
     /**
      * Update the preferences associated with the argument presentation factory.
-     * 
-     * @param presFactoryId
-     *            the id given in the presentation factory's xml
      */
     private void updatePresentationPreferences() {
         // There are some preference values associated with the R2.1 presentation that

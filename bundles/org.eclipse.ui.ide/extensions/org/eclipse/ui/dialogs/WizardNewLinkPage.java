@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -97,7 +97,8 @@ public class WizardNewLinkPage extends WizardPage {
         topLevel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         topLevel.setFont(font);
-        WorkbenchHelp.setHelp(topLevel, IIDEHelpContextIds.NEW_LINK_WIZARD_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel,
+				IIDEHelpContextIds.NEW_LINK_WIZARD_PAGE);
 
         final Button createLinkButton = new Button(topLevel, SWT.CHECK);
         if (type == IResource.FILE)

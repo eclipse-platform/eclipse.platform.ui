@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -114,7 +114,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE);
     }
 
@@ -296,10 +296,9 @@ public class WizardArchiveFileResourceImportPage1 extends
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
                     if (element.isPopulated())
                         return getChildren(element).length > 0;
-                    else {
-                        //If we have not populated then wait until asked
-                        return true;
-                    }
+
+                    //If we have not populated then wait until asked
+                    return true;
                 }
                 return false;
             }
@@ -554,9 +553,8 @@ public class WizardArchiveFileResourceImportPage1 extends
             setMessage(SOURCE_EMPTY_MESSAGE);
             enableButtonGroup(false);
             return false;
-        } else {
-            enableButtonGroup(true);
-            return true;
-        }
+        } 
+        enableButtonGroup(true);
+        return true;
     }
 }

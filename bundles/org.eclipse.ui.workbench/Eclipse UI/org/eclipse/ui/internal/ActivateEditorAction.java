@@ -17,7 +17,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Activates the most recently used editor in the current window.
@@ -28,6 +27,8 @@ public class ActivateEditorAction extends PageEventAction {
 
     /**
      * Creates an ActivateEditorAction.
+     * 
+     * @param window the window
      */
     public ActivateEditorAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
@@ -35,7 +36,8 @@ public class ActivateEditorAction extends PageEventAction {
                 .getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
         // @issue missing action id
         updateState();
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.ACTIVATE_EDITOR_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.ACTIVATE_EDITOR_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.activateEditor"); //$NON-NLS-1$
     }
 

@@ -28,7 +28,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
 
@@ -81,7 +81,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         composite.setFont(parent.getFont());
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_CONFIGURE_WIZARD_PAGE);
 
         createStepGroup(composite);
@@ -267,17 +267,21 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         }
 
         /**
-         * Handles close request
+         * Handles close request.
+         * 
+         * @return the result
          */
         public final boolean performCancel() {
             if (wizard != null)
                 return wizard.performCancel();
-            else
-                return true;
+
+            return true;
         }
 
         /**
-         * Handles finish request
+         * Handles finish request.
+         * 
+         * @return the result
          */
         public final boolean performFinish() {
             if (wizard != null) {
@@ -287,12 +291,11 @@ public class MultiStepConfigureWizardPage extends WizardPage {
                     stepGroup.markStepAsDone();
                     stepIndex++;
                     return true;
-                } else {
-                    return false;
                 }
-            } else {
-                return true;
+                return false;
             }
+            return true;
+            
         }
 
         /**
@@ -388,8 +391,8 @@ public class MultiStepConfigureWizardPage extends WizardPage {
                                             .handleMissingStepWizard(step);
                                     if (!tryAgain)
                                         break;
-                                    else
-                                        stepWizard[0] = step.getWizard();
+
+                                    stepWizard[0] = step.getWizard();
                                 }
                             }
                         });
@@ -399,15 +402,17 @@ public class MultiStepConfigureWizardPage extends WizardPage {
                 setWizard(stepWizard[0]);
                 if (stepWizard[0].getPageCount() > 0)
                     return;
-                else
-                    performFinish();
+
+                performFinish();
             }
 
             wizardDialog.forceClose();
         }
 
         /**
-         * Sets the current wizard
+         * Sets the current wizard.
+         * 
+         * @param newWizard the current wizard
          */
         public void setWizard(IWizard newWizard) {
             wizard = newWizard;
@@ -419,7 +424,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
             // Ensure that all of the created pages are initially not visible
             IWizardPage[] pages = wizard.getPages();
             for (int i = 0; i < pages.length; i++) {
-                IWizardPage page = (IWizardPage) pages[i];
+                IWizardPage page = pages[i];
                 if (page.getControl() != null)
                     page.getControl().setVisible(false);
             }
@@ -433,7 +438,10 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         }
 
         /**
-         * Show the requested page
+         * Show the requested page.
+         * 
+         * @param page the page
+         * @param rememberPrevious whether hte previous page should be remembered
          */
         public void showPage(IWizardPage page, boolean rememberPrevious) {
             if (page == null || page == currentPage)
@@ -473,44 +481,51 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         }
 
         /**
-         * Returns whether the current wizard can finish
+         * Returns whether the current wizard can finish.
+         * 
+         * @return whether the wizard can finish
          */
         public boolean canWizardFinish() {
             if (wizard != null)
                 return wizard.canFinish();
-            else
-                return false;
+
+            return false;
         }
 
         /**
          * Returns whether the current page can flip to
-         * the next page
+         * the next page.
+         * 
+         * @return can flip to next page
          */
         public boolean canFlipToNextPage() {
             if (currentPage != null)
                 return currentPage.canFlipToNextPage();
-            else
-                return false;
+            return false;
         }
 
         /**
-         * Returns the current page's message
+         * Returns the current page's message.
+         * 
+         * @return the message
          */
         public String getMessage() {
             if (currentPage != null)
                 return currentPage.getMessage();
-            else
-                return null;
+
+            return null;
         }
 
         /**
-         * Returns the current page's previous page
+         * Returns the current page's previous page.
+         * 
+         * @return the page
          */
         public IWizardPage getPreviousPage() {
             if (currentPage != null)
                 return currentPage.getPreviousPage();
-            else
-                return null;
+
+            return null;
         }
     }
 }

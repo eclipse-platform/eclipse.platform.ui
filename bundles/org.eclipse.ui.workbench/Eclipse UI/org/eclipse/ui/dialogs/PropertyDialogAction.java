@@ -11,17 +11,13 @@
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
@@ -75,7 +71,8 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		Assert.isNotNull(shell);
 		this.shell = shell;
 		setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
 	}
 
 	/**

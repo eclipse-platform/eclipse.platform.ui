@@ -20,7 +20,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -69,6 +68,9 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     private static java.util.ResourceBundle resoutline_nls = java.util.ResourceBundle
             .getBundle("org.eclipse.ui.views.contentoutline.messages"); //$NON-NLS-1$
 
+    /**
+     * The plugin prefix.
+     */
     public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
     /**
@@ -115,7 +117,7 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      */
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
-        WorkbenchHelp.setHelp(getPageBook(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook(),
                 CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID);
     }
 
@@ -165,8 +167,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         IWorkbenchPage page = getSite().getPage();
         if (page != null)
             return page.getActiveEditor();
-        else
-            return null;
+
+        return null;
     }
 
     /**

@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 
 public class DetachedWindow extends Window {
@@ -123,7 +122,8 @@ public class DetachedWindow extends Window {
         contextSupport.registerShell(shell,
                 IWorkbenchContextSupport.TYPE_WINDOW);
 
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.DETACHED_WINDOW);
+        page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.DETACHED_WINDOW);
     }
 
     /**

@@ -45,7 +45,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.Page;
 import org.osgi.framework.Bundle;
@@ -161,7 +161,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
                     Object helpContextId = entry.getHelpContextIds();
                     if (helpContextId != null) {
                         if (helpContextId instanceof String) {
-                            WorkbenchHelp.displayHelp((String) helpContextId);
+                            getSite().getWorkbenchWindow().getWorkbench()
+									.getHelpSystem().displayHelp(
+											(String) helpContextId);
                             return;
                         }
 
@@ -178,17 +180,18 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
                         } else {
                             contexts = (Object[]) helpContextId;
                         }
+                        IWorkbenchHelpSystem help = getSite().getWorkbenchWindow().getWorkbench().getHelpSystem();
                         // Ignore all but the first element in the array
                         if (contexts[0] instanceof IContext)
-                            WorkbenchHelp.displayHelp((IContext) contexts[0]);
+                        	help.displayHelp((IContext) contexts[0]);
                         else
-                            WorkbenchHelp.displayHelp((String) contexts[0]);
+                        	help.displayHelp((String) contexts[0]);
                         return;
                     }
                 }
 
                 // No help for the selection so show page help
-                WorkbenchHelp.displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
+                getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
             }
         });
     }

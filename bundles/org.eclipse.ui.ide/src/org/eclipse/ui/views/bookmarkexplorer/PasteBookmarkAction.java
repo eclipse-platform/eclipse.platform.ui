@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -33,11 +33,13 @@ class PasteBookmarkAction extends BookmarkAction {
 
     /**
      * The constructor.
+     * 
+     * @param view the view
      */
     public PasteBookmarkAction(BookmarkNavigator view) {
         super(view, BookmarkMessages.getString("PasteBookmark.text"));//$NON-NLS-1$
         this.view = view;
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.PASTE_BOOKMARK_ACTION);
         setEnabled(false);
     }

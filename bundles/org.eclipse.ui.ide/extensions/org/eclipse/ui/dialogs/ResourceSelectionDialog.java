@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.CheckboxTreeAndListGroup;
@@ -102,8 +102,9 @@ public class ResourceSelectionDialog extends SelectionDialog {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICheckStateListener.
+
+    /**
+     * @param event the event
      */
     public void checkStateChanged(CheckStateChangedEvent event) {
         getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0);
@@ -114,7 +115,8 @@ public class ResourceSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell, IIDEHelpContextIds.RESOURCE_SELECTION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IIDEHelpContextIds.RESOURCE_SELECTION_DIALOG);
     }
 
     public void create() {
@@ -148,7 +150,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 
         composite.addControlListener(new ControlListener() {
             public void controlMoved(ControlEvent e) {
-            };
+            }
 
             public void controlResized(ControlEvent e) {
                 //Also try and reset the size of the columns as appropriate
@@ -188,14 +190,12 @@ public class ResourceSelectionDialog extends SelectionDialog {
                         }
                     }
                     return results.toArray();
-                } else {
-                    //input element case
-                    if (o instanceof ArrayList) {
-                        return ((ArrayList) o).toArray();
-                    } else {
-                        return new Object[0];
-                    }
                 }
+                //input element case
+                if (o instanceof ArrayList) {
+                    return ((ArrayList) o).toArray();
+                } 
+                return new Object[0];
             }
         };
     }

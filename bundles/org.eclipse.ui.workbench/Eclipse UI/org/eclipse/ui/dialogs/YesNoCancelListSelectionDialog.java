@@ -13,7 +13,7 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 
 /**
@@ -70,7 +70,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
                 IWorkbenchHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
     }
 

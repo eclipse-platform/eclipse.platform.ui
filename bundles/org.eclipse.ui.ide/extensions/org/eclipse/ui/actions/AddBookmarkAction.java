@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -82,7 +81,8 @@ public class AddBookmarkAction extends SelectionListenerAction {
         this.shell = shell;
         this.promptForName = promptForName;
         setToolTipText(IDEWorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
     }
 
     /**

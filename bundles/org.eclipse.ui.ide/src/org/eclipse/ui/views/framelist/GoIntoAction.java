@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Generic "Go Into" action which goes to the frame for the current selection. 
@@ -26,7 +26,8 @@ public class GoIntoAction extends FrameAction {
         super(frameList);
         setText(FrameListMessages.getString("GoInto.text")); //$NON-NLS-1$
         setToolTipText(FrameListMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.GO_INTO_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IFrameListHelpContextIds.GO_INTO_ACTION);
         update();
     }
 

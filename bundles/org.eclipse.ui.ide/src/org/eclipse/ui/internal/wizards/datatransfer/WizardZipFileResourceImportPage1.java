@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -108,7 +108,7 @@ public class WizardZipFileResourceImportPage1 extends
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE);
     }
 

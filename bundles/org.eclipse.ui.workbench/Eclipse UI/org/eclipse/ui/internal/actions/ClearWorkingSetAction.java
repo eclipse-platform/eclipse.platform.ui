@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -37,14 +37,15 @@ public class ClearWorkingSetAction extends Action {
         setToolTipText(WorkbenchMessages
                 .getString("ClearWorkingSetAction.toolTip")); //$NON-NLS-1$
         setEnabled(actionGroup.getWorkingSet() != null);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLEAR_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.CLEAR_WORKING_SET_ACTION);
         this.actionGroup = actionGroup;
     }
 
     /**
      * Overrides method from Action
      * 
-     * @see org.eclipse.jface.Action#run
+     * @see Action#run
      */
     public void run() {
         actionGroup.setWorkingSet(null);

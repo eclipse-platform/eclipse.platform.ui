@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action deletes all the tasks found in the registry that
@@ -29,10 +29,13 @@ class PurgeCompletedAction extends TaskAction {
 
     /**
      * Creates the action.
+     * 
+     * @param tasklist the task list
+     * @param id the id
      */
     public PurgeCompletedAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 ITaskListHelpContextIds.PURGE_COMPLETED_TASK_ACTION);
     }
 

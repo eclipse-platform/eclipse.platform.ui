@@ -15,20 +15,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -58,8 +55,9 @@ public class WizardZipFileResourceExportPage1 extends
     }
 
     /**
-     * Create an instance of this class
-     * @param IStructuredSelection selection
+     * Create an instance of this class.
+     * 
+     * @param selection the selection
      */
     public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
         this("zipFileExportPage1", selection); //$NON-NLS-1$
@@ -72,7 +70,7 @@ public class WizardZipFileResourceExportPage1 extends
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
     }
 

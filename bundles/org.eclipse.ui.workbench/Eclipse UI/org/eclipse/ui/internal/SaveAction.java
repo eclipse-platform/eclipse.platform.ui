@@ -14,7 +14,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Workbench common <code>Save</code> action.
@@ -22,14 +21,17 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class SaveAction extends BaseSaveAction {
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class
+     * 
+     * @param window the window
      */
     public SaveAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
         setText(WorkbenchMessages.getString("SaveAction.text")); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
         setId("save"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SAVE_ACTION);
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
         setDisabledImageDescriptor(WorkbenchImages

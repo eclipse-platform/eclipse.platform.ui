@@ -13,7 +13,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Implements the go to resource action. Opens a dialog and set
@@ -23,11 +23,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class GotoResourceAction extends ResourceNavigatorAction {
     /**
      * Creates a new instance of the class.
+     * 
+     * @param navigator the navigator
+     * @param label the label
      * @since 2.0
      */
     public GotoResourceAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.GOTO_RESOURCE_ACTION);
     }
 

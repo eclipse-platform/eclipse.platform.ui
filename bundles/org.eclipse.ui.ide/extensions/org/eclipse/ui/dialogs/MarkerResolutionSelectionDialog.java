@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
@@ -91,7 +91,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        WorkbenchHelp.setHelp(newShell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
                 IIDEHelpContextIds.MARKER_RESOLUTION_SELECTION_DIALOG);
     }
 

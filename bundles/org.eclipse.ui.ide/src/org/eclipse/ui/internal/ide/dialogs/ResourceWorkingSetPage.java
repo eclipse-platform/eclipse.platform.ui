@@ -46,7 +46,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -130,7 +129,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
         setControl(composite);
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.WORKING_SET_RESOURCE_PAGE);
         Label label = new Label(composite, SWT.WRAP);
         label.setText(IDEWorkbenchMessages

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action resets the <code>PropertySheetViewer</code> values back
@@ -23,10 +23,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
     /**
      * Create the Defaults action. This action is used to set
      * the properties back to their default values.
+     * 
+     * @param viewer the viewer
+     * @param name the name
      */
     public DefaultsAction(PropertySheetViewer viewer, String name) {
         super(viewer, name);
-        WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.DEFAULTS_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IPropertiesHelpContextIds.DEFAULTS_ACTION);
     }
 
     /**

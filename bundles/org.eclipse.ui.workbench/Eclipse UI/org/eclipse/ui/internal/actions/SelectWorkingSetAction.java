@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -50,13 +49,14 @@ public class SelectWorkingSetAction extends Action {
 
         this.shell = shell;
         this.actionGroup = actionGroup;
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SELECT_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SELECT_WORKING_SET_ACTION);
     }
 
     /**
      * Overrides method from Action
      * 
-     * @see org.eclipse.jface.Action#run
+     * @see Action#run()
      */
     public void run() {
         IWorkingSetManager manager = PlatformUI.getWorkbench()

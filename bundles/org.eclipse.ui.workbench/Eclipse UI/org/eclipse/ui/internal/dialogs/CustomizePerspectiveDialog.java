@@ -81,7 +81,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AbstractActionBarConfigurer;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
@@ -228,6 +227,10 @@ public class CustomizePerspectiveDialog extends Dialog {
             return null;
         }
 
+        /**
+         * @param actionSetId the action to fill
+         * @param item the item to fill 
+         */
         public void fillMenusFor(String actionSetId, IContributionItem item) {
             if (item instanceof ContributionManager) {
                 ContributionManager mgr = (ContributionManager) item;
@@ -283,6 +286,10 @@ public class CustomizePerspectiveDialog extends Dialog {
             }
         }
 
+        /**
+         * @param actionSetId the action set to fill
+         * @param mgr the manager to fill into
+         */
         public void fillToolsFor(String actionSetId, CoolBarManager mgr) {
             IContributionItem[] items = mgr.getItems();
             for (int i = 0; i < items.length; i++) {
@@ -323,8 +330,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         int getDepth() {
             if (parent == null)
                 return 0;
-            else
-                return parent.getDepth() + 1;
+            return parent.getDepth() + 1;
         }
 
         String getDisplayText() {
@@ -337,14 +343,13 @@ public class CustomizePerspectiveDialog extends Dialog {
                     }
                 }
                 return text;
-            } else {
-                if (children.size() > 0)
-                    return WorkbenchMessages
-                            .format(
-                                    "ActionSetSelection.toolbarLocation", new Object[] { text }); //$NON-NLS-1$
-                else
-                    return text;
-            }
+            } 
+            if (children.size() > 0)
+                return WorkbenchMessages
+                        .format(
+                                "ActionSetSelection.toolbarLocation", new Object[] { text }); //$NON-NLS-1$
+            
+            return text;
         }
 
         ArrayList getElements() {
@@ -365,6 +370,9 @@ public class CustomizePerspectiveDialog extends Dialog {
         }
     }
 
+    /**
+     * 
+     */
     public class CustomizeActionBars extends AbstractActionBarConfigurer
             implements IActionBars2 {
         
@@ -378,6 +386,19 @@ public class CustomizePerspectiveDialog extends Dialog {
         MenuManager menuManager;
         CoolBarManager coolBarManager;
 
+        /**
+         * Create a new instance of this class.
+         */
+        public CustomizeActionBars() {
+        }
+
+        /**
+         * Create a new instance of this class.
+         * 
+         * @param configurer the configurer
+         * @param menuManager the menu manager
+         * @param coolBarManager the cool bar manager
+         */
         public CustomizeActionBars(IWorkbenchWindowConfigurer configurer, MenuManager menuManager,
                 CoolBarManager coolBarManager) {
             this.configurer = configurer;
@@ -637,8 +658,8 @@ public class CustomizePerspectiveDialog extends Dialog {
         private String getMenuId() {
             if (parent == rootMenu)
                 return id;
-            else
-                return parent.getMenuId();
+
+            return parent.getMenuId();
         }
 
         ArrayList getSubtreeItems() {
@@ -817,6 +838,12 @@ public class CustomizePerspectiveDialog extends Dialog {
         }
     }
 
+    /**
+     * Create an instance of this Dialog.
+     * 
+     * @param configurer the configurer
+     * @param persp the perspective
+     */
     public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
         super(configurer.getWindow().getShell());
         perspective = persp;
@@ -978,8 +1005,8 @@ public class CustomizePerspectiveDialog extends Dialog {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages
                 .getString("ActionSetSelection.customize")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell,
-                IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
     }
 
     boolean containsActionSet(MenuManager mgr, String actionSetId) {

@@ -17,7 +17,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
@@ -52,7 +51,8 @@ public class AddTaskAction extends SelectionListenerAction {
         this.shell = shell;
         Assert.isNotNull(shell);
         setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.ADD_TASK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.ADD_TASK_ACTION);
     }
 
     private IResource getElement(IStructuredSelection selection) {

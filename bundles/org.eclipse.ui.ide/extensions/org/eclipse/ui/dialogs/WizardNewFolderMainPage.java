@@ -46,8 +46,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -168,7 +168,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
                 | GridData.HORIZONTAL_ALIGN_FILL));
 
-        WorkbenchHelp
+        PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(composite, IIDEHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
 
         resourceGroup = new ResourceAndContainerGroup(

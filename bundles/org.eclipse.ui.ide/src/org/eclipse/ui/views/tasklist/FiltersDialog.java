@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 class FiltersDialog extends Dialog {
     /**
@@ -364,6 +363,8 @@ class FiltersDialog extends Dialog {
 
     /**
      * Creates a new filters dialog.
+     * 
+     * @param parentShell the parent shell
      */
     public FiltersDialog(Shell parentShell) {
         super(parentShell);
@@ -383,6 +384,11 @@ class FiltersDialog extends Dialog {
         }
     }
 
+    /**
+     * Check state change.
+     * 
+     * @param event the event
+     */
     public void checkStateChanged(CheckStateChangedEvent event) {
         MarkerType type = (MarkerType) event.getElement();
         typesViewer.setSubtreeChecked(type, event.getChecked());
@@ -399,7 +405,8 @@ class FiltersDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(TaskListMessages.getString("TaskList.filter")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(newShell, ITaskListHelpContextIds.FILTERS_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				ITaskListHelpContextIds.FILTERS_DIALOG);
     }
 
     /**
@@ -881,7 +888,7 @@ class FiltersDialog extends Dialog {
     /**
      * Updates the given filter from the UI state.
      *
-     * @param filter the filter to update
+     * @param tasksFilter the filter to update
      */
     void updateFilterFromUI(TasksFilter tasksFilter) {
 
@@ -928,7 +935,7 @@ class FiltersDialog extends Dialog {
     /**
      * Updates the UI state from the given filter.
      *
-     * @param filter the filter to use
+     * @param tasksFilter the filter to use
      */
     void updateUIFromFilter(TasksFilter tasksFilter) {
 

@@ -16,7 +16,6 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -67,7 +66,8 @@ public class OpenFileAction extends OpenSystemEditorAction {
         super(page);
         setText(descriptor == null ? IDEWorkbenchMessages
                 .getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_FILE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.OPEN_FILE_ACTION);
         setToolTipText(IDEWorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
         setId(ID);
         this.editorDescriptor = descriptor;

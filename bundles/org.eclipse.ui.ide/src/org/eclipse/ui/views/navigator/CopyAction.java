@@ -28,7 +28,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -76,7 +75,8 @@ import org.eclipse.ui.part.ResourceTransfer;
         setToolTipText(ResourceNavigatorMessages
                 .getString("CopyAction.toolTip")); //$NON-NLS-1$
         setId(CopyAction.ID);
-        WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.COPY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				INavigatorHelpContextIds.COPY_ACTION);
     }
 
     /**

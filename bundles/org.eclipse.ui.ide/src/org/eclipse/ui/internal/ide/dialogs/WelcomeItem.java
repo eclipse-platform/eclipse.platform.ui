@@ -12,9 +12,8 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IHelp;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -118,13 +117,10 @@ public class WelcomeItem {
      * Open a help topic
      */
     private void openHelpTopic(String topic, String href) {
-        IHelp helpSupport = WorkbenchHelp.getHelpSupport();
-        if (helpSupport != null) {
-            if (href != null)
-                helpSupport.displayHelpResource(href);
-            else
-                helpSupport.displayHelpResource(topic);
-        }
+        if (href != null)
+        	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+        else
+        	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(topic);
     }
 
     /**

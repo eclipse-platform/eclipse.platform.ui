@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.ISystemSummarySection;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -58,6 +57,11 @@ public final class AboutSystemDialog extends ProductInfoDialog {
 
     private final static int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
 
+    /**
+     * Create an instance of this dialog.
+     * 
+     * @param parentShell the parent shell
+     */
     public AboutSystemDialog(Shell parentShell) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
@@ -69,7 +73,8 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(WorkbenchMessages.getString("SystemSummary.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(newShell, IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
     }
 
     /* (non-Javadoc)

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action hides or shows expert properties in the <code>PropertySheetViewer</code>.
@@ -20,10 +20,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
     /**
      * Create the Filter action. This action is used to show
      * or hide expert properties.
+     * 
+     * @param viewer the viewer
+     * @param name the name
      */
     public FilterAction(PropertySheetViewer viewer, String name) {
         super(viewer, name);
-        WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.FILTER_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IPropertiesHelpContextIds.FILTER_ACTION);
     }
 
     /**

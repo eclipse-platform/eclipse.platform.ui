@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -66,7 +66,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
     protected Control createContents(Composite parent) {
         Font font = parent.getFont();
 
-        WorkbenchHelp.setHelp(parent,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
                 IIDEHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
         // define container & its gridding
         Composite pageComponent = new Composite(parent, SWT.NULL);

@@ -84,7 +84,6 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -738,7 +737,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
             shell.setText(title);
         }
 
-        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
+        getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
         getWorkbench().getContextSupport().registerShell(shell,
                 IWorkbenchContextSupport.TYPE_WINDOW);
 

@@ -22,7 +22,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -30,10 +30,15 @@ import org.eclipse.ui.ide.IDE;
  */
 class OpenBookmarkAction extends BookmarkAction {
 
+    /**
+     * Create a new instance of this class.
+     * 
+     * @param view the view
+     */
     public OpenBookmarkAction(BookmarkNavigator view) {
         super(view, BookmarkMessages.getString("OpenBookmark.text")); //$NON-NLS-1$
         setToolTipText(BookmarkMessages.getString("OpenBookmark.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION);
         setEnabled(false);
     }

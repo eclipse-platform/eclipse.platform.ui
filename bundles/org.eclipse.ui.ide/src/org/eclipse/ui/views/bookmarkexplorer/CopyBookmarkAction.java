@@ -21,7 +21,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -31,11 +31,13 @@ class CopyBookmarkAction extends BookmarkAction {
 
     /**
      * Creates the action.
+     * 
+     * @param bookmarkNavigator the view
      */
     public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
         super(bookmarkNavigator, BookmarkMessages
                 .getString("CopyBookmark.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
         setEnabled(false);
     }

@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Collapse all project nodes.
@@ -26,7 +26,7 @@ public class CollapseAllAction extends ResourceNavigatorAction {
      */
     public CollapseAllAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
         setEnabled(true);
     }

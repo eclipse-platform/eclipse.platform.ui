@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -62,8 +62,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
         Font font = parent.getFont();
 
-        WorkbenchHelp.setHelp(parent,
-                IWorkbenchHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 
         Composite mainComposite = new Composite(parent, SWT.NONE);
         mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -240,8 +240,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
      */
     protected void performDefaults() {
         super.performDefaults();
-        DecoratorManager manager = (DecoratorManager) WorkbenchPlugin
-                .getDefault().getDecoratorManager();
+        DecoratorManager manager = WorkbenchPlugin.getDefault()
+				.getDecoratorManager();
         DecoratorDefinition[] definitions = manager
                 .getAllDecoratorDefinitions();
         for (int i = 0; i < definitions.length; i++) {
@@ -288,12 +288,12 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     }
 
     /**
-     * Get the DecoratorManager being used for this
+     * Get the DecoratorManager being used for this page.
+     * 
+     * @return the decorator manager
      */
-
     private DecoratorManager getDecoratorManager() {
-        return (DecoratorManager) WorkbenchPlugin.getDefault()
-                .getDecoratorManager();
+        return WorkbenchPlugin.getDefault().getDecoratorManager();
     }
 
 }

@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -94,7 +93,7 @@ public class ProjectCapabilityEditingPropertyPage extends
      */
     protected Control createContents(Composite parent) {
         Font font = parent.getFont();
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IIDEHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
         noDefaultAndApplyButton();
         reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
@@ -244,7 +243,7 @@ public class ProjectCapabilityEditingPropertyPage extends
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
                 IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
         dialog.open();
 
@@ -315,8 +314,9 @@ public class ProjectCapabilityEditingPropertyPage extends
                     Math
                             .max(SIZING_WIZARD_WIDTH, dialog.getShell()
                                     .getSize().x), SIZING_WIZARD_HEIGHT);
-            WorkbenchHelp.setHelp(dialog.getShell(),
-                    IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(
+					dialog.getShell(),
+					IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
             dialog.open();
         }
 

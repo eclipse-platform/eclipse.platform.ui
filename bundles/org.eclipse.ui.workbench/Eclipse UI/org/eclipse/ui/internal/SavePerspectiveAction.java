@@ -17,7 +17,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -49,7 +48,8 @@ public class SavePerspectiveAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)

@@ -12,12 +12,12 @@
 package org.eclipse.ui.views.tasklist;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -32,12 +32,15 @@ class ResolveMarkerAction extends TaskAction {
      */
     protected ResolveMarkerAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 ITaskListHelpContextIds.RESOLVE_MARKER_ACTION);
     }
 
     /**
      * Returns whether this action should be enabled given the selection.
+     * 
+     * @param selection the selection
+     * @return enablement
      */
     public boolean shouldEnable(IStructuredSelection selection) {
         if (selection.size() != 1)
@@ -66,7 +69,7 @@ class ResolveMarkerAction extends TaskAction {
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
                 getShell(), resolutions);
-        if (d.open() != Dialog.OK)
+        if (d.open() != Window.OK)
             return;
         Object[] result = d.getResult();
         if (result != null && result.length > 0)
@@ -76,7 +79,7 @@ class ResolveMarkerAction extends TaskAction {
     /**
      * Returns the resolutions for the given marker.
      *
-     * @param the marker for which to obtain resolutions
+     * @param marker the marker for which to obtain resolutions
      * @return the resolutions for the selected marker	
      */
     private IMarkerResolution[] getResolutions(IMarker marker) {

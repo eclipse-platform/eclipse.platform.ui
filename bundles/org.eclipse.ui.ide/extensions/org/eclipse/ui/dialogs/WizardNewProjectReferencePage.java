@@ -24,7 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -76,7 +76,7 @@ public class WizardNewProjectReferencePage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setFont(font);
 
-        WorkbenchHelp.setHelp(composite,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
                 IIDEHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
 
         Label referenceLabel = new Label(composite, SWT.NONE);

@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionValidator;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -81,7 +80,8 @@ public class CopyResourceAction extends SelectionListenerAction implements
      */
     public CopyResourceAction(Shell shell) {
         this(shell, IDEWorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.COPY_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.COPY_RESOURCE_ACTION);
     }
 
     /**

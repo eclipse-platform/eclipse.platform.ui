@@ -12,10 +12,10 @@
 package org.eclipse.ui.views.tasklist;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.window.Window;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action creates a new task. If a resource is currently
@@ -37,10 +37,14 @@ class NewTaskAction extends TaskAction {
 
     /**
      * Creates the action.
+     * 
+     * @param tasklist the task list
+     * @param id the id
      */
     public NewTaskAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.NEW_TASK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				ITaskListHelpContextIds.NEW_TASK_ACTION);
     }
 
     /**
@@ -51,7 +55,7 @@ class NewTaskAction extends TaskAction {
         TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
         dialog.setResource(getTaskList().getResource());
         int result = dialog.open();
-        if (result == Dialog.OK) {
+        if (result == Window.OK) {
             showMarker(dialog.getMarker());
         }
     }

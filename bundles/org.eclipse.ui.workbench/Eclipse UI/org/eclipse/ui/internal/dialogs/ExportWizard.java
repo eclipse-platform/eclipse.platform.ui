@@ -17,10 +17,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
@@ -44,7 +43,7 @@ public class ExportWizard extends Wizard {
 
         public void createControl(Composite parent) {
             super.createControl(parent);
-            WorkbenchHelp.setHelp(getControl(),
+            workbench.getHelpSystem().setHelp(getControl(),
                     IWorkbenchHelpContextIds.EXPORT_WIZARD_SELECTION_WIZARD_PAGE);
         }
 
@@ -77,6 +76,9 @@ public class ExportWizard extends Wizard {
 
     /**
      * Initializes the wizard.
+     * 
+     * @param aWorkbench the workbench
+     * @param currentSelection the current selectio
      */
     public void init(IWorkbench aWorkbench,
             IStructuredSelection currentSelection) {

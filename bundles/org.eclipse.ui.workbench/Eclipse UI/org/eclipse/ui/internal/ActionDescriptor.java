@@ -18,7 +18,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -177,7 +177,7 @@ public class ActionDescriptor implements IPluginContribution {
                 // qualified)
                 fullID = actionElement.getDeclaringExtension().getNamespace()
                         + "." + helpContextId;//$NON-NLS-1$
-            WorkbenchHelp.setHelp(action, fullID);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(action, fullID);
         }
         if (description != null)
             action.setDescription(description);

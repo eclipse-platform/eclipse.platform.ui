@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 
@@ -135,6 +134,8 @@ public class TaskPropertiesDialog extends Dialog {
      * Returns the marker being created or modified.
      * For a new marker, this returns <code>null</code> until
      * the dialog returns, but is non-null after.
+     * 
+     * @return the marker
      */
     public IMarker getMarker() {
         return marker;
@@ -143,6 +144,8 @@ public class TaskPropertiesDialog extends Dialog {
     /**
      * Sets the resource to use when creating a new task.
      * If not set, the new task is created on the workspace root.
+     * 
+     * @param resource the resource
      */
     public void setResource(IResource resource) {
         this.resource = resource;
@@ -152,6 +155,8 @@ public class TaskPropertiesDialog extends Dialog {
      * Returns the resource to use when creating a new task,
      * or <code>null</code> if none has been set.
      * If not set, the new task is created on the workspace root.
+     * 
+     * @return the resource
      */
     public IResource getResource() {
         return resource;
@@ -160,6 +165,8 @@ public class TaskPropertiesDialog extends Dialog {
     /**
      * Sets initial attributes to use when creating a new task.
      * If not set, the new task is created with default attributes.
+     * 
+     * @param initialAttributes the initial attributes
      */
     public void setInitialAttributes(Map initialAttributes) {
         this.initialAttributes = initialAttributes;
@@ -169,6 +176,8 @@ public class TaskPropertiesDialog extends Dialog {
      * Returns the initial attributes to use when creating a new task,
      * or <code>null</code> if not set.
      * If not set, the new task is created with default attributes.
+     * 
+     * @return the initial attributes
      */
     public Map getInitialAttributes() {
         return initialAttributes;
@@ -189,7 +198,7 @@ public class TaskPropertiesDialog extends Dialog {
                     "TaskProp.propertiesTitle", new Object[] { kind })); //$NON-NLS-1$
         }
 
-        WorkbenchHelp.setHelp(newShell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
                 ITaskListHelpContextIds.PROPERTIES_DIALOG);
     }
 
@@ -214,7 +223,8 @@ public class TaskPropertiesDialog extends Dialog {
 
     /**
      * Method createCreationTimeArea.
-     * @param composite
+     * 
+     * @param parent the parent
      */
     private void createCreationTimeArea(Composite parent) {
         Font font = parent.getFont();

@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.RenameResourceAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the
@@ -37,7 +37,7 @@ public class ResourceNavigatorRenameAction extends RenameResourceAction {
      */
     public ResourceNavigatorRenameAction(Shell shell, TreeViewer treeViewer) {
         super(shell, treeViewer.getTree());
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION);
         this.viewer = treeViewer;
     }

@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.CheckboxTreeAndListGroup;
@@ -147,7 +147,8 @@ public class FileSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell, IIDEHelpContextIds.FILE_SELECTION_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IIDEHelpContextIds.FILE_SELECTION_DIALOG);
     }
 
     public void create() {

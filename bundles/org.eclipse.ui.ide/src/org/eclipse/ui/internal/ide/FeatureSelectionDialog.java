@@ -29,8 +29,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 
 /**
@@ -125,7 +125,8 @@ public class FeatureSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        WorkbenchHelp.setHelp(newShell, helpContextId);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				helpContextId);
     }
 
     /* (non-Javadoc)

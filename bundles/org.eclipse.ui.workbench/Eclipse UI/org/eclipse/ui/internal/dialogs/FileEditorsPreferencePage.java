@@ -16,10 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -37,7 +37,6 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -84,6 +83,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
     /**
      * Add a new resource type to the collection shown in the top of the page.
      * This is typically called after the extension dialog is shown to the user.
+     * 
+     * @param newName the new name
+     * @param newExtension the new extension
      */
     public void addResourceType(String newName, String newExtension) {
         // Either a file name or extension must be provided
@@ -273,8 +275,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         fillEditorTable();
         updateEnabledState();
 
-        WorkbenchHelp.setHelp(parent,
-                IWorkbenchHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
+        workbench.getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
 
         return pageComponent;
     }
@@ -368,9 +370,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         TableItem[] items = resourceTypeTable.getSelection();
         if (items.length > 0) {
             return (FileEditorMapping) items[0].getData(); //Table is single select
-        } else {
-            return null;
         }
+        return null;        
     }
 
     protected IEditorDescriptor[] getAssociatedEditors() {
@@ -383,8 +384,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 
             return (IEditorDescriptor[]) editorList
                     .toArray(new IEditorDescriptor[editorList.size()]);
-        } else
-            return null;
+        } 
+        return null;
     }
 
     public void handleEvent(Event event) {
@@ -456,6 +457,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         return true;
     }
 
+    /**
+     * Prompt for editor.
+     */
     public void promptForEditor() {
         EditorSelectionDialog dialog = new EditorSelectionDialog(getControl()
                 .getShell());
@@ -464,7 +468,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 .setMessage(WorkbenchMessages
                         .format(
                                 "Choose_the_editor_for_file", new Object[] { getSelectedResourceType().getLabel() })); //$NON-NLS-1$
-        if (dialog.open() == Dialog.OK) {
+        if (dialog.open() == Window.OK) {
             EditorDescriptor editor = (EditorDescriptor) dialog
                     .getSelectedEditor();
             if (editor != null) {
@@ -487,10 +491,13 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         }
     }
 
+    /**
+     * Prompt for resource type.
+     */
     public void promptForResourceType() {
         FileExtensionDialog dialog = new FileExtensionDialog(getControl()
                 .getShell());
-        if (dialog.open() == Dialog.OK) {
+        if (dialog.open() == Window.OK) {
             String name = dialog.getName();
             String extension = dialog.getExtension();
             addResourceType(name, extension);
@@ -531,6 +538,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         editorTable.removeAll();
     }
 
+    /**
+     * Add the selected editor to the default list.
+     */
     public void setSelectedEditorAsDefault() {
         TableItem[] items = editorTable.getSelection();
         if (items.length > 0) {
@@ -553,6 +563,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         }
     }
 
+    /**
+     * Update the enabled state.
+     */
     public void updateEnabledState() {
         //Update enabled state
         boolean resourceTypeSelected = resourceTypeTable.getSelectionIndex() != -1;
@@ -565,6 +578,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         defaultEditorButton.setEnabled(editorSelected);
     }
 
+    /**
+     * Update the selected type.
+     */
     public void updateSelectedResourceType() {
         //  TableItem item = resourceTypeTable.getSelection()[0]; //Single select
         //  Image image = ((IFileEditorMapping)item.getData()).getImageDescriptor().getImage();

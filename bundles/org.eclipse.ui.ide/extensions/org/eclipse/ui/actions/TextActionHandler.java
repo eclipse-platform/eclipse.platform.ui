@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -128,14 +128,15 @@ public class TextActionHandler {
                 actionHandler.setEnabled(bool.booleanValue());
             }
         }
-    };
+    }
 
     private class DeleteActionHandler extends Action {
         protected DeleteActionHandler() {
             super(IDEWorkbenchMessages.getString("Delete")); //$NON-NLS-1$
             setId("TextDeleteActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TEXT_DELETE_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.TEXT_DELETE_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -149,6 +150,9 @@ public class TextActionHandler {
             }
         }
 
+        /**
+         * Update state.
+         */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 setEnabled(activeTextControl.getSelectionCount() > 0
@@ -169,7 +173,8 @@ public class TextActionHandler {
             super(IDEWorkbenchMessages.getString("Cut")); //$NON-NLS-1$
             setId("TextCutActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TEXT_CUT_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.TEXT_CUT_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -183,6 +188,9 @@ public class TextActionHandler {
             }
         }
 
+        /**
+         * Update state.
+         */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 setEnabled(activeTextControl.getSelectionCount() > 0);
@@ -201,7 +209,8 @@ public class TextActionHandler {
             super(IDEWorkbenchMessages.getString("Copy")); //$NON-NLS-1$
             setId("TextCopyActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TEXT_COPY_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.TEXT_COPY_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -215,6 +224,9 @@ public class TextActionHandler {
             }
         }
 
+        /**
+         * Update the state.
+         */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 setEnabled(activeTextControl.getSelectionCount() > 0);
@@ -233,7 +245,8 @@ public class TextActionHandler {
             super(IDEWorkbenchMessages.getString("Paste")); //$NON-NLS-1$
             setId("TextPasteActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TEXT_PASTE_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.TEXT_PASTE_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -247,6 +260,9 @@ public class TextActionHandler {
             }
         }
 
+        /**
+         * Update the state
+         */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 setEnabled(true);
@@ -265,7 +281,8 @@ public class TextActionHandler {
             super(IDEWorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
             setId("TextSelectAllActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TEXT_SELECT_ALL_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IIDEHelpContextIds.TEXT_SELECT_ALL_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -279,6 +296,9 @@ public class TextActionHandler {
             }
         }
 
+        /**
+         * Update the state.
+         */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
                 setEnabled(true);

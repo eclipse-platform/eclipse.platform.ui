@@ -51,8 +51,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -486,7 +486,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             public void widgetSelected(SelectionEvent e) {
-                WorkbenchHelp.displayHelpResource(wizardHelpHref);
+            	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
+						wizardHelpHref);
             }
         });
     }

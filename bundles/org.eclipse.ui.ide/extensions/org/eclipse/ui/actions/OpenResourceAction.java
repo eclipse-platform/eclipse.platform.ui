@@ -13,12 +13,13 @@ package org.eclipse.ui.actions;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -56,7 +56,8 @@ public class OpenResourceAction extends WorkspaceAction implements
      */
     public OpenResourceAction(Shell shell) {
         super(shell, IDEWorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
         setToolTipText(IDEWorkbenchMessages
                 .getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
         setId(ID);

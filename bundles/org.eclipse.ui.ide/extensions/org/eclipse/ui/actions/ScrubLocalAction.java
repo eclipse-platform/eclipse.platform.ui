@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -43,7 +43,8 @@ public class ScrubLocalAction extends WorkspaceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
     }
 
     /* (non-Javadoc)

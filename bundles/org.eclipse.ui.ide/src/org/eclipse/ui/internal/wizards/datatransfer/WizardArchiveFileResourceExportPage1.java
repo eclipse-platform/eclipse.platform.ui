@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  *	Page 1 of the base resource export-to-archive Wizard.
@@ -62,7 +62,7 @@ public class WizardArchiveFileResourceExportPage1 extends
 
     /**
      * Create an instance of this class
-     * @param IStructuredSelection selection
+     * @param selection the selection
      */
     public WizardArchiveFileResourceExportPage1(IStructuredSelection selection) {
         this("zipFileExportPage1", selection); //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class WizardArchiveFileResourceExportPage1 extends
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
     }
 

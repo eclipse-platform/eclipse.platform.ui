@@ -26,7 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -58,6 +57,7 @@ import org.eclipse.ui.part.ResourceTransfer;
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
+     * @param clipboard the clipboard
      */
     public PasteAction(Shell shell, Clipboard clipboard) {
         super(ResourceNavigatorMessages.getString("PasteAction.title")); //$NON-NLS-1$
@@ -68,7 +68,8 @@ import org.eclipse.ui.part.ResourceTransfer;
         setToolTipText(ResourceNavigatorMessages
                 .getString("PasteAction.toolTip")); //$NON-NLS-1$
         setId(PasteAction.ID);
-        WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.PASTE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				INavigatorHelpContextIds.PASTE_ACTION);
     }
 
     /**

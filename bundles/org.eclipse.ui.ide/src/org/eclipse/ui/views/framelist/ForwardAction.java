@@ -12,7 +12,6 @@ package org.eclipse.ui.views.framelist;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Generic "Forward" action which goes forward one frame.
@@ -32,7 +31,8 @@ public class ForwardAction extends FrameAction {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
-        WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.FORWARD_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IFrameListHelpContextIds.FORWARD_ACTION);
         update();
     }
 

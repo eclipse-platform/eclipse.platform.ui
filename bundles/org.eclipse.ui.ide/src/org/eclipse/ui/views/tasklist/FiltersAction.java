@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.views.tasklist;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.window.Window;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action opens an editor for the resource
@@ -22,10 +23,13 @@ class FiltersAction extends TaskAction {
 
     /**
      * Creates the action.
+     * @param tasklist the task list
+     * @param id the id
      */
     public FiltersAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.FILTERS_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				ITaskListHelpContextIds.FILTERS_ACTION);
     }
 
     /**
@@ -36,7 +40,7 @@ class FiltersAction extends TaskAction {
         TasksFilter filter = getTaskList().getFilter();
         dialog.setFilter(filter);
         int result = dialog.open();
-        if (result == FiltersDialog.OK) {
+        if (result == Window.OK) {
             getTaskList().filterChanged();
         }
     }

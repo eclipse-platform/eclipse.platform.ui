@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -90,7 +90,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     private AboutBundleData lastSelection = null;
 
     /**
-     * Constructor for AboutPluginsDialog
+     * Constructor for AboutPluginsDialog.
+     * 
+     * @param parentShell the parent shell
+     * @param productName the product name
      */
     public AboutPluginsDialog(Shell parentShell, String productName) {
         this(parentShell, productName, WorkbenchPlugin.getDefault()
@@ -98,12 +101,20 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     }
 
     /**
-     * Constructor for AboutPluginsDialog
+     * Constructor for AboutPluginsDialog.
      * 
+     * @param parentShell 
+     * 			  the parent shell
      * @param productName
      *            must not be null
      * @param bundles
      *            must not be null
+     * @param title 
+     *            the title
+     * @param message 
+     * 			  the message
+     * @param helpContextId 
+     *            the help context id
      */
     public AboutPluginsDialog(Shell parentShell, String productName,
             Bundle[] bundles, String title, String message, String helpContextId) {
@@ -153,7 +164,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         if (title != null)
             newShell.setText(title);
 
-        WorkbenchHelp.setHelp(newShell, helpContextId);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				helpContextId);
     }
 
     /**
@@ -395,7 +407,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      * Return an url to the plugin's about.html file (what is shown when "More info" is
      * pressed) or null if no such file exists.  The method does nl lookup to allow for
      * i18n.
-     * @return
+     * @return the url
      */
     private URL getMoreInfoURL(AboutBundleData bundleInfo) {
         Bundle bundle = Platform.getBundle(bundleInfo.getId());

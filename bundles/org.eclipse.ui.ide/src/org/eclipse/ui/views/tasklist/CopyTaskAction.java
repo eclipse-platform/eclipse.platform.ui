@@ -21,19 +21,23 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
  * Copies a task to the clipboard.
  */
 class CopyTaskAction extends TaskAction {
-    /**
+ 
+	/**
      * Creates the action.
+	 * @param tasklist the task list
+	 * @param id the id
      */
     public CopyTaskAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.COPY_TASK_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				ITaskListHelpContextIds.COPY_TASK_ACTION);
     }
 
     /**

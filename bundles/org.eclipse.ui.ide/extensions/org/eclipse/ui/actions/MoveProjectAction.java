@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -62,7 +61,8 @@ public class MoveProjectAction extends CopyProjectAction {
 		super(shell, MOVE_TITLE);
 		setToolTipText(MOVE_TOOL_TIP);
 		setId(MoveProjectAction.ID);
-		WorkbenchHelp.setHelp(this, IIDEHelpContextIds.MOVE_PROJECT_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.MOVE_PROJECT_ACTION);
 	}
 
 	/**

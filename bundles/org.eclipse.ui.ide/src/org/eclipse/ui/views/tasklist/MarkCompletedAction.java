@@ -16,7 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 class MarkCompletedAction extends TaskAction {
 
@@ -27,7 +27,7 @@ class MarkCompletedAction extends TaskAction {
      */
     protected MarkCompletedAction(TaskList tasklist, String id) {
         super(tasklist, id);
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 ITaskListHelpContextIds.MARK_COMPLETED_ACTION);
     }
 
@@ -49,6 +49,9 @@ class MarkCompletedAction extends TaskAction {
 
     /**
      * Returns whether this action should be enabled for the given selection.
+     * 
+     * @param selection the selection
+     * @return enablement
      */
     public boolean shouldEnable(IStructuredSelection selection) {
         if (selection.isEmpty())

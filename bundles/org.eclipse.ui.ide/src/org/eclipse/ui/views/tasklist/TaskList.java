@@ -101,7 +101,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.IShowInSource;
@@ -249,6 +248,9 @@ public class TaskList extends ViewPart {
 
         private int column;
 
+        /**
+         * @param column
+         */
         public SortByAction(int column) {
             this.column = column;
         }
@@ -270,6 +272,9 @@ public class TaskList extends ViewPart {
 
         private int direction;
 
+        /**
+         * @param direction
+         */
         public SortDirectionAction(int direction) {
             this.direction = direction;
         }
@@ -360,6 +365,9 @@ public class TaskList extends ViewPart {
         super();
     }
 
+    /**
+     * @param control
+     */
     void addDragSupport(Control control) {
 
         int operations = DND.DROP_COPY;
@@ -697,7 +705,8 @@ public class TaskList extends ViewPart {
                 if (contextId == null)
                     contextId = ITaskListHelpContextIds.TASK_LIST_VIEW;
 
-                WorkbenchHelp.displayHelp(contextId);
+                getSite().getWorkbenchWindow().getWorkbench().getHelpSystem()
+						.displayHelp(contextId);
             }
         });
 
@@ -740,6 +749,8 @@ public class TaskList extends ViewPart {
 
     /**
      * Activates the editor on the given marker.
+     * 
+     * @param marker the marker to edit
      */
     public void edit(IMarker marker) {
         viewer.editElement(marker, 3);
@@ -898,6 +909,11 @@ public class TaskList extends ViewPart {
         return getWorkspace().getRoot();
     }
 
+    /**
+     * Get the resources.
+     * 
+     * @return the resources
+     */
     public IResource[] getResources() {
         if (showSelections()) {
             if (focusResources != null) {
@@ -916,8 +932,8 @@ public class TaskList extends ViewPart {
     int getResourceDepth() {
         if (showSelections() && !showChildrenHierarchy())
             return IResource.DEPTH_ZERO;
-        else
-            return IResource.DEPTH_INFINITE;
+
+        return IResource.DEPTH_INFINITE;
     }
 
     /**
@@ -943,9 +959,8 @@ public class TaskList extends ViewPart {
 
         if (selection != null && selection.size() > 1) {
             return provider.getStatusSummarySelected(selection);
-        } else {
-            return provider.getStatusSummaryVisible();
         }
+        return provider.getStatusSummaryVisible();
     }
 
     /**
@@ -1002,13 +1017,12 @@ public class TaskList extends ViewPart {
 
                 if (resource2 == null) {
                     return true;
-                } else {
-                    project = resource2.getProject();
-
-                    if (project == null
-                            || project.equals(resource.getProject()))
-                        return true;
                 }
+                project = resource2.getProject();
+
+                if (project == null
+                        || project.equals(resource.getProject()))
+                    return true;
             }
         }
 
@@ -1130,80 +1144,84 @@ public class TaskList extends ViewPart {
                 .getString("SortByCategory.text")); //$NON-NLS-1$
         sortByCategoryAction.setToolTipText(TaskListMessages
                 .getString("SortByCategory.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByCategoryAction,
-                ITaskListHelpContextIds.TASK_SORT_TYPE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByCategoryAction,
+				ITaskListHelpContextIds.TASK_SORT_TYPE_ACTION);
 
         sortByCompletedAction = new SortByAction(TaskSorter.COMPLETION);
         sortByCompletedAction.setText(TaskListMessages
                 .getString("SortByCompleted.text")); //$NON-NLS-1$
         sortByCompletedAction.setToolTipText(TaskListMessages
                 .getString("SortByCompleted.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByCompletedAction,
-                ITaskListHelpContextIds.TASK_SORT_COMPLETED_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				sortByCompletedAction,
+				ITaskListHelpContextIds.TASK_SORT_COMPLETED_ACTION);
 
         sortByPriorityAction = new SortByAction(TaskSorter.PRIORITY);
         sortByPriorityAction.setText(TaskListMessages
                 .getString("SortByPriority.text")); //$NON-NLS-1$
         sortByPriorityAction.setToolTipText(TaskListMessages
                 .getString("SortByPriority.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByPriorityAction,
-                ITaskListHelpContextIds.TASK_SORT_PRIORITY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByPriorityAction,
+				ITaskListHelpContextIds.TASK_SORT_PRIORITY_ACTION);
 
         sortByDescriptionAction = new SortByAction(TaskSorter.DESCRIPTION);
         sortByDescriptionAction.setText(TaskListMessages
                 .getString("SortByDescription.text")); //$NON-NLS-1$
         sortByDescriptionAction.setToolTipText(TaskListMessages
                 .getString("SortByDescription.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByDescriptionAction,
-                ITaskListHelpContextIds.TASK_SORT_DESCRIPTION_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				sortByDescriptionAction,
+				ITaskListHelpContextIds.TASK_SORT_DESCRIPTION_ACTION);
 
         sortByResourceAction = new SortByAction(TaskSorter.RESOURCE);
         sortByResourceAction.setText(TaskListMessages
                 .getString("SortByResource.text")); //$NON-NLS-1$
         sortByResourceAction.setToolTipText(TaskListMessages
                 .getString("SortByResource.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByResourceAction,
-                ITaskListHelpContextIds.TASK_SORT_RESOURCE_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByResourceAction,
+				ITaskListHelpContextIds.TASK_SORT_RESOURCE_ACTION);
 
         sortByContainerAction = new SortByAction(TaskSorter.FOLDER);
         sortByContainerAction.setText(TaskListMessages
                 .getString("SortByContainer.text")); //$NON-NLS-1$
         sortByContainerAction.setToolTipText(TaskListMessages
                 .getString("SortByContainer.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByContainerAction,
-                ITaskListHelpContextIds.TASK_SORT_FOLDER_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				sortByContainerAction,
+				ITaskListHelpContextIds.TASK_SORT_FOLDER_ACTION);
 
         sortByLocationAction = new SortByAction(TaskSorter.LOCATION);
         sortByLocationAction.setText(TaskListMessages
                 .getString("SortByLocation.text")); //$NON-NLS-1$
         sortByLocationAction.setToolTipText(TaskListMessages
                 .getString("SortByLocation.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByLocationAction,
-                ITaskListHelpContextIds.TASK_SORT_LOCATION_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByLocationAction,
+				ITaskListHelpContextIds.TASK_SORT_LOCATION_ACTION);
 
         sortByCreationTimeAction = new SortByAction(TaskSorter.CREATION_TIME);
         sortByCreationTimeAction.setText(TaskListMessages
                 .getString("SortByCreationTime.text")); //$NON-NLS-1$
         sortByCreationTimeAction.setToolTipText(TaskListMessages
                 .getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortByCreationTimeAction,
-                ITaskListHelpContextIds.TASK_SORT_CREATION_TIME_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				sortByCreationTimeAction,
+				ITaskListHelpContextIds.TASK_SORT_CREATION_TIME_ACTION);
 
         sortAscendingAction = new SortDirectionAction(TaskSorter.ASCENDING);
         sortAscendingAction.setText(TaskListMessages
                 .getString("SortAscending.text")); //$NON-NLS-1$
         sortAscendingAction.setToolTipText(TaskListMessages
                 .getString("SortAscending.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortAscendingAction,
-                ITaskListHelpContextIds.TASK_SORT_ASCENDING_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortAscendingAction,
+				ITaskListHelpContextIds.TASK_SORT_ASCENDING_ACTION);
 
         sortDescendingAction = new SortDirectionAction(TaskSorter.DESCENDING);
         sortDescendingAction.setText(TaskListMessages
                 .getString("SortDescending.text")); //$NON-NLS-1$
         sortDescendingAction.setToolTipText(TaskListMessages
                 .getString("SortDescending.tooltip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(sortDescendingAction,
-                ITaskListHelpContextIds.TASK_SORT_DESCENDING_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sortDescendingAction,
+				ITaskListHelpContextIds.TASK_SORT_DESCENDING_ACTION);
 
         // filters...
         filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$
@@ -1397,7 +1415,7 @@ public class TaskList extends ViewPart {
             propertiesAction.setEnabled(false);
             return;
         }
-        ;
+        
 
         // Can only open properties for a single task at a time
         propertiesAction.setEnabled(selection.size() == 1);
@@ -1447,8 +1465,6 @@ public class TaskList extends ViewPart {
 
     /**
      * Sets the property on a marker to the given value.
-     *
-     * @exception CoreException if an error occurs setting the value
      */
     void setProperty(IMarker marker, String property, Object value) {
         if (MarkerUtil.getProperty(marker, property).equals(value)) {
@@ -1532,6 +1548,8 @@ public class TaskList extends ViewPart {
      * If true, it will resync with the saved input element.
      * Otherwise, it will reconfigure to show all the
      * problems/tasks in the workbench.
+     * 
+     * @param value the value
      */
     void toggleInputSelection(boolean value) {
         /*
@@ -1549,6 +1567,8 @@ public class TaskList extends ViewPart {
      * If true, current input will be
      * remembered and further selections will be
      * ignored.
+     * 
+     * @param value the value
      */
     void toggleLockInput(boolean value) {
         /*

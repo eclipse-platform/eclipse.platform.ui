@@ -19,7 +19,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Global action that saves all targets in the
@@ -42,13 +41,16 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
 
     /**
      * The default constructor.
+     * 
+     * @param window the window
      */
     public SaveAllAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("SaveAll.text"), window); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
         setId("saveAll"); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
         setDisabledImageDescriptor(WorkbenchImages

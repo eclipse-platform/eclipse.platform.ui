@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -50,8 +50,12 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
     protected Control createContents(Composite parent) {
         // @issue if the product subclasses this page, then it should provide
         // the help content
-        WorkbenchHelp.setHelp(parent,
-                org.eclipse.ui.internal.IWorkbenchHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
+    	PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(
+						parent,
+						org.eclipse.ui.internal.IWorkbenchHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 

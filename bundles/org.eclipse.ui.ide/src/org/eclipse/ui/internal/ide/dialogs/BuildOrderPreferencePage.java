@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -27,6 +26,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -135,7 +135,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
                 this, contentsProvider, labelProvider,
                 PROJECT_SELECTION_MESSAGE);
 
-        if (dialog.open() != Dialog.OK)
+        if (dialog.open() != Window.OK)
             return;
 
         Object[] result = dialog.getResult();
@@ -162,7 +162,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
      * Create the list of build paths. If the current build order is empty make the list empty
      * and disable it.
      * @param composite - the parent to create the list in
-     * @param - enabled - the boolean that indcates if the list will be sensitive initially or not
+     * @param enabled - the boolean that indcates if the list will be sensitive initially or not
      */
     private void createBuildOrderList(Composite composite, boolean enabled) {
 
@@ -201,7 +201,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
      */
     protected Control createContents(Composite parent) {
 
-        WorkbenchHelp.setHelp(parent,
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
                 IIDEHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
 
         Font font = parent.getFont();

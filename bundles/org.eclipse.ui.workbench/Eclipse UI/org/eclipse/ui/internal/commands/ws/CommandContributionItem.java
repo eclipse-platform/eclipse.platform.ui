@@ -29,12 +29,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * <p>
@@ -140,7 +140,8 @@ public class CommandContributionItem extends ContributionItem implements
     public CommandContributionItem(ICommand commandToUse) {
         super(commandToUse.getId());
         command = commandToUse;
-        helpListener = WorkbenchHelp.createHelpListener(commandToUse);
+        helpListener = PlatformUI.getWorkbench().getHelpSystem()
+				.createHelpListener(commandToUse);
     }
 
     /**

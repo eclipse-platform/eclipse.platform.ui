@@ -20,9 +20,9 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -77,6 +77,8 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
 
     /**
      * Create a new instance of this class.
+     * 
+     * @param window the window
      */
     public ExportResourcesAction(IWorkbenchWindow window) {
         this(window, WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
@@ -84,6 +86,9 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
 
     /**
      * Create a new instance of this class.
+     * 
+     * @param window the window
+     * @param label the label 
      */
     public ExportResourcesAction(IWorkbenchWindow window, String label) {
         super(label); //$NON-NLS-1$
@@ -95,7 +100,8 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         setToolTipText(WorkbenchMessages
                 .getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
         setId("export"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EXPORT_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.EXPORT_ACTION);
         // self-register selection listener (new for 3.0)
         workbenchWindow.getSelectionService().addSelectionListener(
                 selectionListener);
@@ -109,6 +115,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
     /**
      * Create a new instance of this class
      * 
+     * @param workbench the workbench
      * @deprecated use the constructor <code>ExportResourcesAction(IWorkbenchWindow)</code>
      */
     public ExportResourcesAction(IWorkbench workbench) {
@@ -116,8 +123,10 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
     }
 
     /**
-     * Create a new instance of this class
-     *
+     * Create a new instance of this class.
+     * 
+     * @param workbench the workbench 
+     * @param label the label
      * @deprecated use the constructor <code>ExportResourcesAction(IWorkbenchWindow, String)</code>
      */
     public ExportResourcesAction(IWorkbench workbench, String label) {
@@ -160,7 +169,8 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.EXPORT_WIZARD);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IWorkbenchHelpContextIds.EXPORT_WIZARD);
         dialog.open();
     }
 

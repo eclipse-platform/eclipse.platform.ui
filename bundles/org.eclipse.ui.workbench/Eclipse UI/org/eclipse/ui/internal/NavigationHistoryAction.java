@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>NavigationHistoryAction</code> moves navigation history 
@@ -111,8 +110,8 @@ public class NavigationHistoryAction extends PageEventAction {
             setToolTipText(WorkbenchMessages
                     .getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
             // @issue missing action id
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
+            window.getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
             setImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
             setDisabledImageDescriptor(sharedImages
@@ -124,8 +123,8 @@ public class NavigationHistoryAction extends PageEventAction {
             setToolTipText(WorkbenchMessages
                     .getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
             // @issue missing action id
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
+            window.getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
             setImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
             setDisabledImageDescriptor(sharedImages

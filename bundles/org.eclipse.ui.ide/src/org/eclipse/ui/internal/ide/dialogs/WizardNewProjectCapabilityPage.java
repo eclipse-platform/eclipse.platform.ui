@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -65,7 +65,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
      * Method declared on IDialogPage.
      */
     public void createControl(Composite parent) {
-        WorkbenchHelp.setHelp(parent,
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
                 IIDEHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
         CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
                 .getCapabilityRegistry();

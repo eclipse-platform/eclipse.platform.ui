@@ -22,10 +22,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -41,6 +41,11 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
      */
     private IWorkbenchWindow workbenchWindow;
 
+    /**
+     * Create a new dialog.
+     * 
+     * @param window the window
+     */
     public ProjectPropertyDialogAction(IWorkbenchWindow window) {
         super(new String());
         if (window == null) {
@@ -50,7 +55,7 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
         setText(IDEWorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
         setToolTipText(IDEWorkbenchMessages
                 .getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IIDEHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
         workbenchWindow.getSelectionService().addSelectionListener(this);
         workbenchWindow.getPartService().addPartListener(this);

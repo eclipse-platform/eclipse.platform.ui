@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -108,7 +108,8 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
     /**
      * Check the message. If it is null then continue otherwise inform the user via the
      * status value and disable the OK.
-     * @param message - the error message to show if it is not null.
+     * 
+     * @param errorMsg the error message to show if it is not <code>null</code>
      */
     private void applyValidationResult(String errorMsg) {
         int code;
@@ -147,27 +148,24 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
         if (useDefaults)
             return null;
-        else {
-            String locationFieldContents = locationPathField.getText();
-            if (locationFieldContents.equals("")) {//$NON-NLS-1$
-                return (IDEWorkbenchMessages
-                        .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
-            } else {
-                IPath path = new Path("");//$NON-NLS-1$
-                if (!path.isValidPath(locationFieldContents)) {
-                    return INVALID_LOCATION_MESSAGE;
-                }
-            }
-
-            IStatus locationStatus = this.project.getWorkspace()
-                    .validateProjectLocation(this.project,
-                            new Path(locationFieldContents));
-
-            if (!locationStatus.isOK())
-                return locationStatus.getMessage();
-
-            return null;
+        String locationFieldContents = locationPathField.getText();
+        if (locationFieldContents.equals("")) {//$NON-NLS-1$
+            return (IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
         }
+        IPath path = new Path("");//$NON-NLS-1$
+        if (!path.isValidPath(locationFieldContents)) {
+            return INVALID_LOCATION_MESSAGE;
+        }
+
+        IStatus locationStatus = this.project.getWorkspace()
+                .validateProjectLocation(this.project,
+                        new Path(locationFieldContents));
+
+        if (!locationStatus.isOK())
+            return locationStatus.getMessage();
+
+        return null;
     }
 
     /**
@@ -211,7 +209,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
                 IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
     }
 

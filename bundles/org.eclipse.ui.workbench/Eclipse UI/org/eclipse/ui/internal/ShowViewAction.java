@@ -16,7 +16,6 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 /**
@@ -37,7 +36,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
         setText(accel == null ? label : label + "@" + accel); //$NON-NLS-1$
         setImageDescriptor(desc.getImageDescriptor());
         setToolTipText(label);
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_VIEW_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.SHOW_VIEW_ACTION);
         this.window = window;
         this.desc = desc;
     }

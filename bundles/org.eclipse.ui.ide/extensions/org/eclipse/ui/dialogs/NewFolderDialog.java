@@ -49,8 +49,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -128,7 +128,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell, IIDEHelpContextIds.NEW_FOLDER_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IIDEHelpContextIds.NEW_FOLDER_DIALOG);
     }
 
     /**

@@ -23,7 +23,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -33,16 +36,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -270,7 +266,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 	protected Control createContents(Composite parent) {
 
-		WorkbenchHelp.setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				IIDEHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 		// layout the page

@@ -42,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class EditorList {
     private WorkbenchWindow window;
@@ -510,7 +510,8 @@ public class EditorList {
             setText(WorkbenchMessages.getString("EditorList.saveSelected.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("EditorList.saveSelected.toolTip")); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.SAVE_ACTION);
         }
 
         /**
@@ -547,7 +548,8 @@ public class EditorList {
                     .getString("EditorList.closeSelected.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("EditorList.closeSelected.toolTip")); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_PART_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CLOSE_PART_ACTION);
         }
 
         /**

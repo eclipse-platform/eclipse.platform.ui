@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
@@ -26,8 +25,8 @@ import org.eclipse.ui.internal.CycleEditorAction;
 import org.eclipse.ui.internal.CyclePartAction;
 import org.eclipse.ui.internal.CyclePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.LockToolBarAction;
 import org.eclipse.ui.internal.MaximizePartAction;
@@ -337,7 +336,7 @@ public abstract class ActionFactory {
             window.getPartService().addPartListener(action);
             action.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
             action.enableAccelerator(false);
-            WorkbenchHelp.setHelp(action,
+            window.getWorkbench().getHelpSystem().setHelp(action,
                     IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
             ISharedImages sharedImages = window.getWorkbench()
                     .getSharedImages();

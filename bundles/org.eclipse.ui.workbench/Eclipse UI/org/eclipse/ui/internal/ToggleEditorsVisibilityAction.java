@@ -16,7 +16,6 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Hides or shows the editor area within the current
@@ -61,6 +60,8 @@ public class ToggleEditorsVisibilityAction extends Action implements
 
     /**
      * Creates a new <code>ToggleEditorsVisibilityAction</code>
+     * 
+     * @param window the window
      */
     public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
@@ -71,7 +72,7 @@ public class ToggleEditorsVisibilityAction extends Action implements
         setActionDefinitionId("org.eclipse.ui.window.hideShowEditors"); //$NON-NLS-1$
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this,
+        workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                 IWorkbenchHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
         setEnabled(false);
 

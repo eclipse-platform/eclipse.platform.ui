@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>LockToolBarAction</code> is used to lock the toolbars for the
@@ -53,7 +52,8 @@ public class LockToolBarAction extends Action implements
                 }
             }
         });
-        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.LOCK_TOOLBAR_ACTION);
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.LOCK_TOOLBAR_ACTION);
     }
 
     /* (non-Javadoc)

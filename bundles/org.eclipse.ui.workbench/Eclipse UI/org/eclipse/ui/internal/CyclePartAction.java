@@ -44,12 +44,14 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * Implements a action to enable the user switch between parts using keyboard.
+ */
+/**
+ * @since 3.1
  */
 public class CyclePartAction extends PageEventAction {
 
@@ -88,6 +90,8 @@ public class CyclePartAction extends PageEventAction {
 
     /**
      * Activate the selected item.
+     * @param page the page
+     * @param selectedItem the selected item
      */
     public void activate(IWorkbenchPage page, Object selectedItem) {
         if (selectedItem != null) {
@@ -293,19 +297,21 @@ public class CyclePartAction extends PageEventAction {
         dialog.close();
     }
 
-    /*
-     * (non-Javadoc)
+
+    /**
+     * Return the backward action.
      * 
-     * @see org.eclipse.ui.internal.ICycleAction
+     * @return the backward action
      */
     public String getBackwardActionDefinitionId() {
         return commandBackward;
     }
 
-    /*
-     * (non-Javadoc)
+    
+    /**
+     * Return the forward action.
      * 
-     * @see org.eclipse.ui.internal.ICycleAction
+     * @return the forward action
      */
     public String getForwardActionDefinitionId() {
         return commandForward;
@@ -507,19 +513,20 @@ public class CyclePartAction extends PageEventAction {
         activate(page, selection);
     }
 
-    /*
-     * (non-Javadoc)
+
+    /**
+     * Set the backward action.
      * 
-     * @see org.eclipse.ui.internal.ICycleAction
+     * @param actionDefinitionId the action
      */
     public void setBackwardActionDefinitionId(String actionDefinitionId) {
         commandBackward = actionDefinitionId;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Set the forward action.
      * 
-     * @see org.eclipse.ui.internal.ICycleAction
+     * @param actionDefinitionId the action
      */
     public void setForwardActionDefinitionId(String actionDefinitionId) {
         commandForward = actionDefinitionId;
@@ -535,16 +542,16 @@ public class CyclePartAction extends PageEventAction {
             setToolTipText(WorkbenchMessages
                     .getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
         } else {
             setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
-            WorkbenchHelp.setHelp(this,
-                    IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
+            getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+					IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.previousView"); //$NON-NLS-1$
         }
     }

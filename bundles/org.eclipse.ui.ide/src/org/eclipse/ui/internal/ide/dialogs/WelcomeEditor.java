@@ -63,7 +63,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -694,7 +693,8 @@ public class WelcomeEditor extends EditorPart {
 
         createInfoArea(editorComposite);
 
-        WorkbenchHelp.setHelp(editorComposite, IIDEHelpContextIds.WELCOME_EDITOR);
+        getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
+				editorComposite, IIDEHelpContextIds.WELCOME_EDITOR);
 
         this.colorListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {

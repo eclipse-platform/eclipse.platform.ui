@@ -16,6 +16,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,8 +24,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -96,7 +97,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
                             .format(
                                     "PathVariableSelectionDialog.ExtensionDialog.description", new Object[] { selection.name })); //$NON-NLS-1$
             dialog.setInput(selection.path.toFile());
-            if (dialog.open() == FileFolderSelectionDialog.OK
+            if (dialog.open() == Window.OK
                     && pathVariablesGroup.performOk()) {
                 setExtensionResult(selection, (File) dialog.getResult()[0]);
                 super.okPressed();
@@ -110,7 +111,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
                 IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
     }
 

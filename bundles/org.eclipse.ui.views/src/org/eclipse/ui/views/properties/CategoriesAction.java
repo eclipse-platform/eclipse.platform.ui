@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action hides or shows categories in the <code>PropertySheetViewer</code>.
@@ -19,10 +19,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
     /**
      * Creates the Categories action. This action is used to show
      * or hide categories properties.
+     * @param viewer the viewer
+     * @param name the name
      */
     public CategoriesAction(PropertySheetViewer viewer, String name) {
         super(viewer, name);
-        WorkbenchHelp
+        PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(this, IPropertiesHelpContextIds.CATEGORIES_ACTION);
     }
 
