@@ -13,7 +13,7 @@ package org.eclipse.debug.core;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
 
 /**
- * Provides a value represengting the logical structure of a raw implementation value
+ * Provides a value representing the logical structure of a raw implementation value
  * from a debug model. Logical structures are useful for navigating complex data
  * structures. Logical structure types are contributed via extensions in plug-in XML,
  * and provide a delegate for performing logical value computation. Logical 
