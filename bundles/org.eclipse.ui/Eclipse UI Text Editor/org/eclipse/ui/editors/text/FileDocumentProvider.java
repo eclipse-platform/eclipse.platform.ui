@@ -400,7 +400,22 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					if (info != null && !overwrite)
 						checkSynchronizationState(info.fModificationStamp, file);
 					
-					file.setContents(stream, overwrite, true, monitor);
+					// inform about the upcoming content change
+					fireElementStateChanging(element);
+					try {
+						file.setContents(stream, overwrite, true, monitor);
+					} catch (CoreException x) {
+						// inform about failure
+						fireElementStateChangeFailed(element);
+						throw x;
+					} catch (RuntimeException x) {
+						// inform about failure
+						fireElementStateChangeFailed(element);
+						throw x;
+					}
+					
+					// If here, the editor state will be flipped to "not dirty".
+					// Thus, the state changing flag will be reset.
 					
 					if (info != null) {
 											
@@ -496,7 +511,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		IStatus status= null;
 		
 		try {
+			
+			try {
+				fileEditorInput.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			} catch (CoreException x) {
+				handleCoreException(x, "FileDocumentProvider.handleElementContentChanged"); //$NON-NLS-1$
+			}
+			
 			setDocumentContent(document, fileEditorInput, info.fEncoding);
+			
 		} catch (CoreException x) {
 			status= x.getStatus();
 		}
