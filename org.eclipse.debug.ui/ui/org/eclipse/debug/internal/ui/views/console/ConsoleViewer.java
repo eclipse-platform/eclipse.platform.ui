@@ -353,7 +353,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			if (doc == null) {
 				return;
 			}
-			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
+			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)doc.getDocumentPartitioner();
 			if (partitioner == null) {
 				return;
 			}
