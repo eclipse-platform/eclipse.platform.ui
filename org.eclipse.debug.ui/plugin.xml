@@ -1641,10 +1641,17 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.commands.eof">
       </command>
       <keyBinding
-            keySequence="M1+Z"
-            scope="org.eclipse.debug.ui.console"
             command="org.eclipse.debug.ui.commands.eof"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            platform="win32"
+            scope="org.eclipse.debug.ui.console"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            keySequence="CTRL+Z">
+     </keyBinding>
+     <keyBinding
+		    command="org.eclipse.debug.ui.commands.eof"
+            scope="org.eclipse.debug.ui.console"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            keySequence="CTRL+D">
       </keyBinding>
 <!-- views -->
       <command
