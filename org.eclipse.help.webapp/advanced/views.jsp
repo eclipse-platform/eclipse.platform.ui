@@ -169,8 +169,7 @@ if (data.isIE()){
 	confirmShowAllDialog.focus(); 
 }
 
-function closeConfirmShowAllDialog()
-{
+function closeConfirmShowAllDialog(){
 	try {
 		if (confirmShowAllDialog){
 			confirmShowAllDialog.close();
