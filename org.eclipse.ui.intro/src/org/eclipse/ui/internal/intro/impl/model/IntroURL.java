@@ -68,6 +68,7 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_URL = "url"; //$NON-NLS-1$
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
 
+
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
     public static final String VALUE_FORWARD = "forward"; //$NON-NLS-1$
     public static final String VALUE_HOME = "home"; //$NON-NLS-1$
@@ -96,23 +97,7 @@ public class IntroURL implements IIntroURL {
         BusyIndicator.showWhile(display, new Runnable() {
 
             public void run() {
-                // Avoid flicker when we can. If intro is not opened, we dont
-                // want to force an open on it. Also, be careful if the execute
-                // command closes the Intro, then the control is disposed and
-                // there is no need to redraw.
-                CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                        .getIntro();
-                if (currentIntroPart == null)
-                    result[0] = doExecute();
-                else {
-                    currentIntroPart.getControl().setRedraw(false);
-                    result[0] = doExecute();
-                    currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                            .getIntro();
-                    if (currentIntroPart != null)
-                        // no one closed it.
-                        currentIntroPart.getControl().setRedraw(true);
-                }
+                result[0] = doExecute();
             }
         });
         return result[0];
@@ -309,7 +294,8 @@ public class IntroURL implements IIntroURL {
     }
 
     /**
-     * Display an Intro Page.
+     * Display an Intro Page. Take a flag to enable to disable redrawing.
+     * Default is setting redraw to of.
      * <p>
      * REVISIT: revisit picking first page.
      */
@@ -318,10 +304,18 @@ public class IntroURL implements IIntroURL {
         // listener event to the UI. If setting the page in the model fails (ie:
         // the page was not found in the current model, look for it in loaded
         // models. return false if failed.
+        // avoid flicker.
+        CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                .getIntro();
+        currentIntroPart.getControl().setRedraw(false);
+
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
         boolean success = modelRoot.setCurrentPageId(pageId);
         if (!success)
             success = includePageToShow(modelRoot, pageId);
+
+        // we turned drawing off. Turn it on again.
+        currentIntroPart.getControl().setRedraw(true);
 
         if (success) {
             // found page
