@@ -132,6 +132,11 @@ public abstract class AbstractUIPlugin extends Plugin
 	private class CompatibilityPreferenceStore implements IPreferenceStore {
 	
 		/**
+		 * Flag to indicate that the listener has been added.
+		 */
+		private boolean listenerAdded = false;
+		
+		/**
 		 * The underlying core runtime preference store; <code>null</code> if it
 		 * has not been initialized yet.
 		 */
@@ -156,27 +161,39 @@ public abstract class AbstractUIPlugin extends Plugin
 		 * Creates a new instance for the this plug-in.
 		 */
 		public CompatibilityPreferenceStore() {
+			// Important: do not call initialize() here
+			// due to heinous reentrancy problems.
 		}
 		
 		/**
 		 * Initializes this preference store.
 		 */
 		void initialize() {
-			// here's where we first ask for the plug-in's core runtime preferences
+			// ensure initialization is only done once.
+			if (this.prefs != null) {
+				return;
+			}
+			// here's where we first ask for the plug-in's core runtime 
+			// preferences;
+			// note that this causes this method to be reentered
 			this.prefs = getPluginPreferences();
-			// register listener that funnels everything to firePropertyChangeEvent
-			this
-				.prefs
-				.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-				public void propertyChange(Preferences.PropertyChangeEvent event) {
-					if (!silentRunning) {
-						firePropertyChangeEvent(
-							event.getProperty(),
-							event.getOldValue(),
-							event.getNewValue());
+			// avoid adding the listener a second time when reentered
+			if (!this.listenerAdded) {
+				// register listener that funnels everything to firePropertyChangeEvent
+				this
+					.prefs
+					.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+					public void propertyChange(Preferences.PropertyChangeEvent event) {
+						if (!silentRunning) {
+							firePropertyChangeEvent(
+								event.getProperty(),
+								event.getOldValue(),
+								event.getNewValue());
+						}
 					}
-				}
-			});
+				});
+				this.listenerAdded = true;
+			}
 		}
 	
 		/**
@@ -186,6 +203,8 @@ public abstract class AbstractUIPlugin extends Plugin
 		 */
 		private Preferences getPrefs() {
 			if (prefs == null) {
+				// although we try to ensure initialization is done eagerly,
+				// this cannot be guaranteed, so ensure it is done here
 				initialize();
 			}
 			return prefs;
@@ -527,10 +546,12 @@ public ImageRegistry getImageRegistry() {
  * @return the preference store 
  */
 public IPreferenceStore getPreferenceStore() {
-	// force initialization
+	// Create the preference store lazily.
 	if (preferenceStore == null) {
-		// N.B. this plug-ins's core runtime preference store is not created yet
+		// must assign field before calling initialize(), since
+		// this method can be reentered during initialization
 		preferenceStore = new CompatibilityPreferenceStore();
+		// force initialization
 		preferenceStore.initialize();
 	}
 	return preferenceStore;
@@ -594,7 +615,7 @@ protected void initializeDefaultPluginPreferences() {
 	loadPreferenceStore();
 	// call initializeDefaultPreferences (only) for backwards compatibility 
 	// with Eclipse 1.0
-	initializeDefaultPreferences(preferenceStore);
+	initializeDefaultPreferences(getPreferenceStore());
 }
 
 /** 
