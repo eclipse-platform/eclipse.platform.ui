@@ -18,6 +18,10 @@ package org.eclipse.ui;
  * in an extension contributed to the workbench's capabilities wizard extension point 
  * (named <code>"org.eclipse.ui.capabilities"</code>).
  * </p>
+ * <p>
+ * <b>NOTE:</b> This is experimental API, which may be changed or removed at any point
+ * in time. This API should not be called, overridden or otherwise used in production code.
+ * </p>
  *
  * @see org.eclipse.jface.wizard.IWizard
  * @see org.eclipse.ui.ICapabilityInstallWizard
