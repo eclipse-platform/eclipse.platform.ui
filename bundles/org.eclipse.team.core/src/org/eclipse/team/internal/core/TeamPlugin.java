@@ -66,7 +66,6 @@ final public class TeamPlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Policy.localize("org.eclipse.team.internal.core.messages"); //$NON-NLS-1$
 		Team.startup();
 	}
 	

@@ -176,7 +176,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		
 		initializeImages(this);
 		initializePreferences();

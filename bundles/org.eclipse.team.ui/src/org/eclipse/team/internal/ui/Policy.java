@@ -23,8 +23,8 @@ import org.eclipse.team.internal.core.*;
  * makes progress monitor policy decisions
  */
 public class Policy {
-	// The resource bundle to get strings from
-	protected static ResourceBundle bundle = null;
+	private static String bundleName = "org.eclipse.team.internal.ui.messages"; //$NON-NLS-1$
+	private static ResourceBundle bundle = null;
 	
 	//debug constants
 	public static boolean DEBUG_SYNC_MODELS = false;
@@ -36,13 +36,17 @@ public class Policy {
 		}
 	}
 	
-	/**
-	 * Creates a NLS catalog for the given locale.
-	 * 
-	 * @param bundleName  the name of the bundle
+	/*
+	 * Returns a resource bundle, creating one if it none is available. 
 	 */
-	public static void localize(String bundleName) {
-		bundle = ResourceBundle.getBundle(bundleName);
+	private static ResourceBundle getResourceBundle() {
+		// thread safety
+		ResourceBundle tmpBundle = bundle;
+		if (tmpBundle != null)
+			return tmpBundle;
+		// always create a new classloader to be passed in 
+		// in order to prevent ResourceBundle caching
+		return bundle = ResourceBundle.getBundle(bundleName);
 	}
 	
 	/**
@@ -110,7 +114,7 @@ public class Policy {
 	 */
 	public static String bind(String key) {
 		try {
-			return bundle.getString(key);
+			return getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {
@@ -200,6 +204,6 @@ public class Policy {
 	}
 
 	public static ResourceBundle getBundle() {
-		return bundle;
+		return getResourceBundle();
 	}
 }

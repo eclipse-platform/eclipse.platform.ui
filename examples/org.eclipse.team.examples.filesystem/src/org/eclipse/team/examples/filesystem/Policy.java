@@ -24,13 +24,20 @@ import org.eclipse.core.runtime.OperationCanceledException;
  */
 public class Policy {
 	
-	protected static ResourceBundle bundle = null;
+	private static ResourceBundle bundle = null;
+	private static final String bundleName = "org.eclipse.team.examples.filesystem.messages"; //$NON-NLS-1$
 
-	/**
-	 * Creates a NLS catalog for the given locale.
+	/*
+	 * Returns a resource bundle, creating one if it none is available. 
 	 */
-	public static void localize(String bundleName) {
-		bundle = ResourceBundle.getBundle(bundleName);
+	private static ResourceBundle getResourceBundle() {
+		// thread safety
+		ResourceBundle tmpBundle = bundle;
+		if (tmpBundle != null)
+			return tmpBundle;
+		// always create a new classloader to be passed in 
+		// in order to prevent ResourceBundle caching
+		return bundle = ResourceBundle.getBundle(bundleName);
 	}
 	
 	/**
@@ -55,7 +62,7 @@ public class Policy {
 	 */
 	public static String bind(String key) {
 		try {
-			return bundle.getString(key);
+			return getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {

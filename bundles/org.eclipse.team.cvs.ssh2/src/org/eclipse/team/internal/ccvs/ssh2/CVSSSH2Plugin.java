@@ -73,8 +73,7 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 	}
 	
 	public void start(BundleContext context) throws Exception {
-		super.start(context);	
-		Policy.localize("org.eclipse.team.internal.ccvs.ssh2.messages"); //$NON-NLS-1$
+		super.start(context);
 		initializeDefaultPreferences();
 	}
 }

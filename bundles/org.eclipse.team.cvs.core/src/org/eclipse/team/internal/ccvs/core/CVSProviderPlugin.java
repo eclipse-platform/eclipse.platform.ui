@@ -264,7 +264,6 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
 		// load the state which includes the known repositories
 		loadOldState();
@@ -525,7 +524,7 @@ public class CVSProviderPlugin extends Plugin {
 		
 	public static boolean isText(IFile file) {
 		if (CVSProviderPlugin.getPlugin().getRepositoriesAreBinary()) return false;
-		return Team.getType(file) == Team.TEXT;
+		return Team.getFileContentManager().getType(file) == Team.TEXT;
 	}
 	
 	/**

@@ -667,7 +667,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages"); //$NON-NLS-1$
 		
 		initializeImages();
 		initializePreferences();

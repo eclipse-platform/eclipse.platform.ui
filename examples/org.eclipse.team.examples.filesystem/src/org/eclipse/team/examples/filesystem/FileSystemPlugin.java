@@ -12,10 +12,7 @@ package org.eclipse.team.examples.filesystem;
 
 import java.io.IOException;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -57,17 +54,6 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		// record this instance as the singleton
 		plugin = this;
 		pessimisticPlugin = new PessimisticFilesystemProviderPlugin(descriptor);
-	}
-	
-	/**
-	 * This method will get invoked when the plugin is started.
-	 * Note that this is not necessarily at workbench startup.
-	 * 
-	 * @see org.eclipse.core.runtime.Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		// localize the string bindings used by the plugins (in order to provide NLS support)
-		Policy.localize("org.eclipse.team.examples.filesystem.messages"); //$NON-NLS-1$
 	}
 	
 	/**

@@ -323,7 +323,7 @@ public class Utils {
 	}
 
 	public static void initAction(IAction a, String prefix) {
-		Utils.initAction(a, prefix, Policy.bundle, null);
+		Utils.initAction(a, prefix, Policy.getBundle(), null);
 	}
 	
 	public static void initAction(IAction a, String prefix, ResourceBundle bundle) {
@@ -331,7 +331,7 @@ public class Utils {
 	}
 
 	public static void initAction(IAction a, String prefix, String[] bindings) {
-		Utils.initAction(a, prefix, Policy.bundle, bindings);
+		Utils.initAction(a, prefix, Policy.getBundle(), bindings);
 	}
 	
 	public static void updateLabels(SyncInfo sync, CompareConfiguration config) {
