@@ -26,14 +26,13 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.actions.keybindings.Configuration;
 import org.eclipse.ui.internal.actions.keybindings.KeyManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
+import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.configuration.*;
@@ -714,12 +713,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void initializeFonts() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		FontRegistry registry = JFaceResources.getFontRegistry();
-		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
-		initializeFont(JFaceResources.BANNER_FONT, registry, store);
-		initializeFont(JFaceResources.HEADER_FONT, registry, store);
-		initializeFont(JFaceResources.TEXT_FONT, registry, store);
+		
+		//Iterate through the definitions and initialize thier
+		//defaults in the preference store.
+		FontDefinition[] definitions = FontDefinition.getDefinitions();
+		for(int i = 0; i < definitions.length; i ++){
+			FontDefinition definition = definitions[i];
+			initializeFont(definition.getId(),registry,store);
+			String defaultsTo = definitions[i].getDefaultsTo();
+			if(defaultsTo != null)
+				PreferenceConverter.setDefault(
+					store,
+					definition.getId(),
+					PreferenceConverter.
+						getDefaultFontDataArray(store,defaultsTo));
+		}	
 	}
-	/**
+	/*
+	 * *
 	 * Initialize the specified font with the stored value.
 	 */
 	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Eclipse Workbench Extension Point: Accelerator Configurations</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="Microsoft FrontPage 4.0" name=GENERATOR></HEAD>
+<BODY vLink=#800080 link=#0000ff>
+<CENTER>
+<H1>Font Definitions</H1></CENTER><B><I>Identifier: 
+</I></B>org.eclipse.ui.fontDefinitions 
+<P><B><I>Description: </I></B>This extension point is used to register fonts
+with the JFace FontRegistry and with the workbench preference store for use by
+the Fonts preference page. 
+<P><B><I>Since:</I></B> Release 2.1 
+<P><B><I>Configuration Markup:</I></B> 
+<P><TT>&nbsp;&nbsp; &lt;!ELEMENT fontDefinition (description?)&gt;</TT> <BR><TT>&nbsp;&nbsp; 
+&lt;!ATTLIST fontDefinition</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA 
+#REQUIRED</TT> <BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA 
+#REQUIRED</TT><tt>&nbsp;&nbsp;</tt>  
+<BR><TT> &nbsp;&nbsp;&nbsp;</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<TT>defaultsTo&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt> 
+<br><tt> &nbsp;&nbsp;&nbsp;</tt>  <tt> &gt;</tt> <br>
+
+<tt> &nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)&gt;</tt> 
+<tt>&nbsp;</tt> 
+<UL>
+  <LI><B>id -</B> a unique name that can be used to identify this font
+    definition.&nbsp; 
+  <LI><b>label</b> - a translatable name of the font to be presented to the 
+  user. </LI>
+  <LI><b>defaultsTo</b> - the id of another&nbsp; font definition that is the default
+    setting for the receiver. When there is no preference for this font the font registry will have the value of
+    defaultsTo set for it in the registry. </LI>
+  <LI><B>description</B> - a short description of the fonts usage </LI>
+</UL>
+
+<P><B><I>Examples:</I></B> 
+<P>Following is an example of an a font definition extension:<P><TT>&nbsp;&nbsp; &lt;extension
+point=&quot;org.eclipse.ui.fontDefinition&quot;&gt;</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fontDefinition</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.examples.textFont&quot;</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label=&quot;Text&quot;</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description=&quot;The text
+font&quot;&gt;</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fontDefinition&gt;</TT> 
+<P>&nbsp;&nbsp;&nbsp;<tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;fontDefinition</tt> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.examples.userFont&quot;</TT> 
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label=&quot;User&quot;</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description=&quot;The user font&quot;</TT><br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+defaultsTo=&quot;org.eclipse.jface.textFont&quot;&gt;</tt>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fontDefinition&gt;</TT> 
+<BR><TT>&nbsp;&nbsp; &lt;/extension&gt;</TT> 
+<P><B><I>API Information:</I></B>  The defaultsTo tag is used as a directive by
+the Workbench to set the value of the font definition to the value of defaultsTo
+whenever the defaultsTo fontDefinition is updated. This only occurs if the
+fontDefinition is at its default value - once it is set by the user this updates
+will not occur. The workbench provides 4 fonts: 
+<P><b>org.eclipse.jface.bannerfont</b>. The banner font is used in wizard banners.<br>
+<b>org.eclipse.jface.dialogfont</b>. The dialog font is the font for widgets in dialogs.<br>
+<b>org.eclipse.jface.headerfont</b>. The header font is used for section headers in composite text pages.<br>
+<b>org.eclipse.jface.textfont</b>. The text font is used by text editors.
+<P><B><I>Supplied Implementation: </I></B>The workbench provides the font
+definitions for the text, dialog, banner and header fonts.
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0></a>
+</body>
+</html>

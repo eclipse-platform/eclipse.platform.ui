@@ -41,6 +41,7 @@
    <extension-point id="editors" name="%ExtPoint.editors" schema="schema/editors.mxsd"/>
    <extension-point id="elementFactories" name="%ExtPoint.elementFactories" schema="schema/elementFactories.mxsd"/>
    <extension-point id="exportWizards" name="%ExtPoint.exportWizards" schema="schema/exportWizards.mxsd"/>
+   <extension-point id="fontDefinitions" name="%ExtPoint.fontDefinitions" schema="schema/fontDefinitions.exsd"/>
    <extension-point id="importWizards" name="%ExtPoint.importWizards" schema="schema/importWizards.mxsd"/>
    <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.mxsd"/>
    <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders"/>
@@ -1836,6 +1837,38 @@
             </objectClass>
          </enablement>
       </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.fontDefinitions">
+      <fontDefinition
+      		id="org.eclipse.jface.bannerfont"
+            label="%FontsPreference.BannerFontLabel">
+         <description>
+            %FontsPreference.BannerFontDescription
+         </description>
+      </fontDefinition>
+      <fontDefinition
+      		id="org.eclipse.jface.dialogfont"
+            label="%FontsPreference.DialogFontLabel">
+         <description>
+            %FontsPreference.DialogFontDescription
+         </description>
+      </fontDefinition>
+      <fontDefinition
+      		id="org.eclipse.jface.headerfont"
+            label="%FontsPreference.HeaderFontLabel"
+            registryKey="org.eclipse.jface.headerfont">
+         <description>
+            %FontsPreference.HeaderFontDescription
+         </description>
+      </fontDefinition>
+       <fontDefinition
+      		id="org.eclipse.jface.textfont"
+            label="%FontsPreference.TextFontLabel">
+         <description>
+            %FontsPreference.TextFontDescription
+         </description>
+      </fontDefinition>
    </extension>
 
 </plugin>
