@@ -314,16 +314,17 @@ public class DecorationScheduler {
 		UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//Check again in case someone has already cleared it out.
-				if (pendingUpdate.isEmpty())
-					return Status.OK_STATUS;
 				synchronized (resultLock) {
+					updateWaiting = false;
+					if (pendingUpdate.isEmpty())
+						return Status.OK_STATUS;
+				
 					//Get the elements awaiting update and then
 					//clear the list
 					Object[] elements =
 						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
 					pendingUpdate.clear();
-					updateWaiting = false;
 					monitor.worked(15);
 					decoratorManager.fireListeners(
 						new LabelProviderChangedEvent(
