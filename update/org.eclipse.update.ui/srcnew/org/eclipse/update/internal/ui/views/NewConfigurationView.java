@@ -9,32 +9,31 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
+import org.eclipse.update.operations.IUpdateModelChangedListener;
 
 /**
  * Insert the type's description here.
@@ -919,7 +918,7 @@ public class NewConfigurationView
 				// If we are here, global status is unhappy
 				// because one or more included features
 				// is disabled.
-				if (UpdateManager.hasObsoletePatches(feature)) {
+				if (UpdateUtils.hasObsoletePatches(feature)) {
 					// The disabled included features
 					// are old patches that are now
 					// subsumed by better versions of

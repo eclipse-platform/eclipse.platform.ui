@@ -49,7 +49,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			Platform.addAuthorizationInfo(serverUrl, realm, scheme, info);
 		} catch (CoreException e) {
-			UpdateManager.logException(e);
+			UpdateUtils.logException(e);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 			try {
 				ip = InetAddress.getByName(resourceUrl.getHost());
 			} catch (UnknownHostException e) {
-				UpdateManager.logException(e, false);
+				UpdateUtils.logException(e, false);
 			}
 
 			this.requestingPort = resourceUrl.getPort();
@@ -100,7 +100,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			Platform.addProtectionSpace(resourceUrl, realm);
 		} catch (CoreException e) {
-			UpdateManager.logException(e, false);
+			UpdateUtils.logException(e, false);
 		}
 	}
 
@@ -151,7 +151,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		try {
 			ip = InetAddress.getByName(url.getHost());
 		} catch (UnknownHostException e) {
-			UpdateManager.logException(e, false);
+			UpdateUtils.logException(e, false);
 		}
 
 		if (requestingSite != null && !requestingSite.equals(ip))
@@ -188,7 +188,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 
 		} catch (MalformedURLException e) {
 			IStatus status = Utilities.newCoreException("", e).getStatus();
-			UpdateManager.log(status, false);
+			UpdateUtils.log(status, false);
 		}
 		return new PasswordAuthentication("", new char[] { ' ' }); //$NON-NLS-1$
 	}

@@ -135,7 +135,7 @@ public class FeatureHierarchyElement2 {
 			try {
 				IFeature oldFeature = oldFeatureRef.getFeature(null);
 				IConfiguredSite csite =
-					UpdateManager.getConfigSite(oldFeature, config);
+					UpdateUtils.getConfigSite(oldFeature, config);
 				return csite.isConfigured(oldFeature);
 			} catch (CoreException e) {
 			}
@@ -321,7 +321,7 @@ public class FeatureHierarchyElement2 {
 				} else if (patch) {
 					// 30849 - find the old reference in the
 					// configuration.
-					if (!UpdateManager.isPatch(newFeature)) {
+					if (!UpdateUtils.isPatch(newFeature)) {
 						oldRef = findPatchedReference(newRef, config);
 					}
 				}
@@ -376,7 +376,7 @@ public class FeatureHierarchyElement2 {
 			String mode = getUpdateVersionsMode();
 
 			IFeature[] allInstalled =
-				UpdateManager.getInstalledFeatures(vid, false);
+				UpdateUtils.getInstalledFeatures(vid, false);
 			for (int i = 0; i < allInstalled.length; i++) {
 				IFeature candidate = allInstalled[i];
 				PluginVersionIdentifier cversion =

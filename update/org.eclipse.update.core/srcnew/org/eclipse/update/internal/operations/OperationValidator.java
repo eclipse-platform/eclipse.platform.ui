@@ -227,15 +227,15 @@ public class OperationValidator implements IOperationValidator{
 		throws CoreException {
 		if (feature.isPatch()) {
 			IInstallConfiguration backup =
-				UpdateManager.getBackupConfigurationFor(feature);
+				UpdateUtils.getBackupConfigurationFor(feature);
 			String msg;
 			if (backup != null)
 				msg =
-					UpdateManager.getFormattedMessage(
+					UpdateUtils.getFormattedMessage(
 						KEY_PATCH_UNCONFIGURE_BACKUP,
 						backup.getLabel());
 			else
-				msg = UpdateManager.getString(KEY_PATCH_UNCONFIGURE);
+				msg = UpdateUtils.getString(KEY_PATCH_UNCONFIGURE);
 			status.add(createStatus(feature, msg));
 			return true;
 		}
@@ -337,7 +337,7 @@ public class OperationValidator implements IOperationValidator{
 					status.add(
 						createStatus(
 							newFeature,
-							UpdateManager.getString(KEY_EXCLUSIVE)));
+							UpdateUtils.getString(KEY_EXCLUSIVE)));
 					continue;
 				}
 				features =
@@ -370,7 +370,7 @@ public class OperationValidator implements IOperationValidator{
 					IStatus conflict =
 						createStatus(
 							newFeature,
-							UpdateManager.getString(KEY_CONFLICT));
+							UpdateUtils.getString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -453,7 +453,7 @@ public class OperationValidator implements IOperationValidator{
 
 		// check for <includes> cycle
 		if (features.contains(feature)) {
-			IStatus status = createStatus(top, UpdateManager.getString(KEY_CYCLE));
+			IStatus status = createStatus(top, UpdateUtils.getString(KEY_CYCLE));
 			throw new CoreException(status);
 		}
 
@@ -556,7 +556,7 @@ public class OperationValidator implements IOperationValidator{
 			if (license != null && license.trim().length() > 0)
 				return;
 		}
-		status.add(createStatus(feature, UpdateManager.getString(KEY_NO_LICENSE)));
+		status.add(createStatus(feature, UpdateUtils.getString(KEY_NO_LICENSE)));
 	}
 
 	/*
@@ -617,7 +617,7 @@ public class OperationValidator implements IOperationValidator{
 		throws CoreException {
 		for (int i = 0; i < features.size(); i++) {
 			IFeature candidate = (IFeature) features.get(i);
-			if (UpdateManager.isPatch(feature, candidate)) {
+			if (UpdateUtils.isPatch(feature, candidate)) {
 				ArrayList removeTree =
 					computeFeatureSubtree(candidate, null, null, true);
 				result.addAll(removeTree);
@@ -789,7 +789,7 @@ public class OperationValidator implements IOperationValidator{
 					if (!version.isGreaterThan(cversion)) {
 						// Don't allow this.
 						String msg =
-							UpdateManager.getFormattedMessage(
+							UpdateUtils.getFormattedMessage(
 								KEY_PATCH_REGRESSION,
 								new String[] {
 									ifeature.getLabel(),
@@ -808,7 +808,7 @@ public class OperationValidator implements IOperationValidator{
 				// need to be present.
 				if (!patch && iref.isOptional() == false) {
 					String msg =
-						UpdateManager.getFormattedMessage(
+						UpdateUtils.getFormattedMessage(
 							KEY_PATCH_MISSING_TARGET,
 							new String[] {
 								ifeature.getLabel(),
@@ -857,7 +857,7 @@ public class OperationValidator implements IOperationValidator{
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
 					status.add(
-						createStatus(feature, UpdateManager.getString(KEY_OS)));
+						createStatus(feature, UpdateUtils.getString(KEY_OS)));
 					continue;
 				}
 			}
@@ -865,7 +865,7 @@ public class OperationValidator implements IOperationValidator{
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
 					status.add(
-						createStatus(feature, UpdateManager.getString(KEY_WS)));
+						createStatus(feature, UpdateUtils.getString(KEY_WS)));
 					continue;
 				}
 			}
@@ -873,7 +873,7 @@ public class OperationValidator implements IOperationValidator{
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
 					status.add(
-						createStatus(feature, UpdateManager.getString(KEY_ARCH)));
+						createStatus(feature, UpdateUtils.getString(KEY_ARCH)));
 					continue;
 				}
 			}
@@ -905,7 +905,7 @@ public class OperationValidator implements IOperationValidator{
 			}
 			if (!found) {
 				status.add(
-					createStatus(null, UpdateManager.getString(KEY_PLATFORM)));
+					createStatus(null, UpdateUtils.getString(KEY_PLATFORM)));
 				return;
 			}
 		}
@@ -930,7 +930,7 @@ public class OperationValidator implements IOperationValidator{
 				return;
 		}
 
-		status.add(createStatus(null, UpdateManager.getString(KEY_PRIMARY)));
+		status.add(createStatus(null, UpdateUtils.getString(KEY_PRIMARY)));
 	}
 
 	/*
@@ -1013,17 +1013,17 @@ public class OperationValidator implements IOperationValidator{
 					// report status
 					String target =
 						featurePrereq
-							? UpdateManager.getString(KEY_PREREQ_FEATURE)
-							: UpdateManager.getString(KEY_PREREQ_PLUGIN);
+							? UpdateUtils.getString(KEY_PREREQ_FEATURE)
+							: UpdateUtils.getString(KEY_PREREQ_PLUGIN);
 					String msg =
-						UpdateManager.getFormattedMessage(
+						UpdateUtils.getFormattedMessage(
 							KEY_PREREQ,
 							new String[] { target, id });
 
 					if (!ignoreVersion) {
 						if (rule == IImport.RULE_PERFECT)
 							msg =
-								UpdateManager.getFormattedMessage(
+								UpdateUtils.getFormattedMessage(
 									KEY_PREREQ_PERFECT,
 									new String[] {
 										target,
@@ -1031,7 +1031,7 @@ public class OperationValidator implements IOperationValidator{
 										version.toString()});
 						else if (rule == IImport.RULE_EQUIVALENT)
 							msg =
-								UpdateManager.getFormattedMessage(
+								UpdateUtils.getFormattedMessage(
 									KEY_PREREQ_EQUIVALENT,
 									new String[] {
 										target,
@@ -1039,7 +1039,7 @@ public class OperationValidator implements IOperationValidator{
 										version.toString()});
 						else if (rule == IImport.RULE_COMPATIBLE)
 							msg =
-								UpdateManager.getFormattedMessage(
+								UpdateUtils.getFormattedMessage(
 									KEY_PREREQ_COMPATIBLE,
 									new String[] {
 										target,
@@ -1047,7 +1047,7 @@ public class OperationValidator implements IOperationValidator{
 										version.toString()});
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
-								UpdateManager.getFormattedMessage(
+								UpdateUtils.getFormattedMessage(
 									KEY_PREREQ_GREATER,
 									new String[] {
 										target,
@@ -1128,7 +1128,7 @@ public class OperationValidator implements IOperationValidator{
 		if (included) {
 			// feature is included as optional but
 			// no parent is currently configured.
-			String msg = UpdateManager.getString(KEY_OPTIONAL_CHILD);
+			String msg = UpdateUtils.getString(KEY_OPTIONAL_CHILD);
 			status.add(createStatus(feature, msg));
 		} else {
 			//feature is root - can be configured
@@ -1192,7 +1192,7 @@ public class OperationValidator implements IOperationValidator{
 			if (cconfig.getTimeline() != config.getTimeline()) {
 				// Not the same timeline - cannot revert
 				String msg =
-					UpdateManager.getFormattedMessage(
+					UpdateUtils.getFormattedMessage(
 						KEY_WRONG_TIMELINE,
 						config.getLabel());
 				status.add(createStatus(null, msg));
@@ -1209,7 +1209,7 @@ public class OperationValidator implements IOperationValidator{
 		ArrayList children) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = UpdateManager.getString(rootKey);
+		String message = UpdateUtils.getString(rootKey);
 		return new MultiStatus(
 			UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
 			IStatus.ERROR,
@@ -1227,7 +1227,7 @@ public class OperationValidator implements IOperationValidator{
 			PluginVersionIdentifier version =
 				feature.getVersionedIdentifier().getVersion();
 			fullMessage =
-				UpdateManager.getFormattedMessage(
+				UpdateUtils.getFormattedMessage(
 					KEY_CHILD_MESSAGE,
 					new String[] {
 						feature.getLabel(),

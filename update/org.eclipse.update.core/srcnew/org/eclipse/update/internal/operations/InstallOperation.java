@@ -36,7 +36,7 @@ public class InstallOperation
 		IFeature[] unconfiguredOptionalElements,
 		IVerificationListener verifier) {
 		super(config, site, feature);
-		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
+		IFeature[] installed = UpdateUtils.getInstalledFeatures(feature);
 		if (installed.length > 0)
 			this.oldFeature = installed[0];
 		this.unconfiguredOptionalElements = unconfiguredOptionalElements;
@@ -69,16 +69,16 @@ public class InstallOperation
 
 				boolean oldSuccess = unconfigure(config, oldFeature);
 				if (!oldSuccess) {
-					if (!UpdateManager.isNestedChild(config, oldFeature)) {
+					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
 						// "eat" the error if nested child
 						String message =
-							UpdateManager.getFormattedMessage(
+							UpdateUtils.getFormattedMessage(
 								KEY_OLD,
 								oldFeature.getLabel());
 						IStatus status =
 							new Status(
 								IStatus.ERROR,
-								UpdateManager.getPluginId(),
+								UpdateUtils.getPluginId(),
 								IStatus.OK,
 								message,
 								null);
@@ -102,7 +102,7 @@ public class InstallOperation
 			try {
 				// Get the feature that matches the original unconfigured ones.
 				IFeature localFeature =
-					UpdateManager.getLocalFeature(
+					UpdateUtils.getLocalFeature(
 						targetSite,
 						unconfiguredOptionalElements[i]);
 				if (localFeature != null)

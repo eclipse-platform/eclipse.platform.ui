@@ -54,7 +54,7 @@ public  class EnableCommand extends ScriptedCommand {
 				}
 			}
 			
-			IFeature[] features = UpdateManager.searchSite(featureId, targetSite, false);
+			IFeature[] features = UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
 				System.out.println("There are no configured features with id:" + featureId);
 				return;

@@ -44,9 +44,9 @@ public class JobTargetSites extends HashMap {
 			JobTargetSite jobSite = new JobTargetSite();
 			jobSite.job = jobs[i];
 			jobSite.defaultSite =
-				UpdateManager.getDefaultTargetSite(config, jobs[i], false);
+				UpdateUtils.getDefaultTargetSite(config, jobs[i], false);
 			jobSite.affinitySite =
-				UpdateManager.getAffinitySite(config, jobs[i].getFeature());
+				UpdateUtils.getAffinitySite(config, jobs[i].getFeature());
 			if (jobSite.affinitySite == null)
 				jobSite.affinitySite = jobs[i].getTargetSite();
 			jobSite.targetSite = computeTargetSite(jobSite);
@@ -123,7 +123,7 @@ public class JobTargetSites extends HashMap {
 		for (Iterator enum = this.keySet().iterator(); enum.hasNext();) {
 			JobTargetSite jobSite = (JobTargetSite)get(enum.next());
 			IFeature target = jobSite.job.getFeature();
-			if (!target.equals(patch) && UpdateManager.isPatch(target, patch))
+			if (!target.equals(patch) && UpdateUtils.isPatch(target, patch))
 				return jobSite;
 		}
 		return null;

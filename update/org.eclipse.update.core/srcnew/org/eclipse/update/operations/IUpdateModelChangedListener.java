@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.operations;
+package org.eclipse.update.operations;
 
 public interface IUpdateModelChangedListener {
 	public void objectsAdded(Object parent, Object [] children);

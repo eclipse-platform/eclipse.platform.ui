@@ -81,11 +81,11 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 			return;
 			
 		IFeature localFeature =
-			UpdateManager.getLocalFeature(targetSite, feature);
+			UpdateUtils.getLocalFeature(targetSite, feature);
 		ArrayList oldFeatures = new ArrayList();
 		// First collect all older active features that
 		// have the same ID as new features marked as 'unique'.
-		UpdateManager.collectOldFeatures(localFeature, targetSite, oldFeatures);
+		UpdateUtils.collectOldFeatures(localFeature, targetSite, oldFeatures);
 		// Now unconfigure old features to enforce uniqueness
 		for (int i = 0; i < oldFeatures.size(); i++) {
 			IFeature oldFeature = (IFeature) oldFeatures.get(i);
@@ -95,7 +95,7 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 
 	static void configure(IInstallConfiguration config, IFeature feature)
 		throws CoreException {
-		IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
+		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
 		if (site != null) {
 			site.configure(feature);
 		}
@@ -103,7 +103,7 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 
 	static boolean unconfigure(IInstallConfiguration config, IFeature feature)
 		throws CoreException {
-		IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
+		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
 		if (site != null) {
 			PatchCleaner2 cleaner = new PatchCleaner2(site, feature);
 			boolean result = site.unconfigure(feature);

@@ -299,14 +299,14 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			if (job == null)
 				continue;
 			// do not accept updates without a license
-			if (!UpdateManager.hasLicense(job.getFeature()))
+			if (!UpdateUtils.hasLicense(job.getFeature()))
 				continue;
-			IStatus status = UpdateManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
+			IStatus status = UpdateUtils.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 			if (status == null) {
 				if (hit.isPatch()) {
 					IFeature patch = job.getFeature();
 					// Do not add the patch if already installed
-					IFeature[] sameId = UpdateManager.getInstalledFeatures(patch, false);
+					IFeature[] sameId = UpdateUtils.getInstalledFeatures(patch, false);
 					if (sameId.length==0) {
 						if (filter.accept(patch))
 							collector.accept(patch);
@@ -346,7 +346,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			// Don't waste time searching for updates to 
 			// patches.
 			try {
-				if (UpdateManager.isPatch(ref.getFeature(null)))
+				if (UpdateUtils.isPatch(ref.getFeature(null)))
 					continue;
 			}
 			catch (CoreException e) {
@@ -492,7 +492,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			return false;
 		try {
 			IFeature feature = ref.getFeature(null);
-			return UpdateManager.isPatch(candidate, feature);
+			return UpdateUtils.isPatch(candidate, feature);
 		} catch (CoreException e) {
 			return false;
 		}

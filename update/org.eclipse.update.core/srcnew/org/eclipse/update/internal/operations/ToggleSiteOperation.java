@@ -37,7 +37,7 @@ public class ToggleSiteOperation
 			return false;
 		boolean oldValue = site.isEnabled();
 		site.setEnabled(!oldValue);
-		IStatus status = UpdateManager.getValidator().validateCurrentState();
+		IStatus status = UpdateUtils.getValidator().validateCurrentState();
 		if (status != null) {
 			// revert
 			site.setEnabled(oldValue);
@@ -50,7 +50,7 @@ public class ToggleSiteOperation
 			} catch (CoreException e) {
 				//revert
 				site.setEnabled(oldValue);
-				UpdateManager.logException(e);
+				UpdateUtils.logException(e);
 				throw e;
 			}
 		}

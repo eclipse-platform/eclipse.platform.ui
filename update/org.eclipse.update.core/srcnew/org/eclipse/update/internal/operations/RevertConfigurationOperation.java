@@ -36,7 +36,7 @@ public class RevertConfigurationOperation extends Operation implements IRevertCo
 	public boolean execute(IProgressMonitor monitor, IOperationListener listener)
 		throws CoreException, InvocationTargetException {
 		IStatus status =
-			UpdateManager.getValidator().validatePendingRevert(config);
+			UpdateUtils.getValidator().validatePendingRevert(config);
 		if (status != null) {
 			throw new CoreException(status);
 		}
@@ -47,7 +47,7 @@ public class RevertConfigurationOperation extends Operation implements IRevertCo
 			localSite.save();
 			return true;
 		} catch (CoreException e) {
-			UpdateManager.logException(e);
+			UpdateUtils.logException(e);
 			throw e;
 		}
 	}

@@ -12,7 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
@@ -55,7 +55,7 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 	private void initializeSearch() {
 		if (searchRequest!=null) return;
 		UpdateSearchScope scope = new UpdateSearchScope();
-		scope.setUpdateMapURL(UpdateManager.getUpdateMapURL());
+		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
 		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
 		searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());

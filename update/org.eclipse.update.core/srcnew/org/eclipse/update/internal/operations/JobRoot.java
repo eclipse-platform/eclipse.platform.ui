@@ -49,7 +49,7 @@ public class JobRoot {
 		IConfiguredSite targetSite) {
 
 		ArrayList unconfiguredOptionalFeatures = new ArrayList();
-		getUnconfiguredOptionalFeatures(unconfiguredOptionalFeatures, config, targetSite, getElements(), UpdateManager.isPatch(job.getFeature()));
+		getUnconfiguredOptionalFeatures(unconfiguredOptionalFeatures, config, targetSite, getElements(), UpdateUtils.isPatch(job.getFeature()));
 		IFeature[] unconfiguredOptionalFeaturesArray =
 			new IFeature[unconfiguredOptionalFeatures.size()];
 		unconfiguredOptionalFeatures.toArray(unconfiguredOptionalFeaturesArray);
@@ -81,7 +81,7 @@ public class JobRoot {
 		IFeature oldFeature = job.getOldFeature();
 		IFeature newFeature = job.getFeature();
 		ArrayList list = new ArrayList();
-		boolean patch = UpdateManager.isPatch(newFeature);
+		boolean patch = UpdateUtils.isPatch(newFeature);
 		FeatureHierarchyElement2.computeElements(
 			oldFeature,
 			newFeature,

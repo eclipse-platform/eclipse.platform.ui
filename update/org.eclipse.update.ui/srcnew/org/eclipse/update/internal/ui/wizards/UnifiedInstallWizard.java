@@ -159,7 +159,7 @@ public class UnifiedInstallWizard
 		addPage(reviewPage);
 
 		try {
-			config = UpdateManager.createInstallConfiguration();
+			config = UpdateUtils.createInstallConfiguration();
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		}

@@ -87,7 +87,7 @@ public class OperationsManager {
 
 	public static boolean hasSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasLicense(jobs[i].getFeature()))
+			if (UpdateUtils.hasLicense(jobs[i].getFeature()))
 				return true;
 		}
 		return false;
@@ -95,7 +95,7 @@ public class OperationsManager {
 
 	public static boolean hasSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
+			if (UpdateUtils.hasOptionalFeatures(jobs[i].getFeature()))
 				return true;
 		}
 		return false;
@@ -104,7 +104,7 @@ public class OperationsManager {
 	public static IInstallFeatureOperation[] getSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasLicense(jobs[i].getFeature()))
+			if (UpdateUtils.hasLicense(jobs[i].getFeature()))
 				list.add(jobs[i]);
 		}
 		return (IInstallFeatureOperation[]) list.toArray(
@@ -114,7 +114,7 @@ public class OperationsManager {
 	public static IInstallFeatureOperation[] getSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
+			if (UpdateUtils.hasOptionalFeatures(jobs[i].getFeature()))
 				list.add(jobs[i]);
 		}
 		return (IInstallFeatureOperation[]) list.toArray(

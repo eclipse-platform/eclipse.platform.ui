@@ -34,7 +34,7 @@ public class UnconfigOperation
 		throws CoreException {
 
 		IStatus status =
-			UpdateManager.getValidator().validatePendingUnconfig(feature);
+			UpdateUtils.getValidator().validatePendingUnconfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}
@@ -71,7 +71,7 @@ public class UnconfigOperation
 			return restartNeeded;
 		} catch (CoreException e) {
 			undo();
-			UpdateManager.logException(e);
+			UpdateUtils.logException(e);
 			throw e;
 		}
 	}

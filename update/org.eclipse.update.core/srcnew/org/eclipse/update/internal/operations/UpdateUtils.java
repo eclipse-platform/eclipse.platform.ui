@@ -27,7 +27,7 @@ import org.eclipse.update.operations.*;
  * Helper class for performing update related tasks, queries, etc.
  * All the methods are static and this class should be a singleton.
  */
-public class UpdateManager {
+public class UpdateUtils {
 	private static final String KEY_SAVED_CONFIG =
 		"MultiInstallWizard.savedConfig";
 	private static final String RESOURCE_BUNDLE =
@@ -46,7 +46,7 @@ public class UpdateManager {
 	/**
 	 * Private constructor
 	 */
-	private UpdateManager() {
+	private UpdateUtils() {
 	}
 	
 	/**
@@ -144,14 +144,14 @@ public class UpdateManager {
 
 			for (int i = 0; i < isites.length; i++) {
 				IConfiguredSite isite = isites[i];
-				IFeature[] result = UpdateManager.searchSite(id, isite, onlyConfigured);
+				IFeature[] result = UpdateUtils.searchSite(id, isite, onlyConfigured);
 				for (int j = 0; j < result.length; j++) {
 					IFeature installedFeature = result[j];
 					features.add(installedFeature);
 				}
 			}
 		} catch (CoreException e) {
-			UpdateManager.logException(e);
+			UpdateUtils.logException(e);
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
@@ -363,7 +363,7 @@ public class UpdateManager {
 			}
 			// find other features and unconfigure
 			String id = iref.getVersionedIdentifier().getIdentifier();
-			IFeature[] sameIds = UpdateManager.searchSite(id, targetSite, true);
+			IFeature[] sameIds = UpdateUtils.searchSite(id, targetSite, true);
 			for (int j = 0; j < sameIds.length; j++) {
 				IFeature sameId = sameIds[j];
 				// Ignore self.
@@ -539,7 +539,7 @@ public class UpdateManager {
 	
 	public static URL getUpdateMapURL() {
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
-		String mapFile = pref.getString(UpdateManager.P_MAPPINGS_FILE);
+		String mapFile = pref.getString(UpdateUtils.P_MAPPINGS_FILE);
 		if (mapFile!=null && mapFile.length()>0) {
 			try {
 				String decodedFile = URLDecoder.decode(mapFile);

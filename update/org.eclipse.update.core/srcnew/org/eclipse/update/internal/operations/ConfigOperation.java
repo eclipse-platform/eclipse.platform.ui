@@ -34,7 +34,7 @@ public class ConfigOperation
 		throws CoreException {
 
 		IStatus status =
-			UpdateManager.getValidator().validatePendingConfig(feature);
+			UpdateUtils.getValidator().validatePendingConfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}
@@ -70,7 +70,7 @@ public class ConfigOperation
 			return restartNeeded;
 		} catch (CoreException e) {
 			undo();
-			UpdateManager.logException(e);
+			UpdateUtils.logException(e);
 			throw e;
 		}
 	}

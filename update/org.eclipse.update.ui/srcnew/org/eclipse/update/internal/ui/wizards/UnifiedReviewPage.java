@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
@@ -575,7 +575,7 @@ public class UnifiedReviewPage
 	public void validateSelection() {
 		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		validationStatus =
-			UpdateManager.getValidator().validatePendingChanges(jobs);
+			UpdateUtils.getValidator().validatePendingChanges(jobs);
 		setPageComplete(validationStatus == null);
 		String errorMessage = null;
 

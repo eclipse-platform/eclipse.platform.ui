@@ -68,11 +68,11 @@ public class BatchInstallOperation
 			if (listener != null)
 				listener.beforeExecute(this, null);
 			
-			UpdateManager.makeConfigurationCurrent(
+			UpdateUtils.makeConfigurationCurrent(
 				config,
 				null);
 			monitor.beginTask(
-				UpdateManager.getString(KEY_INSTALLING),
+				UpdateUtils.getString(KEY_INSTALLING),
 				operations.length);
 			for (int i = 0; i < operations.length; i++) {
 				SubProgressMonitor subMonitor =
@@ -89,7 +89,7 @@ public class BatchInstallOperation
 					listener.afterExecute(operations[i], null);
 
 				//monitor.worked(1);
-				UpdateManager.saveLocalSite();
+				UpdateUtils.saveLocalSite();
 				installCount++;
 			}
 			// should we just return true ?

@@ -15,7 +15,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.*;
@@ -37,7 +37,7 @@ public class FindUpdatesAction extends Action {
 
 	public void run() {
 		UpdateSearchScope scope = new UpdateSearchScope();
-		scope.setUpdateMapURL(UpdateManager.getUpdateMapURL());
+		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
 		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
 		final UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());

@@ -15,7 +15,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
 import org.eclipse.update.internal.ui.model.MissingFeature;
@@ -148,7 +148,7 @@ public class FeatureStatusPropertyPage
 				// If we are here, global status is unhappy
 				// because one or more included features
 				// is disabled.
-				if (UpdateManager.hasObsoletePatches(feature)) {
+				if (UpdateUtils.hasObsoletePatches(feature)) {
 					// The disabled included features
 					// are old patches that are now
 					// subsumed by better versions of

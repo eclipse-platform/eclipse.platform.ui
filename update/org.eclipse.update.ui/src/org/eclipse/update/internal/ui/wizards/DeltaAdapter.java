@@ -138,7 +138,7 @@ public class DeltaAdapter {
 
 	private void computeStatus() {
 		IFeatureReference[] refs = getSelectedReferences();
-		status = UpdateManager.getValidator().validateSessionDelta(delta, refs);
+		status = UpdateUtils.getValidator().validateSessionDelta(delta, refs);
 		statusComputed = true;
 	}
 

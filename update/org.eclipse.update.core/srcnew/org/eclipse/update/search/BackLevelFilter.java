@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * This class can be added to the update search request
@@ -28,7 +28,7 @@ public class BackLevelFilter extends BaseFilter {
 	public boolean accept(IFeatureReference match) {
 		try {
 			PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
-			IFeature [] installed = UpdateManager.getInstalledFeatures(match.getVersionedIdentifier(), false);
+			IFeature [] installed = UpdateUtils.getInstalledFeatures(match.getVersionedIdentifier(), false);
 			if (installed.length==0) return true;
 			
 			for (int i=0; i<installed.length; i++) {

@@ -65,7 +65,7 @@ public class FeatureStateAction extends Action {
 				e.getStatus());
 		} catch (InvocationTargetException e) {
 			// This should not happen
-			UpdateManager.logException(e.getTargetException());
+			UpdateUtils.logException(e.getTargetException());
 		}
 	}
 

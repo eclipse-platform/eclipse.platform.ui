@@ -63,7 +63,7 @@ public class DuplicateConflictsValidator  {
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			String location = configSite.getSite().getURL().getFile();
-			return UpdateManager.getFormattedMessage(
+			return UpdateUtils.getFormattedMessage(
 				KEY_CONFLICT,
 				new String[] { version, location });
 		}
@@ -160,7 +160,7 @@ public class DuplicateConflictsValidator  {
 		for (int i = 0; i < jobs.length; i++) {
 			IInstallFeatureOperation job = jobs[i];
 			IConfiguredSite targetSite =
-				UpdateManager.getDefaultTargetSite(config, job);
+				UpdateUtils.getDefaultTargetSite(config, job);
 			IFeature newFeature = job.getFeature();
 			try {
 				computeNewFeature(newFeature, targetSite, featureTable, null);

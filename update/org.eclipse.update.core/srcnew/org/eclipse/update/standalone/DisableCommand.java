@@ -54,7 +54,7 @@ public  class DisableCommand extends ScriptedCommand {
 				}
 			}
 			
-			IFeature[] features = UpdateManager.searchSite(featureId, targetSite, true);
+			IFeature[] features = UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
 				System.out.println("There are no configured features with id:" + featureId);
 				return;

@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * Insert the type's description here.
@@ -69,7 +69,7 @@ public class UpdateSettingsPreferencePage
 
 	private void initialize() {
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
-		String text = pref.getString(UpdateManager.P_MAPPINGS_FILE);
+		String text = pref.getString(UpdateUtils.P_MAPPINGS_FILE);
 		mappingsFile.setText(text);
 		textChanged();
 	}
@@ -93,9 +93,9 @@ public class UpdateSettingsPreferencePage
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
 		String text = mappingsFile.getText();
 		if (text.length() > 0)
-			pref.setValue(UpdateManager.P_MAPPINGS_FILE, text);
+			pref.setValue(UpdateUtils.P_MAPPINGS_FILE, text);
 		else
-			pref.setToDefault(UpdateManager.P_MAPPINGS_FILE);
+			pref.setToDefault(UpdateUtils.P_MAPPINGS_FILE);
 		UpdateCore.getPlugin().savePluginPreferences();
 		return true;
 	}

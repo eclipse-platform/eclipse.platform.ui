@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -77,12 +77,12 @@ public class NewExtensionLocationAction extends Action {
 		File dir = root.getInstallableDirectory();
 		try {
 			IInstallConfiguration config =
-				UpdateManager.createInstallConfiguration();
+				UpdateUtils.createInstallConfiguration();
 			if (UnifiedTargetPage
 				.addConfiguredSite(UpdateUI.getActiveWorkbenchShell(), config, dir, true)
 				!= null) {
-				UpdateManager.makeConfigurationCurrent(config, null);
-				UpdateManager.saveLocalSite();
+				UpdateUtils.makeConfigurationCurrent(config, null);
+				UpdateUtils.saveLocalSite();
 				UpdateUI.requestRestart();
 			}
 		} catch (CoreException e) {

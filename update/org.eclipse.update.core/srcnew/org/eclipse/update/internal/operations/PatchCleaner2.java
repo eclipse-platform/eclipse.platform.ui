@@ -46,7 +46,7 @@ public class PatchCleaner2 {
 	}
 	private void cleanSavedConfigs(IFeature feature) {
 		if (feature.isPatch()) {
-			IInstallConfiguration backupConfig = UpdateManager.getBackupConfigurationFor(feature);
+			IInstallConfiguration backupConfig = UpdateUtils.getBackupConfigurationFor(feature);
 			if (backupConfig!=null) {
 				// clean it
 				remove(backupConfig);
