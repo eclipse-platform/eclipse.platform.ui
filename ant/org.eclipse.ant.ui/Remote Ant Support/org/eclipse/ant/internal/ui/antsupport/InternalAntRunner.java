@@ -159,7 +159,7 @@ public class InternalAntRunner {
 				}
 			}
 		} catch (ClassCastException e) {
-			String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_be_a_build_listener_is_not_an_instance_of_org.apache.tools.ant.BuildListener._1"), new String[]{className}); //$NON-NLS-1$
+			String message = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_be_a_build_listener_is_not_an_instance_of_org.apache.tools.ant.BuildListener._1"), new String[]{className}); //$NON-NLS-1$
 			logMessage(null, message, Project.MSG_ERR);
 			throw new BuildException(message, e);
 		} catch (BuildException e) {
@@ -177,11 +177,11 @@ public class InternalAntRunner {
 	private void parseBuildFile(Project project) {
 		File buildFile = new File(getBuildFileLocation());
 		if (!buildFile.exists()) {
-			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Buildfile__{0}_does_not_exist_!_1"), //$NON-NLS-1$
+			throw new BuildException(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Buildfile__{0}_does_not_exist_!_1"), //$NON-NLS-1$
 						 new String[]{buildFile.getAbsolutePath()}));
 		}
 		if (!buildFile.isFile()) {
-			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Buildfile__{0}_is_not_a_file_1"), //$NON-NLS-1$
+			throw new BuildException(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Buildfile__{0}_is_not_a_file_1"), //$NON-NLS-1$
 							new String[]{buildFile.getAbsolutePath()}));
 		}
 		
@@ -199,7 +199,7 @@ public class InternalAntRunner {
 			sb.append(extraArguments[i]);
 			sb.append(' ');
 		}
-		project.log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString().trim()})); //$NON-NLS-1$
+		project.log(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString().trim()})); //$NON-NLS-1$
 	}
 
 
@@ -256,12 +256,12 @@ public class InternalAntRunner {
 				defaultDesc = new ArrayList(1);
 				defaultDesc.add(topDescriptions.get(indexOfDefDesc));
 			}
-			printTargets(project, defaultName, defaultDesc, InternalAntMessages.getString("InternalAntRunner.Default_target__3"), maxLength); //$NON-NLS-1$
+			printTargets(project, defaultName, defaultDesc, RemoteAntMessages.getString("InternalAntRunner.Default_target__3"), maxLength); //$NON-NLS-1$
 
 		}
 
-		printTargets(project, topNames, topDescriptions, InternalAntMessages.getString("InternalAntRunner.Main_targets__4"), maxLength); //$NON-NLS-1$
-		printTargets(project, subNames, null, InternalAntMessages.getString("InternalAntRunner.Subtargets__5"), 0); //$NON-NLS-1$
+		printTargets(project, topNames, topDescriptions, RemoteAntMessages.getString("InternalAntRunner.Main_targets__4"), maxLength); //$NON-NLS-1$
+		printTargets(project, subNames, null, RemoteAntMessages.getString("InternalAntRunner.Subtargets__5"), 0); //$NON-NLS-1$
 	}
 
 	/**
@@ -358,7 +358,7 @@ public class InternalAntRunner {
 				}
 			}
 			
-			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
+			getCurrentProject().log(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			
 			setTasks();
 			setTypes();
@@ -435,7 +435,7 @@ public class InternalAntRunner {
 						Class taskClass = Class.forName(taskClassName);
 						getCurrentProject().addTaskDefinition(taskName, taskClass);
 					} catch (ClassNotFoundException e) {
-						String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.161"), new String[]{taskClassName, taskName}); //$NON-NLS-1$
+						String message= MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.161"), new String[]{taskClassName, taskName}); //$NON-NLS-1$
 						getCurrentProject().log(message, Project.MSG_WARN);
 					}	
 				}
@@ -462,7 +462,7 @@ public class InternalAntRunner {
 						Class typeClass = Class.forName(typeClassName);
 						getCurrentProject().addDataTypeDefinition(typeName, typeClass);
 					} catch (ClassNotFoundException e) {
-						String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.162"), new String[]{typeClassName, typeName}); //$NON-NLS-1$
+						String message= MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.162"), new String[]{typeClassName, typeName}); //$NON-NLS-1$
 						getCurrentProject().log(message, Project.MSG_WARN);
 					}	
 				}
@@ -493,7 +493,7 @@ public class InternalAntRunner {
 		
 		if (!defaultFound) {
 			//default target must exist
-			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			throw new BuildException(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
@@ -510,11 +510,11 @@ public class InternalAntRunner {
 			try {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
-				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_perform_logging_is_not_an_instance_of_org.apache.tools.ant.BuildLogger._2"), new String[]{loggerClassname}); //$NON-NLS-1$
+				String message = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_perform_logging_is_not_an_instance_of_org.apache.tools.ant.BuildLogger._2"), new String[]{loggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(message, e);
 			} catch (Exception e) {
-				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{loggerClassname}); //$NON-NLS-1$
+				String message = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{loggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(message, e);
 			}
@@ -544,7 +544,7 @@ public class InternalAntRunner {
 
 	private void fireBuildFinished(Project project, Throwable error) {
 		if (error == null && scriptExecuted) {
-			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
+			logMessage(project, RemoteAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
 		}
 		project.fireBuildFinished(error);
 	}
@@ -616,9 +616,9 @@ public class InternalAntRunner {
 				String versionNumber= props.getProperty("VERSION");  //$NON-NLS-1$
 				antVersionNumber= versionNumber;
 			} catch (IOException ioe) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._{0}_9"), new String[]{ioe.getMessage()})); //$NON-NLS-1$
+				throw new BuildException(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._{0}_9"), new String[]{ioe.getMessage()})); //$NON-NLS-1$
 			} catch (NullPointerException npe) {
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._10")); //$NON-NLS-1$
+				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._10")); //$NON-NLS-1$
 			}
 		}
 		return antVersionNumber;
@@ -639,7 +639,7 @@ public class InternalAntRunner {
 		String arg = getArgument(commands, "-listener"); //$NON-NLS-1$
 		while (arg != null) {
 			if (arg.length() == 0) {
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
+				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
 			} 
 			if (buildListeners == null) {
 				buildListeners= new ArrayList(1);
@@ -655,22 +655,22 @@ public class InternalAntRunner {
 		}
 		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
 		if (arg != null) {
-			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
+			throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
 		}
 		
 		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
+				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
 			}
 			if (arg.length() == 0) {
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
+				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
 			} 
 			inputHandlerClassname = arg;
 		}
 		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (arg != null) {
-			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_input_handler_class_may_be_specified._2")); //$NON-NLS-1$
+			throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.Only_one_input_handler_class_may_be_specified._2")); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -714,12 +714,12 @@ public class InternalAntRunner {
 		
 		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
+				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
 			}
 			try {
 				Diagnostics.doReport(System.out);
 			} catch (NullPointerException e) {
-				logMessage(getCurrentProject(), InternalAntMessages.getString("InternalAntRunner.ANT_HOME_must_be_set_to_use_Ant_diagnostics_2"), Project.MSG_ERR); //$NON-NLS-1$
+				logMessage(getCurrentProject(), RemoteAntMessages.getString("InternalAntRunner.ANT_HOME_must_be_set_to_use_Ant_diagnostics_2"), Project.MSG_ERR); //$NON-NLS-1$
 			}
 			return false;
 		}
@@ -730,7 +730,7 @@ public class InternalAntRunner {
 		}
 		if (arg != null) {
 			if (arg.length() == 0) {
-				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"); //$NON-NLS-1$
+				String message= RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
@@ -738,7 +738,7 @@ public class InternalAntRunner {
 				createLogFile(arg);
 			} catch (IOException e) {
 				// just log message and ignore exception
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{arg}), Project.MSG_ERR); //$NON-NLS-1$
+				logMessage(getCurrentProject(), MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{arg}), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		
@@ -754,7 +754,7 @@ public class InternalAntRunner {
 		
 		if (arg != null) {
 			if (arg.length() == 0) {
-				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"); //$NON-NLS-1$
+				String message= RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
@@ -770,7 +770,7 @@ public class InternalAntRunner {
 			}
 			arg= getArgument(commands, "-lib"); //$NON-NLS-1$
 			if (arg != null) {
-				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
+				logMessage(currentProject, RemoteAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -780,7 +780,7 @@ public class InternalAntRunner {
 			arg= getArgument(commands, "-s"); //$NON-NLS-1$
 		}
 		if (arg != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
+			logMessage(currentProject, RemoteAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -857,7 +857,7 @@ public class InternalAntRunner {
 		}
 		
 		// warn of ignored commands
-		String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{ s.substring(1) }); //$NON-NLS-1$
+		String message = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{ s.substring(1) }); //$NON-NLS-1$
 		logMessage(currentProject, message, Project.MSG_WARN); 
 	}
 	
@@ -886,7 +886,7 @@ public class InternalAntRunner {
 		//this stream is closed in the finally block of run(list)
 		out = new PrintStream(new FileOutputStream(logFile));
 		err = out;
-		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
+		logMessage(getCurrentProject(), MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
 		if (buildLogger != null) {
 			buildLogger.setErrorPrintStream(err);
 			buildLogger.setOutputPrintStream(out);
@@ -917,11 +917,11 @@ public class InternalAntRunner {
 		String arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
-				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
+				logMessage(currentProject, RemoteAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
 				break;
 			}
 			if (arg.length() == 0) {
-				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
+				String message= RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
@@ -1009,82 +1009,82 @@ public class InternalAntRunner {
 		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer msg = new StringBuffer();
 		msg.append("ant ["); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.options_13")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.options_13")); //$NON-NLS-1$
 		msg.append("] ["); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
 		msg.append(" ["); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
 		msg.append("2 ["); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.target_15")); //$NON-NLS-1$
 		msg.append("3] ...]]"); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append(InternalAntMessages.getString("InternalAntRunner.Options___21")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.Options___21")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-help, -h\t\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.print_this_message_23")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.print_this_message_23")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-projecthelp, -p\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.print_project_help_information_25")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.print_project_help_information_25")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-version\t\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.print_the_version_information_and_exit_27")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.print_the_version_information_and_exit_27")); //$NON-NLS-1$
 		msg.append(lSep); 
 		msg.append("\t-diagnostics\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.12")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.12")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append(InternalAntMessages.getString("InternalAntRunner.13")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.13")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-quiet, -q\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_quiet_29")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.be_extra_quiet_29")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-verbose, -v\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_verbose_31")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.be_extra_verbose_31")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-debug, -d\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.print_debugging_information_33")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.print_debugging_information_33")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-emacs, -e\t\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.produce_logging_information_without_adornments_35")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.produce_logging_information_without_adornments_35")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-logfile\t<file>\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t\t-l\t<file>"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$
 		msg.append(lSep);  
 		msg.append("\t-listener <classname>\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.add_an_instance_of_class_as_a_project_listener_41")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.add_an_instance_of_class_as_a_project_listener_41")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-noinput\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.158")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.158")); //$NON-NLS-1$
 		msg.append(lSep); 
 		msg.append("\t-buildfile\t<file>\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
 		msg.append(lSep); 
 		msg.append("\t\t-file\t<file>"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t\t-f\t\t<file>"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-D<property>=<value>\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-keep-going, -k"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.159")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.159")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append(InternalAntMessages.getString("InternalAntRunner.160")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.160")); //$NON-NLS-1$
 		msg.append(lSep); 
 		msg.append("\t-propertyfile <name>\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.19")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.19")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append(InternalAntMessages.getString("InternalAntRunner.20")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.20")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-inputhandler <class>\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.22")); //$NON-NLS-1$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.22")); //$NON-NLS-1$
 		msg.append(lSep);
 
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
@@ -1159,7 +1159,7 @@ public class InternalAntRunner {
                 fis = new FileInputStream(file);
                 props.load(fis);
             } catch (IOException e) {
-            	String msg= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
+            	String msg= MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
             	logMessage(getCurrentProject(), msg, Project.MSG_ERR);
             } finally {
                 if (fis != null) {

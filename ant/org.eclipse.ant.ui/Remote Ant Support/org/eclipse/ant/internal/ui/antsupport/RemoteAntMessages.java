@@ -14,13 +14,13 @@ package org.eclipse.ant.internal.ui.antsupport;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class InternalAntMessages {
+public class RemoteAntMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.antsupport.InternalAntMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private InternalAntMessages() {
+	private RemoteAntMessages() {
 	}
 
 	public static String getString(String key) {

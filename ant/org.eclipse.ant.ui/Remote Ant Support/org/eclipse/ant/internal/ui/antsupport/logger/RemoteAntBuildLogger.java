@@ -27,7 +27,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.antsupport.AntSecurityException;
-import org.eclipse.ant.internal.ui.antsupport.InternalAntMessages;
+import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 
 /**
@@ -143,7 +143,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		|| exception instanceof AntSecurityException) {
 			return;
 		}
-		printMessage(MessageFormat.format(InternalAntMessages.getString("RemoteAntBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
+		printMessage(MessageFormat.format(RemoteAntMessages.getString("RemoteAntBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
 					out, Project.MSG_ERR);	
 	}
 	
@@ -152,13 +152,13 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		long minutes = seconds / 60;
 		seconds= seconds % 60;
 
-		StringBuffer result= new StringBuffer(InternalAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
+		StringBuffer result= new StringBuffer(RemoteAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
 		if (minutes > 0) {
 			result.append(minutes);
 			if (minutes > 1) {
-				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._minutes_2")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._minutes_2")); //$NON-NLS-1$
 			} else {
-				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._minute_3")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._minute_3")); //$NON-NLS-1$
 			}
 		}
 		if (seconds > 0) {
@@ -168,14 +168,14 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			result.append(seconds);
 	
 			if (seconds > 1) {
-				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._seconds_4")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._seconds_4")); //$NON-NLS-1$
 			} else {
-				result.append(InternalAntMessages.getString("RemoteAntBuildLogger._second_5")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._second_5")); //$NON-NLS-1$
 			} 
 		}
 		if (seconds == 0 && minutes == 0) {
 			result.append(milliseconds);
-			result.append(InternalAntMessages.getString("RemoteAntBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
+			result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
 		}
 		return result.toString();
 	}
