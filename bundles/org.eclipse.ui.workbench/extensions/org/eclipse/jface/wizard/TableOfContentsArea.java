@@ -1,0 +1,178 @@
+package org.eclipse.jface.wizard;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
+
+/**
+ * The WizardTableOfContents is a class that displays a series
+ * of widgets depicting the current state of pages within a wizard.
+ */
+public class TableOfContentsArea {
+
+	private Canvas canvas;
+	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
+	private IWizard initialWizard;
+	private ITableOfContentsNode currentNode;
+	
+	static final int NODE_SIZE = 30;
+	private static final int BORDER_SIZE = NODE_SIZE - 16 / 2;
+
+	public TableOfContentsArea() {
+		super();
+	}
+
+	/**
+	 * Add the nodes for the current wizard. This should be called whenever
+	 * the wizard is updated for a dialog using the WizardTableOfContentsHeader.
+	 */
+	private void addNodesForWizard(IWizard wizard) {
+
+		ITableOfContentsNode[] newNodes;
+
+		if (wizard instanceof ITableOfContentsWizard) {
+			newNodes = ((ITableOfContentsWizard) wizard).getInitialNodes();
+		} else {
+			IWizardPage[] pages = wizard.getPages();
+			newNodes = new TableOfContentsNode[1];
+			newNodes[0] = new TableOfContentsNode(pages[0]);
+		}
+
+		Display display = wizard.getContainer().getShell().getDisplay();
+		addNodes(newNodes, display);
+
+	}
+	/**
+	 * Add the newNodes to the collection of nodes being displayed.
+	 */
+
+	private void addNodes(ITableOfContentsNode[] newNodes, Display display) {
+
+		int oldSize = nodes.length;
+		ITableOfContentsNode[] mergeNodes =
+			new ITableOfContentsNode[oldSize + newNodes.length];
+		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
+
+		nodes = mergeNodes;
+	}
+
+	/**
+	* Add the nodes for newWizard. If we haven't created anything
+	* set cache the wizard.
+	*/
+	public void addWizard(IWizard newWizard) {
+		//Add nodes if the table is already created
+		if (canvas == null)
+			initialWizard = newWizard;
+		else {
+			if (currentNode != null) {
+				int currentIndex = indexOfPage(currentNode.getPage());
+
+				if (nodes.length > currentIndex) {
+					ITableOfContentsNode nextNode = nodes[currentIndex];
+
+					//Replace the next pages if required
+					if (nextNode.getPage().getWizard().equals(newWizard))
+						return;
+					else {
+						for (int i = currentIndex + 1; i < nodes.length; i++) {
+							nodes[i].dispose();
+						}
+						ITableOfContentsNode[] newNodes =
+							new ITableOfContentsNode[currentIndex + 1];
+						for (int i = 0; i <= currentIndex; i++) {
+							newNodes[i] = nodes[i];
+						}
+
+						nodes = newNodes;
+					}
+				}
+			}
+			addNodesForWizard(newWizard);
+		}
+	}
+
+	/**
+	 * Select the node corresponding to the page.
+	 * @param IWorkbenchPage
+	 */
+	public void updateFor(IWizardPage page) {
+
+		//We may not have created anything yet
+		int index = indexOfPage(page);
+		if (index == -1) {
+
+			ITableOfContentsNode[] newNodes = new ITableOfContentsNode[1];
+			ITableOfContentsNode newNode = new TableOfContentsNode(page);
+			newNodes[0] = newNode;
+			currentNode = newNode;
+			addNodes(newNodes, page.getControl().getDisplay());
+
+		} else {
+			currentNode = nodes[index];
+			ITableOfContentsNode checkNode = currentNode;
+			for (int i = index + 1; i < nodes.length; i++) {
+				nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
+				checkNode = nodes[i];
+			}
+		}
+	}
+
+	/**
+	 * Return the index of the node of the page.
+	 * @param IWorkbenchPage
+	 */
+	private int indexOfPage(IWizardPage page) {
+
+		for (int i = 0; i < nodes.length; i++) {
+			if (nodes[i].getPage().equals(page))
+				return i;
+		}
+		return -1;
+
+	}
+
+	/**
+	 * Create the table of contents canvas area.
+	 */
+	public Control createControl(Composite parent) {
+
+		canvas = new Canvas(parent, SWT.BORDER);
+
+		canvas.addPaintListener(new PaintListener() {
+			/**
+			 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+			 */
+			public void paintControl(PaintEvent event) {
+				drawNodes(event.gc);
+			}
+		});
+
+		//Create the nodes if the wizard has not been set.
+		if (initialWizard != null) {
+			addNodesForWizard(initialWizard);
+			currentNode = nodes[0];
+		}
+
+		return canvas;
+
+	}
+
+	/**
+	 * Draw the nodes for the receiver on the supplied gc.
+	 */
+	private void drawNodes(GC gc) {
+		Point size = canvas.getSize();
+		gc.drawLine(0, size.y / 2, size.x, size.y / 2);
+
+		for (int i = 0; i < nodes.length; i++) {
+			gc.drawImage(
+				nodes[i].getImage(),
+				i * 30 + BORDER_SIZE,
+				BORDER_SIZE);
+		}
+	}
+}
