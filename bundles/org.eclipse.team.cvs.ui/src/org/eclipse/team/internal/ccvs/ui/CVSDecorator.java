@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
@@ -28,10 +29,35 @@ import org.eclipse.team.ui.TeamUIPlugin;
 
 public class CVSDecorator implements ITeamDecorator {
 
+	ImageDescriptor dirty;
+	ImageDescriptor checkedIn;
+	ImageDescriptor checkedOut;
+
+	/**
+	 * Define a cached image descriptor which only creates the image data once
+	 */
+	class CachedImageDescriptor extends ImageDescriptor {
+		ImageDescriptor descriptor;
+		ImageData data;
+		
+		public CachedImageDescriptor(ImageDescriptor descriptor) {
+			this.descriptor = descriptor;
+		}
+		public ImageData getImageData() {
+			if (data == null) {
+				data = descriptor.getImageData();
+			}
+			return data;
+		}
+	};
+		
 	List listeners = new ArrayList(3);
 	private static final CoreException CORE_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null));
 
 	public CVSDecorator() {
+		dirty = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
+		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+		checkedOut = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
 	}
 
 	/*
@@ -78,13 +104,13 @@ public class CVSDecorator implements ITeamDecorator {
 		CVSTeamProvider p = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
 		if(p!=null) {
 			if(p.isDirty(resource)) {
-				overlays.add(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
+				overlays.add(dirty);
 			}
 			if(p.hasRemote(resource)) {
-				overlays.add(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+				overlays.add(checkedIn);
 			} 
 			if(p.isCheckedOut(resource)) {
-				overlays.add(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+				overlays.add(checkedOut);
 			}
 		}
 		return new ImageDescriptor[][] {(ImageDescriptor[])overlays.toArray(new ImageDescriptor[overlays.size()])};
