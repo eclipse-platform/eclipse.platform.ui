@@ -62,6 +62,16 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * @issue better if this was provided by the text editor plug-in
 	 */
 	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+
+	// IDE workbench extension point names
+	public static final String PL_IMPORT ="importWizards"; //$NON-NLS-1$
+	public static final String PL_EXPORT ="exportWizards"; //$NON-NLS-1$
+	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
+	public static final String PL_MARKER_IMAGE_PROVIDER ="markerImageProviders"; //$NON-NLS-1$
+	public static final String PL_MARKER_HELP ="markerHelp"; //$NON-NLS-1$
+	public static final String PL_MARKER_RESOLUTION ="markerResolution"; //$NON-NLS-1$
+	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
+	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 	
 	/**
 	 * Project image registry; lazily initialized.
