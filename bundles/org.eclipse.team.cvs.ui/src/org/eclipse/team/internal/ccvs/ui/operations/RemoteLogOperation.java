@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,9 +29,18 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	
 	private RLog rlog = new RLog();
 	private Map entries = new HashMap();
+	private Map allEntries = new HashMap();
+	private CVSTag tag1;
+	private CVSTag tag2;
 	
 	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources) {
+		this(part, remoteResources, null, null);
+	}
+	
+	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources, CVSTag tag1, CVSTag tag2) {
 		super(part, remoteResources);
+		this.tag1 = tag1;
+		this.tag2 = tag2;
 	}
 	
 	/**
@@ -42,6 +52,16 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	public ILogEntry getLogEntry(ICVSRemoteResource resource) {
 		return (ILogEntry)entries.get(resource);
 	}
+	
+	/**
+	 * Return the log entries that were fetched for the given resource
+	 * or an empty list if no entry was fetched.
+	 * @param resource the resource
+	 * @return the fetched log entries or an empty list is none were found
+	 */
+	public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
+		return (ILogEntry[])allEntries.get(resource);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryLocationOperation#execute(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource[], org.eclipse.core.runtime.IProgressMonitor)
@@ -50,11 +70,19 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		monitor.beginTask("Fetching log information from {0}" + location.getHost(), 100);
 		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
 		LogListener listener = new LogListener();
+		
+		Command.LocalOption[] localOptions;
+		if(tag1 != null && tag2 != null) {
+			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.makeTagOption(tag1, tag2)};
+		} else {
+			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS};
+		}
+		
 		try {
 			s.open(Policy.subMonitorFor(monitor, 10));
 			IStatus status = rlog.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
-					new Command.LocalOption[] {RLog.NO_TAGS },
+					localOptions,
 					remoteResources,
 					listener,
 					Policy.subMonitorFor(monitor, 90));
@@ -72,6 +100,8 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 				if (entry != null) {
 					entries.put(file, entry);
 				}
+				ILogEntry allLogs[] = listener.getEntriesFor(file);
+				allEntries.put(file, allLogs);
 			}
 		}
 	}

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
@@ -24,11 +25,18 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class ChangeLogModelManager extends SynchronizeModelManager implements IPropertyChangeListener {
 		
-	/**
-	 * @param configuration
-	 */
+	/** support for showing change logs for ranges of tags **/
+	private CVSTag tag1;
+	private CVSTag tag2;
+	
 	public ChangeLogModelManager(ISynchronizePageConfiguration configuration) {
+		this(configuration, null, null);
+	}
+	
+	public ChangeLogModelManager(ISynchronizePageConfiguration configuration, CVSTag tag1, CVSTag tag2) {
 		super(configuration);
+		this.tag1 = tag1;
+		this.tag2 = tag2;
 		configuration.addPropertyChangeListener(this);
 	}
 
@@ -66,7 +74,7 @@ public class ChangeLogModelManager extends SynchronizeModelManager implements IP
 		} else if(id.endsWith(HierarchicalModelProvider.HierarchicalModelProviderDescriptor.ID)) {
 			return new HierarchicalModelProvider(getConfiguration(), getSyncInfoSet());
 		} else {
-				return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet());
+				return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet(), tag1, tag2);
 		}
 	}
 

@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -34,6 +35,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
 	public static final String NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_2"; //$NON-NLS-1$
+	private CVSTag localTag;
 
 	/**
 	 * Actions for the compare particpant's toolbar
@@ -69,7 +71,12 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	};
 	
 	public CompareParticipant(CVSCompareSubscriber subscriber) {
+		this(subscriber, null);
+	}
+	
+	public CompareParticipant(CVSCompareSubscriber subscriber, CVSTag localTag) {
 		setSubscriber(subscriber);
+		this.localTag = localTag;
 	}
 		
 	/* (non-Javadoc)
@@ -142,6 +149,8 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new CompareParticipantActionContribution());
+		if(localTag != null)
+			configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration, localTag, getTag()));
 	}
 	
 	/* (non-Javadoc)

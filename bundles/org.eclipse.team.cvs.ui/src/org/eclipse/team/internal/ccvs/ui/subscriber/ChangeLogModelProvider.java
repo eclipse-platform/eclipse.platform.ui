@@ -55,6 +55,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
 	private ChangeLogActionGroup sortGroup;
+	private CVSTag tag1;
+	private CVSTag tag2;
 	private final static String SORT_ORDER_GROUP = "changelog_sort"; //$NON-NLS-1$
 	
 	/**
@@ -220,8 +222,10 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	};
 	private static final ChangeLogModelProviderDescriptor descriptor = new ChangeLogModelProviderDescriptor();
 	
-	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
+	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set, CVSTag tag1, CVSTag tag2) {
 		super(configuration, set);
+		this.tag1 = tag1;
+		this.tag2 = tag2;
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, SORT_ORDER_GROUP);
 		this.sortGroup = new ChangeLogActionGroup();
 		configuration.addActionContribution(sortGroup);
@@ -279,11 +283,26 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 */
 	private void addSyncInfoToCommentNode(SyncInfo info, RemoteLogOperation logs) {
 		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
-		ILogEntry logEntry = logs.getLogEntry(remoteResource);
-		ISynchronizeModelElement element;
-		
+		if(tag1 != null && tag2 != null) {
+			ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+			for (int i = 0; i < logEntries.length; i++) {
+				ILogEntry entry = logEntries[i];
+				addNewElementFor(info, entry.getRemoteFile(), entry);
+			}
+		} else {
+			ILogEntry logEntry = logs.getLogEntry(remoteResource);
+		}
+	}
+	
+	/**
+	 * @param info
+	 * @param remoteResource
+	 * @param logEntry
+	 */
+	private void addNewElementFor(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
+		ISynchronizeModelElement element;	
 		// If the element has a comment then group with common comment
-		if(remoteResource != null) {
+		if(remoteResource != null && logEntry != null) {
 			DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
 			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
 			if (changeRoot == null) {
@@ -327,7 +346,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			}
 		}
 		if(! remotes.isEmpty()) {
-			RemoteLogOperation op = new RemoteLogOperation(null, (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]));
+			RemoteLogOperation op = new RemoteLogOperation(null, (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]), tag1, tag2);
 			op.execute(monitor);
 			return op;
 		}

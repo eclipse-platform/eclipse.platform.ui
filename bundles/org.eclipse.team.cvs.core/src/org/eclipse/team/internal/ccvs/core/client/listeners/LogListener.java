@@ -79,6 +79,14 @@ public class LogListener extends CommandOutputListener {
 		}
 		return null;
 	}
+	
+	public ILogEntry[] getEntriesFor(ICVSRemoteFile file) {
+		List fileEntries = (List)entries.get(file.getRepositoryRelativePath());
+		if (fileEntries != null) {
+			return (ILogEntry[]) fileEntries.toArray(new ILogEntry[fileEntries.size()]);
+		}
+		return new ILogEntry[0];
+	}
 
 	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
