@@ -1019,7 +1019,9 @@ public final class Workbench implements IWorkbench {
 					//result.add(e.getStatus());
 				//}
 			//}
+			
 			windowManager.add(newWindow);
+			getAdviser().postWindowRestore(newWindow.getWindowConfigurer());
 			newWindow.open();
 		}
 		return result;

@@ -277,7 +277,7 @@ public abstract class WorkbenchAdviser {
 	
 	/**
 	 * Performs arbitrary actions after the given workbench window has been
-	 * restored.
+	 * restored, but before it is opened.
 	 * <p>
 	 * This method is called after a previously-saved window have been
 	 * recreated. This method is not called when a new window is created from
