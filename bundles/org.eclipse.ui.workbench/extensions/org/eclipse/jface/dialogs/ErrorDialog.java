@@ -181,6 +181,15 @@ protected void createDialogAndButtonArea(Composite parent) {
  * @see IconAndMessageDialog#getImage()
  */
 protected Image getImage() {
+	
+	if(status != null){
+		if(status.getSeverity() == IStatus.WARNING)
+			return JFaceResources.getImageRegistry().get(DLG_IMG_WARNING);
+		if(status.getSeverity() == IStatus.INFO)
+			return JFaceResources.getImageRegistry().get(DLG_IMG_INFO);
+	}
+	
+	//If it was not a warning or an error then return the error image
 	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
 }
 
