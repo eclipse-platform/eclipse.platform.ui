@@ -171,6 +171,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData());
 			setControl(composite);
+			initializeDialogUnits(composite);
 
 			// set F1 help
 			WorkbenchHelp.setHelp(composite, IHelpContextIds.PATCH_SELECTION_PAGE);
@@ -213,11 +214,14 @@ public class GenerateDiffFileWizard extends Wizard {
 			});
 
 			browseButton = new Button(nameGroup, SWT.NULL);
-			browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			browseButton.setText(Policy.bind("Browse..._4")); //$NON-NLS-1$
+			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			browseButton.setLayoutData(data);
 			browseButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					FileDialog d = new FileDialog(getShell());
+					FileDialog d = new FileDialog(getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 					d.setText(Policy.bind("Save_Patch_As_5")); //$NON-NLS-1$
 					d.setFileName(Policy.bind("patch.txt_6")); //$NON-NLS-1$
 					String file = d.open();
