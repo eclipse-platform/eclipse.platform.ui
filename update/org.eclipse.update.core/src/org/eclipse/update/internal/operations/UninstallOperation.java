@@ -20,7 +20,7 @@ import org.eclipse.update.operations.*;
  * ConfigOperation
  */
 public class UninstallOperation extends FeatureOperation implements IUninstallFeatureOperation{
-	
+
 	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
 		super(config, site, feature);
 	}
@@ -63,7 +63,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 		SiteManager.getLocalSite().save();
 
 		// notify the model
-		OperationsManager.fireObjectChanged(feature, null);
+		OperationsManager.fireObjectChanged(feature, UNINSTALL);
 		
 		return true;
 	}
