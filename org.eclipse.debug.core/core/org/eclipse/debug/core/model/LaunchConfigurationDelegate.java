@@ -10,6 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -94,4 +104,92 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		return true;
 	}
 
+	/**
+	 * Convenience method that returns an array of referenced projects in their suggested build order.
+	 * Subclasses may override this method to provide a different implementation. 
+	 * @param project The project containing the resource being launched
+	 * @return referenced projects ordered by their suggested build order
+	 * @throws CoreException if an error occurs while getting referenced projects from the current project
+	 */
+	protected IProject[] getBuildOrder(IProject[] projects) throws CoreException {
+		HashSet unorderedProjects = new HashSet();
+		for(int i = 0; i< projects.length; i++) {
+			unorderedProjects.add(projects[i]);
+			fillReferencedProjectSet(projects[i], unorderedProjects);
+		}
+		
+		IProject[] projectSet = (IProject[]) unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
+		return orderProjectSet(projectSet);
+	}
+
+
+	/**
+	 * Recursively creates a set of projects referenced by the current project
+	 * @param project The current project
+	 * @param referencedProjSet A set of referenced projects
+	 * @throws CoreException if an error occurs while getting referenced projects from the current project
+	 */
+	protected void fillReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException{
+		IProject[] projects = project.getReferencedProjects();
+		for (int i = 0; i < projects.length; i++) {
+			IProject refProject= projects[i];
+			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
+				referencedProjSet.add(refProject);
+				fillReferencedProjectSet(refProject, referencedProjSet);
+			}
+		}		
+	}
+	
+	/**  
+	 * creates a list of project ordered by their build order from an unordered list of projects.
+	 * @param resourceCollection The list of projects to sort.
+	 * @return A new list of projects, ordered by build order.
+	 */
+	protected IProject[] orderProjectSet(IProject[] projectSet) { 
+		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
+		if (orderedNames != null) {
+			List orderedProjects = new ArrayList(projectSet.length);
+			//Projects may not be in the build order but should be built if selected
+			List unorderedProjects = Arrays.asList(projectSet);
+		
+			for (int i = 0; i < orderedNames.length; i++) {
+				String projectName = orderedNames[i];
+				for (Iterator iterator = unorderedProjects.iterator(); iterator.hasNext(); ) {
+					IProject project = (IProject)iterator.next();
+					if (project.getName().equals(projectName)) {
+						orderedProjects.add(project);
+						iterator.remove();
+						break;
+					}
+				}
+			}
+			//Add anything not specified before we return
+			orderedProjects.addAll(unorderedProjects);
+			return (IProject[]) orderedProjects.toArray(new IProject[orderedProjects.size()]);
+		}
+
+		// Computing build order returned null, try the project prerequisite order
+		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projectSet);
+		return po.projects;
+	}	
+	
+	/**
+	 * Searches the project for problem markers of the specified severity
+	 * @param proj The project to search
+	 * @param severity The severity of the error to search for
+	 * @return true if markers of the specified severity or higher severity exist.
+	 * @throws CoreException if an error occurs while searching for problem markers
+	 */
+	protected boolean existsProblems(IProject proj, int severity) throws CoreException {
+		IMarker[] markers = proj.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		
+		if (markers.length > 0) {
+			for (int i = 0; i < markers.length; i++) {
+				if (((Integer)markers[i].getAttribute(IMarker.SEVERITY)).intValue() >= severity) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
