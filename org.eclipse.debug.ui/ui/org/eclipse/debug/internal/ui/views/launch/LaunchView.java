@@ -43,6 +43,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -912,9 +913,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void clearSourceSelection(Object source) {		
 		if (source instanceof IThread) {
-			DecorationManager.removeDecorations((IThread)source);	
+			IThread thread = (IThread)source;
+			DecorationManager.removeDecorations(thread);
+			InstructionPointerManager.getDefault().removeAnnotations(thread);
 		} else if (source instanceof IDebugTarget) {
-			DecorationManager.removeDecorations((IDebugTarget)source);
+			IDebugTarget target = (IDebugTarget)source;
+			DecorationManager.removeDecorations(target);
+			InstructionPointerManager.getDefault().removeAnnotations(target);
 		}
 	}
 	

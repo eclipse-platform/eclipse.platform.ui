@@ -27,7 +27,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -82,7 +81,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.TERMINATE :
-					removeInstructionPointerAnnotations(source);
 					if (source instanceof IThread) {
 						clearSourceSelection(source);
 						fThreadTimer.getTimedOutThreads().remove(source);
@@ -127,7 +125,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	protected void doHandleResumeEvent(DebugEvent event, Object source) {
 		if (!event.isEvaluation()) {
-			removeInstructionPointerAnnotations(source);
 			clearSourceSelection(source);
 		}
 		if (event.isEvaluation() || event.isStepStart()) {
@@ -178,7 +175,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void updateRunningThread(IThread thread) {
 		labelChanged(thread);
 		getLaunchViewer().updateStackFrameIcons(thread);
-		getLaunchView().clearSourceSelection(thread);
+		clearSourceSelection(thread);
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
@@ -189,31 +186,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		
 		boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
 		if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-			if (thread != null && wasTimedOut) {
-				// Refresh the thread label when a timed out evaluation finishes.
-				// This is necessary because the timeout updates
-				// the label when it occurs
-				updateRunningThread(thread);
+			if (thread != null && !wasTimedOut) {
+				// No refresh required for implicit evaluations that complete on time
+				return;
 			}
-			// Don't refresh fully for evaluation completion.
-			return;
 		}
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element, event, wasTimedOut);
 			return;
 		}
 		refresh(element);
-	}
-	
-	/**
-	 * Remove all instruction pointer annotations associated with the specified element.
-	 */
-	protected void removeInstructionPointerAnnotations(Object element) {
-		if (element instanceof IThread) {
-			InstructionPointerManager.getDefault().removeAnnotations((IThread)element);
-		} else if (element instanceof IDebugTarget) {
-			InstructionPointerManager.getDefault().removeAnnotations((IDebugTarget)element);			
-		}
 	}
 	
 	/**
@@ -243,6 +225,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				labelChanged(frame);
 				if (!evaluationEvent) {
 					getLaunchViewer().setSelection(new StructuredSelection(frame));
+				} else if (wasTimedOut) {
+					getLaunchView().showEditorForCurrentSelection();
 				}
 				return;
 			}
