@@ -16,7 +16,6 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
@@ -110,13 +109,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (labelProvider == null)
 			labelProvider = new UpdateLabelProvider();
 		return labelProvider;
-	}
-
-	/**
-	 * Returns the workspace instance.
-	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 
 	/**

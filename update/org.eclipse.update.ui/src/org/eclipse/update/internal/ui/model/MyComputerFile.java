@@ -53,7 +53,7 @@ public class MyComputerFile extends UIModelObject implements IWorkbenchAdapter {
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
-		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(getName());
+		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(getName());
 	}
 	
 	/**
