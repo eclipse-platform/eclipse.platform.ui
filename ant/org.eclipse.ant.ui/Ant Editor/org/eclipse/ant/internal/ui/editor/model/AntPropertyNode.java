@@ -69,7 +69,7 @@ public class AntPropertyNode extends AntTaskNode {
 			getTask().execute();
 			configured= true;
 		} catch (BuildException be) {
-			
+			getAntModel().handleBuildException(be, this);
 		}
 		return false;
 	}

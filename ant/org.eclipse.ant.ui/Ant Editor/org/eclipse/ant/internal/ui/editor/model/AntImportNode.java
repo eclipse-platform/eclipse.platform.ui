@@ -63,6 +63,7 @@ public class AntImportNode extends AntTaskNode {
 			configured= true;
 			return true;
 		} catch (BuildException be) {
+			getAntModel().handleBuildException(be, this);
 		}
 		return false;
 	}
