@@ -177,13 +177,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return an error message or <code>null</code> in case of no error
 	 */
 	public String showProposals(final boolean autoActivated) {
-					
+		
 		if (fKeyListener == null) {
 			fKeyListener= new MyKeyListener();
 		}
 
 		final Control control= fContentAssistSubjectAdapter.getControl();
-		if (control != null && !control.isDisposed())
+		
+		// add the listener before computing the proposals so we don't move the caret 
+		// when the user types fast.
+		if (!Helper.okToUse(fProposalShell) && control != null && !control.isDisposed())
 			fContentAssistSubjectAdapter.addKeyListener(fKeyListener);
 
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
@@ -199,14 +202,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 					if (!autoActivated)
 						control.getDisplay().beep();
 					
-					unregister();
+					hide();
 				
 				} else {
 					
 					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting()) {
 						
 						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
-						unregister();
+						hide();
 					
 					} else {
 					
@@ -459,8 +462,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 		fDocumentEvents.clear();		
 
-		if (fKeyListener != null && fContentAssistSubjectAdapter.getControl() != null && !fContentAssistSubjectAdapter.getControl().isDisposed())
+		if (fKeyListener != null && fContentAssistSubjectAdapter.getControl() != null && !fContentAssistSubjectAdapter.getControl().isDisposed()) {
 			fContentAssistSubjectAdapter.removeKeyListener(fKeyListener);
+			fKeyListener= null;
+		}
 		
 		if (fLastProposal != null) {
 			if (fLastProposal instanceof ICompletionProposalExtension2 && fViewer != null) {
@@ -864,6 +869,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else {
 			final Control control= fContentAssistSubjectAdapter.getControl();
 			
+			if (fKeyListener == null)
+				fKeyListener= new MyKeyListener();
+			
+			if (!Helper.okToUse(fProposalShell) && !control.isDisposed())
+				fContentAssistSubjectAdapter.addKeyListener(fKeyListener);
+			
 			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 				public void run() {
 					
@@ -872,24 +883,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fFilteredProposals= computeProposals(fInvocationOffset);
 					
 					int count= (fFilteredProposals == null ? 0 : fFilteredProposals.length);
-					if (count == 0)
+					if (count == 0) {
 						control.getDisplay().beep();
-					else if (count == 1 && fContentAssistant.isAutoInserting())
+						hide();
+					} else if (count == 1 && fContentAssistant.isAutoInserting()) {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
-					else {
+						hide();
+					} else {
 						if (fLineDelimiter == null)
 							fLineDelimiter= fContentAssistSubjectAdapter.getLineDelimiter();
 						
 						if (completeCommonPrefix())
-							unregister(); // TODO add some caching? for now: just throw away the completions
+							hide(); // TODO add some caching? for now: just throw away the completions
 						else {
-							if (fKeyListener == null) {
-								fKeyListener= new MyKeyListener();
-							}
-
-							if (!control.isDisposed())
-								fContentAssistSubjectAdapter.addKeyListener(fKeyListener);
-
 							fComputedProposals= fFilteredProposals;
 							createProposalSelector();
 							setProposals(fComputedProposals);
