@@ -105,15 +105,15 @@ public class GenerateDiffFileWizard extends Wizard {
 		protected boolean validatePage() {
 			boolean valid = false;									
 			
-			switch(getSaveType()) {
+			switch (getSaveType()) {
 				case WORKSPACE:
-					if(selectedContainer!=null && getWorkspaceFile()!=null) {
+					if (selectedContainer != null && getWorkspaceFile() != null) {
 						valid = true;
 					}
 					break;
 				case FILESYSTEM:
-					if(new File(getFilesystemFile()).isAbsolute()) {
-					valid = true;
+					if (new File(getFilesystemFile()).isAbsolute()) {
+						valid = true;
 					}
 					break;
 				case CLIPBOARD:
@@ -233,7 +233,10 @@ public class GenerateDiffFileWizard extends Wizard {
 					updateEnablements();
 				}
 			});
+			
 			createTreeViewer(composite);		
+			saveToClipboard.setSelection(true);
+			updateEnablements();
 		}
 		
 		/**
