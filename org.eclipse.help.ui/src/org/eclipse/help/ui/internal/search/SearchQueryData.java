@@ -19,8 +19,9 @@ public class SearchQueryData {
 	 * will search stop
 	 */
 	private static int MAX_HITS = 500;
-	/** maximum number of hits that a search engine
-	 * will search stop
+	/**
+	 * maximum number of hits that a search engine
+	 * will search
 	 */
 	private int maxHits;
 	private boolean fieldSearch;
@@ -142,7 +143,8 @@ public class SearchQueryData {
 				q += "&scope=" + URLEncoder.encode(toc.getHref());
 			}
 		return q;
-	} /**
+	}
+	/**
 	 * Gets the searchWord
 	 * @return Returns a String
 	 */
