@@ -2,19 +2,18 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.compare">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="StructureMerge Viewers"/>
-   </appInfo>
-   <documentation>
-      This extension point allows to plug in a compare/merge 
-viewer for structured content. The viewer must extend 
-&lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
-However since viewers don't have a default 
-constructor the extension point must implement a 
-factory object for viewers: the interface 
-&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="StructureMerge Viewers"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a plug-in to register compare/merge 
+viewers for structural content types. The viewer is expected to 
+extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
+However, since viewers don&apos;t have a default constructor, 
+the extension point must implement the factory interface 
+for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -46,11 +45,6 @@ factory object for viewers: the interface
    </element>
 
    <element name="viewer">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute=""/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -62,9 +56,7 @@ factory object for viewers: the interface
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements a factory for the 
-content merge viewer and implements 
-&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
+                  name of a class that implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.Viewer:org.eclipse.compare.IViewerCreator"/>
@@ -74,7 +66,7 @@ content merge viewer and implements
          <attribute name="extensions" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma separated list of file extensions e.g . "zip, jar"
+                  a comma separated list of file extensions e.g. &quot;zip, jar&quot;
                </documentation>
             </annotation>
          </attribute>
@@ -87,14 +79,14 @@ content merge viewer and implements
       </appInfo>
       <documentation>
          The following is an example of compare/merge viewer 
-for zip files (extension "zip"): 
+for zip files (extension &quot;zip&quot;): 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point = "org.eclipse.compare.structureMergeViewers"&gt; 
+&lt;extension point = &quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
      &lt;viewer 
-         id="org.eclipse.compare.ZipCompareViewer" 
-         class="org.eclipse.compare.ZipCompareViewerCreator" 
-         extensions="zip" 
+         id=&quot;org.eclipse.compare.ZipCompareViewer&quot; 
+         class=&quot;org.eclipse.compare.ZipCompareViewerCreator&quot; 
+         extensions=&quot;zip&quot; 
     /&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -127,9 +119,9 @@ viewer for zip archives.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
- &lt;img SRC="ngibmcpy.gif"
-   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright IBM Corp. 2000, 2003. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

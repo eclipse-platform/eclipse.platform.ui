@@ -2,15 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.compare">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.compare" id="structureCreators" name="Structure Creators"/>
-   </appInfo>
-   <documentation>
-      This extension point allows to plug in an object 
-that produces a tree structure of 
-&lt;samp&gt;IStructureComparator&lt;/samp&gt; for a given content.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.compare" id="structureCreators" name="Structure Creators"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a plug-in to register a structure creator 
+for specific content types. The structure creator is expected to create
+a tree of &lt;samp&gt;IStructureComparator&lt;/samp&gt;s for a given content.
+This tree is used as the input for the structural compare.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -42,11 +43,6 @@ that produces a tree structure of
    </element>
 
    <element name="structureCreator">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute=""/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -58,9 +54,7 @@ that produces a tree structure of
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements the structure creator 
-and implements 
-&lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureComparator&lt;/samp&gt;
+                  name of a class that implements &lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.compare.structuremergeviewer.IStructureComparator"/>
@@ -70,7 +64,7 @@ and implements
          <attribute name="extensions" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma separated list of file extensions e.g . "java, properties"
+                  a comma separated list of file extensions e.g. &quot;java, properties&quot;
                </documentation>
             </annotation>
          </attribute>
@@ -83,14 +77,14 @@ and implements
       </appInfo>
       <documentation>
          The following is an example of a structure creator for 
-java files (extension "java"): 
+java files (extension &quot;java&quot;): 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point = "org.eclipse.compare.structureCreators"&gt; 
+&lt;extension point = &quot;org.eclipse.compare.structureCreators&quot;&gt; 
      &lt;structureCreator 
-         id="org.eclipse.compare.JavaStructureCreator" 
-         class="org.eclipse.compare.JavaStructureCreator" 
-         extensions="java" 
+         id=&quot;org.eclipse.compare.JavaStructureCreator&quot; 
+         class=&quot;org.eclipse.compare.JavaStructureCreator&quot; 
+         extensions=&quot;java&quot; 
     /&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -123,9 +117,9 @@ creator for zip archives.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
- &lt;img SRC="ngibmcpy.gif"
-   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright IBM Corp. 2000, 2003. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

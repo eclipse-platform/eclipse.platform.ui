@@ -2,23 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.compare">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.compare" id="contentViewers" name="Content Viewers"/>
-   </appInfo>
-   <documentation>
-      This extension point allows to plug in a viewer for 
-specific content types. These viewers are used in 
-the EditionSelectionDialog when presenting an edition 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.compare" id="contentViewers" name="Content Viewers"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a plug-in to register 
+viewers for specific content types. 
+These viewers are used in the EditionSelectionDialog when presenting an edition 
 of a resource or a subsection thereof. The viewer 
 must extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt; 
-and must accept a viewer input of type 
-&lt;samp&gt;IStreamContentAccessor&lt;/samp&gt;. 
-However since viewers don't have a default 
-constructor the extension point must implement a 
-factory object for viewers: the interface 
-&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
-   </documentation>
-</annotation>
+and must accept a viewer input of type &lt;samp&gt;IStreamContentAccessor&lt;/samp&gt;. 
+However since viewers don&apos;t have a default constructor the extension point must implement the 
+factory interface for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -50,11 +47,6 @@ factory object for viewers: the interface
    </element>
 
    <element name="viewer">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute=""/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -78,7 +70,7 @@ content merge viewer and implements
          <attribute name="extensions" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma separated list of file extensions e.g . "java, gif"
+                  a comma separated list of file extensions e.g. &quot;java, gif&quot;
                </documentation>
             </annotation>
          </attribute>
@@ -91,14 +83,14 @@ content merge viewer and implements
       </appInfo>
       <documentation>
          The following is an example of a viewer for text 
-files (extension "txt"): 
+files (extension &quot;txt&quot;): 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point = "org.eclipse.compare.contentViewers"&gt; 
+&lt;extension point = &quot;org.eclipse.compare.contentViewers&quot;&gt; 
      &lt;viewer 
-         id="org.eclipse.compare.internal.TextViewer" 
-         class="org.eclipse.compare.internal.TextViewerCreator" 
-         extensions="txt" 
+         id=&quot;org.eclipse.compare.internal.TextViewer&quot; 
+         class=&quot;org.eclipse.compare.internal.TextViewerCreator&quot; 
+         extensions=&quot;txt&quot; 
     /&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -131,9 +123,9 @@ text and images.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
- &lt;img SRC="ngibmcpy.gif"
-   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright IBM Corp. 2000, 2003. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>
