@@ -12,6 +12,7 @@
 <p><b><i>Description:</i></b> For providing an implementation of an IFileModificationValidator
 to be used in the validate-edit and validate-save mechanism. This extension
 point tolerates at most one extension.
+<p>This extension point was added in Eclipse 2.0.</p>
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT fileModificationValidator EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST fileModificationValidator class CDATA
@@ -25,12 +26,12 @@ point tolerates at most one extension.
 </tt>extension point.
 <p>(in file <tt>plugin.xml</tt>)
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.core.resources.fileModificationValidator"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileModificationValidator class="com.xyz.vcm.VCMFileModificationValidator"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileModificationValidator class="org.eclipse.vcm.internal.VCMFileModificationValidator"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
 must represent an implementation of <tt>org.eclipse.core.resource.IFileModificationValidator</tt>.
-<p><b><i>Supplied Implementation:</i></b> The platform itself does not
-define a file modification validator. Particular product installs may include a validator as required.
+<p><b><i>Supplied Implementation:</i></b> The VCM component will generally provide the implementation of the 
+file modification validator.  The extension point should be used by any other clients.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
