@@ -120,6 +120,7 @@ function onloadHandler()
 <%
 	}
 %>
+	focusHandler("e");
 }
 
 var askShowAllDialog;

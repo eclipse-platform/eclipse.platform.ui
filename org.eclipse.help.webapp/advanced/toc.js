@@ -578,6 +578,6 @@ else if (isIE){
   document.ondblclick = mouseDblClickHandler;
   document.onmousemove = mouseMoveHandler;
   document.onkeydown = keyDownHandler;
-  window.onfocus = focusHandler;
+  //window.onfocus = focusHandler;
 }
 
