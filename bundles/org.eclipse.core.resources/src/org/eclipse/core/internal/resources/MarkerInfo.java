@@ -44,7 +44,7 @@ public Object clone() {
 	try {
 		MarkerInfo copy = (MarkerInfo)super.clone();
 		//copy the attribute table contents
-		copy.setAttributes(getAttributes());
+		copy.attributes = getAttributes(true);
 		return copy;
 	} catch (CloneNotSupportedException e) {
 		//cannot happen because this class implements Cloneable
