@@ -48,7 +48,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 				Object obj = cache.get(i);
 				if (obj instanceof ActionDescriptor) {
 					ActionDescriptor ad = (ActionDescriptor) obj;
-					contributeToolbarAction(ad, manager, false);
+					contributeToolbarAction(ad, manager, true);
 				}
 			}
 		}
