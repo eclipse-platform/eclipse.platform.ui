@@ -203,12 +203,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) ||
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB)) {
 				getTextWidget().redraw();
-			}
-		if (!propertyName.equals(IInternalDebugUIConstants.CONSOLE_FONT)) {
-			return;
+		} else if (propertyName.equals(IInternalDebugUIConstants.CONSOLE_FONT)) {
+			getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
 		}
-		
-		getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
 	}
 	
 	/**
