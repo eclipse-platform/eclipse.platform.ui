@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Preference constants used for the Ant Editor
@@ -113,25 +114,7 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 */
 	public static final String FORMATTER_MAX_LINE_LENGTH= "formatter_max_line_length"; //$NON-NLS-1$
-	
-	/**
-	 * A named preference that specifies if the Ant formatter will delete blank lines.
-	 * <p>
-	 * Value is of type <code>Boolean</code>. If <code>true</code> blank lines are deleted
-	 * by the formatter.
-	 * </p>
-	 */
-	public static final String FORMATTER_DELETE_BLANK_LINES= "formatter_delete_blank_lines"; //$NON-NLS-1$
-	
-	/**
-	 * A named preference that specifies if the Ant formatter should format comments.
-	 * <p>
-	 * Value is of type <code>Boolean</code>. If <code>true</code> comments are formatted
-	 * in the editor.
-	 * </p>
-	 */
-	public static final String FORMATTER_COMMENTS= "formatter_comments"; //$NON-NLS-1$
-	
+			
 	/**
 	 * A named preference that specifies if the Ant formatter should wrap elements that are longer than
 	 * the maximum line length.
@@ -148,9 +131,21 @@ public class AntEditorPreferenceConstants {
 	 */
 	public static final String TEMPLATES_USE_CODEFORMATTER= "templates_use_codeformatter"; //$NON-NLS-1$
 
+	/**
+	 * Preference key suffix for bold text style preference keys.
+	 * 
+	 */
+	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+
+	/**
+	 * Preference key suffix for italic text style preference keys.
+	 * 
+	 */
+	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
-	
+		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 500);
@@ -164,8 +159,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 80);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES, false);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_COMMENTS, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, false);
 		
 		store.setDefault(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER, true);
