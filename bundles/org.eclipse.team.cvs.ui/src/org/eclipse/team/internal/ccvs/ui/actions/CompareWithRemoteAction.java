@@ -12,10 +12,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
@@ -77,6 +79,11 @@ public class CompareWithRemoteAction extends TeamAction {
 					}
 					
 					ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
+					// Just to be safe...
+					if (remoteResource == null) {
+						MessageDialog.openInformation(getShell(), Policy.bind("CompareWithRemoteAction.noRemote"), Policy.bind("CompareWithRemoteAction.noRemoteLong"));
+						return;
+					}
 					CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -86,6 +93,10 @@ public class CompareWithRemoteAction extends TeamAction {
 	}
 	
 	protected boolean isEnabled() {
-		return getSelectedResources().length == 1;
+		IResource[] resources = getSelectedResources();
+		if (resources.length != 1) return false;
+		ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[0].getProject());
+		if (provider == null) return false;
+		return provider.hasRemote(resources[0]);
 	}
 }
