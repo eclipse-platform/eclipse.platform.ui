@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="External Tools Base/"/>
 	<classpathentry kind="src" path="Program Tools Support/"/>
-	<classpathentry kind="src" path="/org.eclipse.ant.core"/>
 	<classpathentry kind="src" path="/org.eclipse.core.resources"/>
 	<classpathentry kind="src" path="/org.eclipse.ui"/>
 	<classpathentry kind="src" path="/org.eclipse.debug.core"/>

@@ -3,7 +3,6 @@
 	<name>org.eclipse.ui.externaltools</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.ant.core</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
