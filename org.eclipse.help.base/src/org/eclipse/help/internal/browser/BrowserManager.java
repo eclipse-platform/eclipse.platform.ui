@@ -55,9 +55,9 @@ public class BrowserManager {
 		}
 
 		// 2. set default browser to embedded
-		if (defaultBrowserDesc == null) {
-			setDefaultBrowserID("org.eclipse.help.ui.embeddedbrowser");
-		}
+//		if (defaultBrowserDesc == null) {
+//			setDefaultBrowserID("org.eclipse.help.ui.embeddedbrowser");
+//		}
 		
 		// 3. set default browser to help implementation of system specific browser
 		String os = System.getProperty("os.name").toLowerCase();
