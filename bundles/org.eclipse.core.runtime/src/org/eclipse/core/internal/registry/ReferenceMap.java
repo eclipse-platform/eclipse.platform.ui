@@ -63,7 +63,7 @@ import java.util.*;
  *  provide synchronized access to a <Code>ReferenceMap</Code>.
  *
  *  @author Paul Jack 
- *  @version $Id: ReferenceMap.java,v 1.5 2005/01/19 19:26:16 prapicau Exp $
+ *  @version $Id: ReferenceMap.java,v 1.6 2005/03/18 15:27:09 johna Exp $
  *  @since 2.1
  *  @see java.lang.ref.Reference
  */
@@ -161,12 +161,6 @@ public class ReferenceMap extends AbstractMap {
      *  Cached key set.  May be null if key set is never accessed.
      */
     private transient Set keySet;
-
-
-    /**
-     *  Cached entry set.  May be null if entry set is never accessed.
-     */
-    private transient Set entrySet;
 
 
     /**

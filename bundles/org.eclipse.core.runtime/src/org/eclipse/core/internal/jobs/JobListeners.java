@@ -20,11 +20,6 @@ import org.eclipse.osgi.util.NLS;
  * specialized iterator to ensure the complex iteration logic is contained in one place.
  */
 class JobListeners {
-	/**
-	 * Static singleton empty listener list.
-	 */
-	static final IJobChangeListener[] EMPTY_LISTENERS = new IJobChangeListener[0];
-	
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}

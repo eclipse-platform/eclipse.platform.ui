@@ -22,7 +22,6 @@ public class DataArea {
 	/* package */static final String F_META_AREA = ".metadata"; //$NON-NLS-1$
 	/* package */static final String F_PLUGIN_DATA = ".plugins"; //$NON-NLS-1$
 	/* package */static final String F_LOG = ".log"; //$NON-NLS-1$
-	/* package */static final String F_BACKUP = ".bak"; //$NON-NLS-1$
 	/**
 	 * Internal name of the preference storage file (value <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
 	 */
