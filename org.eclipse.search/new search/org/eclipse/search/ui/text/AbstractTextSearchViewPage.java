@@ -204,11 +204,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private int fSupportedLayouts;
 	
 	/**
-	 * Flag (<code>value 1</code>) denoting tree layout.
+	 * Flag (<code>value 1</code>) denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_FLAT = 1;
 	/**
-	 * Flag (<code>value 2</code>) denoting flat list layout.
+	 * Flag (<code>value 2</code>) denoting tree layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
 	private SelectionProviderAdapter fViewerAdapter;
