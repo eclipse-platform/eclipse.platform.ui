@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.views; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.ui.internal.views.ViewsPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.ui.internal.views,
+ org.eclipse.ui.internal.views.contentoutline,
+ org.eclipse.ui.internal.views.properties,
+ org.eclipse.ui.views.contentoutline,
+ org.eclipse.ui.views.properties
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.help,
+ org.eclipse.ui
+Eclipse-AutoStart: true

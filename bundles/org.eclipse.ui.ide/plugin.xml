@@ -1,31 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.ui.ide"
-   name="%Plugin.name"
-   version="3.1.0"
-   provider-name="%Plugin.providerName"
-   class="org.eclipse.ui.internal.ide.IDEWorkbenchPlugin">
+<plugin>
 
-   <runtime>
-      <library name=".">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-     <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.update.configurator"/>
-      <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.update.ui"/>
-      <import plugin="org.eclipse.core.expressions"/>
-   </requires>
-
-
+    
 <!-- IDE extension points -->
    <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.exsd"/>
    <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders" schema="schema/markerImageProviders.exsd"/>
