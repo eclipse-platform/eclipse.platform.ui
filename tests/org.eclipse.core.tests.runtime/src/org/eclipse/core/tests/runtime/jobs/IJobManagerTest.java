@@ -1426,7 +1426,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		PathRule rule = new PathRule("/testTransferFailure");
 		PathRule subRule = new PathRule("/testTransferFailure/Sub");
 		Thread other = new Thread();
-		//can't transfer a rule this thread doesn't own
+		//can't transfer a rule this thread doesn't own it
 		try {
 			manager.transferRule(rule, other);
 			fail("1.0");
@@ -1474,6 +1474,21 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 
+	/**
+	 * Tests transferring a scheduling rule to the same thread
+	 */
+	public void testTransferSameThread() {
+		PathRule rule = new PathRule("testTransferSameThread");
+		try {
+			manager.beginRule(rule, null);
+			//transfer to same thread is ok
+			manager.transferRule(rule, Thread.currentThread());
+		} catch (Exception e) {
+			fail("1.0", e);
+		} finally {
+			manager.endRule(rule);
+		}
+	}
 	/**
 	 * Simple test of rule transfer
 	 */

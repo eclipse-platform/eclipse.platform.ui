@@ -212,13 +212,13 @@ class ImplicitJobs {
 		//nothing to do for null
 		if (rule == null)
 			return;
-		//ensure destination thread doesn't already have a rule
-		ThreadJob job = (ThreadJob) threadJobs.get(destinationThread);
-		Assert.isLegal(job == null);
 		final Thread currentThread = Thread.currentThread();
 		//nothing to do if transferring to the same thread
 		if (currentThread == destinationThread)
 			return;
+		//ensure destination thread doesn't already have a rule
+		ThreadJob job = (ThreadJob) threadJobs.get(destinationThread);
+		Assert.isLegal(job == null);
 		//ensure calling thread owns the job being transferred
 		job = (ThreadJob) threadJobs.get(currentThread);
 		Assert.isLegal(job != null);
