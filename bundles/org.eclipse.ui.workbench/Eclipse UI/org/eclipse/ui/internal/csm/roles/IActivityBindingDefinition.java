@@ -9,27 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities.workbench;
+package org.eclipse.ui.internal.csm.roles;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IActivityActivationServiceListener {
+public interface IActivityBindingDefinition extends Comparable {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param activityActivationServiceEvent
-	 */	
-	void activityActivationServiceChanged(IActivityActivationServiceEvent activityActivationServiceEvent);
+	String getActivityId();
+
+	String getPluginId();
+	
+	String getRoleId();	
 }
