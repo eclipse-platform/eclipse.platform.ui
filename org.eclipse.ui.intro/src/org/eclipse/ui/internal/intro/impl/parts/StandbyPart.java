@@ -30,7 +30,6 @@ public class StandbyPart {
     private ImageHyperlink returnLink;
     private Composite container;
     private Composite content;
-    //private ContextHelpStandbyPart helpPart;
     private IIntroPart introPart;
 
     // hastable has partIds as keys, and ControlKeys are values.
@@ -122,8 +121,6 @@ public class StandbyPart {
         slayout.marginWidth = slayout.marginHeight = 0;
         content.setLayout(slayout);
 
-        // By default, we always have the Context Help standby content.
-        //addContextHelpPart();
         updateReturnLinkLabel();
     }
 
@@ -133,14 +130,7 @@ public class StandbyPart {
         updateReturnLinkLabel();
         container.layout();
     }
-/*
-    private void addContextHelpPart() {
-        helpPart = new ContextHelpStandbyPart();
-        addStandbyContentPart(IIntroConstants.HELP_CONTEXT_STANDBY_PART,
-                helpPart);
-        setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
-    }
-*/
+
 
     public void setTopControl(String key) {
         cachedControlKey = getCachedContent(key);
@@ -152,7 +142,8 @@ public class StandbyPart {
     private void setTopControl(Control c) {
         StackLayout layout = (StackLayout) content.getLayout();
         layout.topControl = c;
-        if (c instanceof Composite) ((Composite) c).layout();
+        if (c instanceof Composite)
+            ((Composite) c).layout();
         content.layout();
         container.layout();
     }
@@ -180,6 +171,7 @@ public class StandbyPart {
      *  
      */
     public void dispose() {
+
         Enumeration values = cachedContentParts.elements();
         while (values.hasMoreElements()) {
             ControlKey controlKey = (ControlKey) values.nextElement();
@@ -195,7 +187,8 @@ public class StandbyPart {
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
-        if (cachedControlKey != null) cachedControlKey.getPart().setFocus();
+        if (cachedControlKey != null)
+            cachedControlKey.getPart().setFocus();
     }
 
     /**
@@ -234,7 +227,7 @@ public class StandbyPart {
      */
     private ControlKey getCachedContent(String key) {
         if (cachedContentParts.containsKey(key))
-                return (ControlKey) cachedContentParts.get(key);
+            return (ControlKey) cachedContentParts.get(key);
         return null;
     }
 

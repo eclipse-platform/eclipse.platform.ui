@@ -19,9 +19,6 @@ public interface IIntroConstants {
     String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
     String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
-    // Default Help Standby Content part. This is registered in this plugin,
-    // through markup.
-    String HELP_CONTEXT_STANDBY_PART = "org.eclipse.intro.config.contextHelp"; //$NON-NLS-1$
 
     // Form implementation consts:
     // ---------------------------

@@ -93,7 +93,9 @@ public class IntroURL implements IIntroURL {
 
             public void run() {
                 // Avoid flicker when we can. If intro is not opened, we dont
-                // want to force an open on it.
+                // want to force an open on it. Also, be careful if the execute
+                // command closes the Intro, then the control is disposed and
+                // there is no need to redraw.
                 CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                         .getIntroPart();
                 if (currentIntroPart == null)
@@ -101,7 +103,11 @@ public class IntroURL implements IIntroURL {
                 else {
                     currentIntroPart.getControl().setRedraw(false);
                     result[0] = doExecute();
-                    currentIntroPart.getControl().setRedraw(true);
+                    currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                            .getIntroPart();
+                    if (currentIntroPart != null)
+                        // no one closed it.
+                        currentIntroPart.getControl().setRedraw(true);
                 }
             }
         });
@@ -197,8 +203,7 @@ public class IntroURL implements IIntroURL {
         }
 
         // we do not have a valid partId or we failed to instantiate part or
-        // create the part content, show Context help part.
-        standbyPart.setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
+        // create the part content, do nothing.
         return false;
     }
 

@@ -50,25 +50,27 @@ public final class CustomizableIntroPart extends IntroPart {
     private StandbyPart standbyPart;
     private Composite container;
 
+    // Adapter factory to abstract out the StandbyPart implementation from APIs.
+    IAdapterFactory factory = new IAdapterFactory() {
+
+        public Class[] getAdapterList() {
+            return new Class[] { StandbyPart.class };
+        }
+
+        public Object getAdapter(Object adaptableObject, Class adapterType) {
+            if (!(adaptableObject instanceof CustomizableIntroPart))
+                return null;
+
+            if (adapterType.equals(StandbyPart.class)) {
+                return getStandbyPart();
+            } else
+                return null;
+        }
+    };
+
     public CustomizableIntroPart() {
 
         // register adapter to hide standbypart.
-        IAdapterFactory factory = new IAdapterFactory() {
-
-            public Class[] getAdapterList() {
-                return new Class[] { StandbyPart.class };
-            }
-
-            public Object getAdapter(Object adaptableObject, Class adapterType) {
-                if (!(adaptableObject instanceof CustomizableIntroPart))
-                        return null;
-
-                if (adapterType.equals(StandbyPart.class)) {
-                    return getStandbyPart();
-                } else
-                    return null;
-            }
-        };
         Platform.getAdapterManager().registerAdapters(factory,
                 CustomizableIntroPart.class);
 
@@ -96,18 +98,18 @@ public final class CustomizableIntroPart extends IntroPart {
             // we have a valid config contribution, get presentation.
             presentation = model.getPresentation();
             if (presentation != null)
-                    presentation.init(this);
+                presentation.init(this);
             standbyPart = new StandbyPart(model);
             standbyPart.init(this);
         }
 
         // REVISIT: make sure this is handled better.
         if (model == null || !model.hasValidConfig())
-                DialogUtil.displayErrorMessage(site.getShell(),
-                        "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
-                                + ModelLoaderUtil.getLogString(
-                                        getConfigurationElement(), "id") //$NON-NLS-1$
-                                + "\nCheck Log View for details.", null); //$NON-NLS-1$
+            DialogUtil.displayErrorMessage(site.getShell(),
+                    "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
+                            + ModelLoaderUtil.getLogString(
+                                    getConfigurationElement(), "id") //$NON-NLS-1$
+                            + "\nCheck Log View for details.", null); //$NON-NLS-1$
 
     }
 
@@ -179,9 +181,9 @@ public final class CustomizableIntroPart extends IntroPart {
      */
     public void setFocus() {
         if (presentation != null)
-                presentation.setFocus();
+            presentation.setFocus();
         if (standbyPart != null)
-                standbyPart.setFocus();
+            standbyPart.setFocus();
     }
 
     /*
@@ -193,11 +195,14 @@ public final class CustomizableIntroPart extends IntroPart {
         super.dispose();
         // call dispose on both parts.
         if (presentation != null)
-                presentation.dispose();
+            presentation.dispose();
         if (standbyPart != null)
-                standbyPart.dispose();
+            standbyPart.dispose();
         // clear all loaded models since we are disposing of the Intro Part.
         IntroPlugin.getDefault().getExtensionPointManager().clear();
+        // clean platform adapter.
+        Platform.getAdapterManager().unregisterAdapters(factory,
+                CustomizableIntroPart.class);
     }
 
     /**
