@@ -67,7 +67,7 @@ rendered as a single space or a line break. Whitespace immediately after the
 &lt;<b>description</b>&gt; and &lt;<b>br/</b>&gt; tags is ignored, as is
 whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <h2><code>item</code></h2>
-<pre>&lt;!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)&gt;&nbsp;
+<pre>&lt;!ELEMENT item (description ([action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*))&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
@@ -216,20 +216,20 @@ corresponding string value.</p>
 <pre>&lt;item ...&gt;&nbsp;
   &lt;repeated-subitem values=&quot;${v1}&quot;&gt;
      &lt;subitem label=&quot;Step ${this}.&quot;&gt;
-        &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;${this}&quot;/&gt;
+        &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param1=&quot;${this}&quot;/&gt;
      &lt;/subitem&gt;
   &lt;/repeated-subitem&gt;
 &lt;/item&gt;</pre>
 then the item expands to something equivalent to:
 <pre>&lt;item ...&gt;&nbsp;
   &lt;subitem label=&quot;Step 1.&quot;&gt;
-     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;1&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param1=&quot;1&quot;/&gt;
   &lt;/subitem&gt;
   &lt;subitem label=&quot;Step b.&quot;&gt;
-     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;b&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param1=&quot;b&quot;/&gt;
   &lt;/subitem&gt;
   &lt;subitem label=&quot;Step three.&quot;&gt;
-     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;three&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param1=&quot;three&quot;/&gt;
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
 <h2><code>action</code></h2>
