@@ -175,7 +175,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 					} catch (final CoreException e) {
 						ExternalToolsPlugin.getStandardDisplay().asyncExec(new Runnable() {
 							public void run() {
-								ErrorDialog.openError(null, "Failure of Background Ant Build", null, e.getStatus());
+								ErrorDialog.openError(null, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Failure"), null, e.getStatus()); //$NON-NLS-1$
 							}
 						});
 					}
