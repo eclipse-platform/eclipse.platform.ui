@@ -131,6 +131,9 @@
     <test id="usecase.ConcurrencyTest">
       <run class="org.eclipse.core.tests.resources.usecase.ConcurrencyTest"/>
     </test>
+    <test id="usecase.HistoryStorePerformanceTest">
+      <run class="org.eclipse.core.tests.resources.usecase.HistoryStorePerformanceTest"/>
+    </test>
     <test id="usecase.IFileTest">
       <run class="org.eclipse.core.tests.resources.usecase.IFileTest"/>
     </test>
