@@ -224,8 +224,11 @@ protected String getDestinationValue() {
 	String requiredSuffix = getOutputSuffix();
 	String destinationText = super.getDestinationValue();
 
-	if (!destinationText.toLowerCase().endsWith(requiredSuffix.toLowerCase()))
-		destinationText += requiredSuffix;
+	if (destinationText.length() != 0) {
+		// only append a suffix if a value has been specified for the destination
+		if (!destinationText.toLowerCase().endsWith(requiredSuffix.toLowerCase()))
+			destinationText += requiredSuffix;
+	}
 		
 	return destinationText;
 }
@@ -312,14 +315,5 @@ protected void restoreWidgetValues() {
 		compressContentsCheckbox.setSelection(
 			settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));
 	}
-}
-
-/**
- * The <code>WizardZipFileResourceExportPage1</code> implementation of this
- * <code>WizardFileSystemResourceExportPage1</code> method simply returns
- * <code>null</code>, since zip files have no restrictions on destination container.
- */
-protected String getConflictingContainerNameFor(String testString){
-	return null;
 }
 }
