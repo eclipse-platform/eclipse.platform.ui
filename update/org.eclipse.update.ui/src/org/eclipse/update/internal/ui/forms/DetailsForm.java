@@ -561,6 +561,8 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private boolean getUninstallButtonVisibility() {
+		/*
+		 * We will not allow uninstalls for now.
 		if (currentFeature instanceof MissingFeature)
 			return false;
 		if (currentAdapter == null || currentAdapter.isIncluded())
@@ -572,6 +574,7 @@ public class DetailsForm extends PropertyWebForm {
 			boolean configured = isConfigured();
 			return !configured;
 		}
+		*/
 		return false;
 	}
 
