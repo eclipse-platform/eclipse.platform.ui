@@ -104,7 +104,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 			IConfigurationElement[] labels = getConfigurationElement().getChildren("contextLabel"); //$NON-NLS-1$
 			fContextLabels = new ArrayList(labels.length);
 			for (int i = 0; i < labels.length; i++) {
-				fContextLabels.add(new Pair(labels[i].getAttribute("mode"),
+				fContextLabels.add(new Pair(labels[i].getAttribute("mode"), //$NON-NLS-1$
 						labels[i].getAttribute("label"))); //$NON-NLS-1$
 			}
 		}
@@ -146,7 +146,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	/**
 	 * Returns all of the filter elements of this shortcut as a List of String Pairs.
 	 * 
-	 * @return all of the filter elements of this shortcut., or <code>null</code> if not
+	 * @return all of the filter elements of this shortcut, or <code>null</code> if not
 	 *  specified
 	 */
 	public /* <Pair> */ List getFilters() {
@@ -154,7 +154,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 			IConfigurationElement[] filters = getConfigurationElement().getChildren("filter"); //$NON-NLS-1$
 			fFilters = new ArrayList(filters.length);
 			for (int i = 0; i < filters.length; i++) {
-				fFilters.add(new Pair(filters[i].getAttribute("name"),
+				fFilters.add(new Pair(filters[i].getAttribute("name"), //$NON-NLS-1$
 						filters[i].getAttribute("value"))); //$NON-NLS-1$
 			}
 		}
