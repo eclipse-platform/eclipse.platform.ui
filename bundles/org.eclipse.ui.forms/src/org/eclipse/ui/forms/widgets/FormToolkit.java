@@ -688,6 +688,6 @@ public class FormToolkit {
 				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 					borderStyle = SWT.BORDER;
 			}
-		}		
+		}
 	}
 }
