@@ -33,8 +33,6 @@ abstract public class TeamSubscriber {
 	
 	private List listeners = new ArrayList(1);
 	
-	static private ISubscriberManager instance;
-	
 	/**
 	 * Return the subscriber manager which provides access and control of the
 	 * team subscribers.
