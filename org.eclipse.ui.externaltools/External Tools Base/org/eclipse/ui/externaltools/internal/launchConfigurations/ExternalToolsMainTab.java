@@ -17,10 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -374,7 +374,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @exception CoreException if variable substitution fails
 	 */
 	private String getValue(String expression) throws CoreException {
-		IStringVariableManager manager = DebugPlugin.getDefault().getStringVariableManager();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		return manager.performStringSubstitution(expression);
 	}
 
@@ -435,7 +435,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	}
 	
 	protected String newVariableExpression(String varName, String arg) {
-		return DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
+		return VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
 	}
 	
 	/**

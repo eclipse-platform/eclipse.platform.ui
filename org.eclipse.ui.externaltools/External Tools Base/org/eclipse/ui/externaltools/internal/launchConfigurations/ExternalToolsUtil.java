@@ -25,9 +25,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
@@ -167,7 +168,7 @@ public class ExternalToolsUtil {
 	}
 
 	private static IStringVariableManager getStringVariableManager() {
-		return DebugPlugin.getDefault().getStringVariableManager();
+		return VariablesPlugin.getDefault().getStringVariableManager();
 	}
 	
 	/**

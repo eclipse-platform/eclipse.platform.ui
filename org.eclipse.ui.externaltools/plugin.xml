@@ -14,6 +14,7 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
@@ -182,7 +183,7 @@
    </extension>
 <!-- Dynamic (String Substitution) Variables -->	
    <extension
-         point="org.eclipse.debug.core.dynamicVariables">
+         point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="build_type"
             resolver="org.eclipse.ui.externaltools.internal.variables.BuildTypeResolver"
