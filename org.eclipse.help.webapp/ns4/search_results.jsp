@@ -29,8 +29,6 @@ function refresh()
 <style type="text/css">
 BODY {
 	font: 8pt Tahoma;
-	padding:0;
-	border:0;
 }
 
 
@@ -151,21 +149,13 @@ setTimeout('refresh()', 2000);
 
 <%
 }else{
+	out.write("<table><tr><td><p style='padding-left:5px; padding-right:15px;'>");
 	out.write(WebappResources.getString("doSearch", request));
+	out.write("</p></td></tr></table>");
 }
 
-// Highlight topic
-String topic = request.getParameter("topic");
-if (topic != null && topic.startsWith("/"))
-	topic = request.getContextPath() + "/content/help:" + topic;
 %>
 
-<script language="JavaScript">
-/*
-var topic = window.location.protocol + "//" +window.location.host + '<%=topic%>';
-selectTopic(topic);
-*/
-</script>
 
 </body>
 </html>
