@@ -77,4 +77,5 @@ public interface IHelpUIConstants {
 	static final int ADD = 1;
 	static final int REMOVE = 2;
 	static final int CHANGE = 3;
+	static final String INTERNAL_HELP_ID = "org.eclipse.help.ui.localSearch";//$NON-NLS-1$
 }
