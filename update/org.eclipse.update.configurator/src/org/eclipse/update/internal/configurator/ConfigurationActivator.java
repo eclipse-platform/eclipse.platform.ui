@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,10 @@ public class ConfigurationActivator implements BundleActivator {
 					Utils.log("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
 				}
 			}
-			ArrayList installed = new ArrayList(plugins.length);
+			
+			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
+			List toRefresh = getUnresolvedBundles();
+
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
 				try {
@@ -191,7 +194,8 @@ public class ConfigurationActivator implements BundleActivator {
 						if (DEBUG)
 							Utils.debug("Installing " + location);
 						Bundle target = context.installBundle(location);
-						installed.add(target);
+						// any new bundle should be refreshed as well
+						toRefresh.add(target);
 						if (start != null)
 							start.setBundleStartLevel(target, 4);
 					}
@@ -202,7 +206,7 @@ public class ConfigurationActivator implements BundleActivator {
 				}
 			}
 			context.ungetService(reference);
-			refreshPackages((Bundle[]) installed.toArray(new Bundle[installed.size()]));
+			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			if (System.getProperty("eclipse.application") == null || System.getProperty("eclipse.application").equals(PlatformConfiguration.RECONCILER_APP))
 				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
 			//			if (config.getApplicationIdentifier().equals(PlatformConfiguration.RECONCILER_APP) ) {
@@ -219,6 +223,14 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 	}
 
+	private List getUnresolvedBundles() {
+		Bundle[] allBundles = context.getBundles();
+		List unresolved = new ArrayList(); 
+		for (int i = 0; i < allBundles.length; i++)
+			if (allBundles[i].getState() == Bundle.INSTALLED)
+				unresolved.add(allBundles[i]);
+		return unresolved;
+	}
 
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		ArrayList bundlesToUninstall = new ArrayList();
