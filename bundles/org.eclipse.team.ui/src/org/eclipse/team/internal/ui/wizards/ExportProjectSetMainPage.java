@@ -59,6 +59,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
+		setDescription(Policy.bind("ExportProjectSetMainPage.description")); //$NON-NLS-1$
 	}
 
 	/*

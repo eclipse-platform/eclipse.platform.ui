@@ -50,6 +50,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 
 	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
+		setDescription(Policy.bind("ImportProjectSetMainPage.description")); //$NON-NLS-1$
 	}
 	
 	/*

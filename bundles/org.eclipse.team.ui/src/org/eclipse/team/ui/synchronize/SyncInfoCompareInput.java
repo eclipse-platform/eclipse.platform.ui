@@ -206,7 +206,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return Policy.bind("SyncInfoCompareInput.tooltip", description, node.getResource().getFullPath().toString()); //$NON-NLS-1$
+		return Policy.bind("SyncInfoCompareInput.tooltip", Utils.shortenText(30, description), node.getResource().getFullPath().toString()); //$NON-NLS-1$
 	}
 
 	/*
