@@ -83,7 +83,13 @@ public class UILockListener extends LockListener {
 			if (currentWork != null && currentWork.getOperationThread() == lockOwner)
 				return true;
 			ui = Thread.currentThread();
-			doPendingWork();
+			try {
+			    doPendingWork();
+			} finally {
+			    //UI field may be nulled if there is a nested wait during execution
+			    //of pending work, so make sure it is assigned before we start waiting
+			    ui = Thread.currentThread();
+			}
 		}
 		return false;
 	}
