@@ -16,11 +16,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class UneditAction extends WorkspaceAction {
@@ -29,6 +31,11 @@ public class UneditAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		
+		if(! MessageDialog.openConfirm(getShell(), Policy.bind("Uneditaction.confirmTitle"), Policy.bind("Uneditaction.confirmMessage"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				executeProviderAction(new IProviderAction() {
