@@ -412,6 +412,8 @@
                class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
                disabledIcon="icons/full/dtool16/last_edit_pos.gif"
+               style="toggle"
+               state="false"
                icon="icons/full/etool16/last_edit_pos.gif"
                helpContextId="goto_last_edit_position_action_context"
                label="%goToLastEditPosition.label"
