@@ -267,8 +267,8 @@ protected void constrainShellSize() {
 	
 	// move the shell origin as required
 	Point loc = shell.getLocation();
-	int x = Math.max(0, Math.min(loc.x, bounds.width - size.x));
-	int y = Math.max(0, Math.min(loc.y, bounds.height - size.y));
+	int x = Math.max(bounds.x, Math.min(loc.x, bounds.width - size.x));
+	int y = Math.max(bounds.y, Math.min(loc.y, bounds.height - size.y));
 	shell.setLocation(x, y);
 }
 /**
