@@ -618,8 +618,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (nodeListeners == null)
 			return;
 		Object[] listeners = nodeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++)
-			((INodeChangeListener) listeners[i]).added(new NodeChangeEvent(this, child));
+		for (int i = 0; i < listeners.length; i++) {
+			final NodeChangeEvent event = new NodeChangeEvent(this, child);
+			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already logged in Platform#run()
+				}
+				public void run() throws Exception {
+					listener.added(event);
+				}
+			};
+			Platform.run(job);
+		}
 	}
 
 	/*
@@ -654,9 +665,20 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected void nodeRemoved(IEclipsePreferences child) {
 		if (nodeListeners == null)
 			return;
-		Object[] listeners = nodeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++)
-			((INodeChangeListener) listeners[i]).removed(new NodeChangeEvent(this, child));
+		final Object[] listeners = nodeListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final NodeChangeEvent event = new NodeChangeEvent(this, child);
+			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already being logged in Platform#run()
+				}
+				public void run() throws Exception {
+					listener.removed(event);
+				}
+			};
+			Platform.run(job);
+		}
 	}
 
 	/*
@@ -675,8 +697,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (preferenceListeners == null)
 			return;
 		Object[] listeners = preferenceListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++)
-			((IPreferenceChangeListener) listeners[i]).preferenceChange(new PreferenceChangeEvent(this, key, oldValue, newValue));
+		for (int i = 0; i < listeners.length; i++) {
+			final PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
+			final IPreferenceChangeListener listener = (IPreferenceChangeListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already logged in Platform#run()
+				}
+				public void run() throws Exception {
+					listener.preferenceChange(event);
+				}
+			};
+			Platform.run(job);
+		}
 	}
 
 	/*

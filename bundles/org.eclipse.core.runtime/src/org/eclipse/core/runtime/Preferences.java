@@ -477,17 +477,23 @@ public class Preferences {
 	 *    relevant
 	 */
 	protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-
-		if (name == null) {
+		if (name == null)
 			throw new IllegalArgumentException();
-		}
 		Object[] changeListeners = this.listeners.getListeners();
 		// Do we even need to fire an event?
 		if (changeListeners.length > 0) {
-			PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
+			final PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
 			for (int i = 0; i < changeListeners.length; ++i) {
-				IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
-				l.propertyChange(pe);
+				final IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
+				ISafeRunnable job = new ISafeRunnable() {
+					public void handleException(Throwable exception) {
+						// already being logged in Platform#run()
+					}
+					public void run() throws Exception {
+						l.propertyChange(pe);
+					}
+				};
+				Platform.run(job);
 			}
 		}
 	}
