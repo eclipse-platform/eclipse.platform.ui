@@ -554,9 +554,8 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				button.setToolTipText(action.getToolTipText());
 				
-			boolean b = action.isEnabled();	
-			if (enableStateChanged && button.getEnabled() != b)
-				button.setEnabled(b);
+			if (enableStateChanged && button.getEnabled() != shouldBeEnabled)
+				button.setEnabled(shouldBeEnabled);
 				
 			if (checkChanged) {
 				boolean bv = action.isChecked();
