@@ -9,7 +9,16 @@
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,12 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * The ProgressMonitorJobsDialog is the progress monitor dialog used by the
  * progress service to allow locks to show the current jobs.
@@ -40,7 +43,17 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	private int viewerHeight = -1;
 	Composite viewerComposite;
 	private Button detailsButton;
+
+	//These are booleans that are used to check if the runnable in
+	//the receiver is still progressing. When watchingTicks is true
+	//and change to task name or incrementing of values will set
+	//tickOccured to true.
+	private boolean watchingTicks = false;
+	private boolean tickOccured = false;
 	
+	private boolean alreadyClosed = false;
+	private IProgressMonitor wrapperedMonitor;
+
 	//Cache initial enablement in case the enablement state is set
 	//before the button is created
 	protected boolean enableDetailsButton = false;
@@ -236,10 +249,11 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		super.run(fork, cancelable, runnable);
 	}
 	/**
-	 * Set the enable state of the details button now or 
-	 * when it will be created.
-	 * @param enableState a boolean to indicate the preferred'
-	 * state
+	 * Set the enable state of the details button now or when it will be
+	 * created.
+	 * 
+	 * @param enableState
+	 *            a boolean to indicate the preferred' state
 	 */
 	protected void enableDetails(boolean enableState) {
 		if (detailsButton == null)
@@ -247,4 +261,186 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		else
 			detailsButton.setEnabled(enableState);
 	}
+
+	/**
+	 * Return true if bother watchingTicks and ticksOccured is true. If not
+	 * watchingTicks already start after this is called.
+	 * 
+	 * @return boolean <code>true</code> if tickOccured has been set.
+	 */
+	public boolean isTicking() {
+
+		if (watchingTicks) {
+			if (tickOccured) {//If we have the tick reset the state
+				watchingTicks = false;
+				tickOccured = false;
+				return true;
+			}
+			return false;
+		}
+		watchingTicks = true;
+		return false;
+	}
+
+	/**
+	 * Create a monitor for the receiver that wrappers the superclasses monitor.
+	 *  
+	 */
+	public void createWrapperedMonitor() {
+		wrapperedMonitor = new IProgressMonitorWithBlocking() {
+
+			IProgressMonitor superMonitor = ProgressMonitorJobsDialog.super
+					.getProgressMonitor();
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+			 *      int)
+			 */
+			public void beginTask(String name, int totalWork) {
+				superMonitor.beginTask(name, totalWork);
+				checkTicking();
+			}
+
+			/**
+			 * Check if a tick occurred.
+			 */
+			private void checkTicking() {
+				if (watchingTicks)
+					tickOccured = true;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#done()
+			 */
+			public void done() {
+				superMonitor.done();
+				checkTicking();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+			 */
+			public void internalWorked(double work) {
+				superMonitor.internalWorked(work);
+				checkTicking();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+			 */
+			public boolean isCanceled() {
+				return superMonitor.isCanceled();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+			 */
+			public void setCanceled(boolean value) {
+				superMonitor.setCanceled(value);
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+			 */
+			public void setTaskName(String name) {
+				superMonitor.setTaskName(name);
+				checkTicking();
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+			 */
+			public void subTask(String name) {
+				superMonitor.subTask(name);
+				checkTicking();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+			 */
+			public void worked(int work) {
+				superMonitor.worked(work);
+				checkTicking();
+
+			}
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+			 */
+			public void clearBlocked() {
+				//We want to open on blocking too
+				if (superMonitor instanceof IProgressMonitorWithBlocking)
+					((IProgressMonitorWithBlocking) superMonitor)
+							.clearBlocked();
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+			 */
+			public void setBlocked(IStatus reason) {
+				//Assume we are watching as we want the dialog to open
+				watchingTicks = true;
+				checkTicking();
+				if (superMonitor instanceof IProgressMonitorWithBlocking)
+					((IProgressMonitorWithBlocking) superMonitor)
+							.setBlocked(reason);
+
+			}
+
+		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#getProgressMonitor()
+	 */
+	public IProgressMonitor getProgressMonitor() {
+		if (wrapperedMonitor == null)
+			createWrapperedMonitor();
+		return wrapperedMonitor;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
+	 */
+	public boolean close() {
+		boolean result = super.close();
+		if (result) {//As this sometimes delayed cache if it was already closed
+			alreadyClosed = true;
+			watchingTicks = false;
+		}
+		return result;
+	}
+	/**
+	 * Return <code>true</true> if the close() method was already called.
+	 * @return the closed state
+	 */
+	public boolean isAlreadyClosed() {
+		return alreadyClosed;
+	}
+
 }

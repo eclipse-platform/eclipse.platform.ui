@@ -821,8 +821,9 @@ public class ProgressManager extends ProgressProvider
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				setUserInterfaceActive(true);
 
-				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this,dialog))
 					return Status.CANCEL_STATUS;
+				dialog.setOpenOnRun(true);
 				dialog.open();
 				return Status.OK_STATUS;
 			}

@@ -201,16 +201,29 @@ public class ProgressManagerUtil {
 	}
 	/**
 	 * If there are any modal shells open reschedule openJob to wait until they
-	 * are closed. Return true if it rescheduled, false if there is nothing
-	 * blocking it.
+	 * are closed. If the operation in jobsDialog is running then open
+	 * regardless as it is not being blocked by the jobs dialog.
+	 * Return true if it rescheduled, false if there is nothing blocking it.
 	 * 
 	 * @param openJob
-	 * @return boolean. true if the job was rescheduled due to modal dialogs.
+	 * @param jobsDialog The dialog that is running a job. If it is still
+	 * ticking then open away as it is not being blocked by the open dialog.
+	 * May be <code>null</code>.
+	 * @return boolean. true if the job was rescheduled due to modal dialogs
+	 * or if it should not open at all as the operation is done.
 	 */
-	public static boolean rescheduleIfModalShellOpen(Job openJob) {
+	public static boolean rescheduleIfModalShellOpen(Job openJob,ProgressMonitorJobsDialog jobsDialog) {
 		Shell modal = getModalShell();
 		if (modal == null)
 			return false;
+		
+		//If ticks are going on don't block.
+		if(jobsDialog != null){
+			if(jobsDialog.isAlreadyClosed())//Just abort if it is closed
+				return true;
+			if(jobsDialog.isTicking())//open if it is still alive
+				return false;		
+		}
 
 		//try again in a few seconds
 		openJob.schedule(PlatformUI.getWorkbench().getProgressService()

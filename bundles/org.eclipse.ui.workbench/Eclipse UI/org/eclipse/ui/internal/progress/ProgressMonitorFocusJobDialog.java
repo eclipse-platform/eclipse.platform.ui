@@ -348,7 +348,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					return Status.CANCEL_STATUS;
 				
 				//now open the progress dialog if nothing else is
-				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this,ProgressMonitorFocusJobDialog.this))
 					return Status.CANCEL_STATUS;
 
 				//Do not bother if the parent is disposed
