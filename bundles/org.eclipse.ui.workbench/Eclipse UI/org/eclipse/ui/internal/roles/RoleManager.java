@@ -24,6 +24,12 @@ import java.util.Set;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -37,9 +43,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * RoleManager is the type that defines and filters based on
- * role.
- */
+ * RoleManager is the type that defines and filters based on role. */
 public class RoleManager {
 
 	private static RoleManager singleton;
@@ -48,6 +52,8 @@ public class RoleManager {
 	private Role[] roles = new Role[0];
 	private Hashtable activities = new Hashtable();
 	private Hashtable patternBindings = new Hashtable();
+
+	private IResourceChangeListener listener;
 
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
@@ -62,37 +68,43 @@ public class RoleManager {
 
 	}
 
-    /**
-     * Apply default pattern bindings to the objects governed by the given 
-     * manager.
-     * 
-     * @param manager
-     */
-    public void applyPatternBindings(ObjectActivityManager manager) {
-        Set keys = manager.getObjectIds();
-        for (Iterator i = keys.iterator(); i.hasNext();) {            
-            ObjectContributionRecord record = (ObjectContributionRecord) i.next();
-            String objectKey = record.toString();
-            for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext(); ) {
-                Map.Entry patternEntry = (Map.Entry)j.next();
-                if (objectKey.matches((String)patternEntry.getKey())) {
-                    Collection activityIds = (Collection) patternEntry.getValue();
-                    for (Iterator k = activityIds.iterator(); k.hasNext(); ) {
-                        String activityId = (String) k.next();
-                        if (getActivity(activityId) != null) {
-                           manager.addActivityBinding(record, activityId);                       
-                        }
-                    }
-                }
-            }            
-        }            
-    }    
+	public static void shutdown() {
+		if (singleton == null)
+			return;
+		WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(singleton.listener);
+	}
 
 	/**
-	 * Read the roles from the primary feature. If there is no
-	 * roles file then disable filter roles and leave. Otherwise
-	 * read the contents of the file and define the roles 
-	 * for the workbench.
+	 * Apply default pattern bindings to the objects governed by the given
+	 * manager.
+	 * 
+	 * @param manager
+	 */
+	public void applyPatternBindings(ObjectActivityManager manager) {
+		Set keys = manager.getObjectIds();
+		for (Iterator i = keys.iterator(); i.hasNext();) {
+			ObjectContributionRecord record = (ObjectContributionRecord) i.next();
+			String objectKey = record.toString();
+			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
+				Map.Entry patternEntry = (Map.Entry) j.next();
+				if (objectKey.matches((String) patternEntry.getKey())) {
+					Collection activityIds = (Collection) patternEntry.getValue();
+					for (Iterator k = activityIds.iterator(); k.hasNext();) {
+						String activityId = (String) k.next();
+						if (getActivity(activityId) != null) {
+							manager.addActivityBinding(record, activityId);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Read the roles from the primary feature. If there is no roles file then
+	 * disable filter roles and leave. Otherwise read the contents of the file
+	 * and define the roles for the workbench.
+	 * 
 	 * @return boolean true if successful
 	 */
 	private boolean readRoles() {
@@ -138,22 +150,32 @@ public class RoleManager {
 
 	/**
 	 * Report the Exception to the log and turn off the filtering.
+	 * 
 	 * @param e
 	 */
 	private void reportError(Exception e) {
-		IStatus error = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
+		IStatus error =
+			new Status(
+				IStatus.ERROR,
+				PlatformUI.PLUGIN_ID,
+				IStatus.ERROR,
+				e.getLocalizedMessage(),
+				e);
 		WorkbenchPlugin.getDefault().getLog().log(error);
 		filterRoles = false;
 	}
 
 	private RoleManager() {
-		if (readRoles())
+		if (readRoles()) {
 			loadEnabledStates();
+			listener = getChangeListener();
+			WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
+		}
+
 	}
 
 	/**
-	 * Loads the enabled states from the preference store.
-	 */
+	 * Loads the enabled states from the preference store. */
 	void loadEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
@@ -170,8 +192,7 @@ public class RoleManager {
 	}
 
 	/**
-	 * Save the enabled states in he preference store.
-	 */
+	 * Save the enabled states in he preference store. */
 	void saveEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
@@ -185,6 +206,7 @@ public class RoleManager {
 
 	/**
 	 * Create the preference key for the activity.
+	 * 
 	 * @param activity
 	 * @return String
 	 */
@@ -193,12 +215,13 @@ public class RoleManager {
 	}
 
 	/**
-	 * Return whether or not the id is enabled. If there is a role
-	 * whose pattern matches the id return whether or not the role is
-	 * enabled. If there is no match return true;
-     * TODO:  replace with usage of ObjectActivityManager.getActiveObjects()
+	 * Return whether or not the id is enabled. If there is a role whose
+	 * pattern matches the id return whether or not the role is enabled. If
+	 * there is no match return true; TODO: replace with usage of
+	 * ObjectActivityManager.getActiveObjects()
+	 * 
 	 * @param id
-	 * @return boolean. 
+	 * @return boolean.
 	 */
 	public boolean isEnabledId(String id) {
 
@@ -224,6 +247,7 @@ public class RoleManager {
 
 	/**
 	 * Return the roles currently defined.
+	 * 
 	 * @return
 	 */
 	public Role[] getRoles() {
@@ -231,8 +255,8 @@ public class RoleManager {
 	}
 
 	/**
-	 * Return whether or not the filtering is currently
-	 * enabled.
+	 * Return whether or not the filtering is currently enabled.
+	 * 
 	 * @return boolean
 	 */
 	public boolean isFiltering() {
@@ -240,8 +264,8 @@ public class RoleManager {
 	}
 
 	/**
-	 * Set whether or not the filtering is currently
-	 * enabled.
+	 * Set whether or not the filtering is currently enabled.
+	 * 
 	 * @param boolean
 	 */
 	public void setFiltering(boolean value) {
@@ -249,8 +273,9 @@ public class RoleManager {
 	}
 
 	/**
-	 * Return the activity with id equal to activityId.
-	 * Return <code>null</code> if not found.
+	 * Return the activity with id equal to activityId. Return <code>null</code>
+	 * if not found.
+	 * 
 	 * @param activityId
 	 * @return Activity or <code>null</code>
 	 */
@@ -261,10 +286,11 @@ public class RoleManager {
 			return null;
 	}
 
-	/** 
-	 * Enable any activity for which there is a pattern
-	 * binding that matches id.
-     * TODO: replace with usage of ObjectActivityManager.setEnablementFor(bool)
+	/**
+	 * Enable any activity for which there is a pattern binding that matches
+	 * id. TODO: replace with usage of
+	 * ObjectActivityManager.setEnablementFor(bool)
+	 * 
 	 * @param id
 	 */
 	public void enableActivities(String id) {
@@ -288,9 +314,44 @@ public class RoleManager {
 	}
 
 	/**
-	 * @return the set of Activity objects.
-	 */
-	Collection getActivities() {		
+	 * @return the set of Activity objects. */
+	Collection getActivities() {
 		return activities.values();
+	}
+
+	private IResourceChangeListener getChangeListener() {
+		return new IResourceChangeListener() {
+			/*
+			 * (non-Javadoc) @see
+			 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+			 */
+			public void resourceChanged(IResourceChangeEvent event) {
+
+				IResourceDelta mainDelta = event.getDelta();
+				//Has the root changed?
+				if (mainDelta.getKind() == IResourceDelta.CHANGED
+					&& mainDelta.getResource().getType() == IResource.ROOT) {
+
+					try {
+						IResourceDelta[] children = mainDelta.getAffectedChildren();
+						for (int i = 0; i < children.length; i++) {
+							IResourceDelta delta = children[i];
+							if (delta.getResource().getType() == IResource.PROJECT
+								&& delta.getKind() == IResourceDelta.ADDED) {
+								IProject project = (IProject) delta.getResource();
+								String[] ids = project.getDescription().getNatureIds();
+								for (int j = 0; j < ids.length; j++) {
+									enableActivities(ids[j]);
+								}
+							}
+						}
+
+					} catch (CoreException exception) {
+						//Do nothing if there is a CoreException
+					}
+				}
+
+			}
+		};
 	}
 }

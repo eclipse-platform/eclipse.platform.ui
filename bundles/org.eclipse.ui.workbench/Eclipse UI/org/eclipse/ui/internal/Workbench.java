@@ -143,6 +143,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -2310,6 +2311,7 @@ public class Workbench
 		JFaceColors.disposeColors();
 		if (getDecoratorManager() != null)
 			 ((DecoratorManager) getDecoratorManager()).shutdown();
+		RoleManager.shutdown();
 	}
 
 	/**
