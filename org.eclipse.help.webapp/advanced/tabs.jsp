@@ -72,13 +72,14 @@ if (data.isIE()){
 .separator {
 	height:100%;
 	background-color:ThreeDShadow;
-	border-bottom:1px solid <%=prefs.getViewBackground()%>;
+	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
 }
 
 .separator_pressed {
 	height:100%;
 	background-color:ThreeDShadow;
-	border-bottom:1px solid <%=prefs.getViewBackground()%>;
+	Xborder-top:1px solid <%=prefs.getToolbarBackground()%>;
+	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
 }
 
 A {
