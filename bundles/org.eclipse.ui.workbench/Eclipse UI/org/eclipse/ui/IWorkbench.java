@@ -210,6 +210,7 @@ public interface IWorkbench {
      * API under construction and subject to change at any time.
      * </p>
      *
+     * @return the local working set manager
      * @since 3.1
      */
     public ILocalWorkingSetManager createLocalWorkingSetManager();

@@ -48,7 +48,8 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * which identifies the preferred editor type to be opened when <code>openEditor</code>
      * is called.
      * 
-     * @see #openEditor
+     * @see #openEditor(IEditorInput, String)
+     * @see #openEditor(IEditorInput, String, boolean)
      * @deprecated in 3.0 since the notion of markers this is not generally
      *             applicable. Use the IDE-specific constant <code>IDE.EDITOR_ID_ATTR</code>.
      */
@@ -318,6 +319,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * Returns the editor with the specified input. Returns null if there is no
      * opened editor with that input.
      * 
+     * @param input the editor input
      * @return an editor with input equals to <code>input</code>
      */
     public IEditorPart findEditor(IEditorInput input);
@@ -427,6 +429,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * static variable is often used to identify the action set id in caller
      * code.
      * </p>
+     * @param actionSetID the action set to hide
      */
     public void hideActionSet(String actionSetID);
 
@@ -450,7 +453,8 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     /**
      * Returns whether the specified part is visible.
      * 
-     * @return boolean true if part is visible
+     * @param part the part to test
+     * @return boolean <code>true</code> if part is visible
      */
     public boolean isPartVisible(IWorkbenchPart part);
 
@@ -664,6 +668,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * static variable is often used to identify the action set id in caller
      * code.
      * </p>
+     * @param actionSetID the action set to show
      */
     public void showActionSet(String actionSetID);
 
@@ -711,10 +716,12 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
             throws PartInitException;
 
     /**
-     * Returns true if the editor is pinned and should not be reused.
-     * 
-     * @return boolean
-     */
+	 * Returns <code>true</code> if the editor is pinned and should not be
+	 * reused.
+	 * 
+	 * @param editor the editor to test
+	 * @return boolean whether the editor is pinned
+	 */
     public boolean isEditorPinned(IEditorPart editor);
 
     /**
@@ -734,6 +741,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * 
      * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
      * 
+     * @param openEditors the threshold
      * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
      *             instead.
      */
@@ -745,6 +753,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * visited making it easier to the user to move back and forward without
      * losing context.
      * 
+     * @return the navigation history
      * @since 2.1
      */
     public INavigationHistory getNavigationHistory();
