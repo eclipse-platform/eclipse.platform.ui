@@ -80,6 +80,26 @@
           name="Synchronize File System Provider"
           id="org.eclipse.team.examples.filesystem.synchronizeWizard"/>
  </extension>
+ 
+ <extension
+         point="org.eclipse.team.ui.synchronizeParticipants">
+      <participant
+            persistent="false"
+            icon="icons/full/wizards/synced.gif"
+            class="org.eclipse.team.examples.localhistory.LocalHistoryParticipant"
+            name="Latest From Local History"
+            id="org.eclipse.team.synchronize.example"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.team.ui.synchronizeWizards">
+      <wizard
+            class="org.eclipse.team.examples.localhistory.LocalHistorySynchronizeWizard"
+            icon="icons/full/wizards/synced.gif"
+            description="ExampleSynchronizeSupport.wizard1"
+            name="Latest From Local History Synchronize"
+            id="ExampleSynchronizeSupport.wizard1"/>
+   </extension>
       
 <!-- =================================================================================== -->
 <!-- Menus for File System Example														 -->
