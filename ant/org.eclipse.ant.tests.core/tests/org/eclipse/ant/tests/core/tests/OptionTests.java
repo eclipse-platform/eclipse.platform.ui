@@ -397,4 +397,16 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("Incorrect inputhandler", false);
 	}
 	
+	/**
+	 * Tests the "-inputhandler" option with a test input handler
+	 */
+	public void testInputHandler() throws CoreException {
+		
+		run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.inputHandlers.AntTestInputHandler"});
+		assertSuccessful();
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));
+		
+	}
+	
 }
