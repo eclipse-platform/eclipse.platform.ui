@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
