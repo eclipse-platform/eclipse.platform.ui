@@ -26,6 +26,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -262,6 +263,27 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 * @see org.eclipse.jface.text.IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
+	    Rectangle displayBounds = control.getDisplay().getClientArea();
+	    
+	    Point absoluteLoc = control.toDisplay(location);
+	    absoluteLoc.x = absoluteLoc.x < 0 ? displayBounds.x + 25 : absoluteLoc.x;
+	    absoluteLoc.y = absoluteLoc.y < 0 ? displayBounds.y + 25 : absoluteLoc.y;
+	    location = control.toControl(absoluteLoc);
+	    
+	    Point shellSize = shell.getSize();
+	    boolean shellSizeChanged = false;
+	    if (shellSize.x + absoluteLoc.x > displayBounds.width) {
+	        shellSize.x = displayBounds.width - absoluteLoc.x;
+	        shellSizeChanged = true;
+	    }
+	    if (shellSize.y + absoluteLoc.y > displayBounds.height) {
+	        shellSize.y = displayBounds.height - absoluteLoc.y;
+	        shellSizeChanged = true;
+	    }
+	    if (shellSizeChanged) {
+	        shell.setSize(shellSize);
+	    }
+
 		shell.setLocation(location);		
 	}
 	
