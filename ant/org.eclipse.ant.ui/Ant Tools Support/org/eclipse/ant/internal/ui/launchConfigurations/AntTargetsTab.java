@@ -25,9 +25,11 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -493,7 +495,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				    context= getLaunchConfigurationDialog();
 				}
 
-				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, AntUtil.getFileForLocation(expandedLocation, null));
+				ISchedulingRule rule= null;
+				if (!ResourcesPlugin.getWorkspace().isTreeLocked()) {
+					//only set a scheduling rule if not in a resource change callback
+					rule= AntUtil.getFileForLocation(expandedLocation, null);
+				}
+				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, rule);
 			} catch (CoreException ce) {
 				exceptions[0]= ce;
 			} catch (InvocationTargetException e) {
