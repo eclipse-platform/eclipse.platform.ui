@@ -52,7 +52,7 @@ public class AntTemplateAccess {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new TemplateStore(AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore= new TemplateStore(getContextTypeRegistry(),AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
 			} catch (IOException e) {
