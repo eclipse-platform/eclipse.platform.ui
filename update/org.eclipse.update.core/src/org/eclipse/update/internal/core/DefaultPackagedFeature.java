@@ -1,5 +1,6 @@
 package org.eclipse.update.internal.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -39,7 +40,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	public String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall) {
 		String[] names = new String[pluginsToInstall.length];
 		for (int i=0; i<pluginsToInstall.length;i++){
-			names[i] = pluginsToInstall[i].getIdentifier().toString();
+			names[i] = pluginsToInstall[i].getIdentifier().toString()+".jar";
 		}
 		return names;
 	}
@@ -51,11 +52,20 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
 		try {
-			String filePath = siteURL.getPath()+pluginEntry.toString()+".jar";
-			if (currentOpenJarFile!=null & !currentOpenJarFile.getName().equals(filePath)){
-				currentOpenJarFile.close();
-				currentOpenJarFile = new JarFile(filePath);
-			}			
+			String filePath = siteURL.getHost()+":"+siteURL.getPath()+pluginEntry.getIdentifier().toString()+".jar";
+			if (currentOpenJarFile!=null){
+					if (!currentOpenJarFile.getName().equals(filePath)){
+						currentOpenJarFile.close();
+						currentOpenJarFile = new JarFile(filePath);						
+					} else {
+						// same file do nothing
+					}
+			} else {
+				currentOpenJarFile = new JarFile(filePath);											
+			}
+			
+			
+							
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
 			result = currentOpenJarFile.getInputStream(entry);
 		} catch (MalformedURLException e){
@@ -76,12 +86,15 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		JarFile jarFile = null;
 		String[] result = null;
 		try {
-			jarFile = new JarFile(siteURL.getPath()+pluginEntry.toString()+".jar");
+			String jarPath = pluginEntry.getIdentifier().toString()+".jar";
+			URL jarURL= new URL(siteURL,jarPath);			
+			jarFile = new JarFile(siteURL.getHost()+":"+jarURL.getPath());
 			result = new String[jarFile.size()];
 			Enumeration enum = jarFile.entries();
 			int loop = 0;
 			while (enum.hasMoreElements()){
-				result[loop] = (String)enum.nextElement();
+				ZipEntry nextEntry = (ZipEntry)enum.nextElement();
+				result[loop] = (String)nextEntry.getName();
 				loop++;
 			}
 			jarFile.close();

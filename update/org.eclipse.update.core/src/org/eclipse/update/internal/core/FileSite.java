@@ -25,7 +25,7 @@ public class FileSite extends URLSite {
 
 
 	private String getPath(){
-		return getURL().getPath();
+		return getURL().getHost()+":"+getURL().getPath();
 	}
 
 
@@ -46,6 +46,10 @@ public class FileSite extends URLSite {
 		String contentKey,
 		InputStream inStream) {
 		try {
+			
+			//TEST: what if SiteURL is not valid ? What if the site does not exist?
+			
+			
 			// create plugin if doesn't exist
 			String pluginPath = getPath()+pluginEntry.getIdentifier().toString();
 			File pluginDirectory = new File(pluginPath);
@@ -54,7 +58,7 @@ public class FileSite extends URLSite {
 			}
 
 			// create directory if doesn't exist
-			int lastSeparator = contentKey.lastIndexOf(File.separator);
+			int lastSeparator = contentKey.lastIndexOf('/');
 			String path = contentKey.substring(0,lastSeparator);
 			StringTokenizer tokenizer = new StringTokenizer(path,File.separator);
 			String currentPath = pluginPath+File.separator;
@@ -64,9 +68,11 @@ public class FileSite extends URLSite {
 				currentPath = currentPath+currentDir+File.separator;
 			}
 
-			// create file
-			FileOutputStream currentFile = new FileOutputStream(pluginPath+File.separator+contentKey);
-			transferStreams(inStream,currentFile);
+			// create file if the entry is a file
+			if (!contentKey.endsWith("/")){
+				FileOutputStream currentFile = new FileOutputStream(pluginPath+File.separator+contentKey);
+				transferStreams(inStream,currentFile);
+			}
 
 		} catch (IOException e) {
 			//FIXME: 

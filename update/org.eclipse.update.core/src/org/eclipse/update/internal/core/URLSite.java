@@ -1,9 +1,12 @@
 package org.eclipse.update.internal.core;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.AbstractFeature;
@@ -28,9 +31,15 @@ public class URLSite extends AbstractSite {
 		URL jarURL = null;
 		InputStream result = null;
 		try {
-			jarURL = new URL(getURL().getPath()+streamKey+".jar");
-			jarURL.openConnection();
-			result = jarURL.openStream();
+			String jarFile = sourceFeature.getIdentifier().toString()+File.separator+streamKey;
+			jarURL = new URL(getURL(),jarFile);
+			// FIXME: is there a better solution ?
+			// no File Handler t manage file protocol !!!!!
+			if(jarURL.getProtocol().equalsIgnoreCase("file")){
+				result = new FileInputStream(jarURL.getHost()+":"+jarURL.getPath());
+			}else {
+				result = jarURL.openStream();
+			}
 		} catch (MalformedURLException e){
 			//FIXME:
 			e.printStackTrace();
@@ -48,19 +57,7 @@ public class URLSite extends AbstractSite {
 		return null;
 	}
 
-	/**
-	 * @see ISite#install(IFeature, IProgressMonitor)
-	 */
-	public void install(IFeature feature, IProgressMonitor monitor)
-		throws CoreException {
-	}
-
-	/**
-	 * @see ISite#remove(IFeature, IProgressMonitor)
-	 */
-	public void remove(IFeature feature, IProgressMonitor monitor)
-		throws CoreException {
-	}
+
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()

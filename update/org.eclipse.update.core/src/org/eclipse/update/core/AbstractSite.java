@@ -5,15 +5,18 @@ import java.io.InputStream;
 
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class AbstractSite implements ISite {
 
 	
+
 	private ListenersList listeners = new ListenersList();
 	private URL siteURL;
-	private IFeature[] features;
+	private List features;
 
 	/**
 	 * Constructor for AbstractSite
@@ -39,6 +42,23 @@ public abstract class AbstractSite implements ISite {
 		synchronized (listeners){
 			listeners.remove(listener);
 		}
+	}	
+
+	/**
+	 * @see ISite#install(IFeature, IProgressMonitor)
+	 */
+	public void install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
+		// should start UOW and manage Progress Monitor
+		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
+		sourceFeature.install(localFeature);
+		this.addFeature(localFeature);
+	}
+	
+	/**
+	 * @see ISite#remove(IFeature, IProgressMonitor)
+	 */
+	public void remove(IFeature feature, IProgressMonitor monitor)
+		throws CoreException {
 	}	
 
 	/**
@@ -91,14 +111,18 @@ public abstract class AbstractSite implements ISite {
 	 * @return Returns a IFeature[]
 	 */
 	public IFeature[] getFeatures() {
-		return features;
+		return (IFeature[])features.toArray();
 	}
+	
 	/**
-	 * Sets the features
-	 * @param features The features to set
+	 * adds a feature
+	 * @param feature The feature to add
 	 */
-	protected void setFeatures(IFeature[] features) {
-		this.features = features;
+	private void addFeature(IFeature feature) {
+		if (features==null){
+			features = new ArrayList(0);
+		}
+		this.features.add(feature);
 	}
 
 }

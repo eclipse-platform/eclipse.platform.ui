@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.update.core.tests"
+   name="Tests"
+   version="0.0.1">
+<requires>
+   <import plugin="org.eclipse.core.runtime"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.update.core"/>
+</requires>
+
+<runtime>
+</runtime>
+</plugin>

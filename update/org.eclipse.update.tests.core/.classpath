@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
+    <classpathentry kind="src" path="/org.eclipse.update.core"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
+    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="lib" path="/org.junit/junit.jar"/>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="output" path="bin"/>
+</classpath>

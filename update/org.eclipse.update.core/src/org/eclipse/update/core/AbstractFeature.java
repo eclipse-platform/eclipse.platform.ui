@@ -9,11 +9,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
+
+
 public abstract class AbstractFeature implements IFeature {
 
-
+
 	private VersionedIdentifier versionIdentifier;
 	private ISite site;
 	private String label;
@@ -23,7 +24,7 @@ public abstract class AbstractFeature implements IFeature {
 	private String provider;
 	private String description;
 	private String[] contentReferences;
-	private IPluginEntry[] pluginEntries;
+	private List pluginEntries;
 	
 	
 	/**
@@ -37,7 +38,7 @@ public abstract class AbstractFeature implements IFeature {
 		this.discoveryURLs	= sourceFeature.getDiscoveryURLs();
 		this.provider 		= sourceFeature.getProvider();
 		this.description 	= sourceFeature.getDescription();
-		this.pluginEntries	= sourceFeature.getPluginEntries();
+		this.pluginEntries  = Arrays.asList(sourceFeature.getPluginEntries());
 	}
 	
 	/**
@@ -180,7 +181,7 @@ public abstract class AbstractFeature implements IFeature {
 		return 0;
 	}
 
-
+
 	/**
 	 * @see IFeature#getInstallSize(ISite)
 	 */
@@ -188,7 +189,7 @@ public abstract class AbstractFeature implements IFeature {
 		return 0;
 	}
 
-
+
 	/**
 	 * @see IFeature#isExecutable()
 	 */
@@ -196,7 +197,7 @@ public abstract class AbstractFeature implements IFeature {
 		return false;
 	}
 
-
+
 	/**
 	 * @see IFeature#isInstallable()
 	 */
@@ -204,7 +205,7 @@ public abstract class AbstractFeature implements IFeature {
 		return false;
 	}
 
-
+
 	/**
 	 * @see IFeature#getContentReferences()
 	 */
@@ -212,7 +213,7 @@ public abstract class AbstractFeature implements IFeature {
 		return contentReferences;
 	}
 
-
+
 	/**
 	 * @see IFeature#install(IFeature)
 	 */
@@ -222,11 +223,11 @@ public abstract class AbstractFeature implements IFeature {
 		IPluginEntry[] targetSitePluginEntries = targetFeature.getSite().getPluginEntries();
 		
 		// determine list of plugins to install
-		// find the intersection between teh two arrays...
+		// find the intersection between the two arrays of IPluginEntry...
 		IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries,targetSitePluginEntries);
 		
 		// private abstract - Determine list of content references that 
-		// map teh list of plugins to install
+		// map the list of plugins to install
 		String[] contentReferenceToInstall = getContentReferenceToInstall(pluginsToInstall);
 		
 		// optmization, may be private to implementation
@@ -276,12 +277,15 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 		}
 	}
 }
-
+
 
 	/**
 	 * Returns the intersection between two array of PluginEntries.
 	 */
 	private IPluginEntry[] intersection(IPluginEntry[] array1, IPluginEntry[] array2) {
+		if (array1==null){return array2;}
+		if (array2==null){return array1;}
+		
 		List list1 = Arrays.asList(array1);
 		List result = new ArrayList(0);
 		for (int i=0;i<array2.length;i++){
@@ -290,16 +294,19 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 		}
 		return (IPluginEntry[])result.toArray();
 	}
-
+
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		return pluginEntries;
+		
+		//FIXME: not pretty, see setter
+		if (pluginEntries==null) return null;
+		return (IPluginEntry[])(pluginEntries.toArray(new IPluginEntry[pluginEntries.size()]));
 	}
 
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
@@ -307,14 +314,17 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 		return getPluginEntries().length;
 	}
 
-
+
 	/**
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
+		if (pluginEntries==null)
+			pluginEntries = new ArrayList(0);
+		pluginEntries.add(pluginEntry);
 	}
 
-
+
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
@@ -346,6 +356,6 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 	 * 
 	 */
 	protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
-
+
 }
 
