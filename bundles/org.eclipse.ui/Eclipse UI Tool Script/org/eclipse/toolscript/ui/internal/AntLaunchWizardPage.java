@@ -46,11 +46,11 @@ public class AntLaunchWizardPage extends WizardPage {
 	private Text argumentsField;
 
 	public AntLaunchWizardPage(Project project) {
-		super("pageName");
-//		super("execute ant script", Policy.bind("wizard.executeAntScriptTitle"), null);
+		super("AntScriptPage"); //$NON-NLS-1$;
 		this.project = project;
-		setImageDescriptor(getImageDescriptor("icons/full/wizban/ant_wiz.gif"));
-//		setDescription(Policy.bind("wizard.executeAntScriptDescription"));
+		setTitle(ToolScriptMessages.getString("AntLaunchWizard.dialogTitle")); //$NON-NLS-1$;
+		setDescription(ToolScriptMessages.getString("AntLaunchWizard.dialogDescription")); //$NON-NLS-1$;
+		setImageDescriptor(getImageDescriptor("icons/full/wizban/ant_wiz.gif")); //$NON-NLS-1$;
 	}
 	
 	/**
