@@ -273,7 +273,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		getPage().hideView(getViewReference());
 	}
 
-	private Rectangle getParentBounds() {
+	/*package*/ Rectangle getParentBounds() {
 		Control ctrl = getControl();
 		
 		if (getContainer() != null && getContainer() instanceof LayoutPart) {
