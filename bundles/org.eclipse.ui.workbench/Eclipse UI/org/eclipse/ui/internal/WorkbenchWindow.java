@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -656,6 +657,43 @@ protected MenuManager createMenuManager() {
 
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
+				}
+			} else if ("carbon".equals(SWT.getPlatform())) {
+				Map actionMap = Manager.getInstance().getKeyMachine().getActionMap();		
+				SortedSet matchSet = (SortedSet) actionMap.get(commandId);
+		
+				if (matchSet != null && !matchSet.isEmpty()) {
+					KeyBindingMatch match = (KeyBindingMatch) matchSet.first();
+		
+					if (match != null) {
+						StringBuffer stringBuffer = new StringBuffer();
+						KeySequence keySequence = match.getKeyBinding().getKeySequence();
+						List keyStrokes = keySequence.getKeyStrokes();
+						
+						for (int i = 0; i < keyStrokes.size(); i++) {
+							if (i >= 1)
+								stringBuffer.append(' ');
+							
+							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
+							int value = keyStroke.getValue();
+							
+							if ((value & SWT.SHIFT) != 0)
+								stringBuffer.append('\u21E7');
+								
+							if ((value & SWT.CTRL) != 0)
+								stringBuffer.append('\u2303');
+						
+							if ((value & SWT.ALT) != 0)
+								stringBuffer.append('\u2325');
+								
+							if ((value & SWT.COMMAND) != 0)
+								stringBuffer.append('\u2318');
+								
+							stringBuffer.append(Action.findKeyString(value));
+						}
+						
+						return stringBuffer.toString();
+					}
 				}
 			} else {
 				String acceleratorText = Manager.getInstance().getTextForAction(commandId);
