@@ -1145,6 +1145,12 @@ public class EclipseSynchronizer {
 	}
 	
 	protected void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
+		if (Policy.DEBUG_DIRTY_CACHING) {
+			System.out.println("Dirty indicator for "
+				+ resource.getFullPath()
+				+ " set to " 
+				+ (indicator.equals(IS_DIRTY_INDICATOR) ? "DIRTY" : "NOT_DIRTY"));
+		}
 		getSyncInfoCacheFor(resource).setDirtyIndicator(resource, indicator);
 	}
 	
@@ -1169,6 +1175,12 @@ public class EclipseSynchronizer {
 	protected void setDirtyCount(IContainer container, int count) throws CVSException {
 		try {
 			beginOperation(null);
+			if (Policy.DEBUG_DIRTY_CACHING) {
+				System.out.println("Dirty count for "
+					+ container.getFullPath()
+					+ " set to " 
+					+ count);
+			}
 			getSyncInfoCacheFor(container).setCachedDirtyCount(container, count);
 		} finally {
 		   endOperation(null);
@@ -1273,6 +1285,10 @@ public class EclipseSynchronizer {
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
 					try {
+						if (Policy.DEBUG_DIRTY_CACHING) {
+							System.out.println("Dirty cache flushed for "
+								+ resource.getFullPath());
+						}
 						getSyncInfoCacheFor(resource).flushDirtyCache(resource);
 					} catch (CVSException e) {
 						exception[0] = e;
@@ -1298,6 +1314,10 @@ public class EclipseSynchronizer {
 		try {
 			beginOperation(null);
 			try {
+				if (Policy.DEBUG_DIRTY_CACHING) {
+					System.out.println("Dirty cache flushed for "
+						+ resource.getFullPath());
+				}
 				getSyncInfoCacheFor(resource).flushDirtyCache(resource);
 			} finally {
 				flushDirtyCacheWithAncestors(resource.getParent());
