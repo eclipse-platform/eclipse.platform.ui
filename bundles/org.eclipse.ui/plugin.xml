@@ -363,6 +363,12 @@
             id="org.eclipse.ui.navigate.previous">
       </command>
       <command
+            name="%command.openEditorDropDown.name"
+            description="%command.openEditorDropDown.description"
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.window.openEditorDropDown">
+      </command>     
+      <command
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"
             categoryId="org.eclipse.ui.category.window"
@@ -604,8 +610,13 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            commandId="org.eclipse.ui.window.switchToEditor"
+            commandId="org.eclipse.ui.window.openEditorDropDown"
             keySequence="M1+E"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.window.switchToEditor"
+            keySequence="M1+M2+E"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding

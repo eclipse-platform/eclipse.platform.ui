@@ -438,9 +438,6 @@ public abstract class AbstractTableInformationControl {
 		return null;
 	}
 
-	/*
-	 * @see IInformationControlExtension2#setInput(Object)
-	 */
 	public abstract void setInput(Object information);
 
 	protected void inputChanged(Object newInput, Object newSelection) {
@@ -451,16 +448,10 @@ public abstract class AbstractTableInformationControl {
 		}
 	}
 
-	/*
-	 * @see IInformationControl#setVisible(boolean)
-	 */
 	public void setVisible(boolean visible) {
 		fShell.setVisible(visible);
 	}
 
-	/*
-	 * @see IInformationControl#dispose()
-	 */
 	public void dispose() {
 		if (fShell != null) {
 			if (!fShell.isDisposed())
@@ -472,32 +463,19 @@ public abstract class AbstractTableInformationControl {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
-	 */
 	public boolean hasContents() {
 		return fTableViewer != null && fTableViewer.getInput() != null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControl#setSizeConstraints(int,
-	 *      int)
-	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		//fMaxWidth= maxWidth;
 		//fMaxHeight= maxHeight;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControl#computeSizeHint()
-	 */
 	public Point computeSizeHint() {
 		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
-	/*
-	 * @see IInformationControl#setLocation(Point)
-	 */
 	public void setLocation(Point location) {
 		Rectangle trim = fShell.computeTrim(0, 0, 0, 0);
 		Point textLocation = fComposite.getLocation();
@@ -506,71 +484,44 @@ public abstract class AbstractTableInformationControl {
 		fShell.setLocation(location);
 	}
 
-	/*
-	 * @see IInformationControl#setSize(int, int)
-	 */
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
 	}
 
-	/*
-	 * @see IInformationControl#addDisposeListener(DisposeListener)
-	 */
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 	}
 
-	/*
-	 * @see IInformationControl#removeDisposeListener(DisposeListener)
-	 */
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
 
-	/*
-	 * @see IInformationControl#setForegroundColor(Color)
-	 */
 	public void setForegroundColor(Color foreground) {
 		fTableViewer.getTable().setForeground(foreground);
 		fFilterText.setForeground(foreground);
 		fComposite.setForeground(foreground);
 	}
 
-	/*
-	 * @see IInformationControl#setBackgroundColor(Color)
-	 */
 	public void setBackgroundColor(Color background) {
 		fTableViewer.getTable().setBackground(background);
 		fFilterText.setBackground(background);
 		fComposite.setBackground(background);
 	}
 
-	/*
-	 * @see IInformationControl#isFocusControl()
-	 */
 	public boolean isFocusControl() {
 		return fTableViewer.getControl().isFocusControl()
 			|| fFilterText.isFocusControl();
 	}
 
-	/*
-	 * @see IInformationControl#setFocus()
-	 */
 	public void setFocus() {
 		fShell.forceFocus();
 		fFilterText.setFocus();
 	}
 
-	/*
-	 * @see IInformationControl#addFocusListener(FocusListener)
-	 */
 	public void addFocusListener(FocusListener listener) {
 		fShell.addFocusListener(listener);
 	}
 
-	/*
-	 * @see IInformationControl#removeFocusListener(FocusListener)
-	 */
 	public void removeFocusListener(FocusListener listener) {
 		fShell.removeFocusListener(listener);
 	}

@@ -11,7 +11,9 @@
 package org.eclipse.ui.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a partial implementation of <code>IHandler</code>.
@@ -54,6 +56,15 @@ public abstract class AbstractHandler implements IHandler {
                             .handlerChanged(handlerEvent);
     }
 
+    public Object getAttributeValue(String attributeName)
+    	throws NoSuchAttributeException {
+        throw new NoSuchAttributeException();
+    }
+
+    public Set getDefinedAttributeNames() {
+        return Collections.EMPTY_SET;
+    }
+    
     public void removeHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
 

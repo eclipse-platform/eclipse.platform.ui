@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,7 +34,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
@@ -51,6 +57,8 @@ public class EditorPresentation extends BasicStackPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
+
+    private HandlerSubmission openEditorDropDownHandlerSubmission;
 
     private CTabFolder2Adapter showListListener = new CTabFolder2Adapter() {
 
@@ -110,7 +118,7 @@ public class EditorPresentation extends BasicStackPresentation {
     public EditorPresentation(Composite parent, IStackPresentationSite newSite,
             int flags) {
         super(new CTabFolder(parent, SWT.BORDER), newSite);
-        CTabFolder tabFolder = getTabFolder();
+        final CTabFolder tabFolder = getTabFolder();
         tabFolder.addCTabFolder2Listener(showListListener);
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
         int tabLocation = preferenceStore
@@ -130,20 +138,64 @@ public class EditorPresentation extends BasicStackPresentation {
         updateGradient();
         tabFolder.setMinimizeVisible((flags & SWT.MIN) != 0);
         tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
+        final Shell shell = tabFolder.getShell();
+        IWorkbenchWindow workbenchWindow = null;
+        /*
+        IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench()
+                .getWorkbenchWindows();
+        for (int i = 0; i < workbenchWindows.length; i++) {
+            if (workbenchWindows[i].getShell() == shell) {
+                workbenchWindow = workbenchWindows[i];
+                break;
+            }
+        }
+        if (workbenchWindow != null) {
+        */
+            IHandler openEditorDropDownHandler = new AbstractHandler() {
+
+                public void execute(Object parameter) throws ExecutionException {
+                    Rectangle clientArea = tabFolder.getClientArea();
+                    Point location = tabFolder.getDisplay().map(tabFolder,
+                            null, clientArea.x, clientArea.y);
+                    showList(shell, location.x, location.y);
+                }
+            };
+            openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
+                    workbenchWindow,
+                    "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
+                    openEditorDropDownHandler, 1);
+            PlatformUI
+                    .getWorkbench()
+                    .getCommandSupport()
+                    .addHandlerSubmissions(
+                            Collections
+                                    .singletonList(openEditorDropDownHandlerSubmission));
+        //}
     }
 
-	public void dispose() {
-	    preferenceStore.removePropertyChangeListener(propertyChangeListener);	    
-	    super.dispose();
-	}
-    
+    public void dispose() {
+        if (openEditorDropDownHandlerSubmission != null) {
+            PlatformUI
+                    .getWorkbench()
+                    .getCommandSupport()
+                    .removeHandlerSubmissions(
+                            Collections
+                                    .singletonList(openEditorDropDownHandlerSubmission));
+            openEditorDropDownHandlerSubmission = null;
+        }
+        preferenceStore.removePropertyChangeListener(propertyChangeListener);
+        super.dispose();
+    }
+
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
-        tabItem.setText(getLabelText(part, true, (getTabFolder().getStyle() & SWT.MULTI) == 0));
+        tabItem.setText(getLabelText(part, true,
+                (getTabFolder().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));
         tabItem.setToolTipText(getLabelToolTipText(part));
     }
 
-    String getLabelText(IPresentablePart presentablePart, boolean dirtyLeft, boolean includePath) {
+    String getLabelText(IPresentablePart presentablePart, boolean dirtyLeft,
+            boolean includePath) {
         String title = presentablePart.getTitle().trim();
         String text = title;
 
@@ -154,11 +206,13 @@ public class EditorPresentation extends BasicStackPresentation {
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf(title)).trim();
 
-            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
+            if (titleTooltip.endsWith("\\"))
+                    //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
 
-            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
+            if (titleTooltip.endsWith("/"))
+                    //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
 
@@ -168,13 +222,13 @@ public class EditorPresentation extends BasicStackPresentation {
         if (presentablePart.isDirty()) {
             if (dirtyLeft)
                 text = "* " + text; //$NON-NLS-1$
-            else 
+            else
                 text = text + " *"; //$NON-NLS-1$
         }
 
         return text;
     }
-    
+
     Image getLabelImage(IPresentablePart presentablePart) {
         return presentablePart.getTitleImage();
     }
@@ -182,7 +236,7 @@ public class EditorPresentation extends BasicStackPresentation {
     String getLabelToolTipText(IPresentablePart presentablePart) {
         return presentablePart.getTitleToolTip();
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -217,10 +271,10 @@ public class EditorPresentation extends BasicStackPresentation {
         }
 
         if (items.isEmpty()) return;
-		int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
-		int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
-        final EditorList editorList = new EditorList(
-                tabFolder.getShell(), shellStyle, tableStyle);
+        int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
+        int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
+        final EditorList editorList = new EditorList(tabFolder.getShell(),
+                shellStyle, tableStyle);
         editorList.setInput(this);
         Point size = editorList.computeSizeHint();
         int minX = 50; //labelComposite.getSize().x;
@@ -234,8 +288,8 @@ public class EditorPresentation extends BasicStackPresentation {
         editorList.setLocation(new Point(x, y));
         editorList.setVisible(true);
         editorList.setFocus();
-        editorList.getTableViewer().getTable().getShell().addListener(SWT.Deactivate,
-                new Listener() {
+        editorList.getTableViewer().getTable().getShell().addListener(
+                SWT.Deactivate, new Listener() {
 
                     public void handleEvent(Event event) {
                         editorList.setVisible(false);
@@ -253,38 +307,44 @@ public class EditorPresentation extends BasicStackPresentation {
                 .getCurrentTheme();
         FontRegistry fontRegistry = currentTheme.getFontRegistry();
         ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-        Color [] bgColors = new Color[2];
-        int [] percent = new int[1];
+        Color[] bgColors = new Color[2];
+        int[] percent = new int[1];
         boolean vertical;
         if (isActive()) {
             fgColor = colorRegistry
                     .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
-            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);            
-            
+            bgColors[0] = colorRegistry
+                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+            bgColors[1] = colorRegistry
+                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+            percent[0] = currentTheme
+                    .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
+            vertical = currentTheme
+                    .getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
+
         } else {
             fgColor = colorRegistry
-            		.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);           
-            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
-            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);            
+                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
+            bgColors[0] = colorRegistry
+                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+            bgColors[1] = colorRegistry
+                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+            percent[0] = currentTheme
+                    .getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
+            vertical = currentTheme
+                    .getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
         }
 
-        getTabFolder()
-        .setFont(
-                fontRegistry
-                        .get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+        getTabFolder().setFont(
+                fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 
         drawGradient(fgColor, bgColors, percent, vertical);
     }
-    
+
     void setSelection(CTabItem tabItem) {
         selectPart(getPartForTab(tabItem));
     }
-    
+
     void close(IPresentablePart presentablePart) {
         getSite().close(presentablePart);
     }
