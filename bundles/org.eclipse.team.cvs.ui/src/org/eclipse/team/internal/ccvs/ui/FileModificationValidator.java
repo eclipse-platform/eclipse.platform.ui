@@ -135,7 +135,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			return getStatus(e);
 		} catch (InterruptedException e) {
 			// Must return an error to indicate that it is not OK to edit the files
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
+			return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
 		}
 		return OK;
 		
