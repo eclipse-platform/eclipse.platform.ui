@@ -808,6 +808,13 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private boolean testDependencies(IFeature feature) {
+		// NOTE: testing and searching for dependencies is disabled
+		//       at this point. The code needs to correctly handle
+		//       matching rules that can be specified on the dependencies.
+		if (true)
+			return true;
+		
+		
 		IImport[] imports = feature.getImports();
 		if (imports.length == 0)
 			return true;

@@ -56,7 +56,7 @@ public interface IImport extends IAdaptable {
 	 * greater or equal to the specified version.
 	 * @since 2.0
 	 */
-	public static final int RULE_GRATER_OR_EQUAL = 4;
+	public static final int RULE_GREATER_OR_EQUAL = 4;
 
 	/** 
 	 * Returns an identifier of the dependent plug-in.

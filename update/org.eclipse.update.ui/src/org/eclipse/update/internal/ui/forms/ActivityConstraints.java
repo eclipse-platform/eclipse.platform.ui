@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.forms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
@@ -15,175 +16,161 @@ import org.eclipse.update.internal.ui.model.PendingChange;
 public class ActivityConstraints {
 	private static final String KEY_ROOT_MESSAGE =
 		"ActivityConstraints.rootMessage";
-	private static final String KEY_PRIMARY = "ActivityConstraints.primary";
-	private static final String KEY_PREREQ = "ActivityConstraints.prereq";
+	private static final String KEY_ROOT_MESSAGE_INIT =
+		"ActivityConstraints.rootMessageInitial";
 	private static final String KEY_CHILD_MESSAGE =
 		"ActivityConstraints.childMessage";
+	private static final String KEY_PLATFORM = "ActivityConstraints.platform";
+	private static final String KEY_PRIMARY = "ActivityConstraints.primary";
+	private static final String KEY_OS = "ActivityConstraints.os";
+	private static final String KEY_WS = "ActivityConstraints.ws";
+	private static final String KEY_ARCH = "ActivityConstraints.arch";
+	private static final String KEY_PREREQ = "ActivityConstraints.prereq";
+	private static final String KEY_PREREQ_PERFECT =
+		"ActivityConstraints.prereqPerfect";
+	private static final String KEY_PREREQ_EQUIVALENT =
+		"ActivityConstraints.prereqEquivalent";
+	private static final String KEY_PREREQ_COMPATIBLE =
+		"ActivityConstraints.prereqCompatible";
+	private static final String KEY_PREREQ_GREATER =
+		"ActivityConstraints.prereqGreaterOrEqual";
+	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
 
+	/*
+	 * Called by UI before performing operation
+	 */
 	public static IStatus validatePendingChange(PendingChange job) {
-		ArrayList children = new ArrayList();
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
 		switch (job.getJobType()) {
 			case PendingChange.UNCONFIGURE :
-				validateUnconfigure(job.getFeature(), children);
+				validateUnconfigure(job.getFeature(), status);
 				break;
 			case PendingChange.CONFIGURE :
-				validateConfigure(job.getFeature(), children);
+				validateConfigure(job.getFeature(), status);
 				break;
 			case PendingChange.INSTALL :
-				validateInstall(
-					job.getOldFeature(),
-					job.getFeature(),
-					children);
+				validateInstall(job.getOldFeature(), job.getFeature(), status);
 				break;
 		}
-		if (children.size() > 0) {
-			return createMultiStatus(children);
+
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
 		}
 		return null;
 	}
 
+	/*
+	 * Called by UI before processing a delta
+	 */
 	public static IStatus validateSessionDelta(ISessionDelta delta) {
-		ArrayList children = new ArrayList();
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
 		switch (delta.getType()) {
 			case ISessionDelta.ENABLE :
-				validateDeltaConfigure(delta, children);
+				validateDeltaConfigure(delta, status);
 				break;
 		}
-		if (children.size() > 0) {
-			return createMultiStatus(children);
+
+		// report status
+		if (status.size() > 0) {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
+				return createMultiStatus(KEY_ROOT_MESSAGE, status);
 		}
 		return null;
 	}
 
-	private static IStatus createMultiStatus(ArrayList children) {
-		IStatus[] carray =
-			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = UpdateUIPlugin.getResourceString(KEY_ROOT_MESSAGE);
-		return new MultiStatus(
-			UpdateUIPlugin.getPluginId(),
-			IStatus.ERROR,
-			carray,
-			message,
-			null);
+	/*
+	 * Check to see if we are not broken even before we start
+	 */
+	private static void validateInitialState(ArrayList status) {
+		try {
+			ArrayList features = computeFeatures();
+			checkConstraints(features, status);
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
 	}
 
+	/*
+	 * handle unconfigure
+	 */
 	private static void validateUnconfigure(
 		IFeature feature,
-		ArrayList children) {
+		ArrayList status) {
 		try {
-			IFeature platformFeature = getPlatformFeature(feature);
-			if (platformFeature != null) {
-				children.add(
-					createStatus(
-						platformFeature,
-						UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
-				// That's enough - there is no need to check the rest
-				// if we get to here.
-				return;
-			}
-			// test if unconfiguring will invalidate prereqs
-			ArrayList otherFeatures = computeOtherFeatures(feature);
-			ArrayList plugins = new ArrayList();
-			computeUniquePlugins(otherFeatures, plugins);
-			// Going plug-ins are those that are only listed in the feature
-			// that will be unconfigured. Other plug-ins are referenced by
-			// other configured features and should not be of our concern.
-			ArrayList goingPlugins = new ArrayList();
-			computeGoingPlugins(feature, plugins, goingPlugins);
-			// See if any of the features depends on the plug-ins that
-			// will go away
-			for (int i = 0; i < otherFeatures.size(); i++) {
-				IFeature otherFeature = (IFeature) otherFeatures.get(i);
-				validatePrereqs(otherFeature, goingPlugins, true, children);
-			}
+			ArrayList features = computeFeaturesAfterOperation(null, feature);
+			checkConstraints(features, status);
 
 		} catch (CoreException e) {
-			children.add(e.getStatus());
+			status.add(e.getStatus());
 		}
 	}
 
-	private static void validateConfigure(
-		IFeature feature,
-		ArrayList children) {
-		// Check the prereqs
+	/*
+	 * handle configure
+	 */
+	private static void validateConfigure(IFeature feature, ArrayList status) {
 		try {
-			ArrayList otherFeatures = computeOtherFeatures(feature);
-			ArrayList plugins = new ArrayList();
-			computeUniquePlugins(otherFeatures, plugins);
-			//ArrayList goingPlugins = new ArrayList();
-			//computeGoingPlugins(feature, plugins, goingPlugins);
-			validatePrereqs(feature, plugins, false, children);
+			ArrayList features = computeFeaturesAfterOperation(feature, null);
+			checkConstraints(features, status);
+
 		} catch (CoreException e) {
-			children.add(e.getStatus());
+			status.add(e.getStatus());
 		}
 	}
 
-	private static void validateDeltaConfigure(
-		ISessionDelta delta,
-		ArrayList children) {
-		try {
-			IFeatureReference[] refs = delta.getFeatureReferences();
-			// Initialize features
-			IFeature[] features = new IFeature[refs.length];
-			for (int i = 0; i < refs.length; i++) {
-				IFeature feature = refs[i].getFeature();
-				features[i] = feature;
-			}
-			// compute other features in the install configuration
-			ArrayList otherFeatures = computeOtherFeatures(features);
-			// make a full plug-in list by adding up plug-ins
-			// in the current install configuration (minus new
-			// features) and plug-ins from the delta. The 
-			// list of plug-ins is unique (no duplication).
-			ArrayList plugins = new ArrayList();
-			computeUniquePlugins(features, plugins);
-			computeUniquePlugins(otherFeatures, plugins);
-			// Validate prereqs of all the plug-ins in the delta
-			for (int i = 0; i < features.length; i++) {
-				IFeature feature = features[i];
-				validatePrereqs(feature, plugins, false, children);
-			}
-		} catch (CoreException e) {
-			children.add(e.getStatus());
-		}
-	}
-
+	/*
+	 * handle install and update
+	 */
 	private static void validateInstall(
 		IFeature oldFeature,
 		IFeature newFeature,
-		ArrayList children) {
-		// just check if unconfiguring the old feature will
-		// cause anything to break
-		if (oldFeature == null) {
-			// Installing a new feature is OK as long as
-			// all of its prereqs are satisfied. This is
-			// tested before we get to this class, so 
-			// no need to test again.
-			return;
-		}
+		ArrayList status) {
 		try {
-			ArrayList otherFeatures = computeOtherFeatures(oldFeature);
-			ArrayList plugins = new ArrayList();
-			computeUniquePlugins(otherFeatures, plugins);
-			ArrayList goingPlugins = new ArrayList();
-			computeGoingPlugins(oldFeature, plugins, goingPlugins);
-			// now see if the new version of a feature will
-			// bring the going plugins to zero.
-			restoreGoingPlugins(newFeature, goingPlugins);
-			validatePrereqs(oldFeature, goingPlugins, true, children);
+			ArrayList features =
+				computeFeaturesAfterOperation(newFeature, oldFeature);
+			checkConstraints(features, status);
+
 		} catch (CoreException e) {
-			children.add(e.getStatus());
+			status.add(e.getStatus());
 		}
-
 	}
 
-	private static ArrayList computeOtherFeatures(IFeature thisFeature)
-		throws CoreException {
-		return computeOtherFeatures(new IFeature[] { thisFeature });
+	/*
+	 * Handle delta addition
+	 */
+	private static void validateDeltaConfigure(
+		ISessionDelta delta,
+		ArrayList status) {
+		try {
+			ArrayList features = computeFeaturesAfterDelta(delta);
+			checkConstraints(features, status);
+
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
 	}
 
-	private static ArrayList computeOtherFeatures(IFeature[] theseFeatures)
-		throws CoreException {
+	/*
+	 * Compute a list of configured features
+	 */
+	private static ArrayList computeFeatures() throws CoreException {
+
 		ArrayList features = new ArrayList();
 		ILocalSite localSite = SiteManager.getLocalSite();
 		IInstallConfiguration config = localSite.getCurrentConfiguration();
@@ -195,206 +182,399 @@ public class ActivityConstraints {
 			for (int j = 0; j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
 				IFeature cfeature = cref.getFeature();
-				boolean skip = false;
-				for (int k = 0; k < theseFeatures.length; k++) {
-					IFeature thisFeature = theseFeatures[k];
-					if (thisFeature.equals(cfeature)) {
-						skip = true;
-						break;
-					}
-				}
-				if (skip)
-					continue;
 				features.add(cfeature);
 			}
 		}
-		// remove included features so that only the top-level features
-		// remain on the list
-		IFeature[] array =
-			(IFeature[]) features.toArray(new IFeature[features.size()]);
-		for (int i = 0; i < array.length; i++) {
-			IFeature feature = array[i];
-			IFeatureReference[] included =
-				feature.getIncludedFeatureReferences();
-			for (int j = 0; j < included.length; j++) {
-				IFeatureReference ref = included[j];
-				IFeature fref = ref.getFeature();
-				int index = features.indexOf(fref);
-				if (index != -1)
-					features.remove(index);
-			}
+
+		return features;
+	}
+
+	/*
+	 * Compute the nested feature subtree starting at the specified base feature
+	 */
+	private static ArrayList computeFeatureSubtree(
+		IFeature top,
+		IFeature feature,
+		ArrayList features)
+		throws CoreException {
+
+		// check arguments
+		if (features == null)
+			features = new ArrayList();
+		if (top == null)
+			return features;
+		if (feature == null)
+			feature = top;
+
+		// check for <includes> cycle
+		if (features.contains(feature)) {
+			IStatus status =
+				createStatus(top, UpdateUIPlugin.getResourceString(KEY_CYCLE));
+			throw new CoreException(status);
+		}
+
+		// return specified base feature and all its children
+		features.add(feature);
+		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+		for (int i = 0; i < children.length; i++) {
+			IFeature child = children[i].getFeature();
+			features = computeFeatureSubtree(top, child, features);
 		}
 		return features;
 	}
 
-	private static void addUniquePlugins(IFeature feature, ArrayList plugins)
+	/*
+	 * Compute a list of features that will be configured after the operation
+	 */
+	private static ArrayList computeFeaturesAfterOperation(
+		IFeature add,
+		IFeature remove)
 		throws CoreException {
-		IPluginEntry[] entries = feature.getPluginEntries();
-		for (int i = 0; i < entries.length; i++) {
-			IPluginEntry entry = entries[i];
-			if (!plugins.contains(entry))
-				plugins.add(entry);
-			IFeatureReference[] included =
-				feature.getIncludedFeatureReferences();
-			for (int j = 0; j < included.length; j++) {
-				IFeature fref = included[j].getFeature();
-				addUniquePlugins(fref, plugins);
+
+		ArrayList features = computeFeatures();
+		ArrayList addTree = computeFeatureSubtree(add, null, null);
+		ArrayList removeTree = computeFeatureSubtree(remove, null, null);
+		if (add != null)
+			features.addAll(addTree);
+		if (remove != null)
+			features.removeAll(removeTree);
+
+		return features;
+	}
+
+	/*
+	 * Compute a list of features that will be configured after applying the
+	 * specified delta
+	 */
+	private static ArrayList computeFeaturesAfterDelta(ISessionDelta delta)
+		throws CoreException {
+
+		IFeatureReference[] deltaRefs;
+		if (delta == null)
+			deltaRefs = new IFeatureReference[0];
+		else
+			deltaRefs = delta.getFeatureReferences();
+
+		ArrayList features = new ArrayList(); // cumulative results list
+		ILocalSite localSite = SiteManager.getLocalSite();
+		IInstallConfiguration config = localSite.getCurrentConfiguration();
+		IConfiguredSite[] csites = config.getConfiguredSites();
+
+		// compute changes for each site
+		for (int i = 0; i < csites.length; i++) {
+			IConfiguredSite csite = csites[i];
+			ArrayList siteFeatures = new ArrayList();
+
+			// collect currently configured features on site
+			IFeatureReference[] crefs = csite.getConfiguredFeatures();
+			for (int j = 0; crefs != null && j < crefs.length; j++) {
+				IFeatureReference cref = crefs[j];
+				IFeature cfeature = cref.getFeature();
+				siteFeatures.add(cfeature);
 			}
-		}
-	}
 
-	private static void computeGoingPlugins(
-		IFeature feature,
-		ArrayList plugins,
-		ArrayList result)
-		throws CoreException {
-		IPluginEntry[] entries = feature.getPluginEntries();
-		// plug-ins that are only referenced by this feature
-		// and are not on the list will be disabled (going)
-		// when the feature is disabled.
-		for (int i = 0; i < entries.length; i++) {
-			if (!plugins.contains(entries[i])) {
-				result.add(entries[i]);
-			}
-		}
-		IFeatureReference[] included = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < included.length; i++) {
-			computeGoingPlugins(included[i].getFeature(), plugins, result);
-		}
-	}
-
-	private static void restoreGoingPlugins(
-		IFeature feature,
-		ArrayList goingPlugins)
-		throws CoreException {
-		IPluginEntry[] entries = feature.getPluginEntries();
-		// plug-ins that are only referenced by this feature
-		// and are not on the list will be disabled (going)
-		// when the feature is disabled.
-		for (int i = 0; i < entries.length; i++) {
-			int index = goingPlugins.indexOf(entries[i]);
-			if (index != -1)
-				goingPlugins.remove(index);
-		}
-		IFeatureReference[] included = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < included.length; i++) {
-			restoreGoingPlugins(included[i].getFeature(), goingPlugins);
-		}
-	}
-
-	private static void validatePrereqs(
-		IFeature feature,
-		ArrayList goingPlugins,
-		boolean inclusion,
-		ArrayList children) {
-		IImport[] imports = feature.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			IImport iimport = imports[i];
-			VersionedIdentifier vid = iimport.getVersionedIdentifier();
-			String message =
-				UpdateUIPlugin.getFormattedMessage(KEY_PREREQ, vid.toString());
-			boolean found = false;
-			PluginVersionIdentifier version = vid.getVersion();
-			boolean ignoreVersion =
-				version.getMajorComponent() == 0
-					&& version.getMinorComponent() == 0
-					&& version.getServiceComponent() == 0;
-
-			for (int j = 0; j < goingPlugins.size(); j++) {
-				IPluginEntry entry = (IPluginEntry) goingPlugins.get(j);
-				if (ignoreVersion) {
-					if (entry
-						.getVersionedIdentifier()
-						.getIdentifier()
-						.equals(vid.getIdentifier()))
-						found = true;
-				} else if (entry.getVersionedIdentifier().equals(vid))
-					found = true;
-				if (inclusion && found) {
-					children.add(createStatus(feature, message));
-					break;
+			// add deltas for the site			
+			for (int j = 0; j < deltaRefs.length; j++) {
+				ISite deltaSite = deltaRefs[j].getSite();
+				if (deltaSite.equals(csite.getSite())) {
+					IFeature dfeature = deltaRefs[j].getFeature();
+					if (!siteFeatures.contains(dfeature)) // don't add dups
+						siteFeatures.add(dfeature);
 				}
 			}
-			if (!inclusion && !found) {
-				children.add(createStatus(feature, message));
+
+			// reduce the list if needed	
+			IFeature[] array =
+				(IFeature[]) siteFeatures.toArray(
+					new IFeature[siteFeatures.size()]);
+			for (int j = 0; j < array.length; j++) {
+				VersionedIdentifier id1 = array[j].getVersionedIdentifier();
+				for (int k = 0; k < array.length; k++) {
+					if (j == k)
+						continue;
+					VersionedIdentifier id2 = array[k].getVersionedIdentifier();
+					if (id1.getIdentifier().equals(id2.getIdentifier())) {
+						if (id2.getVersion().isGreaterThan(id1.getVersion())) {
+							siteFeatures.remove(array[j]);
+							break;
+						}
+					}
+				}
+			}
+
+			// accumulate site results
+			features.addAll(siteFeatures);
+		}
+
+		return features;
+	}
+
+	/*
+	 * Compute a list of plugin entries for the specified features.
+	 */
+	private static ArrayList computePluginsForFeatures(ArrayList features)
+		throws CoreException {
+		if (features == null)
+			return new ArrayList();
+
+		HashMap plugins = new HashMap();
+		for (int i = 0; i < features.size(); i++) {
+			IFeature feature = (IFeature) features.get(i);
+			IPluginEntry[] entries = feature.getPluginEntries();
+			for (int j = 0; j < entries.length; j++) {
+				IPluginEntry entry = entries[j];
+				plugins.put(entry.getVersionedIdentifier(), entry);
+			}
+		}
+		ArrayList result = new ArrayList();
+		result.addAll(plugins.values());
+		return result;
+	}
+
+	/*
+	 * validate constraints
+	 */
+	private static void checkConstraints(ArrayList features, ArrayList status)
+		throws CoreException {
+		if (features == null)
+			return;
+
+		ArrayList plugins = computePluginsForFeatures(features);
+
+		checkEnvironment(features, status);
+		checkPlatformFeature(features, plugins, status);
+		checkPrimaryFeature(features, status);
+		checkPrereqs(features, plugins, status);
+	}
+
+	/*
+	 * Verify all features are either portable, or match the current environment
+	 */
+	private static void checkEnvironment(
+		ArrayList features,
+		ArrayList status) {
+
+		String os = BootLoader.getOS();
+		String ws = BootLoader.getWS();
+		String arch = BootLoader.getOSArch();
+
+		for (int i = 0; i < features.size(); i++) {
+			IFeature feature = (IFeature) features.get(i);
+			String fos = feature.getOS();
+			String fws = feature.getWS();
+			String farch = feature.getArch();
+
+			if (fos != null && !fos.equals("")) {
+				if (!os.equals(fos)) {
+					status.add(
+						createStatus(
+							feature,
+							UpdateUIPlugin.getResourceString(KEY_OS)));
+					continue;
+				}
+			}
+
+			if (fws != null && !fws.equals("")) {
+				if (!ws.equals(fws)) {
+					status.add(
+						createStatus(
+							feature,
+							UpdateUIPlugin.getResourceString(KEY_WS)));
+					continue;
+				}
+			}
+
+			if (farch != null && !farch.equals("")) {
+				if (!arch.equals(farch)) {
+					status.add(
+						createStatus(
+							feature,
+							UpdateUIPlugin.getResourceString(KEY_ARCH)));
+					continue;
+				}
 			}
 		}
 	}
 
-	private static IFeature getPlatformFeature(IFeature feature)
-		throws CoreException {
+	/*
+	 * Verify we end up with a version of platform configured
+	 */
+	private static void checkPlatformFeature(
+		ArrayList features,
+		ArrayList plugins,
+		ArrayList status) {
+
 		String[] bootstrapPlugins =
 			BootLoader
 				.getCurrentPlatformConfiguration()
 				.getBootstrapPluginIdentifiers();
-		IFeature result = getBootstrapFeature(feature, bootstrapPlugins);
-		if (result != null)
-			return result;
-		// is primary
-		return feature.isPrimary() ? feature : null;
-	}
 
-	private static IFeature getBootstrapFeature(IFeature feature, String[] ids)
-		throws CoreException {
-		IPluginEntry[] entries = feature.getPluginEntries();
-		// contains bootstrap plug-ins
-		for (int i = 0; i < entries.length; i++) {
-			IPluginEntry entry = entries[i];
-			String id = entry.getVersionedIdentifier().getIdentifier();
-			if (isOnTheList(id, ids))
-				return feature;
-		}
-		// test included
-		IFeatureReference[] included = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < included.length; i++) {
-			IFeatureReference ref = included[i];
-			IFeature includedFeature = ref.getFeature();
-			IFeature result = getBootstrapFeature(includedFeature, ids);
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
-
-	private static boolean isOnTheList(String id, String[] list) {
-		for (int i = 0; i < list.length; i++) {
-			if (id.equalsIgnoreCase(list[i]))
-				return true;
-		}
-		return false;
-	}
-
-	private static void computeUniquePlugins(
-		ArrayList otherFeatures,
-		ArrayList plugins)
-		throws CoreException {
-		for (int i = 0; i < otherFeatures.size(); i++) {
-			IFeature otherFeature = (IFeature) otherFeatures.get(i);
-			addUniquePlugins(otherFeature, plugins);
+		for (int i = 0; i < bootstrapPlugins.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < plugins.size(); j++) {
+				IPluginEntry plugin = (IPluginEntry) plugins.get(j);
+				if (bootstrapPlugins[i]
+					.equals(plugin.getVersionedIdentifier().getIdentifier())) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				status.add(
+					createStatus(
+						null,
+						UpdateUIPlugin.getResourceString(KEY_PLATFORM)));
+				return;
+			}
 		}
 	}
 
-	private static void computeUniquePlugins(
-		IFeature[] features,
-		ArrayList plugins)
-		throws CoreException {
-		for (int i = 0; i < features.length; i++) {
-			IFeature feature = features[i];
-			addUniquePlugins(feature, plugins);
+	/*
+	 * Verify we end up with a version of primary feature configured
+	 */
+	private static void checkPrimaryFeature(
+		ArrayList features,
+		ArrayList status) {
+
+		String featureId =
+			BootLoader
+				.getCurrentPlatformConfiguration()
+				.getPrimaryFeatureIdentifier();
+
+		for (int i = 0; i < features.size(); i++) {
+			IFeature feature = (IFeature) features.get(i);
+			if (featureId
+				.equals(feature.getVersionedIdentifier().getIdentifier()))
+				return;
 		}
+
+		status.add(
+			createStatus(null, UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
+	}
+
+	/*
+	 * Verify we do not break prereqs
+	 */
+	private static void checkPrereqs(
+		ArrayList features,
+		ArrayList plugins,
+		ArrayList status) {
+
+		for (int i = 0; i < features.size(); i++) {
+			IFeature feature = (IFeature) features.get(i);
+			IImport[] imports = feature.getImports();
+
+			for (int j = 0; j < imports.length; j++) {
+				IImport iimport = imports[j];
+				// for each import determine plugin, version, match we need
+				VersionedIdentifier iid = iimport.getVersionedIdentifier();
+				String id = iid.getIdentifier();
+				PluginVersionIdentifier version = iid.getVersion();
+				boolean ignoreVersion =
+					version.getMajorComponent() == 0
+						&& version.getMinorComponent() == 0
+						&& version.getServiceComponent() == 0;
+				int rule = iimport.getRule();
+				if (rule == IImport.RULE_NONE)
+					rule = IImport.RULE_COMPATIBLE;
+
+				boolean found = false;
+				for (int k = 0; k < plugins.size(); k++) {
+					// see if we have a plugin that matches
+					IPluginEntry plugin = (IPluginEntry) plugins.get(k);
+					VersionedIdentifier pid = plugin.getVersionedIdentifier();
+					PluginVersionIdentifier pversion = pid.getVersion();
+					if (id.equals(pid.getIdentifier())) {
+						// have a candidate
+						if (ignoreVersion)
+							found = true;
+						else if (
+							rule == IImport.RULE_PERFECT
+								&& pversion.isPerfect(version))
+							found = true;
+						else if (
+							rule == IImport.RULE_EQUIVALENT
+								&& pversion.isEquivalentTo(version))
+							found = true;
+						else if (
+							rule == IImport.RULE_COMPATIBLE
+								&& pversion.isCompatibleWith(version))
+							found = true;
+						else if (
+							rule == IImport.RULE_GREATER_OR_EQUAL
+								&& pversion.isGreaterOrEqualTo(version))
+							found = true;
+					}
+					if (found)
+						break;
+				}
+				if (!found) {
+					// report status
+					String msg =
+						UpdateUIPlugin.getFormattedMessage(
+							KEY_PREREQ,
+							new String[] { id });
+
+					if (!ignoreVersion) {
+						if (rule == IImport.RULE_PERFECT)
+							msg =
+								UpdateUIPlugin.getFormattedMessage(
+									KEY_PREREQ_PERFECT,
+									new String[] { id, version.toString()});
+						else if (rule == IImport.RULE_EQUIVALENT)
+							msg =
+								UpdateUIPlugin.getFormattedMessage(
+									KEY_PREREQ_EQUIVALENT,
+									new String[] { id, version.toString()});
+						else if (rule == IImport.RULE_COMPATIBLE)
+							msg =
+								UpdateUIPlugin.getFormattedMessage(
+									KEY_PREREQ_COMPATIBLE,
+									new String[] { id, version.toString()});
+						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
+							msg =
+								UpdateUIPlugin.getFormattedMessage(
+									KEY_PREREQ_GREATER,
+									new String[] { id, version.toString()});
+					}
+
+					status.add(createStatus(feature, msg));
+				}
+			}
+		}
+	}
+
+	private static IStatus createMultiStatus(
+		String rootKey,
+		ArrayList children) {
+		IStatus[] carray =
+			(IStatus[]) children.toArray(new IStatus[children.size()]);
+		String message = UpdateUIPlugin.getResourceString(rootKey);
+		return new MultiStatus(
+			UpdateUIPlugin.getPluginId(),
+			IStatus.ERROR,
+			carray,
+			message,
+			null);
 	}
 
 	private static IStatus createStatus(IFeature feature, String message) {
-		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String id = vid.getIdentifier();
-		PluginVersionIdentifier version = vid.getVersion();
-		String fullMessage =
-			UpdateUIPlugin.getFormattedMessage(
-				KEY_CHILD_MESSAGE,
-				new String[] {
-					feature.getLabel(),
-					version.toString(),
-					message });
+
+		String fullMessage;
+		if (feature == null)
+			fullMessage = message;
+		else {
+			PluginVersionIdentifier version =
+				feature.getVersionedIdentifier().getVersion();
+			fullMessage =
+				UpdateUIPlugin.getFormattedMessage(
+					KEY_CHILD_MESSAGE,
+					new String[] {
+						feature.getLabel(),
+						version.toString(),
+						message });
+		}
+
 		return new Status(
 			IStatus.ERROR,
 			UpdateUIPlugin.getPluginId(),
