@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.editorsupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 
@@ -61,10 +64,25 @@ public final class ComponentSupport {
 	 * @return IEditorPart
 	 */
 	private static IEditorPart getOleEditor() {
+		// @issue currently assumes OLE editor is provided by IDE plug-in
+		// IDE plug-in is not on prereq chain of generic wb plug-in
+		// hence: IContributorResourceAdapter.class won't compile
+		// and Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor") won't find it
+		// need to be trickier...
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
+		if (desc == null) {
+			// IDE plug-in is not around
+			return null;
+		}
+		// IDE plug-in is around
+		// it's not our job to activate the plug-in
+		if (!desc.isPluginActivated()) {
+			return null;
+		}
+		ClassLoader rcl = desc.getPluginClassLoader();
 		try {
-			Class oleEditorClass =
-				Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
-			return (IEditorPart) oleEditorClass.newInstance();
+			Class c = rcl.loadClass("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
+			return (IEditorPart) c.newInstance();
 		} catch (ClassNotFoundException exception) {
 			return null;
 		}

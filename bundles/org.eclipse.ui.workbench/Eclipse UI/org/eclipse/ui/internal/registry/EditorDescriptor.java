@@ -109,6 +109,13 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable {
 	 * Creates the action contributor for this editor.
 	 */
 	public IEditorActionBarContributor createActionBarContributor() {
+		// Handle case for predefined editor descriptors, like the
+		// one for IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID, which
+		// don't have a configuration element.
+		if (configurationElement == null) {
+			return null;
+		}
+		
 		// Get the contributor class name.
 		String className =
 			configurationElement.getAttribute(ATT_EDITOR_CONTRIBUTOR);

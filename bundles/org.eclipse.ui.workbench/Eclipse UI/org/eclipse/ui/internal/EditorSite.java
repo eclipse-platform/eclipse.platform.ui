@@ -36,7 +36,9 @@ public EditorSite(IEditorPart editor, WorkbenchPage page,
 	super(editor, page);
 	if (desc != null) {
 		this.desc = desc;
-		setConfigurationElement(desc.getConfigurationElement());
+		if (desc.getConfigurationElement() != null) {
+			setConfigurationElement(desc.getConfigurationElement());
+		}
 	}
 }
 
