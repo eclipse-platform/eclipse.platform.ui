@@ -157,22 +157,24 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				if (projects != null) 
 					project = projects[i];
 				
-				// Determine the remote module to be checked out
-				String moduleName;
-				if (resource.isDefinedModule()) {
-					moduleName = resource.getName();
-				} else {
-					moduleName = resource.getRepositoryRelativePath();
-				}
-				
-				checkout(resource, project, moduleName, Policy.subMonitorFor(pm, 1000));
+				checkout(resource, project, Policy.subMonitorFor(pm, 1000));
 			}
 		} finally {
 			pm.done();
 		}
 	}
 
-	protected void checkout(ICVSRemoteFolder resource, IProject project, String moduleName, final IProgressMonitor pm) throws CVSException {
+	protected String getRemoteModuleName(ICVSRemoteFolder resource) {
+		String moduleName;
+		if (resource.isDefinedModule()) {
+			moduleName = resource.getName();
+		} else {
+			moduleName = resource.getRepositoryRelativePath();
+		}
+		return moduleName;
+	}
+
+	protected void checkout(ICVSRemoteFolder resource, IProject project, final IProgressMonitor pm) throws CVSException {
 		// Get the location of the workspace root
 		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
 		// Open a connection session to the repository
@@ -183,7 +185,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			session.open(Policy.subMonitorFor(pm, 50));
 			
 			// Determine the local target projects (either the project provider or the module expansions) 
-			IProject[] targetProjects = prepareProjects(session, project, moduleName, Policy.subMonitorFor(pm, 50));
+			IProject[] targetProjects = prepareProjects(session, resource, project, Policy.subMonitorFor(pm, 50));
 			if (targetProjects == null) return;
 			
 			// Determine if the target project is the same name as the remote folder
@@ -213,7 +215,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			IStatus status = Command.CHECKOUT.execute(session,
 				Command.NO_GLOBAL_OPTIONS,
 				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-				new String[]{moduleName},
+				new String[]{getRemoteModuleName(resource)},
 				null,
 				Policy.subMonitorFor(pm, 800));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -239,10 +241,11 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	 * If the remote resource is a folder which is not a root folder (i.e. a/b/c),
 	 * then the target project will be the last segment (i.e. c).
 	 */
-	private IProject[] prepareProjects(Session session, IProject project, String moduleName, IProgressMonitor pm) throws CVSException {
+	private IProject[] prepareProjects(Session session, final ICVSRemoteFolder remoteFolder, IProject project, IProgressMonitor pm) throws CVSException {
 			
 		pm.beginTask(null, 100);
 		Set targetProjectSet = new HashSet();
+		String moduleName = getRemoteModuleName(remoteFolder);
 		if (project == null) {
 			
 			// Fetch the module expansions
@@ -274,12 +277,18 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		final IStatus[] result = new IStatus[] { null };
 		session.getLocalRoot().run(new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
-				result[0] = scrubProjects(targetProjects, monitor);
+				try {
+					result[0] = scrubProjects(remoteFolder, targetProjects, monitor);
+				} catch (InterruptedException e) {
+					// The operation was cancelled. The result wiull be null
+				}
 			}
 		}, Policy.subMonitorFor(pm, 50));
 		pm.done();
 		// return the target projects if the scrub succeeded
-		if (result[0].isOK()) {
+		if (result[0] == null) {
+			return null;
+		} else if (result[0].isOK()) {
 			return targetProjects;
 		} else {
 			signalFailure(result[0]);
@@ -291,7 +300,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	 * This method is invoked to scrub the local projects that are the check out target of
 	 * a single remote module.
 	 */
-	private IStatus scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CVSException {
+	private IStatus scrubProjects(ICVSRemoteFolder remoteFolder, IProject[] projects, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		if (projects == null) {
 			monitor.done();
 			return OK;
@@ -302,8 +311,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		}
 		for (int i=0;i<projects.length;i++) {
 			IProject project = projects[i];
-			if (needsPromptForOverwrite(project) && !promptToOverwrite(project)) {
-				return new CVSStatus(IStatus.INFO, Policy.bind("CheckoutOperation.checkoutCancelled", project.getName())); //$NON-NLS-1$
+			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
+				throw new InterruptedException();
 			}
 		}
 		// Create the projects and remove any previous content
@@ -371,16 +380,16 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	 * @param project
 	 * @return
 	 */
-	private boolean promptToOverwrite(IProject project) {
-		return promptToOverwrite(Policy.bind("CheckoutOperation.confirmOverwrite"), getOverwritePromptMessage(project)); //$NON-NLS-1$
+	private boolean promptToOverwrite(ICVSRemoteFolder remoteFolder, IProject project) {
+		return promptToOverwrite(Policy.bind("CheckoutOperation.confirmOverwrite"), getOverwritePromptMessage(remoteFolder, project)); //$NON-NLS-1$
 	}
 
-	protected String getOverwritePromptMessage(IProject project) {
+	protected String getOverwritePromptMessage(ICVSRemoteFolder remoteFolder, IProject project) {
 		File localLocation  = getFileLocation(project);
 		if(project.exists()) {
-			return Policy.bind("CheckoutOperation.thisResourceExists", project.getName());//$NON-NLS-1$
+			return Policy.bind("CheckoutOperation.thisResourceExists", project.getName(), getRemoteModuleName(remoteFolder));//$NON-NLS-1$
 		} else {
-			return Policy.bind("CheckoutOperation.thisExternalFileExists", project.getName());//$NON-NLS-1$
+			return Policy.bind("CheckoutOperation.thisExternalFileExists", project.getName(), getRemoteModuleName(remoteFolder));//$NON-NLS-1$
 		}
 	}
 	
