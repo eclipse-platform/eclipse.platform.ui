@@ -19,8 +19,8 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.jface.text.BadLocationException;
 

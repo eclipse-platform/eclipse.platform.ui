@@ -15,8 +15,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;

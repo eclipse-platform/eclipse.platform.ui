@@ -5,7 +5,7 @@
    name="%pluginName"
    version="3.1.0"
    provider-name="%providerName"
-   class="org.eclipse.ant.internal.ui.model.AntUIPlugin">
+   class="org.eclipse.ant.internal.ui.AntUIPlugin">
 
    <runtime>
       <library name="antui.jar">
@@ -294,12 +294,12 @@
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
             class="" 
-            adaptableType="org.eclipse.ant.internal.ui.editor.model.AntTargetNode">
+            adaptableType="org.eclipse.ant.internal.ui.model.AntTargetNode">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
         </factory>
       <factory 
             class="" 
-            adaptableType="org.eclipse.ant.internal.ui.editor.model.AntProjectNode">
+            adaptableType="org.eclipse.ant.internal.ui.model.AntProjectNode">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
         </factory>
          <factory 
@@ -324,7 +324,7 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <instanceof value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
+                   <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
                    <and>
                      <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
                      <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
@@ -352,7 +352,7 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <instanceof value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
+                   <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
                    <and>
                      <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
                      <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
@@ -478,7 +478,7 @@
    </extension>
    
    <extension point="org.eclipse.core.runtime.preferences">
-		<initializer class="org.eclipse.ant.internal.ui.model.AntUIPreferenceInitializer"/>
+		<initializer class="org.eclipse.ant.internal.ui.AntUIPreferenceInitializer"/>
 	</extension>
     
 </plugin>

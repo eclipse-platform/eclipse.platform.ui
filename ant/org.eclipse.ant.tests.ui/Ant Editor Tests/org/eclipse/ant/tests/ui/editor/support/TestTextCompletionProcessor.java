@@ -19,7 +19,7 @@ import java.util.Collection;
 import junit.framework.Assert;
 
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;

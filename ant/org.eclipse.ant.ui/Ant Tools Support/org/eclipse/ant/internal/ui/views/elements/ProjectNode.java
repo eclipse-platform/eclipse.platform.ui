@@ -20,7 +20,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.ProjectInfo;
 import org.eclipse.ant.core.TargetInfo;
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
