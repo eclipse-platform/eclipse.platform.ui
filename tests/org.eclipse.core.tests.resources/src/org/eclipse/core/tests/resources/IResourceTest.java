@@ -1723,7 +1723,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Long[] interestingTimes = new Long[] { new Long(-1), new Long(System.currentTimeMillis()-1000), new Long(System.currentTimeMillis()-100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 1024L)};
+		Long[] interestingTimes = new Long[] { new Long(-1), new Long(System.currentTimeMillis()-1000), new Long(System.currentTimeMillis()-100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
 		Object[][] args = new Object[][] { interestingResources, interestingTimes };
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
