@@ -18,6 +18,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
@@ -28,6 +30,8 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -42,7 +46,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -55,6 +58,8 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.PresentationUtil;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
+import org.eclipse.ui.themes.ITheme;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
@@ -168,6 +173,37 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 	};
 	private ToolBar viewToolBar;
+	
+	/**
+	 * property listener that listens for theme events and updates the tab folder
+	 * accordingly
+	 */
+    private IPropertyChangeListener themeListener = new IPropertyChangeListener() {
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+         */
+        public void propertyChange(PropertyChangeEvent event) {
+            
+            String property = event.getProperty();
+            if (property.equals(IThemeManager.CHANGE_CURRENT_THEME)) { 
+                updateGradient();
+                setTitleAttributes();
+            }
+            else if (property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START)
+                    || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+                    || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR)
+                    || property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR)
+					|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START)
+					|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
+                    || property.equals(IWorkbenchThemeConstants.TAB_TEXT_FONT)) {
+                updateGradient();
+            }
+            else if (property.equals(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT)) {
+                setTitleAttributes();
+            }
+        }	            
+    };
 
 	public BasicStackPresentation(PaneFolder control, IStackPresentationSite stackSite) {
 	    super(stackSite);
@@ -179,12 +215,20 @@ public class BasicStackPresentation extends StackPresentation {
 		titleLabel = new Label(tabFolder.getControl(), SWT.NONE);
 		titleLabel.setVisible(false);
 		titleLabel.moveAbove(null);
+
+		PlatformUI
+        	.getWorkbench()
+        	.getThemeManager()
+        	.addPropertyChangeListener(themeListener);
 		
-		ColorSchemeService.setViewTitleFont(this, titleLabel);
 		
 		viewToolBar = new ToolBar(control.getControl(), SWT.HORIZONTAL 
 				| SWT.FLAT);
 		viewToolBar.moveAbove(null);
+
+		updateGradient();
+		setTitleAttributes();
+
 		
 		ToolItem pullDownButton = new ToolItem(viewToolBar, SWT.PUSH);
 		//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
@@ -259,18 +303,58 @@ public class BasicStackPresentation extends StackPresentation {
 //		});
 
 		titleLabel.addMouseListener(mouseListener);
-		
-		// Compute the tab height
-		int tabHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+				
+		populateSystemMenu(systemMenuManager);		
+	}
 
+    /**
+     * Sets the font on the title of this stack.
+     */
+    protected void setTitleAttributes() {
+        if (titleLabel == null || titleLabel.isDisposed())
+            return;
+        ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+        Font messageFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT);
+        if (!messageFont.equals(titleLabel.getFont())) {
+	        titleLabel.setFont(messageFont);
+	        setControlSize();
+        }
+    }
+    
+    /**
+     * Update the folder gradients based on the current active state.  
+     * Default implementation only sets teh viewToolBar background to the 
+     * correct value.  Subclasses should override, ensuring that they call
+     * super after all color/font changes.
+     */
+    protected void updateGradient() {        
+        if (viewToolBar == null || viewToolBar.isDisposed())
+            return;
+        
+		//ensure the bar has the same background as the view title.
+		viewToolBar.setBackground(tabFolder.getControl().getBackground());        
+    }   
+    
+	
+	/**
+     * @return the required tab height for this folder.
+     */
+    protected int computeTabHeight() {
+        GC gc = new GC(tabFolder.getControl());
+        
+		// Compute the tab height
+		int tabHeight = Math.max(
+		        viewToolBar == null ? 0 : viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y, 
+		        gc.getFontMetrics().getHeight());
+
+		gc.dispose();
+		
 		// Enforce a minimum tab height
 		if (tabHeight < 20) {
 			tabHeight = 20;
 		}
-		tabFolder.setTabHeight(tabHeight);
-		
-		populateSystemMenu(systemMenuManager);		
-	}
+		return tabHeight;
+    }
 
 	/**
 	 * @param systemMenuManager2
@@ -484,12 +568,8 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	/**
 	 * Set the size of a page in the folder.
-	 * 
-	 * TODO: Kim here...I had to make this public so that the when the font
-	 * was updated via the color scheme service it could relayout the 
-	 * presentation... calling control.getLayout() doesn't do the trick.
 	 */
-	public void setControlSize() {
+	protected void setControlSize() {
 		layout(true);
 	}
 	
@@ -526,6 +606,11 @@ public class BasicStackPresentation extends StackPresentation {
 		titleLabel = null;
 		
 		viewToolBar.dispose();
+		
+        PlatformUI
+        .getWorkbench()
+        .getThemeManager()
+        .removePropertyChangeListener(themeListener);   
 	}
 	
 	/* (non-Javadoc)

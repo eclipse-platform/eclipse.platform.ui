@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -22,7 +21,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -77,9 +75,6 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
-		
-		// set basic colors
-		ColorSchemeService.setTabAttributes(this, tabFolder);
 
 		updateGradient();
 	}
@@ -94,43 +89,63 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		getTabFolder().setSimpleTab(traditionalTab);
 	}
 
-	/**
-	 * Update the tab folder's colours to match the current theme settings
-	 * and active state
-	 */
-	private void updateGradient() {
-		Color fgColor;
-		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-        FontRegistry fontRegistry = currentTheme.getFontRegistry();	    
-		ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-		Color [] bgColors = new Color[2];
-		int [] percent = new int[1];
-		boolean vertical;
-		
-        if (isActive()){
-        	
-        	CTabItem item = getTabFolder().getSelection();
-            if(item != null && !getPartForTab(item).isBusy()){
-            	Font tabFont = fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
-            	item.setFont(tabFont);
-            }
-            
-	        fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
-            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
-		} else {
-	        fgColor = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
-            bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-            percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
-            vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
-		}	
-		drawGradient(fgColor, bgColors, percent, vertical);	
-	}
-	
+
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#updateGradient()
+	 */
+	protected void updateGradient() {
+        if (isDisposed())
+            return;
+
+	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
+	    ColorRegistry colorRegistry = theme.getColorRegistry();
+	    	    
+	    if (isActive()) {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+	    }
+	    else {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL));	        
+	    }
+	    boolean resizeNeeded = false;
+	    
+    	CTabItem item = getTabFolder().getSelection();
+    	Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+        if(item != null && !getPartForTab(item).isBusy()){
+        	item.setFont(null);
+        }            
+	    
+	    Font oldTabFont = getTabFolder().getControl().getFont();
+	    if (!oldTabFont.equals(tabFont)) {	    	    
+	        getTabFolder().getControl().setFont(tabFont);
+	        resizeNeeded = true;
+	    }
+	    
+	    //call super to ensure that the toolbar is updated properly.	    
+	    super.updateGradient();	 	   	   
+	    
+	    if (resizeNeeded) {	        
+			getTabFolder().setTabHeight(computeTabHeight());
+
+			//ensure proper control sizes for new fonts
+		    setControlSize();
+	    }
+  	}
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
 	 */
 	public void setActive(boolean isActive) {

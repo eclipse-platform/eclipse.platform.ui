@@ -14,13 +14,13 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -29,7 +29,6 @@ import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -120,8 +119,7 @@ public class EditorPresentation extends BasicStackPresentation {
         // do not support icons in unselected tabs.
         tabFolder.setUnselectedImageVisible(true);
         //tabFolder.setBorderVisible(true);
-        // set basic colors
-        ColorSchemeService.setTabAttributes(this, tabFolder);
+        // set basic colors       
         updateGradient();
         final Shell shell = tabFolder.getControl().getShell();
         IHandler openEditorDropDownHandler = new AbstractHandler() {
@@ -189,51 +187,7 @@ public class EditorPresentation extends BasicStackPresentation {
         // set the tab style to non-simple
         getTabFolder().setSimpleTab(traditionalTab);
     }
-
-    /**
-     * Update the tab folder's colours to match the current theme settings and
-     * active state
-     */
-    private void updateGradient() {
-        Color fgColor;
-        ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager()
-                .getCurrentTheme();
-        FontRegistry fontRegistry = currentTheme.getFontRegistry();
-        ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-        Color[] bgColors = new Color[2];
-        int[] percent = new int[1];
-        boolean vertical;
-        if (isActive()) {
-            fgColor = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-            bgColors[0] = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-            percent[0] = currentTheme
-                    .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
-            vertical = currentTheme
-                    .getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
-
-        } else {
-            fgColor = colorRegistry
-                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
-            bgColors[0] = colorRegistry
-                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-            bgColors[1] = colorRegistry
-                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-            percent[0] = currentTheme
-                    .getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
-            vertical = currentTheme
-                    .getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
-        }
-
-        getTabFolder().getControl().setFont(
-                fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-
-        drawGradient(fgColor, bgColors, percent, vertical);
-    }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -243,6 +197,56 @@ public class EditorPresentation extends BasicStackPresentation {
         return ""; //$NON-NLS-1$
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#updateGradient()
+     */
+    protected void updateGradient() {
+        if (isDisposed())
+            return;
+
+	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
+	    ColorRegistry colorRegistry = theme.getColorRegistry();
+	    
+	    if (isActive()) {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+	    }
+	    else {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL));	        
+	    }
+	    
+	    boolean resizeNeeded = false;
+	    Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+	    Font oldTabFont = getTabFolder().getControl().getFont();
+	    if (!oldTabFont.equals(tabFont)) {	    	    
+	        getTabFolder().getControl().setFont(tabFont);
+
+	        //only layout on font changes.
+	        resizeNeeded = true;
+	    }
+	    
+        //call super to ensure that the toolbar is updated properly.
+        super.updateGradient();
+        
+        if (resizeNeeded) {
+            getTabFolder().setTabHeight(computeTabHeight());
+		    //ensure proper control sizes for new fonts
+		    setControlSize();
+        }
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getPaneName()
 	 */
