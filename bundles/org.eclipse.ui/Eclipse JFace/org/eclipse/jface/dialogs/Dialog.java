@@ -82,12 +82,12 @@ public abstract class Dialog extends Window {
 	/**
 	 * The dialog area; <code>null</code> until dialog is layed out.
 	 */
-	private Control dialogArea;
+	Control dialogArea;
 
 	/**
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
-	private Control buttonBar;
+	Control buttonBar;
 	
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
@@ -406,13 +406,6 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	return button;
 }
 
-protected void setButtonLayoutData(Button button) {
-	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	button.setLayoutData(data);
-}
 /**
  * Creates and returns the contents of this dialog's 
  * button bar.
@@ -654,4 +647,10 @@ protected void okPressed() {
 	setReturnCode(OK);
 	close();
 }
-}
+protected void setButtonLayoutData(Button button) {
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
+}}
