@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,8 @@ public class HistoryStore {
 	protected Workspace workspace;
 	protected IPath location;
 	protected BlobStore blobStore;
-	private IndexedStoreWrapper store;
+	IndexedStoreWrapper store;
 	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
-
-	//flag used inside stateAlreadyExists to prevent creating an array
-	protected boolean stateAlreadyExists;
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
@@ -103,31 +100,91 @@ public class HistoryStore {
 	 *
 	 * @param path Full workspace path to the resource being logged.
 	 * @param uuid UUID for stored file contents.
-	 * @params lastModified Timestamp for rseource being logged.
+	 * @param lastModified Timestamp for rseource being logged.
 	 */
 	protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
 		// Determine how many states already exist for this path and timestamp.
-		// This count is just used to distinguish between states that have the
-		// same path and last modified timestamp.
-		class CountVisitor implements IHistoryStoreVisitor {
-			byte count = 0;
+		class BitVisitor implements IHistoryStoreVisitor {
+			BitSet bits = new BitSet();
 
 			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
-				count++;
+				bits.set(entry.getCount());
 				return true;
 			}
 
-			public byte getCount() {
-				return count;
+			public byte useNextClearBit(byte[] key) {
+				// Don't use an empty slot as this will put this state
+				// out of order relative to the other states with the same 
+				// path and last modified time.  So find the first clear bit
+				// after the last set bit.
+				int nextBit = bits.length();
+				// This value must fit in a byte.  If we are running off the
+				// end of the byte, check to see if there are any empty bits
+				// in the middle.  If so, reorganize the counters so we maintain
+				// the ordering of the states but use up the least number
+				// of bits (i.e., de-fragment the bitset).
+				if (nextBit > Byte.MAX_VALUE) {
+					if (bits.cardinality() < Byte.MAX_VALUE) {
+						// We know we have some clear bits.
+						try {
+							IndexCursor cursor = store.getCursor();
+							// destCount will always be the count value of the 
+							// next key we want to assign a state to
+							byte destCount = (byte) bits.nextClearBit(0);
+							if (destCount < 0)
+								// There are no clear bits
+								return (byte) -1;
+							// sourceCount will always be the count value of the
+							// next key we want to move to destCount.  When
+							// sourceCount is -1, there are no more source states
+							// to move so we are done.
+							byte sourceCount = (byte) bits.nextSetBit(destCount);
+							if (sourceCount < 0)
+								// There are no more states to move
+								return destCount;
+							byte[] completeKey = new byte[key.length + 1];
+							System.arraycopy(key, 0, completeKey, 0, key.length);
+							for (; sourceCount >= 0 && destCount >= 0; destCount++) {
+								completeKey[completeKey.length - 1] = sourceCount;
+								cursor.find(completeKey);
+								if (cursor.keyMatches(completeKey)) {
+									HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
+									HistoryStoreEntry entryToInsert = new HistoryStoreEntry(storedEntry.getPath(), storedEntry.getUUID(), storedEntry.getLastModified(), destCount);
+									remove(storedEntry);
+									ObjectID valueID = store.createObject(entryToInsert.valueToBytes());
+									store.getIndex().insert(entryToInsert.getKey(), valueID);
+									sourceCount = (byte) bits.nextSetBit(sourceCount + 1);
+								}
+							}
+							cursor.close();
+							return destCount;
+						} catch (Exception e) {
+							String message = Policy.bind("history.problemsAccessing"); //$NON-NLS-1$
+							ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
+							ResourcesPlugin.getPlugin().getLog().log(status);
+						}
+					} else {
+						// Every count is being used.  Too many states.
+						return (byte) -1;
+					}
+				}
+				return (byte) nextBit;
 			}
 		}
 
 		// Build partial key for which matches will be found.
 		byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(path, lastModified);
-		CountVisitor visitor = new CountVisitor();
+		BitVisitor visitor = new BitVisitor();
 		accept(keyPrefix, visitor, false, true);
-		HistoryStoreEntry entryToInsert = new HistoryStoreEntry(path, uuid, lastModified, visitor.getCount());
+		byte index = visitor.useNextClearBit(keyPrefix);
 		try {
+			if (index < 0) {
+				String message = Policy.bind("history.tooManySimUpdates", path.toString(), new Date(lastModified).toString()); //$NON-NLS-1$
+				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, path, message, null);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+				return;
+			}
+			HistoryStoreEntry entryToInsert = new HistoryStoreEntry(path, uuid, lastModified, index);
 			// valueToBytes just converts the uuid to byte form
 			ObjectID valueID = store.createObject(entryToInsert.valueToBytes());
 			store.getIndex().insert(entryToInsert.getKey(), valueID);
@@ -217,19 +274,19 @@ public class HistoryStore {
 		}
 	}
 
-	protected boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
-		stateAlreadyExists = false;
+	boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
+		final boolean[] rc = new boolean[] {false};
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
 			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 				if (uuid.equals(entry.getUUID())) {
-					stateAlreadyExists = true;
+					rc[0] = true;
 					return false;
 				}
 				return true;
 			}
 		};
 		accept(path, visitor, false);
-		return stateAlreadyExists;
+		return rc[0];
 	}
 
 	/**
@@ -400,6 +457,23 @@ public class HistoryStore {
 	protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
 		// Do not remove the blob yet.  It may be referenced by another
 		// history store entry.
+		try {
+			Vector objectIds = store.getIndex().getObjectIdentifiersMatching(entry.getKey());
+			if (objectIds.size() == 1) {
+				store.removeObject((ObjectID) objectIds.get(0));
+			} else if (objectIds.size() > 1) {
+				// There is a problem with more than one entry having the same
+				// key.
+				String message = Policy.bind("history.tooManySimUpdates", entry.getPath().toString(), new Date(entry.getLastModified()).toString()); //$NON-NLS-1$
+				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, entry.getPath(), message, null);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+			}
+		} catch (Exception e) {
+			String[] messageArgs = {entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString()};
+			String message = Policy.bind("history.specificProblemsCleaning", messageArgs); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
 		entry.remove();
 	}
 
@@ -407,8 +481,21 @@ public class HistoryStore {
 	 * Removes all file states from this store.
 	 */
 	public void removeAll() {
-		// XXX: should implement a method with a better performance
-		removeAll(workspace.getRoot());
+		// TODO: should implement a method with a better performance
+		try {
+			IndexCursor cursor = store.getCursor();
+			cursor.findFirstEntry();
+			while (cursor.isSet()) {
+				HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
+				remove(entry);
+			}
+			cursor.close();
+			store.commit();
+		} catch (Exception e) {
+			String message = Policy.bind("history.problemsRemoving", workspace.getRoot().getFullPath().toString()); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, workspace.getRoot().getFullPath(), message, e);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
 	}
 
 	public void removeAll(IResource resource) {
@@ -474,7 +561,7 @@ public class HistoryStore {
 	}
 
 	public void startup(IProgressMonitor monitor) {
-		// do nothing
+		// ignore
 	}
 
 	protected void resetIndexedStore() {
