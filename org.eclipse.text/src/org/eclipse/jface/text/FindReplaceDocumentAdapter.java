@@ -232,9 +232,8 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		StringBuffer out= new StringBuffer(string.length());
 		boolean quoting= false;
 		
-		int i= 0;
-		while (i < string.length()) {
-			char ch= string.charAt(i++);
+		for (int i= 0, length= string.length(); i < length; i++) {
+			char ch= string.charAt(i);
 			if (ch == '\\') {
 				if (quoting) {
 					out.append("\\E"); //$NON-NLS-1$
