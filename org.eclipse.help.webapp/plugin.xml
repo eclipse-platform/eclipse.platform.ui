@@ -18,11 +18,5 @@
       <import plugin="org.eclipse.help"/>
 
    </requires>
-
-   <runtime>
-      <library name="helpwebapp.jar">
-        <export name="*"/>
-      </library>
-   </runtime>
    
 </plugin>
