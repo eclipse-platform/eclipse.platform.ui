@@ -225,6 +225,9 @@ public class ConfigurationManagerWindow
 		catch (CoreException e) {
 		}
 		
+		UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
+		getShell().setImage(provider.get(UpdateUIImages.DESC_CONFIGS_VIEW, 0));
+		
 		return container;
 	}
 

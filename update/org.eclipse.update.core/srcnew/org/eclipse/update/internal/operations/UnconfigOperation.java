@@ -26,47 +26,55 @@ public class UnconfigOperation extends SingleOperation implements IUnconfigOpera
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
-		
+		PendingOperation op =
+			new PendingOperation(
+				getInstallConfiguration(),
+				getTargetSite(),
+				getFeature(),
+				PendingOperation.UNCONFIGURE);
+		IStatus status = UpdateManager.getValidator().validatePendingChange(op);
+		if (status != null) {
+			throw new CoreException(status);
+		}
+
 		PatchCleaner2 cleaner = new PatchCleaner2(targetSite, feature);
 		targetSite.unconfigure(feature);
 		cleaner.dispose();
-		
-		IStatus status = UpdateManager.getValidator().validateCurrentState();
-		if (status != null) {
-			undo();
-			throw new CoreException(status);
-		} else {
-			try {
-				// Restart not needed
-				boolean restartNeeded = false;
 
-				// Check if this operation is cancelling one that's already pending
-				IOperation pendingOperation = UpdateManager.getOperationsManager().findPendingOperation(feature);
+		try {
+			// Restart not needed
+			boolean restartNeeded = false;
 
-				if (pendingOperation instanceof IConfigOperation) {
-					// no need to do either pending change
-					UpdateManager.getOperationsManager().removePendingOperation(pendingOperation);
-				} else {
-					UpdateManager.getOperationsManager().addPendingOperation(this);
-					restartNeeded = true;
-				}
+			// Check if this operation is cancelling one that's already pending
+			IOperation pendingOperation =
+				UpdateManager.getOperationsManager().findPendingOperation(feature);
 
-				markProcessed();
-				if (listener != null)
-					listener.afterExecute(this);
-
-				SiteManager.getLocalSite().save();
-
-				return restartNeeded;
-			} catch (CoreException e) {
-				undo();
-				UpdateManager.logException(e);
-				throw e;
+			if (pendingOperation instanceof IConfigOperation) {
+				// no need to do either pending change
+				UpdateManager.getOperationsManager().removePendingOperation(
+					pendingOperation);
+			} else {
+				UpdateManager.getOperationsManager().addPendingOperation(this);
+				restartNeeded = true;
 			}
+
+			markProcessed();
+			if (listener != null)
+				listener.afterExecute(this);
+
+			SiteManager.getLocalSite().save();
+
+			return restartNeeded;
+		} catch (CoreException e) {
+			undo();
+			UpdateManager.logException(e);
+			throw e;
 		}
 	}
+	
 	
 	public void undo() throws CoreException{
 		targetSite.configure(feature);
 	}
+	
 }

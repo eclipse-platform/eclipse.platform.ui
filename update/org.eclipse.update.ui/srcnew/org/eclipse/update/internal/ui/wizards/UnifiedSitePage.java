@@ -357,8 +357,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 
 	private void updateSearchRequest() {
 		Object[] checked = treeViewer.getCheckedElements();
-		ArrayList barray = new ArrayList();
-		
+
 		UpdateSearchScope scope = new UpdateSearchScope();
 		int nsites=0;
 

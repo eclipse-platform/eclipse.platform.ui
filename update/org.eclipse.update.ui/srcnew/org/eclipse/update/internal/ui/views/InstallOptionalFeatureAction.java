@@ -23,7 +23,6 @@ import org.eclipse.update.internal.operations.PendingOperation;
 import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.MissingFeature;
-import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 /**
  * @author wassimm
