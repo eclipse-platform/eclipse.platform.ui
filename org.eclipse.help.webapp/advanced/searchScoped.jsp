@@ -213,8 +213,8 @@ function onloadHandler(e)
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td id="searchTD">
-					<label id="searchLabel" for="searchWord">
-					&nbsp;<%=ServletResources.getString("Search", request)%>:
+					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
+					&nbsp;<%=ServletResources.getLabel("Search", request)%>:
 					</label>
 				</td>
 				<td>
@@ -225,10 +225,10 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("selectWorkingSet", request)%>' alt='<%=ServletResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=ServletResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Scope", request)%>:</a>
+					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("selectWorkingSet", request)%>' alt='<%=ServletResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=ServletResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';" accessKey="<%=ServletResources.getAccessKey("Scope", request)%>"><%=ServletResources.getLabel("Scope", request)%>:</a>
 				</td>
 				<td nowrap>
-					<input type="hidden" name="workingSet" value='<%=data.getScope()%>' >
+					<input type="hidden" name="workingSet" value='<%=data.getScope()%>'>
 					<div id="scope" ><%=data.getScope()%></div>
 				</td>
 			</tr>

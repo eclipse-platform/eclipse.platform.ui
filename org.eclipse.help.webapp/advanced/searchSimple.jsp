@@ -200,8 +200,8 @@ function onloadHandler(e)
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td>
-					<label id="searchLabel" for="searchWord">
-					&nbsp;<%=ServletResources.getString("Search", request)%>:
+					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
+					&nbsp;<%=ServletResources.getLabel("Search", request)%>:
 					</label>
 				</td>
 				<td>
