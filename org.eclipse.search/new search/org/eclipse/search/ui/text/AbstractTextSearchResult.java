@@ -123,12 +123,40 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fElementsToMatches.put(match.getElement(), matches);
 		}
 		if (!matches.contains(match)) {
-			matches.add(match);
+			insertSorted(matches, match);
 			return true;
 		}
 		return false;
 	}
 	
+	private static void insertSorted(List matches, Match match) {
+		if (matches.size() == 0) {
+			matches.add(match);
+			return;
+		}
+		int insertIndex= getInsertIndex(matches, match, 0, matches.size());
+		matches.add(insertIndex, match);
+	}
+	
+	private static int getInsertIndex(List matches, Match match, int min, int max) {
+		if (min == max)
+			return min;
+		int middle= (min+max)/2;
+		int compareResult= compare(match, (Match) matches.get(middle));
+		if (compareResult == 0)
+			return middle+1;
+		if (compareResult > 0)
+			return getInsertIndex(matches, match, min, middle);
+		return getInsertIndex(matches, match, middle+1, max);
+	}
+
+	private static int compare(Match match1, Match match2) {
+		int diff= match2.getOffset()-match1.getOffset();
+		if (diff != 0)
+			return diff;
+		return match2.getLength()-match1.getLength();
+	}
+
 	/**
 	 * Removes all matches from this search result.
 	 * <p>
