@@ -705,6 +705,8 @@ public class TextViewer extends Viewer implements
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
 		private Map fRememberedPartitioners;
+		/** The active rewrite session */
+		private DocumentRewriteSession fRewriteSession;
 		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
@@ -900,29 +902,36 @@ public class TextViewer extends Viewer implements
 			
 			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18232
 			
+			IDocument document= TextViewer.this.getDocument();
+			
 			if (replaceAll) {
 				
-				TextViewer.this.setRedraw(false);
-				TextViewer.this.startSequentialRewriteMode(false);
+				if (document instanceof IDocumentExtension4) {
+					IDocumentExtension4 extension= (IDocumentExtension4) document;
+					fRewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
+				} else {
+					TextViewer.this.setRedraw(false);
+					TextViewer.this.startSequentialRewriteMode(false);
+					if (fUndoManager != null)
+						fUndoManager.beginCompoundChange();
+				}
 				
-				if (fUndoManager != null)
-					fUndoManager.beginCompoundChange();
-				
-				IDocument document= TextViewer.this.getDocument();
 				fRememberedPartitioners= TextUtilities.removeDocumentPartitioners(document);
 
 			} else {
 				
-				TextViewer.this.setRedraw(true);
-				TextViewer.this.stopSequentialRewriteMode();
-				
-				if (fUndoManager != null)
-					fUndoManager.endCompoundChange();
-					
-				if (fRememberedPartitioners != null) {
-					IDocument document= TextViewer.this.getDocument();
-					TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
+				if (document instanceof IDocumentExtension4) {
+					IDocumentExtension4 extension= (IDocumentExtension4) document;
+					extension.stopRewriteSession(fRewriteSession);
+				} else {
+					TextViewer.this.setRedraw(true);
+					TextViewer.this.stopSequentialRewriteMode();
+					if (fUndoManager != null)
+						fUndoManager.endCompoundChange();
 				}
+				
+				if (fRememberedPartitioners != null)
+					TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
 			}
 		}
 	}

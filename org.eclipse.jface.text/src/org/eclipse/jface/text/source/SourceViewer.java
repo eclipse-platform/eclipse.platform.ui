@@ -712,7 +712,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 					if (document instanceof IDocumentExtension4) {
 						IDocumentExtension4 extension= (IDocumentExtension4) document;
-						rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
+						rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
 					} else {
 						setRedraw(false);
 						startSequentialRewriteMode(false);
