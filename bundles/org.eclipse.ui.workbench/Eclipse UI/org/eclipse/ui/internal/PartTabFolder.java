@@ -84,13 +84,16 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
         public void dragStart(IPresentablePart beingDragged,
                 Point initialLocation, boolean keyboard) {
-            LayoutPart pane = getPaneFor(beingDragged);
-
-            if (pane != null) {
-                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
-                        getPresentation().getControl().getBounds()),
-                        initialLocation, !keyboard);
-            }
+        	
+        	if (isMoveable(beingDragged)) {
+	            LayoutPart pane = getPaneFor(beingDragged);
+	
+	            if (pane != null) {
+	                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
+	                        getPresentation().getControl().getBounds()),
+	                        initialLocation, !keyboard);
+	            }
+        	}
         }
 
         /*
@@ -99,18 +102,21 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
          * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
          */
         public void dragStart(Point initialPosition, boolean keyboard) {
-            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
-                    getParent(), getPresentation().getControl().getBounds()),
-                    initialPosition, !keyboard);
+            if (canMoveFolder()) {
+	            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
+	                    getParent(), getPresentation().getControl().getBounds()),
+	                    initialPosition, !keyboard);
+            }
         }
 
         public boolean isCloseable(IPresentablePart part) {
             Perspective perspective = page.getActivePerspective();
 
             if (perspective == null) {
-            // Shouldn't happen -- can't have a PartTabFolder without a
-            // perspective
-            return false; }
+	            // Shouldn't happen -- can't have a PartTabFolder without a
+	            // perspective
+	            return false; 
+            }
 
             ViewPane pane = (ViewPane) getPaneFor(part);
 
@@ -123,6 +129,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
 
         public boolean isMoveable(IPresentablePart part) {
+        	if (part == null) {
+        		return canMoveFolder();
+        	}
+        	
             return isCloseable(part);
         }
 
@@ -191,6 +201,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
             systemMenuRestore.dispose();
             systemMenuSize.dispose();
         }
+        
+        public boolean isDynamic() {
+        	return true;
+        }
     }
     
     private IContributionItem systemMenuContribution;
@@ -227,6 +241,18 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
     }
 
+    private boolean canMoveFolder() {
+        Perspective perspective = page.getActivePerspective();
+
+        if (perspective == null) {
+            // Shouldn't happen -- can't have a PartTabFolder without a
+            // perspective
+            return false; 
+        }        	
+    	
+        return !perspective.isFixedLayout();    	
+    }
+    
     /**
      * Add a part at a particular position
      */

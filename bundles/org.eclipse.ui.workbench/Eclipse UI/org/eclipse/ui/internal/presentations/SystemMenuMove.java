@@ -64,7 +64,7 @@ public class SystemMenuMove extends ContributionItem {
                         true);
             }
         });
-        menuItem3.setEnabled(true);
+        menuItem3.setEnabled(stackPresentationSite.isMoveable(null));
     }
 
     public boolean isDynamic() {

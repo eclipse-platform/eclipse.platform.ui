@@ -131,7 +131,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         }
 
         public boolean isMoveable(IPresentablePart part) {
-            return isCloseable(part);
+        	return true;
         }
     };
 
