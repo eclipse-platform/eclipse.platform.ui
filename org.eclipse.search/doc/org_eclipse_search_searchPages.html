@@ -50,9 +50,8 @@ this hint is omitted the page will be no larger than the other pages.</li>
 <li>
 <b>tabPosition</b> - an integer defining where the page is placed in the page book. The value does not define the absolute position but the position relative to the other pages. The ordering of pages is as follows:
 	<ol>
-	<li>if neither page defines the tab position then they are ordered alphabetically according to their labels</li>
-	<li>if both pages have the tab position specified then the page with the lower value comes first. If the values are equal then the pages are treated as if the values would not exist (see 1.)</li>
-	<li>if only one page has the value specified then this page comes first
+	<li>if the tabPosition is not specified for a page then <tt>Integer.MAX_VALUE / 2</tt> is used</li>
+	<li>the page with the lower value comes first. If the values are equal then the pages are are ordered alphabetically according to their labels</li>
 	</ol>
 </li>
 

@@ -130,7 +130,7 @@ class SearchPageDescriptor implements Comparable {
 	 *
 	 */
 	public int getTabPosition() {
-		int position= Integer.MAX_VALUE;
+		int position= Integer.MAX_VALUE / 2;
 		String str= fElement.getAttribute(TAB_POSITION_ATTRIBUTE);
 		if (str != null)
 			try {
