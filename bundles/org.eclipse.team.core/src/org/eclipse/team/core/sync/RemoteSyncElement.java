@@ -217,11 +217,10 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 							description = OUTGOING | CHANGE;
 						} else {
 							description = CONFLICTING | CHANGE;
-						}
-						if (description != IN_SYNC && 
-							granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
-						    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
-							description |= PSEUDO_CONFLICT;
+							if (granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
+							    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
+								description |= PSEUDO_CONFLICT;
+							}
 						}
 						progress.done();
 					}
