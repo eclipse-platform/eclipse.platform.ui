@@ -42,7 +42,7 @@ public class SearchPageRegistry {
 	private void initializeExtensionCache(String extensionPoint, String targetClassAttribute) {
 		fTargetClassNameToExtension= new HashMap();
 		IConfigurationElement[] extensions=
-			Platform.getPluginRegistry().getConfigurationElementsFor(
+			Platform.getExtensionRegistry().getConfigurationElementsFor(
 				extensionPoint);
 		for (int i= 0; i < extensions.length; i++) {
 			fTargetClassNameToExtension.put(extensions[i].getAttribute(targetClassAttribute), extensions[i]);
