@@ -154,7 +154,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {fileLoc}); //$NON-NLS-1$
                 addPatternMatchListener(new ConsoleLogFilePatternMatcher(fileLoc));
             } catch (FileNotFoundException e) {
-                DebugUIPlugin.log(e);
                 message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.2"), new String[] {file}); //$NON-NLS-1$
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
