@@ -83,15 +83,13 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else if (element instanceof IVariable || element instanceof IValue) {
 				if (element instanceof IndexedVariablePartition) {
 					return IInternalDebugUIConstants.IMG_OBJS_ARRAY_PARTITION;
-				} else {
-					return IDebugUIConstants.IMG_OBJS_VARIABLE;
-				}
+				} 
+				return IDebugUIConstants.IMG_OBJS_VARIABLE;
 			} else if (element instanceof IStackFrame) {
 				if (((IStackFrame)element).getThread().isSuspended()) {
 					return IDebugUIConstants.IMG_OBJS_STACKFRAME;
-				} else {
-					return IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING;					
 				}
+				return IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING;
 			} else if (element instanceof IThread) {
 				IThread thread = (IThread)element;
 				if (thread.isSuspended()) {
@@ -121,9 +119,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else if (element instanceof IProcess) {
 				if (((IProcess) element).isTerminated()) {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED;
-				} else {
-					return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
-				}
+				} 
+				return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
 			} else if (element instanceof ILaunch) {
 				// determine the image from the launch config type
 				ILaunch launch= (ILaunch)element;
@@ -265,19 +262,18 @@ public class DefaultLabelProvider implements ILabelProvider {
 	protected String getLaunchText(ILaunch launch) {
 		if (launch.getLaunchConfiguration() == null || (!launch.getLaunchConfiguration().exists() && !launch.getLaunchConfiguration().isWorkingCopy())) {
 			return DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1"); //$NON-NLS-1$
-		} else {
-			// new launch configuration
-			ILaunchConfiguration config = launch.getLaunchConfiguration();
-			StringBuffer buff= new StringBuffer(config.getName());
-			buff.append(" ["); //$NON-NLS-1$
-			try {
-				buff.append(config.getType().getName());
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-			buff.append("]"); //$NON-NLS-1$
-			return buff.toString();			
+		} 
+		// new launch configuration
+		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		StringBuffer buff= new StringBuffer(config.getName());
+		buff.append(" ["); //$NON-NLS-1$
+		try {
+			buff.append(config.getType().getName());
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
 		}
+		buff.append("]"); //$NON-NLS-1$
+		return buff.toString();			
 	}
 
 	protected String getExpressionText(IExpression expression) {
@@ -367,9 +363,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 			if (breakpoint != null && marker.exists()) {
 				if (breakpoint.isEnabled()) {
 					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-				} else {
-					return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
-				}
+				} 
+				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 			}
 		} catch (CoreException e) {
 		}
@@ -381,9 +376,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				if (breakpoint.isEnabled()) {
 					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-				} else {
-					return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
-				}
+				} 
+				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 			} catch (CoreException e) {
 			}
 		}
