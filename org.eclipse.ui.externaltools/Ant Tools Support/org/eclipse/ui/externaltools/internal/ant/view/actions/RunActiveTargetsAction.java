@@ -50,7 +50,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask(AntViewActionMessages.getString("RunActiveTargetsAction.Running"), TOTAL_WORK_UNITS); //$NON-NLS-1$
 
-					List targetList= getActiveTargets();
+					List targetList= view.getActiveTargets();
 					if (targetList.isEmpty()) {
 						return;
 					}
@@ -141,14 +141,6 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 	 * active targets
 	 */
 	public void update() {
-		setEnabled(!getActiveTargets().isEmpty());
+		setEnabled(!view.getActiveTargets().isEmpty());
 	}
-
-	/**
-	 * Returns the list of targets that are currently active in the Ant View. 
-	 */
-	public List getActiveTargets() {
-		return view.getActiveTargets();
-	}
-
 }
