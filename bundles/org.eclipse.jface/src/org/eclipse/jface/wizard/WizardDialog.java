@@ -474,6 +474,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		applyDialogFont(progressMonitorPart);
 		return composite;
 	}
 	/**
