@@ -12,7 +12,6 @@ Contributors:
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.swt.widgets.Control;
@@ -142,7 +141,7 @@ NavigationHistoryEntry[] getBackwardEntries() {
 	for (int i=0; i<activeEntry; i++) {
 		entries[activeEntry - 1 - i] = getEntry(i);
 	}
-	return colapseEntries(entries);
+	return entries;
 }
 /*
  * Return the forward history entries.  Return in restore order (i.e., the first
@@ -156,24 +155,7 @@ NavigationHistoryEntry[] getForwardEntries() {
  	for (int i=activeEntry + 1; i<history.size(); i++) {
  		entries[i - activeEntry - 1] = getEntry(i);
  	}
- 	return colapseEntries(entries);
-}
-NavigationHistoryEntry[] colapseEntries(NavigationHistoryEntry[] entries) {
-	ArrayList allEntries = new ArrayList(Arrays.asList(entries));
-	NavigationHistoryEntry priviousEntry = null;
-	for (Iterator iter = allEntries.iterator(); iter.hasNext();) {
-		NavigationHistoryEntry entry = (NavigationHistoryEntry) iter.next();
-		if(priviousEntry != null) {
-			String text = priviousEntry.getHistoryText();
-			if(text != null) {
-				if(text.equals(entry.getHistoryText()) && priviousEntry.editorInfo == entry.editorInfo)
-					iter.remove();
-			}
-		}
-		priviousEntry = entry;
-	}
-	entries = new NavigationHistoryEntry[allEntries.size()];
-	return (NavigationHistoryEntry[])allEntries.toArray(entries);
+ 	return entries;
 }
 /*
  * (non-Javadoc)

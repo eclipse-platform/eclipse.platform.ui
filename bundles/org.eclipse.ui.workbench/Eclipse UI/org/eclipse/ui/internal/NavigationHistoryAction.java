@@ -11,6 +11,10 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -75,28 +79,59 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 		dispose();
 		historyMenu = new Menu(parent);
 		IWorkbenchPage page = getWorkbenchWindow().getActivePage();
-		if (page != null) {
-			final NavigationHistory history = (NavigationHistory)page.getNavigationHistory();
-			NavigationHistoryEntry[] entries;
-			if (forward) entries = history.getForwardEntries();
-			else entries = history.getBackwardEntries();
-			for (int i=0; i<entries.length; i++) {
-				if (i > MAX_HISTORY_LENGTH) break;
-				String text = entries[i].getHistoryText();
-				if (text != null) {
-					MenuItem item = new MenuItem(historyMenu, SWT.NONE);
-					item.setData(entries[i]);
-					item.setText(text);
-					item.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) {
-							history.shiftCurrentEntry((NavigationHistoryEntry)e.widget.getData());
-						}
-					});
-				}
+		if(page == null)
+			return historyMenu;
+
+		final NavigationHistory history = (NavigationHistory)getWorkbenchWindow().getActivePage().getNavigationHistory();
+		NavigationHistoryEntry[] entries;
+		if (forward) entries = history.getForwardEntries();
+		else entries = history.getBackwardEntries();
+		int entriesCount[] = new int[entries.length];
+		for (int i = 0; i < entriesCount.length; i++)
+			entriesCount[i] = 1;
+		entries = colapseEntries(entries,entriesCount);
+		for (int i=0; i<entries.length; i++) {
+			if (i > MAX_HISTORY_LENGTH) break;
+			String text = entries[i].getHistoryText();
+			if (text != null) {
+				MenuItem item = new MenuItem(historyMenu, SWT.NONE);
+				item.setData(entries[i]);
+				if(entriesCount[i] > 1)
+					text = WorkbenchMessages.format("NavigationHistoryAction.locations", new String[] {text,new Integer(entriesCount[i]).toString()}); //$NON-NLS-1$
+				item.setText(text);
+				item.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						history.shiftCurrentEntry((NavigationHistoryEntry)e.widget.getData());
+					}
+				});
 			}
 		}
 		return historyMenu;
 	}
+	
+	private NavigationHistoryEntry[] colapseEntries(NavigationHistoryEntry[] entries,int entriesCount[]) {
+		ArrayList allEntries = new ArrayList(Arrays.asList(entries));
+		NavigationHistoryEntry priviousEntry = null;
+		int i = -1;
+		for (Iterator iter = allEntries.iterator(); iter.hasNext();) {
+			NavigationHistoryEntry entry = (NavigationHistoryEntry) iter.next();
+			if(priviousEntry != null) {
+				String text = priviousEntry.getHistoryText();
+				if(text != null) {
+					if(text.equals(entry.getHistoryText()) && priviousEntry.editorInfo == entry.editorInfo) {
+						iter.remove();
+						entriesCount[i]++;
+						continue;
+					}
+				}
+			}
+			priviousEntry = entry;
+			i++;
+		}
+		entries = new NavigationHistoryEntry[allEntries.size()];
+		return (NavigationHistoryEntry[])allEntries.toArray(entries);
+	}
+	
 	public void init(IWorkbenchWindow window){
 	}
 	/* (non-Javadoc)
