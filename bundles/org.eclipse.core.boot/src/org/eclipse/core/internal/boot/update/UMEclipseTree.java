@@ -256,7 +256,6 @@ public static String[] getPathMembers(URL path) {
 
 	String[] straList = null;
 	URL url = null;
-	boolean proceed = false;
 
 	String strURL = appendTrailingSlash(path).toExternalForm() + IManifestAttributes.INSTALL_INDEX;
 
@@ -276,7 +275,6 @@ public static String[] getPathMembers(URL path) {
 			BaseURLHandler.Response response = BaseURLHandler.open(url);
 			if( response.getResponseCode() == HttpURLConnection.HTTP_OK ){
 				inputStream = response.getInputStream();
-				proceed = true;
 			} 
 		}
 		catch (IOException ex) {
@@ -305,7 +303,7 @@ public static String[] getPathMembers(URL path) {
 			vectorStrings.copyInto(straList);
 
 			try{inputStream.close();} catch(Exception x) {}
-		} else if (proceed == true) { 
+		} else  { 
 			String protocol = path.getProtocol();
 			if (protocol.equals("file") ||  protocol.equals("valoader")) {
 				straList = (new File(path.getFile())).list();
