@@ -41,10 +41,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see EditorPart
  */
 public abstract class WorkbenchPart implements IWorkbenchPart, IExecutableExtension {
-	private String title;
+	private String title = ""; //$NON-NLS-1$
 	private ImageDescriptor imageDescriptor;
 	private Image titleImage;
-	private String toolTip;
+	private String toolTip = ""; //$NON-NLS-1$
 	private IConfigurationElement configElement;
 	private IWorkbenchPartSite partSite;
 	private ListenerList propChangeListeners = new ListenerList(2);
@@ -198,10 +198,7 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	configElement = cfig;
 
 	// Title.
-	title = cfig.getAttribute("name");//$NON-NLS-1$
-	if (title == null) {
-		title = "Unknown";//$NON-NLS-1$
-	}
+	title = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$
 
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
@@ -241,13 +238,12 @@ protected void setSite(IWorkbenchPartSite site) {
  *
  * @param title the title, or <code>null</code> to clear
  */
-protected void setTitle(String newTitle) {
-	
+protected void setTitle(String title) {
+    title = Util.safeString(title); 
 	//Do not send changes if they are the same
-	if(Util.equals(newTitle, title))
+	if(Util.equals(this.title, title))
 		return;
-	
-	this.title = newTitle;
+	this.title = title;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**
@@ -257,16 +253,23 @@ protected void setTitle(String newTitle) {
  */
 protected void setTitleImage(Image titleImage) {
     Assert.isTrue(titleImage == null || !titleImage.isDisposed());
+	//Do not send changes if they are the same
+    if (this.titleImage == titleImage)
+        return;
 	this.titleImage = titleImage;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**
  * Sets or clears the title tool tip text of this part.
  *
- * @param text the new tool tip text
+ * @param toolTip the new tool tip text, or <code>null</code> to clear
  */
-protected void setTitleToolTip(String text) {
-	this.toolTip = text;
+protected void setTitleToolTip(String toolTip) {
+    toolTip = Util.safeString(toolTip);
+	//Do not send changes if they are the same
+	if(Util.equals(this.toolTip, toolTip))
+		return;
+	this.toolTip = toolTip;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**

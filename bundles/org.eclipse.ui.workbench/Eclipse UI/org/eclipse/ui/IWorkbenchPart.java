@@ -105,7 +105,7 @@ public interface IWorkbenchPart extends IAdaptable {
  * <ul>
  *   <li><code>IWorkbenchPart.PROP_TITLE</code> </li>
  *   <li><code>IEditorPart.PROP_INPUT</code> </li>
- *   <li><code>IEditorPart.PROP_DIRTY</code> </li>
+ *   <li><code>ISaveablePart.PROP_DIRTY</code> </li>
  * </ul>
  * </p>
  *
@@ -173,7 +173,7 @@ public IWorkbenchPartSite getSite();
  * container.  
  * </p>
  *
- * @return the workbench part title
+ * @return the workbench part title (not <code>null</code>)
  */
 public String getTitle();
 /**
@@ -190,15 +190,16 @@ public String getTitle();
  */
 public Image getTitleImage();
 /**
- * Returns the title tool tip text of this workbench part. If this value 
- * changes the part must fire a property listener event with 
+ * Returns the title tool tip text of this workbench part. 
+ * An empty string result indicates no tool tip.
+ * If this value changes the part must fire a property listener event with 
  * <code>PROP_TITLE</code>.
  * <p>
  * The tool tip text is used to populate the title bar of this part's 
  * visual container.  
  * </p>
  *
- * @return the workbench part title tool tip
+ * @return the workbench part title tool tip (not <code>null</code>)
  */
 public String getTitleToolTip();
 /**
