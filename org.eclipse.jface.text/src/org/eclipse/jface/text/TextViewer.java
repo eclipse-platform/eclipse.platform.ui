@@ -745,17 +745,17 @@ public class TextViewer extends Viewer implements
 		 * @see IFindReplaceTarget#getSelection()
 		 */
 		public Point getSelection() {
-			Point point= TextViewer.this.getSelectedRange();
-			return modelSelection2WidgetSelection(point);
+			Point modelSelection= TextViewer.this.getSelectedRange();
+			return modelSelection2WidgetSelection(modelSelection);
 		}
 
 		/*
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
-		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 			try {
-				return findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, false);
-			} catch (PatternSyntaxException ex) {
+				return findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord, false);
+			} catch (PatternSyntaxException x) {
 				return -1;
 			}
 		}
@@ -763,9 +763,9 @@ public class TextViewer extends Viewer implements
 		/*
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
-		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 
-			int modelOffset= offset == -1 ? -1 : widgetOffset2ModelOffset(offset);
+			int modelOffset= widgetOffset == -1 ? -1 : widgetOffset2ModelOffset(widgetOffset);
 			
 			if (fRange != null) {
 				IRegion range= fRange.getRange();
@@ -774,8 +774,8 @@ public class TextViewer extends Viewer implements
 				modelOffset= TextViewer.this.findAndSelect(modelOffset, findString, searchForward, caseSensitive, wholeWord, regExSearch);
 			}
 
-			offset= modelOffset == -1 ? -1 : modelOffset2WidgetOffset(modelOffset);
-			return offset;
+			widgetOffset= modelOffset == -1 ? -1 : modelOffset2WidgetOffset(modelOffset);
+			return widgetOffset;
 		}
 		
 		/*
