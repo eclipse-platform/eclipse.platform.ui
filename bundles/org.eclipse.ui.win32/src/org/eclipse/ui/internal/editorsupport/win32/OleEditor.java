@@ -164,27 +164,17 @@ public class OleEditor extends EditorPart {
 		}
 	};
 
-	private static final String FILE_PROMPTER_TITLE =
-		WorkbenchMessages.getString("OleEditor.renameTitle"); //$NON-NLS-1$
-	//$NON-NLS-1$
-	private static final String FILE_PROMPTER_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.renameMessage"); //$NON-NLS-1$
-	//$NON-NLS-1$
 	private static final String RENAME_ERROR_TITLE =
 		WorkbenchMessages.getString("OleEditor.errorSaving"); //$NON-NLS-1$
-	//$NON-NLS-1$
 	private static final String OLE_EXCEPTION_TITLE =
 		WorkbenchMessages.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
-	//$NON-NLS-1$
 	private static final String OLE_EXCEPTION_MESSAGE =
 		WorkbenchMessages.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
-	//$NON-NLS-1$
 	private static final String SAVE_ERROR_TITLE =
 		WorkbenchMessages.getString("OleEditor.savingTitle"); //$NON-NLS-1$
-	//$NON-NLS-1$
 	private static final String SAVE_ERROR_MESSAGE =
 		WorkbenchMessages.getString("OleEditor.savingMessage"); //$NON-NLS-1$
-	//$NON-NLS-1$
+
 	/**
 	 * Return a new ole editor.
 	 */
