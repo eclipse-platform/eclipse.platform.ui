@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * The breakpoint manager manages all registered breakpoints
- * for the debug plugin. It is instantiated by the debug plugin.
+ * for the debug plugin. It is instantiated by the debug plugin at startup.
  *
  * @see IBreakpointManager
  */
@@ -38,11 +38,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * A table of breakpoint extension points, keyed by
 	 * marker type
+	 * key: a marker type
+	 * value: the breakpoint extension which corresponds to that marker type
 	 */
 	private HashMap fBreakpointExtensions;
 	
 	/**
 	 * Collection of markers that associates markers to breakpoints
+	 * key: a marker
+	 * value: the breakpoint which contains that marker
 	 */	
 	private HashMap fMarkersToBreakpoints;
 
@@ -52,7 +56,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private ListenerList fBreakpointListeners= new ListenerList(6);
 
 	/**
-	 * Singleton resource delta visitor
+	 * Singleton resource delta visitor which handles marker
+	 * additions, changes, and removals.
 	 */
 	private static BreakpointManagerVisitor fgVisitor;
 
