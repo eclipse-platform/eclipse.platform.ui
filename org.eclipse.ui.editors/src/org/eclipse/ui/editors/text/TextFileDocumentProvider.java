@@ -707,7 +707,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (info != null) {
 			
 			if (info.fTextFileBuffer.getDocument() != document) {
-				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, "not the same document", null); //$NON-NLS-1$
+				// the info exists, but not for the given document
+				// -> saveAs was executed with a target that is already open 
+				// in another editor
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=85519
+				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, TextEditorMessages.getString("TextFileDocumentProvider.saveAsTargetOpenInEditor"), null); //$NON-NLS-1$
 				throw new CoreException(status);				
 			}
 			
