@@ -8,10 +8,6 @@ package org.eclipse.debug.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Copied from org.eclipse.jdt.core.util - should be pushed down to
- * desktop/core for common functionallity.
- */
 public class StringMatcher {
 	protected String fPattern;
 	protected int fLength; // pattern length

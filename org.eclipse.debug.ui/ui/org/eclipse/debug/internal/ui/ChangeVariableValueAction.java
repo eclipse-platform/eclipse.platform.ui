@@ -73,8 +73,8 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		fTreeEditor.grabHorizontal = true;
 		fTreeEditor.setEditor(fComposite, selectedItems[0]);
 
-		// This is a hack.  There is no API on model presentation to get just the
-		// variable name, so we have to make do with just calling IVariable.getName()
+		// There is no API on the model presentation to get just the variable name, 
+		// so we have to make do with just calling IVariable.getName()
 		String varName = "";
 		try {
 			varName = fVariable.getName();
