@@ -452,7 +452,6 @@ public final class FormText extends Canvas {
 			model.parseRegularText(text, expandURLs);
 		loading = false;
 		layout();
-		redraw();
 	}
 	/**
 	 * Sets the contents of the stream. Optionally, URLs in untagged text can
@@ -469,7 +468,6 @@ public final class FormText extends Canvas {
 		model.parseInputStream(is, expandURLs);
 		loading = false;
 		layout();
-		redraw();
 	}
 	/**
 	 * Controls whether whitespace inside paragraph and list
