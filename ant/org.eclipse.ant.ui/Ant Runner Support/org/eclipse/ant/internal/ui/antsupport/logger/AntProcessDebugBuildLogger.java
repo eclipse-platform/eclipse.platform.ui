@@ -46,7 +46,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	private Task fLastTaskFinished;
 	
 	private List fBreakpoints= null;
-	
+    
+	//properties set before execution
+    private Map fInitialProperties= null;
 	private Map fProperties= null;
 	
 	private AntDebugTarget fTarget;
@@ -77,6 +79,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
+        if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
+            fInitialProperties= event.getProject().getProperties();
+        }
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
 		fTasks.push(fCurrentTask);
@@ -182,35 +187,45 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		  propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		  Map currentProperties= null;
 		  if (!fTasks.isEmpty()) {
-		  	currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
-		  	
-		  	if (fProperties != null && currentProperties.size() == fProperties.size()) {
+		      currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
+		      if (fProperties != null && currentProperties.size() == fProperties.size()) {
 		  		//no new properties
 		  		((AntThread) fTarget.getThreads()[0]).newProperties("no"); //$NON-NLS-1$
 		  		return;
 		  	}
 		  	
+              Map currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
 		  	Iterator iter= currentProperties.keySet().iterator();
 		  	String propertyName;
 		  	String propertyValue;
 		  	while (iter.hasNext()) {
 		  		propertyName = (String) iter.next();
-		  		if (propertyName.equals("line.separator")) { //$NON-NLS-1$
-		  			continue;
-		  		}
 		  		if (fProperties == null || fProperties.get(propertyName) == null) { //new property
-		  			propertiesRepresentation.append(propertyName.length());
-		  			propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		  			propertiesRepresentation.append(propertyName);
-		  			propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		  			propertyValue= (String) currentProperties.get(propertyName);
-		  			propertiesRepresentation.append(propertyValue.length());
-		  			propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		  			propertiesRepresentation.append(propertyValue);
-		  			propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		  		}
-		  	}
-		  }
+                  propertiesRepresentation.append(propertyName.length());
+                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                    propertiesRepresentation.append(propertyName);
+                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                    propertyValue= (String) currentProperties.get(propertyName);
+                    propertiesRepresentation.append(propertyValue.length());
+                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                    propertiesRepresentation.append(propertyValue);
+                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                    if (fInitialProperties.get(propertyName) != null) { //properties set before the start of the build
+                        if (currentUserProperties.get(propertyName) == null) {
+                            propertiesRepresentation.append(DebugMessageIds.PROPERTY_SYSTEM);
+                        } else {
+                            propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
+                        }
+                    } else if (currentUserProperties.get(propertyName) == null){
+                        propertiesRepresentation.append(DebugMessageIds.PROPERTY_RUNTIME);
+                    } else {
+                        propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
+                    }
+                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                }
+            }
+        }
+		  propertiesRepresentation.deleteCharAt(propertiesRepresentation.length() - 1);
 		  fProperties= currentProperties;
 		  ((AntThread) fTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 	}
@@ -310,4 +325,14 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			return null;
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
+     */
+    public void targetStarted(BuildEvent event) {
+        if (fInitialProperties == null) {
+            fInitialProperties= event.getProject().getProperties();
+        }
+        super.targetStarted(event);
+    }
 }
