@@ -233,7 +233,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("CVSMergeSubscriber.21", resource.getFullPath().toString()), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("CVSMergeSubscriber.21", path.toString()), null); //$NON-NLS-1$
 			}
 		}
 		if(resources.isEmpty()) {
