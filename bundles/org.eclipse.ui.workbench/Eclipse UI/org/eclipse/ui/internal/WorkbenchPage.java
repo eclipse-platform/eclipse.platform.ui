@@ -899,9 +899,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			getPerspective(),
 			CHANGE_EDITOR_CLOSE);
 
-		//if it was the last part, close the perspective
-		lastPartClosePerspective();
-
 		// Return true on success.
 		return true;
 	}
@@ -989,9 +986,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			} else
 				actionSwitcher.updateTopEditor(top);
 		}
-
-		//if it was the last part, close the perspective
-		lastPartClosePerspective();
 
 		// Return true on success.
 		return true;
@@ -1827,18 +1821,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		//if it was the last part, close the perspective
 //		lastPartClosePerspective();
-	}
-
-	/*
-	 * Closes the perspective when there are no fast views or active parts. Bug
-	 * 7743.
-	 */
-	private void lastPartClosePerspective() {
-		Perspective persp = getActivePerspective();
-		if (persp != null && getActivePart() == null)
-			if (persp.getViewReferences().length == 0
-				&& getEditorReferences().length == 0)
-				closePerspective(persp, false, true);
 	}
 
 	/**

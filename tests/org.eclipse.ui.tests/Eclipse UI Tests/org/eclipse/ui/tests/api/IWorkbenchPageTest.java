@@ -772,6 +772,10 @@ public class IWorkbenchPageTest extends UITestCase {
 				assertEquals(callTraces[i].contains("doSave"), false);
 				callTraces[i].clear();
 		}
+		
+		// close the last remaining editor, with save=false
+		editorRefs = fActivePage.getEditorReferences();
+		fActivePage.closeEditors(editorRefs, false);
 	}
 	
 	public void testCloseAllEditors() throws Throwable {

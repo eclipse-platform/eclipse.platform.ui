@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.ui.IPropertyListener;
@@ -36,14 +37,14 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 {	
 	protected CallHistory callTrace;
 		
-	private IPropertyListener myListener;
-	private Composite myParent;		
 	private IWorkbenchPartSite site;
 	private String title;
 	private MockSelectionProvider selectionProvider;
 	private IConfigurationElement config;
 	private Object data;
 	private Image titleImage;
+
+    private ListenerList propertyListeners = new ListenerList();
 	
 	public MockWorkbenchPart() {		
 		callTrace = new CallHistory(this);
@@ -62,7 +63,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		this.config = config;
 		this.data = data;
-		title = (String)config.getAttribute("name");
+		title = config.getAttribute("name");
 
 		// Icon.
 		String strIcon = config.getAttribute("icon");//$NON-NLS-1$
@@ -74,6 +75,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 				ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
 				titleImage = imageDesc.createImage();
 			} catch (MalformedURLException e) {
+			    // ignore
 			}
 		}
 	}
@@ -99,14 +101,13 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#addPropertyListener(IPropertyListener)
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
-		myListener = listener;	
+	    propertyListeners.add(listener);
 	}
 
 	/**
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		myParent = parent;
 		callTrace.add("createPartControl" );
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(title);
@@ -144,7 +145,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#removePropertyListener(IPropertyListener)
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
-		myListener = null;
+		propertyListeners.remove(listener);
 	}
 
 	/**
@@ -166,5 +167,16 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 */
 	public void fireSelection() {
 		selectionProvider.fireSelection();
+	}
+	
+	/**
+	 * Fires a property change event.
+	 */
+	protected void firePropertyChange(int propertyId) {
+		Object [] listeners = propertyListeners.getListeners();
+		for (int i = 0; i < listeners.length; i ++) {
+			IPropertyListener l = (IPropertyListener)listeners[i];
+			l.propertyChanged(this, propertyId);
+		}
 	}
 }

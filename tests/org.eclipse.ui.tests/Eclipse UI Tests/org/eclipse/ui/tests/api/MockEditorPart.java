@@ -38,7 +38,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart, IG
 	 * @see IEditorPart#doSave(IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		dirty = false;
+		setDirty(false);
 		callTrace.add( "doSave" );
 	}
 
@@ -89,7 +89,8 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart, IG
 
 	public void setDirty( boolean value )
 	{
-		dirty = value;	
+		dirty = value;
+		firePropertyChange(PROP_DIRTY);
 	}
 
 	/**
