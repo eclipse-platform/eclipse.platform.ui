@@ -26,13 +26,13 @@ to the file.&nbsp; For this reason, clients that read the description file
 contents should tolerate unknown elements and attributes.
 <p>Clients that modify, delete, or replace the project description file
 do so at their own risk.&nbsp; Projects with invalid or missing description
-files will not be generally usable.&nbsp; If projects with invalid descriptions
-are discovered on workspace startup, they are closed, and it will not be
-possible to open the file until the project description file has been repaired.&nbsp;
-The workspace will not generally attempt to automatically repair missing
-or deleted description file.&nbsp; One exception is that missing project
-description files will be regenerated during workspace save and on calls
-to <tt>IProject.setDescription</tt>.
+files will not be generally usable.&nbsp; If a project with an invalid
+description file is discovered on workspace startup, the project is closed,
+and it will not be possible to open it until the project description file
+has been repaired.&nbsp; The workspace will not generally attempt to automatically
+repair a missing or invalid description file.&nbsp; One exception is that
+missing project description files will be regenerated during workspace
+save and on calls to <tt>IProject.setDescription</tt>.
 <p>Modifications to the project description file have mostly the same effect
 as changing the project description via <tt>IProject.setDescription</tt>.&nbsp;
 One exception is that adding or removing project natures will not trigger
@@ -45,35 +45,102 @@ name in the file will be ignored if it does not match the name of the project
 being created.&nbsp; If the description file on disk is invalid, the project
 creation will fail.
 <br>&nbsp;
-<p><b><i>Configuration Markup:</i></b><b><i></i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT projectDescription (></tt><tt></tt>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT run parameter*></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST run</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp; ></tt>
-<p>&lt;projectDescription>
-<br>&nbsp;&lt;name>zzJohn&lt;/name>
-<br>&nbsp;&lt;comment>&lt;/comment>
-<br>&nbsp;&lt;projects>
-<br>&nbsp; &lt;project>org.eclipse.core.boot&lt;/project>
-<br>&nbsp; &lt;project>org.eclipse.core.resources&lt;/project>
-<br>&nbsp; &lt;project>org.eclipse.core.runtime&lt;/project>
-<br>&nbsp;&lt;/projects>
-<br>&nbsp;&lt;buildSpec>
-<br>&nbsp; &lt;buildCommand>
-<br>&nbsp;&nbsp; &lt;name>org.eclipse.jdt.core.javabuilder&lt;/name>
-<br>&nbsp;&nbsp; &lt;arguments>
-<br>&nbsp;&nbsp; &lt;/arguments>
-<br>&nbsp; &lt;/buildCommand>
-<br>&nbsp;&lt;/buildSpec>
-<br>&nbsp;&lt;natures>
-<br>&nbsp; &lt;nature>org.eclipse.jdt.core.javanature&lt;/nature>
-<br>&nbsp; &lt;nature>org.eclipse.team.cvs.core.cvsnature&lt;/nature>
-<br>&nbsp;&lt;/natures>
-<br>&lt;/projectDescription>
-<br>&nbsp;
-<br>&nbsp;
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT projectDescription (name, comment, projects,
+buildSpec, natures)></tt><tt></tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT name EMPTY></tt>
+<ul>
+<li>
+<b>name </b>- the name of the project.&nbsp; Ignored if it does match the
+name of the project using this description.&nbsp; Corresponds to <tt>IProjectDescription.getName()</tt>.</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT comment EMPTY></tt>
+<ul>
+<li>
+<b>comment</b> - a comment for the project.&nbsp; The comment can have
+arbitrary contents that are not interpreted by the project or workspace.&nbsp;
+Corresponds to <tt>IProjectDescription.getComment()</tt>.</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT projects (project)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT project EMPTY></tt>
+<ul>
+<li>
+<b>projects</b> - the names of the projects that are referenced by this
+project.&nbsp; Corresponds to <tt>IProjectDescription.getReferencedProjects().</tt></li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT buildSpec (buildCommand)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT buildCommand (name, arguments)></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT name EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT arguments (dictionary?)></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT dictionary (key, value)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT key EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT value EMPTY></tt>
+<ul>
+<li>
+<b>buildSpec</b> - the ordered list of build commands for this project.&nbsp;
+Corresponds to <tt>IProjectDescription.getBuildSpec().</tt></li>
+
+<li>
+<b>buildCommand </b>- a single build commands for this project.&nbsp; Corresponds
+to <tt>org.eclipse.core.resources.ICommand.</tt></li>
+
+<li>
+<b>name</b> - the symbolic name of an incremental project builder.&nbsp;
+Corresponds to <tt>ICommand.getBuilderName().</tt></li>
+
+<li>
+<b>arguments</b> - optional arguments that may be passed to the project
+builder.&nbsp; Corresponds to <tt>ICommand.getArguments()</tt>.</li>
+
+<li>
+<b>dictionary</b> - a list of &lt;key, value> pairs in the argument list.&nbsp;
+Analagous to <tt>java.util.Map.</tt></li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT natures (nature)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ELEMENT nature EMPTY></tt>
+<ul>
+<li>
+<b>natures </b>- the names of the natures that are on this project.&nbsp;
+Corresponds to <tt>IProjectDescription.getNatureIds().</tt></li>
+</ul>
+<b><i>Examples: </i></b>The following is a sample project description file.&nbsp;
+The project has a single nature and builder configured, and some project
+references.
+<p><tt>&lt;?xml version="1.0" encoding="UTF-8"?></tt>
+<br><tt>&lt;projectDescription></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;name>WinterProject&lt;/name></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;comment>This is a cool project.&lt;/comment></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;projects></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;project>org.seasons.sdt&lt;/project></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;project>CoolStuff&lt;/project></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/projects></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;buildSpec></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;buildCommand></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;name>org.seasons.sdt.seasonBuilder&lt;/name></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;arguments></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;dictionary></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;key>climate&lt;/key></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;value>cold&lt;/value></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/dictionary></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/arguments></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/buildCommand></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/buildSpec></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;natures></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;nature>org.seasons.sdt.seasonNature&lt;/nature></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/natures></tt>
+<br><tt>&lt;/projectDescription></tt>
+<br>&nbsp;<b><i></i></b>
+<p><b><i>API Information:</i></b> The contents of the project description
+file map to the <tt>org.eclipse.core.resources.IProjectDescription</tt>
+interface. The project description file can be overwritten by the method
+<tt>IProject.setDescription()</tt>.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
