@@ -72,7 +72,7 @@ public class NewExtensionLocationAction extends Action {
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
 			ErrorDialog.openError(UpdateUI.getActiveWorkbenchShell(), title, null, e.getStatus());
-			UpdateUI.logException(e);
+			UpdateUI.logException(e,false);
 		}
 	}
 
