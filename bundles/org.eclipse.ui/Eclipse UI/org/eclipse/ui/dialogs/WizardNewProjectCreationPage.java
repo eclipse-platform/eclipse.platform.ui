@@ -92,7 +92,7 @@ public void createControl(Composite parent) {
 	
 	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
-	validatePage();
+	setPageComplete(validatePage());
 	// Show description on opening
 	setErrorMessage(null);
 	setMessage(null);
@@ -311,17 +311,28 @@ private void handleLocationBrowseButtonPressed() {
 public void setInitialProjectName(String name) {
 	if (name == null)
 		initialProjectFieldValue = null;
-	else
+	else{
 		initialProjectFieldValue = name.trim();
+		initialLocationFieldValue = new Path(getDefaultLocationForName(initialProjectFieldValue));
+	}
 }
 /**
  * Set the location to the default location if we are set to useDefaults.
  */
 private void setLocationForSelection() {
-	if (useDefaults) {
-		IPath defaultPath = Platform.getLocation().append(getProjectNameFieldValue());
-		locationPathField.setText(defaultPath.toOSString());
-	}
+	if (useDefaults) 
+		locationPathField.setText(getDefaultLocationForName(getProjectNameFieldValue()));
+}
+
+/**
+ * Get the defualt location for the provided name.
+ * @return String
+ * @param String
+ */
+ 
+private String getDefaultLocationForName(String nameValue) {
+	IPath defaultPath = Platform.getLocation().append(nameValue);
+	return defaultPath.toOSString();
 }
 /**
  * Returns whether this page's controls currently all contain valid 
