@@ -74,6 +74,7 @@ public class NewConfigurationView
 	private Action propertiesAction;
 	private SiteStateAction2 siteStateAction;
 	private Action installationHistoryAction;
+	private Action newExtensionLocationAction;
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
@@ -468,7 +469,7 @@ public class NewConfigurationView
 			"org.eclipse.update.ui.CofigurationView_revertAction");
 			
 		installationHistoryAction = new InstallationHistoryAction("Installation History", UpdateUIImages.DESC_HISTORY_OBJ);
-
+		newExtensionLocationAction = new NewExtensionLocationAction("Extension Location...", UpdateUIImages.DESC_ESITE_OBJ);
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
@@ -584,9 +585,15 @@ public class NewConfigurationView
 
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
-			manager.add(new Separator());
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
+		}
+		
+		if (obj instanceof ILocalSite || obj instanceof IConfiguredSiteAdapter) {
+			manager.add(new Separator());
+			MenuManager mgr = new MenuManager("New");
+			mgr.add(newExtensionLocationAction);
+			manager.add(mgr);
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
@@ -955,13 +962,18 @@ public class NewConfigurationView
 				revertAction));
 		array.add(
 			new PreviewTask(
+				"Add an Extension Location",
+				"This task allows you to locate and add an extension location to the current configuration.",
+				newExtensionLocationAction));
+		array.add(
+			new PreviewTask(
 				"Show Activities",
 				"This task allows you to view the activities that caused the creation of this configuration.",
 				propertiesAction));
 		array.add(
 			new PreviewTask(
 				"View Installation History",
-				"View all activities since the installation of the product.",
+				"This task allows you to view all activities since the installation of the product.",
 				installationHistoryAction));
 				
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
@@ -974,6 +986,11 @@ public class NewConfigurationView
 				null,
 				"You can enable or disable an entire install location. Disabling a location is equivalent to disabling every feature in it.",
 				siteStateAction));
+		array.add(
+			new PreviewTask(
+				"Add an Extension Location",
+				"This task allows you to locate and add an extension location to the current configuration.",
+				newExtensionLocationAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// feature adapter tasks

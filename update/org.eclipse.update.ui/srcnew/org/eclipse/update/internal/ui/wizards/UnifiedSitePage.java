@@ -15,7 +15,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.internal.dialogs.FileFolderSelectionDialog;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -297,7 +296,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		});
 		dialog.setTitle("Local Site");
 		dialog.setMessage("&Select a local site:");
-		if (dialog.open() == FileFolderSelectionDialog.OK) {
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			model.addBookmark((SiteBookmark) dialog.getFirstResult());
 			model.saveBookmarks();
