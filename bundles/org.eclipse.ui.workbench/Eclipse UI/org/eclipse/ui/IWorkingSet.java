@@ -104,6 +104,8 @@ public interface IWorkingSet extends IPersistableElement {
      * 
      * @return <code>true</code> if the working set can be edit; otherwise
      *  <code>false</code>
+     *  
+     * @since 3.1
      */
     public boolean isEditable();
 }
