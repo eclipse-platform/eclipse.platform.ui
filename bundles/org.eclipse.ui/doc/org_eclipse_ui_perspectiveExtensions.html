@@ -18,9 +18,9 @@ actions or views to the perspective which appear when the perspective is
 selected.&nbsp; Optional additions by other plug-ins are appended to the
 initial definition.
 <p><b><i>Configuration Markup:</i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveExtension (actionSet | viewAction
-| perspectiveAction |</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newWizardAction | view)*></tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveExtension (actionSet | viewShortcut
+| perspectiveShortcut |</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newWizardShortcut | view)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveExtension</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -38,34 +38,34 @@ CDATA #REQUIRED</tt>
 <li>
 <b>id</b> - the unique identifier of the action set which will be added to the perspective.</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT viewAction EMPTY></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST viewAction</tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT viewShortcut EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST viewShortcut</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the unique identifier of the view which will be added to the perspective "Show
+<b>id</b> - the unique identifier of the view which will be added to the perspective's "Show
 View" submenu of the "Perspective" menu.</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT newWizardAction EMPTY></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST newWizardAction</tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT newWizardShortcut EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST newWizardShortcut</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the unique identifier of the new wizard which will be added to the perspective
+<b>id</b> - the unique identifier of the new wizard which will be added to the perspective's
 "New" submenu of the "File" menu.</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveAction EMPTY></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveAction</tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveShortcut EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveShortcut</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - the unique identifier of the perspective which will be added to the perspective
+<b>id</b> - the unique identifier of the perspective which will be added to the perspective's
 "Open" submenu of the "Perspective" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT view EMPTY></tt>
