@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
@@ -82,13 +84,32 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 
 	/**
-	 * Initialize this action so that it can dynamically set its tooltip.
+	 * Initialize this action so that it can dynamically set its tooltip.  Also set the enabled state
+	 * of the underlying action based on whether there are any registered launch configuration types that 
+	 * understand how to launch in the mode of this action.
 	 */
 	protected void initialize(IAction action) {
 		DebugUIPlugin.getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		fOriginalTooltip = action.getToolTipText();
 		setActionProxy(action);
-		updateTooltip();		
+		updateTooltip();	
+		
+		action.setEnabled(existsConfigTypesForMode());	
+	}
+	
+	/**
+	 * Return <code>true</code> if there are any registered launch configuration types for
+	 * the mode of this action, <code>false</code> otherwise.
+	 */
+	protected boolean existsConfigTypesForMode() {
+		ILaunchConfigurationType[] configTypes = getLaunchManager().getLaunchConfigurationTypes();
+		for (int i = 0; i < configTypes.length; i++) {
+			ILaunchConfigurationType configType = configTypes[i];
+			if (configType.supportsMode(getMode())) {
+				return true;
+			}
+		}		
+		return false;
 	}
 	
 	/**
@@ -241,6 +262,15 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		} 
 	}
 	
+	/**
+	 * Returns the launch manager.
+	 * 
+	 * @return the launch manager
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
