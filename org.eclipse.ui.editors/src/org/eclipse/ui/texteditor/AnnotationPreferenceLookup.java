@@ -43,7 +43,7 @@ public class AnnotationPreferenceLookup {
 	 */
 	public AnnotationPreference getAnnotationPreference(Annotation annotation) {
 		String typeName= annotation.getType();
-		if (typeName == null)
+		if (typeName == Annotation.TYPE_UNKNOWN)
 			return null;
 		
 		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
