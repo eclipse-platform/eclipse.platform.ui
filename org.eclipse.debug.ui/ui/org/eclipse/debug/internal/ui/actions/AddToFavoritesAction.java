@@ -55,6 +55,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		setLaunchConfiguration(null);
 		setMode(null);
+		setGroup(null);
 		if (selection.size() == 1) {
 			Object object = selection.getFirstElement();
 			ILaunch launch = null;
@@ -73,9 +74,13 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 			if (launch != null) {
 				ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 				if (configuration != null) {
+					ILaunchGroup group= DebugUITools.getLaunchGroup(configuration, getMode());
+					if (group == null) {
+					    return false;
+					}
+					setGroup(group);
 					setLaunchConfiguration(configuration);
-					setMode(launch.getLaunchMode());
-					setGroup(DebugUITools.getLaunchGroup(configuration, getMode()));
+					setMode(launch.getLaunchMode());				
 					setText(MessageFormat.format(ActionMessages.getString("AddToFavoritesAction.1"), new String[]{DebugUIPlugin.removeAccelerators(getGroup().getLabel())})); //$NON-NLS-1$
 				}
 			}
