@@ -692,15 +692,6 @@ public class TextViewer extends Viewer implements
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
 		private Map fRememberedPartitioners;
-
-		/**
-		 * Resets the find/replace document adapter.
-		 * 
-		 * @since 3.0
-		 */
-		void resetFindRepalceDocumentAdapter() {
-			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(TextViewer.this.getVisibleDocument());
-		}
 		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
@@ -1256,7 +1247,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @since 3.0
 	 */
-	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+	protected FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -2999,11 +2990,9 @@ public class TextViewer extends Viewer implements
 		
 		initializeWidgetContents();
 		
-		if (fVisibleDocument != null) {
-			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
-			if (fVisibleDocumentListener != null)
-				fVisibleDocument.addDocumentListener(fVisibleDocumentListener);
-		}
+		fFindReplaceDocumentAdapter= null;
+		if (fVisibleDocument != null && fVisibleDocumentListener != null)
+			fVisibleDocument.addDocumentListener(fVisibleDocumentListener);
 	}
 	
 	/**
@@ -3907,7 +3896,7 @@ public class TextViewer extends Viewer implements
 	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
 	 * @since 3.0
 	 */
-	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
+	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
 		if (fTextWidget == null)
 			return -1;
 			
@@ -4138,7 +4127,7 @@ public class TextViewer extends Viewer implements
 	 * @return the find/replace document adapter.
 	 * @since 3.0
 	 */
-	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
+	protected FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null)
 			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
 		return fFindReplaceDocumentAdapter;

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentInformationMappingExtension;
 import org.eclipse.jface.text.IRegion;
@@ -299,6 +300,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (isProjectionMode()) {
 			removeProjectionAnnotationModel(getVisualAnnotationModel());
 			fProjectionAnnotationModel.removeAllAnnotations();
+			fFindReplaceDocumentAdapter= null;
 			fireProjectionDisabled();
 		}
 	}
@@ -309,6 +311,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void enableProjection() {
 		if (!isProjectionMode()) {
 			addProjectionAnnotationModel(getVisualAnnotationModel());
+			fFindReplaceDocumentAdapter= null;
 			fireProjectionEnabled();
 		}
 	}
@@ -941,4 +944,82 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		
 		return new Point(modelOffset, modelLength);
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#getFindReplaceDocumentAdapter()
+	 */
+	protected FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
+		if (fFindReplaceDocumentAdapter == null) {
+			IDocument document= isProjectionMode() ? getDocument() : getVisibleDocument();
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(document);
+		}
+		return fFindReplaceDocumentAdapter;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#findAndSelect(int, java.lang.String, boolean, boolean, boolean, boolean)
+	 */
+	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+		
+		if (!isProjectionMode())
+			return super.findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+		
+		StyledText textWidget= getTextWidget();
+		if (textWidget == null)
+			return -1;
+			
+		try {
+			
+			IRegion matchRegion= getFindReplaceDocumentAdapter().find(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			if (matchRegion != null) {
+				exposeModelRange(matchRegion);
+				setSelectedRange(matchRegion.getOffset(), matchRegion.getLength());
+				textWidget.showSelection();
+				return matchRegion.getOffset();
+			}
+			
+		} catch (BadLocationException x) {
+		}
+		
+		return -1;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#findAndSelectInRange(int, java.lang.String, boolean, boolean, boolean, int, int, boolean)
+	 */
+	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
+		
+		if (!isProjectionMode())
+			return super.findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+		
+		StyledText textWidget= getTextWidget();
+		if (textWidget == null)
+			return -1;
+			
+		try {
+			
+			int modelOffset= startPosition;
+			if (forwardSearch && (startPosition == -1 || startPosition < rangeOffset)) {
+				modelOffset= rangeOffset;
+			} else if (!forwardSearch && (startPosition == -1 || startPosition > rangeOffset + rangeLength)) {
+				modelOffset= rangeOffset + rangeLength;
+			}
+			
+			IRegion matchRegion= getFindReplaceDocumentAdapter().find(modelOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			if (matchRegion != null) {
+				int offset= matchRegion.getOffset();
+				int length= matchRegion.getLength();
+				if (rangeOffset <= offset || offset + length <= rangeOffset + rangeLength) {
+					exposeModelRange(matchRegion);
+					setSelectedRange(offset, length);
+					textWidget.showSelection();
+					return offset;
+				}
+			}
+			
+		} catch (BadLocationException x) {
+		}
+		
+		return -1;
+	}	
 }
