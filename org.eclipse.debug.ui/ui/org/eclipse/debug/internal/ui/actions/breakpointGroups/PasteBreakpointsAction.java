@@ -16,7 +16,6 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
@@ -69,7 +68,9 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * Implementation of method defined on <code>IAction</code>.
      */
     public void run() {
-        getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
+		if (getBreakpointsView().canPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection())) {
+			getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
+		}
     }
 
     /**
@@ -77,11 +78,6 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * in the clipboard. Only updates when the breakpoints view has focus. 
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-    	// only update when view has focus
-    	if (!getBreakpointsView().getViewer().getControl().isFocusControl()) {
-    		return false;
-    	}
-    	
         // can't paste into "Others" (only move)
         Object target = getTarget();
         if (target instanceof BreakpointContainer) {
@@ -89,19 +85,10 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
             if (container.getCategory() instanceof OtherBreakpointCategory) {
                 return false;
             }
+			return true;
         }
-
-        final ISelection[] clipboardData = new ISelection[1];
-        getBreakpointsView().getSite().getShell().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                // clipboard must have resources or files
-                LocalSelectionTransfer transfer = LocalSelectionTransfer.getInstance();
-                clipboardData[0] = (ISelection) clipboard.getContents(transfer);
-            }
-        });
-        ISelection pasteSelection = clipboardData[0];
-        
-        return getBreakpointsView().canPaste(target, pasteSelection);
+		// don't access clipboard - causes Hang -see bug 84870
+		return false;
     }
 }
 

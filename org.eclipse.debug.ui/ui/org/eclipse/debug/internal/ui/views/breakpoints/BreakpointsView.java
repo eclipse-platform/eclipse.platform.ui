@@ -867,18 +867,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     public boolean isShowingGroups() {
         return fContentProvider.isShowingGroups();
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
-	public void setFocus() {
-		super.setFocus();
-		PasteBreakpointsAction action = (PasteBreakpointsAction) getAction(IWorkbenchActionDefinitionIds.PASTE);
-		if (action != null) {
-			action.selectionChanged((IStructuredSelection) getSite().getSelectionProvider().getSelection());
-		}
-		
-	}
     
 	/**
 	 * Returns a list containing a point indicating the breakpoint to attempt to
