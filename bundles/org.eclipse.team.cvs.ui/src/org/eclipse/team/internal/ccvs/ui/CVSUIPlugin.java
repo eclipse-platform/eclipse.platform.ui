@@ -424,15 +424,15 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	public void propertyChange(PropertyChangeEvent event) {
 		try {
 			String property = event.getProperty();
-			if(property.equals(ICVSUIConstants.PREF_SHOW_MARKERS)) {
-				Boolean b = (Boolean)event.getNewValue();
-				if(b.booleanValue() == true) {
+			if (property.equals(ICVSUIConstants.PREF_SHOW_MARKERS)) {
+				boolean b = getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS);
+				if (b) {
 					AddDeleteMoveListener.refreshAllMarkers();
 				} else {
 					AddDeleteMoveListener.clearAllCVSMarkers();
 				}
 			}
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			log(e.getStatus());
 		}
 	}
