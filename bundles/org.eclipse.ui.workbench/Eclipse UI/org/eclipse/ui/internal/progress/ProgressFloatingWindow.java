@@ -46,7 +46,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	ProgressFloatingWindow(Shell parent, Control associatedControl) {
 		super(parent, associatedControl);
-
+		setShellStyle(SWT.NO_TRIM | SWT.NO_FOCUS);
 	}
 
 	/*
@@ -83,7 +83,8 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
-		viewer.getControl().setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		viewer.getControl().setBackground(
+			viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		initContentProvider();
@@ -201,5 +202,5 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			oldRegion.dispose();
 		return result;
 	}
-	
+
 }
