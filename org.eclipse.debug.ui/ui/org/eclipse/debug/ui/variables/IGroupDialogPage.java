@@ -16,6 +16,10 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 /**
  * Represents the API for a group of visual components
  * to access the dialog page that contains it.
+ * 
+ * This interface is intended to be used by clients implementing
+ * visual components that contain variable-editing components.
+ * @see IVariableComponent
  */
 public interface IGroupDialogPage extends IMessageProvider {
 	
