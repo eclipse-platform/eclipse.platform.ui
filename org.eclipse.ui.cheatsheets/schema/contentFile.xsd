@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <element name="cheatSheet">
+        <complexType>
+            <sequence>
+                <element maxOccurs="1" minOccurs="1" ref="intro"/>
+                <element maxOccurs="unbounded" minOccurs="1" ref="item"/>
+            </sequence>
+            <attribute name="title" type="string" use="required"/>
+            <attribute name="version" type="string" use="required"/>
+        </complexType>
+    </element>
+    <element name="intro">
+        <complexType>
+            <simpleContent>
+                <extension base="string">
+                    <attribute name="href" type="string" use="optional"/>
+                </extension>
+            </simpleContent>
+        </complexType>
+    </element>    
+    <element name="item">
+        <complexType mixed="true">
+            <choice maxOccurs="unbounded" minOccurs="0">
+                <element ref="subitem"/>
+            </choice>
+            <attribute name="actionphrase" type="string" use="optional"/>
+            <attribute name="class" type="string" use="optional"/>
+            <attribute name="actionparam*" type="string" use="optional"/> <!--The * must be replaced by a number. (eg. actionpamam0, actionparam1, etc. ) -->
+            <attribute name="dynamic" type="string" use="optional"/>
+            <attribute name="href" type="string" use="optional"/>
+            <attribute name="id" type="string" use="required"/>
+            <attribute name="pluginId" type="string" use="optional"/>
+            <attribute name="title" type="string" use="required"/>
+        </complexType>
+    </element>
+    <element name="subitem">
+        <complexType>
+            <attribute name="actionphrase" type="string" use="optional"/>
+            <attribute name="class" type="string" use="optional"/>
+            <attribute name="actionparam*" type="string" use="optional"/> <!--The * must be replaced by a number. (eg. actionpamam0, actionparam1, etc. ) -->
+            <attribute name="id" type="string" use="required"/>
+            <attribute name="label" type="string" use="required"/>
+            <attribute name="pluginId" type="string" use="optional"/>
+        </complexType>
+    </element>
+</schema>
