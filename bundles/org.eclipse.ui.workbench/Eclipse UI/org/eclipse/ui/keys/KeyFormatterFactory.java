@@ -20,6 +20,7 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * <code>IKeyFormatter</code> available for use. It also allows the default
  * formatter to be changed.
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyFormatterFactory
  * @since 3.0
  * @see org.eclipse.ui.keys.IKeyFormatter
  */

@@ -21,6 +21,7 @@ package org.eclipse.ui.keys;
  * permitted to extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.ParseException
  * @since 3.0
  */
 public final class ParseException extends Exception {

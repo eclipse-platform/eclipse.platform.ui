@@ -24,6 +24,7 @@ package org.eclipse.ui.keys;
  * extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.NaturalKey
  * @since 3.0
  */
 public abstract class NaturalKey extends Key {

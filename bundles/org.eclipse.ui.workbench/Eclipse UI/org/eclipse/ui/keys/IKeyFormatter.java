@@ -17,6 +17,7 @@ package org.eclipse.ui.keys;
  * user sees in the keys preference page and the menus, as well as the strings
  * that are used for persistent storage.
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.IKeyFormatter
  * @since 3.0
  */
 public interface IKeyFormatter {

@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.keys.NativeKeyFormatter;
 /**
  * A utility class for converting SWT events into key strokes.
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.SWTKeySupport
  * @since 3.0
  */
 public final class SWTKeySupport {

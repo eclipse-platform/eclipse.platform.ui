@@ -23,7 +23,7 @@ import java.util.TreeMap;
  * <code>CharacterKey</code> objects are immutable. Clients are not permitted
  * to extend this class.
  * </p>
- * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.CharacterKey
  * @since 3.0
  */
 public final class CharacterKey extends NaturalKey {

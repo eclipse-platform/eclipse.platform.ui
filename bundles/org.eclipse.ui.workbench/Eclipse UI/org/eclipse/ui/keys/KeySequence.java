@@ -43,6 +43,7 @@ import org.eclipse.ui.internal.util.Util;
  * to extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeySequence
  * @since 3.0
  */
 public final class KeySequence implements Comparable {

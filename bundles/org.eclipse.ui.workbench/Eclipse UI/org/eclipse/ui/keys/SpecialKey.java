@@ -28,6 +28,7 @@ import java.util.TreeMap;
  * extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.SpecialKey
  * @since 3.0
  */
 public final class SpecialKey extends NaturalKey {

@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
  * to extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.ModifierKey
  * @since 3.0
  * @see org.eclipse.ui.keys.NaturalKey
  */

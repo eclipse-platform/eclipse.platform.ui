@@ -30,6 +30,7 @@ package org.eclipse.ui.keys;
  * this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.Key
  * @since 3.0
  */
 public abstract class Key implements Comparable {

@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.util.Util;
  * extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke
  * @since 3.0
  * @see org.eclipse.ui.keys.ModifierKey
  * @see org.eclipse.ui.keys.NaturalKey
