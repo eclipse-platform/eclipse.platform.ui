@@ -74,7 +74,10 @@ public class CmdLineArgs {
 	}
 
 	private boolean isValidCommand(String cmd) {
-		return cmd.equals("install")
+		if (cmd == null)
+			return false;
+		else
+			return cmd.equals("install")
 			|| cmd.equals("enable")
 			|| cmd.equals("disable")
 			|| cmd.equals("search")
@@ -89,6 +92,8 @@ public class CmdLineArgs {
 	public ScriptedCommand getCommand() {
 		try {
 			String cmd = (String) options.get("-command");
+			if (cmd == null)
+				return null;
 			if (cmd.equals("install"))
 				return new InstallCommand(
 					(String) options.get("-featureId"),
