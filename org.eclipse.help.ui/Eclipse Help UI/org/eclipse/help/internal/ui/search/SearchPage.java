@@ -26,6 +26,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.contributions.xml.*;
+import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.server.PluginURL;
@@ -127,7 +128,7 @@ public class SearchPage extends NavigationPage {
 
 		if (root == null || !root.getChildren().hasNext()) {
 			root.addChild(
-				new SearchElement(WorkbenchResources.getString("No_results_found"), null));
+				new SearchElement(WorkbenchResources.getString("No_results_found"), "org.eclipse.help/" + Resources.getString("noresult.html")));
 			return root;
 		}
 
