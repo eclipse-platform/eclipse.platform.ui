@@ -121,6 +121,9 @@ public class FastViewPane {
 		 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
 		 */
 		public void dragStart(Point initialPosition, boolean keyboard) {
+		    if (!isPartMoveable())
+		        return;
+		    
 			ViewPane pane = currentPane;
 			
 			Control control = getPresentation().getControl(); 
@@ -154,11 +157,42 @@ public class FastViewPane {
 			appendToGroupIfPossible(menuManager, "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
 		}
 
+		public boolean isCloseable(IPresentablePart toClose) {
+		    if (currentPane == null)
+		        return true;
+	        Perspective perspective = currentPane.getPage().getActivePerspective();
+	        if (perspective == null) {
+	            // Shouldn't happen -- can't have a FastViewPane without a perspective
+	            return true; 
+	        }
+	        return perspective.isCloseable(currentPane.getViewReference());		    
+		}
+		
 		public boolean isPartMoveable(IPresentablePart toMove) {
-			return true;
+		    return isPartMoveable();
 		}
 
 		public boolean isStackMoveable() {
+		    // a fast view stack is moveable iff its part is moveable
+		    return isPartMoveable();
+		}
+		
+		private boolean isPartMoveable() {
+		    if (currentPane == null)
+		        return false;
+	        Perspective perspective = currentPane.getPage().getActivePerspective();
+	        if (perspective == null) {
+	            // Shouldn't happen -- can't have a FastViewPane without a perspective
+	            return false; 
+	        }        	
+	        return perspective.isMoveable(currentPane.getViewReference());    	
+		}
+		 
+		public boolean supportsState(int newState) {
+		    if (currentPane == null)
+		        return false;
+		    if (currentPane.getPage().isFixedLayout())
+		        return false;
 			return true;
 		}
 
