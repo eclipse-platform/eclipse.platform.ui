@@ -257,7 +257,6 @@ public class TaskPropertiesDialog extends Dialog {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         composite.setLayoutData(gridData);
         
-        composite.setLayoutData(gridData);
         
         Label label = new Label(composite, SWT.NONE);
         label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
