@@ -250,10 +250,6 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		viewToolBar = new ToolBar(control.getControl(), SWT.FLAT);
 		viewToolBar.moveAbove(null);
-
-		updateGradient();
-		setTitleAttributes();
-
 		
 		ToolItem pullDownButton = new ToolItem(viewToolBar, SWT.PUSH);
 		//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
@@ -315,10 +311,34 @@ public class DefaultPartPresentation extends StackPresentation {
 		PresentationUtil.addDragListener(tabFolder.getControl(), dragListener);
 
 		titleLabel.addMouseListener(mouseListener);
-				
-		populateSystemMenu(systemMenuManager);		
+		
+		{ // Initialize system menu
+			systemMenuManager.add(new GroupMarker("misc")); //$NON-NLS-1$
+			systemMenuManager.add(new GroupMarker("restore")); //$NON-NLS-1$
+			systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuRestore(getSite())));
+			
+			systemMenuManager.add(new SystemMenuMove(getSite(), getPaneName()));
+			systemMenuManager.add(new GroupMarker("size")); //$NON-NLS-1$
+			systemMenuManager.add(new GroupMarker("state")); //$NON-NLS-1$
+			systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMinimize(getSite())));
+			
+			systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMaximize(getSite())));
+			systemMenuManager.add(new Separator("close")); //$NON-NLS-1$
+			systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuClose(getSite())));
+			
+			getSite().addSystemActions(systemMenuManager);
+		} // End of system menu initialization
 	}
 
+	/**
+	 * This method performs initialization that must be done after the object is created. Subclasses
+	 * must call this method exactly once on the last line of any public constructor.
+	 */
+	public void init() {
+		updateGradient();
+		setTitleAttributes();
+	}
+	
     /**
      * Sets the font on the title of this stack.
      */
@@ -398,38 +418,13 @@ public class DefaultPartPresentation extends StackPresentation {
         
 		// Compute the tab height
 		int tabHeight = Math.max(
-		        viewToolBar == null ? 0 : viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y, 
+		        viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y, 
 		        gc.getFontMetrics().getHeight());
 
 		gc.dispose();
 		
-		// Enforce a minimum tab height
-		if (tabHeight < 20) {
-			tabHeight = 20;
-		}
 		return tabHeight;
     }
-
-	/**
-	 */
-	private void populateSystemMenu(IMenuManager systemMenuManager) {
-
-		systemMenuManager.add(new GroupMarker("misc")); //$NON-NLS-1$
-		systemMenuManager.add(new GroupMarker("restore")); //$NON-NLS-1$
-		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuRestore(getSite())));
-		
-
-		systemMenuManager.add(new SystemMenuMove(getSite(), getPaneName()));
-		systemMenuManager.add(new GroupMarker("size")); //$NON-NLS-1$
-		systemMenuManager.add(new GroupMarker("state")); //$NON-NLS-1$
-		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMinimize(getSite())));
-		
-		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMaximize(getSite())));
-		systemMenuManager.add(new Separator("close")); //$NON-NLS-1$
-		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuClose(getSite())));
-		
-		getSite().addSystemActions(systemMenuManager);
-	}
 	
 	protected String getPaneName() {
 		return "&Pane";

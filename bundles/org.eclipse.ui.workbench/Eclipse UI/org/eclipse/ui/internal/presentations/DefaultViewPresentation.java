@@ -66,8 +66,8 @@ public class DefaultViewPresentation extends DefaultPartPresentation {
 		
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
-
-		updateGradient();
+		
+		init();
 	}
 	
 	/**
