@@ -219,12 +219,15 @@ public class Console extends ViewPart {
 	 * Create contributed actions
 	 */
 	private void createActions() {
-		clearOutputAction = new Action(Policy.bind("Console.clearOutput"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CLEAR)) { //$NON-NLS-1$
+		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
+		clearOutputAction = new Action(Policy.bind("Console.clearOutput"), plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR_ENABLED)) { //$NON-NLS-1$
 			public void run() {
 				document.clear();
 			}
 		};
 		clearOutputAction.setToolTipText(Policy.bind("Console.clearOutput")); //$NON-NLS-1$
+		clearOutputAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR_DISABLED));
+		clearOutputAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR));
 		
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);

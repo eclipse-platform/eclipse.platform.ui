@@ -94,12 +94,36 @@ public class TeamImages {
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING, baseURL);
 		createImageDescriptor(UIConstants.IMG_REFRESH, baseURL);
 		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE, baseURL);
+		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
+
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_REFRESH_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_CONTENTS_DISABLED, baseURL);
+
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_REFRESH_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_CONTENTS_ENABLED, baseURL);
+
 		createImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP, baseURL);
 		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE, baseURL);
 		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE, baseURL);
+
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_DISABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_DISABLED, baseURL);
+
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
+
 		createImageDescriptor(UIConstants.IMG_WIZBAN_SHARE, baseURL);
 		createImageDescriptor(UIConstants.IMG_WIZBAN_NEW_CONNECTION, baseURL);
-		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
 		
 		// Wizard banners
 		createImageDescriptor(UIConstants.IMG_PROJECTSET_IMPORT_BANNER, baseURL);

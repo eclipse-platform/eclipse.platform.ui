@@ -177,24 +177,30 @@ public class SyncView extends ViewPart {
 		// Create the actions
 		incomingMode = new SyncModeAction(
 			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_ENABLED),
 			SYNC_INCOMING);
 		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
 		incomingMode.setChecked(false);
+		incomingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_DISABLED));
+		incomingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP));
 		
 		outgoingMode = new SyncModeAction(
 			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_ENABLED),
 			SYNC_OUTGOING);
 		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
 		outgoingMode.setChecked(false);
+		outgoingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_DISABLED));
+		outgoingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE));
 		
 		freeMode = new SyncModeAction(
 			Policy.bind("SyncView.freeModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_ENABLED),
 			SYNC_BOTH);
 		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip")); //$NON-NLS-1$
 		freeMode.setChecked(false);
+		freeMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_DISABLED));
+		freeMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE));
 		
 		// Set up global actions for next and previous
 		next = new NavigationAction(true);

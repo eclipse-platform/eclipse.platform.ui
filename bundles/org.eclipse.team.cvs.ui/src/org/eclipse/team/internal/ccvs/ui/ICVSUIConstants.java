@@ -33,6 +33,14 @@ public interface ICVSUIConstants {
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR = "clcl16/clear_co.gif"; //$NON-NLS-1$
 	
+	// toolbar (disabled)
+	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
+	public final String IMG_CLEAR_DISABLED = "dlcl16/clear_co.gif"; //$NON-NLS-1$
+	
+	// toolbar (enabled)
+	public final String IMG_REFRESH_ENABLED = "elcl16/refresh.gif"; //$NON-NLS-1$
+	public final String IMG_CLEAR_ENABLED = "elcl16/clear_co.gif"; //$NON-NLS-1$
+	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif"; //$NON-NLS-1$
 	

@@ -603,7 +603,9 @@
             id="org.eclipse.team.cvs.ui.history">
          <action
                label="%HistoryFilter.label"
-               icon="icons/full/clcl16/filter_history.gif"
+               icon="icons/full/elcl16/filter_history.gif"
+               disabledIcon="icons/full/dlcl16/filter_history.gif"
+               hoverIcon="icons/full/clcl16/filter_history.gif"               
                tooltip="%HistoryFilter.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction"
                toolbarPath="actions"
@@ -675,7 +677,9 @@
 				id="org.eclipse.team.cvs.ui.ContentAction"
 				state="false"
 				toolbarPath="Normal/additions"
-				icon="icons/full/ctool16/contents.gif"
+				icon="icons/full/etool16/contents.gif"
+				disabledIcon="icons/full/dtool16/contents.gif"
+				hoverIcon="icons/full/ctool16/contents.gif"
 				label="%ContentAction.label"
  	            tooltip="%ContentAction.tooltip"
  				class="org.eclipse.team.internal.ccvs.ui.actions.ContentAction">

@@ -174,7 +174,8 @@ public class HistoryView extends ViewPart {
 	 */
 	protected void contributeActions() {
 		// Refresh (toolbar)
-		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
+		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
+		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 					public void run() {
@@ -184,6 +185,8 @@ public class HistoryView extends ViewPart {
 			}
 		};
 		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
+		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
+		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 		
 		// Double click open action
 		openAction = new OpenLogEntryAction();

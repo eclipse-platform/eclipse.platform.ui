@@ -312,35 +312,42 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	 */
 	private void initializeActions(final SyncCompareInput diffModel) {
 		// Mask actions
-		ImageDescriptor image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING);
+		ImageDescriptor image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING_ENABLED);
 		showIncoming = new FilterAction(Policy.bind("CatchupReleaseViewer.showIncomingAction"), image); //$NON-NLS-1$
 		showIncoming.setToolTipText(Policy.bind("CatchupReleaseViewer.showIncomingAction")); //$NON-NLS-1$
-	
-		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING);
+		showIncoming.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING_DISABLED));
+		showIncoming.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING));
+		
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING_ENABLED);
 		showOutgoing = new FilterAction(Policy.bind("CatchupReleaseViewer.showOutgoingAction"), image); //$NON-NLS-1$
 		showOutgoing.setToolTipText(Policy.bind("CatchupReleaseViewer.showOutgoingAction")); //$NON-NLS-1$
-	
-		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING);
-		
+		showOutgoing.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING_DISABLED));
+		showOutgoing.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING));
+			
 		//show only conflicts is not a HideAction because it doesnt flip bits, it sets an exact mask
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_ENABLED);
 		showOnlyConflicts = new FilterAction(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), image); //$NON-NLS-1$
 		showOnlyConflicts.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction")); //$NON-NLS-1$
-	
+		showOnlyConflicts.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_DISABLED));
+		showOnlyConflicts.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING));
+
 		//refresh action
-		image = TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_ENABLED);
 		refresh = new Action(Policy.bind("CatchupReleaseViewer.refreshAction"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.refresh();
 			}
 		};
 		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction")); //$NON-NLS-1$
+		refresh.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_DISABLED));
+		refresh.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH));
 		
 		// Expand action
 		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(expandAll, IHelpContextIds.EXPANDALL_ACTION);
 		
 		// Toggle granularity
-		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS_ENABLED);
 		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1"), image) { //$NON-NLS-1$
 			public void run() {
 				compareFileContents = isChecked();
@@ -350,6 +357,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		};
 		compareFileContents = diffModel.getSyncGranularity() != IRemoteSyncElement.GRANULARITY_TIMESTAMP;
 		toggleGranularity.setChecked(compareFileContents);
+		toggleGranularity.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS_DISABLED));
+		toggleGranularity.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS));
 		
 		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(removeFromTree, IHelpContextIds.REMOVE_ACTION);
@@ -408,7 +417,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		}
 		
 		// Ignore white space
-		image = TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE_ENABLED);
 		ignoreWhiteSpace = new Action(Policy.bind("CatchupReleaseViewer.ignoreWhiteSpace"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.setIgnoreWhitespace(isChecked());
@@ -417,6 +426,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		ignoreWhiteSpace.setId("team.ignoreWhiteSpace"); //$NON-NLS-1$
 		boolean ignore = CompareUIPlugin.getDefault().getPreferenceStore().getBoolean(CompareConfiguration.IGNORE_WHITESPACE);
 		ignoreWhiteSpace.setChecked(ignore);
+		ignoreWhiteSpace.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE_DISABLED));
+		ignoreWhiteSpace.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE));
 		
 		// Show next and previous change
 		showNext = new NavigationAction(true);
