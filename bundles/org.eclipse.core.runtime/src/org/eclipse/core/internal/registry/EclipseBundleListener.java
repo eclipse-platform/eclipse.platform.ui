@@ -126,7 +126,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			return null;
 		try {
 			String message = Policy.bind("parse.problems", bundle.getLocation()); //$NON-NLS-1$
-			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
 			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);

@@ -56,7 +56,7 @@ public class PluginActivator implements BundleActivator {
 		if (startLevel == null)
 			return;
 		if (startLevel.getStartLevel() <= startLevel.getBundleStartLevel(context.getBundle())) {
-			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getSymbolicName()), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getSymbolicName()), null); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(status);
 			throw new BundleException(status.getMessage());
 		}

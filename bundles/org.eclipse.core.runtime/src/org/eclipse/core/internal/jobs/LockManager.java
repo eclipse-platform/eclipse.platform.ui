@@ -166,10 +166,10 @@ public class LockManager {
 		String message = Policy.bind("jobs.internalError"); //$NON-NLS-1$
 		IStatus status;
 		if (e instanceof CoreException) {
-			status = new MultiStatus(IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, message, e);
+			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
 			((MultiStatus) status).merge(((CoreException) e).getStatus());
 		} else {
-			status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, message, e);
+			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
 		}
 		InternalPlatform.getDefault().log(status);
 	}

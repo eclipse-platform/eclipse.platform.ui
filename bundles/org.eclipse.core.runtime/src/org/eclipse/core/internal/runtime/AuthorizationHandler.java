@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 // This class factors out the management of the .keyring location
 public class AuthorizationHandler {
@@ -33,7 +34,7 @@ public class AuthorizationHandler {
 		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
-			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + InternalPlatform.PI_RUNTIME);
+			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 			file = new File(file, F_KEYRING);
 			keyringFile = file.getAbsolutePath();
 		}

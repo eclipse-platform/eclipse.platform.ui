@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.core.internal.content.ContentTypeBuilder;
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class LocalContentTypeBuilder extends ContentTypeBuilder {
@@ -32,7 +32,7 @@ public class LocalContentTypeBuilder extends ContentTypeBuilder {
 		List selected = new ArrayList();
 		for (int i = 0; i < allContentTypeCEs.length; i++) {
 			String namespace = allContentTypeCEs[i].getDeclaringExtension().getNamespace();
-			if (namespace.equals(IPlatform.PI_RUNTIME) || namespace.equals(RuntimeTest.PI_RUNTIME_TESTS))
+			if (namespace.equals(Platform.PI_RUNTIME) || namespace.equals(RuntimeTest.PI_RUNTIME_TESTS))
 				selected.add(allContentTypeCEs[i]);
 		}
 		return allContentTypeCEs;

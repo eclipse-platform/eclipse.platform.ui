@@ -527,7 +527,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		}
 
 		public IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
+			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
 			for (int i = 0; i < listenerInfos.length; i++) {
 				ListenerInfo listenerInfo = (ListenerInfo) listenerInfos[i];
 				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))
@@ -536,7 +536,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 					listenerInfo.listener.registryChanged(new RegistryChangeEvent(deltas, listenerInfo.filter));
 				} catch (RuntimeException re) {
 					String message = re.getMessage() == null ? "" : re.getMessage(); //$NON-NLS-1$
-					result.add(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.OK, message, re));
+					result.add(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.OK, message, re));
 				}
 			}
 			return result;

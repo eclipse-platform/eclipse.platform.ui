@@ -113,7 +113,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		}
 		if (dtdToFind == null && elementToFind == null) {
 			String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 		}
 	}
 }

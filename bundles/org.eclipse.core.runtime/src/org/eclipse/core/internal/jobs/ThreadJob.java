@@ -82,7 +82,7 @@ class ThreadJob extends Job {
 		if (JobManager.DEBUG || JobManager.DEBUG_BEGIN_END) {
 			System.out.println(msg);
 			Throwable t = lastPush == null ? new IllegalArgumentException() : lastPush;
-			IStatus error = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, msg, t);
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, t);
 			InternalPlatform.getDefault().log(error);
 		}
 		Assert.isLegal(false, msg);
@@ -100,7 +100,7 @@ class ThreadJob extends Job {
 		String msg = buf.toString();
 		if (JobManager.DEBUG) {
 			System.out.println(msg);
-			IStatus error = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, msg, new IllegalArgumentException());
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, new IllegalArgumentException());
 			InternalPlatform.getDefault().log(error);
 		}
 		Assert.isLegal(false, msg);
@@ -116,7 +116,7 @@ class ThreadJob extends Job {
 			return monitor.isCanceled();
 		} catch (RuntimeException e) {
 			String msg = Policy.bind("jobs.internalError"); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, e);
 			InternalPlatform.getDefault().log(status);
 		}
 		return false;

@@ -81,7 +81,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 			// specified name is not a simple attribute nor child element
 			else {
 				String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$
 				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
@@ -104,7 +104,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 
 		if (className == null || className.equals("")) { //$NON-NLS-1$
 			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 
 			throw new CoreException(status);
@@ -161,7 +161,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 	}
 
 	private void throwException(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
 		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 		throw new CoreException(status);
 	}

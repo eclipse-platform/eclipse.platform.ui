@@ -34,13 +34,13 @@ public class InternalPlatform {
 
 	public static void installPlugins(URL[] installURLs) throws CoreException {
 		String message = Policy.bind("platform.errorInstalling"); //$NON-NLS-1$
-		MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, 0, message, null); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, 0, message, null); //$NON-NLS-1$
 		BundleContext context = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundleContext();
 		for (int i = 0; i < installURLs.length; i++) {
 			try {
 				context.installBundle(installURLs[i].toExternalForm());
 			} catch (BundleException e) {
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("platform.cannotInstallPlugin", installURLs[i].toExternalForm()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("platform.cannotInstallPlugin", installURLs[i].toExternalForm()), e); //$NON-NLS-1$
 				result.merge(status);
 			}
 		}

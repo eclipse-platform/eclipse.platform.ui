@@ -11,7 +11,6 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
-import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**

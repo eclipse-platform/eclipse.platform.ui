@@ -83,7 +83,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		boolean fromCache = true;
 		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
 			// Try to read the registry from the cache first. If that fails, create a new registry
-			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
 
 			long start = 0;
 			if (InternalPlatform.DEBUG)
@@ -284,7 +284,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				}
 				if (applicationId == null)
 					throw new RuntimeException(Policy.bind("application.noIdFound")); //$NON-NLS-1$
-				IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
+				IExtension applicationExtension = registry.getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, applicationId);
 				if (applicationExtension == null)
 					throw new RuntimeException(Policy.bind("application.notFound", applicationId)); //$NON-NLS-1$
 				IConfigurationElement[] configs = applicationExtension.getConfigurationElements();

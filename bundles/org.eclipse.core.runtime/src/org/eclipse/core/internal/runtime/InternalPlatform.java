@@ -37,7 +37,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * Bootstrap class for the platform. It is responsible for setting up the
  * platform class loader and passing control to the actual application class
  */
-public final class InternalPlatform implements IPlatform {
+public final class InternalPlatform {
 	private BundleContext context;
 	private IExtensionRegistry registry;
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
@@ -52,7 +52,6 @@ public final class InternalPlatform implements IPlatform {
 	private static IAdapterManager adapterManager;
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	static ServiceRegistration platformRegistration;
 	static EnvironmentInfo infoService;
 	static URLConverter urlConverter;
 	static FrameworkLog frameworkLog;
@@ -83,12 +82,12 @@ public final class InternalPlatform implements IPlatform {
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	
 	// execution options
-	private static final String OPTION_DEBUG = PI_RUNTIME + "/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_SHUTDOWN = PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY = PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY_DUMP = PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCES = PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
 
 	// command line options
 	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
@@ -326,14 +325,14 @@ public final class InternalPlatform implements IPlatform {
 
 	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
-			String pluginId = PI_RUNTIME;
+			String pluginId = Platform.PI_RUNTIME;
 			String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
 			IStatus status;
 			if (e instanceof CoreException) {
-				status = new MultiStatus(pluginId, IPlatform.PLUGIN_ERROR, message, e);
+				status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);
 				((MultiStatus) status).merge(((CoreException) e).getStatus());
 			} else {
-				status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
+				status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 			}
 			//we have to be safe, so don't try to log if the platform is not running 
 			//since it will fail - last resort is to print the stack trace on stderr
@@ -376,7 +375,6 @@ public final class InternalPlatform implements IPlatform {
 		initializeAuthorizationHandler();
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
-		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
 	}
 
 	private Runnable getSplashHandler() {
@@ -441,7 +439,7 @@ public final class InternalPlatform implements IPlatform {
 			final ILogListener listener = listeners[i];
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
-					listener.logging(status, PI_RUNTIME);
+					listener.logging(status, Platform.PI_RUNTIME);
 				}
 
 				public void handleException(Throwable e) {
@@ -1153,13 +1151,13 @@ public final class InternalPlatform implements IPlatform {
 		String productId = System.getProperty(PROP_PRODUCT);
 		if (productId == null)
 			return null;
-		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT, productId);
+		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT, productId);
 		if (entries.length > 0) {
 			// There should only be one product with the given id so just take the first element
 			product = new Product(productId, entries[0]);
 			return product;
 		}
-		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT);
+		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT);
 		List logEntries = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
@@ -1177,12 +1175,12 @@ public final class InternalPlatform implements IPlatform {
 				} catch (CoreException e) {
 					if (logEntries == null)
 						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
+					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
 				}
 			}
 		}
 		if (logEntries != null)
-			getFrameworkLog().log(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
 
 		return null;
 	}
@@ -1198,11 +1196,11 @@ public final class InternalPlatform implements IPlatform {
 	public FileManager getRuntimeFileManager() {
 		if (runtimeFileManager==null) {
 			try {
-				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + PI_RUNTIME);
+				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 				controlledDir.mkdirs();
 				runtimeFileManager = new FileManager(controlledDir);
 			} catch (IOException e) {
-				getFrameworkLog().log(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + PI_RUNTIME), 0, null, null)); //$NON-NLS-1$
+				getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME), 0, null, null)); //$NON-NLS-1$
 			}
 		}
 		return runtimeFileManager;

@@ -12,14 +12,14 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.internal.runtime.CompatibilityHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class CompatibilityActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
-		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(IPlatform.PI_RUNTIME);
+		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(Platform.PI_RUNTIME);
 		CompatibilityHelper.setPlugin(descriptor, InternalPlatform.getDefault().getRuntimeInstance());
 	}
 

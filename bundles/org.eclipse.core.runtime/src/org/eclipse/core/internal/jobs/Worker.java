@@ -39,7 +39,7 @@ public class Worker extends Thread {
 
 	private IStatus handleException(InternalJob job, Throwable t) {
 		String message = Policy.bind("jobs.internalError", job.getName()); //$NON-NLS-1$
-		return new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, message, t);
+		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, t);
 	}
 
 	private void log(IStatus result) {

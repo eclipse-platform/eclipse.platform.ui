@@ -29,11 +29,11 @@ import org.eclipse.core.runtime.jobs.*;
  * must NEVER call the worker pool while its own monitor is held.
  */
 public class JobManager implements IJobManager {
-	private static final String OPTION_DEADLOCK_ERROR = IPlatform.PI_RUNTIME + "/jobs/errorondeadlock"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_BEGIN_END = IPlatform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_JOBS = IPlatform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_JOBS_TIMING = IPlatform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
-	private static final String OPTION_LOCKS = IPlatform.PI_RUNTIME + "/jobs/locks"; //$NON-NLS-1$
+	private static final String OPTION_DEADLOCK_ERROR = Platform.PI_RUNTIME + "/jobs/errorondeadlock"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_BEGIN_END = Platform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_JOBS = Platform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_JOBS_TIMING = Platform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
+	private static final String OPTION_LOCKS = Platform.PI_RUNTIME + "/jobs/locks"; //$NON-NLS-1$
 
 	static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS));
 	static final boolean DEBUG_BEGIN_END = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_BEGIN_END));
@@ -621,8 +621,8 @@ public class JobManager implements IJobManager {
 				try {
 					monitor = progressProvider.getDefaultMonitor();
 				} catch (Exception e) {
-					String msg = Policy.bind("meta.pluginProblems", IPlatform.PI_RUNTIME); //$NON-NLS-1$
-					InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e));
+					String msg = Policy.bind("meta.pluginProblems", Platform.PI_RUNTIME); //$NON-NLS-1$
+					InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, e));
 				}
 			}
 		}
@@ -698,7 +698,7 @@ public class JobManager implements IJobManager {
 			return;
 		IStatus reason;
 		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
-			reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
+			reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
 		} else {
 			String msg = Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
 			reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);

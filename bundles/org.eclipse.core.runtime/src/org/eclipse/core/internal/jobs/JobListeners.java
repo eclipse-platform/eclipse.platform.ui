@@ -130,7 +130,7 @@ class JobListeners {
 			return;
 		String pluginId = Platform.PI_RUNTIME;
 		String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
-		IStatus status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
+		IStatus status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		//we have to be safe, so don't try to log if the platform is not running 
 		//since it will fail - last resort is to print the stack trace on stderr
 		if (InternalPlatform.getDefault().isRunning())

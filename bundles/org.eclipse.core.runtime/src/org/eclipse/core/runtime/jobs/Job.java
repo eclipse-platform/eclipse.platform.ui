@@ -47,7 +47,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see Job#run(IProgressMonitor)
 	 * @see Job#done(IStatus)
 	 */
-	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, IPlatform.PI_RUNTIME, 1, "", null);//$NON-NLS-1$
+	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, Platform.PI_RUNTIME, 1, "", null);//$NON-NLS-1$
 
 	/* Job priorities */
 	/** 

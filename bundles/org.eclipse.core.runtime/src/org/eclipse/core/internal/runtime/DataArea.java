@@ -100,7 +100,7 @@ public class DataArea {
 		if (location.toFile().exists()) {
 			if (!location.toFile().isDirectory()) {
 				String message = Policy.bind("meta.notDir", location.toString()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 			}
 		}
 		//try infer the device if there isn't one (windows)
@@ -117,11 +117,11 @@ public class DataArea {
 			file.mkdirs();
 		} catch (Exception e) {
 			String message = Policy.bind("meta.couldNotCreate", file.getAbsolutePath()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, e));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 		}
 		if (!file.canWrite()) {
 			String message = Policy.bind("meta.readonly", file.getAbsolutePath()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 		}
 		// set the log file location now that we created the data area
 		IPath path = location.append(F_META_AREA).append(F_LOG);

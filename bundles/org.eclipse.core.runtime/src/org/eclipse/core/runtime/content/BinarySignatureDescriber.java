@@ -78,7 +78,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 				Hashtable parameters = (Hashtable) data;
 				if (!parameters.containsKey(SIGNATURE)) {
 					String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
-					throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null));
+					throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 				}
 				signature = parseSignature((String) parameters.get(SIGNATURE));
 				if (parameters.containsKey(OFFSET))
@@ -88,7 +88,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 			}
 		} catch (NumberFormatException nfe) {
 			String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, nfe));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, nfe));
 		}
 	}
 

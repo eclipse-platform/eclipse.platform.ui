@@ -23,13 +23,13 @@ public class Status implements IStatus {
 	 *
 	 * @since 3.0
 	 */
-	public static final IStatus OK_STATUS = new Status(OK, IPlatform.PI_RUNTIME, OK, Policy.bind("ok"), null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	/**
 	 * A standard CANCEL status with no message.
 	 * 
 	 * @since 3.0
 	 */
-	public static final IStatus CANCEL_STATUS = new Status(CANCEL, IPlatform.PI_RUNTIME, 1, "", null); //$NON-NLS-1$
+	public static final IStatus CANCEL_STATUS = new Status(CANCEL, Platform.PI_RUNTIME, 1, "", null); //$NON-NLS-1$
 	/**
 	 * The severity. One of
 	 * <ul>

@@ -29,7 +29,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 	}
 
-	final static String CONTENT_TYPE_PREF_NODE = IPlatform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
+	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
 	private static ContentTypeManager instance;
 	private static final int MARK_LIMIT = 0x400;
 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.content;
 
-import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -44,12 +44,12 @@ public interface IContentDescription {
 	/**
 	 * Key for the byte order mark property.
 	 */
-	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset"); //$NON-NLS-1$
+	public final static QualifiedName CHARSET = new QualifiedName(Platform.PI_RUNTIME, "charset"); //$NON-NLS-1$
 	/**
 	 * Key for the byte order mark property. This property is only meaningful 
 	 * when describing byte streams.  
 	 */
-	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IPlatform.PI_RUNTIME, "bom"); //$NON-NLS-1$
+	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(Platform.PI_RUNTIME, "bom"); //$NON-NLS-1$
 	/**
 	 * Options constant meaning that all properties should be described. 
 	 */

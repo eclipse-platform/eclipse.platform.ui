@@ -71,7 +71,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 
 	protected IConfigurationElement[] getConfigurationElements() {
 		IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
-		IExtensionPoint contentTypesXP = registry.getExtensionPoint(IPlatform.PI_RUNTIME, PT_CONTENTTYPES);
+		IExtensionPoint contentTypesXP = registry.getExtensionPoint(Platform.PI_RUNTIME, PT_CONTENTTYPES);
 		IConfigurationElement[] allContentTypeCEs = contentTypesXP.getConfigurationElements();
 		return allContentTypeCEs;
 	}
@@ -111,7 +111,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 			message = Policy.bind("content.missingName", contentType.getId()); //$NON-NLS-1$
 		if (message == null)
 			return true;
-		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null);
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null);
 		InternalPlatform.getDefault().log(status);
 		return false;
 	}
@@ -145,7 +145,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas = (event.getExtensionDeltas(IPlatform.PI_RUNTIME, PT_CONTENTTYPES));
+		IExtensionDelta[] deltas = (event.getExtensionDeltas(Platform.PI_RUNTIME, PT_CONTENTTYPES));
 		for (int i = 0; i < deltas.length; i++) {
 			IConfigurationElement[] configElements = deltas[i].getExtension().getConfigurationElements();
 			if (deltas[i].getKind() == IExtensionDelta.ADDED) {
@@ -165,7 +165,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	}
 
 	public void startup() {
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this, IPlatform.PI_RUNTIME);
+		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
 	}
 
 	protected void validateCatalog() {

@@ -261,9 +261,9 @@ public class AuthorizationDatabase {
 				input.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
 		}
 	}
 
@@ -282,7 +282,7 @@ public class AuthorizationDatabase {
 			}
 		} else {
 			//the format has changed, just log a warning
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.authFormatChanged"), null)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.authFormatChanged"), null)); //$NON-NLS-1$
 			//close the stream and save a new file in the correct format
 			try {
 				is.close();
@@ -310,7 +310,7 @@ public class AuthorizationDatabase {
 				out.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), e)); //$NON-NLS-1$
 		}
 		needsSaving = false;
 	}

@@ -37,11 +37,11 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testRegistry() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
+		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
 		assertTrue("1.1", isText(contentTypeManager, textContentType));
 		assertNotNull("1.2", ((ContentType) textContentType).getDescriber());
-		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
 		assertTrue("2.1", isText(contentTypeManager, xmlContentType));
 		assertEquals("2.2", textContentType, xmlContentType.getBaseType());
@@ -91,7 +91,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testContentDetection() throws IOException {
 		LocalContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary1");
-		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType appropriate = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
 		// if only inappropriate is provided, none will be selected
@@ -111,7 +111,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testContentDescription() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType xmlType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType xmlType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentDescription description;
 		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.ALL);
 		assertNotNull("1.0", description);
@@ -192,8 +192,8 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testIsKindOf() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
-		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
+		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
@@ -209,11 +209,11 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testFindContentType() throws Exception {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
+		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), "file.txt");
 		assertNotNull("1.0", single);
 		assertEquals("1.1", textContentType, single);
-		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		single = contentTypeManager.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), "foo.xml");
 		assertNotNull("2.0", single);
 		assertEquals("2.1", xmlContentType, single);
@@ -222,7 +222,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	}
 
 	public void testAssociations() throws CoreException {
-		IContentType text = Platform.getContentTypeManager().getContentType((IPlatform.PI_RUNTIME + ".text"));
+		IContentType text = Platform.getContentTypeManager().getContentType((Platform.PI_RUNTIME + ".text"));
 		// associate a user-defined file spec
 		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
 		// test associations

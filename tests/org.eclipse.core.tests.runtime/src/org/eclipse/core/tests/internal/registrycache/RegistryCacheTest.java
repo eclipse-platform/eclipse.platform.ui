@@ -52,7 +52,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	}
 
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
-		return new RegistryCacheReader(cacheFile, new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null), false);
+		return new RegistryCacheReader(cacheFile, new MultiStatus(Platform.PI_RUNTIME, 0, "", null), false);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	}
 
 	private Namespace parseManifest(String symbolicName, Reader input) throws IOException, SAXException {
-		ExtensionsParser parser = new ExtensionsParser(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null));
+		ExtensionsParser parser = new ExtensionsParser(new MultiStatus(Platform.PI_RUNTIME, 0, "", null));
 		Namespace result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml");
 		result.setUniqueIdentifier(symbolicName);
 		return result;

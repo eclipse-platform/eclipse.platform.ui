@@ -61,11 +61,11 @@ class WorkerPool {
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
 		computeMaxThreads();
-		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(IPlatform.PI_RUNTIME);
+		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME);
 		IEclipsePreferences eclipseNode = (IEclipsePreferences) node;
 		eclipseNode.addPreferenceChangeListener(new IEclipsePreferences.IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
-				if (event.getKey().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
+				if (event.getKey().equalsIgnoreCase(Platform.PREF_PLATFORM_PERFORMANCE))
 					computeMaxThreads();
 			}
 		});
@@ -89,7 +89,7 @@ class WorkerPool {
 	 * preference.
 	 */
 	protected void computeMaxThreads() {
-		int speed = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(IPlatform.PI_RUNTIME).getInt(IPlatform.PREF_PLATFORM_PERFORMANCE, 3);
+		int speed = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME).getInt(Platform.PREF_PLATFORM_PERFORMANCE, 3);
 		switch (speed) {
 			case 1 :
 				MAX_THREADS = DEFAULT_MAX_THREADS / 5;

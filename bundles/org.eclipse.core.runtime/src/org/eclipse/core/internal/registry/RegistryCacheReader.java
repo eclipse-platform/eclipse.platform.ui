@@ -77,8 +77,8 @@ public class RegistryCacheReader {
 			String osStamp = in.readUTF();
 			String windowsStamp = in.readUTF();
 			String localeStamp = in.readUTF();
-			IPlatform info = InternalPlatform.getDefault();
-			return ((expectedTimestamp == 0 || expectedTimestamp == registryStamp) && (installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
+			InternalPlatform info = InternalPlatform.getDefault();
+			return ((expectedTimestamp == 0 || expectedTimestamp == registryStamp) && (installStamp == info.getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
 		} catch (IOException e) {
 			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading", "HeaderInformation"), e); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -309,15 +309,15 @@ public class RegistryCacheReader {
 		} catch (IOException e) {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
 			String message = Policy.bind("meta.unableToReadCache"); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
 		} catch (Throwable t) {
 			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
 			// log general message
 			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, null));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, null));
 			// log actual error			
 			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
 		} finally {
 			try {
 				if (in != null)
@@ -325,7 +325,7 @@ public class RegistryCacheReader {
 			} catch (IOException e) {
 				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
 				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
-				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
 			}
 		}
 		return new ConfigurationElement[0];
@@ -345,22 +345,22 @@ public class RegistryCacheReader {
 		} catch (IOException e) {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
 			String message = Policy.bind("meta.unableToReadCache"); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
 			return null;
 		}
 		try {
 			return readCache(in, expectedTimestamp);
 		} catch (InvalidRegistryCacheException e) {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e.getCause() : null;
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, e.getMessage(), exception));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, e.getMessage(), exception));
 		} catch (Throwable t) {
 			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
 			// log general message
 			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, null));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, null));
 			// log actual error			
 			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
 		} finally {
 			try {
 				if (in != null)
@@ -368,7 +368,7 @@ public class RegistryCacheReader {
 			} catch (IOException e) {
 				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
 				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
-				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
 			}
 		}
 		return null;

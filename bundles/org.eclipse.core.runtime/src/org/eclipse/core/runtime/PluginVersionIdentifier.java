@@ -140,9 +140,9 @@ public final class PluginVersionIdentifier {
 		try {
 			parseVersion(version);
 		} catch (RuntimeException e) {
-			return new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
+			return new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
 		}
-		return new Status(IStatus.OK, IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("ok"), null); //$NON-NLS-1$
+		return new Status(IStatus.OK, Platform.PI_RUNTIME, IStatus.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	}
 
 	private static Object[] parseVersion(String versionId) {

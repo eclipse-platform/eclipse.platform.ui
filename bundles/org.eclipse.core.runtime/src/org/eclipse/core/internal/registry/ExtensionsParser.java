@@ -315,7 +315,7 @@ public class ExtensionsParser extends DefaultHandler {
 		else
 			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
 					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
-		error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
+		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
 	private SAXParserFactory acquireXMLParsing() {
@@ -517,7 +517,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void internalError(String message) {
-		error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
+		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, message, null));
 	}
 
 	/* (non-Javadoc)

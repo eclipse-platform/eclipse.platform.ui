@@ -584,7 +584,7 @@ class DeadlockDetector {
 	 */
 	private void reportDeadlock(Deadlock deadlock) {
 		String msg = "Deadlock detected. All locks owned by thread " + deadlock.getCandidate().getName() + " will be suspended."; //$NON-NLS-1$ //$NON-NLS-2$
-		MultiStatus main = new MultiStatus(IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, new IllegalStateException());
+		MultiStatus main = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, new IllegalStateException());
 		Thread[] threads = deadlock.getThreads();
 		for (int i = 0; i < threads.length; i++) {
 			Object[] ownedLocks = getOwnedLocks(threads[i]);
@@ -598,7 +598,7 @@ class DeadlockDetector {
 			}
 			buf.append("and is waiting for lock "); //$NON-NLS-1$
 			buf.append(waitLock);
-			Status child = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, buf.toString(), null);
+			Status child = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, buf.toString(), null);
 			main.add(child);
 		}
 		InternalPlatform.getDefault().log(main);

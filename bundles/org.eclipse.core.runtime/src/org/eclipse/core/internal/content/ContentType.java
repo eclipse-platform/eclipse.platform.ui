@@ -153,7 +153,7 @@ public class ContentType implements IContentType {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
 			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
 	}
@@ -409,7 +409,7 @@ public class ContentType implements IContentType {
 		setValidation(INVALID);
 		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
 		// don't log CoreExceptions again
-		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
 		InternalPlatform.getDefault().log(status);
 		return describer = new InvalidDescriber();
 	}
@@ -452,7 +452,7 @@ public class ContentType implements IContentType {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
 			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
 	}
@@ -478,7 +478,7 @@ public class ContentType implements IContentType {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
 			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
 	}

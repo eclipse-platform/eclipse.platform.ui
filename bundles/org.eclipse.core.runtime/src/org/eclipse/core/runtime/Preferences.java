@@ -336,10 +336,10 @@ public class Preferences {
 				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[] {IPath.class});
 				return exportingMethod.invoke(prefExporter, new Object[] {file});
 			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, "Error while " + methodName, e));
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, "Error while " + methodName, e));
 			}
 		} else {
-			throw new CoreException(new Status(IStatus.INFO, IPlatform.PI_RUNTIME, IStatus.OK, "Preferences import/export not implemented", null));
+			throw new CoreException(new Status(IStatus.INFO, Platform.PI_RUNTIME, IStatus.OK, "Preferences import/export not implemented", null));
 		}
 	}
 
