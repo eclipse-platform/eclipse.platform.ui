@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -38,6 +39,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -170,9 +172,17 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 								try {
 									ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 									if (folder.isCVSFolder()) {
+										// Check for outgoing file deletions (bug 20715)
+										ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
+										for (int j = 0; j < files.length; j++) {
+											if (!files[j].exists()) {
+												outgoing.add(((IContainer)resource).getFile(new Path(files[j].getName())));
+											}
+										}
 										return true;
 									} else {
-										outgoing.add(resource);
+										if (resource.exists())
+											outgoing.add(resource);
 										return false;
 									}
 								} catch (CVSException e) {
@@ -182,7 +192,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 							}	
 							return true;
 						}
-					});
+					}, IResource.DEPTH_INFINITE, true);
 				}
 			} catch (CoreException e) {
 				ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
