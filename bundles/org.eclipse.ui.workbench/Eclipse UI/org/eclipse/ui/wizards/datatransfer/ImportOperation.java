@@ -719,7 +719,6 @@ ArrayList validateEdit(List existingFiles) {
 void validateFiles(List sourceFiles) {
 	ArrayList noOverwrite = new ArrayList();
 	ArrayList overwriteReadonly = new ArrayList();
-	ArrayList rejectedFiles;
 	
 	collectExistingReadonlyFiles(destinationPath, sourceFiles, noOverwrite, overwriteReadonly, POLICY_DEFAULT);
 	rejectedFiles = validateEdit(overwriteReadonly);
