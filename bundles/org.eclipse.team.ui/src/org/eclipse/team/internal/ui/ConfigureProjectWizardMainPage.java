@@ -43,6 +43,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private IWorkbench workbench;
 	private IProject project;
 	private boolean creationMode = true;
+	private String instructionLabel="ConfigureProjectWizardMainPage.selectRepository";
 	
 	private IConfigurationWizard selectedWizard;
 	
@@ -59,6 +60,11 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		this.wizards = wizards;
 		this.creationMode = creationMode;
 	}
+	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, String instructionLabel) {
+		this(pageName,title,titleImage,wizards);
+		this.instructionLabel=instructionLabel;
+	}
+	
 	public IConfigurationWizard getSelectedWizard() {
 		return selectedWizard;
 	}
@@ -82,7 +88,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_PROJECT_PAGE);
 				
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
+		label.setText(Policy.bind(instructionLabel)); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
