@@ -15,12 +15,18 @@ import org.eclipse.jface.util.Assert;
 	private int fLastChar;
 	private boolean fSawEOF= false;
 	private BufferedReader fReader;
+	private boolean fIgnoreSingleCR= false;
+	
 	
 	/* package */ LineReader(BufferedReader reader) {
 		fReader= reader;
 		Assert.isNotNull(reader);
 	}
 
+	void ignoreSingleCR() {
+		fIgnoreSingleCR= true;
+	}
+	
     /**
      * Reads a line of text. A line is considered to be terminated by any one
      * of a line feed ('\n'), a carriage return ('\r'), or a carriage return
@@ -51,8 +57,13 @@ import org.eclipse.jface.util.Assert;
 					break;	// EOF
 				}
 				if (c != '\n') {
-					fHaveChar= true;
-					fLastChar= c;
+					if (fIgnoreSingleCR) {
+						sb.append((char)c);	
+						continue;
+					} else {
+						fHaveChar= true;
+						fLastChar= c;
+					}
 				} else
 					sb.append((char)c);	
 				break;

@@ -143,6 +143,7 @@ public class Patcher {
 		String fileName= null;
 		
 		LineReader lr= new LineReader(reader);
+		lr.ignoreSingleCR();
 		
 		// read leading garbage
 		while (true) {
