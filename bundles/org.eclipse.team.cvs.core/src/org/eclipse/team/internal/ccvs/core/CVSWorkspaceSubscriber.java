@@ -21,14 +21,18 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
@@ -38,6 +42,7 @@ import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
 import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
 import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * CVSWorkspaceSubscriber
@@ -172,11 +177,10 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.TeamSubscriber#getAllOutOfSync(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#collectOutOfSync(org.eclipse.core.resources.IResource[], int, org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public SyncInfo[] getAllOutOfSync(IResource[] resources, final int depth, final IProgressMonitor monitor) throws TeamException {
+	public void collectOutOfSync(IResource[] resources, int depth, final SyncInfoSet set, final IProgressMonitor monitor) {
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-		final List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			try {
@@ -193,25 +197,26 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 							if (isOutOfSync(innerResource, monitor)) {
 								SyncInfo info = getSyncInfo(innerResource);
 								if (info != null && info.getKind() != 0) {
-									result.add(info);
+									set.add(info);
 								}
 							}
-							return true;
 						} catch (TeamException e) {
-							// TODO:See bug 42795
-							throw new CoreException(e.getStatus());
+							set.addError(new TeamStatus(
+									IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR,
+									Policy.bind("CVSWorkspaceSubscriber.2", innerResource.getFullPath().toString(), e.getMessage()), e, innerResource)); //$NON-NLS-1$
 						}
+						return true;
 					}
 				}, depth, true /* include phantoms */);
 			} catch (CoreException e) {
-				throw CVSException.wrapException(e);
+				set.addError(new TeamStatus(
+						IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR,
+						e.getMessage(), e, ResourcesPlugin.getWorkspace().getRoot()));
 			} finally {
 				Platform.getJobManager().endRule(resource);
-				monitor.done();
 			}
 		}
 		monitor.done();
-		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
 	
 	/* internal use only */ boolean isOutOfSync(IResource resource, IProgressMonitor monitor) throws TeamException {

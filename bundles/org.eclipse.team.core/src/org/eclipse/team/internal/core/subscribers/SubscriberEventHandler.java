@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 
@@ -267,33 +268,45 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		int depth,
 		IProgressMonitor monitor) {
 		
-		monitor.beginTask(null, 100);
+		
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		try {
-			SyncInfo[] infos = null;
-				try {
-					infos = syncSetInput.getSubscriber().getAllOutOfSync(new IResource[] { resource }, depth, Policy.subMonitorFor(monitor, 10));
-				} catch (TeamException e) {
-					// Log the exception and fallback to using hierarchical search
-					TeamPlugin.log(e);
+			
+			// Create a monitor that will handle preemptions and dispatch if required
+			IProgressMonitor collectionMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN) {
+				public void subTask(String name) {
+					handlePreemptiveEvents(this);
+					handlePendingDispatch(this);
+					super.subTask(name);
 				}
-	
-			// The subscriber hasn't cached out-of-sync resources. We will have to
-			// traverse all resources and calculate their state. 
-			if (infos == null) {
-				IProgressMonitor subMonitor = Policy.infiniteSubMonitorFor(monitor, 90);
-				subMonitor.beginTask(null, 20);
-				collect(
-						resource,
-						IResource.DEPTH_INFINITE,
-						subMonitor);
-			} else {
-				// The subscriber has returned the list of out-of-sync resources.
-				for (int i = 0; i < infos.length; i++) {
-					SyncInfo info = infos[i];
+				public void worked(int work) {
+					handlePreemptiveEvents(this);
+					handlePendingDispatch(this);
+					super.worked(work);
+				}
+			};
+			
+			// Create a sync set that queues up resources and errors for dispatch
+			SyncInfoSet collectionSet = new SyncInfoSet() {
+				public void add(SyncInfo info) {
+					super.add(info);
 					resultCache.add(
-						new SubscriberEvent(info.getLocal(), SubscriberEvent.CHANGE, depth, info));
+							new SubscriberEvent(info.getLocal(), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, info));
 				}
-			}
+				public void addError(ITeamStatus status) {
+					super.addError(status);
+					TeamPlugin.getPlugin().getLog().log(status);
+					syncSetInput.handleError(status);
+				}
+				public void remove(IResource resource) {
+					super.remove(resource);
+					resultCache.add(
+							new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
+				}
+			};
+			
+			syncSetInput.getSubscriber().collectOutOfSync(new IResource[] { resource }, depth, collectionSet, collectionMonitor);
+			
 		} finally {
 			monitor.done();
 		}

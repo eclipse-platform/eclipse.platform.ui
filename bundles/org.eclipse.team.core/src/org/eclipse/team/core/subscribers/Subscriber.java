@@ -14,10 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.synchronize.IResourceVariantComparator;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * A Subscriber provides synchronization between local resources and a
@@ -98,7 +106,7 @@ abstract public class Subscriber {
 	 * @param resource
 	 *                   the resource
 	 * @return a list of member resources
-	 * @exception CoreException
+	 * @exception TeamException
 	 *                         if this request fails. Reasons include:
 	 */
 	abstract public IResource[] members(IResource resource) throws TeamException;
@@ -188,7 +196,7 @@ abstract public class Subscriber {
 	 * @return status with code <code>OK</code> if there were no problems;
 	 *               otherwise a description (possibly a multi-status) consisting of
 	 *               low-severity warnings or informational messages.
-	 * @exception CoreException
+	 * @exception TeamException
 	 *                         if this method fails. Reasons include:
 	 *                         <ul>
 	 *                         <li>The server could not be contacted.</li>
@@ -227,28 +235,39 @@ abstract public class Subscriber {
 			listeners.remove(listener);
 		}
 	}
-
+	
 	/**
-	 * Return an array of all out-of-sync resources (getKind() != 0) that occur
+	 * Adds all out-of-sync resources (getKind() != 0) that occur
 	 * under the given resources to the specified depth. The purpose of this
 	 * method is to provide subscribers a means of optimizing the determination
 	 * of all out-of-sync out-of-sync descendants of a set of resources.
 	 * <p>
-	 * A return value of an empty array indicates that there are no out-of-sync
-	 * resources supervised by the subscriber. A return of <code>null</code>
-	 * indicates that the subscriber does not support this operation in an
-	 * optimized fashion. In this case, the caller can determine the
-	 * out-of-sync resources by traversing the resource structure form the
-	 * roots of the subscriber (@see <code>getRoots()</code>).
-	 * </p>
+	 * If any of the directly provided resources are not supervised by the subscriber, then
+	 * they should be removed from the set.
+	 * If errors occur while determining the sync info for the resources, they should
+	 * be added to the set using <code>addError</code>.
 	 * 
-	 * @param resources
-	 * @param depth
-	 * @param monitor
-	 * @return
+	 * @param resources the root of the resource subtrees from which out-of-sync sync info should be collected
+	 * @param depth the depth to which sync info should be collected
+	 * (one of <code>IResource.DEPTH_ZERO</code>,
+	 * <code>IResource.DEPTH_ONE</code>, or <code>IResource.DEPTH_INFINITE</code>)
+	 * @param set the sync info set to which out-of-sync resources should be added (or removed). Any errors
+	 * should be added to the set as well.
+	 * @param monitor a progress monitor
 	 */
-	public SyncInfo[] getAllOutOfSync(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		return null;
+	public void collectOutOfSync(IResource[] resources, int depth, SyncInfoSet set, IProgressMonitor monitor) {
+		try {
+			monitor.beginTask(null, 100 * resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 100);
+				subMonitor.beginTask(null, IProgressMonitor.UNKNOWN);
+				collect(resource, depth, set, subMonitor);
+				subMonitor.done();
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 	
 	/**
@@ -276,5 +295,53 @@ abstract public class Subscriber {
 				}
 			});
 		}
+	}
+	
+	/*
+	 * Collect the calculated synchronization information for the given resource at the given depth. The
+	 * results are added to the provided list.
+	 */
+	private void collect(
+		IResource resource,
+		int depth,
+		SyncInfoSet set,
+		IProgressMonitor monitor) {
+		
+		if (resource.getType() != IResource.FILE
+			&& depth != IResource.DEPTH_ZERO) {
+			try {
+				IResource[] members = members(resource);
+				for (int i = 0; i < members.length; i++) {
+					collect(
+						members[i],
+						depth == IResource.DEPTH_INFINITE
+							? IResource.DEPTH_INFINITE
+							: IResource.DEPTH_ZERO,
+						set,
+						monitor);
+				}
+			} catch (TeamException e) {
+				set.addError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR, Policy.bind("SubscriberEventHandler.8", resource.getFullPath().toString(), e.getMessage()), e, resource)); //$NON-NLS-1$
+			}
+		}
+
+		monitor.subTask(Policy.bind("SubscriberEventHandler.2", resource.getFullPath().toString())); //$NON-NLS-1$
+		try {
+			SyncInfo info = getSyncInfo(resource);
+			if (info == null) {
+				// Resource is no longer under the subscriber control.
+				// This can occur for the resources past as arguments to collectOutOfSync
+				set.remove(resource);
+			} else {
+				set.add(info);
+			}
+		} catch (TeamException e) {
+			set.addError(new TeamStatus(
+					IStatus.ERROR, TeamPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, 
+					Policy.bind("SubscriberEventHandler.9", resource.getFullPath().toString(), e.getMessage()),  //$NON-NLS-1$
+					e, resource));
+		}
+		// Tick the monitor to give the owner a chance to do something
+		monitor.worked(1);
 	}
 }
