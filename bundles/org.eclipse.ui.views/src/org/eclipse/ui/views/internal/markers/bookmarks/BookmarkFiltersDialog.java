@@ -153,7 +153,7 @@ class BookmarkFiltersDialog extends org.eclipse.ui.views.internal.markers.Filter
 	 */
 	protected void resetPressed() {
 		descriptionGroup.setContains(BookmarkFilter.DEFAULT_CONTAINS);
-		descriptionGroup.setDescription(""); //$NON-NLS-1$
+		descriptionGroup.setDescription(BookmarkFilter.DEFAULT_DESCRIPTION);
 
 		super.resetPressed();
 	}

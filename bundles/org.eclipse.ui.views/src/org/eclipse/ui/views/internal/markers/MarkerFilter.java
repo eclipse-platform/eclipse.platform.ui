@@ -402,45 +402,18 @@ public class MarkerFilter implements IFilter {
 		workingSet = set;
 	}
 	
-	/**
-	 * Saves the filter state in a section of the dialog settings.
-	 * 
-	 * @param dialogSettings the dialog settings where the filter will save its state.
-	 */
-	public void saveState(IDialogSettings dialogSettings) {
-		if (dialogSettings == null) {
-			return;
-		}
 
-		IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
-		if (settings == null) {
-			settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
-		}
-		
-		settings.put(TAG_ENABLED, enabled);
-		settings.put(TAG_FILTER_ON_MARKER_LIMIT, filterOnMarkerLimit);
-		settings.put(TAG_MARKER_LIMIT, markerLimit);
-		settings.put(TAG_ON_RESOURCE, onResource);
-		
-		String types = ""; //$NON-NLS-1$
-		for (int i = 0; i < selectedTypes.size(); i++) {
-			MarkerType type = (MarkerType) selectedTypes.get(i);
-			types += type.getId() + TAG_TYPES_DELIMITER;
-		}
-		settings.put(TAG_SELECTED_TYPES, types);
-		
-		if (workingSet != null) {
-			settings.put(TAG_WORKING_SET, workingSet.getName());
-		}
+	public void resetState() {
+		enabled = DEFAULT_ACTIVATION_STATUS;
+		filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
+		markerLimit = DEFAULT_MARKER_LIMIT;
+		onResource = DEFAULT_ON_RESOURCE;
+		addAllSubTypes();
 	}
 	
-	/**
-	 * Attempts to restore its state from the provided dialog settings. If the IDialogSettings object
-	 * does not contain a section named "filter", the filter resets its state.
-	 * 
-	 * @param dialogSettings that contains state information about the filter.
-	 */
 	public void restoreState(IDialogSettings dialogSettings) {
+		resetState();
+		
 		if (dialogSettings == null) {
 			resetState();
 			return;
@@ -490,7 +463,17 @@ public class MarkerFilter implements IFilter {
 				setOnResource(DEFAULT_ON_RESOURCE);
 			}
 		}
-		restoreWorkingSet(settings.get(TAG_WORKING_SET));
+		
+		String workingSetName = settings.get(TAG_WORKING_SET);
+
+		if (workingSetName != null) {
+			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+			
+			if (workingSet != null) {
+				this.workingSet = workingSet;
+			}
+		}
 
 		String types = settings.get(TAG_SELECTED_TYPES);
 		if (types == null) {
@@ -507,31 +490,30 @@ public class MarkerFilter implements IFilter {
 		}
 	}
 	
-	/**
-	 * Restores the saved working set, if any.
-	 * 
-	 * @param the saved working set name or null
-	 */
-	private void restoreWorkingSet(String workingSetName) {
-		if (workingSetName != null) {
-			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
-			
-			if (workingSet != null) {
-				this.workingSet = workingSet;
-			}
+	public void saveState(IDialogSettings dialogSettings) {
+		if (dialogSettings == null) {
+			return;
+		}
+
+		IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
+		if (settings == null) {
+			settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
+		}
+		
+		settings.put(TAG_ENABLED, enabled);
+		settings.put(TAG_FILTER_ON_MARKER_LIMIT, filterOnMarkerLimit);
+		settings.put(TAG_MARKER_LIMIT, markerLimit);
+		settings.put(TAG_ON_RESOURCE, onResource);
+		
+		String types = ""; //$NON-NLS-1$
+		for (int i = 0; i < selectedTypes.size(); i++) {
+			MarkerType type = (MarkerType) selectedTypes.get(i);
+			types += type.getId() + TAG_TYPES_DELIMITER;
+		}
+		settings.put(TAG_SELECTED_TYPES, types);
+		
+		if (workingSet != null) {
+			settings.put(TAG_WORKING_SET, workingSet.getName());
 		}
 	}
-
-	/**
-	 * Resets the state of the filter to its default settings.
-	 */
-	public void resetState() {
-		enabled = DEFAULT_ACTIVATION_STATUS;
-		filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
-		markerLimit = DEFAULT_MARKER_LIMIT;
-		onResource = DEFAULT_ON_RESOURCE;
-		addAllSubTypes();
-	}
-	
 }

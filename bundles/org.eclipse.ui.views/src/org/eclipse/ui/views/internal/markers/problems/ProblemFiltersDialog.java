@@ -250,7 +250,7 @@ class ProblemFiltersDialog extends org.eclipse.ui.views.internal.markers.Filters
 	 */
 	protected void resetPressed() {
 		descriptionGroup.setContains(ProblemFilter.DEFAULT_CONTAINS);
-		descriptionGroup.setDescription(""); //$NON-NLS-1$
+		descriptionGroup.setDescription(ProblemFilter.DEFAULT_DESCRIPTION);
 		
 		severityGroup.setEnabled(ProblemFilter.DEFAULT_SELECT_BY_SEVERITY);
 		severityGroup.setErrorSelected((ProblemFilter.DEFAULT_SEVERITY & ProblemFilter.SEVERITY_ERROR) > 0);

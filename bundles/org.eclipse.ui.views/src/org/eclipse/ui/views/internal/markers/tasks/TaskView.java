@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -37,8 +36,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.markers.CreationTime;
@@ -46,102 +47,172 @@ import org.eclipse.ui.views.internal.markers.Folder;
 import org.eclipse.ui.views.internal.markers.IField;
 import org.eclipse.ui.views.internal.markers.IFilter;
 import org.eclipse.ui.views.internal.markers.LineNumber;
-import org.eclipse.ui.views.internal.markers.MarkerFilter;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
 import org.eclipse.ui.views.internal.markers.MarkerUtil;
 import org.eclipse.ui.views.internal.markers.MarkerView;
 import org.eclipse.ui.views.internal.markers.Message;
 import org.eclipse.ui.views.internal.markers.Resource;
 
-
 public class TaskView extends MarkerView {
+
+	private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = { 
+		new ColumnPixelData(19, false),
+		new ColumnPixelData(19, false),
+		new ColumnWeightData(200),
+		new ColumnWeightData(75),
+		new ColumnWeightData(150),
+		new ColumnWeightData(60)
+	};
+		
+	private final static IField[] HIDDEN_FIELDS = { 
+		new CreationTime() 
+	};
 	
-	static final String TAG_DIALOG_SECTION = "org.eclipse.ui.views.tasklist"; //$NON-NLS-1$
+	private final static String[] ROOT_TYPES = { 
+		IMarker.TASK
+	};
+
+	private final static String[] TABLE_COLUMN_PROPERTIES = {
+		TaskViewConstants.COMPLETION,
+		IMarker.PRIORITY,
+		IMarker.MESSAGE,
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		""
+	}; 
 	
-	private static final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS =
-		{
-			new ColumnPixelData(19, false),
-			new ColumnPixelData(19, false),
-			new ColumnWeightData(200),
-			new ColumnWeightData(75),
-			new ColumnWeightData(150),
-			new ColumnWeightData(60)};
-			
-	private static String[] tableColumnProperties =
-		{
-			TaskViewConstants.COMPLETION,
-			IMarker.PRIORITY,
-			IMarker.MESSAGE,
-			"", //$NON-NLS-1$
-			"", //$NON-NLS-1$
-			""  }; //$NON-NLS-1$
-			
+	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.task"; //$NON-NLS-1$
+
+	private final static IField[] VISIBLE_FIELDS = { 
+		new Completion(),
+		new Priority(), 
+		new Message(), 
+		new Resource(), 
+		new Folder(), 
+		new LineNumber() 
+	};
+
 	private ICellModifier cellModifier = new ICellModifier() {
-		public Object getValue(Object element, String property) {
-			return TaskView.this.getValue(element, property);
+		public Object getValue(Object element, String property) {							
+			if (element instanceof IMarker) {
+				IMarker marker = (IMarker) element;
+				
+				if (TaskViewConstants.COMPLETION.equals(property))
+					return new Boolean(marker.getAttribute(IMarker.DONE, false));
+
+				if (IMarker.PRIORITY.equals(property))
+					return new Integer(IMarker.PRIORITY_HIGH - marker.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
+				
+				if (IMarker.MESSAGE.equals(property))
+					return marker.getAttribute(IMarker.MESSAGE, "");
+			}
+
+			return null;				
 		}
+
 		public boolean canModify(Object element, String property) {
 			return MarkerUtil.isEditable((IMarker) element);
 		}
-		/**
-		 * Modifies a marker as a result of a successfully completed direct editing.
-		 */
+
 		public void modify(Object element, String property, Object value) {
-			Item item = (Item) element;
-			IMarker marker = (IMarker) item.getData();
-			setProperty(marker, property, value);
+			if (element instanceof Item) {
+				Item item = (Item) element;
+				Object data = item.getData();
+				
+				if (data instanceof IMarker) {				
+					IMarker marker = (IMarker) data;
+					
+					try {
+						if (!getValue(marker, property).equals(value)) {
+							if (TaskViewConstants.COMPLETION.equals(property))
+								marker.setAttribute(IMarker.DONE, value);
+							else if (IMarker.PRIORITY.equals(property))
+								marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH - ((Integer) value).intValue());
+							else if (IMarker.MESSAGE.equals(property))
+								marker.setAttribute(IMarker.MESSAGE, value);
+					
+							if (taskFilter != null && !taskFilter.select(marker))
+								filtersChanged();
+						}
+					} catch (CoreException e) {
+						ErrorDialog.openError(getSite().getShell(), Messages.getString("errorModifyingTask") , null, e.getStatus()); //$NON-NLS-1$
+					}
+				}
+			}
 		}
 	};
 
-	protected SelectionProviderAction markCompletedAction;
-	protected Action deleteCompletedAction;
-	protected Action addGlobalTaskAction;
-	
-	private CellEditorActionHandler editorActionHandler;
-	
-	private MarkerFilter filter;
-	private MarkerRegistry registry;
+	private CellEditorActionHandler cellEditorActionHandler;	
+	private TaskFilter taskFilter;
+	private TaskRegistry taskRegistry;
+	private AddGlobalTaskAction addGlobalTaskAction;
+	private DeleteCompletedAction deleteCompletedAction;
+	private MarkCompletedAction markCompletedAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		TableViewer viewer = getViewer();
-		CellEditor editors[] = new CellEditor[viewer.getTable().getColumnCount()];
-		editors[0] = new CheckboxCellEditor(viewer.getTable());
-		String[] priorities = new String[] { Messages.getString("priority.high"), //$NON-NLS-1$
+		TableViewer tableViewer = getViewer();
+		CellEditor cellEditors[] = new CellEditor[tableViewer.getTable().getColumnCount()];
+		cellEditors[0] = new CheckboxCellEditor(tableViewer.getTable());
+		
+		String[] priorities = new String[] { 
+			Messages.getString("priority.high"), //$NON-NLS-1$
 			Messages.getString("priority.normal"), //$NON-NLS-1$
 			Messages.getString("priority.low") //$NON-NLS-1$
 		};
-		editors[1] = new ComboBoxCellEditor(viewer.getTable(), priorities, SWT.READ_ONLY);
-		CellEditor descriptionEditor = new TextCellEditor(viewer.getTable());
-		editors[2] = descriptionEditor;
-		viewer.setCellEditors(editors);
-		viewer.setCellModifier(cellModifier);
-		viewer.setColumnProperties(tableColumnProperties);
 		
-		//Add global action handlers.	
-		editorActionHandler =
-			new CellEditorActionHandler(getViewSite().getActionBars());
-		editorActionHandler.addCellEditor(descriptionEditor);
-		editorActionHandler.setCopyAction(copyAction);
-		editorActionHandler.setPasteAction(pasteAction);
-		editorActionHandler.setDeleteAction(deleteAction);
-		editorActionHandler.setSelectAllAction(selectAllAction);
+		cellEditors[1] = new ComboBoxCellEditor(tableViewer.getTable(), priorities, SWT.READ_ONLY);
+		CellEditor descriptionCellEditor = new TextCellEditor(tableViewer.getTable());
+		cellEditors[2] = descriptionCellEditor;
+		tableViewer.setCellEditors(cellEditors);
+		tableViewer.setCellModifier(cellModifier);
+		tableViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
+		
+		cellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
+		cellEditorActionHandler.addCellEditor(descriptionCellEditor);
+		cellEditorActionHandler.setCopyAction(copyAction);
+		cellEditorActionHandler.setPasteAction(pasteAction);
+		cellEditorActionHandler.setDeleteAction(deleteAction);
+		cellEditorActionHandler.setSelectAllAction(selectAllAction);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getRootTypes()
-	 */
-	protected String[] getRootTypes() {
-		return new String[] {IMarker.TASK};
+
+	public void dispose() {
+		if (cellEditorActionHandler != null)
+			cellEditorActionHandler.dispose();		
+		
+		if (markCompletedAction != null)
+			markCompletedAction.dispose();
+		
+		super.dispose();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getDialogSettings()
-	 */
+
+	public void init(IViewSite viewSite, IMemento memento) throws PartInitException {
+		super.init(viewSite, memento);
+		taskFilter = new TaskFilter();
+		IDialogSettings dialogSettings = getDialogSettings();
+		
+		if (taskFilter != null)
+			taskFilter.restoreState(dialogSettings);
+			
+		taskRegistry = TaskRegistry.getInstance();
+		taskRegistry.setFilter(taskFilter);
+		taskRegistry.setInput((IResource) getViewerInput());
+	}
+
+	public void saveState(IMemento memento) {
+		IDialogSettings dialogSettings = getDialogSettings();
+		
+		if (taskFilter != null)
+			taskFilter.saveState(dialogSettings);
+		
+		super.saveState(memento);	
+	}
+
+	protected ColumnLayoutData[] getDefaultColumnLayouts() {
+		return DEFAULT_COLUMN_LAYOUTS;
+	}
+
 	protected IDialogSettings getDialogSettings() {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
@@ -152,181 +223,69 @@ public class TaskView extends MarkerView {
 
 		return settings;
 	}
-	
-	protected IField[] getVisibleFields() {
-		return new IField[] {new Completion(),
-							   new Priority(),
-							   new Message(), 
-							   new Resource(), 
-							   new Folder(), 
-							   new LineNumber()
-		};
+
+	protected void createActions() {
+		super.createActions();
+		addGlobalTaskAction = new AddGlobalTaskAction(this);
+		deleteCompletedAction = new DeleteCompletedAction(this, getViewer(), getRegistry());
+		markCompletedAction = new MarkCompletedAction(getViewer());
+		propertiesAction = new TaskPropertiesAction(this, getViewer());
 	}
-	
-	protected IField[] getHiddenFields() {
-		return new IField[] {new CreationTime()
-		};
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#createColumns(org.eclipse.swt.widgets.Table)
-	 */
+
 	protected void createColumns(Table table) {
 		super.createColumns(table);
 		TableColumn[] columns = table.getColumns();
-		if (columns != null && columns.length >= 2) {
+		
+		if (columns != null && columns.length >= 1) {
 			columns[0].setResizable(false);
-			columns[1].setResizable(false);
+		
+			if (columns.length >= 2)
+				columns[1].setResizable(false);	
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getRegistry()
-	 */
-	protected MarkerRegistry getRegistry() {
-		if (registry == null) {
-			registry = TaskRegistry.getInstance();
-			registry.setFilter(getFilter());
-			registry.setInput((IResource) getViewerInput());
-		}
-		return registry;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#createActions()
-	 */
-	protected void createActions() {
-		super.createActions();
-		propertiesAction = new TaskPropertiesAction(this, getViewer());
-		markCompletedAction = new MarkCompletedAction(getViewer());
-		deleteCompletedAction = new DeleteCompletedAction(this, getViewer(), getRegistry());
-		addGlobalTaskAction = new AddGlobalTaskAction(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.internal.markers.MarkerView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(addGlobalTaskAction);
 		manager.add(new Separator());
 		super.fillContextMenu(manager);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
-	 */
 	protected void fillContextMenuAdditions(IMenuManager manager) {
 		manager.add(new Separator());
 		manager.add(markCompletedAction);
 		manager.add(deleteCompletedAction);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.internal.markers.MarkerView#initToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
-	protected void initToolBar(IToolBarManager tbm) {
-		tbm.add(addGlobalTaskAction);
-		super.initToolBar(tbm);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getFilter()
-	 */
 	protected IFilter getFilter() {
-		if (filter == null) {
-			filter = new TaskFilter();
-			filter.restoreState(getDialogSettings());
-		}
-		return filter;
+		return taskFilter;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getColumnLayouts()
-	 */
-	protected ColumnLayoutData[] getDefaultColumnLayouts() {
-		return DEFAULT_COLUMN_LAYOUTS;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		markCompletedAction.dispose();
-		if (editorActionHandler != null) {
-			editorActionHandler.dispose();
-			editorActionHandler = null;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markerview.MarkerView#getFiltersDialog()
-	 */
 	protected Dialog getFiltersDialog() {
-		if (getFilter() != null && getFilter() instanceof TaskFilter) {
-			return new TaskFiltersDialog(getSite().getShell(), (TaskFilter) getFilter());
-		}
-		return super.getFiltersDialog();
+		return new TaskFiltersDialog(getSite().getShell(), taskFilter);
+	}
+	
+	protected IField[] getHiddenFields() {
+		return HIDDEN_FIELDS;
 	}
 
-	/**
-	 * Sets the property on a marker to the given value.
-	 *
-	 * @exception CoreException if an error occurs setting the value
-	 */
-	protected void setProperty(IMarker marker, String property, Object value) {
-		if (getValue(marker, property).equals(value)) {
-			return;
-		}
-		try {
-			if (property.equals(TaskViewConstants.COMPLETION)) { // Completed
-				marker.setAttribute(IMarker.DONE, value);
-			} 
-			else if (property.equals(IMarker.PRIORITY)) { // Priority
-				// this property is used only by cell editor, where order is High, Normal, Low
-				marker.setAttribute(
-					IMarker.PRIORITY,
-					IMarker.PRIORITY_HIGH - ((Integer) value).intValue());
-			} 
-			else if (property.equals(IMarker.MESSAGE)) { // Description
-				marker.setAttribute(IMarker.MESSAGE, value);
-			}
-			if (filter != null && !filter.select(marker)) {
-				filtersChanged();
-			}
-		} catch (CoreException e) {
-			String msg = Messages.getString("errorModifyingTask"); //$NON-NLS-1$
-			ErrorDialog.openError(
-				getSite().getShell(),
-				msg,
-				null,
-				e.getStatus());
-		}
+	protected MarkerRegistry getRegistry() {
+		return taskRegistry;
 	}
-	
-	private Object getValue(Object element, String property) {
-		if (!(element instanceof IMarker)) {
-			return null;
-		}
-		IMarker marker = (IMarker) element;
-		if (property.equals(TaskViewConstants.COMPLETION)) {
-			return new Boolean(marker.getAttribute(IMarker.DONE, false));
-		}
-		if (property.equals(IMarker.PRIORITY)) {
-			int priority = marker.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-			priority = IMarker.PRIORITY_HIGH - priority;
-			return new Integer(priority);
-		}
-		if (property.equals(IMarker.MESSAGE)) {
-			return (new Message()).getValue(element);
-		}
-		return null;
+
+	protected String[] getRootTypes() {
+		return ROOT_TYPES;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.internal.tableview.TableView#getViewerInput()
-	 */
+
 	protected Object getViewerInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	protected IField[] getVisibleFields() {
+		return VISIBLE_FIELDS;
+	}
+
+	protected void initToolBar(IToolBarManager toolBarManager) {
+		toolBarManager.add(addGlobalTaskAction);
+		super.initToolBar(toolBarManager);
 	}
 }

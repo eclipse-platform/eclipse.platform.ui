@@ -94,7 +94,7 @@ public abstract class MarkerView extends TableView {
 			MarkerView.this.itemsChanged(additions, removals, changes);
 		}
 	};
-	
+
 	private ISelectionListener focusListener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 			MarkerView.this.focusSelectionChanged(part, selection);

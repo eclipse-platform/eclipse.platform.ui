@@ -285,7 +285,7 @@ class TaskFiltersDialog extends org.eclipse.ui.views.internal.markers.FiltersDia
 		}
 		filter.setPriority(priority);
 		
-		filter.setSelectByStatus(statusGroup.isEnabled());
+		filter.setSelectByDone(statusGroup.isEnabled());
 		filter.setDone(statusGroup.getDone());
 
 		super.updateFilterFromUI();
@@ -306,7 +306,7 @@ class TaskFiltersDialog extends org.eclipse.ui.views.internal.markers.FiltersDia
 		priorityGroup.setNormalSelected((priority & TaskFilter.PRIORITY_NORMAL) > 0);
 		priorityGroup.setLowSelected((priority & TaskFilter.PRIORITY_LOW) > 0);
 		
-		statusGroup.setEnabled(filter.getSelectByStatus());
+		statusGroup.setEnabled(filter.getSelectByDone());
 		statusGroup.setDone(filter.getDone());
 		
 		super.updateUIFromFilter();
@@ -327,14 +327,14 @@ class TaskFiltersDialog extends org.eclipse.ui.views.internal.markers.FiltersDia
 	 */
 	protected void resetPressed() {
 		descriptionGroup.setContains(TaskFilter.DEFAULT_CONTAINS);
-		descriptionGroup.setDescription(""); //$NON-NLS-1$
+		descriptionGroup.setDescription(TaskFilter.DEFAULT_DESCRIPTION);
 		
 		priorityGroup.setEnabled(TaskFilter.DEFAULT_SELECT_BY_PRIORITY);
 		priorityGroup.setHighSelected((TaskFilter.DEFAULT_PRIORITY & TaskFilter.PRIORITY_HIGH) > 0);
 		priorityGroup.setNormalSelected((TaskFilter.DEFAULT_PRIORITY & TaskFilter.PRIORITY_NORMAL) > 0);
 		priorityGroup.setLowSelected((TaskFilter.DEFAULT_PRIORITY & TaskFilter.PRIORITY_NORMAL) > 0);
 		
-		statusGroup.setEnabled(TaskFilter.DEFAULT_SELECT_BY_STATUS);
+		statusGroup.setEnabled(TaskFilter.DEFAULT_SELECT_BY_DONE);
 		statusGroup.setDone(TaskFilter.DEFAULT_DONE);
 		
 		super.resetPressed();
