@@ -434,7 +434,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
 		disableProjection();
-		return TextUtilities.overlaps(getModelCoverage(), new Region(offset, length));
+		IRegion coverage= getModelCoverage();
+		if (coverage == null)
+			return false;
+		
+		boolean appending= (offset == coverage.getOffset() + coverage.getLength()) && length == 0;
+		return appending || TextUtilities.overlaps(coverage, new Region(offset, length));
 	}
 	
 	/**
