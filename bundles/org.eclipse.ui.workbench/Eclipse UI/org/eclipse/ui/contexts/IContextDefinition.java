@@ -24,7 +24,7 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface IContextDefinition {
 
 	/**
 	 * JAVADOC
@@ -60,11 +60,4 @@ public interface IContext {
 	 * @return
 	 */	
 	String getPluginId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
 }

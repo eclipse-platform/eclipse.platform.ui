@@ -16,7 +16,7 @@ import java.util.List;
 
 interface IRegistry {
 
-	List getContexts();
+	List getContextDefinitions();
 
 	void load()
 		throws IOException;

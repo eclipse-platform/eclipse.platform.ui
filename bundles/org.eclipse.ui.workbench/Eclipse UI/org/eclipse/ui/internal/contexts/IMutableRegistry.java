@@ -19,5 +19,5 @@ interface IMutableRegistry extends IRegistry {
 	void save()
 		throws IOException;
 
-	void setContexts(List contexts);
+	void setContextDefinitions(List contextDefinitions);
 }

@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
@@ -30,7 +30,7 @@ final class Persistence {
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
-	static IContext readContext(IMemento memento, String pluginIdOverride) {
+	static IContextDefinition readContextDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -47,10 +47,10 @@ final class Persistence {
 		
 		String parentId = memento.getString(TAG_PARENT_ID);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new Context(description, id, name, parentId, pluginId);
+		return new ContextDefinition(description, id, name, parentId, pluginId);
 	}
 
-	static List readContexts(IMemento memento, String name, String pluginIdOverride) {
+	static List readContextDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -62,42 +62,42 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readContext(mementos[i], pluginIdOverride));
+			list.add(readContextDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static void writeContext(IMemento memento, IContext context) {
-		if (memento == null || context == null)
+	static void writeContextDefinition(IMemento memento, IContextDefinition contextDefinition) {
+		if (memento == null || contextDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_DESCRIPTION, context.getDescription());
-		memento.putString(TAG_ID, context.getId());
-		memento.putString(TAG_NAME, context.getName());
-		memento.putString(TAG_PARENT_ID, context.getParentId());
-		memento.putString(TAG_PLUGIN_ID, context.getPluginId());
+		memento.putString(TAG_DESCRIPTION, contextDefinition.getDescription());
+		memento.putString(TAG_ID, contextDefinition.getId());
+		memento.putString(TAG_NAME, contextDefinition.getName());
+		memento.putString(TAG_PARENT_ID, contextDefinition.getParentId());
+		memento.putString(TAG_PLUGIN_ID, contextDefinition.getPluginId());
 	}
 
-	static void writeContexts(IMemento memento, String name, List contexts) {
-		if (memento == null || name == null || contexts == null)
+	static void writeContextDefinitions(IMemento memento, String name, List contextDefinitions) {
+		if (memento == null || name == null || contextDefinitions == null)
 			throw new NullPointerException();
 		
-		contexts = new ArrayList(contexts);
-		Iterator iterator = contexts.iterator();
+		contextDefinitions = new ArrayList(contextDefinitions);
+		Iterator iterator = contextDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
 			if (object == null)
 				throw new NullPointerException();
-			else if (!(iterator.next() instanceof IContext))
+			else if (!(iterator.next() instanceof IContextDefinition))
 				throw new IllegalArgumentException();
 		}		
 
-		iterator = contexts.iterator();
+		iterator = contextDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeContext(memento.createChild(name), (IContext) iterator.next());
+			writeContextDefinition(memento.createChild(name), (IContextDefinition) iterator.next());
 	}
 
 	private Persistence() {

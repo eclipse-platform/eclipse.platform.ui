@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
@@ -33,7 +33,7 @@ final class PluginRegistry extends AbstractRegistry {
 			String name = element.getName();
 
 			if (Persistence.TAG_CONTEXT.equals(name))
-				return readContext(element);
+				return readContextDefinition(element);
 
 			return true; // TODO return false;
 		}		
@@ -41,7 +41,7 @@ final class PluginRegistry extends AbstractRegistry {
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
-	private List contexts;
+	private List contextDefinitions;
 	private IPluginRegistry pluginRegistry;
 	private PluginRegistryReader pluginRegistryReader;
 	
@@ -56,16 +56,16 @@ final class PluginRegistry extends AbstractRegistry {
 
 	public void load()
 		throws IOException {	
-		if (contexts == null)
-			contexts = new ArrayList();
+		if (contextDefinitions == null)
+			contextDefinitions = new ArrayList();
 		else 
-			contexts.clear();
+			contextDefinitions.clear();
 
 		if (pluginRegistryReader == null)
 			pluginRegistryReader = new PluginRegistryReader();
 
 		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
-		super.contexts = Collections.unmodifiableList(contexts);		
+		super.contextDefinitions = Collections.unmodifiableList(contextDefinitions);		
 	}
 
 	private String getPluginId(IConfigurationElement element) {
@@ -85,11 +85,11 @@ final class PluginRegistry extends AbstractRegistry {
 		return pluginId;
 	}
 
-	private boolean readContext(IConfigurationElement element) {
-		IContext context = Persistence.readContext(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readContextDefinition(IConfigurationElement element) {
+		IContextDefinition contextDefinition = Persistence.readContextDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (context != null)
-			contexts.add(context);	
+		if (contextDefinition != null)
+			contextDefinitions.add(contextDefinition);	
 		
 		return true;
 	}

@@ -29,6 +29,69 @@ import java.util.SortedSet;
  */
 public interface ICommandManager {
 
+	/*
+	ICommandManager
+		
+		get/setActiveContextIds();
+		get/setActiveCommandIds();		
+		get/setActiveKeyConfigurationId();
+		get/setLocale();
+		get/setPlatform();
+		
+		ICommandHandle getCommandHandle(String commandId);
+		SortedMap getIdToCommandMap();
+
+	
+	ICommand
+
+		getCommandDefinition();
+
+		getContextBindings(); 
+			// IContextBinding 1:1 with IContextBindingDefinition
+		
+		getImageBindings();
+			// IImageBinding for those IImageBindingDefinitions matching platform and locale
+			// just image style, image uri, match value (for ordering)		
+		
+		getKeyBindings(); 
+			// IKeyBinding for those IKeyBindingDefinitions matching active context, active command, active key configuration, platform, and locale
+			// just key sequence and match value (for ordering)
+
+		isActive();		
+		isContext();
+
+	
+	ICommandRegistry
+		
+		SortedSet getContextBindingDefinitions();
+		SortedSet getImageBindingsDefinitions();
+		SortedSet getKeyBindingDefinitions();
+
+	
+	IContextManager
+
+		get/setActiveContextIds();
+		
+		IContextHandle getContextHandle(String contextId);
+		SortedMap getIdToContextMap();
+		
+	
+	IContext
+	
+		IContextDefinition getContextDefinition();
+		
+		isActive();		
+
+	*/			
+	/*
+		// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
+		List getKeySequences();
+		Map getImageUrisByStyle();
+		SortedSet getContextIds();
+		
+		boolean inContext(); ids of getContextBindings() in activeContextIds?		
+	*/	
+
 	/**
 	 * Registers an ICommandManagerListener instance with this command manager.
 	 *

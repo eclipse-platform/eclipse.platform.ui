@@ -16,13 +16,13 @@ import java.util.List;
 
 abstract class AbstractRegistry implements IRegistry {
 
-	protected List contexts = Collections.EMPTY_LIST;
+	protected List contextDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractRegistry() {
 		super();
 	}
 
-	public List getContexts() {
-		return contexts;
+	public List getContextDefinitions() {
+		return contextDefinitions;
 	}
 }	

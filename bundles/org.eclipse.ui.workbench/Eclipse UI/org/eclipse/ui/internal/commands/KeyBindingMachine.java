@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -111,7 +111,7 @@ public final class KeyBindingMachine {
 				if (strings.contains(id))
 					return null;
 							
-				IContext context = (IContext) contextMap.get(id);
+				IContextDefinition context = (IContextDefinition) contextMap.get(id);
 				
 				if (context == null)
 					return null;

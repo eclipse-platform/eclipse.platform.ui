@@ -9,20 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts;
+package org.eclipse.ui.contexts;
 
-import java.util.List;
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IContextRegistryEvent {
 
-import org.eclipse.ui.contexts.IContextDefinition;
-import org.eclipse.ui.internal.util.Util;
-
-abstract class AbstractMutableRegistry extends AbstractRegistry implements IMutableRegistry {
-
-	protected AbstractMutableRegistry() {
-		super();
-	}
-
-	public void setContextDefinitions(List contextDefinitions) {
-		this.contextDefinitions = Util.safeCopy(contextDefinitions, IContextDefinition.class);	
-	}
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	IContextRegistry getContextRegistry();
 }

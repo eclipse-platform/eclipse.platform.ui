@@ -12,7 +12,6 @@
 package org.eclipse.ui.contexts;
 
 import java.util.SortedMap;
-import java.util.SortedSet;
 
 /**
  * <p>
@@ -27,22 +26,15 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface IContextManager {
+public interface IContextRegistry {
 
 	/**
-	 * Registers an IContextManagerListener instance with this context manager.
+	 * Registers an IContextRegistryListener instance with this context registry.
 	 *
-	 * @param contextManagerListener the IContextManagerListener instance to register.
+	 * @param contextRegistryListener the IContextRegistryListener instance to register.
 	 * @throws NullPointerException
-	 */	
-	void addContextManagerListener(IContextManagerListener contextManagerListener);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
 	 */
-	SortedSet getActiveContextIds();
+	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
 
 	/**
 	 * JAVADOC
@@ -50,28 +42,21 @@ public interface IContextManager {
 	 * @param contextId
 	 * @return
 	 * @throws NullPointerException
-	 */	
-	IContextHandle getContextHandle(String contextId);
+	 */
+	IContextDefinitionHandle getContextDefinitionHandle(String contextDefinitionId);
 
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	IContextRegistry getContextRegistry();
+	SortedMap getContextDefinitionsById();
 
 	/**
-	 * JAVADOC
+	 * Unregisters an IContextRegistryListener instance with this context registry.
 	 *
-	 * @return
-	 */
-	SortedMap getContextsById();
-	
-	/**
-	 * Unregisters an IContextManagerListener instance with this context manager.
-	 *
-	 * @param contextManagerListener the IContextManagerListener instance to unregister.
+	 * @param contextRegistryListener the IContextRegistryListener instance to unregister.
 	 * @throws NullPointerException
 	 */
-	void removeContextManagerListener(IContextManagerListener contextManagerListener);
+	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
 }

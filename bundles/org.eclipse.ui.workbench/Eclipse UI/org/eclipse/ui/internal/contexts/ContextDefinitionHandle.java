@@ -11,18 +11,28 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import java.util.List;
-
 import org.eclipse.ui.contexts.IContextDefinition;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.contexts.IContextDefinitionHandle;
+import org.eclipse.ui.handles.NotDefinedException;
+import org.eclipse.ui.internal.handles.Handle;
 
-abstract class AbstractMutableRegistry extends AbstractRegistry implements IMutableRegistry {
+final class ContextDefinitionHandle extends Handle implements IContextDefinitionHandle {
 
-	protected AbstractMutableRegistry() {
-		super();
+	ContextDefinitionHandle(String id) {
+		super(id);
 	}
-
-	public void setContextDefinitions(List contextDefinitions) {
-		this.contextDefinitions = Util.safeCopy(contextDefinitions, IContextDefinition.class);	
+	
+	public IContextDefinition getContextDefinition()
+		throws NotDefinedException {
+		return (IContextDefinition) getObject();
+	}
+		
+	public void define(Object object) {
+		if (object == null)
+			throw new NullPointerException();
+		else if (!(object instanceof IContextDefinition))
+			throw new IllegalArgumentException();
+			
+		super.define(object);
 	}
 }

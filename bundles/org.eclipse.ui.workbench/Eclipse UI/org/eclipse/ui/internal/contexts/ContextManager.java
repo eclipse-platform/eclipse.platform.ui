@@ -11,23 +11,25 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.contexts.IContextHandle;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.contexts.IContextRegistry;
+import org.eclipse.ui.contexts.IContextRegistryEvent;
+import org.eclipse.ui.contexts.IContextRegistryListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextManager implements IContextManager {
@@ -45,15 +47,19 @@ public final class ContextManager implements IContextManager {
 	private IContextManagerEvent contextManagerEvent;
 	private List contextManagerListeners;
 	private SortedMap contextHandlesById = new TreeMap();
+	private IContextRegistry contextRegistry;
 	private SortedMap contextsById = new TreeMap();
-	private IRegistry pluginRegistry;
-	private IMutableRegistry preferenceRegistry;
 
 	private ContextManager() {
 		super();
-		loadPluginRegistry();
-		loadPreferenceRegistry();
-		updateFromRegistries();
+		contextRegistry = ContextRegistry.getInstance();		
+		contextRegistry.addContextRegistryListener(new IContextRegistryListener() {
+			public void contextRegistryChanged(IContextRegistryEvent contextRegistryEvent) {
+				update();
+			}
+		});
+		
+		update();
 	}
 
 	public void addContextManagerListener(IContextManagerListener contextManagerListener) {
@@ -85,6 +91,10 @@ public final class ContextManager implements IContextManager {
 		return contextHandle;
 	}
 
+	public IContextRegistry getContextRegistry() {
+		return contextRegistry;
+	}
+
 	public SortedMap getContextsById() {
 		return Collections.unmodifiableSortedMap(contextsById);
 	}
@@ -106,7 +116,7 @@ public final class ContextManager implements IContextManager {
 		
 		if (!activeContextIds.equals(this.activeContextIds)) {
 			this.activeContextIds = activeContextIds;	
-			fireContextManagerChanged();
+			update();
 		}
 	}
 	
@@ -125,42 +135,19 @@ public final class ContextManager implements IContextManager {
 		}			
 	}
 	
-	private void loadPluginRegistry() {
-		if (pluginRegistry == null)
-			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
+	private void update() {
+		SortedMap contextDefinitionsById = contextRegistry.getContextDefinitionsById();
+		SortedMap contextsById = new TreeMap();
+		Iterator iterator = contextDefinitionsById.entrySet().iterator();
 		
-		try {
-			pluginRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}
-	}
-	
-	private void loadPreferenceRegistry() {
-		if (preferenceRegistry == null)
-			preferenceRegistry = new PreferenceRegistry(WorkbenchPlugin.getDefault().getPreferenceStore());
-		
-		try {
-			preferenceRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}
-	}
-
-	private void updateFromRegistries() {
-		if (pluginRegistry == null)
-			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
-		
-		try {
-			pluginRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			Object key = entry.getKey();
+			IContextDefinition contextDefinition = (IContextDefinition) entry.getValue();
+			IContext context = new Context(activeContextIds.contains(contextDefinition.getId()), contextDefinition.getDescription(), contextDefinition.getId(), contextDefinition.getName(), contextDefinition.getParentId(), contextDefinition.getPluginId());		
+			contextsById.put(key, context);
 		}
 
-		List contexts = new ArrayList();
-		contexts.addAll(pluginRegistry.getContexts());
-		contexts.addAll(preferenceRegistry.getContexts());
-		SortedMap contextsById = Context.sortedMapById(contexts);			
 		SortedSet contextChanges = new TreeSet();
 		Util.diff(contextsById, this.contextsById, contextChanges, contextChanges, contextChanges);
 		boolean contextManagerChanged = false;
@@ -174,7 +161,7 @@ public final class ContextManager implements IContextManager {
 			fireContextManagerChanged();
 
 		if (!contextChanges.isEmpty()) {
-			Iterator iterator = contextChanges.iterator();
+			iterator = contextChanges.iterator();
 		
 			while (iterator.hasNext()) {
 				String contextId = (String) iterator.next();					

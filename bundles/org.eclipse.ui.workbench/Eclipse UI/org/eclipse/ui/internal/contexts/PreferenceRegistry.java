@@ -48,7 +48,7 @@ final class PreferenceRegistry extends AbstractMutableRegistry {
 			
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				contexts = Collections.unmodifiableList(Persistence.readContexts(memento, Persistence.TAG_CONTEXT, null));
+				contextDefinitions = Collections.unmodifiableList(Persistence.readContextDefinitions(memento, Persistence.TAG_CONTEXT, null));
 			} catch (WorkbenchException eWorkbench) {
 				throw new IOException();
 			} finally {
@@ -60,7 +60,7 @@ final class PreferenceRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeContexts(xmlMemento, Persistence.TAG_CONTEXT, contexts);
+		Persistence.writeContextDefinitions(xmlMemento, Persistence.TAG_CONTEXT, contextDefinitions);
 		Writer writer = new StringWriter();
 
 		try {
