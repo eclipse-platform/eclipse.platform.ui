@@ -196,7 +196,4 @@ public void testMultiDelete_1GDGRIZ() {
 		fail("20.0", e);
 	}
 }
-protected void tearDown() throws Exception {
-	super.tearDown();
-	getWorkspace().getRoot().delete(true, null);
-}}
+}
