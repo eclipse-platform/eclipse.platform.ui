@@ -135,6 +135,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			runner.setCustomClasspath(customClasspath);
 		}
 		
+		String antHome= AntUtil.getAntHome(configuration);
+		if (antHome != null) {
+			runner.setAntHome(antHome);
+		}
+		
 		monitor.worked(1);
 								
 		if (monitor.isCanceled()) {

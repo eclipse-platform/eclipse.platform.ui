@@ -93,6 +93,18 @@ public final class AntUtil {
 		Map map = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map) null);
 		return map;
 	}
+	
+	/**
+	 * Returns a String specifying the ant home to use for the build, or
+	 * <code>null</code> if none is specified.
+	 *
+	 * @param configuration launch configuration
+	 * @return String specifying ant home to use, or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_ANT_HOME, (String) null);
+	}
 
 	/**
 	 * Returns an array of property files to be used for the build, or
