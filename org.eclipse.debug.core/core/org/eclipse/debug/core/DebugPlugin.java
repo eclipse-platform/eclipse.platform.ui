@@ -718,9 +718,11 @@ public class DebugPlugin extends Plugin {
 				
 				// wait for something to run
 				synchronized (this) {
-					try {
-						wait();
-					} catch (InterruptedException e) {
+					if (fRunnables.isEmpty()) {
+						try {
+							wait();
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 				
