@@ -1,13 +1,14 @@
 package org.eclipse.ui;
 
 /*
- * Copyright (c) 2002 IBM Corp.  All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2002,2003 IBM Corp.  All rights reserved. This file is made
+ * available under the terms of the Common Public License v1.0 which accompanies
+ * this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.
+ * html
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
@@ -31,11 +32,21 @@ public interface IDecoratorManager {
 	ILabelDecorator getLabelDecorator();
 
 	/**
-	 * Returns the heavyweight label decorator instance for the specified 
-	 * decorator id if it is enabled. Otherwise returns <code>null</code>.
-	 * Returns <code>null</code> for lightweight decorators.
-	 * Use <code>getLightweightLabelDecorator</code> instead for lightweight 
+	 * Return the IBaseLabelProvider that corresponds to the
+	 * decoratorId. This cab handle both lightweight and full
 	 * decorators.
+	 * 
+	 * @param decoratorId the decorator id
+	 * @return the label provider
+	 */
+	IBaseLabelProvider getBaseLabelProvider(String decoratorId);
+
+	/**
+	 * Returns the full label decorator instance for the specified decorator id
+	 * if it is enabled. Otherwise returns <code>null</code>. Returns
+	 * <code>null</code> for lightweight decorators. It is recommended that
+	 * getBaseLabelProvider is used instead so that lightweight decorators are
+	 * also checked.
 	 * 
 	 * @param decoratorId the decorator id
 	 * @return the label decorator
@@ -51,6 +62,7 @@ public interface IDecoratorManager {
 	 * 
 	 * @param decoratorId the decorator id
 	 * @return the lightweight label decorator
+	 * @deprecated use getBaseLabelProvider(String) instead.
 	 */
 	ILightweightLabelDecorator getLightweightLabelDecorator(String decoratorId);
 
@@ -71,6 +83,15 @@ public interface IDecoratorManager {
 	 * <code>false</code> to disable it
 	 * @throws CoreException if the decorator cannot be instantiated
 	 */
-	void setEnabled(String decoratorId, boolean enabled) throws CoreException;		
+	void setEnabled(String decoratorId, boolean enabled) throws CoreException;
+
+	/**
+	 * Fire a LabelProviderChangedEvent for the decorator that corresponds to
+	 * decoratorID if it exists and is enabled using the IBaseLabelProvider
+	 * as the argument to the event. Otherwise do nothing.
+	 * 
+	 * @param decoratorId the decorator id
+	 */
+	void update(String decoratorId);
 
 }

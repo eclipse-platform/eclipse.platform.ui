@@ -29,7 +29,7 @@ public class DecoratorManager
 	implements ILabelDecorator, ILabelProviderListener, IDecoratorManager {
 
 	private DecorationScheduler scheduler;
-	
+
 	private LightweightDecoratorManager lightweightManager;
 
 	//Hold onto the list of listeners to be told if a change has occured
@@ -77,7 +77,7 @@ public class DecoratorManager
 
 		lightweightManager =
 			new LightweightDecoratorManager(lightweightDefinitions);
-			
+
 		scheduler = new DecorationScheduler(this);
 	}
 
@@ -158,8 +158,7 @@ public class DecoratorManager
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		String result =
-			scheduler.decorateWithText(text, element,adapted);
+		String result = scheduler.decorateWithText(text, element, adapted);
 		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
@@ -196,8 +195,7 @@ public class DecoratorManager
 	public Image decorateImage(Image image, Object element) {
 
 		Object adapted = getResourceAdapter(element);
-		Image result =
-			scheduler.decorateWithOverlays(image, element,adapted);
+		Image result = scheduler.decorateWithOverlays(image, element, adapted);
 		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
 		for (int i = 0; i < decorators.length; i++) {
@@ -562,7 +560,18 @@ public class DecoratorManager
 			definition.setEnabled(enabled);
 	}
 
-	/**
+	/*
+	 * @see IDecoratorManager#getBaseLabelProvider(String)
+ 	 */
+ 	public IBaseLabelProvider getBaseLabelProvider(String decoratorId) {
+		IBaseLabelProvider fullProvider = getLabelDecorator(decoratorId);
+		if (fullProvider == null)
+			return getLightweightLabelDecorator(decoratorId);
+		else
+			return fullProvider;
+	}
+
+	/*
 	 * @see IDecoratorManager#getLabelDecorator(String)
 	 */
 	public ILabelDecorator getLabelDecorator(String decoratorId) {
@@ -576,11 +585,12 @@ public class DecoratorManager
 		return null;
 	}
 
-	/**
+	/*
 	 * @see IDecoratorManager#getLightweightLabelDecorator(String)
 	 */
 	public ILightweightLabelDecorator getLightweightLabelDecorator(String decoratorId) {
-		LightweightDecoratorDefinition definition = lightweightManager.getDecoratorDefinition(decoratorId);
+		LightweightDecoratorDefinition definition =
+			lightweightManager.getDecoratorDefinition(decoratorId);
 		//Do not return for a disabled decorator
 		if (definition != null && definition.isEnabled()) {
 			return definition.getDecorator();
@@ -644,13 +654,22 @@ public class DecoratorManager
 		return decoratorArray;
 	}
 
-
 	/**
 	 * Returns the lightweightManager.
 	 * @return LightweightDecoratorManager
 	 */
 	LightweightDecoratorManager getLightweightManager() {
 		return lightweightManager;
+	}
+
+	/**
+	 * @see org.eclipse.ui.IDecoratorManager#update(java.lang.String)
+	 */
+	public void update(String decoratorId) {
+
+		IBaseLabelProvider provider = getBaseLabelProvider(decoratorId);
+		if(provider != null)
+			fireListeners(new LabelProviderChangedEvent(provider));
 	}
 
 }
