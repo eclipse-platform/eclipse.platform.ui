@@ -59,5 +59,15 @@ window.onresize = function (evt) { location.reload(); };
 <td align=right ><a  href="#" onclick="parent.showBookshelf(this); this.blur();" onmouseover="window.status='<%=WebappResources.getString("Bookshelf", request)%>';return true;" onmouseout="window.status='';"><img src="../images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a>&nbsp;</td>
 </tr>
 </table>	
+<DIV style="width : 3000px; height : 1px; top : 0px; left : 0px;
+  position : absolute;
+  z-index : 2;
+  visibility : visible;
+" id="topBorder"><IMG src="../images/blackdot.gif" height="1" width="3000"></DIV>
+<DIV style="width : 3000px; height : 1px; top : 25px; left : 0px;
+  position : absolute;
+  z-index : 2;
+  visibility : visible;
+" id="bottomBorder"><IMG src="../images/blackdot.gif" height="1" width="3000"></DIV>
 </body>
 </html>

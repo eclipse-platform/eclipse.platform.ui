@@ -82,6 +82,16 @@ TABLE {
       <layer name="liveHelpFrame" style="visibility:hidden;width:0;height:0;" frameborder="no" width="0" height="0" scrolling="no">
       </layer>
 
-   </body>
+<DIV style="width : 3000px; height : 1px; top : 0px; left : 0px;
+  position : absolute;
+  z-index : 2;
+  visibility : visible;
+" id="topBorder"><IMG src="../images/blackdot.gif" height="1" width="3000"></DIV>
+<DIV style="width : 3000px; height : 1px; top : 25px; left : 0px;
+  position : absolute;
+  z-index : 2;
+  visibility : visible;
+" id="bottomBorder"><IMG src="../images/blackdot.gif" height="1" width="3000"></DIV>
+</body>
 </html>
 
