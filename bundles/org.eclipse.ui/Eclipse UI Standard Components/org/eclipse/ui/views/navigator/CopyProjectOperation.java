@@ -64,6 +64,7 @@ import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 		//Get the project name and location in a two element list
 		ProjectLocationSelectionDialog dialog =
 			new ProjectLocationSelectionDialog(parentShell, project);
+		dialog.setTitle(ResourceNavigatorMessages.getString("CopyProjectOperation.copyProject"));
 		if (dialog.open() != dialog.OK) 
 			return;
 			

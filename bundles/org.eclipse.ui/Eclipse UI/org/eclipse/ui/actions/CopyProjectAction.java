@@ -182,6 +182,7 @@ boolean performCopy(
 protected Object [] queryDestinationParameters(IProject project) {
 	ProjectLocationSelectionDialog dialog =
 		new ProjectLocationSelectionDialog(shell, project);
+	dialog.setTitle(WorkbenchMessages.getString("CopyProjectAction.copyTitle"));
 	dialog.open();
 	return dialog.getResult();
 }
@@ -239,7 +240,8 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	List selectedResources = getSelectedResources();
 	if (selectedResources.size() != 1)
 		return false;
-	if ((selectedResources.get(0)) instanceof IProject)
+	IResource source = (IResource)selectedResources.get(0);
+	if (source instanceof IProject && ((IProject)source).isOpen())
 		return true;
 	return false;
 }

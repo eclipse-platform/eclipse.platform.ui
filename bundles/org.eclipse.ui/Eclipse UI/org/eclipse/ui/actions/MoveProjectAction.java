@@ -115,6 +115,7 @@ boolean performMove(
 protected Object[] queryDestinationParameters(IProject project) {
 	ProjectLocationMoveDialog dialog =
 		new ProjectLocationMoveDialog(shell, project);
+	dialog.setTitle(WorkbenchMessages.getString("MoveProjectAction.moveTitle"));
 	dialog.open();
 	return dialog.getResult();
 }
