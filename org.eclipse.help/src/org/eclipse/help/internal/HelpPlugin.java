@@ -157,7 +157,7 @@ public class HelpPlugin extends Plugin {
 		if (isWindows)
 			prefs.setDefault(
 				"custom_browser_path",
-				"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE \"%1\"");
+				"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1");
 		else
 			prefs.setDefault("custom_browser_path", "mozilla %1");
 	}
