@@ -390,7 +390,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * page.
 	 * 
 	 * @see #AbstractTextSearchViewPage(int)
-	 * @param layout
+	 * @param layout the layout to test for
 	 * @return whether the given layout is suppported.
 	 */
 	public boolean isLayoutSupported(int layout) {
@@ -499,6 +499,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public Control getControl() {
 		return fPagebook;
 	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -760,8 +761,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 	/**
-	 * Subclasses may override.
-	 * { @inheritDoc }
+	 * {@inheritDoc}
+	 * Subclasses may exend this method.
 	 */
 	public void restoreState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {
@@ -785,8 +786,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 	/**
-	 * Subclasses my override.
 	 * { @inheritDoc }
+	 * Subclasses my extend this method.
 	 */
 	public void saveState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {

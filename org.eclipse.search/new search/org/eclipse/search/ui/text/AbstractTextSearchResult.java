@@ -78,6 +78,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Adds a Match to this search result. This method does nothing if the
 	 * Match is already present.
+	 * Subclasses may extend this method.
 	 * 
 	 * @param match The match to add.
 	 */
@@ -93,7 +94,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Adds a number of Matches to this search result. This method does nothing for 
 	 * matches that are already present.
-	 * 
+	 * Subclasses may extend this method.
 	 * @param matches the matches to add.
 	 */
 	public void addMatches(Match[] matches) {
@@ -138,6 +139,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	
 	/**
 	 * Removes all matches from this search result.
+	 * Subclasses may extend this method.
 	 */
 	public void removeAll() {
 		synchronized (fElementsToMatches) {
@@ -152,6 +154,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Removes the given match from this search result. This method has no
 	 * effect if the match is not found.
+	 * Subclasses may extend this method.
 	 * 
 	 * @param match the match to remove.
 	 */
@@ -167,13 +170,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Removes the given matches from this search result. This method has no
 	 * effect for matches that are not found
+	 * Subclasses may extend this method.
 	 * 
 	 * @param matches the matches to remove.
 	 */
 	public void removeMatches(Match[] matches) {
 		Set existing= new HashSet();
-		for (int i = 0; i < matches.length; i++) {
-			synchronized (fElementsToMatches) {
+		synchronized (fElementsToMatches) {
+			for (int i = 0; i < matches.length; i++) {
 				if (doRemoveMatch(matches[i]))
 					existing.add(matches[i]);
 			}
