@@ -99,13 +99,16 @@ public class CheckoutAsAction extends TeamAction {
 						});
 						if (!confirm[0]) return;
 					}
-					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, monitor);
+					monitor.beginTask(null, 100);
+					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, project.getName()));
+					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
 		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG);
 	}
+	
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
