@@ -1101,7 +1101,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			location.x= 0;
 
 			if (fVerticalRuler instanceof IVerticalRulerExtension)
-			((IVerticalRulerExtension) fVerticalRuler).setLocationOfLastMouseButtonActivity(location.x, location.y);
+				((IVerticalRulerExtension) fVerticalRuler).setLocationOfLastMouseButtonActivity(location.x, location.y);
 
 			location= text.toDisplay(location);
 			fRulerContextMenu.setLocation(location.x, location.y);
