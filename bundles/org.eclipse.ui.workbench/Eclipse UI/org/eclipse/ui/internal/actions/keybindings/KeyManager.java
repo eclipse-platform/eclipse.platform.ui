@@ -258,7 +258,6 @@ public class KeyManager {
 			((Binding) iterator.next()).write(memento.createChild(Binding.ELEMENT)); 
 	}
 
-
 	private SortedSet solveRegionalBindingSet(SortedSet regionalBindingSet, State[] states) {
 		class Key implements Comparable {		
 			private final static int HASH_INITIAL = 17;
@@ -357,8 +356,17 @@ public class KeyManager {
 				}
 			}				
 
-			if (bindings != null)
-				bindingSet.addAll(bindings);
+			if (bindings != null) {
+				Iterator iterator4 = bindings.iterator();
+				
+				while (iterator4.hasNext()) {
+					Binding binding = (Binding) iterator4.next();
+					bindingSet.add(Binding.create(binding.getAction(), binding.getConfiguration(), binding.getKeySequence(), binding.getPlugin(),
+						binding.getRank() + bestMatch, binding.getScope()));								
+				}				
+			
+				System.out.println(bestMatch);
+			}
 		}					
 
 		return bindingSet;
