@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -35,6 +36,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import sun.security.krb5.internal.i;
 
 /**
  * This tab appears in the LaunchConfigurationDialog for all launch configuration
@@ -89,7 +91,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 	// The launch config working copy providing the values shown on this tab
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
 	
-	private static final String SHARED_LOCATION_CONTAINER_KEY = "shared_location_container_key";
+	//private static final String SHARED_LOCATION_CONTAINER_KEY = "shared_location_container_key";
 
 	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
 		fLaunchConfigurationDialog = dialog;
@@ -408,7 +410,8 @@ public class CommonTab implements ILaunchConfigurationTab {
 																	   false,
 																	   "Select a location for the launch configuration");
 		
-		IContainer currentContainer = (IContainer)getSharedLocationText().getData(SHARED_LOCATION_CONTAINER_KEY);
+		String currentContainerString = getSharedLocationText().getText();
+		IContainer currentContainer = getContainer(currentContainerString);
 		if (currentContainer != null) {
 			IPath path = currentContainer.getFullPath();
 			dialog.setInitialSelections(new Object[] {path});
@@ -420,10 +423,14 @@ public class CommonTab implements ILaunchConfigurationTab {
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
 			IPath path = (IPath)results[0];
 			IContainer container = (IContainer) getWorkspaceRoot().findMember(path);
-			String containerName = path.toString();
-			getSharedLocationText().setData(SHARED_LOCATION_CONTAINER_KEY, container);
+			String containerName = path.toOSString();
 			getSharedLocationText().setText(containerName);
 		}		
+	}
+	
+	protected IContainer getContainer(String path) {
+		Path containerPath = new Path(path);
+		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
 	
 	/**
@@ -491,16 +498,18 @@ public class CommonTab implements ILaunchConfigurationTab {
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
 		boolean isShared = !config.isLocal();
 		getSharedRadioButton().setSelection(isShared);
+		getLocalRadioButton().setSelection(!isShared);
+		setSharedEnabled(isShared);
 	}
 	
 	protected void updateSharedLocationFromConfig(ILaunchConfiguration config) {
 		IFile file = config.getFile();
 		if (file != null) {
-			IPath path = file.getFullPath();
-			IContainer container = (IContainer) getWorkspaceRoot().findMember(path);
-			String containerName = path.toString();
-			getSharedLocationText().setData(SHARED_LOCATION_CONTAINER_KEY, container);
-			getSharedLocationText().setText(containerName);
+			IContainer parent = file.getParent();
+			if (parent != null) {
+				String containerName = parent.getFullPath().toOSString();
+				getSharedLocationText().setText(containerName);
+			}
 		}
 	}
 	
@@ -553,7 +562,8 @@ public class CommonTab implements ILaunchConfigurationTab {
 	protected void updateConfigFromLocalShared() {
 		if (getWorkingCopy() != null) {
 			if (isShared()) {
-				IContainer container = (IContainer) getSharedLocationText().getData(SHARED_LOCATION_CONTAINER_KEY);
+				String containerPathString = getSharedLocationText().getText();
+				IContainer container = (IContainer) getContainer(containerPathString);
 				getWorkingCopy().setContainer(container);
 			} else {
 				getWorkingCopy().setContainer(null);

@@ -212,8 +212,10 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
 			if (!file.exists()) {
 				file.create(stream, false, null);
+				//getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
 			} else {
 				file.setContents(stream, false, false, null);
+				//getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
 			}
 		}		
 	}
@@ -385,7 +387,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public String getName() {
 		if (getNewName() == null) {
-			return super.getName();
+			//return super.getName();
+			return getRawName();
 		} else {
 			return getNewName();
 		}

@@ -36,6 +36,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * is the key for a launch configuration handle.
 	 */
 	private IPath fLocation;
+	
+	/**
+	 * 
+	 */	
+	private String fRawName;
 		
 	/**
 	 * Constructs a launch configuration in the given location.
@@ -47,17 +52,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		setLocation(location);
 	}
 	
-	/**
-	 * Sets the location of this configuration's underlying
-	 * file.
-	 * 
-	 * @param location the location of this configuration's underlying
-	 *  file
-	 */
-	private void setLocation(IPath location) {
-		fLocation = location;
-	}
-
 	/**
 	 * @see ILaunchConfiguration#launch(String)
 	 */
@@ -90,6 +84,18 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#getName()
 	 */
 	public String getName() {
+		return getLastLocationSegment();
+	}
+	
+	protected final String getRawName() {
+		return fRawName;
+	}
+	
+	private void setRawName(String name) {
+		fRawName = name;
+	}
+	
+	private String getLastLocationSegment() {
 		String name = getLocation().lastSegment();
 		name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
 		return name;
@@ -100,6 +106,18 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public IPath getLocation() {
 		return fLocation;
+	}
+
+	/**
+	 * Sets the location of this configuration's underlying
+	 * file.
+	 * 
+	 * @param location the location of this configuration's underlying
+	 *  file
+	 */
+	private void setLocation(IPath location) {
+		fLocation = location;
+		setRawName(getLastLocationSegment());
 	}
 
 	/**

@@ -5,9 +5,9 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
-import java.util.Arrays;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -55,6 +55,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import sun.security.krb5.internal.i;
+import sun.security.krb5.internal.crypto.c;
+import sun.security.krb5.internal.crypto.e;
 
 /**
  * The dialog used to edit and launch launch configurations.
@@ -68,7 +71,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	private TreeViewer fConfigTree;
 	
-	private Object fWorkbenchSelection;
+	private Object fContext;
 	
 	private Object fSelectedTreeObject;
 	
@@ -168,6 +171,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private boolean fWorkingCopyUserDirty = false;
 	
 	/**
+	 * Indicates if the working copy is currently being saved.
+	 */
+	private boolean fDoingSave = false;
+	
+	/**
 	 * Id for 'Save & Launch' button.
 	 */
 	protected static final int ID_SAVE_AND_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
@@ -182,7 +190,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected static final Object[] EMPTY_ARRAY = new Object[0];	
 	
-	protected static final String DEFAULT_NEW_CONFIG_NAME = "New configuration";
+	protected static final String DEFAULT_NEW_CONFIG_NAME = "New_configuration";
 	
 	/**
 	 * Status area messages
@@ -195,21 +203,42 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
 	 * 
-	 * @param shell the parent shell, or <code>null</code> to
-	 *  create a top-level shell
+	 * @param shell the parent shell
+	 * @param selection the selection used to initialize this dialog, typically the 
+	 *  current workbench selection
+	 * @param mode one of <code>ILaunchManager.RUN_MODE</code> or 
+	 *  <code>ILaunchManager.DEBUG_MODE</code>
 	 */
 	public LaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
 		super(shell);
-		resolveWorkbenchSelection(selection);
+		setContext(resolveContext(selection));
 		setMode(mode);
 	}
 	
-	protected void resolveWorkbenchSelection(IStructuredSelection selection) {
+	/**
+	 * Returns the Object to be used as context for this dialog, derived from the specified selection.
+	 * If the specified selection has as its first element an IFile whose extension matches
+	 * <code>ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION</code>, then return
+	 * the launch configuration declared in the IFile.  Otherwise, return the first element 
+	 * in the specified selection.
+	 */
+	protected Object resolveContext(IStructuredSelection selection) {
+		
+		// Empty selection means no context
 		if ((selection == null) || (selection.size() < 1)) {
-			setWorkbenchSelection(null);
-		} else {
-			setWorkbenchSelection(selection.getFirstElement());
+			return null;
+		} 
+
+		// If first element is a launch config file, create a launch configuration from it
+		// and make this the context, otherwise just return the first element
+		Object firstSelected = selection.getFirstElement();
+		if (firstSelected instanceof IFile) {
+			IFile file = (IFile) firstSelected;
+			if (file.getFileExtension().equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+				return getLaunchManager().getLaunchConfiguration(file);
+			}
 		}
+		return firstSelected;
 	}
 	
 	/**
@@ -314,7 +343,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * config tree when this dialog is first realized.
 	 */
 	protected void initializeFirstConfig() {
-		Object workbenchSelection = getWorkbenchSelection();
+		Object workbenchSelection = getContext();
 		if (workbenchSelection == null) {
 			clearLaunchConfiguration();
 			return;
@@ -332,7 +361,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * the workbench, select it in the tree.  	
 	 */
 	protected void initializeFirstConfigForConfiguration() {
-		IStructuredSelection selection = new StructuredSelection(getWorkbenchSelection());
+		IStructuredSelection selection = new StructuredSelection(getContext());
 		setTreeViewerSelection(selection);
 	}
 	
@@ -355,7 +384,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		try {
 			setChangesAreUserChanges(false);
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
-			workingCopy.initializeDefaults(getWorkbenchSelection());
+			workingCopy.initializeDefaults(getContext());
 		} catch (CoreException ce) {
 			return;	
 		}
@@ -371,7 +400,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected ILaunchConfigurationType determineConfigTypeFromSelection() {		
 		IResource resource = null;
-		Object workbenchSelection = getWorkbenchSelection();
+		Object workbenchSelection = getContext();
 		if (workbenchSelection instanceof IResource) {
 			resource = (IResource)workbenchSelection;
 		} else if (workbenchSelection instanceof IAdaptable) {
@@ -800,10 +829,19 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}
 
 		/**
+		 * Return only the launch configuration types that support the current mode.
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return getLaunchManager().getLaunchConfigurationTypes();
+			ILaunchConfigurationType[] allTypes = getLaunchManager().getLaunchConfigurationTypes();
+			ArrayList list = new ArrayList(allTypes.length);
+			String mode = getMode();
+			for (int i = 0; i < allTypes.length; i++) {
+				if (allTypes[i].supportsMode(mode)) {
+					list.add(allTypes[i]);
+				}
+			}			
+			return list.toArray();
 		}
 
 		/**
@@ -812,7 +850,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		public void dispose() {
 		}
 
-		/*
+		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -846,6 +884,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @param event selection changed event
 	 */
  	public void selectionChanged(SelectionChangedEvent event) {
+ 		
+ 		// Ignore selectionChange events that occur while saving
+ 		if (doingSave()) {
+ 			return;
+ 		}
  		
  		// Get the selection		
  		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
@@ -1194,12 +1237,12 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		return fWorkingCopyUserDirty;
  	}
  	
- 	protected void setWorkbenchSelection(Object selection) {
- 		fWorkbenchSelection = selection;
+ 	protected void setContext(Object context) {
+ 		fContext = context;
  	}
  	
- 	protected Object getWorkbenchSelection() {
- 		return fWorkbenchSelection;
+ 	protected Object getContext() {
+ 		return fContext;
  	}
  	
  	protected void setSelectedTreeObject(Object selection) {
@@ -1317,6 +1360,14 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		getTreeViewer().remove(configuration);		
 	}
 	
+	protected void setDoingSave(boolean doingSave) {
+		fDoingSave = doingSave;
+	}
+	
+	protected boolean doingSave() {
+		return fDoingSave;
+	}
+	
 	/**
 	 * Return whether the current working copy can be replaced with a new working copy.
 	 */
@@ -1406,7 +1457,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			}
 			setChangesAreUserChanges(false);
 			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
-			Object workbenchSelection = getWorkbenchSelection();
+			Object workbenchSelection = getContext();
 			if (workbenchSelection != null) {
 				wc.initializeDefaults(workbenchSelection);
 			}
@@ -1463,9 +1514,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		int index = 1;
 		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
 			StringBuffer buffer = new StringBuffer(startingName);
-			buffer.append(" (copy#");
+			buffer.append('_');
 			buffer.append(String.valueOf(index));
-			buffer.append(')');	
 			index++;
 			newName = buffer.toString();		
 		}		
@@ -1484,18 +1534,20 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Notification that the 'save' button has been pressed
 	 */
 	protected void handleSavePressed() {
-		ILaunchConfiguration config = null;
+		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
+		ILaunchConfiguration newConfig = null;
+		setWorkingCopy(null);
 		try {
-			config = getWorkingCopy().doSave();
+			setDoingSave(true);
+			newConfig = workingCopy.doSave();
+			setDoingSave(false);
 		} catch (CoreException ce) {			
 		}	
-		setLastSavedName(getWorkingCopy().getName());	
-		setWorkingCopyUserDirty(false);
-		
+		setLastSavedName(workingCopy.getName());	
+		setWorkingCopyUserDirty(false);		
 		setEnableStateEditButtons();
-
-		//IStructuredSelection selection = new StructuredSelection(config);
-		//setTreeViewerSelection(selection);
+		
+		getTreeViewer().setSelection(new StructuredSelection(newConfig));
 	}
 	
 	/**
