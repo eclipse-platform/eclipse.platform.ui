@@ -900,10 +900,21 @@ public class PreferenceDialog extends Dialog
 		setSelectedNodePreference(storeValue);
 	}
 	/**
-	 * Get the name of the selected item preference
+	 * Sets the name of the selected item preference.
+	 * Public equivalent to <code>setSelectedNodePreference</code>.
 	 * 
 	 * @param pageId
-	 *            The indentifer for the page
+	 *            The identifier for the page
+	 * @since 3.0
+	 */
+	public void setSelectedNode(String pageId) {
+		setSelectedNodePreference(pageId);
+	}
+	/**
+	 * Sets the name of the selected item preference.
+	 * 
+	 * @param pageId
+	 *            The identifier for the page
 	 */
 	protected void setSelectedNodePreference(String pageId) {
 		lastPreferenceId = pageId;
