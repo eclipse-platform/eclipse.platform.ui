@@ -453,15 +453,16 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Returns the name of a charset to be used when decoding the contents of this 
 	 * file into characters. 
 	 * <p>
-	 * If checkImplicit is <code>false</code>, this method 
-	 * will return the charset defined by calling <code>setCharset</code>, provided this file exists, or
-	 * <code>null</code> otherwise.
+	 * If checkImplicit is <code>false</code>, this method will return the 
+	 * charset defined by calling <code>setCharset</code>, provided this file 
+	 * exists, or <code>null</code> otherwise.
 	 * </p><p>
 	 * If checkImplicit is <code>true</code>, this method uses the following 
 	 * algorithm to determine the charset to be returned:
 	 * <ol>
-	 * <li>the charset defined by calling #setCharset, if any, and this file exists, or</li>
-	 * <li>if <code>checkImplicit</code> and the charset automatically discovered based on this file's contents,
+	 * <li>the charset defined by calling #setCharset, if any, and this file 
+	 * exists, or</li>
+	 * <li>the charset automatically discovered based on this file's contents,
 	 * if one can be determined, or</li>
 	 * <li>the default encoding for this file's parent (as defined by 
 	 * <code>IContainer#getDefaultCharset</code>).</li>
