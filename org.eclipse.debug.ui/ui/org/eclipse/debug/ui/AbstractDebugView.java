@@ -281,7 +281,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @see PageBookView#createDefaultPage(PageBook)
 	 */
-	protected final IPage createDefaultPage(PageBook book) {
+	protected IPage createDefaultPage(PageBook book) {
 		ViewerPage page = new ViewerPage();
 		page.createControl(book);
 		initPage(page);
