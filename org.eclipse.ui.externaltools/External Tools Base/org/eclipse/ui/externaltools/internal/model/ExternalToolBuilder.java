@@ -46,7 +46,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
 	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
-		int[] buildKinds = buildTypesToArray((String) config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
+		int[] buildKinds = buildTypesToArray(config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
 		for (int j = 0; j < buildKinds.length; j++) {
 			if (kind == buildKinds[j]) {
 				return true;
@@ -74,14 +74,14 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (ID.equals(commands[i].getBuilderName())){
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 				if (config != null && buildKindCompatible(kind, config)) {
-					doBuild(kind, commands[i].getArguments(), config, monitor);
+					doBuild(kind, config, monitor);
 				}
 			}
 		}
 		return null;
 	}
 
-	protected void doBuild(int kind, Map args, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
 		if (resources != null && resources.length > 0) {
