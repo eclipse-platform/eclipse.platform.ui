@@ -792,6 +792,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 * @see org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled() {
+		if (getSourceViewerConfiguration() == null) {
+			return; //editor has been disposed.
+		}
 		if (fInitialReconcile) {
 			updateForInitialReconcile();
 		}
