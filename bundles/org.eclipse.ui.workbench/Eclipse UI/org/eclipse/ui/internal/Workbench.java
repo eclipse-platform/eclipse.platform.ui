@@ -152,7 +152,8 @@ import org.eclipse.update.core.SiteManager;
  * The workbench class represents the top of the ITP user interface.  Its primary
  * responsability is the management of workbench windows and other ISV windows.
  */
-public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
+public class Workbench
+	implements IContextResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
@@ -168,9 +169,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	private String[] commandLineArgs;
 	private final IPropertyChangeListener propertyChangeListener =
 		new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				handlePropertyChange(event);
-			}
+		public void propertyChange(PropertyChangeEvent event) {
+			handlePropertyChange(event);
+		}
 	};
 
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -186,7 +187,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	public Workbench() {
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+			getShowTasksChangeListener(),
+			IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/* begin command and context support */
@@ -196,112 +199,124 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
 				return;
 
-			final Display display = Display.getCurrent();
-			final Shell[] shells = display.getShells();
-		
-			for (int i = 0; i < shells.length; i++) {
-				final int style = shells[i].getStyle();
-	
-				if (((style & SWT.APPLICATION_MODAL) != 0) || ((style & SWT.PRIMARY_MODAL) != 0) || ((style & SWT.SYSTEM_MODAL) != 0))
+			if (event.widget instanceof Control) {
+				Shell shell = ((Control) event.widget).getShell();
+				if (shell.getParent() != null)
 					return;
 			}
 
-			KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToAccelerator(event));				
-				
+			KeyStroke keyStroke =
+				KeySupport.convertAcceleratorToKeyStroke(
+					KeySupport.convertEventToAccelerator(event));
+
 			if (press(keyStroke, event)) {
 				switch (event.type) {
-					case SWT.KeyDown:
+					case SWT.KeyDown :
 						event.doit = false;
 						break;
-					case SWT.Traverse:
+					case SWT.Traverse :
 						event.detail = SWT.TRAVERSE_NONE;
 						event.doit = true;
 						break;
-					default:
-				}
+					default :
+						}
 
-				event.type = SWT.NONE;					
+				event.type = SWT.NONE;
 			}
 		}
 	};
 
-	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
+	private final ICommandManagerListener commandManagerListener =
+		new ICommandManagerListener() {
 		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
 			updateActiveContextIds();
 		}
 	};
-	
-	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+
+	private final IContextManagerListener contextManagerListener =
+		new IContextManagerListener() {
 		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
 			updateActiveContextIds();
 		}
 	};
 
-	private IActionServiceListener actionServiceListener = new IActionServiceListener() {
+	private IActionServiceListener actionServiceListener =
+		new IActionServiceListener() {
 		public void actionServiceChanged(IActionServiceEvent actionServiceEvent) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-	}; 
+	};
 
-	private IContextActivationServiceListener contextActivationServiceListener = new IContextActivationServiceListener() {
+	private IContextActivationServiceListener contextActivationServiceListener =
+		new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-	}; 
-	
-	private IInternalPerspectiveListener internalPerspectiveListener = new IInternalPerspectiveListener() {
-		public void perspectiveActivated(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor) {
+	};
+
+	private IInternalPerspectiveListener internalPerspectiveListener =
+		new IInternalPerspectiveListener() {
+		public void perspectiveActivated(
+			IWorkbenchPage workbenchPage,
+			IPerspectiveDescriptor perspectiveDescriptor) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
 
-		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-			updateActiveCommandIdsAndActiveContextIds();
-		}
-		
-		public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		public void perspectiveChanged(
+			IWorkbenchPage workbenchPage,
+			IPerspectiveDescriptor perspectiveDescriptor,
+			String changeId) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
 
-		public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			updateActiveCommandIdsAndActiveContextIds();				
-		}		
+		public void perspectiveClosed(
+			IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void perspectiveOpened(
+			IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
 	};
 
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-			
+
 		public void pageClosed(IWorkbenchPage workbenchPage) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-			
+
 		public void pageOpened(IWorkbenchPage workbenchPage) {
 			updateActiveCommandIdsAndActiveContextIds();
-		}				
+		}
 	};
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-		
+
 		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
 		}
-		
+
 		public void partClosed(IWorkbenchPart workbenchPart) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-		
+
 		public void partDeactivated(IWorkbenchPart workbenchPart) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
-		
+
 		public void partOpened(IWorkbenchPart workbenchPart) {
 			updateActiveCommandIdsAndActiveContextIds();
 		}
 	};
-				
+
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			updateActiveCommandIdsAndActiveContextIds();
@@ -312,34 +327,34 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			updateActiveCommandIdsAndActiveContextIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
-			
+
 		public void windowDeactivated(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();				
+			updateActiveCommandIdsAndActiveContextIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
-			
+
 		public void windowOpened(IWorkbenchWindow workbenchWindow) {
-			updateActiveCommandIdsAndActiveContextIds();				
+			updateActiveCommandIdsAndActiveContextIds();
 			updateActiveWorkbenchWindowMenuManager();
 		}
 	};
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-	private StatusLineContributionItem modeContributionItem; 
-	
+	private StatusLineContributionItem modeContributionItem;
+
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
 	//private IContextActivationService activeWorkbenchWindowContextActivationService;
-	
-	private	IWorkbenchPage activeWorkbenchPage;
+
+	private IWorkbenchPage activeWorkbenchPage;
 	private IActionService activeWorkbenchPageActionService;
-	private	IContextActivationService activeWorkbenchPageContextActivationService;
-	
-	private	IWorkbenchPart activeWorkbenchPart;
+	private IContextActivationService activeWorkbenchPageContextActivationService;
+
+	private IWorkbenchPart activeWorkbenchPart;
 	private IActionService activeWorkbenchPartActionService;
-	private	IContextActivationService activeWorkbenchPartContextActivationService;
-	
+	private IContextActivationService activeWorkbenchPartContextActivationService;
+
 	private IActionService actionService;
 	private IContextActivationService contextActivationService;
 
@@ -348,38 +363,39 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			actionService = new ActionService();
 			actionService.addActionServiceListener(actionServiceListener);
 		}
-		
+
 		return actionService;
 	}
 
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
-		
+
 	public IContextActivationService getContextActivationService() {
 		if (contextActivationService == null) {
 			contextActivationService = new ContextActivationService();
-			contextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+			contextActivationService.addContextActivationServiceListener(
+				contextActivationServiceListener);
 		}
-		
+
 		return contextActivationService;
 	}
 
 	public IContextManager getContextManager() {
 		return contextManager;
 	}
-    
-    public final void disableKeyFilter() {
-        final Display display = Display.getCurrent();
-        display.removeFilter(SWT.KeyDown, listener);
-        display.removeFilter(SWT.Traverse, listener);
-    }
-    
-    public final void enableKeyFilter() {
-        final Display display = Display.getCurrent();
-        display.addFilter(SWT.KeyDown, listener);
-        display.addFilter(SWT.Traverse, listener);
-    }
+
+	public final void disableKeyFilter() {
+		final Display display = Display.getCurrent();
+		display.removeFilter(SWT.KeyDown, listener);
+		display.removeFilter(SWT.Traverse, listener);
+	}
+
+	public final void enableKeyFilter() {
+		final Display display = Display.getCurrent();
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
+	}
 
 	public final boolean inContext(final String commandId) {
 		if (commandId != null) {
@@ -396,28 +412,39 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	// TODO remove event parameter once key-modified actions are removed
 	public final boolean press(KeyStroke keyStroke, Event event) {
 		final KeySequence modeBeforeKeyStroke = commandManager.getMode();
-		final List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
+		final List keyStrokes =
+			new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
 		keyStrokes.add(keyStroke);
-		final KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
-		final Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+		final KeySequence modeAfterKeyStroke =
+			KeySequence.getInstance(keyStrokes);
+		final Map matchesByKeySequenceForModeBeforeKeyStroke =
+			commandManager.getMatchesByKeySequenceForMode();
 		commandManager.setMode(modeAfterKeyStroke);
-		modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());					
-		final Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+		modeContributionItem.setText(
+			"carbon".equals(SWT.getPlatform())
+				? KeySupport.formatOSX(modeAfterKeyStroke)
+				: modeAfterKeyStroke.format());
+		final Map matchesByKeySequenceForModeAfterKeyStroke =
+			commandManager.getMatchesByKeySequenceForMode();
 		boolean consumeKeyStroke = false;
 
-		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {			
+		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
 			// this key stroke is part of one or more possible completions: consume the keystroke						
-			consumeKeyStroke = true;	
-		} else {		
+			consumeKeyStroke = true;
+		} else {
 			// there are no possible longer multi-stroke sequences, allow a completion now if possible
-			final Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
-			
+			final Match match =
+				(Match) matchesByKeySequenceForModeBeforeKeyStroke.get(
+					modeAfterKeyStroke);
+
 			if (match != null) {
 				// a completion was found. 
 				final String commandId = match.getCommandId();
 				final Map actionsById = commandManager.getActionsById();
-				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
-	
+				org.eclipse.ui.commands.IAction action =
+					(org.eclipse.ui.commands.IAction) actionsById.get(
+						commandId);
+
 				if (action != null) {
 					// an action was found corresponding to the completion
 
@@ -436,11 +463,14 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 
 			// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
 			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
-				consumeKeyStroke = true;			
+				consumeKeyStroke = true;
 
 			// clear mode			
-			commandManager.setMode(KeySequence.getInstance());	
-			modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(KeySequence.getInstance()) : KeySequence.getInstance().format());				
+			commandManager.setMode(KeySequence.getInstance());
+			modeContributionItem.setText(
+				"carbon".equals(SWT.getPlatform())
+					? KeySupport.formatOSX(KeySequence.getInstance())
+					: KeySequence.getInstance().format());
 		}
 
 		// TODO is this necessary?		
@@ -449,52 +479,85 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	}
 
 	public void updateActiveContextIds() {
-		commandManager.setActiveContextIds(contextManager.getActiveContextIds());
+		commandManager.setActiveContextIds(
+			contextManager.getActiveContextIds());
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-		
+
 		if (workbenchWindow != null) {
-			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+			MenuManager menuManager =
+				((WorkbenchWindow) workbenchWindow).getMenuManager();
 			menuManager.update(IAction.TEXT);
 		}
 	}
 
 	void updateActiveCommandIdsAndActiveContextIds() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
-		
-		if (activeWorkbenchWindow != null && !(activeWorkbenchWindow instanceof WorkbenchWindow))
+
+		if (activeWorkbenchWindow != null
+			&& !(activeWorkbenchWindow instanceof WorkbenchWindow))
 			activeWorkbenchWindow = null;
-		
+
 		//IActionService activeWorkbenchWindowActionService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getActionService() : null;
 		//IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
-		
-		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
-		IActionService activeWorkbenchPageActionService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getActionService() : null;
-		IContextActivationService activeWorkbenchPageContextActivationService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;		
-		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
-		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
-		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
-		IActionService activeWorkbenchPartActionService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getActionService() : null;
-		IContextActivationService activeWorkbenchPartContextActivationService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getContextActivationService() : null;
+
+		IWorkbenchPage activeWorkbenchPage =
+			activeWorkbenchWindow != null
+				? activeWorkbenchWindow.getActivePage()
+				: null;
+		IActionService activeWorkbenchPageActionService =
+			activeWorkbenchPage != null
+				? ((WorkbenchPage) activeWorkbenchPage).getActionService()
+				: null;
+		IContextActivationService activeWorkbenchPageContextActivationService =
+			activeWorkbenchPage != null
+				? ((WorkbenchPage) activeWorkbenchPage)
+					.getContextActivationService()
+				: null;
+		IPartService activePartService =
+			activeWorkbenchWindow != null
+				? activeWorkbenchWindow.getPartService()
+				: null;
+		IWorkbenchPart activeWorkbenchPart =
+			activePartService != null
+				? activePartService.getActivePart()
+				: null;
+		IWorkbenchPartSite activeWorkbenchPartSite =
+			activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		IActionService activeWorkbenchPartActionService =
+			activeWorkbenchPartSite != null
+				? ((PartSite) activeWorkbenchPartSite).getActionService()
+				: null;
+		IContextActivationService activeWorkbenchPartContextActivationService =
+			activeWorkbenchPartSite != null
+				? ((PartSite) activeWorkbenchPartSite)
+					.getContextActivationService()
+				: null;
 
 		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
 			if (this.activeWorkbenchWindow != null) {
-				this.activeWorkbenchWindow.removePageListener(pageListener); 
-				this.activeWorkbenchWindow.getPartService().removePartListener(partListener);
-				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().removePerspectiveListener(internalPerspectiveListener);
+				this.activeWorkbenchWindow.removePageListener(pageListener);
+				this.activeWorkbenchWindow.getPartService().removePartListener(
+					partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getPerspectiveService()
+					.removePerspectiveListener(internalPerspectiveListener);
 			}
-					
+
 			this.activeWorkbenchWindow = activeWorkbenchWindow;
-					
+
 			if (this.activeWorkbenchWindow != null) {
-				this.activeWorkbenchWindow.addPageListener(pageListener); 
-				this.activeWorkbenchWindow.getPartService().addPartListener(partListener);
-				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);					
-			}			
+				this.activeWorkbenchWindow.addPageListener(pageListener);
+				this.activeWorkbenchWindow.getPartService().addPartListener(
+					partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getPerspectiveService()
+					.addPerspectiveListener(internalPerspectiveListener);
+			}
 		}
-		
+
 		/*
 		if (activeWorkbenchWindowActionService != this.activeWorkbenchWindowActionService) {
 			if (this.activeWorkbenchWindowActionService != null)
@@ -502,51 +565,69 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					
 			this.activeWorkbenchWindow = activeWorkbenchWindow;
 			this.activeWorkbenchWindowActionService = activeWorkbenchWindowActionService;
-
+		
 			if (this.activeWorkbenchWindowActionService != null)
 				this.activeWorkbenchWindowActionService.addActionServiceListener(actionServiceListener);
 		}
 		*/
-		
-		if (activeWorkbenchPageActionService != this.activeWorkbenchPageActionService) {
+
+		if (activeWorkbenchPageActionService
+			!= this.activeWorkbenchPageActionService) {
 			if (this.activeWorkbenchPageActionService != null)
-				this.activeWorkbenchPageActionService.removeActionServiceListener(actionServiceListener);
-					
+				this
+					.activeWorkbenchPageActionService
+					.removeActionServiceListener(
+					actionServiceListener);
+
 			this.activeWorkbenchPage = activeWorkbenchPage;
-			this.activeWorkbenchPageActionService = activeWorkbenchPageActionService;
+			this.activeWorkbenchPageActionService =
+				activeWorkbenchPageActionService;
 
 			if (this.activeWorkbenchPageActionService != null)
-				this.activeWorkbenchPageActionService.addActionServiceListener(actionServiceListener);
+				this.activeWorkbenchPageActionService.addActionServiceListener(
+					actionServiceListener);
 		}
 
-		if (activeWorkbenchPartActionService != this.activeWorkbenchPartActionService) {
+		if (activeWorkbenchPartActionService
+			!= this.activeWorkbenchPartActionService) {
 			if (this.activeWorkbenchPartActionService != null)
-				this.activeWorkbenchPartActionService.removeActionServiceListener(actionServiceListener);
-					
+				this
+					.activeWorkbenchPartActionService
+					.removeActionServiceListener(
+					actionServiceListener);
+
 			this.activeWorkbenchPart = activeWorkbenchPart;
-			this.activeWorkbenchPartActionService = activeWorkbenchPartActionService;
+			this.activeWorkbenchPartActionService =
+				activeWorkbenchPartActionService;
 
 			if (this.activeWorkbenchPartActionService != null)
-				this.activeWorkbenchPartActionService.addActionServiceListener(actionServiceListener);		
+				this.activeWorkbenchPartActionService.addActionServiceListener(
+					actionServiceListener);
 		}
-		
+
 		SortedMap actionsById = new TreeMap();
 		actionsById.putAll(getActionService().getActionsById());
-		
+
 		//if (this.activeWorkbenchWindowActionService != null)
 		//	actionsById.putAll(this.activeWorkbenchWindowActionService.getActionsById());
 
 		if (this.activeWorkbenchWindow != null) {
-			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForGlobalActions());
-			actionsById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getActionsForActionSets());			
+			actionsById.putAll(
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getActionsForGlobalActions());
+			actionsById.putAll(
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getActionsForActionSets());
 		}
-			
+
 		if (this.activeWorkbenchPageActionService != null)
-			actionsById.putAll(this.activeWorkbenchPageActionService.getActionsById());
+			actionsById.putAll(
+				this.activeWorkbenchPageActionService.getActionsById());
 
 		if (this.activeWorkbenchPartActionService != null)
-			actionsById.putAll(this.activeWorkbenchPartActionService.getActionsById());
-			
+			actionsById.putAll(
+				this.activeWorkbenchPartActionService.getActionsById());
+
 		commandManager.setActionsById(actionsById);
 
 		/*
@@ -556,46 +637,65 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					
 			this.activeWorkbenchWindow = activeWorkbenchWindow;
 			this.activeWorkbenchWindowContextActivationService = activeWorkbenchWindowContextActivationService;
-
+		
 			if (this.activeWorkbenchWindowContextActivationService != null)
 				this.activeWorkbenchWindowContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 		*/
 
-		if (activeWorkbenchPageContextActivationService != this.activeWorkbenchPageContextActivationService) {
+		if (activeWorkbenchPageContextActivationService
+			!= this.activeWorkbenchPageContextActivationService) {
 			if (this.activeWorkbenchPageContextActivationService != null)
-				this.activeWorkbenchPageContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
-					
+				this
+					.activeWorkbenchPageContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
+
 			this.activeWorkbenchPage = activeWorkbenchPage;
-			this.activeWorkbenchPageContextActivationService = activeWorkbenchPageContextActivationService;
+			this.activeWorkbenchPageContextActivationService =
+				activeWorkbenchPageContextActivationService;
 
 			if (this.activeWorkbenchPageContextActivationService != null)
-				this.activeWorkbenchPageContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+				this
+					.activeWorkbenchPageContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
-		if (activeWorkbenchPartContextActivationService != this.activeWorkbenchPartContextActivationService) {
+		if (activeWorkbenchPartContextActivationService
+			!= this.activeWorkbenchPartContextActivationService) {
 			if (this.activeWorkbenchPartContextActivationService != null)
-				this.activeWorkbenchPartContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
-					
+				this
+					.activeWorkbenchPartContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
+
 			this.activeWorkbenchPart = activeWorkbenchPart;
-			this.activeWorkbenchPartContextActivationService = activeWorkbenchPartContextActivationService;
+			this.activeWorkbenchPartContextActivationService =
+				activeWorkbenchPartContextActivationService;
 
 			if (this.activeWorkbenchPartContextActivationService != null)
-				this.activeWorkbenchPartContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+				this
+					.activeWorkbenchPartContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
 		}
-		
+
 		SortedSet activeContextIds = new TreeSet();
-		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
-		
+		activeContextIds.addAll(
+			getContextActivationService().getActiveContextIds());
+
 		//if (this.activeWorkbenchWindowContextActivationService != null)
 		//	activeContextIds.addAll(this.activeWorkbenchWindowContextActivationService.getActiveContextIds());
-		
+
 		if (this.activeWorkbenchPageContextActivationService != null)
-			activeContextIds.addAll(this.activeWorkbenchPageContextActivationService.getActiveContextIds());
+			activeContextIds.addAll(
+				this
+					.activeWorkbenchPageContextActivationService
+					.getActiveContextIds());
 
 		if (this.activeWorkbenchPartContextActivationService != null)
-			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
-			
+			activeContextIds.addAll(
+				this
+					.activeWorkbenchPartContextActivationService
+					.getActiveContextIds());
+
 		contextManager.setActiveContextIds(new ArrayList(activeContextIds));
 	}
 
@@ -606,41 +706,51 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$	
 		commandManager.addCommandManagerListener(commandManagerListener);
 		contextManager.addContextManagerListener(contextManagerListener);
-		updateActiveContextIds();       
+		updateActiveContextIds();
 		display.addFilter(SWT.Traverse, listener);
 		display.addFilter(SWT.KeyDown, listener);
-		addWindowListener(windowListener);				
+		addWindowListener(windowListener);
 		updateActiveCommandIdsAndActiveContextIds();
 	}
 
 	/* end command and context support */
-	
+
 	// TODO: The code for bringing the problem view to front must be moved 
 	// to org.eclipse.ui.views.
-		
+
 	/**
 	 * Returns the resource change listener for noticing new errors.
 	 * Processes the delta and shows the Tasks view if new errors 
 	 * have appeared.  See PR 2066.
-	 */ 
+	 */
 	private IResourceChangeListener getShowTasksChangeListener() {
 		return new IResourceChangeListener() {
-			public void resourceChanged(final IResourceChangeEvent event) {	
+			public void resourceChanged(final IResourceChangeEvent event) {
 				IPreferenceStore store = getPreferenceStore();
-				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
+				if (store
+					.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
 					IMarker error = findProblemToShow(event);
 					if (error != null) {
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
 								try {
-									IWorkbenchWindow window = getActiveWorkbenchWindow();
-									if (window != null && !window.getShell().isDisposed()) { 
-										IWorkbenchPage page = window.getActivePage();
+									IWorkbenchWindow window =
+										getActiveWorkbenchWindow();
+									if (window != null
+										&& !window.getShell().isDisposed()) {
+										IWorkbenchPage page =
+											window.getActivePage();
 										if (page != null) {
-											IViewPart tasksView= page.findView(IPageLayout.ID_PROBLEM_VIEW);
-											if(tasksView == null) {
-												IWorkbenchPart activePart= page.getActivePart();
-												page.showView(IPageLayout.ID_PROBLEM_VIEW);
+											IViewPart tasksView =
+												page.findView(
+													IPageLayout
+														.ID_PROBLEM_VIEW);
+											if (tasksView == null) {
+												IWorkbenchPart activePart =
+													page.getActivePart();
+												page.showView(
+													IPageLayout
+														.ID_PROBLEM_VIEW);
 												//restore focus stolen by showing the Tasks view
 												page.activate(activePart);
 											} else {
@@ -658,25 +768,27 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			}
 		};
 	}
-	
+
 	/**
 	 * Finds the first problem marker to show.
 	 * Returns the first added error or warning.
 	 */
 	private IMarker findProblemToShow(IResourceChangeEvent event) {
-		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+		IMarkerDelta[] markerDeltas =
+			event.findMarkerDeltas(IMarker.PROBLEM, true);
 		for (int i = 0; i < markerDeltas.length; i++) {
 			IMarkerDelta markerDelta = markerDeltas[i];
 			if (markerDelta.getKind() == IResourceDelta.ADDED) {
 				int sev = markerDelta.getAttribute(IMarker.SEVERITY, -1);
-				if (sev == IMarker.SEVERITY_ERROR || sev == IMarker.SEVERITY_WARNING) {
+				if (sev == IMarker.SEVERITY_ERROR
+					|| sev == IMarker.SEVERITY_WARNING) {
 					return markerDelta.getMarker();
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * See IWorkbench
 	 */
@@ -693,8 +805,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Fire window opened event.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
-		if (window instanceof WorkbenchWindow)        
-			((WorkbenchWindow) window).getStatusLineManager().add(modeContributionItem);
+		if (window instanceof WorkbenchWindow)
+			((WorkbenchWindow) window).getStatusLineManager().add(
+				modeContributionItem);
 
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
@@ -706,13 +819,14 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
 		if (window instanceof WorkbenchWindow)
-			((WorkbenchWindow) window).getStatusLineManager().remove(modeContributionItem);
+			((WorkbenchWindow) window).getStatusLineManager().remove(
+				modeContributionItem);
 
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
 		}
-					
+
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowClosed(window);
@@ -754,8 +868,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		if (!isClosing && !force)
 			return false;
 
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean closeEditors = store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean closeEditors =
+			store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
 				public void run() {
@@ -763,7 +879,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					for (int i = 0; i < windows.length; i++) {
 						IWorkbenchPage pages[] = windows[i].getPages();
 						for (int j = 0; j < pages.length; j++) {
-							isClosing = isClosing && pages[j].closeAllEditors(false);
+							isClosing =
+								isClosing && pages[j].closeAllEditors(false);
 						}
 					}
 				}
@@ -832,9 +949,11 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 						for (int k = 0; k < editors.length; k++) {
 							IEditorPart editor = editors[k];
 							if (editor.isDirty()) {
-								if (!dirtyEditorsInput.contains(editor.getEditorInput())) {
+								if (!dirtyEditorsInput
+									.contains(editor.getEditorInput())) {
 									dirtyEditors.add(editor);
-									dirtyEditorsInput.add(editor.getEditorInput());
+									dirtyEditorsInput.add(
+										editor.getEditorInput());
 								}
 							}
 						}
@@ -844,7 +963,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if (w == null)
 						w = windows[0];
-					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
+					result[0] =
+						EditorManager.saveAll(dirtyEditors, finalConfirm, w);
 				}
 			}
 		});
@@ -855,7 +975,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 *
 	 * Assumes that busy cursor is active.
 	 */
-	private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable input) throws WorkbenchException {
+	private IWorkbenchWindow busyOpenWorkbenchWindow(
+		String perspID,
+		IAdaptable input)
+		throws WorkbenchException {
 		// Create a workbench window (becomes active window)
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
@@ -917,7 +1040,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		});
 		return ret[0];
 	}
-	
+
 	/**
 	 * Creates the action builder for the given window.
 	 * 
@@ -927,8 +1050,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	protected WorkbenchActionBuilder createActionBuilder(IWorkbenchWindow window) {
 		return new WorkbenchActionBuilder(window);
 	}
- 
-	
+
 	/**
 	 * Connect to the core workspace.
 	 */
@@ -941,22 +1063,21 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	private void disableAutoBuild() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription description = workspace.getDescription();
-		
+
 		autoBuild = description.isAutoBuilding();
 		if (autoBuild) {
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store =
+				WorkbenchPlugin.getDefault().getPreferenceStore();
 			store.setValue(IPreferenceConstants.AUTO_BUILD, false);
 			description.setAutoBuilding(false);
 			try {
 				workspace.setDescription(description);
-			} catch (CoreException exception) { 
-				MessageDialog.openError(
-					null, 
-					WorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
-					WorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
+			} catch (CoreException exception) {
+				MessageDialog.openError(null, WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("Restoring_Problem")); //$NON-NLS-1$
 			}
 		}
-	}	
+	}
 	/**
 	 * Disconnect from the core workspace.
 	 */
@@ -966,7 +1087,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
-					status.merge(ResourcesPlugin.getWorkspace().save(true, monitor));
+					status.merge(
+						ResourcesPlugin.getWorkspace().save(true, monitor));
 				} catch (CoreException e) {
 					status.merge(e.getStatus());
 				}
@@ -997,14 +1119,16 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	private void enableAutoBuild() {
 		if (autoBuild) {
 			IWorkbenchWindow windows[] = getWorkbenchWindows();
-			Shell shell = windows[windows.length - 1].getShell();				
+			Shell shell = windows[windows.length - 1].getShell();
 			try {
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-					protected void execute(IProgressMonitor monitor) throws CoreException {
-						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
+					protected void execute(IProgressMonitor monitor)
+						throws CoreException {
+						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild")); //$NON-NLS-1$
 
 						IWorkspace workspace = ResourcesPlugin.getWorkspace();
-						IWorkspaceDescription description = workspace.getDescription();
+						IWorkspaceDescription description =
+							workspace.getDescription();
 						description.setAutoBuilding(true);
 						workspace.setDescription(description);
 					}
@@ -1016,16 +1140,15 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException exception) {
-				MessageDialog.openError(
-					shell, 
-					WorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
-					WorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
+				MessageDialog.openError(shell, WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("Workspace.problemAutoBuild")); //$NON-NLS-1$
 			}
 			// update the preference store so that property change listener
 			// get notified of preference change.
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store =
+				WorkbenchPlugin.getDefault().getPreferenceStore();
 			store.setValue(IPreferenceConstants.AUTO_BUILD, true);
-			updateBuildActions(true);			
+			updateBuildActions(true);
 		}
 	}
 	/**
@@ -1047,14 +1170,14 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				return (IWorkbenchWindow) data;
 			shell = shell.getParent();
 		}
-		
+
 		// Look for the window that was last known being
 		// the active one
 		WorkbenchWindow win = getActivatedWindow();
 		if (win != null) {
 			return win;
 		}
-		
+
 		// Look at all the shells and pick the first one
 		// that is a workbench window.
 		Shell shells[] = display.getShells();
@@ -1063,7 +1186,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			if (data instanceof IWorkbenchWindow)
 				return (IWorkbenchWindow) data;
 		}
-		
+
 		// Can't find anything!
 		return null;
 	}
@@ -1077,14 +1200,16 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		 * subclass this internal class. 
 		 */
 		return commandLineArgs;
-	}	
+	}
 	/**
 	 * Returns the editor history.
 	 */
 	public EditorHistory getEditorHistory() {
 		if (editorHistory == null) {
 			IPreferenceStore store = getPreferenceStore();
-			editorHistory = new EditorHistory(store.getInt(IPreferenceConstants.RECENT_FILES));
+			editorHistory =
+				new EditorHistory(
+					store.getInt(IPreferenceConstants.RECENT_FILES));
 		}
 		return editorHistory;
 	}
@@ -1105,7 +1230,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	public IEditorRegistry getEditorRegistry() {
 		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
-	
+
 	/**
 	 * Returns the number for a new window.  This will be the first
 	 * number > 0 which is not used to identify another window in
@@ -1137,7 +1262,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		}
 		return count + 1;
 	}
-	
+
 	/**
 	 * Returns the perspective registry for the workbench.
 	 *
@@ -1187,7 +1312,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * @return the about info
 	 */
 	public WorkbenchConfigurationInfo getConfigurationInfo() {
-		if(configurationInfo == null)
+		if (configurationInfo == null)
 			configurationInfo = new WorkbenchConfigurationInfo();
 		return configurationInfo;
 	}
@@ -1226,7 +1351,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
-		
+
 	/**
 	 * Listener for preference changes.
 	 */
@@ -1234,9 +1359,12 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
 			// Auto build is stored in core. It is also in the preference 
 			// store for use by import/export.
-			IWorkspaceDescription description =	ResourcesPlugin.getWorkspace().getDescription();
+			IWorkspaceDescription description =
+				ResourcesPlugin.getWorkspace().getDescription();
 			boolean autoBuildSetting = description.isAutoBuilding();
-			boolean newAutoBuildSetting = getPreferenceStore().getBoolean(IPreferenceConstants.AUTO_BUILD);
+			boolean newAutoBuildSetting =
+				getPreferenceStore().getBoolean(
+					IPreferenceConstants.AUTO_BUILD);
 
 			if (autoBuildSetting != newAutoBuildSetting) {
 				// Update the core setting.
@@ -1251,9 +1379,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				// If auto build is turned on, then do a global incremental
 				// build on all the projects.
 				if (newAutoBuildSetting) {
-					GlobalBuildAction action = new GlobalBuildAction(
-						getActiveWorkbenchWindow(),
-						IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					GlobalBuildAction action =
+						new GlobalBuildAction(
+							getActiveWorkbenchWindow(),
+							IncrementalProjectBuilder.INCREMENTAL_BUILD);
 					action.doBuild();
 				}
 				updateBuildActions(newAutoBuildSetting);
@@ -1263,8 +1392,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	/**
 	 * Initializes the workbench.
 	 *
-     * @param display The display on which this workbench is being initialized;
-     * must not be <code>null</code>.
+	 * @param display The display on which this workbench is being initialized;
+	 * must not be <code>null</code>.
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs, final Display display) {
@@ -1281,7 +1410,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		addAdapters();
 		windowManager = new WindowManager();
 		WorkbenchColors.startup();
-		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
+		boolean useColorIcons =
+			getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 		initializeFonts();
 		initializeSingleClickOption();
@@ -1296,7 +1426,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		if (avoidDeadlock) {
 			UILockListener uiLockListener = new UILockListener(display);
 			Platform.getJobManager().setLockListener(uiLockListener);
-			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
+			display.setSynchronizer(
+				new UISynchronizer(display, uiLockListener));
 		}
 
 		try {
@@ -1321,8 +1452,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		return true;
 	}
 	private void refreshFromLocal(String[] commandLineArgs) {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean refresh =
+			store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
 		if (!refresh)
 			return;
 		//Do not refresh if it was already done by core on startup.
@@ -1335,9 +1468,11 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		final CoreException ex[] = new CoreException[1];
 		try {
 			dlg.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
 					try {
-						IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+						IContainer root =
+							ResourcesPlugin.getWorkspace().getRoot();
 						root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					} catch (CoreException e) {
 						ex[0] = e;
@@ -1347,13 +1482,24 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			if (ex[0] != null) {
 				String errorTitle = WorkbenchMessages.getString("Workspace.problemsTitle"); //$NON-NLS-1$
 				String msg = WorkbenchMessages.getString("Workspace.problemMessage"); //$NON-NLS-1$
-				ErrorDialog.openError(shell, errorTitle, msg, ex[0].getStatus());
+				ErrorDialog.openError(
+					shell,
+					errorTitle,
+					msg,
+					ex[0].getStatus());
 			}
 		} catch (InterruptedException e) {
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e.getTargetException()));
+			WorkbenchPlugin.log(
+				msg,
+				new Status(
+					Status.ERROR,
+					PlatformUI.PLUGIN_ID,
+					0,
+					msg,
+					e.getTargetException()));
 		}
 	}
 
@@ -1373,7 +1519,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		}
 		if (perspId == null)
 			return;
-		IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspId);
+		IPerspectiveDescriptor desc =
+			getPerspectiveRegistry().findPerspectiveWithId(perspId);
 		if (desc == null)
 			return;
 
@@ -1384,16 +1531,25 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			showPerspective(perspId, win);
 		} catch (WorkbenchException e) {
 			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
+			WorkbenchPlugin.log(
+				msg,
+				new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		}
 	}
 
 	private void initializeSingleClickOption() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
-		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
-		boolean openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
-		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean openOnSingleClick =
+			store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
+		boolean selectOnHover =
+			store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
+		boolean openAfterDelay =
+			store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
+		int singleClickMethod =
+			openOnSingleClick
+				? OpenStrategy.SINGLE_CLICK
+				: OpenStrategy.DOUBLE_CLICK;
 		if (openOnSingleClick) {
 			if (selectOnHover)
 				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
@@ -1407,7 +1563,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Initialize the workbench fonts with the stored values.
 	 */
 	private void initializeFonts() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
 		FontRegistry registry = JFaceResources.getFontRegistry();
 
 		//Iterate through the definitions and initialize thier
@@ -1419,37 +1576,42 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			String fontKey = definition.getId();
 			initializeFont(fontKey, registry, store);
 			String defaultsTo = definitions[i].getDefaultsTo();
-			if (defaultsTo != null){
+			if (defaultsTo != null) {
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
-					PreferenceConverter.
-						getDefaultFontDataArray(store,defaultsTo));
-				
+					PreferenceConverter.getDefaultFontDataArray(
+						store,
+						defaultsTo));
+
 				//If there is no value in the registry pass though the mapping
-				if(!registry.hasValueFor(fontKey))
+				if (!registry.hasValueFor(fontKey))
 					fontsToSet.add(definition);
 			}
 		}
-		
-		
+
 		/**
 		 * Now that all of the font have been initialized anything
 		 * that is still at its defaults and has a defaults to
 		 * needs to have its value set in the registry.
 		 * Post process to be sure that all of the fonts have the correct
 		 * setting before there is an update.
-		 */		
+		 */
 		Iterator updateIterator = fontsToSet.iterator();
-		while(updateIterator.hasNext()){
+		while (updateIterator.hasNext()) {
 			FontDefinition update = (FontDefinition) updateIterator.next();
-			registry.put(update.getId(),registry.getFontData(update.getDefaultsTo()));
+			registry.put(
+				update.getId(),
+				registry.getFontData(update.getDefaultsTo()));
 		}
 	}
 	/**
 	 * Initialize the specified font with the stored value.
 	 */
-	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
+	private void initializeFont(
+		String fontKey,
+		FontRegistry registry,
+		IPreferenceStore store) {
 		if (store.isDefault(fontKey))
 			return;
 		FontData[] font = PreferenceConverter.getFontDataArray(store, fontKey);
@@ -1459,16 +1621,23 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Initialize the product image obtained from the product info file
 	 */
 	private void initializeProductImage() {
-		ImageDescriptor descriptor = getConfigurationInfo().getAboutInfo().getWindowImage();
+		ImageDescriptor descriptor =
+			getConfigurationInfo().getAboutInfo().getWindowImage();
 		if (descriptor != null) {
-			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
-			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
+			WorkbenchImages.getImageRegistry().put(
+				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
+				descriptor);
+			Image image =
+				WorkbenchImages.getImage(
+					IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
 			if (image != null) {
 				Window.setDefaultImage(image);
 			}
 		} else {
 			// Avoid setting a missing image as the window default image
-			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, ImageDescriptor.getMissingImageDescriptor());
+			WorkbenchImages.getImageRegistry().put(
+				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
+				ImageDescriptor.getMissingImageDescriptor());
 		}
 	}
 	/**
@@ -1483,16 +1652,16 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	public boolean isStarting() {
 		return isStarting;
 	}
-	
- 	/**
- 	 * Creates a new workbench window.
- 	 * 
- 	 * @return the new workbench window
-     */
- 	protected WorkbenchWindow newWorkbenchWindow() {
- 		return new WorkbenchWindow(this, getNewWindowNumber());
+
+	/**
+	 * Creates a new workbench window.
+	 * 
+	 * @return the new workbench window
+	*/
+	protected WorkbenchWindow newWorkbenchWindow() {
+		return new WorkbenchWindow(this, getNewWindowNumber());
 	}
-	
+
 	/**
 	 * Create the initial workbench window.
 	 * @return true if the open succeeds
@@ -1506,14 +1675,16 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		// Create the initial page.
 		try {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), root);
+			newWindow.openPage(
+				getPerspectiveRegistry().getDefaultPerspective(),
+				root);
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
 		}
 		newWindow.open();
 	}
-	
+
 	/**
 	 * Create the workbench UI from a persistence file.
 	 */
@@ -1532,7 +1703,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				IMemento memento = XMLMemento.createReadRoot(reader);
 
 				// Validate known version format
-				String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
+				String version =
+					memento.getString(IWorkbenchConstants.TAG_VERSION);
 				boolean valid = false;
 				for (int i = 0; i < VERSION_STRING.length; i++) {
 					if (VERSION_STRING[i].equals(version)) {
@@ -1542,9 +1714,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				}
 				if (!valid) {
 					reader.close();
-					MessageDialog.openError(
-						(Shell) null,
-						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
+					MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
 					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 					stateFile.delete();
 					result[0] = RESTORE_CODE_RESET;
@@ -1555,14 +1725,14 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				// We no longer support the release 1.0 format
 				if (VERSION_STRING[0].equals(version)) {
 					reader.close();
-					boolean ignoreSavedState = new MessageDialog(
-						null, 
-						WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
-						null,
-						WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
-						MessageDialog.WARNING,
-						new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
-						0).open() == 0; 	// OK is the default
+						boolean ignoreSavedState = new MessageDialog(null, WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
+		null, WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
+	MessageDialog.WARNING,
+		new String[] {
+			IDialogConstants.OK_LABEL,
+			IDialogConstants.CANCEL_LABEL },
+		0).open() == 0;
+					// OK is the default
 					if (ignoreSavedState) {
 						stateFile.delete();
 						result[0] = RESTORE_CODE_RESET;
@@ -1576,11 +1746,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				IStatus restoreResult = restoreState(memento);
 				reader.close();
 				if (restoreResult.getSeverity() == IStatus.ERROR) {
-					ErrorDialog.openError(
-						null,
-						WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
-						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
-						restoreResult);
+					ErrorDialog.openError(null, WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+					WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
+					restoreResult);
 				}
 			}
 			public void handleException(Throwable e) {
@@ -1591,20 +1759,27 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 
 		});
 		// ensure at least one window was opened
-		if (result[0] == RESTORE_CODE_OK && windowManager.getWindows().length == 0)
+		if (result[0] == RESTORE_CODE_OK
+			&& windowManager.getWindows().length == 0)
 			result[0] = RESTORE_CODE_RESET;
 		return result[0];
 	}
 	/**
 	 * Opens a new window and page with the default perspective.
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
-		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
+	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
+		throws WorkbenchException {
+		return openWorkbenchWindow(
+			getPerspectiveRegistry().getDefaultPerspective(),
+			input);
 	}
 	/**
 	 * Opens a new workbench window and page with a specific perspective.
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) throws WorkbenchException {
+	public IWorkbenchWindow openWorkbenchWindow(
+		final String perspID,
+		final IAdaptable input)
+		throws WorkbenchException {
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -1636,11 +1811,11 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Record the workbench UI in a document
 	 */
 	private XMLMemento recordWorkbenchState() {
-		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
+		XMLMemento memento =
+			XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
 		IStatus status = saveState(memento);
 		if (status.getSeverity() != IStatus.OK) {
-			ErrorDialog.openError((Shell)null,
-				WorkbenchMessages.getString("Workbench.problemsSaving"),  //$NON-NLS-1$
+			ErrorDialog.openError((Shell) null, WorkbenchMessages.getString("Workbench.problemsSaving"), //$NON-NLS-1$
 			WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
 			status);
 		}
@@ -1650,42 +1825,45 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Method declared on IWorkbench.
 	 */
 	public boolean restart() {
-		return close(EXIT_RESTART); // this is the return code from run() to trigger a restart
+		return close(EXIT_RESTART);
+		// this is the return code from run() to trigger a restart
 	}
 	/**
 	 * Restores the state of the previously saved workbench
 	 */
 	private IStatus restoreState(IMemento memento) {
 
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("Workbench.problemsRestoring"), null); //$NON-NLS-1$
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
 		IMemento childMem;
 		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
-			childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "PerspectiveHistory"); //$NON-NLS-1$
+			childMem =
+				memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
 			if (childMem != null)
 				result.add(getPerspectiveHistory().restoreState(childMem));
 		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "PerspectiveHistory"); //$NON-NLS-1$
 		}
 		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 			IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
 			if (mruMemento != null) {
 				result.add(getEditorHistory().restoreState(mruMemento));
 			}
 		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 		}
 		// Get the child windows.
-		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
-		IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IMemento[] children =
+			memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
+		IPerspectiveRegistry reg =
+			WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 
-		AboutInfo newFeaturesWithPerspectives[] = getConfigurationInfo().collectNewFeaturesWithPerspectives();
+		AboutInfo newFeaturesWithPerspectives[] =
+			getConfigurationInfo().collectNewFeaturesWithPerspectives();
 		// Read the workbench windows.
 		for (int x = 0; x < children.length; x++) {
 			childMem = children[x];
@@ -1693,7 +1871,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			newWindow.create();
 			IPerspectiveDescriptor desc = null;
 			if (x < newFeaturesWithPerspectives.length)
-				desc = reg.findPerspectiveWithId(newFeaturesWithPerspectives[x].getWelcomePerspective());
+				desc =
+					reg.findPerspectiveWithId(
+						newFeaturesWithPerspectives[x].getWelcomePerspective());
 
 			result.merge(newWindow.restoreState(childMem, desc));
 			if (desc != null) {
@@ -1704,9 +1884,14 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 						page = pages[0];
 				}
 				if (page == null) {
-					IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+					IContainer root =
+						WorkbenchPlugin.getPluginWorkspace().getRoot();
 					try {
-						page = (WorkbenchPage) newWindow.openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);
+						page =
+							(WorkbenchPage) newWindow.openPage(
+								newFeaturesWithPerspectives[x]
+									.getWelcomePerspective(),
+								root);
 					} catch (WorkbenchException e) {
 						result.add(e.getStatus());
 					}
@@ -1715,7 +1900,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				}
 				newWindow.setActivePage(page);
 				try {
-					page.openEditor(new WelcomeEditorInput(newFeaturesWithPerspectives[x]), WELCOME_EDITOR_ID, true);
+					page.openEditor(
+						new WelcomeEditorInput(newFeaturesWithPerspectives[x]),
+						WELCOME_EDITOR_ID,
+						true);
 				} catch (PartInitException e) {
 					result.add(e.getStatus());
 				}
@@ -1734,7 +1922,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		String pluginId = "org.eclipse.ui"; //$NON-NLS-1$
 		String extensionPoint = "startup"; //$NON-NLS-1$
 
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+		IExtensionPoint point =
+			registry.getExtensionPoint(pluginId, extensionPoint);
 		IExtension[] extensions = point.getExtensions();
 		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
 		for (int i = 0; i < extensions.length; i++) {
@@ -1748,14 +1937,18 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	protected void startPlugins() {
 		Runnable work = new Runnable() {
 			IPreferenceStore store = getPreferenceStore();
-			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			final String pref =
+				store.getString(
+					IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 			public void run() {
 				IPluginDescriptor descriptors[] = getEarlyActivatedPlugins();
 				for (int i = 0; i < descriptors.length; i++) {
 					final IPluginDescriptor pluginDescriptor = descriptors[i];
 					SafeRunnable code = new SafeRunnable() {
 						public void run() throws Exception {
-							String id = pluginDescriptor.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
+							String id =
+								pluginDescriptor.getUniqueIdentifier()
+									+ IPreferenceConstants.SEPARATOR;
 							if (pref.indexOf(id) < 0) {
 								Plugin plugin = pluginDescriptor.getPlugin();
 								IStartup startup = (IStartup) plugin;
@@ -1778,7 +1971,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Runs the workbench.
 	 */
 	public Object run(Object arg) {
-		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 		String[] commandLineArgs = new String[0];
 		if (arg != null && arg instanceof String[])
 			commandLineArgs = (String[]) arg;
@@ -1797,16 +1990,17 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		}
 		//Workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
-		
+
 		//Set the priority higher than normal so as to be higher 
 		//than the JobManager.
-		Thread.currentThread().setPriority(Math.min(Thread.MAX_PRIORITY,Thread.NORM_PRIORITY + 1));
+		Thread.currentThread().setPriority(
+			Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
 		display.addListener(SWT.Close, new Listener() {
 			public void handleEvent(Event event) {
 				event.doit = close();
 			}
 		});
-        
+
 		try {
 			Window.IExceptionHandler handler = new ExceptionHandler(this);
 			Window.setExceptionHandler(handler);
@@ -1819,7 +2013,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				startPlugins();
 				display.asyncExec(new Runnable() {
 					public void run() {
-						UIStats.end(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+						UIStats.end(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 					}
 				});
 				runEventLoop(handler);
@@ -1850,9 +2044,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	 * Saves the current state of the workbench so it can be restored later on
 	 */
 	private IStatus saveState(IMemento memento) {
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsSaving"),null); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("Workbench.problemsSaving"), null); //$NON-NLS-1$
 
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
@@ -1861,7 +2053,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
 		for (int nX = 0; nX < windows.length; nX++) {
 			WorkbenchWindow window = (WorkbenchWindow) windows[nX];
-			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
+			IMemento childMem =
+				memento.createChild(IWorkbenchConstants.TAG_WINDOW);
 			result.merge(window.saveState(childMem));
 		}
 		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
@@ -1894,12 +2087,18 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	/**
 	 * @see IExecutableExtension
 	 */
-	public void setInitializationData(IConfigurationElement configElement, String propertyName, Object data) {
+	public void setInitializationData(
+		IConfigurationElement configElement,
+		String propertyName,
+		Object data) {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException {
+	public IWorkbenchPage showPerspective(
+		String perspectiveId,
+		IWorkbenchWindow window)
+		throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open, then the window
@@ -1908,7 +2107,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		if (win != null) {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
 			if (page != null) {
-				IPerspectiveDescriptor perspectives[] = page.getOpenedPerspectives();
+				IPerspectiveDescriptor perspectives[] =
+					page.getOpenedPerspectives();
 				for (int i = 0; i < perspectives.length; i++) {
 					IPerspectiveDescriptor persp = perspectives[i];
 					if (perspectiveId.equals(persp.getId())) {
@@ -1939,7 +2139,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 						if (perspectiveId.equals(persp.getDesc().getId())) {
 							Shell shell = win.getShell();
 							shell.open();
-							if(shell.getMinimized())
+							if (shell.getMinimized())
 								shell.setMinimized(false);
 							return page;
 						}
@@ -1953,7 +2153,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		// perspectives, and that window is given focus.
 		win = (WorkbenchWindow) window;
 		if (win != null) {
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store =
+				WorkbenchPlugin.getDefault().getPreferenceStore();
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 			IWorkbenchPage page = win.getActiveWorkbenchPage();
 			IPerspectiveDescriptor persp = null;
@@ -1963,10 +2164,13 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			// Only open a new window if user preference is set and the window
 			// has an active perspective.
 			if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
-				IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
+				IWorkbenchWindow newWindow =
+					openWorkbenchWindow(perspectiveId, input);
 				return newWindow.getActivePage();
 			} else {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(
+						perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -1985,7 +2189,11 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) throws WorkbenchException {
+	public IWorkbenchPage showPerspective(
+		String perspectiveId,
+		IWorkbenchWindow window,
+		IAdaptable input)
+		throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open and the same requested
@@ -2002,7 +2210,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 					inputSame = input.equals(page.getInput());
 				if (inputSame) {
 					inputSameAsWindow = true;
-					IPerspectiveDescriptor perspectives[] = page.getOpenedPerspectives();
+					IPerspectiveDescriptor perspectives[] =
+						page.getOpenedPerspectives();
 					for (int i = 0; i < perspectives.length; i++) {
 						IPerspectiveDescriptor persp = perspectives[i];
 						if (perspectiveId.equals(persp.getId())) {
@@ -2044,12 +2253,15 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		// on condition that the user preference is not to open perspectives in a new window.
 		win = (WorkbenchWindow) window;
 		if (inputSameAsWindow && win != null) {
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store =
+				WorkbenchPlugin.getDefault().getPreferenceStore();
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 
 			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
 				IWorkbenchPage page = win.getActiveWorkbenchPage();
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(
+						perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -2069,7 +2281,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			if (page != null)
 				persp = page.getPerspective();
 			if (persp == null) {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(
+						perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -2093,8 +2307,8 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	private void shutdown() {
 		WorkbenchColors.shutdown();
 		JFaceColors.disposeColors();
-		if(getDecoratorManager() != null)
-			((DecoratorManager) getDecoratorManager()).shutdown();
+		if (getDecoratorManager() != null)
+			 ((DecoratorManager) getDecoratorManager()).shutdown();
 	}
 
 	/**
@@ -2125,10 +2339,10 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 				return activatedWindow;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Sets the workbench window which was last known being the
 	 * active one, or <code>null</code>.
@@ -2149,9 +2363,13 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		Window[] wins = windowManager.getWindows();
 		for (int i = 0; i < wins.length; i++) {
 			if (autoBuildSetting) {
-				((WorkbenchWindow)wins[i]).getActionBuilder().removeManualIncrementalBuildAction();
+				((WorkbenchWindow) wins[i])
+					.getActionBuilder()
+					.removeManualIncrementalBuildAction();
 			} else {
-				((WorkbenchWindow)wins[i]).getActionBuilder().addManualIncrementalBuildAction();
+				((WorkbenchWindow) wins[i])
+					.getActionBuilder()
+					.addManualIncrementalBuildAction();
 			}
 		}
 	}
