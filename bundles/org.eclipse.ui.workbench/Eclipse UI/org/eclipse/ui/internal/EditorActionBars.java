@@ -11,11 +11,14 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.SubContributionManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
@@ -60,10 +63,15 @@ public class EditorActionBars extends SubActionBars2 {
     }
 
     private IToolBarManager coolItemToolBarMgr = null;
+
     private IEditorActionBarContributor editorContributor;
+
     private boolean enabledAllowed = true;
+
     private IEditorActionBarContributor extensionContributor;
+
     private int refCount;
+
     private ToolBarContributionItem toolBarContributionItem = null;
 
     private String type;
@@ -120,11 +128,27 @@ public class EditorActionBars extends SubActionBars2 {
         if (editorContributor != null) editorContributor.dispose();
         if (extensionContributor != null) extensionContributor.dispose();
 
-        // Dispose of the Cool Item that is created for this editor.
-        // For action sets we just make the cool item invisible. Here we
-        // will actually delete all the contribuitons items in the tool bar
-        // manager that is in the tool bar conribution item.
+        /*
+         * Dispose of the contribution item, but also make sure that no one
+         * else is holding on to it. In this case, go through the
+         * SubCoolBarManager to its parent (the real CoolBarManager), and
+         * replace the reference with a placeholder.
+         */
         if (toolBarContributionItem != null) {
+            // Create a placeholder and place it in the cool bar manager.
+            ICoolBarManager coolBarManager = getCoolBarManager();
+            if (coolBarManager instanceof SubContributionManager) {
+                SubContributionManager subManager = (SubContributionManager) coolBarManager;
+                IContributionManager manager = subManager.getParent();
+                if (manager instanceof ContributionManager) {
+                    final IContributionItem replacementItem = new PlaceholderContributionItem(
+                            toolBarContributionItem);
+                    ((ContributionManager) manager).replaceItem(replacementItem
+                            .getId(), replacementItem);
+                }
+            }
+
+            // Dispose of the replaced item.
             toolBarContributionItem.dispose();
         }
         toolBarContributionItem = null;
@@ -178,15 +202,39 @@ public class EditorActionBars extends SubActionBars2 {
 
         if (toolBarContributionItem == null) {
             IContributionItem foundItem = coolBarManager.find(type);
-            if (foundItem instanceof ToolBarContributionItem) {
+            if ((foundItem instanceof ToolBarContributionItem)) {
                 toolBarContributionItem = (ToolBarContributionItem) foundItem;
-                coolItemToolBarMgr = toolBarContributionItem.getToolBarManager();
+                coolItemToolBarMgr = toolBarContributionItem
+                        .getToolBarManager();
+                if (coolItemToolBarMgr == null) {
+                    coolItemToolBarMgr = new ToolBarManager(coolBarManager
+                            .getStyle());
+                    toolBarContributionItem = new ToolBarContributionItem(
+                            coolItemToolBarMgr, type);
+                    // Add editor item to group
+                    coolBarManager.prependToGroup(
+                            IWorkbenchActionConstants.GROUP_EDITOR,
+                            toolBarContributionItem);
+                }
             } else {
-                coolItemToolBarMgr = new ToolBarManager(coolBarManager.getStyle());
-                toolBarContributionItem = new ToolBarContributionItem(coolItemToolBarMgr, type);
-                // Add editor item to group
-                coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
-                        toolBarContributionItem);
+                coolItemToolBarMgr = new ToolBarManager(coolBarManager
+                        .getStyle());
+                if ((coolBarManager instanceof ContributionManager)
+                        && (foundItem instanceof PlaceholderContributionItem)) {
+                    PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
+                    toolBarContributionItem = placeholder
+                            .createToolBarContributionItem(coolItemToolBarMgr);
+                    // Restore from a placeholder
+                    ((ContributionManager) coolBarManager).replaceItem(type,
+                            toolBarContributionItem);
+                } else {
+                    toolBarContributionItem = new ToolBarContributionItem(
+                            coolItemToolBarMgr, type);
+                    // Add editor item to group
+                    coolBarManager.prependToGroup(
+                            IWorkbenchActionConstants.GROUP_EDITOR,
+                            toolBarContributionItem);
+                }
             }
             ((ToolBarManager) coolItemToolBarMgr).setOverrides(new Overrides());
             toolBarContributionItem.setVisible(getActive());
@@ -204,7 +252,8 @@ public class EditorActionBars extends SubActionBars2 {
      * @return <code>true</code> if the manager is visible
      */
     private boolean isVisible() {
-        if (toolBarContributionItem != null) return toolBarContributionItem.isVisible();
+        if (toolBarContributionItem != null)
+                return toolBarContributionItem.isVisible();
         return false;
     }
 
@@ -218,8 +267,10 @@ public class EditorActionBars extends SubActionBars2 {
         super.partChanged(part);
         if (part instanceof IEditorPart) {
             IEditorPart editor = (IEditorPart) part;
-            if (editorContributor != null) editorContributor.setActiveEditor(editor);
-            if (extensionContributor != null) extensionContributor.setActiveEditor(editor);
+            if (editorContributor != null)
+                    editorContributor.setActiveEditor(editor);
+            if (extensionContributor != null)
+                    extensionContributor.setActiveEditor(editor);
         }
     }
 
@@ -241,7 +292,8 @@ public class EditorActionBars extends SubActionBars2 {
     private void setActive(boolean set, boolean forceVisibility) {
         basicSetActive(set);
         if (isSubMenuManagerCreated())
-                ((EditorMenuManager) getMenuManager()).setVisible(set, forceVisibility);
+                ((EditorMenuManager) getMenuManager()).setVisible(set,
+                        forceVisibility);
 
         if (isSubStatusLineManagerCreated())
                 ((SubStatusLineManager) getStatusLineManager()).setVisible(set);

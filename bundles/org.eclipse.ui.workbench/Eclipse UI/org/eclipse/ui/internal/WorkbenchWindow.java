@@ -1691,18 +1691,33 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							IWorkbenchConstants.TAG_ITEM_TYPE,
 							IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
 				} else {
-					// Assume that it is a ToolBarContributionItem
+				    // Store the identifier.
 					coolItemMem.putString(
 							IWorkbenchConstants.TAG_ITEM_TYPE,
 							IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
-					ToolBarContributionItem tbItem = (ToolBarContributionItem) item;
-					tbItem.saveWidgetState();
-					coolItemMem.putInteger(
-							IWorkbenchConstants.TAG_ITEM_X,
-							tbItem.getCurrentWidth());
-					coolItemMem.putInteger(
-							IWorkbenchConstants.TAG_ITEM_Y,
-							tbItem.getCurrentHeight());
+					
+					/* Retrieve a reasonable approximation of the height and
+					 * width, if possible.
+					 */
+					final int height;
+					final int width;
+					if (item instanceof ToolBarContributionItem) {
+					    ToolBarContributionItem toolBarItem = (ToolBarContributionItem) item;
+					    toolBarItem.saveWidgetState();
+					    height = toolBarItem.getCurrentHeight();
+					    width = toolBarItem.getCurrentWidth();
+					} else if (item instanceof PlaceholderContributionItem) {
+					    PlaceholderContributionItem placeholder = (PlaceholderContributionItem) item;
+					    height = placeholder.getHeight();
+					    width = placeholder.getWidth();
+					} else {
+					    height = -1;
+					    width = -1;
+					}
+					
+					// Store the height and width.
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X, width);
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y, height); 
 				}
 			}
 		}
