@@ -18,18 +18,21 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.link.ILinkedListener;
+import org.eclipse.jface.text.link.InclusivePositionUpdater;
 import org.eclipse.jface.text.link.LinkedEnvironment;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
@@ -38,8 +41,11 @@ import org.eclipse.jface.text.link.ProposalPosition;
 
 
 /**
- * A template proposal.
- * TODO make API
+ * A template proposal. 
+ * 
+ * XXX This is work in progress. 
+ * 
+ * @since 3.0
  */
 public class TemplateProposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 
@@ -121,6 +127,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			String templateString= templateBuffer.getString();	
 			document.replace(start, end - start, templateString);	
 			
+			
 			// translate positions
 			LinkedEnvironment env= new LinkedEnvironment();
 			TemplateVariable[] variables= templateBuffer.getVariables();
@@ -139,7 +146,10 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				String[] values= variable.getValues();
 				ICompletionProposal[] proposals= new ICompletionProposal[values.length];
 				for (int j= 0; j < values.length; j++) {
-					proposals[j]= new CompletionProposal(values[j], offsets[0] + start, length, offsets[0] + length);
+					ensurePositionCategoryInstalled(document, env);
+					Position pos= new Position(offsets[0] + start, length);
+					document.addPosition(getCategory(), pos);
+					proposals[j]= new EnhancedCompletionProposal(values[j], pos, length);
 				}
 				
 				for (int j= 0; j != offsets.length; j++)
@@ -163,13 +173,45 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				fSelectedRegion= new Region(getCaretOffset(templateBuffer) + start, 0);
 			
 		} catch (BadLocationException e) {
-//			JavaPlugin.log(e);
+			openErrorDialog(viewer.getTextWidget().getShell(), e);		    
+			fSelectedRegion= fRegion;
+		} catch (BadPositionCategoryException e) {
 			openErrorDialog(viewer.getTextWidget().getShell(), e);		    
 			fSelectedRegion= fRegion;
 		}
 
 	}	
 	
+	private void ensurePositionCategoryInstalled(final IDocument document, LinkedEnvironment env) {
+		if (!document.containsPositionCategory(getCategory())) {
+			document.addPositionCategory(getCategory());
+			final InclusivePositionUpdater updater= new InclusivePositionUpdater(getCategory());
+			document.addPositionUpdater(updater);
+			
+			env.addLinkedListener(new ILinkedListener() {
+
+				/*
+				 * @see org.eclipse.jface.text.link.ILinkedListener#left(org.eclipse.jface.text.link.LinkedEnvironment, int)
+				 */
+				public void left(LinkedEnvironment environment, int flags) {
+					try {
+						document.removePositionCategory(getCategory());
+					} catch (BadPositionCategoryException e) {
+						// ignore
+					}
+					document.removePositionUpdater(updater);
+				}
+
+				public void suspend(LinkedEnvironment environment) {}
+				public void resume(LinkedEnvironment environment, int flags) {}
+			});
+		}
+	}
+
+	private String getCategory() {
+		return "TemplateProposalCategory_" + toString(); //$NON-NLS-1$
+	}
+
 	private int getCaretOffset(TemplateBuffer buffer) {
 	
 	    TemplateVariable[] variables= buffer.getVariables();
