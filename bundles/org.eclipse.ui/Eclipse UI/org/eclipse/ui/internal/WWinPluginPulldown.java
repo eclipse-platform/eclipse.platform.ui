@@ -4,11 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.*;
 
 /**
  * A workbench window pulldown action.  
@@ -26,6 +26,11 @@ public class WWinPluginPulldown extends WWinPluginAction {
 			}
 		}
 		public Menu getMenu(Menu parent) {
+			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
+			if (delegate instanceof IWorkbenchWindowPulldownDelegate2) {
+				IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2)delegate;
+				return delegate2.getMenu(parent);
+			}
 			return null;
 		}
 		public void dispose() {

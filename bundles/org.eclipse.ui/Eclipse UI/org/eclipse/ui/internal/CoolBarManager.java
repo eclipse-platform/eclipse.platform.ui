@@ -235,7 +235,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		layout.items = newItems;
 		layout.itemSizes = coolBar.getItemSizes();
 		layout.itemWrapIndices = coolBar.getWrapIndices();
-		layout.locked = coolBar.getLocked();
 
 		//System.out.println("get layout " + layout.toString());
 
@@ -369,7 +368,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				coolItem.setPreferredSize(coolSize);
 				coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
 			}
-			coolBar.setLocked(false);
 			coolBar.setWrapIndices(new int[] {
 			});
 			return;
@@ -477,7 +475,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		//		System.out.println();
 
 		coolBar.setRedraw(false);
-		coolBar.setLocked(layout.locked);
 		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
 
 		// restore the wrap indices after the new item order is restored, wrap on the same items that 

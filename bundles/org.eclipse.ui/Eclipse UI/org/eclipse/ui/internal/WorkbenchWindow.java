@@ -840,6 +840,18 @@ public boolean isApplicationMenu(String menuID) {
 	return WorkbenchActionBuilder.isContainerMenu(menuID);
 }
 /**
+ * Locks/unlocks the CoolBar for the workbench.
+ * 
+ * @param lock whether the CoolBar should be locked or unlocked
+ */
+/* package */ void lockToolBar(boolean lock) {
+	IToolBarManager toolsMgr = getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		coolBarMgr.lockLayout(lock);
+	}
+}
+/**
  * Called when this window is about to be closed.
  *
  * Subclasses may overide to add code that returns <code>false</code> 

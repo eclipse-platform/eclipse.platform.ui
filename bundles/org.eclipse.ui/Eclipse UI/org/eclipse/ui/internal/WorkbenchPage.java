@@ -1433,19 +1433,6 @@ public boolean isZoomed() {
 	return persp.getPresentation().isZoomed();
 }
 /**
- * Locks/unlocks the CoolBar for the specified perspective.
- * 
- * @param persp the perspective whose coolbar should be locked or unlocked
- * @param lock whether the CoolBar should be locked or unlocked
- */
-/* package */ void lockToolBar(Perspective persp, boolean lock) {
-	IToolBarManager toolsMgr = window.getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.lockLayout(lock);
-	}
-}
-/**
  * Returns <code>true</code> if the window needs to unzoom for the given
  * IWorkbenchPart to be seen by the user. Returns false otherwise.
  * 

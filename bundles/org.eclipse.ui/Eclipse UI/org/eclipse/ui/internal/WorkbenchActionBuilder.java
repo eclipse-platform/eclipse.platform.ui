@@ -220,21 +220,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				enableActions(page.getPerspective() != null);
 			}
 			public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-				CoolBarLayout layout = ((WorkbenchPage) page).getToolBarLayout();
-				boolean locked = false;
-				if (layout != null) {
-					locked = layout.locked;
-				}
-				lockToolBarAction.setChecked(locked);
 			}
 			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(true);
-				CoolBarLayout layout = ((WorkbenchPage) page).getToolBarLayout();
-				boolean locked = false;
-				if (layout != null) {
-					locked = layout.locked;
-				}
-				lockToolBarAction.setChecked(locked);
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}

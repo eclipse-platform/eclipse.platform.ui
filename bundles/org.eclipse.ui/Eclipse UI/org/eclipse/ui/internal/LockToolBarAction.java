@@ -8,8 +8,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * The <code>LockToolBarAction</code> is used to lock the toolbar for the
- * active perspective in the workbench window's active page.
+ * The <code>LockToolBarAction</code> is used to lock the toolbars for the
+ * workbench.  The toolbar for all perspectives is locked.
  */
 public class LockToolBarAction extends Action {
 	private WorkbenchWindow window;
@@ -32,13 +32,7 @@ public class LockToolBarAction extends Action {
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-		if (page != null) {
-			Perspective persp = page.getActivePerspective();
-			if (persp != null) {
-				boolean locked = isChecked();
-				page.lockToolBar(persp, locked);
-			}
-		}
+		boolean locked = isChecked();
+		window.lockToolBar(locked);
 	}
 }
