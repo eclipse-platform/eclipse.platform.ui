@@ -50,8 +50,7 @@ public interface ILaunchConfigurationTab {
 
 	/**
 	 * Creates the top level control for this launch configuration
-	 * tab under the given parent composite. Marks the beginning
-	 * of this tab's lifecycle. This method is called once on
+	 * tab under the given parent composite.  This method is called once on
 	 * tab creation, after <code>setLaunchConfigurationDialog</code>
 	 * is called.
 	 * <p>
