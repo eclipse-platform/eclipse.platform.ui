@@ -435,6 +435,16 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * </p>
 	 *  
 	 * @return the name of a charset
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource could not be read.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
+	 * <li> The corresponding location in the local file system
+	 *       is occupied by a directory.</li>
+	 * </ul>
 	 * @see IFile#getCharset(boolean) 
 	 * @see IEncodedStorage#getCharset()
 	 * @see IContainer#getDefaultCharset()
@@ -466,6 +476,16 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * </p>
 	 *  
 	 * @return the name of a charset, or <code>null</code>
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource could not be read.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
+	 * <li> The corresponding location in the local file system
+	 *       is occupied by a directory.</li>
+	 * </ul>
 	 * @see IEncodedStorage#getCharset()
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
@@ -489,10 +509,12 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @throws CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
+	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> The workspace is not in sync with the corresponding location
 	 *       in the local file system.</li>
-	 * <li> This resource is not local.</li>
+	 * <li> The corresponding location in the local file system
+	 *       is occupied by a directory.</li>
 	 * </ul> 
 	 * @see IContentDescription
 	 * @see IContentTypeManager#getDescriptionFor(InputStream, String, QualifiedName[])
