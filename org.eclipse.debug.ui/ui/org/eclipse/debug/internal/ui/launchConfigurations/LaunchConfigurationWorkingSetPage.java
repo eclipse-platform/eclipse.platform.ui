@@ -235,6 +235,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 	private void handleCheckStateChange(final CheckStateChangedEvent event) {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
+				fTree.getControl().setRedraw(false);
 				IAdaptable element= (IAdaptable)event.getElement();
 				boolean state= event.getChecked();		
 				if (isExpandable(element)) {
@@ -243,6 +244,7 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 					
 				updateParentState(element, state);
 				validateInput();
+				fTree.getControl().setRedraw(true);
 			}
 		});
 	}
@@ -251,21 +253,17 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 		if (!(parent instanceof IAdaptable)) {
 			return;
 		}
-		
-		Object[] children= fTreeContentProvider.getChildren(parent);
-		for (int i= children.length - 1; i >= 0; i--) {
-			Object element= children[i];
-			if (state) {
-				fTree.setChecked(element, true);
-				fTree.setGrayed(element, false);
-			}
-			else {
-				fTree.setGrayChecked(element, false);
-			}
-			if (isExpandable(element)) {
+
+		fTree.setGrayed(parent, false);
+		fTree.setChecked(parent, state);
+		if (isExpandable(parent)) {
+			Object[] children= fTreeContentProvider.getChildren(parent);
+			for (int i= children.length - 1; i >= 0; i--) {
+				Object element= children[i];	
 				setSubtreeChecked(element, state, true);
 			}
 		}
+
 	}
 
 	private void updateParentState(Object child, boolean baseChildState) {
