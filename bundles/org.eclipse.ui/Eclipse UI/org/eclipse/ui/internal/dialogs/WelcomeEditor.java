@@ -486,8 +486,10 @@ public void dispose() {
 		busyCursor.dispose();
 	if (handCursor != null)
 		handCursor.dispose();
-	JFacePreferences.getPreferenceStore().
-		removePropertyChangeListener(this.colorListener);
+	if (this.colorListener != null) {
+		JFacePreferences.getPreferenceStore().
+			removePropertyChangeListener(this.colorListener);
+	}
 }
 /* (non-Javadoc)
  * Saves the contents of this editor.
