@@ -13,18 +13,16 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.KeyEvent;
 
 /**
- * The key binding service is responsible for invoking an action
- * when the action's sequence of accelerator keys is pressed. The
- * accelerator key sequence assigned to an action is defined by the
- * extension point <code>org.eclipse.ui.acceleratorSets</code> and the
- * active accelerator configuration choosen by the user.
+ * The key binding service allows one to query or set the scope of Eclipse
+ * for the purposes of resolving key assignments to commands, and to register
+ * actions to handle specific commands. See the <code>org.eclipse.ui.commands</code>
+ * extension point for details.
  * <p>
  * A participating workbench part is responsible to register all
- * its actions with the service. The part is also responsible to
- * set the current scope.
- * </p><p>
- * This interface is not intended to be implemented or extended
- * by clients.
+ * its actions with this service. The part is also responsible to set the current scope.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  * @since 2.0
  */
