@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
@@ -49,6 +50,15 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		return false;
 	}
 	
+	public Object getRealTask() {
+		Task task= getTask();
+		if (task instanceof UnknownElement) {
+			task.maybeConfigure();
+			return ((UnknownElement)task).getRealThing();
+		}
+		return task;
+	}
+	
 	/*
 	 * Sets the Java class path in org.apache.tools.ant.types.Path
 	 * so that the classloaders defined by these "definer" tasks will have the 
@@ -73,5 +83,13 @@ public class AntDefiningTaskNode extends AntTaskNode {
 
 		org.apache.tools.ant.types.Path systemClasspath= new org.apache.tools.ant.types.Path(null, buff.substring(0, buff.length() - 2));
 		org.apache.tools.ant.types.Path.systemClasspath= systemClasspath;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#setParent(org.eclipse.ant.internal.ui.editor.model.AntElementNode)
+	 */
+	protected void setParent(AntElementNode node) {
+		super.setParent(node);
+		getProjectNode().addDefiningTaskNode(this);
 	}
 }

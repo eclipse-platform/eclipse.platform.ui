@@ -11,6 +11,8 @@
 
 package org.eclipse.ant.internal.ui.editor.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
@@ -23,6 +25,7 @@ public class AntProjectNode extends AntElementNode {
 
 	private Project fProject;
 	private AntModel fModel;
+	private Map fNameToDefiningNodeMap;
 	
 	public AntProjectNode(Project project, AntModel antModel) {
 		super("project"); //$NON-NLS-1$
@@ -67,6 +70,21 @@ public class AntProjectNode extends AntElementNode {
 		fProject.setDefault(null);
 		fProject.setDescription(null);
 		fProject.setName(""); //$NON-NLS-1$
+		fNameToDefiningNodeMap= null;
 		setProblemSeverity(XMLProblem.NO_PROBLEM);
+	}
+	
+	public void addDefiningTaskNode(AntDefiningTaskNode node) {
+		if (fNameToDefiningNodeMap == null) {
+			fNameToDefiningNodeMap= new HashMap();
+		}
+		fNameToDefiningNodeMap.put(node.getLabel(), node);
+	}
+	
+	public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
+		if (fNameToDefiningNodeMap != null) {
+			return (AntDefiningTaskNode)fNameToDefiningNodeMap.get(nodeName);
+		}
+		return null;
 	}
 }

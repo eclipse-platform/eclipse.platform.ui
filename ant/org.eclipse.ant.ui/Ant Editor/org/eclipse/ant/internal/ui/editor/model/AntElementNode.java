@@ -185,13 +185,21 @@ public class AntElementNode {
 	}
 
 	/**
-     * Returns the parent XmlElement.
+     * Returns the parent <code>AntElementNode</code>.
      * 
      * @return the parent or <code>null</code> if this element has no parent.
      */
     public AntElementNode getParentNode() {
         return parent;
-    }    
+    } 
+    
+    public AntProjectNode getProjectNode() {
+    	AntElementNode projectParent= getParentNode();
+    	while (projectParent != null && !(projectParent instanceof AntProjectNode)) {
+    		projectParent= projectParent.getParentNode();
+    	}
+    	return (AntProjectNode)projectParent;
+    }
     
     
     /**
@@ -201,15 +209,18 @@ public class AntElementNode {
      * 
      */
     public void addChildNode(AntElementNode childElement) {
-        childElement.parent = this;
+    	childElement.setParent(this);
         if (childNodes == null) {
         	childNodes= new ArrayList();
         }
         childNodes.add(childElement);
     }
+    
+	protected void setParent(AntElementNode node) {
+		parent= node;
+	}
 
-
-    /**
+	/**
 	 * Sets the absolute file system path of the file this element is defined
 	 * within.
 	 */
