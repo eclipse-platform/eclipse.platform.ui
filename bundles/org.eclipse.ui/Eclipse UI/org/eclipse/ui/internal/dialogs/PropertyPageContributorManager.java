@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.misc.Sorter;
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -21,6 +22,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	private boolean contributorsLoaded=false;
 	
 	private Sorter sorter = new Sorter() {
+		private Collator collator = Collator.getInstance();
+		
 		public boolean compare(Object o1, Object o2) {
 			// Make sure the workbench info page is always at the top.
 			RegistryPageContributor c1 = (RegistryPageContributor)o1;
@@ -43,7 +46,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			String s1 = c1.getPageName().toUpperCase();
 			String s2 = c2.getPageName().toUpperCase();
 			//Return true if c2 is 'greater than' c1
-			return s2.compareTo(s1) > 0;
+			return collator.compare(s2, s1) > 0;
 		}
 	};
 /**
