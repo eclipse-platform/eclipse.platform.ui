@@ -73,7 +73,7 @@ public class SmartEnterAction extends TextEditorAction {
 		if (!(ed instanceof AbstractTextEditor))
 			return;
 		
-		if (!validateEdit())
+		if (!validateEditorInputState())
 			return;
 		
 		AbstractTextEditor editor= (AbstractTextEditor) ed;

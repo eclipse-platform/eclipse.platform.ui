@@ -70,7 +70,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		if (editor == null)
 			return;
 
-		if (!validateEdit())
+		if (!validateEditorInputState())
 			return;
 
 		Display display= null;

@@ -107,7 +107,7 @@ public final class TextOperationAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		if (!fRunsOnReadOnly && !validateEdit())
+		if (!fRunsOnReadOnly && !validateEditorInputState())
 			return;
 			
 		Display display= null;

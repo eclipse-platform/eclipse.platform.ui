@@ -130,7 +130,7 @@ public class DeleteLineAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		if (!validateEdit())
+		if (!validateEditorInputState())
 			return;
 
 		IDocument document= getDocument(editor);

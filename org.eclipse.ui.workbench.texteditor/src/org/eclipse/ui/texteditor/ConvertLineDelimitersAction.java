@@ -81,7 +81,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			if (editor == null)
 				return;
 
-			if (!validateEdit())
+			if (!validateEditorInputState())
 				return;
 				
 			Object adapter= editor.getAdapter(IRewriteTarget.class);

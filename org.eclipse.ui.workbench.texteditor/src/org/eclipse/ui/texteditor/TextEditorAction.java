@@ -97,7 +97,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 * implements <code>ITextEditorExtension2</code>, it returns {@link ITextEditorExtension#isEditorInputReadOnly()};<br>
 	 * else, {@link ITextEditor#isEditable()} is returned, or <code>false</code> if the editor is <code>null</code>.</p>
 	 * 
-	 * <p>There is only a difference to {@link #validateEdit()} if the editor implements
+	 * <p>There is only a difference to {@link #validateEditorInputState()} if the editor implements
 	 * <code>ITextEditorExtension2</code>.</p>
 	 * 
 	 * @return <code>true</code> if a modifying action should be enabled, <code>false</code> otherwise
@@ -130,7 +130,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 * @return <code>true</code> if a modifying action can proceed to modify the underlying document, <code>false</code> otherwise
 	 * @since 3.0 
 	 */
-	protected boolean validateEdit() {
+	protected boolean validateEditorInputState() {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension2)
 			return ((ITextEditorExtension2) editor).validateEditorInputState();

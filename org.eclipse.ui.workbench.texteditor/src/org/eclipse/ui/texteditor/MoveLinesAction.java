@@ -359,7 +359,7 @@ public class MoveLinesAction extends TextEditorAction {
 		if (fEditor == null)
 			return;
 		
-		if (!validateEdit())
+		if (!validateEditorInputState())
 			return;
 
 		ISourceViewer viewer= fEditor.getSourceViewer();

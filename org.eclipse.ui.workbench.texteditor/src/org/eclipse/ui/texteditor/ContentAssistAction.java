@@ -69,7 +69,7 @@ public final class ContentAssistAction extends TextEditorAction {
 		if (fOperationTarget != null) {
 			
 			ITextEditor editor= getTextEditor();
-			if (editor != null && validateEdit()) {
+			if (editor != null && validateEditorInputState()) {
 				
 				Display display= null;
 				

@@ -60,7 +60,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	 */
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null || !validateEdit())
+		if (editor == null || !validateEditorInputState())
 			return;
 		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
 		if (target != null)
