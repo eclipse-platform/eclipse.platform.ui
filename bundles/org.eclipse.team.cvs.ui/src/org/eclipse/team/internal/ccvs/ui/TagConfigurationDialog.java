@@ -45,6 +45,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -67,6 +68,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -693,11 +695,11 @@ public class TagConfigurationDialog extends Dialog {
 		refreshButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					try {
-						CVSUIPlugin.runWithProgress(shell, true /*cancelable*/, new IRunnableWithProgress() {
+						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								try {
 									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(folder, false /* replace */, true, monitor);
-									runnable.run();
+									Display.getDefault().asyncExec(runnable);
 								} catch (TeamException e) {
 									throw new InvocationTargetException(e);
 								}
