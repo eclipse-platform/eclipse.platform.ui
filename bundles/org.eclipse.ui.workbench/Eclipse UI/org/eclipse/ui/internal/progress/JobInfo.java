@@ -153,6 +153,13 @@ class JobInfo extends JobTreeElement {
 	boolean isJobInfo() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
+	 */
+	void clearTaskInfo() {
+		taskInfo = null;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
