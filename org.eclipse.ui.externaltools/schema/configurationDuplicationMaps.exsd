@@ -80,6 +80,7 @@ of the type &quot;org.eclipse.ui.externaltools.ProgramLaunchConfigurationType&qu
 configuration of the type&quot;org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType&quot;
 should be created.
 
+&lt;pre&gt;
 &lt;extension
       point=&quot;org.eclipse.ui.externaltools.configurationDuplicationMaps&quot;&gt;
    &lt;configurationMap
@@ -87,6 +88,7 @@ should be created.
          builderType=&quot;org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType&quot;&gt;
    &lt;/configurationMap&gt;
 &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
    
