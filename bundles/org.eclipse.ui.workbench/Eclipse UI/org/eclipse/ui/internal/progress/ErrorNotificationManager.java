@@ -23,19 +23,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.progress.WorkbenchJob;
-
 import org.eclipse.ui.internal.ExceptionHandler;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The ErrorNotificationManager is the class that manages the display of
@@ -160,11 +156,7 @@ public class ErrorNotificationManager {
         if (workbench instanceof Workbench
                 && ((Workbench) workbench).isClosing())
             return Status.CANCEL_STATUS;
-        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-
-        if (window == null)
-            return Status.CANCEL_STATUS;
-        dialog = new JobErrorDialog(window.getShell(), title, msg, errorInfo, IStatus.OK
+        dialog = new JobErrorDialog(null, title, msg, errorInfo, IStatus.OK
                 | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
         try {
 	        dialog.open();
