@@ -17,6 +17,7 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.ui.internal.views.properties.IDEPropertiesMessages;
 
@@ -131,6 +132,7 @@ public class ResourcePropertySource implements IPropertySource {
      * @param res the resource for which this is a property source
      */
     public ResourcePropertySource(IResource res) {
+        Assert.isNotNull(res);
         this.element = res;
     }
 

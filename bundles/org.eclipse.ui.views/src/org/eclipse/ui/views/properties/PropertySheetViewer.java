@@ -563,18 +563,21 @@ class PropertySheetViewer extends Viewer {
         // check each entry for the filter
         List filteredEntries = new ArrayList(entries.length);
         for (int i = 0; i < entries.length; i++) {
-            String[] filters = entries[i].getFilters();
-            boolean expert = false;
-            if (filters != null) {
-                for (int j = 0; j < filters.length; j++) {
-                    if (filters[j].equals(IPropertySheetEntry.FILTER_ID_EXPERT)) {
-                        expert = true;
-                        break;
+            IPropertySheetEntry entry = entries[i];
+            if (entry != null) {
+                String[] filters = entry.getFilters();
+                boolean expert = false;
+                if (filters != null) {
+                    for (int j = 0; j < filters.length; j++) {
+                        if (filters[j].equals(IPropertySheetEntry.FILTER_ID_EXPERT)) {
+                            expert = true;
+                            break;
+                        }
                     }
                 }
+                if (!expert)
+                    filteredEntries.add(entry);
             }
-            if (!expert)
-                filteredEntries.add(entries[i]);
         }
         return filteredEntries;
     }

@@ -232,7 +232,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         List descriptors = computeMergedPropertyDescriptors();
 
         // rebuild child entries using old when possible
-        childEntries = new PropertySheetEntry[descriptors.size()];
+        PropertySheetEntry[] newEntries = new PropertySheetEntry[descriptors.size()];
 		for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
             // create new entry
@@ -241,8 +241,10 @@ public class PropertySheetEntry implements IPropertySheetEntry {
             entry.setParent(this);
             entry.setPropertySourceProvider(propertySourceProvider);
             entry.refreshValues();
-            childEntries[i] = entry;
+            newEntries[i] = entry;
         }
+        // only assign if successful
+        childEntries = newEntries;
     }
 
 	/**
@@ -269,13 +271,15 @@ public class PropertySheetEntry implements IPropertySheetEntry {
             editor = null;
         }
         // recursive call to dispose children
-        if (childEntries != null)
-            for (int i = 0; i < childEntries.length; i++) {
+        PropertySheetEntry[] entriesToDispose = childEntries;
+        childEntries = null;
+        if (entriesToDispose != null)
+            for (int i = 0; i < entriesToDispose.length; i++) {
                 // an error in a property source may cause refreshChildEntries
                 // to fail. Since the Workbench handles such errors we
                 // can be left in a state where a child entry is null.
-                if (childEntries[i] != null)
-                    childEntries[i].dispose();
+                if (entriesToDispose[i] != null)
+                    entriesToDispose[i].dispose();
             }
     }
 
@@ -514,15 +518,20 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         // cache old entries by their descriptor id
         Map entryCache = new HashMap(childEntries.length * 2 + 1);
         for (int i = 0; i < childEntries.length; i++) {
-            entryCache.put(childEntries[i].getDescriptor().getId(),
-                    childEntries[i]);
+            PropertySheetEntry childEntry = childEntries[i];
+            if (childEntry != null) {
+                entryCache.put(childEntry.getDescriptor().getId(), childEntry);
+            }
         }
 
         // create a list of entries to dispose
         List entriesToDispose = new ArrayList(Arrays.asList(childEntries));
 
+        // clear the old entries
+        this.childEntries = null;
+
         // rebuild child entries using old when possible
-        childEntries = new PropertySheetEntry[descriptors.size()];
+        PropertySheetEntry[] newEntries = new PropertySheetEntry[descriptors.size()];
         boolean entriesChanged = descriptors.size() != entryCache.size();
         for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
@@ -542,9 +551,12 @@ public class PropertySheetEntry implements IPropertySheetEntry {
                 entriesChanged = true;
             }
             entry.refreshValues();
-            childEntries[i] = entry;
+            newEntries[i] = entry;
         }
 
+        // only assign if successful
+        this.childEntries = newEntries;
+        
         if (entriesChanged)
             fireChildEntriesChanged();
 
