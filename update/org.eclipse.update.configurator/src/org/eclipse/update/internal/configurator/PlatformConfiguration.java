@@ -541,6 +541,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			w = new PrintWriter(os);
 			try {
 				write(w);
+				//saveAsXML(new File(cfigDir, "platform.xml"));
 			} finally {
 				w.close();
 			}
@@ -1766,6 +1767,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			Transformer transformer=transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 
@@ -1792,6 +1794,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -1803,6 +1807,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void saveSiteAsXML(SiteEntry site, Element parent) {
 		Document doc = parent.getOwnerDocument();
 		Element siteElement = doc.createElement(CFG_SITE);
+		parent.appendChild(siteElement);
+		
 		siteElement.setAttribute(CFG_URL, site.getURL().toString());
 		siteElement.setAttribute(CFG_STAMP, Long.toString(site.getChangeStamp()));
 		siteElement.setAttribute(CFG_FEATURE_STAMP, Long.toString(site.getFeaturesChangeStamp()));
@@ -1825,8 +1831,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			listElement.setNodeValue(list[i]);
 			siteElement.appendChild(listElement);
 		}
-		parent.appendChild(siteElement);
-
 		// note: we don't save features inside the site element.
 	}
 	
@@ -1837,17 +1841,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void saveFeatureAsXML(IFeatureEntry feature, Element parent) {
 		Document doc = parent.getOwnerDocument();
 		Element featureElement = doc.createElement(CFG_FEATURE_ENTRY);
+		parent.appendChild(featureElement);
 	
 		// write out feature entry settings
-		featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, feature.getFeatureIdentifier()); 
+		if (feature.getFeatureIdentifier() != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, feature.getFeatureIdentifier()); 
 		if (feature.canBePrimary())
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true"); 
-		featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, feature.getFeatureVersion()); 
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true");
+		if (feature.getFeatureVersion() != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, feature.getFeatureVersion()); 
 		if (feature.getFeatureVersion() != null && !feature.getFeatureVersion().equals(feature.getFeaturePluginVersion()))
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_VERSION, feature.getFeaturePluginVersion()); 
 		if (feature.getFeatureIdentifier() != null && !feature.getFeatureIdentifier().equals(feature.getFeaturePluginIdentifier()))
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, feature.getFeaturePluginIdentifier()); 
-		featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, feature.getFeatureApplication()); 
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, feature.getFeaturePluginIdentifier());
+		if (feature.getFeatureApplication() != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, feature.getFeatureApplication()); 
 		URL[] roots = feature.getFeatureRootURLs();
 		for (int i=0; i<roots.length; i++) {
 			Element rootElement = doc.createElement(CFG_FEATURE_ENTRY_ROOT);

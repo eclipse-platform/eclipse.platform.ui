@@ -209,7 +209,7 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 	}
 
-	// Temp method
+
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		ArrayList bundlesToUninstall = new ArrayList();
 		for (int i=1; i<cachedBundles.length; i++) {
