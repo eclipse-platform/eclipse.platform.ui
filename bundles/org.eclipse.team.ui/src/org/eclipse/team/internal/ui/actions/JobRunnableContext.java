@@ -13,14 +13,21 @@ package org.eclipse.team.internal.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.*;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This runnable context executes it's operation in the context of a background job.
@@ -82,18 +89,7 @@ public class JobRunnableContext implements ITeamRunnableContext {
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
-		schedule(job, site);
-	}
-
-	private void schedule(Job job, IWorkbenchSite site) {
-		if (site != null) {
-			IWorkbenchSiteProgressService siteProgress = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
-			if (siteProgress != null) {
-				siteProgress.schedule(job);
-				return;
-			}
-		}
-		job.schedule();
+		Utils.schedule(job, site);
 	}
 
 	/* (non-Javadoc)

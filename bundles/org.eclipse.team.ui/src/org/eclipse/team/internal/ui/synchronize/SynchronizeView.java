@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -22,12 +21,18 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.jobs.JobBusyCursor;
 import org.eclipse.team.internal.ui.synchronize.actions.SynchronizePageDropDownAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantListener;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.MessagePage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
@@ -53,11 +58,6 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 * Drop down action to switch between participants
 	 */
 	private SynchronizePageDropDownAction fPageDropDown;
-	
-	/**
-	 * Half-busy cursor support
-	 */
-	private JobBusyCursor halfBusyCursor;
 	
 	/**
 	 * Preference key to save
@@ -173,11 +173,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			}
 			section.put(KEY_LAST_ACTIVE_PARTICIPANT, activeParticipant.getId());
 		}
-		
-		
-		halfBusyCursor.dispose();
-		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
-		
+				
+		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);	
 	}
 
 	/* (non-Javadoc)
@@ -307,7 +304,6 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		createActions();
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		configureToolBar(tbm);
-		halfBusyCursor = new JobBusyCursor(parent);
 		updateForExistingParticipants();
 		getViewSite().getActionBars().updateActionBars();
 		updateTitle();
@@ -344,19 +340,5 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#getJobChangeListener()
-	 */
-	public IJobChangeListener getJobChangeListener() {
-		return new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				halfBusyCursor.finished();
-			}
-			public void running(IJobChangeEvent event) {	
-				halfBusyCursor.started();
-			}
-		};
 	}
 }
