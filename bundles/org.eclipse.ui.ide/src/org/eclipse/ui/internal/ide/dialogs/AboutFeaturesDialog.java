@@ -108,9 +108,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
 
         this.productName = productName;
-        this.bundleGroupInfos = bundleGroupInfos;
 
-        AboutData.sortByProvider(reverseSort, bundleGroupInfos);
+        // the order of the array may be changed due to sorting, so create a
+        // copy
+        this.bundleGroupInfos = new AboutBundleGroupData[bundleGroupInfos.length];
+        System.arraycopy(bundleGroupInfos, 0, this.bundleGroupInfos, 0,
+                bundleGroupInfos.length);
+
+        AboutData.sortByProvider(reverseSort, this.bundleGroupInfos);
     }
 
 	/**
@@ -245,8 +250,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         createTable(outer);
         createInfoArea(outer);
 
-        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL,
-                GridData.VERTICAL_ALIGN_FILL, true, true);
+        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
         gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
         table.setLayoutData(gridData);
 
@@ -431,8 +435,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         if (map == null)
             return null;
 
-        String key = info.getId() + "_" + info.getVersion(); //$NON-NLS-1$
-        return (IFeature) map.get(key);
+        return (IFeature) map.get(info.getVersionedId());
     }
 
 	/**

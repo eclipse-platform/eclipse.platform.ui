@@ -32,6 +32,7 @@ public abstract class AboutData {
     private String name;
     private String version;
     private String id;
+    private String versionedId = null;
 
     protected AboutData(String providerName, String name, String version, String id) {
         this.providerName = providerName == null ? "" : providerName; //$NON-NLS-1$
@@ -54,6 +55,12 @@ public abstract class AboutData {
 
     public String getVersion() {
         return version;
+    }
+    
+    public String getVersionedId() {
+        if(versionedId == null)
+            versionedId = getId() + "_" + getVersion(); //$NON-NLS-1$
+        return versionedId;
     }
 
     /**

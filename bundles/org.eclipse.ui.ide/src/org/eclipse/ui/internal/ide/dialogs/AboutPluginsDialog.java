@@ -13,9 +13,12 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IBundleGroup;
+import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -106,25 +109,37 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		this.helpContextId = helpContextId;
 		this.productName = productName;
 
-        ArrayList list = new ArrayList(bundles.length);
-		for(int i = 0; i < bundles.length; ++i )
-		    list.add(new AboutBundleData(bundles[i]));
-		bundleInfos = (AboutBundleData[])list.toArray(new AboutBundleData[0]);
+		// create a data object for each bundle, remove duplicates
+        Map map = new HashMap();
+        for (int i = 0; i < bundles.length; ++i) {
+            AboutBundleData data = new AboutBundleData(bundles[i]);
+            if (!map.containsKey(data.getVersionedId()))
+                    map.put(data.getVersionedId(), data);
+        }
+        bundleInfos = (AboutBundleData[]) map.values().toArray(
+                new AboutBundleData[0]);
 
 		AboutData.sortByProvider(reverseSort, bundleInfos);
 	}
 
-	// TODO when bug 54574 is fixed, this should be changed to use bundle
-	//      providers -> bundle groups -> bundles
 	private static Bundle[] getAllBundles() {
-	    IPluginDescriptor[] descs = Platform.getPluginRegistry().getPluginDescriptors();
-	    Bundle[] bundles = new Bundle[descs.length];
-	    for(int i = 0; i < descs.length; ++i)
-	        bundles[i] = Platform.getBundle(descs[i].getUniqueIdentifier());
+        LinkedList result = new LinkedList();
 
-	    return bundles;
-	}
+        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+        if (providers != null)
+            for (int i = 0; i < providers.length; ++i) {
+	            IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
+	            for (int j = 0; j < bundleGroups.length; ++j) {
+	                Bundle[] bundles = bundleGroups[i].getBundles();
+	                for (int k = 0; k < bundles.length; ++k) {
+	                    result.add(bundles[k]);
+	                }
+	            }
+	        }
 
+        return (Bundle[]) result.toArray(new Bundle[result.size()]);
+    }
+	
 	/*
      * (non-Javadoc) Method declared on Dialog.
      */
@@ -251,8 +266,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		    item.setData(bundleInfos[i]);
 		}
 
-        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL,
-                GridData.VERTICAL_ALIGN_FILL, true, true);
+        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
         gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
         vendorInfo.setLayoutData(gridData);
     }
