@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.swt.graphics.Image;
+
 /**
  * The JobTreeElement is the abstract superclass of items
  * displayed in the tree.
@@ -41,6 +43,14 @@ abstract class JobTreeElement implements Comparable{
 	abstract String getDisplayString();
 	
 	/**
+	 * Get the image for the reciever. By default there is no image.
+	 * @return Image or <code>null</code>.
+	 */
+	public Image getDisplayImage(){
+		return null;
+	}
+	
+	/**
 	 * Return the condensed version of the display string
 	 * @return
 	 */
@@ -67,5 +77,18 @@ abstract class JobTreeElement implements Comparable{
 	 */
 	abstract boolean isActive();
 	
+	/**
+	 * Return whether or not the receiver can be cancelled.
+	 * @return boolean
+	 */
+	public boolean isCancellable(){
+		return false;
+	}
 
+	/**
+	 * Cancel the receiver.
+	 */
+	public void cancel(){
+		//By default do nothing.
+	}
 }

@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
-
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,12 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.*;
-
 /**
  * The ProgressTreeViewer is a tree viewer that handles the coloring of text.
  */
 class ProgressTreeViewer extends TreeViewer {
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,7 +43,6 @@ class ProgressTreeViewer extends TreeViewer {
 			}
 		}
 	}
-	
 	/**
 	 * This method updates the colors for the treeItem.
 	 * 
@@ -57,21 +52,23 @@ class ProgressTreeViewer extends TreeViewer {
 	 * @param info
 	 * 			The information for that tree item.
 	 */
-
-	private void updateColors(TreeItem treeItem, JobTreeElement element) {
-
+	protected void updateColors(TreeItem treeItem, JobTreeElement element) {
 		if (element.isJobInfo()) {
 			JobInfo info = (JobInfo) element;
 			if (info.getJob().getState() != Job.RUNNING) {
-				treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
+				setNotRunningColor(treeItem);
 				return;
 			}
 		}
-
 		treeItem.setForeground(treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-
 	}
-
+	/**
+	 * Set the color of the treeItem to be the color for not running.
+	 * @param treeItem
+	 */
+	protected void setNotRunningColor(TreeItem treeItem) {
+		treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
+	}
 	/**
 	 * Create a new instance of the receiver with the supplied parent and
 	 * style.
@@ -86,7 +83,6 @@ class ProgressTreeViewer extends TreeViewer {
 	public ProgressTreeViewer(Composite parent, int style) {
 		super(parent, style);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -94,7 +90,6 @@ class ProgressTreeViewer extends TreeViewer {
 	 */
 	protected void createChildren(Widget widget) {
 		super.createChildren(widget);
-		
 		getTree().addKeyListener(new KeyAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -104,33 +99,23 @@ class ProgressTreeViewer extends TreeViewer {
 			public void keyPressed(KeyEvent e) {
 				//Bind escape to cancel
 				if (e.keyCode == SWT.DEL) {
-					ISelection selection = getSelection();		
-					deleteJob(selection);	
+					cancelSelection();
 				}
 			}
 		});
 	}
-	
 	/**
-	 * This method deletes the selected job, as well as its children.
-	 * @param selection
-	 * 			The selected job.
+	 * Cancels the selected elements.
 	 */
-	public void deleteJob(ISelection selection)
-	{
-		
+	public void cancelSelection() {
+		ISelection selection = getSelection();
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured =
-				(IStructuredSelection) selection;
+			IStructuredSelection structured = (IStructuredSelection) selection;
 			Iterator elements = structured.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if (next instanceof JobInfo)
-					((JobInfo) next).cancel();
+				((JobTreeElement) next).cancel();
 			}
-			
 		}
-		
 	}
-
 }

@@ -130,10 +130,8 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 		//The UI operation has been blocked.  Open a progress dialog
 		//to report the situation and give the user an opportunity to cancel.
 		
-		final IStatus finalReason = reason;
 		dialog = new BlockedJobsDialog(null, EventLoopProgressMonitor.this);
 		dialog.setBlockOnOpen(false);
-		dialog.setStatus(finalReason);
 		
 		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages.getString("EventLoopProgressMonitor.OpenDialogJobName")){ //$NON-NLS-1$
 			/* (non-Javadoc)

@@ -98,9 +98,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
 
-	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
-	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
-	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
+	public static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
+	public static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
+	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
 	public static final String BUSY_OVERLAY_KEY = "BUSY_OVERLAY"; //$NON-NLS-1$
 	
@@ -128,6 +128,17 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			singleton = new ProgressManager();
 		return singleton;
 	}
+	
+	/**
+	 * Return the image for the percent done.
+	 * @param done. int between 0 and 100.
+	 * @return
+	 */
+	public static Image getProgressImageFor(int done){
+		int index = Math.min(4, (done / 20));
+		return JFaceResources.getImage(keys[index]);
+	}
+		
 	/**
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
@@ -750,36 +761,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			ProgressManagerUtil.logException(exception);
 			return null;
 		}
-	}
-
-	/**
-	 * Get the current image for the receiver. If there is no progress yet
-	 * return null.
-	 * 
-	 * @param element
-	 * @return
-	 */
-	Image getDisplayImage(JobTreeElement element) {
-		if (element.isJobInfo()) {
-			JobInfo info = (JobInfo) element;
-			int done = info.getPercentDone();
-			if (done > 0) {
-				int index = Math.min(4, (done / 20));
-				return JFaceResources.getImage(keys[index]);
-			} else {
-				if (info.isBlocked())
-					return JFaceResources.getImage(BLOCKED_JOB_KEY);
-				int state = info.getJob().getState();
-				if (state == Job.SLEEPING)
-					return JFaceResources.getImage(SLEEPING_JOB_KEY);
-				if (state == Job.WAITING)
-					return JFaceResources.getImage(WAITING_JOB_KEY);
-
-				//By default return the 0 progress image
-				return JFaceResources.getImage(keys[0]);
-			}
-		}
-		return null;
 	}
 
 	/**

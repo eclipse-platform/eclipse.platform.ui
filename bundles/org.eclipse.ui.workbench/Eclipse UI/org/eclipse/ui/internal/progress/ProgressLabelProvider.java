@@ -25,8 +25,7 @@ public class ProgressLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		return ProgressManager.getInstance().getDisplayImage(
-			(JobTreeElement) element);
+		return ((JobTreeElement) element).getDisplayImage();
 	}
 
 	/* (non-Javadoc)

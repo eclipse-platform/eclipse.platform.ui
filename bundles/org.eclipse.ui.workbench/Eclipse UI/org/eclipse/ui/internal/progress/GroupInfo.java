@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -137,7 +138,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 	 */
 	public void setCanceled(boolean value) {
-		//Just a group so no cancel state
+		cancel();
 	}
 
 	/* (non-Javadoc)
@@ -195,6 +196,21 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		return isActive;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#cancel()
+	 */
+	public void cancel() {
+		Iterator listIterator = infos.iterator();
+		while(listIterator.hasNext()){
+			((JobInfo) listIterator.next()).cancel();
+		}
+	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isCancellable()
+	 */
+	public boolean isCancellable() {
+		return true;
+	}
 
 }
