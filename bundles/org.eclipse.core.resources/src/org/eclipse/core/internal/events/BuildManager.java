@@ -27,11 +27,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * only a single delta is interesting).
 	 */
 	class DeltaCache {
-		private IResourceDelta delta;
+		private Object delta;
 		private ElementTree newTree;
 		private ElementTree oldTree;
 		private IPath projectPath;
-		public void cache(IPath project, ElementTree oldTree, ElementTree newTree, IResourceDelta delta) {
+		public void cache(IPath project, ElementTree oldTree, ElementTree newTree, Object delta) {
 			this.projectPath = project;
 			this.oldTree = oldTree;
 			this.newTree = newTree;
@@ -47,10 +47,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		 * Returns the cached resource delta for the given project and trees, or
 		 * null if there is no matching delta in the cache.
 		 */
-		public IResourceDelta getDelta(IPath project, ElementTree oldTree, ElementTree newTree) {
+		public Object getDelta(IPath project, ElementTree oldTree, ElementTree newTree) {
 			if (delta == null)
 				return null;
-			if (projectPath.equals(project) && this.oldTree == oldTree && this.newTree == newTree)
+			boolean pathsEqual = projectPath == null ? project == null : projectPath.equals(project);
+			if (pathsEqual && this.oldTree == oldTree && this.newTree == newTree)
 				return delta;
 			return null;
 		}
@@ -88,8 +89,15 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//the following four fields only apply for the lifetime of 
 	//a single builder invocation.
 	protected ElementTree currentTree;
+	/**
+	 * Caches the IResourceDelta for a pair of trees
+	 */
 	final protected DeltaCache deltaCache = new DeltaCache();
-
+	/**
+	 * Caches the DeltaDataTree used to determine if a build is necessary
+	 */
+	final protected DeltaCache deltaTreeCache = new DeltaCache();
+	
 	//used for interrupting an auto-build when another operation starts
 	protected volatile boolean interrupted = false;
 	protected ElementTree lastBuiltTree;
@@ -250,16 +258,20 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				building = false;
-				interrupted = false;
-				builtProjects.clear();
-				deltaCache.flush();
+				cleanup();
 			}
 		} finally {
 			monitor.done();
 			if (trigger != IncrementalProjectBuilder.AUTO_BUILD)
 				autoBuildJob.avoidBuild();
 		}
+	}
+	private void cleanup() {
+		building = false;
+		interrupted = false;
+		builtProjects.clear();
+		deltaCache.flush();
+		deltaTreeCache.flush();
 	}
 	public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
 		try {
@@ -271,8 +283,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!status.isOK())
 				throw new ResourceException(status);
 		} finally {
-			building = false;
-			deltaCache.flush();
+			cleanup();
 		}
 	}
 	public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
@@ -289,11 +300,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				building = false;
+				cleanup();
 			}
 		} finally {
 			monitor.done();
-			deltaCache.flush();
 		}
 	}
 	protected boolean canRun(int trigger) {
@@ -408,7 +418,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	protected Hashtable getBuilders(IProject project) {
 		ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
-		Assert.isNotNull(info, Policy.bind("events.noProject", project.getName())); //$NON-NLS-1$
+		if (info == null)
+			Assert.isNotNull(info, Policy.bind("events.noProject", project.getName())); //$NON-NLS-1$
 		return info.getBuilders();
 	}
 	/**
@@ -441,7 +452,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return ResourceDeltaFactory.newEmptyDelta(project);
 		}
 		//now check against the cache
-		IResourceDelta result = deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
+		IResourceDelta result = (IResourceDelta)deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
 		if (result != null)
 			return result;
 
@@ -630,13 +641,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		ElementTree oldTree = builder.getLastBuiltTree();
 		ElementTree newTree = workspace.getElementTree();
 		long start = System.currentTimeMillis();
-		if (Policy.DEBUG_NEEDS_BUILD) {
-			String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
-			Policy.debug(true, message);
+		currentDelta = (DeltaDataTree)deltaTreeCache.getDelta(null, oldTree, newTree);
+		if (currentDelta == null) {
+			if (Policy.DEBUG_NEEDS_BUILD) {
+				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug(true, message);
+			}
+			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
+			if (Policy.DEBUG_NEEDS_BUILD)
+				Policy.debug(true, "End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
+			deltaTreeCache.cache(null, oldTree, newTree, currentDelta);
 		}
-		currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
-		if (Policy.DEBUG_NEEDS_BUILD)
-			Policy.debug(true, "End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//search for the builder's project
 		if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
