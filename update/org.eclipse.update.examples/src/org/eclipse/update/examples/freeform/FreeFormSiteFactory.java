@@ -10,7 +10,6 @@ import org.eclipse.update.core.BaseSiteFactory;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.Site;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.ParsingException;
 import org.eclipse.update.core.model.URLEntryModel;
 
 public class FreeFormSiteFactory extends BaseSiteFactory {

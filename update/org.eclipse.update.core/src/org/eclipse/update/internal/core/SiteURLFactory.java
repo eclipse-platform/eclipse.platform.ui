@@ -11,7 +11,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.ParsingException;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.xml.sax.SAXException;
 

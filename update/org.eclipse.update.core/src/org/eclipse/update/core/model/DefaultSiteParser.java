@@ -160,7 +160,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else{
 			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
 			// what we received was not a site.xml, no need to continue
-			throw new SAXException(new ParsingException(new InvalidSiteTypeException(null)));
+			throw new SAXException("The XML stream is not a valid default site.xml file. The root tag is not site");
 		}
 			
 	}

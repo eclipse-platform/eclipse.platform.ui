@@ -219,4 +219,10 @@ public class SiteFTP implements ISite {
 		return null;
 	}
 
+	/**
+	 * @see ISite#addPluginEntry(IPluginEntry)
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {
+	}
+
 }

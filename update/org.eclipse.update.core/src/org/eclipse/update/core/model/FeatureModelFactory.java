@@ -7,7 +7,9 @@ package org.eclipse.update.core.model;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.update.core.Utilities;
 import org.xml.sax.SAXException;
 
 /**
@@ -45,18 +47,18 @@ public class FeatureModelFactory {
 	 * @since 2.0
 	 */
 	public FeatureModel parseFeature(InputStream stream)
-		throws ParsingException, IOException, SAXException {
+		throws CoreException, SAXException {
 		DefaultFeatureParser parser = new DefaultFeatureParser(this);
-
-		FeatureModel featureModel = parser.parse(stream);
-		if (parser.getStatus().getChildren().length > 0) {
-			// some internalError were detected
-			IStatus[] children = parser.getStatus().getChildren();
-			String error = ""; //$NON-NLS-1$
-			for (int i = 0; i < children.length; i++) {
-				error = error + "\r\n" + children[i].getMessage(); //$NON-NLS-1$
+		FeatureModel featureModel = null;
+		try {
+			featureModel = parser.parse(stream);
+			if (parser.getStatus().getChildren().length > 0) {
+				// some internalError were detected
+				IStatus status = parser.getStatus();
+				throw new CoreException(status);
 			}
-			throw new ParsingException(new Exception(error));
+		} catch (IOException e) {
+			throw Utilities.newCoreException("Access Error", e);
 		}
 		return featureModel;
 	}

@@ -23,7 +23,6 @@ import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.Site;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.ParsingException;
 import org.eclipse.update.core.model.CategoryModel;
 
 public class BuildZipSiteFactory extends BaseSiteFactory {
