@@ -584,13 +584,17 @@ public abstract class WorkbenchAdvisor {
 	}
 	
 	/**
-	 * Returns the id of the initial perspective for new workbench windows.
+	 * Returns the id of the perspective to use for the initial workbench window.
 	 * <p>
-	 * This method is called during startup when the workbench is restoring
-	 * the window(s) or creating a new window. Subclasses must implement.
+	 * This method is called during startup when the workbench is creating 
+	 * the first new window. Subclasses must implement.
+	 * </p>
+	 * <p>
+	 * If the {@link IWorkbenchPreferenceConstants#DEFAULT_PERSPECTIVE_ID} preference
+	 * is specified, it supercedes the perspective specified here.
 	 * </p>
 	 * 
-	 * @return the id of the initial perspective
+	 * @return the id of the perspective for the initial window
 	 */
 	public abstract String getInitialWindowPerspectiveId();
 	
