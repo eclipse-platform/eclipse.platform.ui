@@ -39,7 +39,7 @@ import org.eclipse.debug.core.IBreakpointListener;
  * @see IStorageRetrieval
  * @see org.eclipse.debug.core.ILaunch
  */
-public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IStorageRetrieval {
+public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IMemoryBlockRetrieval {
 	/**
 	 * Returns the system process associated with this debug target
 	 * or <code>null</code> if no system process is associated with
