@@ -13,8 +13,10 @@ package org.eclipse.ui.internal.ide.registry;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
