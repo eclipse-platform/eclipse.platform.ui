@@ -12,7 +12,7 @@
 	<!-- Set the timestamp and important properties -->
 	<target name="init">
 		<tstamp/>
-		<property name="buildNumber" value="0917"/>
+		<property name="buildNumber" value="0920"/>
 		<property name="bootclasspath" value=""/>
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 		<property name="destdir" value="../../plugin-export" />
