@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.tests.keys;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -60,7 +62,11 @@ public class Bug43321Test extends UITestCase {
 		IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
 		testProject.create(null);
 		testProject.open(null);
-		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(testProject.getFile(".project")); //$NON-NLS-1$
+		IFile textFile = testProject.getFile("A.txt"); //$NON-NLS-1$
+		String contents = "A blurb"; //$NON-NLS-1$
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(contents.getBytes());
+		textFile.create(inputStream, true, null);
+		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(textFile);
 		editor.selectAndReveal(0, 1);
 
 		// Press "Ctrl+C" to perform a copy.
