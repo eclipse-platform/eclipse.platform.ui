@@ -173,16 +173,12 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		IStatus installStatus = verifyUpdatableStatus();
-		if (!installStatus.isOK()) {
-			// FIXME - remove ConfiguredSite.NonInstallableSite from messages
-/*			String errorMessage =
+		if (!isUpdatable()) {
+			String errorMessage =
 				Policy.bind(
 					"ConfiguredSite.NonInstallableSite",
 					getSite().getURL().toExternalForm());
 			//$NON-NLS-1$
-			 * */
-			throw Utilities.newCoreException(installStatus.getMessage(), installStatus.getException());
 		}
 
 		// feature is null
@@ -258,16 +254,12 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		IStatus uninstallStatus = verifyUpdatableStatus();
-		//FIXME - remove ConfiguredSite.NonUninstallableSite from messages
-		if (!uninstallStatus.isOK()) {
-			/*String errorMessage =
+		if (!isUpdatable()) {
+			String errorMessage =
 				Policy.bind(
 					"ConfiguredSite.NonUninstallableSite",
 					getSite().getURL().toExternalForm());
 			//$NON-NLS-1$
-			 * */
-			throw Utilities.newCoreException(uninstallStatus.getMessage(),uninstallStatus.getException());
 		}
 
 		// create the Activity
@@ -854,8 +846,9 @@ public class ConfiguredSite
 		if (!sameProduct(file))
 			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId"),null); //$NON-NLS-1$
 			
-		if (containsAnotherSite(file))
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainsAnotherSite"),null); //$NON-NLS-1$
+		// do not check children
+		//if (containsAnotherSite(file))
+		//	return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainsAnotherSite"),null); //$NON-NLS-1$
 
 		if (isContainedInAnotherSite(file))
 			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite"),null);	//$NON-NLS-1$
@@ -900,6 +893,9 @@ public class ConfiguredSite
 	private static boolean containsAnotherSite(File file) {
 		if (file == null)
 			return false;
+
+		UpdateManagerPlugin.warn("contains: Checking for markers at:" + file);
+			
 		if (!file.isDirectory())
 			return containsAnotherSite(file.getParentFile());
 
@@ -918,6 +914,9 @@ public class ConfiguredSite
 	 */
 	private static boolean isContainedInAnotherSite(File file) {
 
+		if (file==null)
+			return false;
+		UpdateManagerPlugin.warn("IsContained: Checking for markers at:" + file);			
 		if (!file.isDirectory())
 			return isContainedInAnotherSite(file.getParentFile());
 

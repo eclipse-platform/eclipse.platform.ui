@@ -121,7 +121,7 @@ public class UpdateManagerPlugin extends Plugin {
 	 */
 	public static void warn(String s) {
 		if (DEBUG && DEBUG_SHOW_WARNINGS)
-			log(s,null); 
+			warn(s,null); 
 	}
 
 	/**

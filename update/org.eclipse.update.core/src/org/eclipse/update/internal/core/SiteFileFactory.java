@@ -57,8 +57,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 			String msg="";
 			if (id != null)
 				msg = id.toString();
-			if (isFragment())
-				msg+=" [fragment]";
 			return msg; //$NON-NLS-1$
 		}
 	}
@@ -305,26 +303,25 @@ public class SiteFileFactory extends BaseSiteFactory {
 	}
 
 	/**
-	 * Method addParsedPlugins.
-	 * @param model
-	 * @throws CoreException
+	 * tranform each Plugin and Fragment into an ArchiveReferenceModel
+	 * and a PluginEntry for the Site	 
 	 */
 	private void addParsedPlugin(PluginIdentifier plugin) throws CoreException {
 
-		// tranform each Plugin and Fragment in an ArchiveEntry
-		// and a PluginEntry for the Site
 		String location = null;
 		try {
 			if (plugin != null) {
+				
+				// create the plugin Entry
 				PluginEntry entry = new PluginEntry();
 				entry.setPluginIdentifier(plugin.getIdentifier());
 				entry.setPluginVersion(plugin.getVersion().toString());
 				entry.isFragment(plugin.isFragment());
-
 				((Site) site).addPluginEntry(entry);
 
+				// Create the Site mapping ArchiveRef->PluginEntry
+				// the id of the archiveRef is plugins\<pluginid>_<ver>.jar as per the specs				
 				SiteFileFactory archiveFactory = new SiteFileFactory();
-				// the id is plugins\<pluginid>_<ver>.jar as per the specs
 				ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();
 				String pluginID =
 					Site.DEFAULT_PLUGIN_PATH
@@ -334,6 +331,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 				location = plugin.getLocation().toURL().toExternalForm();
 				archive.setURLString(location);
 				((Site) site).addArchiveReferenceModel(archive);
+
+				// TRACE				
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+					UpdateManagerPlugin.debug("Added archive to site:"+pluginID+" pointing to: "+location);
+				}
 			}
 		} catch (MalformedURLException e) {
 			throw  Utilities.newCoreException(

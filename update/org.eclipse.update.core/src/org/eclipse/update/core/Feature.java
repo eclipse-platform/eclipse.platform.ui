@@ -749,20 +749,21 @@ public class Feature extends FeatureModel implements IFeature {
 			// check if declared on the Site
 			if (refs != null) {
 				for (int ref = 0; ref < refs.length && !found; ref++) {
-					IFeature feature = null;
-					try {
-						feature =
-							(refs[ref] == null) ? null : refs[ref].getFeature();
-					} catch (CoreException e) {
-						UpdateManagerPlugin.warn(null,e);						
-					};
-
-					if (feature != null) {
-						if (identifier
-							.equals(feature.getVersionedIdentifier())) {
-							includedFeatureReferences.add(refs[ref]);
-							found = true;
-						}
+					if (refs[ref]!=null){
+						IFeature feature = null;
+						try {
+							feature = refs[ref].getFeature();
+						} catch (CoreException e) {
+							UpdateManagerPlugin.warn(null,e);						
+						};
+	
+						if (feature != null) {
+							if (identifier
+								.equals(feature.getVersionedIdentifier())) {
+								includedFeatureReferences.add(refs[ref]);
+								found = true;
+							}
+						}						
 					}
 				}
 			}

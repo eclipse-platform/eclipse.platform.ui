@@ -178,7 +178,7 @@ public class TargetPage extends BannerPage {
 		tableViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IConfiguredSite site = (IConfiguredSite) obj;
-				return site.verifyUpdatableStatus().isOK();
+				return site.isUpdatable();
 			}
 		});
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -214,7 +214,7 @@ public class TargetPage extends BannerPage {
 		IConfiguredSite firstSite = null;
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite csite = sites[i];
-			if (csite.verifyUpdatableStatus().isOK()) {
+			if (csite.isUpdatable()) {
 				firstSite = csite;
 				break;
 			}

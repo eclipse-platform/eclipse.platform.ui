@@ -88,7 +88,7 @@ public class InstallConfiguration
 	/*
 	 * Returns the default site policy
 	 */
-	public int getDefaultPolicy() {
+	private int getDefaultPolicy() {
 		return IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
 	}
 
@@ -117,10 +117,11 @@ public class InstallConfiguration
 				BootLoader.getCurrentPlatformConfiguration();
 			ConfigurationPolicy configurationPolicy =
 				(ConfigurationPolicy) configSite.getConfigurationPolicy();
-			String[] pluginPath	= new String[0];
-			if (configurationPolicy.getPolicy()==IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
+			String[] pluginPath = new String[0];
+			if (configurationPolicy.getPolicy()
+				== IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
 				pluginPath = configurationPolicy.getPluginPath(site, null);
-				
+
 			// create new Site in configuration
 			IPlatformConfiguration.ISitePolicy sitePolicy =
 				runtimeConfiguration.createSitePolicy(
@@ -133,7 +134,7 @@ public class InstallConfiguration
 			runtimeConfiguration.configureSite(siteEntry);
 
 			// if the privatre marker doesn't already exist create it
-			configSite.createPrivateSiteMarker();			
+			configSite.createPrivateSiteMarker();
 		}
 
 		return configSite;
@@ -214,9 +215,9 @@ public class InstallConfiguration
 	}
 
 	/*
-	 * @see IInstallConfiguration#export(File)
+	 * write the Configuration.xml file
 	 */
-	public void export(File exportFile) throws CoreException {
+	private void export(File exportFile) throws CoreException {
 		try {
 			Writer writer = new Writer(exportFile, "UTF8"); //$NON-NLS-1$
 			writer.write(this);
@@ -271,54 +272,14 @@ public class InstallConfiguration
 				configuredFeatureEntries[i]);
 		}
 
-		// Write the plugin path
+		// Write the plugin path, primary feature and platform
+		// into platform.cfg
 		for (int i = 0; i < configurationSites.length; i++) {
 			ConfiguredSite cSite = ((ConfiguredSite) configurationSites[i]);
 			ConfigurationPolicy configurationPolicy =
 				cSite.getConfigurationPolicy();
-			String[] pluginPath =
-				configurationPolicy.getPluginPath(
-					cSite.getSite(),
-					cSite.getPreviousPluginPath());
 
-			IPlatformConfiguration.ISitePolicy sitePolicy =
-				runtimeConfiguration.createSitePolicy(
-					configurationPolicy.getPolicy(),
-					pluginPath);
-
-			URL urlToCheck = null;
-			try {
-				urlToCheck = new URL(cSite.getPlatformURLString());
-			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(
-					Policy.bind(
-						"InstallConfiguration.UnableToCreateURL",
-						cSite.getPlatformURLString()),
-					e);
-				//$NON-NLS-1$
-			} catch (ClassCastException e) {
-				throw Utilities.newCoreException(
-					Policy.bind("InstallConfiguration.UnableToCast"),
-					e);
-				//$NON-NLS-1$
-			}
-
-			// if the URL already exist, set the policy
-			IPlatformConfiguration.ISiteEntry siteEntry =
-				runtimeConfiguration.findConfiguredSite(urlToCheck);
-			if (siteEntry != null) {
-				siteEntry.setSitePolicy(sitePolicy);
-			} else {
-				throw Utilities.newCoreException(
-					Policy.bind(
-						"InstallConfiguration.UnableToFindConfiguredSite",
-						urlToCheck.toExternalForm(),
-						runtimeConfiguration
-							.getConfigurationLocation()
-							.toExternalForm()),
-					null);
-				//$NON-NLS-1$
-			}
+			savePluginPath(cSite, runtimeConfiguration);
 
 			// IF primary feature URL or platform feature URL that we need to pass to runtime config
 			// is part of platform:base:, write it as platform:base: URL
@@ -329,96 +290,9 @@ public class InstallConfiguration
 				try {
 					feature = configuredFeaturesRef[j].getFeature();
 				} catch (CoreException e) {
-					UpdateManagerPlugin.warn(null,e);					
+					UpdateManagerPlugin.warn(null, e);
 				}
-
-				if (feature != null) {
-					// write the primary features				
-					if (feature.isPrimary()) {
-
-						String id =
-							feature.getVersionedIdentifier().getIdentifier();
-
-						// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
-						IPluginEntry[] entries = feature.getPluginEntries();
-						URL url = null;
-						IPluginEntry featurePlugin = null;
-						for (int k = 0; k < entries.length; k++) {
-							if (id
-								.equalsIgnoreCase(
-									entries[k]
-										.getVersionedIdentifier()
-										.getIdentifier())) {
-								url =
-									getRuntimeConfigurationURL(
-										entries[k],
-										cSite);
-								featurePlugin = entries[k];
-							}
-						}
-
-						// get any fragments for the feature plugin
-						ArrayList list = new ArrayList();
-						if (url != null)
-							list.add(url);
-						if (featurePlugin != null) {
-							URL[] fragments =
-								getRuntimeFragmentURLs(featurePlugin);
-							list.addAll(Arrays.asList(fragments));
-						}
-						URL[] roots = (URL[]) list.toArray(new URL[0]);
-
-						// save information in runtime platform state
-						String version =
-							feature
-								.getVersionedIdentifier()
-								.getVersion()
-								.toString();
-						String application = feature.getApplication();
-						IPlatformConfiguration.IFeatureEntry featureEntry =
-							runtimeConfiguration.createFeatureEntry(
-								id,
-								version,
-								application,
-								roots);
-						runtimeConfiguration.configureFeatureEntry(
-							featureEntry);
-					} else {
-						// write non-primary feature entries
-						String id =
-							feature.getVersionedIdentifier().getIdentifier();
-						String version =
-							feature
-								.getVersionedIdentifier()
-								.getVersion()
-								.toString();
-						IPlatformConfiguration.IFeatureEntry featureEntry =
-							runtimeConfiguration.createFeatureEntry(
-								id,
-								version,
-								null,
-								null);
-						runtimeConfiguration.configureFeatureEntry(
-							featureEntry);
-					}
-
-					// write the platform features (features that contain special platform plugins)
-					IPluginEntry[] platformPlugins =
-						getPlatformPlugins(feature, runtimeConfiguration);
-					for (int k = 0; k < platformPlugins.length; k++) {
-						String id =
-							platformPlugins[k]
-								.getVersionedIdentifier()
-								.getIdentifier();
-						URL url =
-							getRuntimeConfigurationURL(
-								platformPlugins[k],
-								cSite);
-						runtimeConfiguration.setBootstrapPluginLocation(
-							id,
-							url);
-					}
-				}
+				saveFeatureEntry(cSite, feature, runtimeConfiguration);
 			}
 		}
 
@@ -433,6 +307,139 @@ public class InstallConfiguration
 						.toExternalForm()),
 				e);
 			//$NON-NLS-1$
+		}
+	}
+
+	/*
+	 * Write the plugin path for each site
+	 */
+	private void savePluginPath(
+		ConfiguredSite cSite,
+		IPlatformConfiguration runtimeConfiguration) throws CoreException {
+		ConfigurationPolicy configurationPolicy =
+			cSite.getConfigurationPolicy();
+
+		// create a ISitePolicy (policy, pluginPath)
+		// for the site			
+		String[] pluginPath =
+			configurationPolicy.getPluginPath(
+				cSite.getSite(),
+				cSite.getPreviousPluginPath());
+		IPlatformConfiguration.ISitePolicy sitePolicy =
+			runtimeConfiguration.createSitePolicy(
+				configurationPolicy.getPolicy(),
+				pluginPath);
+
+		// get the URL of the site that matches the one platform.cfg gave us
+		URL urlToCheck = null;
+		try {
+			urlToCheck = new URL(cSite.getPlatformURLString());
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"InstallConfiguration.UnableToCreateURL",
+					cSite.getPlatformURLString()),
+				e);
+			//$NON-NLS-1$
+		} catch (ClassCastException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("InstallConfiguration.UnableToCast"),
+				e);
+			//$NON-NLS-1$
+		}
+
+		// if the URL already exist, set the policy
+		IPlatformConfiguration.ISiteEntry siteEntry =
+			runtimeConfiguration.findConfiguredSite(urlToCheck);
+		if (siteEntry != null) {
+			siteEntry.setSitePolicy(sitePolicy);
+		} else {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"InstallConfiguration.UnableToFindConfiguredSite",
+					urlToCheck.toExternalForm(),
+					runtimeConfiguration
+						.getConfigurationLocation()
+						.toExternalForm()),
+				null);
+			//$NON-NLS-1$
+		}
+	}
+
+	/*
+	 * Save the Feature entry
+	 * The feature can be a primary feature and/or a platform feature
+	 */
+	private void saveFeatureEntry(
+		ConfiguredSite cSite,
+		IFeature feature,
+		IPlatformConfiguration runtimeConfiguration) throws CoreException {
+		if (feature == null)
+			return;
+
+		// write the primary features				
+		if (feature.isPrimary()) {
+
+			String id = feature.getVersionedIdentifier().getIdentifier();
+
+			// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
+			IPluginEntry[] entries = feature.getPluginEntries();
+			URL url = null;
+			IPluginEntry featurePlugin = null;
+			for (int k = 0; k < entries.length; k++) {
+				if (id
+					.equalsIgnoreCase(
+						entries[k].getVersionedIdentifier().getIdentifier())) {
+					url = getRuntimeConfigurationURL(entries[k], cSite);
+					featurePlugin = entries[k];
+				}
+			}
+
+			// get any fragments for the feature plugin
+			ArrayList list = new ArrayList();
+			if (url != null)
+				list.add(url);
+			if (featurePlugin != null) {
+				URL[] fragments = getRuntimeFragmentURLs(featurePlugin);
+				list.addAll(Arrays.asList(fragments));
+			}
+			URL[] roots = (URL[]) list.toArray(new URL[0]);
+
+			// save information in runtime platform state
+			String version =
+				feature.getVersionedIdentifier().getVersion().toString();
+			String application = feature.getApplication();
+			IPlatformConfiguration.IFeatureEntry featureEntry =
+				runtimeConfiguration.createFeatureEntry(
+					id,
+					version,
+					application,
+					roots);
+			runtimeConfiguration.configureFeatureEntry(featureEntry);
+		} else {
+			// write non-primary feature entries
+			String id = feature.getVersionedIdentifier().getIdentifier();
+			String version =
+				feature.getVersionedIdentifier().getVersion().toString();
+			IPlatformConfiguration.IFeatureEntry featureEntry =
+				runtimeConfiguration.createFeatureEntry(
+					id,
+					version,
+					null,
+					null);
+			runtimeConfiguration.configureFeatureEntry(featureEntry);
+		}
+
+		// write the platform features (features that contain special platform plugins)
+		IPluginEntry[] platformPlugins =
+			getPlatformPlugins(feature, runtimeConfiguration);
+		for (int k = 0; k < platformPlugins.length; k++) {
+			String id =
+				platformPlugins[k].getVersionedIdentifier().getIdentifier();
+			URL url = getRuntimeConfigurationURL(platformPlugins[k], cSite);
+			if (url!=null){
+				runtimeConfiguration.setBootstrapPluginLocation(id, url);
+			}
 		}
 	}
 
@@ -548,7 +555,7 @@ public class InstallConfiguration
 							featureToUnconfigure =
 								featuresToUnconfigure[j].getFeature();
 						} catch (CoreException e) {
-							UpdateManagerPlugin.warn(null,e);							
+							UpdateManagerPlugin.warn(null, e);
 						}
 						if (featureToUnconfigure != null)
 							nowConfigSites[i].unconfigure(featureToUnconfigure);
@@ -590,12 +597,11 @@ public class InstallConfiguration
 		IPluginEntry[] featurePlugins = feature.getPluginEntries();
 
 		for (int i = 0; i < platformPluginID.length; i++) {
+			String featurePluginId = null;
 			for (int j = 0; j < featurePlugins.length; j++) {
-				if (platformPluginID[i]
-					.equals(
-						featurePlugins[j]
-							.getVersionedIdentifier()
-							.getIdentifier())) {
+				featurePluginId =
+					featurePlugins[j].getVersionedIdentifier().getIdentifier();
+				if (platformPluginID[i].equals(featurePluginId)) {
 					featurePlatformPlugins.put(
 						platformPluginID[i],
 						featurePlugins[j]);
@@ -620,6 +626,7 @@ public class InstallConfiguration
 	/*
 	 * returns the URL of the pluginEntry on the site
 	 * resolve the URL to use platform: URL if needed
+	 * return null if the URL to write is not valid
 	 */
 	private URL getRuntimeConfigurationURL(
 		IPluginEntry entry,
@@ -640,10 +647,23 @@ public class InstallConfiguration
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
 				UpdateManagerPlugin.debug(
-					"getRuntimeCOnfiguration Full URL:"
+					"getRuntimeConfiguration Full URL:"
 						+ fullURL
 						+ " Relative:"
 						+ relativeString);
+						
+			// verify we are about to write a valid file URL
+			// check with fullURL as it is not resolved to platform:base/
+			if (fullURL!=null){
+				if ("file".equals(fullURL.getProtocol())){
+					String fileString = fullURL.getFile();
+					if (!new File(fileString).exists()){
+						UpdateManagerPlugin.log("The URL:"+result+" doesn't point to a valid platform plugin.The URL will not be written in the platform configuration",new Exception());
+						return null;
+					}				
+				} 
+			}
+						
 			return result;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
@@ -741,9 +761,5 @@ public class InstallConfiguration
 		}
 		return url;
 	}
-
-	
-	
-
 
 }
