@@ -19,8 +19,8 @@ package org.eclipse.ui;
  * This interface may be implemented by clients.
  * </p>
  *
- * @see IPageService#addPerspectiveListener
- * 
+ * @see IPageService#addPerspectiveListener(IPerspectiveListener)
+ * @see PerspectiveAdapter
  * @since 3.0
  */
 public interface IPerspectiveListener2 extends IPerspectiveListener {
