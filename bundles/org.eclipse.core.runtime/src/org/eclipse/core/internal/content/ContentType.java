@@ -80,6 +80,9 @@ public class ContentType implements IContentType {
 	public String getId() {
 		return namespace + '.' + simpleId; 
 	}
+	public IContentTypeManager getManager() {
+		return manager;
+	}
 	public String getMIMEType() {
 		return mimeType;
 	}
@@ -107,14 +110,11 @@ public class ContentType implements IContentType {
 		}
 		return false;
 	}
-	public boolean isText() {
-		if (namespace.equals(IPlatform.PI_RUNTIME) && simpleId.equals("text")) //$NON-NLS-1$
+	public boolean isKindOf(IContentType another) {
+		if (this == another)
 			return true;
-		if (baseTypeId == null)
-			return false;
 		IContentType baseType = getBaseType();
-		// if it is orphan, treat it as root
-		return baseType == null ? false : baseType.isText();
+		return baseType != null && baseType.isKindOf(another);
 	}
 	boolean isValid() {
 		return validation == VALID;
@@ -155,6 +155,6 @@ public class ContentType implements IContentType {
 		this.validation = validation;
 	}
 	public String toString() {
-		return getId() + (isText() ? "(text)" : "(binary)"); //$NON-NLS-1$ //$NON-NLS-2$
+		return getId(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

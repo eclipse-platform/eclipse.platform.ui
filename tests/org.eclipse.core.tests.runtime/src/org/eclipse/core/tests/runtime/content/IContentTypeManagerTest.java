@@ -42,29 +42,29 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
-		assertTrue("1.1", textContentType.isText());
+		assertTrue("1.1", isText(textContentType));
 		assertNull("1.2", ((ContentType) textContentType).getDescriber());
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
-		assertTrue("2.1", xmlContentType.isText());
+		assertTrue("2.1", isText(xmlContentType));
 		assertEquals("2.2", textContentType, xmlContentType.getBaseType());
 		IContentDescriber xmlDescriber = ((ContentType) xmlContentType).getDescriber();
 		assertNotNull("2.3", xmlDescriber);
 		assertTrue("2.4", xmlDescriber instanceof XMLContentDescriber);
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		assertNotNull("3.0", xmlBasedDifferentExtensionContentType);
-		assertTrue("3.1", xmlBasedDifferentExtensionContentType.isText());
+		assertTrue("3.1", isText(xmlBasedDifferentExtensionContentType));
 		assertEquals("3.2", xmlContentType, xmlBasedDifferentExtensionContentType.getBaseType());
 		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
 		assertNotNull("4.0", xmlBasedSpecificNameContentType);
-		assertTrue("4.1", xmlBasedSpecificNameContentType.isText());
+		assertTrue("4.1", isText(xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
 		IContentType[] xmlTypes = contentTypeManager.findContentTypesForFileName("foo.xml");
 		assertEquals("5.0", 1, xmlTypes.length);
 		assertEquals("5.1", xmlContentType, xmlTypes[0]);
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
 		assertNotNull("6.0", binaryContentType);
-		assertTrue("6.1", !binaryContentType.isText());
+		assertTrue("6.1", !isText(binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
 		IContentType[] binaryTypes = contentTypeManager.findContentTypesForFileName("foo.samplebin");
 		assertEquals("7.0", 1, binaryTypes.length);
@@ -152,6 +152,10 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesForFileName("foo.bar");
 		assertEquals("2.1", 1, fooBarAssociated.length);
 		assertEquals("2.2", fooBarType, fooBarAssociated[0]);
+	}
+	private boolean isText(IContentType candidate) {
+		IContentType text = ((ContentType) candidate).getManager().getContentType(IContentTypeManager.CT_TEXT);
+		return candidate.isKindOf(text);
 	}
 	public static Test suite() {
 		return new TestSuite(IContentTypeManagerTest.class);		

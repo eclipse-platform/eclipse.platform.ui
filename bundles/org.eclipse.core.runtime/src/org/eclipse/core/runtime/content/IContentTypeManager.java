@@ -27,6 +27,22 @@ import java.io.InputStream;
  */
 public interface IContentTypeManager {
 	/**
+	 * Content type identifier constant for platform's primary 
+	 * text-based content type: <code>org.eclipse.core.runtime.text</code>. 
+	 * <p>
+	 * All text-based content types ought to be sub types of the content type 
+	 * identified by this string. This provides a simple way for detecting 
+	 * whether a content type is text-based:
+	 * <pre>
+	 * IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+	 * IContentType someType = ...;
+	 * boolean isTextBased = someType.isKindOf(text);
+	 * </pre> 
+	 * </p>
+	 */
+	public final static String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
+	
+	/**
 	 * Applies content-based content type detection on the given input stream
 	 * taking only the provided set of content types into account.
 	 * Returns <code>null</code> if no appropriate content types are 

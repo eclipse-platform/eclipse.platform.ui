@@ -38,14 +38,6 @@ public interface IContentType {
 	 */
 	public String getName();
 	/**
-	 * Returns whether this content type is text-based, i.e., is descendant of
-	 * the org.eclipse.core.runtime.text content type.
-	 * 
-	 * @return <code>true</code> if this content type is text-based, 
-	 * <code>false</code> otherwise
-	 */
-	public boolean isText();
-	/**
 	 * Returns the MIME type for this content type, if one has been configured.
 	 * 
 	 * @return this content type's MIME type, or <code>null</code>
@@ -72,6 +64,19 @@ public interface IContentType {
 	 * @return this content type's base type, or <code>null</code>
 	 */
 	public IContentType getBaseType();
+	/**
+	 * Returns whether this content type is a kindd of the given content type. A
+	 * content type A is a kind of a content type B if:
+	 * <ol>
+	 * <li>A and B are the same content type, or</li> 
+	 * <li>B is A's base type. or</li>
+	 * <li>A's base type is a kind of B.</li>
+	 * </ol>
+	 * 
+	 * @param superType a potential super type for this content type 
+	 * @return <code>true</code>
+	 */
+	public boolean isKindOf(IContentType another);
 	/**
 	 * Returns the default charset for this content type if one has been defined, 
 	 * <code>null</code> otherwise.
