@@ -688,6 +688,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				final Map /* from KSubstOption to List of String */ filesToAdmin = new HashMap();
 				final List /* of ICVSResource */ filesToCommit = new ArrayList();
 				final Collection /* of ICVSFile */ filesToCommitAsText = new HashSet(); // need fast lookup
+				final boolean useCRLF = IS_CRLF_PLATFORM && (CVSProviderPlugin.getPlugin().isUsePlatformLineend());
 		
 				/*** determine the resources to be committed and/or admin'd ***/
 				for (Iterator it = changeSet.entrySet().iterator(); it.hasNext();) {
@@ -717,7 +718,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 					// file exists remotely so we'll have to commit it
 					if (fromKSubst.isBinary() && ! toKSubst.isBinary()) {
 						// converting from binary to text
-						cleanLineDelimiters(file, IS_CRLF_PLATFORM, new NullProgressMonitor()); // XXX need better progress monitoring
+						cleanLineDelimiters(file, useCRLF, new NullProgressMonitor()); // XXX need better progress monitoring
 						// remember to commit the cleaned resource as text before admin
 						filesToCommitAsText.add(mFile);
 					}

@@ -70,6 +70,7 @@ public interface ICVSUIConstants {
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
 	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$
+	public final String PREF_USE_PLATFORM_LINEEND = "pref_lineend"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_MIXED_TAGS = "pref_prompt_on_mixed_tags"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_SAVING_IN_SYNC = "pref_prompt_on_saving_in_sync"; //$NON-NLS-1$
 	public final String PREF_SAVE_DIRTY_EDITORS = "pref_save_dirty_editors"; //$NON-NLS-1$

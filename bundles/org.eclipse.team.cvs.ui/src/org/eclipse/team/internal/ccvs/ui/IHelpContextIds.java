@@ -65,6 +65,7 @@ public interface IHelpContextIds {
 	public static final String PREF_QUIET = PREFIX + "quietness_level_pref"; //$NON-NLS-1$
 	public static final String PREF_COMPRESSION = PREFIX + "compression_level_pref"; //$NON-NLS-1$
 	public static final String PREF_KEYWORDMODE = PREFIX + "default_keywordmode_pref"; //$NON-NLS-1$
+	public static final String PREF_LINEEND = PREFIX + "line_end_pref"; //$NON-NLS-1$
 	public static final String PREF_COMMS_TIMEOUT = PREFIX + "comms_timeout_pref"; //$NON-NLS-1$
 	public static final String PREF_CONSIDER_CONTENT = PREFIX + "consider_content_pref"; //$NON-NLS-1$
 	public static final String PREF_REPLACE_DELETE_UNMANAGED = PREFIX + "replace_deletion_of_unmanaged_pref"; //$NON-NLS-1$

@@ -597,6 +597,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
 		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
 		store.setDefault(ICVSUIConstants.PREF_TEXT_KSUBST, CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION.toMode());
+		store.setDefault(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, true);
 		store.setDefault(ICVSUIConstants.PREF_REPLACE_UNMANAGED, true);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS, CVSProviderPlugin.DEFAULT_CVS_RSH_PARAMETERS);
@@ -646,6 +647,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
+		CVSProviderPlugin.getPlugin().setUsePlatformLineend(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));

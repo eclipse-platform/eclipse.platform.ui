@@ -953,7 +953,7 @@ public class Session {
 		// if not binary, translate line delimiters on the fly
 		if (! isBinary) {
 			// switch from LF to CRLF if appropriate
-			if (IS_CRLF_PLATFORM) {
+			if (IS_CRLF_PLATFORM && CVSProviderPlugin.getPlugin().isUsePlatformLineend()) {
 				// auto-correct for CRLF line-ends that come from the server
 				in = new CRLFtoLFInputStream(in);
 				// convert LF to CRLF

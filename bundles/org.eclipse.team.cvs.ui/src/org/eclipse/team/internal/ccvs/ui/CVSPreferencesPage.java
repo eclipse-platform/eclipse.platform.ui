@@ -65,6 +65,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Combo quietnessCombo;
 	private Combo compressionLevelCombo;
 	private Combo ksubstCombo;
+	private Button usePlatformLineend;
 	private List ksubstOptions;
 	private Button considerContentsInCompare;
 	private Button replaceUnmanaged;
@@ -184,6 +185,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
+		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -246,6 +248,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(compressionLevelCombo, IHelpContextIds.PREF_COMPRESSION);
 		WorkbenchHelp.setHelp(quietnessCombo, IHelpContextIds.PREF_QUIET);
 		WorkbenchHelp.setHelp(ksubstCombo, IHelpContextIds.PREF_KEYWORDMODE);
+		WorkbenchHelp.setHelp(usePlatformLineend, IHelpContextIds.PREF_LINEEND);
 		WorkbenchHelp.setHelp(timeoutValue, IHelpContextIds.PREF_COMMS_TIMEOUT);
 		WorkbenchHelp.setHelp(considerContentsInCompare, IHelpContextIds.PREF_CONSIDER_CONTENT);
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
@@ -305,6 +308,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			ksubstCombo.add(option.getLongDisplayText());
 		}
 		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
+		usePlatformLineend.setSelection(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
@@ -346,6 +350,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			mode = "-kkv"; //$NON-NLS-1$
 		}
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
+		store.setValue(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, usePlatformLineend.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
@@ -370,6 +375,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
+		CVSProviderPlugin.getPlugin().setUsePlatformLineend(
+				store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		
@@ -396,6 +403,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
+		usePlatformLineend.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));

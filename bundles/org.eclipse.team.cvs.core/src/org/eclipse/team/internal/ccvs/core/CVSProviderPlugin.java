@@ -61,6 +61,7 @@ public class CVSProviderPlugin extends Plugin {
 	private QuietOption quietness;
 	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
 	private KSubstOption defaultTextKSubstOption = DEFAULT_TEXT_KSUBST_OPTION;
+	private boolean usePlatformLineend = true;
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
@@ -618,4 +619,16 @@ public class CVSProviderPlugin extends Plugin {
 		return root.node(InstanceScope.SCOPE).node(getDescriptor().getUniqueIdentifier());
 	}
 	
+	/**
+	 * @return Returns the usePlatformLineend.
+	 */
+	public boolean isUsePlatformLineend() {
+		return usePlatformLineend;
+	}
+	/**
+	 * @param usePlatformLineend The usePlatformLineend to set.
+	 */
+	public void setUsePlatformLineend(boolean usePlatformLineend) {
+		this.usePlatformLineend = usePlatformLineend;
+	}
 }
