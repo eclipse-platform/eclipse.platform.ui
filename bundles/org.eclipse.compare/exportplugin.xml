@@ -11,7 +11,7 @@
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
 		<jar 
-			jarfile="${dest}/jdt.jar"
+			jarfile="${dest}/compare.jar"
 			basedir="bin"
 		/>
 		<copy file="plugin.xml" todir="${dest}"/>
