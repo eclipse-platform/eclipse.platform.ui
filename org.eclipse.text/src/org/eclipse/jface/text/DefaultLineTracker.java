@@ -22,7 +22,7 @@ package org.eclipse.jface.text;
 public class DefaultLineTracker extends AbstractLineTracker {
 	
 	/** The predefined delimiters of this tracker */
-	public final static String[] DELIMITERS= { "\r", "\n", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
+	public final static String[] DELIMITERS= { "\r\n", "\r", "\n"  }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	/** A predefined delimiter information which is always reused as return value */
 	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
 	
@@ -54,21 +54,21 @@ public class DefaultLineTracker extends AbstractLineTracker {
 				
 				if (i + 1 < length) {
 					if (text.charAt(i + 1) == '\n') {
-						fDelimiterInfo.delimiter= DELIMITERS[2];
+						fDelimiterInfo.delimiter= DELIMITERS[0];
 						fDelimiterInfo.delimiterIndex= i;
 						fDelimiterInfo.delimiterLength= 2;
 						return fDelimiterInfo;
 					}
 				}
 				
-				fDelimiterInfo.delimiter= DELIMITERS[0];
+				fDelimiterInfo.delimiter= DELIMITERS[1];
 				fDelimiterInfo.delimiterIndex= i;
 				fDelimiterInfo.delimiterLength= 1;
 				return fDelimiterInfo;
 				
 			} else if (ch == '\n') {
 				
-				fDelimiterInfo.delimiter= DELIMITERS[1];
+				fDelimiterInfo.delimiter= DELIMITERS[2];
 				fDelimiterInfo.delimiterIndex= i;
 				fDelimiterInfo.delimiterLength= 1;
 				return fDelimiterInfo;
