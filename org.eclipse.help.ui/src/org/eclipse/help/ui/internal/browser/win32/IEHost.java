@@ -31,6 +31,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private static final String BROWSER_Y = "browser.y";
 	private static final String BROWSER_WIDTH = "browser.w";
 	private static final String BROWSER_HEIGTH = "browser.h";
+	private static final String BROWSER_MAXIMIZED = "browser.maximized";
 	private static String installURL;
 	private static String stateLocation;
 	private Display display;
@@ -40,6 +41,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private IEStore store;
 	boolean opened = false;
 	ToolItem backItem, forwardItem;
+	int x, y, w, h;
 	/**
 	 * Constructor
 	 */
@@ -94,13 +96,30 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				Point location = shell.getLocation();
-				store.put(BROWSER_X, Integer.toString(location.x));
-				store.put(BROWSER_Y, Integer.toString(location.y));
+				store.put(BROWSER_X, Integer.toString(x));
+				store.put(BROWSER_Y, Integer.toString(y));
 				Point size = shell.getSize();
-				store.put(BROWSER_WIDTH, Integer.toString(size.x));
-				store.put(BROWSER_HEIGTH, Integer.toString(size.y));
+				store.put(BROWSER_WIDTH, Integer.toString(w));
+				store.put(BROWSER_HEIGTH, Integer.toString(h));
+				store.put(BROWSER_MAXIMIZED, (new Boolean(shell.getMaximized()).toString()));
 				store.save();
 				shell.close();
+			}
+		});
+		shell.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point location = shell.getLocation();
+					x = location.x;
+					y = location.y;
+				}
+			}
+			public void controlResized(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point size = shell.getSize();
+					w = size.x;
+					h = size.y;
+				}
 			}
 		});
 		shell.setText(ieResources.getString("browserTitle"));
@@ -112,17 +131,21 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		shell.setLayout(layout);
 		createContents(shell);
 		// use saved location and size
-		int x = store.getInt(BROWSER_X);
-		int y = store.getInt(BROWSER_Y);
-		int w = store.getInt(BROWSER_WIDTH);
-		int h = store.getInt(BROWSER_HEIGTH);
+		x = store.getInt(BROWSER_X);
+		y = store.getInt(BROWSER_Y);
+		w = store.getInt(BROWSER_WIDTH);
+		h = store.getInt(BROWSER_HEIGTH);
 		if (w == 0 || h == 0) {
-			// use defaults
+			// first launch, use default size
 			w = 700;
 			h = 500;
+		} else {
+			// do not set location to 0,0 the first time
+			shell.setLocation(x, y);
 		}
-		shell.setLocation(x, y);
 		shell.setSize(w, h);
+		if (store.getBoolean(BROWSER_MAXIMIZED))
+			shell.setMaximized(true);
 		shell.open();
 		opened = true;
 	}

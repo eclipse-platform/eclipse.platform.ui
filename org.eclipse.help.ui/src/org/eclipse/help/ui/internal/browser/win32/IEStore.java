@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
 import java.util.Properties;
 /**
+ * Stored properties of wrapped IE browser.
  */
 public class IEStore extends Properties {
 	private File file = null;
@@ -66,8 +67,17 @@ public class IEStore extends Properties {
 		return ret;
 	}
 	/**
-	* Helper function: gets int for a given name.
-	*/
+	 * Helper function: gets boolean for a given name.
+	 */
+	public boolean getBoolean(String name) {
+		String value = getProperty(name);
+		if (value == null)
+			return false;
+		return Boolean.valueOf(value).booleanValue();
+	}
+	/**
+	 * Helper function: gets int for a given name.
+	 */
 	public int getInt(String name) {
 		String value = getProperty(name);
 		if (value == null)
