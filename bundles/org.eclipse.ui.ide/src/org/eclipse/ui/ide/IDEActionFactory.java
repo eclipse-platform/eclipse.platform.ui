@@ -28,14 +28,10 @@ import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
  * Access to standard actions provided by the IDE workbench (including
  * those of the generic workbench).
  * <p>
- * Most of the functionality of this class is provided by
- * static methods and fields.
+ * The functionality of this class is provided by static fields.
  * Example usage:
  * <pre>
  * MenuManager menu = ...;
- * ActionFactory.IWorkbenchAction closeEditorAction
- * 	  = IDEActionFactory.CLOSE.create(window);
- * menu.add(closeEditorAction);
  * ActionFactory.IWorkbenchAction closeProjectAction
  * 	  = IDEActionFactory.CLOSE_PROJECT.create(window);
  * menu.add(closeProjectAction);
@@ -48,8 +44,15 @@ import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
  * 
  * @since 3.0
  */
-public abstract class IDEActionFactory extends ActionFactory {
+public final class IDEActionFactory {
 
+	/**
+	 * Prevents instantiation.
+	 */
+	private IDEActionFactory() {
+		// do nothing
+	}
+	
 	/**
 	 * Workbench action: Displays the About dialog.
 	 * This action maintains its enablement state.
@@ -243,12 +246,4 @@ public abstract class IDEActionFactory extends ActionFactory {
 		}
 	};
 
-	/**
-	 * Creates a new IDE workbench action factory with the given id.
-	 * 
-	 * @param actionId the id of actions created by this action factory
-	 */
-	protected IDEActionFactory(String actionId) {
-		super(actionId);
-	}
 }

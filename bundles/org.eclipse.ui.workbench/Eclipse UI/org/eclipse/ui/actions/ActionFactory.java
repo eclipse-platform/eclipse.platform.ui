@@ -52,12 +52,14 @@ import org.eclipse.ui.internal.actions.ActivityEnablerAction;
  * fields. Example usage:
  * 
  * <pre>
- *  MenuManager menu = ...; ActionFactory.IWorkbenchAction closeEditorAction = ActionFactory.CLOSE.create(window); menu.add(closeEditorAction);
+ * MenuManager menu = ...; 
+ * ActionFactory.IWorkbenchAction closeEditorAction 
+ *    = ActionFactory.CLOSE.create(window); 
+ * menu.add(closeEditorAction);
  * </pre>
- * 
  * </p>
  * <p>
- * Clients may declare subclasses that provide additional application-specific
+ * Clients may declare other classes that provide additional application-specific
  * action factories.
  * </p>
  * 
