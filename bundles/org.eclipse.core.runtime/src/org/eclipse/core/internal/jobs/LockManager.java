@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.jobs.LockListener;
  * the proper lock depth. 
  */
 public class LockManager {
-
 	/**
 	 * This class captures the state of suspended locks.
 	 * Locks are suspended if deadlock is detected.
@@ -111,33 +110,49 @@ public class LockManager {
 	 * This thread has just acquired a lock.  Update graph.
 	 */
 	void addLockThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			locks.lockAcquired(thread, lock);
+		if (locks == null)
+			return;
+		try {
+			synchronized (locks) {
+				locks.lockAcquired(thread, lock);
+			}
+		} catch (Exception e) {
+			handleInternalError(e);
 		}
 	}
 	/**
 	 * This thread has just been refused a lock.  Update graph and check for deadlock.
 	 */
 	void addLockWaitThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			Deadlock found = locks.lockWaitStart(thread, lock);
-			// if deadlock was detected, the found variable will contain all the information about it,
-			// including which locks to suspend for which thread to resolve the deadlock.
-			if (found != null) {
-				ISchedulingRule[] toSuspend = found.getLocks();
-				LockState[] suspended = new LockState[toSuspend.length];
-				for (int i = 0; i < toSuspend.length; i++) 
-					suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
-				synchronized (suspendedLocks) {
-					Stack prevLocks = (Stack) suspendedLocks.get(found.getCandidate());
-					if (prevLocks == null)
-						prevLocks = new Stack();
-					prevLocks.push(suspended);
-					suspendedLocks.put(found.getCandidate(), prevLocks);
+		if (locks == null)
+			return;
+		try {
+			synchronized (locks) {
+				Deadlock found = locks.lockWaitStart(thread, lock);
+				// if deadlock was detected, the found variable will contain all the information about it,
+				// including which locks to suspend for which thread to resolve the deadlock.
+				if (found != null) {
+					ISchedulingRule[] toSuspend = found.getLocks();
+					LockState[] suspended = new LockState[toSuspend.length];
+					for (int i = 0; i < toSuspend.length; i++) 
+						suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
+					synchronized (suspendedLocks) {
+						Stack prevLocks = (Stack) suspendedLocks.get(found.getCandidate());
+						if (prevLocks == null)
+							prevLocks = new Stack();
+						prevLocks.push(suspended);
+						suspendedLocks.put(found.getCandidate(), prevLocks);
+					}
 				}
 			}
+		} catch (Exception e) {
+			handleInternalError(e);
 		}
 	}
+	/**
+	 * Handles exceptions that occur while calling third party code from within the
+	 * LockManager. This is essentially an inlined version of Platform.run(ISafeRunnable)
+	 */
 	private static void handleException(Throwable e) {
 		String message = Policy.bind("jobs.internalError"); //$NON-NLS-1$
 		IStatus status;
@@ -148,6 +163,21 @@ public class LockManager {
 			status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, message, e);
 		}
 		InternalPlatform.getDefault().log(status);
+	}
+	/**
+	 * There was an internal error in the deadlock detection code.  Shut the entire
+	 * thing down to prevent further errors.  Recovery is too complex as it
+	 * requires freezing all threads and inferring the present lock state.
+	 */
+	private void handleInternalError(Throwable t) {
+		try {
+			handleException(t);
+			locks.toDebugString();
+		} catch (Exception e2) {
+			//ignore failure to log or to create the debug string
+		}
+		//discard the deadlock detector for good
+		locks = null;
 	}
 	/**
 	 * Returns true IFF the underlying graph is empty.
@@ -165,6 +195,8 @@ public class LockManager {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
 			return true;
+		if (locks == null)
+			return false;
 		synchronized (locks) {
 			return locks.contains(Thread.currentThread());
 		}
@@ -179,24 +211,38 @@ public class LockManager {
 	 * Releases all the acquires that were called on the given rule. Needs to be called only once.
 	 */
 	void removeLockCompletely(Thread thread, ISchedulingRule rule) {
-		synchronized (locks) {
-			locks.lockReleasedCompletely(thread, rule);
+		if (locks == null)
+			return;
+		try {
+			synchronized (locks) {
+				locks.lockReleasedCompletely(thread, rule);
+			}
+		} catch (Exception e) {
+			handleInternalError(e);
 		}
 	}
 	/**
 	 * This thread has just released a lock.  Update graph.
 	 */
 	void removeLockThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			locks.lockReleased(thread, lock);
+		try {
+			synchronized (locks) {
+				locks.lockReleased(thread, lock);
+			}
+		} catch (Exception e) {
+			handleInternalError(e);
 		}
 	}
 	/**
 	 * This thread has just stopped waiting for a lock. Update graph.
 	 */
 	void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			locks.lockWaitStop(thread, lock);
+		try {
+			synchronized (locks) {
+				locks.lockWaitStop(thread, lock);
+			}
+		} catch (Exception e) {
+			handleInternalError(e);
 		}
 	}
 	/**
