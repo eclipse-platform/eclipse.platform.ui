@@ -350,8 +350,12 @@ function mouseClickHandler(e) {
 
 function focusHandler(e)
 {
-	if (oldActive)
-		oldActive.focus();
+	if (oldActive){
+		try{
+			oldActive.focus();
+		} catch (e) {
+		}
+	}
 }
 
 /**
