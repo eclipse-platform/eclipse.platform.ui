@@ -69,10 +69,11 @@ public class PollingInputStream extends FilterInputStream {
 			// If we do, just log it so we can close.
 			TeamPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		} finally {
-			for (;;) {
+			boolean stop = false;
+			while (!stop) {
 				try {
 					in.close();
-					return;
+					stop = true;
 				} catch (InterruptedIOException e) {
 					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)

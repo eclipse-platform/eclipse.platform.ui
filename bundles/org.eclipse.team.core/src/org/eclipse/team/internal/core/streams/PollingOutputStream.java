@@ -148,10 +148,11 @@ public class PollingOutputStream extends FilterOutputStream {
  			out.flush();
 			attempts = 0;
  		} finally {
-			for (;;) {
+ 			boolean stop = false;
+			while (!stop) {
 				try {
 					out.close();
-					return;
+					stop = true;
 				} catch (InterruptedIOException e) {
 					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
