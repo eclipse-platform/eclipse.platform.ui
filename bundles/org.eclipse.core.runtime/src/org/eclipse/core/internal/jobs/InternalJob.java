@@ -10,6 +10,7 @@
 package org.eclipse.core.internal.jobs;
 
 import java.util.*;
+
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -77,6 +78,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * The thread that is currently running this job
 	 */
 	private Thread thread = null;
+	/**
+	 * Arbitrary properties (key,value) pairs, attached
+	 * to a job instance by a third party.
+	 */
+	private ObjectMap properties;
 
 	protected InternalJob(String name) {
 		Assert.isNotNull(name);
@@ -131,9 +137,25 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final IProgressMonitor getProgressMonitor() {
 		return monitor;
 	}
+	/* (non-Javadoc)
+	 * @see Job#getProperty
+	 */
+	protected Object getProperty(QualifiedName key) {
+		// thread safety: (Concurrency001 - copy on write)
+		Map temp = properties;
+		if (temp == null)
+			return null;
+		return temp.get(key);
+	}
+	/* (non-Javadoc)
+	 * @see Job#getResult
+	 */
 	protected IStatus getResult() {
 		return result;
 	}
+	/* (non-Javadoc)
+	 * @see Job#getRule
+	 */
 	protected ISchedulingRule getRule() {
 		return schedulingRule;
 	}
@@ -276,6 +298,30 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	final void setProgressMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
+	}
+	/* (non-Javadoc)
+	 * @see Job#setProperty
+	 */
+	protected void setProperty(QualifiedName key, Object value) {
+		// thread safety: (Concurrency001 - copy on write)
+		if (value == null) {
+			if (properties == null)
+				return;
+			ObjectMap temp = (ObjectMap) properties.clone();
+			temp.remove(key);
+			if (temp.isEmpty())
+				properties = null;
+			else
+				properties = temp;
+		} else {
+			ObjectMap temp = properties;
+			if (temp == null)
+				temp = new ObjectMap(5);
+			else
+				temp = (ObjectMap) properties.clone();
+			temp.put(key, value);
+			properties = temp;
+		}
 	}
 	final void setResult(IStatus result) {
 		this.result = result;

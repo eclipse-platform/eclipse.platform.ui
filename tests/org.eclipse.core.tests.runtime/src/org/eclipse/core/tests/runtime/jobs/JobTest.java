@@ -69,7 +69,21 @@ public class JobTest extends TestCase {
 			assertTrue("1." + i, shortJob.getPriority() == priority[i]);
 		}
 	}
-
+	public void testGetProperty() {
+		QualifiedName n1 = new QualifiedName("org.eclipse.core.tests.runtime", "p1");
+		QualifiedName n2 = new QualifiedName("org.eclipse.core.tests.runtime", "p2");
+		assertNull("1.0", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, null);
+		assertNull("1.1", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, shortJob);
+		assertTrue("1.2", shortJob.getProperty(n1) == shortJob);
+		assertNull("1.3", shortJob.getProperty(n2));
+		shortJob.setProperty(n1, "hello");
+		assertEquals("1.4", "hello", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, null);
+		assertNull("1.5", shortJob.getProperty(n1));
+		assertNull("1.6", shortJob.getProperty(n2));
+	}
 	public void testGetResult() {
 		//execute a short job
 		assertTrue("1.0", shortJob.getResult() == null);

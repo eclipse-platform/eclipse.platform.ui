@@ -388,6 +388,22 @@ public class JobManager implements IJobManager {
 		return (Job[]) members.toArray(new Job[members.size()]);
 	}
 	/**
+	 * Locates a waiting or running job that is somehow blocked by
+	 * the given job. Returns the blocked job, or <code>null</code>
+	 * if no blocked job could be found.
+	 *
+	 */
+	protected Job findBlockedJob(InternalJob job) {
+		//TODO This method is experimental
+		synchronized (lock) {
+			//if this job isn't running, it can't be blocking anyone
+			if (job.getState() != Job.RUNNING) 
+				return null;
+			//if any job is queued behind this one, it is blocked by it
+			return (Job)job.previous();
+		}
+	}
+	/**
 	 * Returns a running or blocked job whose scheduling rule conflicts with the 
 	 * scheduling rule of the given waiting job.  Returns null if there are no 
 	 * conflicting jobs.  A job can only run if there are no running jobs and no blocked

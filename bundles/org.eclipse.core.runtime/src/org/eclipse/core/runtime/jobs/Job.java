@@ -215,6 +215,18 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.getPriority();
 	}
 	/**
+	 * Returns the value of the property of this job identified by the given key, 
+	 * or <code>null</code> if this job has no such property.
+	 *
+	 * @param key the name of the property
+	 * @return the value of the property, 
+	 *     or <code>null</code> if this job has no such property
+	 * @see #setProperty
+	 */
+	public final Object getProperty(QualifiedName key) {
+		return super.getProperty(key);
+	}
+	/**
 	 * Returns the result of this job's last run.
 	 * 
 	 * @return the result of this job's last run, or <code>null</code> if this
@@ -409,6 +421,29 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void setProgressGroup(IProgressMonitor group, int ticks) {
 		super.setProgressGroup(group, ticks);
+	}
+	/**
+	 * Sets the value of the property of this job identified
+	 * by the given key. If the supplied value is <code>null</code>,
+	 * the property is removed from this resource. 
+	 * <p>
+	 * Properties are intended to be used as a caching mechanism
+	 * by ISV plug-ins. They allow key-object associations to be stored with
+	 * a job instance.  These key-value associations are maintained in 
+	 * memory (at all times), and the information is never discarded automatically.
+	 * </p>
+	 * <p>
+	 * The qualifier part of the property name must be the unique identifier
+	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
+	 * </p>
+	 *
+	 * @param key the qualified name of the property
+	 * @param value the value of the property, 
+	 *     or <code>null</code> if the property is to be removed
+	 * @see #getProperty
+	 */
+	public void setProperty(QualifiedName key, Object value) {
+		super.setProperty(key, value);
 	}
 	/**
 	 * Sets the scheduling rule to be used when scheduling this job.  This method
