@@ -109,28 +109,16 @@ public interface ISharedImages {
 	
 	/**
 	 * Identifies the new wizard image in the enabled state.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD = "IMG_TOOL_NEW_WIZARD"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the new wizard image in the hover (colored) state.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the new wizard image in the disabled state.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
 	

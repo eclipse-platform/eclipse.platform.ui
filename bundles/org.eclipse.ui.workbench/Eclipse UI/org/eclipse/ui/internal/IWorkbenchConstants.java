@@ -30,6 +30,9 @@ public interface IWorkbenchConstants {
 	public static final String PL_EDITOR ="editors"; //$NON-NLS-1$
 	public static final String PL_VIEWS ="views"; //$NON-NLS-1$
 	public static final String PL_POPUP_MENU ="popupMenus"; //$NON-NLS-1$
+	public static final String PL_IMPORT ="importWizards"; //$NON-NLS-1$
+	public static final String PL_EXPORT ="exportWizards"; //$NON-NLS-1$
+	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
 	public static final String PL_ELEMENT_FACTORY ="elementFactories"; //$NON-NLS-1$
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
 	public static final String PL_ACCELERATOR_CONFIGURATIONS ="acceleratorConfigurations"; //$NON-NLS-1$

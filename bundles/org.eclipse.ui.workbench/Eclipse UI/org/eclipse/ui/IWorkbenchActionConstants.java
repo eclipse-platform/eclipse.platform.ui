@@ -209,7 +209,7 @@ public interface IWorkbenchActionConstants {
 	 * File menu: name of standard New action (value <code>"new"</code>).
 	 * 
 	 * @deprecated in 3.0. Use
-	 * <code>org.eclipse.ui.ide.IDEActionFactory.NEW.getId()</code>
+	 * <code>org.eclipse.ui.ActionFactory.NEW.getId()</code>
 	 * instead.
 	 */
 	public static final String NEW = "new"; //$NON-NLS-1$
@@ -287,7 +287,7 @@ public interface IWorkbenchActionConstants {
 	 * File menu: name of standard Import action (value <code>"import"</code>).
 	 * 
 	 * @deprecated in 3.0. Use
-	 * <code>org.eclipse.ui.ide.IDEActionFactory.IMPORT.getId()</code>
+	 * <code>org.eclipse.ui.ActionFactory.IMPORT.getId()</code>
 	 * instead.
 	 */
 	public static final String IMPORT = "import"; //$NON-NLS-1$
@@ -296,7 +296,7 @@ public interface IWorkbenchActionConstants {
 	 * File menu: name of standard Export action (value <code>"export"</code>).
 	 * 
 	 * @deprecated in 3.0. Use
-	 * <code>org.eclipse.ui.ide.IDEActionFactory.EXPORT.getId()</code>
+	 * <code>org.eclipse.ui.ActionFactory.EXPORT.getId()</code>
 	 * instead.
 	 */
 	public static final String EXPORT = "export"; //$NON-NLS-1$

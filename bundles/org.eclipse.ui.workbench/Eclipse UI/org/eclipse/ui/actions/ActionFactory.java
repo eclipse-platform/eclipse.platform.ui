@@ -1092,4 +1092,53 @@ public abstract class ActionFactory {
 			return action;
 		}
 	};
+
+	/**
+	 * Workbench action (id "import"): Opens the import wizard.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory IMPORT = new ActionFactory("import") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new ImportResourcesAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+
+	/**
+	 * Workbench action (id "export"): Opens the export wizard.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory EXPORT = new ActionFactory("export") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new ExportResourcesAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+
+	/**
+	 * Workbench action (id "new"): Opens the new wizard.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory NEW = new ActionFactory("new") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new NewWizardAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+
 }
