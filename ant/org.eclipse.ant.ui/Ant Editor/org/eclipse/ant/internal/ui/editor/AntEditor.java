@@ -730,6 +730,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         	}
         	return;
         } 
+		
+		if (moveCursor) {
+			markInNavigationHistory();
+		}
+		
     	while (reference.getImportNode() != null) {
     		reference= reference.getImportNode();
     	}
