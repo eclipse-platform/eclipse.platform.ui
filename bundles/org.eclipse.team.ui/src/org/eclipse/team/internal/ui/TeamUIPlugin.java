@@ -15,8 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
-import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -182,9 +180,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		
 		initializeImages(this);
 		initializePreferences();
-	
-		IAdapterFactory factory = new TeamAdapterFactory();
-		Platform.getAdapterManager().registerAdapters(factory, DiffNode.class);
 
 		// This is a backwards compatibility check to ensure that repository
 		// provider capability are enabled automatically if an old workspace is
