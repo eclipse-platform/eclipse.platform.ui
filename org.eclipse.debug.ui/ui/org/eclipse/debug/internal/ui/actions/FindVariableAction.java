@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -69,9 +70,14 @@ public class FindVariableAction extends Action implements IUpdate {
 
 	public void update() {
 		VariablesView view= (VariablesView) fDelegate.getView();
-		setEnabled(view.getViewer().getInput() instanceof IStackFrame); 
-        //IAdaptable debugContext = DebugUITools.getDebugContext();
-        //setEnabled(debugContext instanceof IStackFrame);
+		if (view != null) {
+			Viewer viewer = view.getViewer();
+			if (viewer != null) {
+				setEnabled(viewer.getInput() instanceof IStackFrame);
+				return;
+			}
+		}
+		setEnabled(false);
 	}
 
 }
