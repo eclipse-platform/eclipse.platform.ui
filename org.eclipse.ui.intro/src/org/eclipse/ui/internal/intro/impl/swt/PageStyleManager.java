@@ -317,7 +317,7 @@ public class PageStyleManager extends SharedStyleManager {
         return getColor(toolkit, key);
     }
 
-    public boolean isBold(IntroText text) {
+    public boolean isBoldSS(IntroText text) {
         StringBuffer buff = createPathKey(text);
         if (buff == null)
             return false;
@@ -327,6 +327,25 @@ public class PageStyleManager extends SharedStyleManager {
             value = "false"; //$NON-NLS-1$
         return value.toLowerCase().equals("true"); //$NON-NLS-1$
     }
+
+    public boolean isBold(IntroText text) {
+        StringBuffer buff = createPathKey(text);
+        if (buff != null) {
+            String key = buff.append(".font.bold").toString();
+            String value = getProperty(key);
+            if (value != null)
+                return value.toLowerCase().equals("true");
+        } else {
+            // bold is not specified by ID. Check to see if there is a style-id
+            // specified for bold.
+            String value = getProperty("bold-style-id");
+            if (value != null && text.getStyleId() != null)
+                return text.getStyleId().equals(value);
+        }
+        return false;
+    }
+
+
 
 }
 
