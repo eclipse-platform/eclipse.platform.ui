@@ -14,17 +14,14 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Manages SWT resources for a particular device. Clients normally don't need to construct
- * this object themselves, since JFace provides global registries for each display. The
- * global registries can be accessed via JFaceResources.getResources(Display). These global
- * registries should be used wherever possible since creating multiple registries on the same
- * device is wasteful.
- * 
+ * Manages SWT resources for a particular device.
+ *  
  * <p>
- * Clients would only need to construct a DeviceResourceManager if they are allocating resources
- * on a non-display (such as a printer), or if they specifically want multiple copies of certain
- * resources (which may be useful when debugging resource leaks). In any other circumstance, the
- * class LocalResourceManager should be used for a localized registry.
+ * IMPORTANT: in most cases clients should use a <code>LocalResourceManager</code> instead of a
+ * <code>DeviceResourceManager</code>. To create a resource manager on a particular display, 
+ * use <code>new LocalResourceManager(JFaceResources.getResources(myDisplay))</code>.
+ * <code>DeviceResourceManager</code> should only be used directly when managing
+ * resources for a device other than a Display (such as a printer).  
  * </p>
  * 
  * @see LocalResourceManager
