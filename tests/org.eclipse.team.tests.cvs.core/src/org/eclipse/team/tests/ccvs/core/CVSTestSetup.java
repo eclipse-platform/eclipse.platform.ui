@@ -189,7 +189,8 @@ public class CVSTestSetup extends TestSetup {
 			repository.validateConnection(new NullProgressMonitor());
 		} catch (CVSException e) {
 			System.out.println("Unable to connect to remote repository: " + repository.toString());
-			throw e;
+			// Try once more, just in case
+			repository.validateConnection(new NullProgressMonitor());
 		}
 		
 		// Initialize the repo if requested (requires rsh access)
