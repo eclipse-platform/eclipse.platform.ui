@@ -94,12 +94,21 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
 /*
  * @see IResource#accept
  */
-public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
+public void accept(final IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
 	// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(includePhantoms, false);
 	int flags = getFlags(info);
 	checkExists(flags, true);
+	//use the fast visitor if visiting to infinite depth
+	if (depth == IResource.DEPTH_INFINITE) {
+		accept(new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) throws CoreException {
+				return visitor.visit(proxy.requestResource());
+			}
+		}, memberFlags);
+		return;
+	}
 	// ignore team private member entry point when INCLUDE_TEAM_PRIVATE_MEMBERS is not specified
 	final boolean includeTeamPrivateMembers = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
 	if (!includeTeamPrivateMembers && isTeamPrivateMember(flags))
@@ -115,13 +124,11 @@ public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws 
 	int type = info.getType();
 	if (type == FILE)
 		return;
-	if (depth == DEPTH_ONE)
-		depth = DEPTH_ZERO;
 	// if we had a gender change we need to fix up the resource before asking for its members
 	IContainer resource = getType() != type ? (IContainer) workspace.newResource(getFullPath(), type) : (IContainer) this;
 	IResource[] members = resource.members(memberFlags);
 	for (int i = 0; i < members.length; i++)
-		members[i].accept(visitor, depth, memberFlags);
+		members[i].accept(visitor, DEPTH_ZERO, memberFlags);
 }
 
 protected void assertCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {

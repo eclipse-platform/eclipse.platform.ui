@@ -246,6 +246,15 @@ public interface IResource extends IAdaptable {
  * visit method.
  * </p>
  * <p>
+ * No guarantees are made about the behavior of this method if resources are
+ * deleted or added during the traversal of this resource hierarchy.  If
+ * resources are deleted during the traversal, they may still be passed to the
+ * visitor; if resources are created, they may not be passed to the visitor.  If
+ * resources other than the one being visited are modified during the traversal,
+ * the resource proxy may contain stale information when that resource is
+ * visited.
+ * </p>
+<p>
  * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
  * flags (recommended), only member resources that exists will be visited.
  * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit will
@@ -345,6 +354,12 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
  * this resource's members are not visited.
  * <p>
  * The subtree under the given resource is traversed to the supplied depth.
+ * </p>
+ * <p>
+ * No guarantees are made about the behavior of this method if resources are
+ * deleted or added during the traversal of this resource hierarchy.  If
+ * resources are deleted during the traversal, they may still be passed to the
+ * visitor; if resources are created, they may not be passed to the visitor.
  * </p>
  * <p>
  * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
