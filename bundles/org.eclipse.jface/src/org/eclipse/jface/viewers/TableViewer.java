@@ -783,7 +783,7 @@ public class TableViewer extends StructuredViewer {
 				// So, if the object associated with this item has changed,
 				// just disassociate it for now, and update it below.
 				item.setText(""); //$NON-NLS-1$
-				item.setImage(new Image[table.getItemCount()]);//Clear all images
+				item.setImage(new Image[table.getColumnCount()]);//Clear all images
 				disassociate(item);
 			}
 		}
