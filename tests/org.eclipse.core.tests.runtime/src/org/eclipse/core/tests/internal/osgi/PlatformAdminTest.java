@@ -10,27 +10,54 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.osgi;
 
-import java.util.*;
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.adaptor.testsupport.SimplePlatformAdmin;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.resolver.*;
 import org.osgi.framework.BundleException;
 
-public class PlatformAdminTest extends EclipseWorkspaceTest {
+public class PlatformAdminTest extends AbstractStateTest {
+	public static Test suite() {
+		return new TestSuite(PlatformAdminTest.class);
+	}
 	public PlatformAdminTest(String name) {
 		super(name);
 	}
-	private final static String A1_LOCATION = "org.eclipse.a";
-	private final static String A1_MANIFEST = "Bundle-SymbolicName: org.eclipse.a\n" + "Bundle-Version: 1.0.0\n" + "Export-Package: org.eclipse.package1,org.eclipse.package2\n" + ";Import-Package: org.eclipse.package3";
-	private final static String B1_LOCATION = "org.eclipse.b";
-	private final static String B1_MANIFEST = "Bundle-SymbolicName: org.eclipse.b\n" + "Bundle-Version: 1.0.0\n" + "Provide-Package: org.eclipse.b.package1,org.eclipse.b.package2,org.eclipse.b.package3\n" + "Export-Package: org.eclipse.package3";
-	private final static String C1_LOCATION = "org.eclipse.c";
-	private final static String C1_MANIFEST = "Bundle-SymbolicName: org.eclipse.c\n" + "Bundle-Version: 1.0.0\n" + "Required-Bundle: org.eclipse.b";
-	private final static String D1_LOCATION = "org.eclipse.d";
-	private final static String D1_MANIFEST = "Bundle-SymbolicName: org.eclipse.d\n" + "Bundle-Version: 1.0.0";
+	private State storeAndRetrieve(State toStore) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+		toStore.getFactory().writeState(toStore, dos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		DataInputStream dis = new DataInputStream(bais);
+		return toStore.getFactory().readState(dis);
+	}
+	public void testCache() throws IOException, BundleException {
+		State originalState = buildSimpleState();
+		State retrievedState = storeAndRetrieve(originalState);
+		assertEquals("0.9", 0, retrievedState.getChanges().getChanges().length);
+		assertIdentical("1.0", originalState, retrievedState);
+		originalState.resolve();
+		retrievedState = storeAndRetrieve(originalState);
+		assertIdentical("2.0", originalState, retrievedState);
+	}
+	public void testClone() throws BundleException {
+		State original = buildSimpleState();
+		State newState = original.getFactory().createState(original);
+		assertEquals("1", original, newState);
+		original = buildComplexState();
+		newState = original.getFactory().createState(original);
+		assertEquals("2", original, newState);
+	}
 	public void testCommit() {
+		final String A1_LOCATION = "org.eclipse.a";
+		final String A1_MANIFEST = "Bundle-SymbolicName: org.eclipse.a\n" + "Bundle-Version: 1.0.0\n" + "Export-Package: org.eclipse.package1,org.eclipse.package2\n" + ";Import-Package: org.eclipse.package3";
+		final String B1_LOCATION = "org.eclipse.b";
+		final String B1_MANIFEST = "Bundle-SymbolicName: org.eclipse.b\n" + "Bundle-Version: 1.0.0\n" + "Provide-Package: org.eclipse.b.package1,org.eclipse.b.package2,org.eclipse.b.package3\n" + "Export-Package: org.eclipse.package3";
+		final String C1_LOCATION = "org.eclipse.c";
+		final String C1_MANIFEST = "Bundle-SymbolicName: org.eclipse.c\n" + "Bundle-Version: 1.0.0\n" + "Required-Bundle: org.eclipse.b";
+		final String D1_LOCATION = "org.eclipse.d";
+		final String D1_MANIFEST = "Bundle-SymbolicName: org.eclipse.d\n" + "Bundle-Version: 1.0.0";
 		PlatformAdmin platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
 		State state = platformAdmin.getState();
 		BundleDescription a1 = null;
@@ -79,17 +106,9 @@ public class PlatformAdminTest extends EclipseWorkspaceTest {
 		}
 		assertEquals("7.0", 2, platformAdmin.getState().getBundles().length);
 	}
-	private Dictionary parseManifest(String manifest) {
-		Dictionary entries = new Hashtable();
-		StringTokenizer tokenizer = new StringTokenizer(manifest, ":\n");
-		while (tokenizer.hasMoreTokens()) {
-			String key = tokenizer.nextToken();
-			String value = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "";
-			entries.put(key, value);
-		}
-		return entries;
-	}
-	public static Test suite() {
-		return new TestSuite(PlatformAdminTest.class);
-	}
 }
+//TODO tests to enable
+//testFragmentUpdateNoVersionChanged()
+//testFragmentUpdateVersionChanged()
+//testHostUpdateNoVersionChanged()
+//testHostUpdateVersionChanged()

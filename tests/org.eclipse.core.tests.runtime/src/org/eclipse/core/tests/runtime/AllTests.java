@@ -45,6 +45,7 @@ public static Test suite() {
 	suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
 	suite.addTest(PreferenceForwarderTest.suite());
+	suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
 	return suite;
 }
 }
