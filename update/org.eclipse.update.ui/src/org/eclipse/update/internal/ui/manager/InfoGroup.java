@@ -4,8 +4,7 @@ package org.eclipse.update.internal.ui.manager;
  * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.*;
-import org.eclipse.update.ui.forms.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.core.*;
 import org.eclipse.swt.layout.*;
 import java.net.URL;

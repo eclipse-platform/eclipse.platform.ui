@@ -36,7 +36,7 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 
 		try {
 			IAdaptable input = UpdateUIPlugin.getWorkspace();
-			window.openPage(UpdatePerspective.PERSPECTIVE_ID, input);
+			window.getWorkbench().openPage(UpdatePerspective.PERSPECTIVE_ID, input, 0);
 		} catch (WorkbenchException e) {
 		/*
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$

@@ -8,7 +8,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.update.ui.forms.IFormPage;
+import org.eclipse.update.ui.forms.internal.IFormPage;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.ui.texteditor.IUpdate;

@@ -4,7 +4,7 @@ package org.eclipse.update.internal.ui.manager;
  * All Rights Reserved.
  */
 import org.eclipse.update.internal.ui.parts.UpdateFormPage;
-import org.eclipse.update.ui.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class UpdatesPage extends UpdateFormPage {
 	
