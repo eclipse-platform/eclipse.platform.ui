@@ -88,10 +88,17 @@ with this perspective.
          <attribute name="theme" type="string">
             <annotation>
                <documentation>
-                  The theme to use to customize the UI of tabs and View titlebars.
+                  the id of the theme to use to customize the UI of tabs and view titlebars.
                </documentation>
             </annotation>
-         </attribute>         
+         </attribute>
+         <attribute name="fixed" type="boolean">
+            <annotation>
+               <documentation>
+                  indicates whether the layout of the perspective is fixed.  If true, then views created by the perspective factory are not closeable, and cannot be moved.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
