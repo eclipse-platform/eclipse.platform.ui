@@ -73,8 +73,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	 */
 	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
-		IWorkbench workbench = navigator.getSite().getWorkbenchWindow().getWorkbench();
-
+		
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);		
 		propertyDialogAction =
@@ -100,9 +99,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			ResourceNavigatorMessages.getString("ToggleLinkingAction.text")); //$NON-NLS-1$
 		toggleLinkingAction.setToolTipText(
 			ResourceNavigatorMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
-		// TODO: fix up images for linking
-//		toggleLinkingAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/synced.gif"));//$NON-NLS-1$
-//		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
+		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
 		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 	}
 	
