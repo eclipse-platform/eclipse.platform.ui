@@ -574,7 +574,22 @@
             default="true"
             name="Plugin Icon Test 3"
             id="org.eclipse.ui.tests.IconTestEditor3"
-            extensions="icontest3"/>       
+            extensions="icontest3"/>
+       <editor
+             class="org.eclipse.ui.tests.api.MockEditorPart"
+             default="false"
+             icon="icons/anything.gif"
+             id="org.eclipse.ui.tests.contentType1Editor"
+             name="org.eclipse.ui.tests.contentType1Editor">
+          <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type1"/>
+       </editor>
+       <editor
+             default="false"
+             extensions="content-type1"
+             filenames="content-type1.blah"
+             icon="icons/anything.gif"
+             id="org.eclipse.ui.tests.contentType1Editor-fallback"
+             name="org.eclipse.ui.tests.editor2org.eclipse.ui.tests.contentType1Editor-fallback"/>       
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -771,6 +786,16 @@
 				<parameter name="element" value="testObjectStateContentTypeElement" />
 			</describer>
 		</content-type>
+       <content-type
+             file-extensions="content-type1"
+             file-names="content-type1.blah"
+             id="content-type1"
+             name="org.eclipse.ui.tests.content-type1"
+             priority="normal">
+        		<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+				<parameter name="element" value="contentType1" />
+			</describer>
+        </content-type>
    </extension>
    		
    <extension

@@ -15,6 +15,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -269,4 +271,44 @@ public class IEditorRegistryTest extends TestCase {
             fail();
         }
     }
+	
+	/**
+	 * Assert that the content-type based editor is chosen.
+	 */
+	public void testEditorContentTypeByFilenameWithContentType() {
+		IContentType contentType = Platform.getContentTypeManager().getContentType("org.eclipse.ui.tests.content-type1");
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type1.blah", contentType);
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType1Editor", descriptor.getId());
+	}
+	
+	/**
+	 * Assert that the content type based editor is chosen.
+	 */
+	public void testEditorContentTypeByExtWithContentType() {
+		IContentType contentType = Platform.getContentTypeManager().getContentType("org.eclipse.ui.tests.content-type1");
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type1", contentType);
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType1Editor", descriptor.getId());
+	}
+
+	/**
+	 * Assert that in the absence of content type, fall back to the traditional filename binding.
+	 */
+	public void testEditorContentTypeByExtWithoutContentType() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type1", null);
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
+	}
+
+	/**
+	 * Assert that in the absence of content type, fall back to the traditional filename binding.
+	 */
+	public void testEditorContentTypeByFilenameWithoutContentType() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type1.blah", null);
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
+	}
+
+
 }
