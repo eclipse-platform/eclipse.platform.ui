@@ -2956,7 +2956,8 @@ public class TextViewer extends Viewer implements
 		if (fVisibleDocument != null) {
 			if (fDocumentListener != null)
 				fVisibleDocument.removeDocumentListener(fDocumentListener);
-			freeSlaveDocument(fVisibleDocument);
+			if (fVisibleDocument != document)
+				freeSlaveDocument(fVisibleDocument);
 		}
 		
 		fVisibleDocument= document;
