@@ -267,7 +267,7 @@ public boolean isSaveAllEnabled() {
 public boolean isSelectAllEnabled() {
 	if (text == null || text.isDisposed())
 		return false;
-	return text.getText().length() > 0;
+	return text.getCharCount() > 0;
 }
 /**
  * The <code>TextCellEditor</code> implementation of this
