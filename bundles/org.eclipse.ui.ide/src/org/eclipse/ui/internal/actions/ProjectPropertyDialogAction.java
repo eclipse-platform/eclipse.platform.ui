@@ -84,6 +84,7 @@ public void run() {
 	} else
 		title = WorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
+	// @issue should use PropertyDialogAction instead
 	PropertyDialog propertyDialog = new PropertyDialog(window.getShell(), pageManager, new StructuredSelection(project)); 
 	propertyDialog.create();
 	propertyDialog.getShell().setText(title);

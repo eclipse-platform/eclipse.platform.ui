@@ -18,7 +18,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.ide.DialogUtil;
 
 /**
  * Standard action for opening an editor on the currently selected file 

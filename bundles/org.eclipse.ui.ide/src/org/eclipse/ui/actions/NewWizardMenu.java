@@ -85,8 +85,10 @@ public class NewWizardMenu extends ContributionItem {
 			// Get visible actions.
 			List actions = null;
 			IWorkbenchPage page = window.getActivePage();
-			if (page != null)
+			if (page != null) {
+				// @issue new wizards
 				actions = ((WorkbenchPage) page).getNewWizardActionIds();
+			}
 			if (actions != null) {
 				if(actions.size() > 0)
 					innerMgr.add(new Separator());

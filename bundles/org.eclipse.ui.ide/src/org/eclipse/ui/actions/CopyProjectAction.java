@@ -31,7 +31,7 @@ import java.util.List;
  * Note that this action assumes that a single project is selected and being
  * manipulated. This should be disabled for multi select or no selection.
  */
-public class CopyProjectAction extends SelectionListenerAction {
+public class CopyProjectAction extends ResourceSelectionListenerAction {
 	private static String COPY_TOOL_TIP = WorkbenchMessages.getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
 	private static String COPY_TITLE = WorkbenchMessages.getString("CopyProjectAction.title"); //$NON-NLS-1$
 	private static String COPY_PROGRESS_TITLE = WorkbenchMessages.getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$

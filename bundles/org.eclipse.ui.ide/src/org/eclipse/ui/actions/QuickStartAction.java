@@ -24,13 +24,13 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.FeatureSelectionDialog;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.Workbench;

@@ -19,8 +19,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import java.util.Iterator;
 
@@ -31,7 +31,7 @@ import java.util.Iterator;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenSystemEditorAction extends SelectionListenerAction  {
+public class OpenSystemEditorAction extends ResourceSelectionListenerAction  {
 
 	/**
 	 * The id of this action.

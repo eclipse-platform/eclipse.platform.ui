@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;

@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**

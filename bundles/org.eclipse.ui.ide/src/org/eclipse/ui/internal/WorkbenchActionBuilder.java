@@ -90,6 +90,7 @@ public final class WorkbenchActionBuilder {
 		}
 	};
 
+	// @issue which actions become API, which go to IDE
 	// actions
 	private NewWizardAction newWizardAction;
 	private NewWizardDropDownAction newWizardDropDownAction;

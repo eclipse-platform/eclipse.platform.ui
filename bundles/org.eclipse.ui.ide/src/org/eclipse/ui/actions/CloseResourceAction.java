@@ -29,6 +29,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
  * Standard action for closing the currently selected project(s).

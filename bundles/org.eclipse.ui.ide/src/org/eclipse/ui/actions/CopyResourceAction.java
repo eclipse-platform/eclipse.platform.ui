@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class CopyResourceAction extends SelectionListenerAction implements ISelectionValidator {
+public class CopyResourceAction extends ResourceSelectionListenerAction implements ISelectionValidator {
 
 	/**
 	 * The id of this action.

@@ -91,8 +91,10 @@ public void run(IAction action) {
 		return;
 	try {
 		IWorkbenchPage page = workbenchWindow.getActivePage();
-		if (page != null)
+		if (page != null) {
+			// @issue need snip in porting guide
 			page.openEditor(file);
+		}
 	} catch (CoreException x) {
 		String title = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
 		String message = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorMessage"); //$NON-NLS-1$

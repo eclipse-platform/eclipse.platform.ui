@@ -32,7 +32,7 @@ import java.util.Iterator;
  * 
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
  */
-public class CreateFileAction extends SelectionListenerAction {
+public class CreateFileAction extends ResourceSelectionListenerAction {
 	
 	/**
 	 * The id of this action.

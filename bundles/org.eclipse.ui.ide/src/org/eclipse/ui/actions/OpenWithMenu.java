@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
+	// @issue Enough api on IEditorRegistry to suppor this action?
 	private EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry();
 
 	private static Hashtable imageCache = new Hashtable(11);

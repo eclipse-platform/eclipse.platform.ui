@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.dialogs.IElementFilter;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchLabelProvider;

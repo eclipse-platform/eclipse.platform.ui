@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.dialogs.ExportWizard;
  * </p>
  * @since 2.0
  */
-public class ExportResourcesAction extends SelectionListenerAction {
+public class ExportResourcesAction extends ResourceSelectionListenerAction {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 	private static final int SIZING_WIZARD_HEIGHT = 550;
 	private IWorkbenchWindow window;
