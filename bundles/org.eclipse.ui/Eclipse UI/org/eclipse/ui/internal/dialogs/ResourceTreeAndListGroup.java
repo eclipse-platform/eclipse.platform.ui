@@ -535,11 +535,10 @@ private void grayUpdateHierarchy(Object treeElement) {
  */
 public void initialCheckListItem(Object element) {
 	Object parent = treeContentProvider.getParent(element);
-	currentTreeSelection = parent;
+	selectAndReveal(parent);
 	//As this is not done from the UI then set the box for updating from the selection to false 
 	listItemChecked(element, true, false);
 	grayUpdateHierarchy(parent);
-	selectAndReveal(parent);
 }
 /**
  *	Set the initial checked state of the passed element to true,
