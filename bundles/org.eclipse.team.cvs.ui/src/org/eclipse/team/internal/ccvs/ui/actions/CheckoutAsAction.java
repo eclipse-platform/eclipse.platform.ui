@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -23,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 
@@ -60,13 +62,18 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					if (destinationPaths == null) return;
 					String newName = (String) destinationPaths[0];
 					IPath newLocation = new Path((String) destinationPaths[1]);
-					
+
+					// prompt if the project exists locally
+					project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
+					PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { project },
+						getOverwriteLocalAndFileSystemPrompt(), Policy.bind("ReplaceWithAction.confirmOverwrite"));
+					if (prompt.promptForMultiple().length == 0) return;
+
 					monitor.beginTask(null, 100);
 					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, newName)); //$NON-NLS-1$
 
 					// create the project
 					try {
-						project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 						if (newLocation.equals(Platform.getLocation())) {
 							// create in default location
 							project.create(Policy.subMonitorFor(monitor, 3));
