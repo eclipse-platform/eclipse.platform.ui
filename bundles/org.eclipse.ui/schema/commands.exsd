@@ -19,8 +19,8 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-<!--element ref="gestureConfiguration"/-->
 <!--element ref="gestureBinding"/-->
+<!--element ref="gestureConfiguration"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="scope"/>
@@ -28,21 +28,21 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  An optional identifier of the extension instance.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name of the extension instance
+                  An optional name of the extension instance.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified identifier of the target extension point
+                  A fully qualified identifier of the target extension point.
                </documentation>
             </annotation>
          </attribute>
@@ -61,11 +61,16 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element-->
    <element name="activeKeyConfiguration">
+      <annotation>
+         <documentation>
+            This element allows one to set the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id (&lt;code&gt;id&lt;/code&gt;attribute) of the keyConfiguration element one wishes to be initially active.
                </documentation>
             </annotation>
          </attribute>
@@ -77,21 +82,21 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  A translatable description of this category, more detailed than its name, for display in the UI.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique identifier of this category.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The translatable name of this category for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -110,7 +115,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  A translatable description of this command, more detailed than its name, for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -121,55 +126,23 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique identifier of this command.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The translatable name of this command for display in the UI.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-<!--element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
 <!--element name="gestureBinding">
       <complexType>
          <sequence>
@@ -219,57 +192,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          </attribute>
       </complexType>
    </element-->
-   <element name="keyBinding">
-      <complexType>
-<!--sequence>
-            <element ref="sequence" minOccurs="0" maxOccurs="1"/>
-         </sequence-->
-         <attribute name="configuration" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="command" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="locale" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="platform" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="scope" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="string" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="keyConfiguration">
+<!--element name="gestureConfiguration">
       <complexType>
          <attribute name="description" type="string">
             <annotation>
@@ -300,8 +223,97 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
       </complexType>
+   </element-->
+   <element name="keyBinding">
+      <complexType>
+<!--sequence>
+            <element ref="sequence" minOccurs="0" maxOccurs="1"/>
+         </sequence-->
+         <attribute name="configuration" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="locale" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="scope" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="string" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
    </element>
 
+   <element name="keyConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable description of this key configuration, more detailed than its name, for display in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this key configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends &lt;parent&gt;)&quot; to the name. This will be automatically added by the UI where necessary.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -313,33 +325,26 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          </attribute>
       </complexType>
    </element-->
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
    <element name="scope">
       <complexType>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  A translatable description of this scope, more detailed than its name, for display in the UI.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique identifier of this scope.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends &lt;parent&gt;)&quot; to the name. This will be automatically added by the UI where necessary.
                </documentation>
             </annotation>
          </attribute>
