@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 /**
- * This interface describes the constants used for <link>IWorkbenchPart</link> properties 
+ * This interface describes the constants used for <link>IWorkbenchPart</link> properties.
  * 
  * @since 3.0
  */

@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Interface implemented by objects that can process changes in selection.
- * Parts can use an ISelectionHandler as a service fto change
+ * Parts can use an <code>ISelectionHandler</code> as a service to change
  * their selection. 
  * 
  * @since 3.1

@@ -15,8 +15,8 @@ package org.eclipse.ui.views.properties;
  * <code>IPropertySheetEntry</code>.
  * <p>
  * This interface is public since it appears in the api
- * of <code>IPropertySheetEntry</code>. It in not intended
- * to be implemented outside of this package
+ * of <code>IPropertySheetEntry</code>.  It is not intended
+ * to be implemented outside of this package.
  * <p>
  */
 public interface IPropertySheetEntryListener {
