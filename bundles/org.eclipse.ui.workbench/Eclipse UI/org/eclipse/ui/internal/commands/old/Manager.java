@@ -35,23 +35,15 @@ public class Manager {
 	}
 
 	private CoreRegistry coreRegistry;
-	private LocalRegistry localRegistry;
 	private PreferenceRegistry preferenceRegistry;
-	private SequenceMachine gestureMachine;	
 	private SequenceMachine keyMachine;	
 	
 	private Manager() {
 		super();		
 		coreRegistry = CoreRegistry.getInstance();		
-		localRegistry = LocalRegistry.getInstance();
 		preferenceRegistry = PreferenceRegistry.getInstance();		
-		gestureMachine = SequenceMachine.create();
 		keyMachine = SequenceMachine.create();
 		reset();		
-	}
-
-	public SequenceMachine getGestureMachine() {
-		return gestureMachine;
 	}
 
 	public SequenceMachine getKeyMachine() {
@@ -76,18 +68,12 @@ public class Manager {
 		}
 
 		try {
-			localRegistry.load();
-		} catch (IOException eIO) {
-		}
-		
-		try {
 			preferenceRegistry.load();
 		} catch (IOException eIO) {
 		}
 		
 		List activeGestureConfigurations = new ArrayList();
 		activeGestureConfigurations.addAll(coreRegistry.getActiveGestureConfigurations());
-		activeGestureConfigurations.addAll(localRegistry.getActiveGestureConfigurations());
 		activeGestureConfigurations.addAll(preferenceRegistry.getActiveGestureConfigurations());	
 		String activeGestureConfigurationId;
 			
@@ -100,7 +86,6 @@ public class Manager {
 
 		List activeKeyConfigurations = new ArrayList();
 		activeKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
-		activeKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
 		activeKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());	
 		String activeKeyConfigurationId;
 			
@@ -113,38 +98,28 @@ public class Manager {
 
 		List contexts = new ArrayList();
 		contexts.addAll(coreRegistry.getContexts());
-		contexts.addAll(localRegistry.getContexts());
 		contexts.addAll(preferenceRegistry.getContexts());
 		SortedMap contextMap = SequenceMachine.buildPathMapForContextMap(Context.sortedMapById(contexts));
 
 		SortedSet gestureBindingSet = new TreeSet();		
 		gestureBindingSet.addAll(coreRegistry.getGestureBindings());
-		gestureBindingSet.addAll(localRegistry.getGestureBindings());
 		gestureBindingSet.addAll(preferenceRegistry.getGestureBindings());
 		Manager.validateSequenceBindings(gestureBindingSet);
 		
 		List gestureConfigurations = new ArrayList();
 		gestureConfigurations.addAll(coreRegistry.getGestureConfigurations());
-		gestureConfigurations.addAll(localRegistry.getGestureConfigurations());
 		gestureConfigurations.addAll(preferenceRegistry.getGestureConfigurations());
 		SortedMap gestureConfigurationMap = SequenceMachine.buildPathMapForConfigurationMap(Configuration.sortedMapById(gestureConfigurations));
 
 		SortedSet keyBindingSet = new TreeSet();		
 		keyBindingSet.addAll(coreRegistry.getKeyBindings());
-		keyBindingSet.addAll(localRegistry.getKeyBindings());
 		keyBindingSet.addAll(preferenceRegistry.getKeyBindings());
 		Manager.validateSequenceBindings(keyBindingSet);
 
 		List keyConfigurations = new ArrayList();
 		keyConfigurations.addAll(coreRegistry.getKeyConfigurations());
-		keyConfigurations.addAll(localRegistry.getKeyConfigurations());
 		keyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
 		SortedMap keyConfigurationMap = SequenceMachine.buildPathMapForConfigurationMap(Configuration.sortedMapById(keyConfigurations));
-
-		gestureMachine.setConfiguration(activeGestureConfigurationId);
-		gestureMachine.setConfigurationMap(Collections.unmodifiableSortedMap(gestureConfigurationMap));
-		gestureMachine.setContextMap(Collections.unmodifiableSortedMap(contextMap));
-		gestureMachine.setBindingSet(Collections.unmodifiableSortedSet(gestureBindingSet));
 
 		keyMachine.setConfiguration(activeKeyConfigurationId);	
 		keyMachine.setConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
@@ -158,8 +133,29 @@ public class Manager {
 		while (iterator.hasNext()) {
 			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
 			
-			if (!SequenceUtil.validateSequence(sequenceBinding.getSequence()))
+			if (!validateSequence(sequenceBinding.getSequence()))
 				iterator.remove();
 		}
+	}
+	
+	static boolean validateSequence(Sequence sequence) {
+		List strokes = sequence.getStrokes();
+		int size = strokes.size();
+			
+		if (size == 0)
+			return false;
+		else 
+			for (int i = 0; i < size; i++) {
+				Stroke stroke = (Stroke) strokes.get(i);	
+	
+				if (!validateStroke(stroke))
+					return false;
+			}
+			
+		return true;
+	}
+
+	static boolean validateStroke(Stroke stroke) {
+		return stroke.getValue() != 0;
 	}
 }

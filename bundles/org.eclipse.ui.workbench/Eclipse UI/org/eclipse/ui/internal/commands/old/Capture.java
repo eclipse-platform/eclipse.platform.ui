@@ -49,7 +49,7 @@ public final class Capture {
 					data = mouseEvent.stateMask;
 					pen = mouseEvent.button;
 					points.clear();
-					points.add(Point.create(mouseEvent.x, mouseEvent.y));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
 					control.addMouseMoveListener(mouseMoveListener);
 				}
 			}
@@ -57,7 +57,7 @@ public final class Capture {
 			public void mouseUp(MouseEvent mouseEvent) {
 				if (capturing && mouseEvent.button == pen) {
 					control.removeMouseMoveListener(mouseMoveListener);
-					points.add(Point.create(mouseEvent.x, mouseEvent.y));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
 					CaptureEvent captureEvent = CaptureEvent.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
 					capturing = false;
 					data = 0;
@@ -74,7 +74,7 @@ public final class Capture {
 		mouseMoveListener = new MouseMoveListener() {
 			public void mouseMove(MouseEvent mouseEvent) {
 				if (capturing)
-					points.add(Point.create(mouseEvent.x, mouseEvent.y));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
 			}
 		};	
 		

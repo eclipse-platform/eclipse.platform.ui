@@ -16,14 +16,10 @@ public final class Point implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Point.class.getName().hashCode();
 
-	public static Point create(int x, int y) {
-		return new Point(x, y);
-	}
-
 	private int x;
 	private int y;
 
-	private Point(int x, int y) {
+	Point(int x, int y) {
 		super();
 		this.x = x;
 		this.y = y;

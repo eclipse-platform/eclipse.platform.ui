@@ -260,10 +260,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private List coreKeyBindings;
 	private List coreKeyConfigurations;
 
-	private List localActiveKeyConfigurations;
-	private List localKeyBindings;
-	private List localKeyConfigurations;
-
 	private List preferenceActiveKeyConfigurations;
 	private List preferenceKeyBindings;
 	private List preferenceKeyConfigurations;
@@ -316,16 +312,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	public void setVisible(boolean visible) {
 		if (visible == true) {
 			AbstractRegistry coreRegistry = CoreRegistry.getInstance();
-			AbstractMutableRegistry localRegistry = LocalRegistry.getInstance();
 			AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 			try {
 				coreRegistry.load();
-			} catch (IOException eIO) {
-			}
-	
-			try {
-				localRegistry.load();
 			} catch (IOException eIO) {
 			}
 	
@@ -337,7 +327,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			boolean categoriesChanged = false;
 			List categories = new ArrayList();
 			categories.addAll(coreRegistry.getCategories());
-			categories.addAll(localRegistry.getCategories());
 			categories.addAll(preferenceRegistry.getCategories());
 	
 			if (!Util.equals(categories, this.categories)) {
@@ -350,7 +339,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			boolean commandsChanged = false;
 			List commands = new ArrayList();
 			commands.addAll(coreRegistry.getCommands());
-			commands.addAll(localRegistry.getCommands());
 			commands.addAll(preferenceRegistry.getCommands());
 			
 			if (!Util.equals(commands, this.commands)) {
@@ -365,7 +353,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	
 			List scopes = new ArrayList();
 			scopes.addAll(coreRegistry.getContexts());
-			scopes.addAll(localRegistry.getContexts());
 			scopes.addAll(preferenceRegistry.getContexts());
 	
 			if (!Util.equals(scopes, this.scopes)) {
@@ -401,11 +388,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			coreKeyBindings = new ArrayList(coreRegistry.getKeyBindings());
 			Manager.validateSequenceBindings(coreKeyBindings);
 			coreKeyConfigurations = new ArrayList(coreRegistry.getKeyConfigurations());
-
-			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
-			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
-			Manager.validateSequenceBindings(localKeyBindings);
-			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
 
 			copyToUI();
 			update();
@@ -453,8 +435,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private void copyToUI() {	
 		List activeKeyConfigurations = new ArrayList();
 		activeKeyConfigurations.addAll(coreActiveKeyConfigurations);
-		activeKeyConfigurations.addAll(localActiveKeyConfigurations);
-		activeKeyConfigurations.addAll(preferenceActiveKeyConfigurations);
+ 		activeKeyConfigurations.addAll(preferenceActiveKeyConfigurations);
 
 		if (!Util.equals(activeKeyConfigurations, this.activeKeyConfigurations)) {
 			this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
@@ -467,7 +448,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 		List keyConfigurations = new ArrayList();
 		keyConfigurations.addAll(coreKeyConfigurations);
-		keyConfigurations.addAll(localKeyConfigurations);
 		keyConfigurations.addAll(preferenceKeyConfigurations);
 
 		if (!Util.equals(keyConfigurations, this.keyConfigurations)) {
@@ -504,7 +484,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		SortedSet keyBindingSet = new TreeSet();
 		keyBindingSet.addAll(coreKeyBindings);
-		keyBindingSet.addAll(localKeyBindings);
 		keyBindingSet.addAll(preferenceKeyBindings);
 
 		tree = build(keyBindingSet);	
@@ -1073,7 +1052,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private void selectedButtonChange() {
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && SequenceUtil.validateSequence(keySequence);
+		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
@@ -1133,7 +1112,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		boolean commandSelected = command != null;
 
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && SequenceUtil.validateSequence(keySequence);
+		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();

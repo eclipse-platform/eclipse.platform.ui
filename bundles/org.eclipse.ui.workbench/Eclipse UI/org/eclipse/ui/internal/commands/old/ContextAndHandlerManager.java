@@ -311,16 +311,10 @@ public class ContextAndHandlerManager implements IContextResolver {
 	
 	void reset() {
 		AbstractRegistry coreRegistry = CoreRegistry.getInstance();
-		AbstractMutableRegistry localRegistry = LocalRegistry.getInstance();
 		AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 		try {
 			coreRegistry.load();
-		} catch (IOException eIO) {
-		}
-	
-		try {
-			localRegistry.load();
 		} catch (IOException eIO) {
 		}
 	
@@ -331,7 +325,6 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 		List contextBindings = new ArrayList();
 		contextBindings.addAll(coreRegistry.getContextBindings());
-		contextBindings.addAll(localRegistry.getContextBindings());
 		contextBindings.addAll(preferenceRegistry.getContextBindings());	
 		contextsByCommand = new TreeMap();
 		Iterator iterator = contextBindings.iterator();
