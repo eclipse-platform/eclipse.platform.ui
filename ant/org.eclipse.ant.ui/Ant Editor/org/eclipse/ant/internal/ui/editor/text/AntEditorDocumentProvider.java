@@ -37,9 +37,9 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 /*
  * This file originates from an internal package of Eclipse's 
@@ -49,7 +49,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  */
 public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 
-	protected class AntAnnotationModel extends AbstractMarkerAnnotationModel implements IProblemRequestor {
+	protected class AntAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
 		
 		private List fGeneratedAnnotations= new ArrayList();
 		private List fCollectedProblems= new ArrayList();
@@ -58,8 +58,8 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		private List fPreviouslyOverlaid= null; 
 		private List fCurrentlyOverlaid= new ArrayList();
 
-		public AntAnnotationModel() {
-			super();
+		public AntAnnotationModel(IFile file) {
+			super(file);
 		}
 
 		/*
@@ -186,8 +186,8 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			return fReverseMap.get(position);
 		}
 						
-		/*
-		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.source.AnnotationModel#addAnnotation(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position, boolean)
 		 */
 		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
@@ -206,16 +206,16 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			}
 		}
 			
-		/*
-		 * @see AnnotationModel#removeAllAnnotations(boolean)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.source.AnnotationModel#removeAllAnnotations(boolean)
 		 */
 		protected void removeAllAnnotations(boolean fireModelChanged) {
 			super.removeAllAnnotations(fireModelChanged);
 			fReverseMap.clear();
 		}
 			
-		/*
-		 * @see AnnotationModel#removeAnnotation(Annotation, boolean)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.source.AnnotationModel#removeAnnotation(org.eclipse.jface.text.source.Annotation, boolean)
 		 */
 		protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 			Position position= getPosition(annotation);
@@ -232,38 +232,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			}
 				
 			super.removeAnnotation(annotation, fireModelChanged);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#retrieveMarkers()
-		 */
-		protected IMarker[] retrieveMarkers() throws CoreException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#deleteMarkers(org.eclipse.core.resources.IMarker[])
-		 */
-		protected void deleteMarkers(IMarker[] markers) throws CoreException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
-		 */
-		protected void listenToMarkerChanges(boolean listen) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#isAcceptable(org.eclipse.core.resources.IMarker)
-		 */
-		protected boolean isAcceptable(IMarker marker) {
-			// TODO Auto-generated method stub
-			return false;
 		}
 	}
 	
@@ -379,7 +347,7 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
      * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
      */
     protected IAnnotationModel createAnnotationModel(IFile file) {
-		   return new AntAnnotationModel();
+		   return new AntAnnotationModel(file);
     }
 
     protected AntModel createAntModel(Object element, IDocument document, IAnnotationModel annotationModel) {
@@ -391,8 +359,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
 	 */
 	protected FileInfo createFileInfo(Object element) throws CoreException {
-		
-		
 		FileInfo info= super.createFileInfo(element);
 		if (!(info instanceof AntFileInfo)) {
 			return null;
@@ -400,10 +366,10 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	
 		AntFileInfo xmlInfo= (AntFileInfo) info;
 		IAnnotationModel model= xmlInfo.fModel;
-		if (model == null) {
-			model= createAnnotationModel(null);
-			model.connect(xmlInfo.fTextFileBuffer.getDocument());
-		}
+//		if (model == null) {
+//			model= createAnnotationModel(null);
+//			model.connect(xmlInfo.fTextFileBuffer.getDocument());
+//		}
 		AntModel antModel= createAntModel(element, xmlInfo.fTextFileBuffer.getDocument(), model);
 		antModel.install();
 		xmlInfo.fAntModel= antModel;
