@@ -1,9 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.jface.tests.performance;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * The RefreshTestContentProvider is the content
+ * provider for refresh tests.
+ *
+ */
 public class RefreshTestContentProvider implements IStructuredContentProvider {
 
 	static TestElement[] allElements;
@@ -19,7 +35,7 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	
 	public RefreshTestContentProvider(int size){
 		Assert.isTrue(size <= ELEMENT_COUNT);
-		setElements(size);
+		setSize(size);
 	}
 	
 	/**
@@ -27,7 +43,7 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	 * to size.
 	 * @param size
 	 */
-	private void setElements(int size) {
+	public void setSize(int size) {
 		
 		currentElements = new TestElement[size];
 		for (int i = 0; i < currentElements.length; i++) {

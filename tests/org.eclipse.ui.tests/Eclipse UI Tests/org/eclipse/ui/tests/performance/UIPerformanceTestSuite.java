@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -29,6 +31,7 @@ public class UIPerformanceTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UIPerformanceTestSuite() {
+		 addTest(new JFacePerformanceSuite());
         addTest(new WorkbenchPerformanceSuite());
         addTest(new ViewPerformanceSuite());
         addTest(new EditorPerformanceSuite());

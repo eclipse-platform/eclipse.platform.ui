@@ -11,31 +11,32 @@
 
 package org.eclipse.jface.tests.performance;
 
-import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
 
 /**
- * The ListViewerRefreshTest is a test of refreshing the list viewer.
- * 
+ * ComboViewerRefreshTest is a test of refreshes of
+ * difference size in the combo viewer.
+ *
  */
-public class ListViewerRefreshTest extends LinearViewerTest {
+public class ComboViewerRefreshTest extends LinearViewerTest {
 
-	ListViewer viewer;
+	ComboViewer viewer;
 	private RefreshTestContentProvider contentProvider;
-	public ListViewerRefreshTest(String testName, int tagging) {
+	public ComboViewerRefreshTest(String testName, int tagging) {
 		super(testName, tagging);
 
 	}
 
-	public ListViewerRefreshTest(String testName) {
+	public ComboViewerRefreshTest(String testName) {
 		super(testName);
 
 	}
 
 	protected StructuredViewer createViewer(Shell shell) {
-		viewer = new ListViewer(shell);
+		viewer = new ComboViewer(shell);
 		contentProvider = new RefreshTestContentProvider(
 						RefreshTestContentProvider.ELEMENT_COUNT / 2);
 		viewer.setContentProvider(contentProvider);
@@ -52,7 +53,9 @@ public class ListViewerRefreshTest extends LinearViewerTest {
 
 		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
 			startMeasuring();
-			viewer.refresh();
+			for (int j = 0; j < 10; j++) {
+				viewer.refresh();
+			}			
 			processEvents();
 			stopMeasuring();
 		}
@@ -68,11 +71,11 @@ public class ListViewerRefreshTest extends LinearViewerTest {
 		openBrowser();
 
 		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 2);
-			viewer.refresh();
 			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 4);
 			startMeasuring();
-			viewer.refresh();
+			for (int j = 0; j < 10; j++) {
+				viewer.refresh();
+			}	
 			processEvents();
 			stopMeasuring();
 		}
@@ -88,11 +91,11 @@ public class ListViewerRefreshTest extends LinearViewerTest {
 		openBrowser();
 
 		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 2);
-			viewer.refresh();
 			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT);
 			startMeasuring();
-			viewer.refresh();
+			for (int j = 0; j < 10; j++) {
+				viewer.refresh();
+			}	
 			processEvents();
 			stopMeasuring();
 		}

@@ -8,27 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.tests.performance;
 
+import junit.framework.TestSuite;
+
 /**
- * The TestElement is the element used for testing
- * viewers.
+ * The JFacePerformanceSuite are the performance
+ * tests for JFace.
  *
  */
-public class TestElement {
-	String name;
+public class JFacePerformanceSuite extends TestSuite {
 
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param index
-	 */
-	public TestElement(int index) {
-		name = "Element " + String.valueOf(index);
-	}
-
-	public String getText() {
-		return name;
+	public JFacePerformanceSuite() {
+		super();
+		addTest(new ListViewerRefreshTest("testRefresh"));
+		addTest(new ListViewerRefreshTest("testRefreshSmaller"));
+		addTest(new ListViewerRefreshTest("testRefreshLarger"));
+		addTest(new ComboViewerRefreshTest("testRefresh"));
+		addTest(new ComboViewerRefreshTest("testRefreshSmaller"));
+		addTest(new ComboViewerRefreshTest("testRefreshLarger"));
 	}
 }
