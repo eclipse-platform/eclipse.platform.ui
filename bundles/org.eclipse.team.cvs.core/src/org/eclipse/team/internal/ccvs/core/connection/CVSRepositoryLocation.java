@@ -270,7 +270,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see IUserInfo#getUsername()
 	 */
 	public String getUsername() {
-		return user;
+		// If the username is mutable, get it from the cache if it's there
+		if (user == null && isUsernameMutable()) {
+			try {
+				retrievePassword();
+			} catch (CVSException e) {
+			}
+		}
+		return user == null ? "" : user;
 	}
 	
 	/*
