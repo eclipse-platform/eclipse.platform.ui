@@ -112,6 +112,9 @@ public class ViewPane extends PartPane
 					}
 				});
 			}
+			else{//Clear out the button if we don't need it anymore
+				pullDownButton = null;
+			}
 		
 			if (isFastView()) {
 				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
@@ -486,6 +489,11 @@ public void showViewMenu() {
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
 	if(isFastView() && (page.getActiveFastView() != getPart()))
 		return;
+		
+	//If there is no pull down button there is no associated menu
+	if(pullDownButton == null || pullDownButton.isDisposed())
+		return;
+		
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
 	Rectangle bounds = pullDownButton.getBounds();
 	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
