@@ -240,9 +240,7 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 
 		public boolean equals(Object target) {
-			// much simplified equals as we know the each conditions under which 
-			// it will be called.
-			return handler.equals(target);
+			return handler.equals(((HandlerWrapper) target).handler);
 		}
 
 		public int hashCode() {
