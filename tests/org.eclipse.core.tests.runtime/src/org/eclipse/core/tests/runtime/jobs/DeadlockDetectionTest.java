@@ -810,7 +810,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Regression test for bug 46894. Stale rules left over in graph.
 	 */
-	public void _testRuleHierarchyLockInteraction() {
+	public void testRuleHierarchyLockInteraction() {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 5;
 		final int[] status = new int[NUM_JOBS];
@@ -1025,7 +1025,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * 15 jobs are competing for 5 rules and 5 locks.
 	 * Each job must acquire 1 rule and 2 locks in random order.
 	 */
-	public void _testComplexRuleLockInteraction() {
+	public void testComplexRuleLockInteraction() {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_LOCKS = 5;
 		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
@@ -1106,7 +1106,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test that when a job with a rule is cancelled, no stale entries are left in the graph.
 	 */
-	public void _testJobRuleCancellation() {
+	public void testJobRuleCancellation() {
 		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
 		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START};
@@ -1161,7 +1161,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test that a lock which was acquired several times and then suspended to resolve deadlock
 	 * is set correctly to the proper depth when it is reacquired by the thread that used to own it.
 	 */
-	public void _testLockMultipleAcquireThenSuspend() {
+	public void testLockMultipleAcquireThenSuspend() {
 		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
 		final ILock lock = manager.newLock();
