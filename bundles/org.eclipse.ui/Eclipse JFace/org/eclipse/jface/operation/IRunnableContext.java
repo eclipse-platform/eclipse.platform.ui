@@ -39,7 +39,8 @@ public interface IRunnableContext {
  * @exception InvocationTargetException wraps any exception or error which occurs 
  *  while running the runnable
  * @exception InterruptedException propagated by the context if the runnable 
- *  acknowledges cancelation by throwing this exception
+ *  acknowledges cancelation by throwing this exception.  This should not be thrown
+ *  if cancelable is <code>false</code>.
  */
 public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 }
