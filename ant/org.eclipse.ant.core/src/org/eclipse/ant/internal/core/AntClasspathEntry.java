@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.core;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -57,7 +58,7 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 	
 	public AntClasspathEntry(URL url) {
 		this.url= url;
-		this.entryString= url.getFile();
+		this.entryString= new File(url.getPath()).getAbsolutePath();
 	}
 	
 	/* (non-Javadoc)
