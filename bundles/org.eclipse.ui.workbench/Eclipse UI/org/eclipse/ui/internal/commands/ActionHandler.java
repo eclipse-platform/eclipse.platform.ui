@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.commands;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IPropertyListener;
 
 public class ActionHandler implements IHandler {
 
@@ -28,15 +29,28 @@ public class ActionHandler implements IHandler {
 		return action;
 	}
 
-	public boolean isEnabled() {
-		return action.isEnabled();
+	public void addPropertyListener(IPropertyListener propertyListener) {
 	}
 
-	public void run() {
+	public void execute()
+		throws Exception {	
 		action.run();
 	}
 
-	public void runWithEvent(Event event) {
+	public void execute(Event event) 
+		throws Exception {
 		action.runWithEvent(event);
+	}
+
+	public Object getProperty(String name)
+		throws Exception {
+		return null;
+	}
+
+	public boolean isEnabled() {
+		return action.isEnabled();
+	}
+	
+	public void removePropertyListener(IPropertyListener propertyListener) {	
 	}
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.swt.widgets.Event;
+import java.util.SortedSet;
 
 /**
  * <p>
@@ -23,45 +23,35 @@ import org.eclipse.swt.widgets.Event;
  * 
  * @since 3.0
  */
-public interface IHandler {
+public interface ICommandManager {
 
 	/**
-	 * Registers an IPropertyListener instance with this property.
+	 * Registers an IManagerListener instance with this manager.
 	 *
-	 * @param propertyListener the IPropertyListener instance to register.
+	 * @param managerListener the IManagerListener instance to register.
 	 */	
-	void addPropertyListener(IPropertyListener propertyListener);
+	void addManagerListener(ICommandManagerListener managerListener);
 
 	/**
 	 * TODO javadoc
-	 */	
-	void execute()
-		throws Exception;
-
-	/**
-	 * TODO temporary method
-	 */	
-	void execute(Event event)
-		throws Exception;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param name
+	 *
+	 * @param id
 	 * @return
 	 */	
-	Object getProperty(String name)
-		throws Exception;
+	ICommand getCommand(String id);
 
 	/**
-	 * TODO temporary method
-	 */	
-	boolean isEnabled();
+	 * TODO javadoc
+	 *
+	 * @param id
+	 * @return
+	 */
+	SortedSet getCommandIds();
 	
 	/**
-	 * Unregisters an IPropertyListener instance with this property.
+	 * Unregisters an IManagerListener instance with this manager.
 	 *
-	 * @param propertyListener the IPropertyListener instance to unregister.
+	 * @param managerListener the IManagerListener instance to unregister.
 	 */
-	void removePropertyListener(IPropertyListener propertyListener);
+	void removeManagerListener(ICommandManagerListener managerListener);
 }

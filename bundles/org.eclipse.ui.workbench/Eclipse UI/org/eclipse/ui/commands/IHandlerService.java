@@ -15,6 +15,9 @@ import java.util.SortedMap;
 
 /**
  * <p>
+ * TODO javadoc
+ * </p>
+ * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  * <p>
@@ -28,28 +31,29 @@ public interface IHandlerService {
 	/**
 	 * Registers an IHandlerServiceListener instance with this handler service.
 	 *
-	 * @param ids the IHandlerServiceListener instance to register.
+	 * @param handlerServiceListener the IHandlerServiceListener instance to register.
 	 */	
 	void addHandlerServiceListener(IHandlerServiceListener handlerServiceListener);
 
-	/**
-	 * Unregisters an IHandlerServiceListener instance with this handler service.
-	 *
-	 * @param ids the IHandlerServiceListener instance to unregister.
-	 */
-	void removeHandlerServiceListener(IHandlerServiceListener handlerServiceListener);
-	
 	/**
 	 * Returns the mapping of command ids to IHandler instances.
 	 * 
 	 * @return the mapping of command ids to IHandler instances.
 	 */
 	SortedMap getHandlerMap();
-	
+
+	/**
+	 * Unregisters an IHandlerServiceListener instance with this handler service.
+	 *
+	 * @param handlerServiceListener the IHandlerServiceListener instance to unregister.
+	 */
+	void removeHandlerServiceListener(IHandlerServiceListener handlerServiceListener);
+		
 	/**
 	 * Sets the mapping of command ids to IHandler instances.
 	 *
-	 * @param ids the mapping of command ids to IHandler instances.
+	 * @param handlerMap the mapping of command ids to IHandler instances.
+	 * @throws IllegalArgumentException
 	 */	
 	void setHandlerMap(SortedMap handlerMap)
 		throws IllegalArgumentException;

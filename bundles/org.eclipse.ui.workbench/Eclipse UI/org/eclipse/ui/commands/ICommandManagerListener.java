@@ -13,9 +13,6 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * TODO javadoc
- * </p>
- * <p>
  * This interface is not intended to be extended by clients.
  * </p>
  * <p>
@@ -24,13 +21,6 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IHandlerServiceListener {
+public interface ICommandManagerListener {
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param handlerServiceEvent
-	 */	
-	void handlerServiceChanged(HandlerServiceEvent handlerServiceEvent);
 }
-

@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
-
-import org.eclipse.swt.widgets.Event;
+package org.eclipse.ui.contexts;
 
 /**
+ * <p>
+ * TODO javadoc
+ * </p>
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
@@ -23,45 +24,34 @@ import org.eclipse.swt.widgets.Event;
  * 
  * @since 3.0
  */
-public interface IHandler {
+public interface IContextManager {
 
 	/**
-	 * Registers an IPropertyListener instance with this property.
+	 * Registers an IContextManagerListener instance with this context manager.
 	 *
-	 * @param propertyListener the IPropertyListener instance to register.
+	 * @param contextManagerListener the IContextManagerListener instance to register.
 	 */	
-	void addPropertyListener(IPropertyListener propertyListener);
+	void addContextManagerListener(IContextManagerListener contextManagerListener);
 
 	/**
 	 * TODO javadoc
-	 */	
-	void execute()
-		throws Exception;
-
-	/**
-	 * TODO temporary method
-	 */	
-	void execute(Event event)
-		throws Exception;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param name
+	 *
+	 * @param contextId
 	 * @return
 	 */	
-	Object getProperty(String name)
-		throws Exception;
+	IContext getContext(String contextId);
 
 	/**
-	 * TODO temporary method
-	 */	
-	boolean isEnabled();
+	 * TODO javadoc
+	 *
+	 * @return
+	 */
+	String[] getContextIds();
 	
 	/**
-	 * Unregisters an IPropertyListener instance with this property.
+	 * Unregisters an IContextManagerListener instance with this context manager.
 	 *
-	 * @param propertyListener the IPropertyListener instance to unregister.
+	 * @param contextManagerListener the IContextManagerListener instance to unregister.
 	 */
-	void removePropertyListener(IPropertyListener propertyListener);
+	void removeContextManagerListener(IContextManagerListener contextManagerListener);
 }

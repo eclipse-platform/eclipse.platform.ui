@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.contexts;
 
 /**
  * <p>
@@ -24,13 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IHandlerServiceListener {
+public interface IContextServiceListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param handlerServiceEvent
+	 * @param contextServiceEvent
 	 */	
-	void handlerServiceChanged(HandlerServiceEvent handlerServiceEvent);
+	void contextServiceChanged(ContextServiceEvent contextServiceEvent);
 }
-

@@ -18,8 +18,8 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
@@ -35,13 +35,11 @@ final class KeyBindingService implements IKeyBindingService {
 	}
 
 	public String[] getScopes() {
-    	List contexts = contextService.getContexts();
-    	return (String[]) contexts.toArray(new String[contexts.size()]);
+    	return contextService.getContextIds();
     }
 
 	public void setScopes(String[] scopes) {
-		List contexts = Arrays.asList(scopes);
-		contextService.setContexts(contexts);		 	
+		contextService.setContextIds(scopes);		 	
     }
 
 	public void registerAction(IAction action) {

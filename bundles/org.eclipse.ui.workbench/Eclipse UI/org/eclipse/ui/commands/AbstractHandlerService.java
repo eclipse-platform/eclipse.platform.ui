@@ -9,23 +9,39 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.commands.IHandlerService;
-import org.eclipse.ui.commands.IHandlerServiceListener;
-
+/**
+ * <p>
+ * TODO javadoc
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
 public abstract class AbstractHandlerService implements IHandlerService {
 	
+	private HandlerServiceEvent handlerServiceEvent;
 	private List handlerServiceListeners;
-	
+
+	/**
+	 * TODO javadoc
+	 */		
 	public AbstractHandlerService() {
 		super();
 	}
 
+	/**
+	 * Registers an IHandlerServiceListener instance with this handler service.
+	 *
+	 * @param handlerServiceListener the IHandlerServiceListener instance to register.
+	 */
 	public void addHandlerServiceListener(IHandlerServiceListener handlerServiceListener) {
 		if (handlerServiceListeners == null)
 			handlerServiceListeners = new ArrayList();
@@ -34,6 +50,11 @@ public abstract class AbstractHandlerService implements IHandlerService {
 			handlerServiceListeners.add(handlerServiceListener);
 	}
 
+	/**
+	 * Unregisters an IHandlerServiceListener instance with this handler service.
+	 *
+	 * @param handlerServiceListener the IHandlerServiceListener instance to unregister.
+	 */
 	public void removeHandlerServiceListener(IHandlerServiceListener handlerServiceListener) {
 		if (handlerServiceListeners != null) {
 			handlerServiceListeners.remove(handlerServiceListener);
@@ -43,12 +64,20 @@ public abstract class AbstractHandlerService implements IHandlerService {
 		}
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	protected void fireHandlerServiceChanged() {
 		if (handlerServiceListeners != null) {
 			Iterator iterator = handlerServiceListeners.iterator();
 			
-			while (iterator.hasNext())
-				((IHandlerServiceListener) iterator.next()).handlerServiceChanged(this);							
+			if (iterator.hasNext()) {
+				if (handlerServiceEvent == null)
+					handlerServiceEvent = new HandlerServiceEvent(this);
+				
+				while (iterator.hasNext())	
+					((IHandlerServiceListener) iterator.next()).handlerServiceChanged(handlerServiceEvent);
+			}							
 		}			
 	}
 }

@@ -12,8 +12,10 @@
 package org.eclipse.ui.commands;
 
 /**
+ * TODO javadoc
+ * 
  * <p>
- * This interface is not intended to be extended by clients.
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -21,12 +23,32 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IContextServiceListener {
+public class CommandEvent {
+
+	private ICommand command;
 
 	/**
-	 * TODO
+	 * TODO javadoc
 	 * 
-	 * @param contextService
+	 * @param command
+	 * @throws IllegalArgumentException
 	 */	
-	void contextServiceChanged(IContextService contextService);
+	public CommandEvent(ICommand command)
+		throws IllegalArgumentException {		
+		super();
+		
+		if (command == null)
+			throw new IllegalArgumentException();
+		
+		this.command = command;
+	}
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */		
+	public ICommand getCommand() {
+		return command;
+	}
 }

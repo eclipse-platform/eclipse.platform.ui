@@ -12,11 +12,10 @@
 package org.eclipse.ui.commands;
 
 /**
- * <p>
  * TODO javadoc
- * </p>
+ * 
  * <p>
- * This interface is not intended to be extended by clients.
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,13 +23,32 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IHandlerServiceListener {
+public class PropertyEvent {
+
+	private String name;
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param handlerServiceEvent
+	 * @param name
+	 * @throws IllegalArgumentException
 	 */	
-	void handlerServiceChanged(HandlerServiceEvent handlerServiceEvent);
-}
+	public PropertyEvent(String name)
+		throws IllegalArgumentException {		
+		super();
+		
+		if (name == null)
+			throw new IllegalArgumentException();
+		
+		this.name = name;
+	}
 
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */		
+	public String getName() {
+		return name;
+	}
+}

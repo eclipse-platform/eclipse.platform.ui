@@ -9,23 +9,39 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.contexts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.commands.IContextService;
-import org.eclipse.ui.commands.IContextServiceListener;
-
+/**
+ * <p>
+ * TODO javadoc
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
 public abstract class AbstractContextService implements IContextService {
 	
+	private ContextServiceEvent contextServiceEvent;
 	private List contextServiceListeners;
-	
+
+	/**
+	 * TODO javadoc
+	 */		
 	public AbstractContextService() {
 		super();
 	}
 
+	/**
+	 * Registers an IContextServiceListener instance with this context service.
+	 *
+	 * @param contextServiceListener the IContextServiceListener instance to register.
+	 */	
 	public void addContextServiceListener(IContextServiceListener contextServiceListener) {
 		if (contextServiceListeners == null)
 			contextServiceListeners = new ArrayList();
@@ -34,6 +50,11 @@ public abstract class AbstractContextService implements IContextService {
 			contextServiceListeners.add(contextServiceListener);
 	}
 
+	/**
+	 * Unregisters an IContextServiceListener instance with this context service.
+	 *
+	 * @param contextServiceListener the IContextServiceListener instance to unregister.
+	 */
 	public void removeContextServiceListener(IContextServiceListener contextServiceListener) {
 		if (contextServiceListeners != null) {
 			contextServiceListeners.remove(contextServiceListener);
@@ -43,12 +64,20 @@ public abstract class AbstractContextService implements IContextService {
 		}
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	protected void fireContextServiceChanged() {
 		if (contextServiceListeners != null) {
 			Iterator iterator = contextServiceListeners.iterator();
 			
-			while (iterator.hasNext())
-				((IContextServiceListener) iterator.next()).contextServiceChanged(this);							
+			if (iterator.hasNext()) {
+				if (contextServiceEvent == null)
+					contextServiceEvent = new ContextServiceEvent(this);
+				
+				while (iterator.hasNext())	
+					((IContextServiceListener) iterator.next()).contextServiceChanged(contextServiceEvent);
+			}							
 		}			
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,13 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.commands.IContextService;
-import org.eclipse.ui.commands.IContextServiceListener;
+import org.eclipse.ui.commands.HandlerServiceEvent;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.commands.IHandlerServiceListener;
+import org.eclipse.ui.contexts.ContextServiceEvent;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.contexts.IContextServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
@@ -66,13 +69,13 @@ public class ContextAndHandlerManager implements IContextResolver {
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
 	private final IContextServiceListener contextServiceListener = new IContextServiceListener() {
-		public void contextServiceChanged(IContextService contextService) {
+		public void contextServiceChanged(ContextServiceEvent contextServiceEvent) {
 			ContextAndHandlerManager.this.contextServiceChanged();
 		}
 	};	
 
 	private final IHandlerServiceListener handlerServiceListener = new IHandlerServiceListener() {
-		public void handlerServiceChanged(IHandlerService handlerService) {
+		public void handlerServiceChanged(HandlerServiceEvent handlerServiceEvent) {
 			ContextAndHandlerManager.this.handlerServiceChanged();
 		}
 	};
@@ -239,7 +242,11 @@ public class ContextAndHandlerManager implements IContextResolver {
 			IHandler handler = getHandler((String) sequenceMapForMode.get(childMode));
 			
 			if (handler != null && handler.isEnabled())
-				handler.runWithEvent(event);
+				try {			
+					handler.execute(event);
+				} catch (Exception e) {
+					// TODO
+				}
 		}
 		else {
 			modeContributionItem.setText(KeySupport.formatSequence(childMode, true));
@@ -279,10 +286,10 @@ public class ContextAndHandlerManager implements IContextResolver {
 		List contexts = new ArrayList();
 		
 		if (workbenchWindowContextService != null)
-			contexts.addAll(workbenchWindowContextService.getContexts());
+			contexts.addAll(Arrays.asList(workbenchWindowContextService.getContextIds()));
 
 		if (activeWorkbenchPartContextService != null)
-			contexts.addAll(activeWorkbenchPartContextService.getContexts());
+			contexts.addAll(Arrays.asList(activeWorkbenchPartContextService.getContextIds()));
 
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
@@ -382,7 +389,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 		
 			if (set != null) {
 				if (activeWorkbenchPartContextService != null) {
-					List contexts = activeWorkbenchPartContextService.getContexts();
+					List contexts = Arrays.asList(activeWorkbenchPartContextService.getContextIds());
 
 					if (contexts != null) {
 						// TODO: get rid of this
@@ -402,7 +409,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 				}
 
 				if (workbenchWindowContextService != null) {
-					List contexts = workbenchWindowContextService.getContexts();
+					List contexts = Arrays.asList(workbenchWindowContextService.getContextIds());
 		
 					if (contexts != null) {
 						// TODO: get rid of this

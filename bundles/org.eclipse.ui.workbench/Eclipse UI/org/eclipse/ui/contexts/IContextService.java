@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
-
-import java.util.List;
+package org.eclipse.ui.contexts;
 
 /**
+ * <p>
+ * TODO javadoc
+ * </p>
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
@@ -28,29 +29,30 @@ public interface IContextService {
 	/**
 	 * Registers an IContextServiceListener instance with this context service.
 	 *
-	 * @param ids the IContextServiceListener instance to register.
+	 * @param contextServiceListener the IContextServiceListener instance to register.
 	 */	
 	void addContextServiceListener(IContextServiceListener contextServiceListener);
-
-	/**
-	 * Unregisters an IContextServiceListener instance with this context service.
-	 *
-	 * @param ids the IContextServiceListener instance to unregister.
-	 */
-	void removeContextServiceListener(IContextServiceListener contextServiceListener);
 
 	/**
 	 * Returns the context ids.
 	 *
 	 * @return the context ids.
 	 */
-	List getContexts();
+	String[] getContextIds();
+
+	/**
+	 * Unregisters an IContextServiceListener instance with this context service.
+	 *
+	 * @param contextServiceListener the IContextServiceListener instance to unregister.
+	 */
+	void removeContextServiceListener(IContextServiceListener contextServiceListener);
 	
 	/**
 	 * Sets the context ids.
 	 *
-	 * @param ids the context ids.
+	 * @param contextIds the context ids.
+	 * @throws IllegalArgumentException
 	 */	
-	void setContexts(List contextIds)
+	void setContextIds(String[] contextIds)
 		throws IllegalArgumentException;
 }
