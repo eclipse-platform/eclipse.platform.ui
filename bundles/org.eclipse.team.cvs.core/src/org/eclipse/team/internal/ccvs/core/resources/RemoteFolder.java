@@ -89,7 +89,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	
 	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag, boolean isStatic) {
 		super(parent, name);
-		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
+		if (repository != null) {
+			this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
+		}
 		this.repository = repository;	
 	}
 	
@@ -396,6 +398,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
+		if (folderInfo == null) {
+			return Util.appendPath(parent.getRemoteLocation(stopSearching), getName());
+		}
 		return folderInfo.getRemoteLocation();
 	}
 	
@@ -403,7 +408,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#isCVSFolder()
 	 */
 	public boolean isCVSFolder() {
-		return true;
+		return folderInfo != null;
 	}
 
 	/**
@@ -465,8 +470,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
 		this.folderInfo = folderInfo;
-		// Currently not supported
-		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));//$NON-NLS-1$
 	}
 	
 	/*
@@ -615,4 +618,12 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#isManaged()
+	 */
+	public boolean isManaged() {
+		return super.isManaged() && isCVSFolder();
+	}
+
 }

@@ -45,7 +45,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Import;
 import org.eclipse.team.internal.ccvs.core.client.Request;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -237,22 +236,22 @@ public class CVSWorkspaceRoot {
 		final ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 			
 		try {
-			// Get the import properties
-			String message = Policy.bind("CVSProvider.initialImport"); //$NON-NLS-1$
-			String vendor = "vendor"; //$NON-NLS-1$
-			String tag = "start"; //$NON-NLS-1$
 			String projectName = project.getName();
 			if (moduleName == null)
 				moduleName = projectName;
 
 			// Perform the import using a dummy root so the local project is not traversed
-			Session s = new Session(location, new RemoteFolderTree(null, location, Path.EMPTY.toString(), null));
+			RemoteFolderTree root = new RemoteFolderTree(null, location, Path.EMPTY.toString(), null);
+			root.setChildren(new ICVSRemoteResource[] {
+				new RemoteFolder(root, moduleName, null, null, null, false)
+			});
+			Session s = new Session(location, root);
 			s.open(monitor, true /* open for modification */);
 			try {
-				IStatus status = Command.IMPORT.execute(s,
+				IStatus status = Command.ADD.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
-					new LocalOption[] {Import.makeArgumentOption(Command.MESSAGE_OPTION, message)},
-					new String[] { moduleName, vendor, tag },
+					Command.NO_LOCAL_OPTIONS,
+					new String[] { moduleName },
 					null,
 					monitor);
 				// If we get a warning, the operation most likely failed so check that the status is OK
