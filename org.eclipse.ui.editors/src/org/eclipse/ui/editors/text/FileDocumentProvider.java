@@ -742,13 +742,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.0
 	 */
 	public boolean isSynchronized(Object element) {
-		Object elementInfo= getElementInfo(element);
-		if (elementInfo instanceof FileInfo) {
-			FileEditorInput input= (FileEditorInput) element;
-			IResource resource= input.getFile();
-			return resource.isSynchronized(IResource.DEPTH_ZERO);
+		if (element instanceof IFileEditorInput) {
+			if (getElementInfo(element) != null) {
+				IFileEditorInput input= (IFileEditorInput) element;
+				IResource resource= input.getFile();
+				return resource.isSynchronized(IResource.DEPTH_ZERO);
+			}
+			return false;
 		}
-		return false;
+		return super.isSynchronized(element);
 	}
 	
 	// --------------- Encoding support ---------------
