@@ -197,9 +197,11 @@ public abstract class PluginAction extends Action
 	 */
 	public void selectionChanged(ISelection newSelection) {
 		// Update selection.
-		this.selection = newSelection;
+		selection = newSelection;
+		if (selection == null)
+			selection = StructuredSelection.EMPTY;
 		if (hasAdaptableType())
-			this.selection = getResourceAdapters(newSelection);
+			selection = getResourceAdapters(selection);
 			
 		// If the delegate can be loaded, do so.
 		// Otherwise, just update the enablement.

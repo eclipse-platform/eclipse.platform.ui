@@ -122,9 +122,6 @@ public class WWinPluginAction extends PluginAction
 	 */
 	protected void refreshSelection() {
 		ISelection selection = window.getSelectionService().getSelection();
-		if (selection == null)
-			selectionChanged(StructuredSelection.EMPTY);
-		else 
-			selectionChanged(selection);
+		selectionChanged(selection);
 	}
 }
