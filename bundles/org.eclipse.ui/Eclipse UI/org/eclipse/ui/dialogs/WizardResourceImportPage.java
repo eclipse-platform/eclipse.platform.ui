@@ -82,10 +82,16 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 protected WizardResourceImportPage(String name, IStructuredSelection selection) {
 	super(name);
 
-	if (selection.size() == 1)
-		currentResourceSelection = (IResource) selection.getFirstElement();
-	else
-		currentResourceSelection = null;
+	//Initialize to null
+	currentResourceSelection = null;
+	if (selection.size() == 1){
+		Object firstElement = selection.getFirstElement();
+		if(firstElement instanceof IAdaptable){
+			Object resource = ((IAdaptable) firstElement).getAdapter(IResource.class);
+			if(resource != null)
+				currentResourceSelection = (IResource) resource;
+		}
+	}		
 
 	if (currentResourceSelection != null) {
 		if (currentResourceSelection.getType() == IResource.FILE)
