@@ -1156,9 +1156,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			IStructuredSelection ss= (IStructuredSelection)selection;
 			Object o= ss.getFirstElement();
 			
-			TreeViewer tViewer= (TreeViewer)getViewer();
-			boolean expanded= tViewer.getExpandedState(o);
-			tViewer.setExpandedState(o, !expanded);
+			if (o != null) {
+				TreeViewer tViewer= (TreeViewer)getViewer();
+				boolean expanded= tViewer.getExpandedState(o);
+				tViewer.setExpandedState(o, !expanded);
+			}
 		}
 	}	
 	/**
