@@ -281,8 +281,11 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		if (sets == null) {
 			return;
 		}
-		
-		setWorkingSet(sets[0]); // We disallowed multi-select
+		if (sets.length == 0) {
+			setWorkingSet(null); //ok pressed with no working set selected
+		} else {
+			setWorkingSet(sets[0]); // We disallowed multi-select
+		}
 	}
 	
 	/**
@@ -295,6 +298,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private void setWorkingSet(IWorkingSet set) {
 		if (set == null) {
 			searchScopes= null;
+			workingSetText.setText(""); //$NON-NLS-1$
 			updateOkEnabled();
 			return;
 		}
