@@ -68,6 +68,12 @@ public final class IDE {
 	 * identifies the preferred editor type to be opened.
 	 */	
 	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
+	
+	/**
+	 * The resource based perspective identifier.
+	 * @issue should this now be org.eclipse.ui.ide.resourcePerspective?
+	 */
+	public static final String RESOURCE_PERSPECTIVE_ID = "org.eclipse.ui.resourcePerspective"; //$NON-NLS-1$
 
 	/**
 	 * Marker help registry mapping markers to help context ids and resolutions;

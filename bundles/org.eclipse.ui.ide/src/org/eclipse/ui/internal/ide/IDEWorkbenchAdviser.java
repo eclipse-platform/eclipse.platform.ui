@@ -676,13 +676,17 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public IPerspectiveDescriptor getInitialWindowPerspective(IWorkbenchWindowConfigurer configurer) {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 		
+		String perspectiveId = null;
 		if (index >=0 && welcomePerspectiveInfos != null && index < welcomePerspectiveInfos.size()) {
-			String perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
-			IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-			return reg.findPerspectiveWithId(perspectiveId);
-		} else {
-			return null;
+			perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
 		}
+
+		if (perspectiveId == null) {
+			perspectiveId = IDE.RESOURCE_PERSPECTIVE_ID;
+		}
+		
+		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		return reg.findPerspectiveWithId(perspectiveId);
 	}
 
 	/*
