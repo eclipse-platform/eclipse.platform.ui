@@ -103,6 +103,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * @see IBreakpoint#delete()
 	 */
 	public void delete() throws CoreException {
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(this, false);
 		getMarker().delete();
 	}
 
