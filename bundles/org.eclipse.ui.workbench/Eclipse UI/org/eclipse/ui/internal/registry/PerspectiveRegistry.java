@@ -400,13 +400,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionRemo
             }
         }
 
-        // bug 69387: don't look for state location if there is no instance
-        // area, i.e., -data @none
-        if (Platform.getInstanceLocation() == null)
-            return;
-
-        /* Get the entries from files, if any */
-        IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+        // Get the entries from files, if any
+        // if -data @noDefault specified the state location may not be initialized
+        IPath path = WorkbenchPlugin.getDefault().getDataLocation();
+        if(path == null)
+        	return;
+        
         File folder = path.toFile();
 
         if (folder.isDirectory()) {

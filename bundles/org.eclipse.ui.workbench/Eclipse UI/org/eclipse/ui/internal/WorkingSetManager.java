@@ -68,12 +68,15 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
     }
 
     /**
-     * Returns the file used as the persistence store
+     * Returns the file used as the persistence store,
+     * or <code>null</code> if there is no available file.
      * 
-     * @return the file used as the persistence store
+     * @return the file used as the persistence store, or <code>null</code>
      */
     private File getWorkingSetStateFile() {
-        IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+        IPath path = WorkbenchPlugin.getDefault().getDataLocation();
+        if(path == null)
+        	return null;
         path = path.append(WORKING_SET_STATE_FILENAME);
         return path.toFile();
     }
@@ -94,7 +97,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
     public void restoreState() {
         File stateFile = getWorkingSetStateFile();
 
-        if (stateFile.exists()) {
+        if (stateFile != null && stateFile.exists()) {
             try {
                 FileInputStream input = new FileInputStream(stateFile);
                 BufferedReader reader = new BufferedReader(
@@ -132,7 +135,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
         XMLMemento memento = XMLMemento
                 .createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
         File stateFile = getWorkingSetStateFile();
-
+        if(stateFile == null) return;
         saveWorkingSetState(memento);
         saveMruList(memento);
         try {

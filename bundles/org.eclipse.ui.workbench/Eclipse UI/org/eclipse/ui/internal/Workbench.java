@@ -780,7 +780,8 @@ public final class Workbench implements IWorkbench {
      * Answer the workbench state file.
      */
     private File getWorkbenchStateFile() {
-        IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+        IPath path = WorkbenchPlugin.getDefault().getDataLocation();
+        if(path==null) return null;
         path = path.append(DEFAULT_WORKBENCH_STATE_FILENAME);
         return path.toFile();
     }
@@ -1243,7 +1244,7 @@ public final class Workbench implements IWorkbench {
         // Read the workbench state file.
         final File stateFile = getWorkbenchStateFile();
         // If there is no state file cause one to open.
-        if (!stateFile.exists()) {
+        if (stateFile == null || !stateFile.exists()) {
             String msg = WorkbenchMessages
                     .getString("Workbench.noStateToRestore"); //$NON-NLS-1$
             return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
@@ -1655,7 +1656,9 @@ public final class Workbench implements IWorkbench {
      */
     private boolean saveMementoToFile(XMLMemento memento) {
         // Save it to a file.
+    	// XXX: nobody currently checks the return value of this method.
         File stateFile = getWorkbenchStateFile();
+        if(stateFile==null) return false;
         try {
             FileOutputStream stream = new FileOutputStream(stateFile);
             OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
