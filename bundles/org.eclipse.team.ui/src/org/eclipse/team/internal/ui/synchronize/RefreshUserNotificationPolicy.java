@@ -46,7 +46,12 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		// Decide on what action to take after the refresh is completed
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-					boolean prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG);
+					boolean prompt = true;
+					if(event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+						prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG);
+					} else {
+						prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG);
+					}
 				
 					SyncInfo[] infos = event.getChanges();
 					List selectedResources = new ArrayList();

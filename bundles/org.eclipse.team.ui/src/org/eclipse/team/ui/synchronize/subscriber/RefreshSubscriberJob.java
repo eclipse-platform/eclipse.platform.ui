@@ -20,18 +20,15 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.ui.synchronize.RefreshChangeListener;
+import org.eclipse.team.internal.ui.synchronize.RefreshEvent;
 
 /**
- * Job to refresh a subscriber with its remote state.
+ * Job to refresh a {@link Subscriber} in the background. The job can be configured
+ * to be re-scheduled and run at a specified interval.
  * 
- * There can be several refresh jobs created but they will be serialized.
- * This is accomplished using a synchrnized block on the family id. It is
- * important that no scheduling rules are used for the job in order to
- * avoid possible deadlock. 
+ * @since 3.0
  */
 public final class RefreshSubscriberJob extends WorkspaceJob {
 	
@@ -56,11 +53,11 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	private static long scheduleDelay;
 	
 	/**
-	 * The subscribers and roots to refresh. If these are changed when the job
-	 * is running the job is cancelled.
+	 * The subscribers and resources to refresh.
 	 */
 	private IResource[] resources;
-	private SubscriberSyncInfoCollector collector;
+	private Subscriber subscriber;
+	//private SubscriberSyncInfoCollector collector;
 	
 	/**
 	 * Refresh started/completed listener for every refresh
@@ -68,79 +65,12 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	private static List listeners = new ArrayList(1);
 	private static final int STARTED = 1;
 	private static final int DONE = 2;
+
+	private SubscriberSyncInfoCollector collector;
 	
-	protected static class RefreshEvent implements IRefreshEvent {
-		int type; 
-		Subscriber subscriber;
-		SyncInfo[] changes;
-		long startTime = 0;
-		long stopTime = 0;
-		IStatus status;
-		IResource[] resources;
-		
-		RefreshEvent(int type, IResource[] resources, Subscriber subscriber) {
-			this.type = type;
-			this.subscriber = subscriber;
-			this.resources = resources;
-		}
-		
-		public int getRefreshType() {
-			return type;
-		}
-
-		public Subscriber getSubscriber() {
-			return subscriber;
-		}
-
-		public SyncInfo[] getChanges() {
-			return changes;
-		}
-		
-		public void setChanges(SyncInfo[] changes) {
-			this.changes = changes;
-		}
-		
-		/**
-		 * @return Returns the startTime.
-		 */
-		public long getStartTime() {
-			return startTime;
-		}
-
-		/**
-		 * @param startTime The startTime to set.
-		 */
-		public void setStartTime(long startTime) {
-			this.startTime = startTime;
-		}
-
-		/**
-		 * @return Returns the stopTime.
-		 */
-		public long getStopTime() {
-			return stopTime;
-		}
-
-		/**
-		 * @param stopTime The stopTime to set.
-		 */
-		public void setStopTime(long stopTime) {
-			this.stopTime = stopTime;
-		}
-
-		public IStatus getStatus() {
-			return status;
-		}
-		
-		public void setStatus(IStatus status) {
-			this.status = status;
-		}
-
-		public IResource[] getResources() {
-			return resources;
-		}
-	}
-	
+	/**
+	 * Notification for safely notifying listeners of refresh lifecycle.
+	 */
 	private abstract class Notification implements ISafeRunnable {
 		private IRefreshSubscriberListener listener;
 		public void handleException(Throwable exception) {
@@ -160,20 +90,22 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		protected abstract void notify(IRefreshSubscriberListener listener);
 	}
 	
-		
-	public RefreshSubscriberJob(String name, IResource[] resources, SubscriberSyncInfoCollector collector) {
-		this(collector.getSubscriber().getName(), collector);		 //$NON-NLS-1$
-		this.resources = resources;
-	}
-	
-	public RefreshSubscriberJob(String name, SubscriberSyncInfoCollector collector) {
+	/**
+	 * Create a job to refresh the specified resources with the subscriber.
+	 * @param name
+	 * @param resources
+	 * @param subscriber
+	 */
+	public RefreshSubscriberJob(String name, IResource[] resources, Subscriber subscriber) {
 		super(name);
-		
-		this.collector = collector;
-		
+		Assert.isNotNull(resources);
+		Assert.isNotNull(subscriber);
+		this.resources = resources;
+		this.subscriber = subscriber;
 		setPriority(Job.DECORATE);
 		setRefreshInterval(3600 /* 1 hour */);
 		
+		// Handle restarting of job if it is configured as a scheduled refresh job.
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if(shouldReschedule()) {
@@ -187,10 +119,18 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		});		
 	}
 	
+	public void setSubscriberCollector(SubscriberSyncInfoCollector collector) {
+		this.collector = collector;
+	}
+	
+	/**
+	 * If a collector is available then run the refresh and the background event processing 
+	 * within the same progess group.
+	 */
 	public boolean shouldRun() {
 		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
-		boolean shouldRun = collector != null && getSubscriber() != null;
-		if(shouldRun) {
+		boolean shouldRun = getSubscriber() != null;
+		if(shouldRun && getCollector() != null) {
 			IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 			group.beginTask(getName(), 100); //$NON-NLS-1$
 			setProgressGroup(group, 80);
@@ -198,7 +138,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		}
 		return shouldRun; 
 	}
-	
+
 	public boolean belongsTo(Object family) {		
 		return family == getFamily();
 	}
@@ -212,6 +152,10 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * and it will continue to refresh the other subscribers.
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
+		// Only allow one refresh job at a time
+		// NOTE: It would be cleaner if this was done by a scheduling
+		// rule but at the time of writting, it is not possible due to
+		// the scheduling rule containment rules.
 		// Synchronized to ensure only one refresh job is running at a particular time
 		synchronized (getFamily()) {	
 			MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
@@ -227,10 +171,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
 			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
 			try {
-				// Only allow one refresh job at a time
-				// NOTE: It would be cleaner if this was done by a scheduling
-				// rule but at the time of writting, it is not possible due to
-				// the scheduling rule containment rules.
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
@@ -268,15 +208,15 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	}
 	
 	protected IResource[] getResources() {
-		if(resources != null) {
-			return resources;
-		} else {
-			return collector.getSubscriber().roots();
-		}
+		return resources;
 	}
 	
 	protected Subscriber getSubscriber() {
-		return collector.getSubscriber();
+		return subscriber;
+	}
+	
+	protected SubscriberSyncInfoCollector getCollector() {
+		return collector;
 	}
 	
 	public long getScheduleDelay() {

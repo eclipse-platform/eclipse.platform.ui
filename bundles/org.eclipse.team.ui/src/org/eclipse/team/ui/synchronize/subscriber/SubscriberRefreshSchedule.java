@@ -4,12 +4,19 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IMemento;
 
+/**
+ * Schedule to refresh a subscriber at a specified interval. The schedule can be disabled or enabled
+ * and will create the refresh job.
+ * 
+ * @since 3.0
+ */
 public class SubscriberRefreshSchedule {
 	private long refreshInterval = 3600; // 1 hour default
 	
@@ -97,7 +104,9 @@ public class SubscriberRefreshSchedule {
 			return;
 		}
 		if(job == null) {
-			job = new RefreshSubscriberJob(Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()), participant.getSubscriberSyncInfoCollector()); //$NON-NLS-1$
+			Subscriber s = participant.getSubscriber();
+			job = new RefreshSubscriberJob(Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()),s.roots(), s); //$NON-NLS-1$
+			job.setSubscriberCollector(participant.getSubscriberSyncInfoCollector());
 		} else if(job.getState() != Job.NONE){
 			stopJob();
 		}

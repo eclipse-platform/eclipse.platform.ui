@@ -22,7 +22,6 @@ import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.IWorkbenchPart;
 
-
 /**
  * A subscriber operation provides access to a {@link SyncInfoSet} containing
  * the selection from a {@link SubscriberAction}.
@@ -32,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @see SyncInfoSet
  * @see SubscriberAction
+ * @since 3.0
  */
 public abstract class SubscriberOperation extends TeamOperation {
 	

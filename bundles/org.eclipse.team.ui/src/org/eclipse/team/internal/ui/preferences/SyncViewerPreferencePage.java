@@ -32,6 +32,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
 	private BooleanFieldEditor promptAtEndOfSynchronize = null;
+	private BooleanFieldEditor promptAtEndOfSchduledSynchronize = null;
 	private BooleanFieldEditor useDefaultPerspective = null;
 	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
 	
@@ -71,12 +72,11 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(compressFolders);
 		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
-		addField(showSyncInLabels);
-		
-		new Label(getFieldEditorParent(), SWT.NONE);
-		
+		addField(showSyncInLabels);	
 		promptAtEndOfSynchronize = new BooleanFieldEditor(SYNCHRONIZING_COMPLETE_SHOW_DIALOG, "Prompt at the end of a synchronize operation.", SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(promptAtEndOfSynchronize);
+		promptAtEndOfSchduledSynchronize = new BooleanFieldEditor(SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG, "Prompt at the end of a scheduled synchronize operation.", SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		addField(promptAtEndOfSchduledSynchronize);
 		
 		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, "Switch to the associated perspective when a synchronize operation completes", 3, 
 				new String[][] {

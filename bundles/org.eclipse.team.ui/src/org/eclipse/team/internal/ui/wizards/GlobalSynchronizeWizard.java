@@ -39,6 +39,7 @@ public class GlobalSynchronizeWizard extends Wizard {
 		setWindowTitle("Synchronize"); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
 		setForcePreviousAndNextButtons(true);
+		setNeedsProgressMonitor(false);
 	}
 
 	/*

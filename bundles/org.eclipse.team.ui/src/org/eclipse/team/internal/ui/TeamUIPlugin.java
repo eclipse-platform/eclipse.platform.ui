@@ -148,6 +148,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, true);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);		
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG, true);
+		store.setDefault(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG, true);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT);		 //$NON-NLS-1$
 	}
 	

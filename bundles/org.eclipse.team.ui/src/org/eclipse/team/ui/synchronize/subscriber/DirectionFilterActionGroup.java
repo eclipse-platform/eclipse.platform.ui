@@ -22,29 +22,33 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**
- * This ActionGroup provides filtering of a sync set by change direction.
- * The actions are presented to the user as toolbar buttons where only one
- * button is active at a time.
- * <p>
- * When a modes changes a property change event is fired from the participant 
- * with a value of <code>SubscriberParticipant.P_SYNCVIEWPAGE_MODE</code>.
- * </p>
+ * This action group provides radio buttons for each possible direction of synchronization information. The
+ * modes created by this action group can be configured. The actions directly set the mode of a
+ * {@link SubscriberParticipant}.
+ *
  * @see SubscriberParticipant
  * @since 3.0 
  */
 public class DirectionFilterActionGroup extends ActionGroup implements IPropertyChangeListener {
 	
-	// An array of the selection actions for the modes (indexed by mode constant)	
+	// The list of created actions	
 	private List actions = new ArrayList(3);
 	
+	// The modes
 	private DirectionFilterAction incomingMode;					
 	private DirectionFilterAction outgoingMode;
 	private DirectionFilterAction bothMode;
 	private DirectionFilterAction conflictsMode;
+	
+	// The participant controlled by these modes
 	private SubscriberParticipant page;
 	
+	// The modes displayed by this action group
 	private int supportedModes;
 	
+	/**
+	 * An action filter for a specific mode. 
+	 */
 	class DirectionFilterAction extends Action {
 		private int modeId;
 		
@@ -59,10 +63,6 @@ public class DirectionFilterActionGroup extends ActionGroup implements IProperty
 			};
 		}
 		public void run() {
-			// checkMode() is called because programatic checking of radio buttons doesn't 
-			// consider radio buttons, hence breaks the radio-button behavior. As a workaround
-			// we have to manually check/uncheck the set instead.
-			//checkMode(modeId);
 			if(isChecked()) {
 				page.setMode(modeId);
 			}

@@ -16,6 +16,11 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 
+/**
+ * Wizard contributed to the global synchronize action to synchronize subscriber participants.
+ *
+ * @since 3.0
+ */
 public class SubscriberRefreshWizard extends Wizard {
 	
 	public final static int SCOPE_WORKING_SET = 1;
@@ -31,6 +36,7 @@ public class SubscriberRefreshWizard extends Wizard {
 		this.participant = participant;
 		setWindowTitle(Policy.bind("SubscriberRefreshWizard.0") + participant.getName()); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
+		setNeedsProgressMonitor(false);
 	}
 	
 	public void setScopeHint(int scopeHint) {
@@ -49,7 +55,7 @@ public class SubscriberRefreshWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		IResource[] resources = selectionPage.getSelectedResources();
+		IResource[] resources = selectionPage.getCheckedResources();
 		if(resources != null && resources.length > 0) {
 			IRefreshSubscriberListener listener = participant.getRefreshListeners().createSynchronizeViewListener(participant);
 			

@@ -13,6 +13,7 @@ package org.eclipse.team.ui.synchronize.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
@@ -43,8 +44,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	private ISynchronizeView view;
 	
-	private SubscriberParticipantPage page;
-	
 	/**
 	 * Key for settings in memento
 	 */
@@ -69,6 +68,11 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Property constant indicating the mode of a page has changed. 
 	 */
 	public static final String P_SYNCVIEWPAGE_MODE = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_MODE";	 //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating the selection has changed.
+	 */
+	public static final String P_SYNCVIEWPAGE_SELECTION = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_SELECTION";	 //$NON-NLS-1$
 		
 	/**
 	 * Modes are direction filters for the view
@@ -79,10 +83,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	public final static int CONFLICTING_MODE = 0x8;
 	public final static int ALL_MODES = INCOMING_MODE | OUTGOING_MODE | CONFLICTING_MODE | BOTH_MODE;
 	
-	public final static int[] INCOMING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING};
-	public final static int[] OUTGOING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING};
-	public final static int[] BOTH_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING, SyncInfo.OUTGOING};
-	public final static int[] CONFLICTING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING};
+	private final static int[] INCOMING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING};
+	private final static int[] OUTGOING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING};
+	private final static int[] BOTH_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING, SyncInfo.OUTGOING};
+	private final static int[] CONFLICTING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING};
 
 	private IRefreshSubscriberListenerFactory refreshListenerFactory;
 	
@@ -103,9 +107,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @see org.eclipse.team.ui.sync.ISynchronizeViewPage#createPage(org.eclipse.team.ui.sync.ISynchronizeView)
 	 */
 	public final IPageBookViewPage createPage(ISynchronizeView view) {
-		this.view = view;
-		this.page = doCreatePage(view);
-		return this.page;
+		return doCreatePage(view);
 	}
 	
 	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
@@ -156,7 +158,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	public void selectResources(IResource[] resources) {
-		page.setSelection(resources, true);
+		firePropertyChange(this, P_SYNCVIEWPAGE_SELECTION, null, new StructuredSelection(resources));
 	}
 	
 	/* (non-Javadoc)
@@ -341,7 +343,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	private void refreshHelper(IWorkbenchSite site, String taskName, IResource[] resources, final SubscriberSyncInfoCollector collector, final IRefreshSubscriberListener listener) {
-		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector); //$NON-NLS-1$
+		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+		job.setSubscriberCollector(collector);
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
 				if(listener != null) {

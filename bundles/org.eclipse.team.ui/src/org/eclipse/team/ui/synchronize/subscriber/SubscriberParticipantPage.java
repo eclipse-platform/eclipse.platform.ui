@@ -11,7 +11,6 @@
 package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.compare.internal.INavigatable;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -290,6 +289,9 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 			if(changesViewer instanceof StructuredViewer) {
 				((StructuredViewer)changesViewer).refresh(true /* update labels */);
 			}
+		} else if(event.getProperty().equals(SubscriberParticipant.P_SYNCVIEWPAGE_SELECTION)) {
+			IStructuredSelection selection = (IStructuredSelection)event.getNewValue();
+			setSelection(selection.toArray(), true);			
 		}
 	}
 	
@@ -329,7 +331,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		return new SynchronizeViewerAdvisor(getSynchronizeView(), getParticipant());
 	}
 
-	public void setSelection(IResource[] resources, boolean reveal) {
-		getViewerConfiguration().setSelection(resources, reveal);
+	public void setSelection(Object[] objects, boolean reveal) {
+		getViewerConfiguration().setSelection(objects, reveal);
 	}
 }

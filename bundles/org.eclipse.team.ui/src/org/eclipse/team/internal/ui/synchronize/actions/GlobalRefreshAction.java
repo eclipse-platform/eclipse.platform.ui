@@ -76,7 +76,6 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	}
 
 	public GlobalRefreshAction() {
-		Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
 		synchronizeAction = new Action(Policy.bind("GlobalRefreshAction.4")) { //$NON-NLS-1$
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();

@@ -30,6 +30,7 @@ public interface IPreferenceIds {
 	
 	public static final String SYNCHRONIZING_DEFAULT_PARTICIPANT = PREFIX + "sychronizing_default_participant"; //$NON-NLS-1$
 	public static final String SYNCHRONIZING_COMPLETE_SHOW_DIALOG = PREFIX + "sychronizing_dontshow_complete_dialog"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG = PREFIX + "sychronizing_scheduled_dontshow_complete_dialog"; //$NON-NLS-1$
 	
 	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE = PREFIX + "sychronizing_default_perspective_to_show"; //$NON-NLS-1$
 	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT = PREFIX + "sychronizing_default_perspective_to_show_prompt"; //$NON-NLS-1$

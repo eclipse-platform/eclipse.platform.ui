@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.ide.IDE;
@@ -36,24 +37,40 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
- * Page that allows the user to select a set of resources that are managed by a synchronize 
- * participant.
+ * Page that allows the user to select a set of resources that are managed by a subscriber 
+ * participant. Callers can provide a scope hint to determine the initial selection for the
+ * resource list. By default, the resources in the current selection are checked, otherwise
+ * all resources are checked.
  * 
+ * @see SubscriberRefreshWizard
+ * @see ISynchronizeParticipant#createSynchronizeWizard()
  * @since 3.0
  */
 public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	
 	private SubscriberParticipant participant;
+	
+	// The scope hint for initial selection
+	private int scopeHint;
+	
+	// Set of scope hint to determine the initial selection
 	private Button participantScope;
 	private Button selectedResourcesScope;
 	private Button workingSetScope;
 	private Button enclosingProjectsScope;
 	private Button selectWorkingSetButton;
+	
+	// The checked tree viewer
 	private ContainerCheckedTreeViewer fViewer;
+	
+	// Working set label and holder
 	private Text workingSetLabel;
 	private IWorkingSet workingSet;
-	private int scopeHint;
-
+	
+	/**
+	 * Content provider that accepts a <code>SubscriberParticipant</code> as input and
+	 * returns the participants root resources.
+	 */
 	class MyContentProvider extends BaseWorkbenchContentProvider {
 		public Object[] getChildren(Object element) {
 			if(element instanceof SubscriberParticipant) {
@@ -63,6 +80,10 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * Label decorator that will display the full path for participant roots that are folders. This
+	 * is useful for participants that have non-project roots.
+	 */
 	class MyLabelProvider extends LabelProvider {
 		private LabelProvider workbenchProvider = new WorkbenchLabelProvider();
 		public String getText(Object element) {
@@ -80,18 +101,24 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		}
 	}
 		
+	/**
+	 * Create a new page for the given participant. The scope hint will determine the initial selection.
+	 * 
+	 * @param participant the participant to synchronize
+	 * @param scopeHint a hint about the initial selection, can be one of:
+	 * 	SubscriberRefreshWizard#SCOPE_WORKING_SET
+	 * 	SubscriberRefreshWizard#SCOPE_SELECTED_RESOURCES 
+	 * 	SubscriberRefreshWizard#SCOPE_ENCLOSING_PROJECT
+	 *		SubscriberRefreshWizard#SCOPE_PARTICIPANT_ROOTS
+	 */
 	public GlobalRefreshResourceSelectionPage(SubscriberParticipant participant, int scopeHint) {
-		super("Synchronize");
+		super(Policy.bind("GlobalRefreshResourceSelectionPage.1")); //$NON-NLS-1$
 		this.scopeHint = scopeHint;
-		setDescription("Select the resource to synchronize");
-		setTitle("Synchronize");
-		setParticipant(participant);
-	}
-	
-	public void setParticipant(SubscriberParticipant participant) {
+		setDescription(Policy.bind("GlobalRefreshResourceSelectionPage.2")); //$NON-NLS-1$
+		setTitle(Policy.bind("GlobalRefreshResourceSelectionPage.3")); //$NON-NLS-1$
 		this.participant = participant;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -103,13 +130,13 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		
 		if (participant.getSubscriber().roots().length == 0) {
 			Label l = new Label(top, SWT.NULL);
-			l.setText("There are no resources associated with '" + participant.getName() + "''.");
+			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.4")); //$NON-NLS-1$
 		} else {
 			Label l = new Label(top, SWT.NULL);
-			l.setText("Available resources to Synchronize:");
-			fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER) {
-				
-				};
+			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
+			
+			// The viewer
+			fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
 			GridData data = new GridData(GridData.FILL_BOTH);
 			data.widthHint = 250;
 			data.heightHint = 200;
@@ -128,7 +155,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 						
 			// Scopes
 			Group scopeGroup = new Group(top, SWT.NULL);
-			scopeGroup.setText("Scope");
+			scopeGroup.setText(Policy.bind("GlobalRefreshResourceSelectionPage.6")); //$NON-NLS-1$
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 4;
 			layout.makeColumnsEqualWidth = false;
@@ -137,7 +164,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			scopeGroup.setLayoutData(data);
 			
 			participantScope = new Button(scopeGroup, SWT.RADIO); 
-			participantScope.setText("W&orkspace");
+			participantScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.7")); //$NON-NLS-1$
 			participantScope.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateParticipantScope();
@@ -145,7 +172,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			});
 			
 			selectedResourcesScope = new Button(scopeGroup, SWT.RADIO); 
-			selectedResourcesScope.setText("&Selected Resources");
+			selectedResourcesScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.8")); //$NON-NLS-1$
 			selectedResourcesScope.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateSelectedResourcesScope();
@@ -153,7 +180,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			});
 			
 			enclosingProjectsScope = new Button(scopeGroup, SWT.RADIO); 
-			enclosingProjectsScope.setText("&Enclosing Projects");
+			enclosingProjectsScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.9")); //$NON-NLS-1$
 			enclosingProjectsScope.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEnclosingProjectScope();
@@ -165,7 +192,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			enclosingProjectsScope.setLayoutData(data);
 			
 			workingSetScope = new Button(scopeGroup, SWT.RADIO); 
-			workingSetScope.setText("&Working Set: ");
+			workingSetScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.10")); //$NON-NLS-1$
 			workingSetScope.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if(workingSetScope.getSelection()) {
@@ -181,15 +208,13 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			workingSetLabel.setLayoutData(data);
 			
 			Button selectWorkingSetButton = new Button(scopeGroup, SWT.NULL);
-			selectWorkingSetButton.setText("&Choose...");
+			selectWorkingSetButton.setText(Policy.bind("GlobalRefreshResourceSelectionPage.11")); //$NON-NLS-1$
 			selectWorkingSetButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					selectWorkingSetAction();
 					workingSetScope.setSelection(true);
 					updateWorkingSetScope();
-				}
-
-			
+				}			
 			});
 			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			selectWorkingSetButton.setLayoutData(data);
@@ -203,7 +228,35 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		updateOKStatus();
 		Dialog.applyDialogFont(top);
 	}
-
+	
+	/**
+	 * Allow the finish button to be pressed if there are checked resources.
+	 *
+	 */
+	protected void updateOKStatus() {	
+		if(fViewer != null) {
+			setPageComplete(fViewer.getCheckedElements().length > 0);
+		} else {
+			setPageComplete(true);
+		}
+	}
+	
+	/**
+	 * Return the list of top-most resources that have been checked.
+	 * 
+	 * @return  the list of top-most resources that have been checked or an
+	 * empty list if nothing is selected.
+	 */
+	public IResource[] getCheckedResources() {
+		TreeItem[] item = fViewer.getTree().getItems();
+		List checked = new ArrayList();
+		for (int i = 0; i < item.length; i++) {
+			TreeItem child = item[i];
+			collectCheckedItems(child, checked);
+		}
+		return (IResource[]) checked.toArray(new IResource[checked.size()]);
+	}
+	
 	private void initializeScopingHint() {
 		switch(scopeHint) {
 			case SubscriberRefreshWizard.SCOPE_PARTICIPANT_ROOTS:
@@ -227,7 +280,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	
 	private void updateEnclosingProjectScope() {
 		if(enclosingProjectsScope.getSelection()) {
-			IResource[] selectedResources = getSelectedResources();
+			IResource[] selectedResources = getCheckedResources();
 			List projects = new ArrayList();
 			for (int i = 0; i < selectedResources.length; i++) {
 				projects.add(selectedResources[i].getProject());
@@ -286,46 +339,15 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		return new IResource[0];
 	}
 	
-	protected void updateOKStatus() {	
-		if(fViewer != null) {
-			setPageComplete(fViewer.getCheckedElements().length > 0);
-		} else {
-			setPageComplete(true);
-		}
-	}
-	
-	/**
-	 * Return the set of root resources selected.
-	 */
-	public IResource[] getSelectedResources() {
-		if(fViewer != null) {
-			// Checked elements are ordered top-down.
-			// Note: n^2!!!
-			List resources = IDE.computeSelectedResources(new StructuredSelection(fViewer.getCheckedElements()));
-			Map rootResources = new HashMap();
-			for (Iterator it = resources.iterator(); it.hasNext();) {
-				IResource element = (IResource) it.next();
-				if(! rootResources.containsKey(element.getProject())) {
-					List roots = new ArrayList();
-					roots.add(element);
-					rootResources.put(element.getProject(), roots);
-				} else { 
-					List r = (List)rootResources.get(element.getProject());
-					boolean toAdd = true;
-					for (Iterator it2 = r.iterator(); it2.hasNext();) {
-						IResource e = (IResource) it2.next();
-						if(e.getFullPath().isPrefixOf(element.getFullPath()))
-							toAdd = false;
-							break;
-					}
-					if(toAdd) {
-						r.add(element);
-					}
-				}
-			}	
-			return (IResource[]) rootResources.keySet().toArray(new IResource[rootResources.size()]);
-		} else {
-			return new IResource[0];
+	private void collectCheckedItems(TreeItem item, List checked) {
+		if(item.getChecked() && !item.getGrayed()) {
+			checked.add(item.getData());
+		} else if(item.getGrayed()) {
+			TreeItem[] children = item.getItems();
+			for (int i = 0; i < children.length; i++) {
+				TreeItem child = children[i];
+				collectCheckedItems(child, checked);
+			}
 		}
 	}
 	

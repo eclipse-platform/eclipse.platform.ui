@@ -21,8 +21,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -33,16 +31,20 @@ import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeCompareInput;
 import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 
+/**
+ * A dialog that is displayed at the end of a synchronize. The dialog shows the result of
+ * the synchronize operation. A details area is shown if there are new changes found, 
+ * otherwise a message displays the current changes in the given participant.
+ *
+ * @since 3.0
+ */
 public class RefreshCompleteDialog extends DetailsDialog {
 	private SyncInfoFilter filter;
 	private FilteredSyncInfoCollector collector;
 	private SynchronizeCompareInput compareEditorInput;
 	private IRefreshEvent event;
 	private SubscriberParticipant participant;
-
 	private Button dontShowAgainButton;
-	
-	private IDialogSettings settings;
 	private SyncInfoTree syncInfoSet = new SyncInfoTree();
 	
 	public RefreshCompleteDialog(Shell parentShell, IRefreshEvent event, SubscriberParticipant participant) {
@@ -71,16 +73,14 @@ public class RefreshCompleteDialog extends DetailsDialog {
 				syncInfoSet, 
 				filter);		
 		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
-		this.settings = workbenchSettings.getSection("RefreshCompleteDialog");//$NON-NLS-1$
-		if (settings == null) {
-			this.settings = workbenchSettings.addNewSection("RefreshCompleteDialog");//$NON-NLS-1$
-		}
 	}
 
 	/**
 	 * Populate the dialog with the new changes discovered during the refresh
 	 */
 	public void initialize() {
+		// The collector is connected to a subcriber collector which we know is populated in the
+		// background. As such, there is no need for a progress monitor here.
 		this.collector.start(new NullProgressMonitor());
 	}
 
@@ -89,18 +89,6 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-	}
-
-	protected Combo createCombo(Composite parent, int widthChars) {
-		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		GC gc = new GC(combo);
-		gc.setFont(combo.getFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();
-		data.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, widthChars);
-		gc.dispose();
-		combo.setLayoutData(data);
-		return combo;
 	}
 
 	/* (non-Javadoc)
@@ -186,12 +174,6 @@ public class RefreshCompleteDialog extends DetailsDialog {
 		Dialog.applyDialogFont(parent);
 	}
 
-	private void initializeSettings() {
-		if(dontShowAgainButton != null) {
-			dontShowAgainButton.setSelection(! TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG));
-		}
-	}
-
 	protected SyncInfoSet getSubscriberSyncInfoSet() {
 		return participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet();
 	}
@@ -222,16 +204,20 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 */
 	protected void okPressed() {
 		if(dontShowAgainButton != null) {
-			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG, ! dontShowAgainButton.getSelection());		
+			if(event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+				TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG, ! dontShowAgainButton.getSelection());
+			} else {
+				TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG, ! dontShowAgainButton.getSelection());
+			}
 		}
 		TeamUIPlugin.getPlugin().savePluginPreferences();		
 		super.okPressed();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#updateEnablements()
 	 */
-	protected void updateEnablements() {
+	protected void updateEnablements() {	
 	}
 
 	private Label createLabel(Composite parent, String text, int columns) {
@@ -258,5 +244,15 @@ public class RefreshCompleteDialog extends DetailsDialog {
 			resources[i] = info.getLocal();
 		}
 		return resources;
+	}
+	
+	private void initializeSettings() {
+		if(dontShowAgainButton != null) {
+			if(event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+				dontShowAgainButton.setSelection(! TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG));
+			} else {
+				dontShowAgainButton.setSelection(! TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG));
+			}
+		}
 	}
 }

@@ -33,6 +33,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
 	private Action refreshSelectionAction;
+	private IToolBarManager toolbarMgr;
 
 	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(participant.getId(), view.getViewSite(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
@@ -69,6 +70,10 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 		super.fillContextMenu(viewer, manager);
 	}
 
+	public void updateToolbar(IToolBarManager mgr) {
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SyncInfoDiffTreeViewer#handleDoubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
