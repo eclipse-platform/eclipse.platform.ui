@@ -262,7 +262,7 @@ public abstract class BackgroundEventHandler {
 			// It's hard to know how much work is going to happen
 			// since the queue can grow. Use the current queue size as a hint to
 			// an infinite progress monitor
-			monitor.beginTask(null, 100);
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 			IProgressMonitor subMonitor = Policy.infiniteSubMonitorFor(monitor, 90);
 			subMonitor.beginTask(null, 1024);
 
