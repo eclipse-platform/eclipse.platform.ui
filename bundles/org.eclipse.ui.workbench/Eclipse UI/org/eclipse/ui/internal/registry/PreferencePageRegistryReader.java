@@ -195,6 +195,10 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			//Iterate through all the nodes
 			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
 			WorkbenchPreferenceNode node = categoryNode.getNode();
+			if (node == favorite) {
+				// skip it - favorite already at the top of the list
+				continue;
+			}
 			String category = node.getCategory();
 			if (category == null) {
 				contributions.add(node);
