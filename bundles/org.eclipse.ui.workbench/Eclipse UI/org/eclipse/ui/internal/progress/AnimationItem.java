@@ -168,7 +168,11 @@ public class AnimationItem {
 		//Don't bother if there is nothing showing yet
 		if (!window.getShell().isVisible())
 			return;
-		floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
+		
+		synchronized(windowLock){
+			floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
+		}
+		
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
 				.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
