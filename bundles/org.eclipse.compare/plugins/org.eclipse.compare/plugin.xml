@@ -19,6 +19,7 @@
 	<runtime>
 		<library name="compare.jar" >
 			<export name="*"/>
+     		<packages prefixes="org.eclipse.compare"/>
 		</library>
 	</runtime>
 		   
