@@ -497,7 +497,7 @@ protected void initializeBounds() {
 
 
 	if (resizeListener != null) {
-		shell.removeListener(SWT.RESIZE,resizeListener);
+		shell.removeListener(SWT.Resize,resizeListener);
 	}
 	
 	if (resizeHasOccurred) { // Check if shell size has been set already.
