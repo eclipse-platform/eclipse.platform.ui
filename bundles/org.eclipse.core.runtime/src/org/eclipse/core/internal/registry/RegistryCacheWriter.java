@@ -244,12 +244,23 @@ public class RegistryCacheWriter {
 
 	public void saveCache(ExtensionRegistry registry, long registryStamp) {
 		registry.enterRead();
+		SafeFileOutputStream safeOut = null;
 		try {
-			DataOutputStream out = openCacheFile();
+			safeOut = new SafeFileOutputStream(cacheFile);
+			DataOutputStream out = new DataOutputStream(safeOut);
 			try {
 				writeCache(registry, registryStamp, out);
 			} finally {
-				out.close();
+				// at this point we have traversed the whole registry.
+				// if we failed lazily loading configuration elements, 
+				// just discard the temporary file we have created
+				// to avoid overwriting the existing one with bogus data
+				RegistryCacheReader reader = registry.getCacheReader();
+				if (reader != null && reader.hasFailed())
+					safeOut.close(true);
+				else
+					// close the DataOutputStream normally
+					out.close();
 			}
 		} catch (IOException e) {
 			// an I/O failure would keep the extension elements unloaded
@@ -263,10 +274,6 @@ public class RegistryCacheWriter {
 
 	public void saveCache(ExtensionRegistry registry) {
 		this.saveCache(registry, 0);
-	}
-
-	private DataOutputStream openCacheFile() throws IOException {
-		return new DataOutputStream(new SafeFileOutputStream(cacheFile)); //TODO Do we need to use the safeFile? Failing would not really matter anyway. If this is removed then we can consider deleting the SafeFileOutputStream class
 	}
 
 }

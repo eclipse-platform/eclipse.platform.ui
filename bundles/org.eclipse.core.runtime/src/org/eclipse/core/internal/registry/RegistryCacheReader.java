@@ -38,6 +38,8 @@ public class RegistryCacheReader {
 	protected List objectTable = null;
 	private boolean lazilyLoadExtensions;
 	private boolean flushableExtensions = true;
+	// indicates we failed load configuration elements lazily
+	private boolean failed;
 	protected File cacheFile;
 
 	public static final byte REGISTRY_CACHE_VERSION = 7;
@@ -357,12 +359,16 @@ public class RegistryCacheReader {
 				if (in != null)
 					in.close();
 			} catch (IOException e) {
-				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
-				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
-				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
+				// ignore
 			}
 		}
+		// we only get here when we have problems
+		failed = true;
 		return new ConfigurationElement[0];
+	}
+
+	boolean hasFailed() {
+		return failed;
 	}
 
 	private void logError(Throwable t) {
@@ -396,29 +402,26 @@ public class RegistryCacheReader {
 		} catch (InvalidRegistryCacheException e) {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e.getCause() : null;
 			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, e.getMessage(), exception));
-		} catch (Throwable t) {
-			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
-			// log general message
-			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, null));
-			// log actual error			
-			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
+		} catch (OutOfMemoryError oome) {
+			// catch any OutOfMemoryErrors that may have been caused by corrupted data
+			logError(oome);
+		} catch (RuntimeException re) {
+			// catch any ArrayIndexOutOfBounds/NullPointer/NegativeArraySize/... exceptions that may have been caused by corrupted data
+			logError(re);
 		} finally {
 			try {
 				if (in != null)
 					in.close();
 			} catch (IOException e) {
-				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
-				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
-				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
+				// ignore
 			}
 		}
 		return null;
 	}
 
 	public class InvalidRegistryCacheException extends Exception {
-		Throwable cause=null;
+		Throwable cause = null;
+
 		public InvalidRegistryCacheException(String msg, Throwable cause) {
 			super(msg);
 			this.cause = cause;
@@ -427,7 +430,7 @@ public class RegistryCacheReader {
 		public InvalidRegistryCacheException(String string) {
 			super(string);
 		}
-		
+
 		public Throwable getCause() {
 			return cause;
 		}

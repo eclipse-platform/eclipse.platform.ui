@@ -56,13 +56,17 @@ public class SafeFileOutputStream extends OutputStream {
 	}
 
 	public void close() throws IOException {
+		close(false);
+	}
+	
+	public void close(boolean discard) throws IOException {
 		try {
 			output.close();
 		} catch (IOException e) {
 			failed = true;
 			throw e; // rethrow
 		}
-		if (failed)
+		if (discard || failed)
 			temp.delete();
 		else
 			commit();
@@ -91,7 +95,7 @@ public class SafeFileOutputStream extends OutputStream {
 			tempPath = target.getAbsolutePath() + EXTENSION;
 		temp = new File(tempPath);
 	}
-
+	
 	public void flush() throws IOException {
 		try {
 			output.flush();
