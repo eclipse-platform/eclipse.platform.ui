@@ -310,6 +310,8 @@ private IViewPart busyShowView(String viewID, boolean activate)
 		else
 			bringToTop(view);
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
+		// Just in case view was fast.
+		window.getShortcutBar().update(true);
 	}
 	return view;
 }
