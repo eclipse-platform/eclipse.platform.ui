@@ -120,7 +120,7 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			else
 				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 			monitor.subTask(message);
-			hookStartBuild(builder);
+			hookStartBuild(builder, trigger);
 			//do the build
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
@@ -465,12 +465,21 @@ public boolean hasBeenBuilt(IProject project) {
 /**
  * Hook for adding trace options and debug information at the start of a build.
  */
-private void hookStartBuild(IncrementalProjectBuilder builder) {
+private void hookStartBuild(IncrementalProjectBuilder builder, int trigger) {
 	if (Policy.MONITOR_BUILDERS)
 		EventStats.startBuild(builder);
 	if (Policy.DEBUG_BUILD_INVOKING) {
 		timeStamp = System.currentTimeMillis();
-		Policy.debug(true, "Invoking builder: " + toString(builder)); //$NON-NLS-1$
+		String type;
+		switch (trigger) {
+			case IncrementalProjectBuilder.FULL_BUILD:
+				type = "FULL_BUILD"; //$NON-NLS-1$
+				break;
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+			default:
+				type = "INCREMENTAL_BUILD"; //$NON-NLS-1$
+		}
+		Policy.debug(true, "Invoking (" + type + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 /**
