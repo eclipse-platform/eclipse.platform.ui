@@ -182,7 +182,7 @@ public interface IPreferenceConstants {
 	 * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
 	 * <code>false</code> if editors should show a single editor tab (3.0 style)
 	 * <p>
-	 * The default value for this preference is: <code>false</code> (show single editor tab)
+	 * The default value for this preference is: <code>true</code>
 	 * </p>
 	 * 
 	 * @since 3.0
@@ -196,7 +196,7 @@ public interface IPreferenceConstants {
 	 * Boolean-valued: <code>true</code> if editors and views should use a traditional style of tab and
 	 * <code>false</code> if editors should show new style tab (3.0 style)
 	 * <p>
-	 * The default value for this preference is: <code>false</code>
+	 * The default value for this preference is: <code>true</code>
 	 * </p>
 	 * 
 	 * @since 3.0
