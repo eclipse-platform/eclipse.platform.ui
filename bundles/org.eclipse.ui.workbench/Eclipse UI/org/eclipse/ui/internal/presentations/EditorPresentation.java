@@ -152,7 +152,7 @@ public class EditorPresentation extends BasicStackPresentation {
         };
         openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
                 shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-                openEditorDropDownHandler, Priority.NORMAL);
+                openEditorDropDownHandler, Priority.MEDIUM);
         PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmissions(
                 Collections.singletonList(openEditorDropDownHandlerSubmission));
     }

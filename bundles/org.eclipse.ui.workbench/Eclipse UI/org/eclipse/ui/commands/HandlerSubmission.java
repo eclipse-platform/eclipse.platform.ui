@@ -69,7 +69,7 @@ public final class HandlerSubmission implements Comparable {
         switch (priority) {
         case 0:
         case 1:
-            this.priority = Priority.NORMAL;
+            this.priority = Priority.MEDIUM;
             break;
         case 2:
         case 3:
@@ -108,7 +108,7 @@ public final class HandlerSubmission implements Comparable {
         switch (priority) {
         case 0:
         case 1:
-            this.priority = Priority.NORMAL;
+            this.priority = Priority.MEDIUM;
             break;
         case 2:
         case 3:
