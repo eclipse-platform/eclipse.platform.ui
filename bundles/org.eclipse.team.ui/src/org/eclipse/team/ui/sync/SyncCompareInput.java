@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -194,7 +193,10 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	
 		try {
-			this.trees = createSyncElements(pm);
+			pm.beginTask(null, 100);
+			
+			// Estimate 70% of the time is creating the sync elements
+			this.trees = createSyncElements(Policy.subMonitorFor(pm, 70));
 			setMessage(null);
 			if (trees.length == 0) {
 				return null;
@@ -206,13 +208,17 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 					// collect changes and build the diff tree
 					diffRoot = new DiffNode(0);
 					try {						
-						doServerDelta(pm);
+						doServerDelta(monitor);
 					} catch (InterruptedException e) {
 						exceptions[0] = e;
 					}
 				}
 			};
-			ResourcesPlugin.getWorkspace().run(runnable, null);
+			if (pm.isCanceled()) {
+				throw new InterruptedException();
+			}
+			// Estimate 30% of the time is doing the server delta
+			ResourcesPlugin.getWorkspace().run(runnable, Policy.subMonitorFor(pm, 30));
 			if (exceptions[0] != null) throw exceptions[0];
 			if (pm.isCanceled()) {
 				throw new InterruptedException();
@@ -236,9 +242,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		pm.beginTask("", trees.length * 1000);
 		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle"));
 		for (int i = 0; i < trees.length; i++) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(pm, 1000);
 			IRemoteSyncElement tree = trees[i];
-			IDiffElement localRoot = collectResourceChanges(null, tree, subMonitor);
+			IDiffElement localRoot = collectResourceChanges(null, tree, Policy.subMonitorFor(pm, 1000));
 			makeParents(localRoot);
 		}
 	}

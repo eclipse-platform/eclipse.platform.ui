@@ -56,9 +56,15 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
 		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
-		for (int i = 0; i < trees.length; i++) {
-			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-			trees[i] = provider.getRemoteSyncTree(resources[i], null, monitor);
+		int work = 1000 * resources.length;
+		monitor.beginTask(null, work);
+		try {
+			for (int i = 0; i < trees.length; i++) {
+				CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
+				trees[i] = provider.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
+			}
+		} finally {
+			monitor.done();
 		}
 		return trees;
 	}
