@@ -448,13 +448,21 @@ public class JobManager implements IJobManager {
 		if (waiting.getRule() == null)
 			return null;
 		synchronized (lock) {
+			if (running.isEmpty())
+				return null;
 			//check the running jobs
+			boolean hasBlockedJobs = false;
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
 				if (waiting.isConflicting(job))
 					return job;
+				if (!hasBlockedJobs)
+					hasBlockedJobs = job.previous() != null;
 			}
-			//next check all jobs blocked by running jobs
+			//there are no blocked jobs, so we are done
+			if (!hasBlockedJobs)
+				return null;
+			//check all jobs blocked by running jobs
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
 				while (true) {
