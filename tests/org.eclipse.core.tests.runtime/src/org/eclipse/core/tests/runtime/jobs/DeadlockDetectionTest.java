@@ -46,6 +46,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 		}
 	}
@@ -115,6 +116,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		kill(allRunnables);
 
@@ -122,6 +124,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				((Thread) allRunnables.get(i)).join(100000);
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
@@ -145,6 +148,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		kill(allRunnables);
 
@@ -152,6 +156,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				((Thread) allRunnables.get(i)).join(100000);
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
@@ -177,6 +182,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		kill(allRunnables);
 
@@ -184,6 +190,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				((Thread) allRunnables.get(i)).join(100000);
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
@@ -672,6 +679,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		//cancel the wait for the rule
 		canceller.setCanceled(true);
@@ -986,6 +994,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		kill(allRunnables);
 
@@ -993,6 +1002,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				((Thread) allRunnables.get(i)).join(100000);
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
@@ -1024,6 +1034,7 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			assertTrue("Timeout waiting for job to end.", ++i < 100);
 		}
@@ -1085,6 +1096,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 
 		status[0] = TestBarrier.STATUS_DONE;
@@ -1095,6 +1107,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e1) {
+					//ignore
 				}
 				//sanity check to avoid hanging tests
 				assertTrue("Timeout waiting for jobs to finish.", ++j < 1000);
@@ -1155,6 +1168,7 @@ public class DeadlockDetectionTest extends TestCase {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		second.cancel();
 		status[0] = TestBarrier.STATUS_RUNNING;
