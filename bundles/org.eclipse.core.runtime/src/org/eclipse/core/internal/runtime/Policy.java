@@ -28,7 +28,9 @@ public class Policy {
 		ResourceBundle tmpBundle = bundle;
 		if (tmpBundle != null)
 			return tmpBundle;
-		return bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new BundleClassLoader(InternalPlatform.getDefault().getBundleContext().getBundle()));
+		// always create a new classloader to be passed in 
+		// in order to prevent ResourceBundle caching
+		return bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new RuntimeBundleClassLoader());
 	}
 
 	/**
@@ -118,21 +120,20 @@ public class Policy {
 	}
 
 	/**
-	 * A helper classloader that prevents ResourceBundles to be cached.
+	 * A temporary classloader for the runtime plug-in.
 	 */
-	private static class BundleClassLoader extends ClassLoader {
-		private Bundle base;
+	private static class RuntimeBundleClassLoader extends ClassLoader {
 
-		public BundleClassLoader(Bundle base) {
-			this.base = base;
+		private Bundle getRuntimeBundle() {
+			return InternalPlatform.getDefault().getBundleContext().getBundle();
 		}
 
 		protected Class findClass(String name) throws ClassNotFoundException {
-			return base.loadClass(name);
+			return getRuntimeBundle().loadClass(name);
 		}
 
 		protected URL findResource(String name) {
-			return base.getResource(name);
+			return getRuntimeBundle().getResource(name);
 		}
 	}
 
