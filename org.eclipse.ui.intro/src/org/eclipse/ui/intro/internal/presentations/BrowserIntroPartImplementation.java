@@ -119,9 +119,11 @@ public class BrowserIntroPartImplementation extends
     /**
      * create the browser and set it's contents
      */
-    public void createPartControl(Composite parent) {
-
+    public void createPartControl(Composite parent){
+       
+        
         browser = new Browser(parent, SWT.MULTI);
+        
 
         // add a location listener on the browser so we can intercept
         // LocationEvents. Responsible for intercepting URLs and updating UI
@@ -167,7 +169,7 @@ public class BrowserIntroPartImplementation extends
                 Logger.logError("Unable to set URL on the browser", null); //$NON-NLS-1$
                 return;
             }
-        }
+        }  
     }
 
     /**
@@ -245,6 +247,10 @@ public class BrowserIntroPartImplementation extends
 
     public void setFocus() {
         browser.setFocus();
+    }
+    
+    public void dispose() {
+        browser.dispose();
     }
 
 }

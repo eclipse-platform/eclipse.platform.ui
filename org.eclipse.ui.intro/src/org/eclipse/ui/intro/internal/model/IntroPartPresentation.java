@@ -14,6 +14,7 @@ package org.eclipse.ui.intro.internal.model;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.*;
@@ -159,6 +160,7 @@ public class IntroPartPresentation extends IntroElement {
     public void createPartControl(Composite parent) {
         Vector validImplementations = getValidImplementationElements(getConfigurationElement());
         IConfigurationElement implementationElement = null;
+        //Composite container = new Composite()
         for (int i = 0; i < validImplementations.size(); i++) {
             implementationElement = (IConfigurationElement) validImplementations
                     .elementAt(i);
@@ -176,6 +178,12 @@ public class IntroPartPresentation extends IntroElement {
                         + ExtensionPointManager
                                 .getLogString(implementationElement));
                 break;
+            } catch (SWTError e) {
+                Logger.logWarning("failed to create implementation from: "
+                        + ExtensionPointManager
+                                .getLogString(implementationElement));
+                implementation = null;
+                implementationElement = null;
             } catch (Exception e) {
                 Logger.logWarning("failed to create implementation from: "
                         + ExtensionPointManager

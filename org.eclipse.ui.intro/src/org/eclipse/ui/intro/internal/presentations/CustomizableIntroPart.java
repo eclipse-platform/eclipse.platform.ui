@@ -96,7 +96,6 @@ public class CustomizableIntroPart extends IntroPart {
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-
         container = new Composite(parent, SWT.NULL);
         StackLayout layout = new StackLayout();
         layout.marginHeight = 0;
@@ -107,7 +106,6 @@ public class CustomizableIntroPart extends IntroPart {
             presentation.createPartControl(container);
             standbyPart.createPartControl(container);
         }
-
     }
 
     /*

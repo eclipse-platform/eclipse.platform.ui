@@ -27,16 +27,20 @@ import org.eclipse.ui.intro.internal.util.*;
 public class StandbyPart {
 
     private FormToolkit toolkit;
+
     private IntroModelRoot model;
+
     private ImageHyperlink returnLink;
+
     private Composite container;
+
     private Composite content;
+
     private ContextHelpPart helpPart;
 
-
     private IIntroPart introPart;
-    // for now, hastable has classnames as keys, and ControlKeys
-    // are values.
+
+    // hastable has partIds as keys, and ControlKeys are values.
     private Hashtable cachedContentParts = new Hashtable();
 
     private ControlKey cachedControlKey;
@@ -44,7 +48,9 @@ public class StandbyPart {
     class StandbyLayout extends Layout {
 
         private int VGAP = 10;
+
         private int VMARGIN = 5;
+
         private int HMARGIN = 5;
 
         /*
@@ -100,7 +106,6 @@ public class StandbyPart {
     public void init(IIntroPart introPart) {
         this.introPart = introPart;
     }
-
 
     public void createPartControl(Composite parent) {
         toolkit = new FormToolkit(parent.getDisplay());
@@ -236,13 +241,13 @@ public class StandbyPart {
         return null;
     }
 
-
     /*
      * Model class to wrap Control and IStandbyContentPart pairs.
      */
     class ControlKey {
 
         Control c;
+
         IStandbyContentPart part;
 
         ControlKey(Control c, IStandbyContentPart part) {
