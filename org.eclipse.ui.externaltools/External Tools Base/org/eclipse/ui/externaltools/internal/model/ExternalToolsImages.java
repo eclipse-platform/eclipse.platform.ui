@@ -12,6 +12,7 @@ Contributors:
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -32,11 +33,8 @@ public class ExternalToolsImages {
 	/**
 	 * A table of all the <code>ImageDescriptor</code>s.
 	 */
-	private static HashMap imageDescriptors;
+	private static Map imageDescriptors;
 
-	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon"; //$NON-NLS-1$
-	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID"; //$NON-NLS-1$
-	
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
