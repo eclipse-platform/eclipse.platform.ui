@@ -347,7 +347,9 @@ abstract public class CVSAction extends TeamAction {
 			if (resource.getType() != IResource.PROJECT) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 				CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
-				if (!CVSTag.equalTags(tag, parentTag)) {
+				// prompt if the tags are not equal
+				// consider BASE to be equal the parent tag since we don't make BASE sticky on replace
+				if (!CVSTag.equalTags(tag, parentTag) && !CVSTag.equalTags(tag, CVSTag.BASE)) {
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {							
 							AvoidableMessageDialog dialog = new AvoidableMessageDialog(
