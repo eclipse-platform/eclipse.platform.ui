@@ -19,6 +19,7 @@ import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
+import org.eclipse.jdt.internal.ui.preferences.CHyperLink;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -55,7 +56,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
-import org.eclipse.ui.internal.editors.text.CHyperLink;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
