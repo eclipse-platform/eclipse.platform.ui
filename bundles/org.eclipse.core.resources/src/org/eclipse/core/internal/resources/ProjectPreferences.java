@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.resources.ProjectScope;
@@ -36,6 +38,8 @@ public class ProjectPreferences extends EclipsePreferences {
 	private String qualifier;
 	private String projectName;
 	private EclipsePreferences loadLevel;
+	// cache which nodes have been loaded from disk
+	private static Set loadedNodes = new HashSet();
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -107,6 +111,14 @@ public class ProjectPreferences extends EclipsePreferences {
 			((EclipsePreferences) node).load(location);
 			node.flush();
 		}
+	}
+
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return loadedNodes.contains(node.name());
+	}
+
+	protected void loaded() {
+		loadedNodes.add(name());
 	}
 
 	/*
