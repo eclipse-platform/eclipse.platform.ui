@@ -175,15 +175,11 @@
 				label="%AddToWorkspaceAction.label"
 				tooltip="%AddToWorkspaceAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
-		</objectContribution>
-		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.ModuleVersionContributions" 
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.ModuleVersion">
-			<action 
-				id="org.eclipse.team.ccvs.ui.addToWorkspace"
-				label="%AddToWorkspaceAction.label"
-				tooltip="%AddToWorkspaceAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.removeTag"
+				label="%RemoveModuleVersionAction.label"
+				tooltip="%RemoveModuleVersionAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"/>
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFileContributions" 
@@ -256,15 +252,6 @@
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"/>
 		</objectContribution>			
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.ModuleVersionContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.ModuleVersion">
-			<action
-				id="org.eclipse.team.ccvs.ui.removeTag"
-				label="%RemoveModuleVersionAction.label"
-				tooltip="%RemoveModuleVersionAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"/>
-		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.BranchTagContributions"
 			objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag">

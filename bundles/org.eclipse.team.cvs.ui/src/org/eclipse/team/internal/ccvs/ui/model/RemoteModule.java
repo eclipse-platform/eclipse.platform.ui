@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -59,9 +59,9 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 			// This is inefficient; need API to get remote resource for a given tag
 			public void run() {
 				CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder, new NullProgressMonitor());
-				ModuleVersion[] versions = new ModuleVersion[tags.length];
+				Object[] versions = new Object[tags.length];
 				for (int i = 0; i < versions.length; i++) {
-					versions[i] = new ModuleVersion(folder.getRepository().getRemoteFolder(folder.getRelativePath(), tags[i]), tags[i], RemoteModule.this);
+					versions[i] = folder.getRepository().getRemoteFolder(folder.getRelativePath(), tags[i]);
 				}
 				result[0] = versions;
 			}

@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -20,7 +20,6 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.model.ModuleVersion;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -42,10 +41,6 @@ public class AddToWorkspaceAction extends TeamAction {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFolder) {
 					resources.add(next);
-					continue;
-				}
-				if (next instanceof ModuleVersion) {
-					resources.add(((ModuleVersion)next).getCVSRemoteFolder());
 					continue;
 				}
 				if (next instanceof IAdaptable) {

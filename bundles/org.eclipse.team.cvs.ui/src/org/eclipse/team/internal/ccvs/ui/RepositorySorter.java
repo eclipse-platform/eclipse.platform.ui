@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -13,7 +13,6 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
-import org.eclipse.team.internal.ccvs.ui.model.ModuleVersion;
 
 public class RepositorySorter extends ViewerSorter {
 	public int category(Object element) {
@@ -38,9 +37,6 @@ public class RepositorySorter extends ViewerSorter {
 		}
 		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {
 			return ((ICVSRepositoryLocation)o1).getLocation().compareTo(((ICVSRepositoryLocation)o2).getLocation());
-		}
-		if (o1 instanceof ModuleVersion && o2 instanceof ModuleVersion) {
-			return -super.compare(viewer, o1, o2);
 		}
 		return super.compare(viewer, o1, o2);
 	}
