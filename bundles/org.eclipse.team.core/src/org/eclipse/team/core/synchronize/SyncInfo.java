@@ -142,6 +142,8 @@ public class SyncInfo implements IAdaptable {
 	 * Construct a sync info object.
 	 */
 	public SyncInfo(IResource local, IResourceVariant base, IResourceVariant remote, IResourceVariantComparator comparator) {
+		Assert.isNotNull(local);
+		Assert.isNotNull(comparator);
 		this.local = local;
 		this.base = base;
 		this.remote = remote;

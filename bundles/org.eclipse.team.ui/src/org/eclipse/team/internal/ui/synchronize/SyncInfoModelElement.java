@@ -11,13 +11,13 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 
 /**
@@ -46,6 +46,8 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	 */
 	public SyncInfoModelElement(IDiffContainer parent, SyncInfo info) {
 		super(parent);
+		
+		Assert.isNotNull(info);
 		this.info = info;
 		// update state
 		setKind(info.getKind());		
@@ -155,18 +157,14 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	 * contributor is not a resource.
 	 */
 	public IResource getResource() {
-		ITypedElement element = getLeft();
-		if(element instanceof ResourceNode) {
-			return ((ResourceNode)element).getResource();
-		}
-		return null;
+		return info.getLocal();
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return getResource() != null ? getResource().getFullPath().toString() : getName();
+		return getResource().getFullPath().toString();
 	}
 	
 	/**
