@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IPath;
 
 
 /**
- * Facade for the file buffers plug-in. Provides access to the
- * text file buffer manager and helper methods for location 
- * handling.
+ * Facade for the file buffers plug-in. Provides access to the text file buffer
+ * manager and helper methods for location handling. This facade is available
+ * independent from the activation status of the file buffers plug-in.
  * 
  * @since 3.0
  */

@@ -16,7 +16,7 @@ import org.eclipse.jface.text.IDocument;
  * Factory for text file buffer documents. Used by the text file buffer manager
  * to create the document for a new text file buffer.
  * <p>
- * The expected interface of extensions provided for the
+ * This interface is the expected interface of extensions provided for the
  * <code>"org.eclipse.core.filebuffers.documentCreation"</code> extension
  * point.
  * 

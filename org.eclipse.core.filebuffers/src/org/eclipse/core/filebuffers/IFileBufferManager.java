@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * connected to the file buffer manager. In order to connect a file to a file
  * buffer manager call <code>connect</code>. After that call has
  * successfully completed the file buffer can be obtained by <code>getFileBuffer</code>.
- * The file buffer is created on the first connect and diposed on the last
+ * The file buffer is created on the first connect and disposed on the last
  * disconnect. I.e. the file buffer manager keeps track of how often a file is
  * connected and returns the same file buffer to each client as long as the
  * file is connected.

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * Factory for text file buffer annotation models. Used by the text file buffer
  * manager to create the annotation model for a new text file buffer.
  * <p>
- * The expected interface for extension provided for the
+ * This interface is the expected interface for extensions provided for the
  * <code>"org.eclipse.core.filebuffers.annotationModelCreation"</code>
  * extension point.
  * 

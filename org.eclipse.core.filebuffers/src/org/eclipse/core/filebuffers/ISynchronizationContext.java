@@ -11,16 +11,28 @@ Contributors:
 package org.eclipse.core.filebuffers;
 
 /**
- * Executes <code>Runnables</code> according to a certain synchronization
- * policy. This could be that all given <code>Runnables</code> are executed in
- * a specific thread or environment.
+ * A file buffer manager (see
+ * {@link org.eclipse.core.filebuffers.IFileBufferManager}uses a
+ * <code>ISynchronizationContext</code> in order to execute commands
+ * encapsulated as {@link java.lang.Runnable}. The synchronization context
+ * executes the <code>Runnables</code> according to a specific
+ * synchronization/execution policy. This could be that the given
+ * <code>Runnable</code> is executed in a specific thread or environment or
+ * adhere to specific timing constraints. The concrete characteristics of the
+ * policy is to be specified by the context implementer.
+ * <p>
+ * This interface can be implemented by clients. Clients use
+ * {@link org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(ISynchronizationContext)}
+ * to install a particular synchronization context with a file buffer manager.
  * 
  * @since 3.0
  */
 public interface ISynchronizationContext {
 	
 	/**
-	 * Executes the given runnable.
+	 * Executes the given runnable according to the specified
+	 * synchronization/execution policy.
+	 * 
 	 * 
 	 * @param runnable the runnable to be executed
 	 */

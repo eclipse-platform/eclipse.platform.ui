@@ -17,7 +17,7 @@ import org.eclipse.jface.text.IDocument;
 /**
  * Participates in the setup of a text file buffer document.
  * <p>
- * The expected interface for extensions provided for the
+ * This interface is the expected interface for extensions provided for the
  * <code>"org.eclipse.core.filebuffers.documentSetup"</code> extension point.
  * <p>
  * Participants have to be aware of the existence of other participants. I.e.
