@@ -27,7 +27,11 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public int available() throws IOException {
-		return bufferSize - offset + in.available();
+		try {
+			return bufferSize - offset + in.available();
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	private int copyFromBuffer(byte[] userBuffer, int userOffset, int needed) {
@@ -104,12 +108,16 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public int read() throws IOException {
-		ensureAvailable(1);
-		if (bufferSize <= offset)
-			return -1;
-		int nextByte = 0xFF & blocks[offset / blockCapacity][offset % blockCapacity];
-		offset++;
-		return nextByte;
+		try {
+			ensureAvailable(1);
+			if (bufferSize <= offset)
+				return -1;
+			int nextByte = 0xFF & blocks[offset / blockCapacity][offset % blockCapacity];
+			offset++;
+			return nextByte;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public int read(byte[] b) throws IOException {
@@ -117,9 +125,13 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public int read(byte[] b, int off, int len) throws IOException {
-		ensureAvailable(len);
-		int copied = copyFromBuffer(b, off, len);
-		return copied == 0 ? -1 : copied;
+		try {
+			ensureAvailable(len);
+			int copied = copyFromBuffer(b, off, len);
+			return copied == 0 ? -1 : copied;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public void reset() {
@@ -127,12 +139,16 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public long skip(long toSkip) throws IOException {
-		if (toSkip <= 0)
-			return 0;
-		ensureAvailable(toSkip);
-		long skipped = Math.min(toSkip, bufferSize - offset);
-		offset += skipped;
-		return skipped;
+		try {
+			if (toSkip <= 0)
+				return 0;
+			ensureAvailable(toSkip);
+			long skipped = Math.min(toSkip, bufferSize - offset);
+			offset += skipped;
+			return skipped;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public void rewind() {

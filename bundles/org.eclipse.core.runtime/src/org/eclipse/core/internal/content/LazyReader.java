@@ -27,7 +27,11 @@ public class LazyReader extends Reader {
 	}
 
 	public boolean ready() throws IOException {
-		return (bufferSize - offset) > 0 || in.ready();
+		try {
+			return (bufferSize - offset) > 0 || in.ready();
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	private int copyFromBuffer(char[] userBuffer, int userOffset, int needed) {
@@ -104,12 +108,16 @@ public class LazyReader extends Reader {
 	}
 
 	public int read() throws IOException {
-		ensureAvailable(1);
-		if (bufferSize <= offset)
-			return -1;
-		char nextChar = blocks[offset / blockCapacity][offset % blockCapacity];
-		offset++;
-		return nextChar;
+		try {
+			ensureAvailable(1);
+			if (bufferSize <= offset)
+				return -1;
+			char nextChar = blocks[offset / blockCapacity][offset % blockCapacity];
+			offset++;
+			return nextChar;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public int read(char[] c) throws IOException {
@@ -117,9 +125,13 @@ public class LazyReader extends Reader {
 	}
 
 	public int read(char[] c, int off, int len) throws IOException {
-		ensureAvailable(len);
-		int copied = copyFromBuffer(c, off, len);
-		return copied == 0 ? -1 : copied;
+		try {
+			ensureAvailable(len);
+			int copied = copyFromBuffer(c, off, len);
+			return copied == 0 ? -1 : copied;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public void reset() {
@@ -127,12 +139,16 @@ public class LazyReader extends Reader {
 	}
 
 	public long skip(long toSkip) throws IOException {
-		if (toSkip <= 0)
-			return 0;
-		ensureAvailable(toSkip);
-		long skipped = Math.min(toSkip, bufferSize - offset);
-		offset += skipped;
-		return skipped;
+		try {
+			if (toSkip <= 0)
+				return 0;
+			ensureAvailable(toSkip);
+			long skipped = Math.min(toSkip, bufferSize - offset);
+			offset += skipped;
+			return skipped;
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
 	}
 
 	public void close() {

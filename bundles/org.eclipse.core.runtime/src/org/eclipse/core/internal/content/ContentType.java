@@ -169,7 +169,7 @@ public final class ContentType implements IContentType {
 		}
 		if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 			return;
-		manager.fireContentTypeChangeEvent(this);		
+		manager.fireContentTypeChangeEvent(this);
 		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
@@ -190,14 +190,23 @@ public final class ContentType implements IContentType {
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
-			return IContentDescriber.INVALID;
 		} catch (Error e) {
 			// describer got some serious problem. disable it (logging the reason) and throw the error again 
 			invalidateDescriber(e);
 			throw e;
+		} catch (LowLevelIOException llioe) {
+			// throw the actual exception
+			throw llioe.getActualException();
+		} catch (IOException ioe) {
+			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
+			if (ContentTypeManager.DEBUGGING) {
+				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				ContentType.log(message, ioe);
+			}
 		} finally {
 			((LazyInputStream) contents).rewind();
 		}
+		return IContentDescriber.INVALID;
 	}
 
 	int describe(ITextContentDescriber selectedDescriber, Reader contents, ContentDescription description) throws IOException {
@@ -206,14 +215,23 @@ public final class ContentType implements IContentType {
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
-			return IContentDescriber.INVALID;
 		} catch (Error e) {
 			// describer got some serious problem. disable it (logging the reason) and throw the error again			
 			invalidateDescriber(e);
 			throw e;
+		} catch (LowLevelIOException llioe) {
+			// throw the actual exception
+			throw llioe.getActualException();
+		} catch (IOException ioe) {
+			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
+			if (ContentTypeManager.DEBUGGING) {
+				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				ContentType.log(message, ioe);
+			}
 		} finally {
 			((LazyReader) contents).rewind();
 		}
+		return IContentDescriber.INVALID;
 	}
 
 	public IContentType getBaseType() {
@@ -520,7 +538,7 @@ public final class ContentType implements IContentType {
 		}
 		if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 			return;
-		manager.fireContentTypeChangeEvent(this);			
+		manager.fireContentTypeChangeEvent(this);
 		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());

@@ -13,7 +13,8 @@ package org.eclipse.core.runtime.content;
 import java.io.*;
 import java.util.Hashtable;
 import javax.xml.parsers.ParserConfigurationException;
-import org.eclipse.core.internal.content.*;
+import org.eclipse.core.internal.content.XMLContentDescriber;
+import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -56,7 +57,6 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * will be.
 	 */
 	private String elementToFind = null;
-	private String id;
 
 	/* (Intentionally not included in javadoc)
 	 * Determines the validation status for the given contents.
@@ -74,15 +74,6 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		try {
 			if (!xmlHandler.parseContents(contents))
 				return INVALID;
-		} catch (CharConversionException cce) {
-			// in some cases (see bug 62443) a CharConversionException may occur
-			// we don't want to allow higher-level IOExceptions such as these ones 
-			// to cause the current content type detection loop to fail
-			if (ContentTypeManager.DEBUGGING) {
-				String message = Policy.bind("content.errorReadingContents", id); //$NON-NLS-1$ 
-				ContentType.log(message, cce);
-			}
-			return INVALID;
 		} catch (SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
 			return INVALID;
@@ -131,7 +122,6 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * @see IExecutableExtension#setInitializationData
 	 */
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
-		this.id = config.getDeclaringExtension().getNamespace() + '.' + config.getAttributeAsIs("id"); //$NON-NLS-1$
 		if (data instanceof String)
 			elementToFind = (String) data;
 		else if (data instanceof Hashtable) {
