@@ -36,9 +36,7 @@ BODY {
 }
 
 #tdborder {
-	border:1px solid ThreeDShadow; 
-	border-left-width:0;
-	border-right-width:0;
+	border-bottom:1px solid ThreeDShadow; 
 }
 td.button {
 <%

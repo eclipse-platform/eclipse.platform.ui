@@ -2,7 +2,7 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 --%>
-<%@ include file="header.jsp"%>
+<%@ include file="fheader.jsp"%>
 
 <% 
 	LayoutData data = new LayoutData(application,request);

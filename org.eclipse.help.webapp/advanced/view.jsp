@@ -2,7 +2,7 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 --%>
-<%@ include file="header.jsp"%>
+<%@ include file="fheader.jsp"%>
 
 <% 
 	LayoutData data = new LayoutData(application,request);
@@ -17,8 +17,8 @@
 <title><%=ServletResources.getString(view.getName(), request)%></title>
 </head>
 
-<frameset  rows="24,*"  frameborder="0" framespacing="0" border=0 spacing=0 >
-	<frame name="ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+<frameset  rows="24,*"  frameborder="0" framespacing="0" border=0  >
+	<frame id="toolbar" name="ToolbarFrame" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name='ViewFrame' src='<%=view.getURL()+view.getName()+"View.jsp?"+request.getQueryString()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>
 

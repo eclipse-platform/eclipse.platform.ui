@@ -2,7 +2,7 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 --%>
-<%@ include file="header.jsp"%>
+<%@ include file="fheader.jsp"%>
 
 <% 
 	LayoutData data = new LayoutData(application,request);
@@ -14,6 +14,31 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><%=ServletResources.getString("Help", request)%></title>
+
+<style type="text/css">
+<% 
+if (data.isMozilla()) {
+%>
+HTML {
+	border-top:2px groove Window;
+	border-left:2px groove Window;
+
+	background:ButtonFace;
+}
+<% 
+} else {
+%>
+FRAMESET {
+	border-top:2px groove;
+	border-left:2px groove;
+	border-right:3px ridge Window;
+	border-bottom:3px ridge Window;
+}
+<%
+}
+%>
+</style>
+
 <script language="JavaScript">
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isMozilla10 = isMozilla && navigator.userAgent.indexOf('rv:1') != -1;
@@ -120,7 +145,7 @@ function restoreNavigation(errorMessage)
 </script>
 </head>
 
-<frameset onload="showView('<%=data.getVisibleView()%>')" id="navFrameset" rows="*,24"  framespacing="0" border="0"  frameborder="0" spacing="0"  scrolling="no">
+<frameset onload="showView('<%=data.getVisibleView()%>')" id="navFrameset" rows="*,24"  framespacing="0" border="0"  frameborder="0" scrolling="no">
    <frame name="ViewsFrame" src='<%="views.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
    <frame name="TabsFrame" src='<%="tabs.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>

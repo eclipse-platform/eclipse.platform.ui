@@ -80,11 +80,11 @@
 <%
 	}
 
-if (data.isIE()) {
+if (data.isMozilla()) {
 %>
 <style type="text/css">
 #tdborder {
-	border-right-width:0;
+	border-right:2px ridge Window; 
 }
 </style>
 <%
