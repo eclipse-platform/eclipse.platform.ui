@@ -308,7 +308,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			jobMgr.endRule(rule);
 		} else synchronized (fDocumentAccessorLock) {
 			fDocumentLocked= false;
-			fDocumentAccessorLock.notify();
+			fDocumentAccessorLock.notifyAll();
 		}
 	}
 
