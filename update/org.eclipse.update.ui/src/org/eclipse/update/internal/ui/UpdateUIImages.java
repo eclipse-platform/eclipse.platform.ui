@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.*;
  */
 public class UpdateUIImages {
 
-	public final static String ICONS_PATH = "icons/full/"; //$NON-NLS-1$
+	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	/**
 	 * Set of predefined Image Descriptors.

@@ -541,8 +541,6 @@ public class ConfigurationView
 		showNestedFeaturesAction.setText(UpdateUI.getString("ConfigurationView.showNestedFeatures")); //$NON-NLS-1$
 		showNestedFeaturesAction.setImageDescriptor(
 			UpdateUIImages.DESC_SHOW_HIERARCHY);
-		showNestedFeaturesAction.setHoverImageDescriptor(
-			UpdateUIImages.DESC_SHOW_HIERARCHY_H);
 		showNestedFeaturesAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_SHOW_HIERARCHY_D);
 
