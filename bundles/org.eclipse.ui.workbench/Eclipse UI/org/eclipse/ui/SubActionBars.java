@@ -135,8 +135,8 @@ public class SubActionBars implements IActionBars {
 		if (actionHandlers != null)
 			actionHandlers.clear();
 		if (menuMgr != null) {
-			menuMgr.disposeManager();
 			menuMgr.dispose();
+			menuMgr.disposeManager();
 		}
 		if (statusLineMgr != null)
 			statusLineMgr.disposeManager();

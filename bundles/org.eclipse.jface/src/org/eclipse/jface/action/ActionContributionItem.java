@@ -748,7 +748,7 @@ public class ActionContributionItem extends ContributionItem {
 	 * is disposed.  However, it has the advantage that the same image in different contribution managers
 	 * is only ever created once.
 	 */
-	private ImageCache getImageCache() {
+	private static ImageCache getImageCache() {
 		ImageCache cache = globalImageCache;
 		if (cache == null) {
 			globalImageCache = cache = new ImageCache();
