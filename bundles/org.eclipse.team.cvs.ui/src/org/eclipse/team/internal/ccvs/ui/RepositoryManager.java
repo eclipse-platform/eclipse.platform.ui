@@ -56,6 +56,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
  */
 public class RepositoryManager {
 	private static final String STATE_FILE = ".repositoryManagerState";
+	private static final int STATE_FILE_VERSION_1 = -1;
 	
 	// Map ICVSRepositoryLocation -> List of CVSTag
 	Hashtable branchTags = new Hashtable();
@@ -402,6 +403,10 @@ public class RepositoryManager {
 	private void writeState(DataOutputStream dos) throws IOException {
 		// Write the repositories
 		Collection repos = Arrays.asList(getKnownRoots());
+		// Write out version number for file.
+		// We write it as an int so we can read either the repoSize or the version in the readState
+		// XXX We should come up with a more long term solution.
+		dos.writeInt(STATE_FILE_VERSION_1);
 		dos.writeInt(repos.size());
 		Iterator it = repos.iterator();
 		while (it.hasNext()) {
@@ -457,6 +462,11 @@ public class RepositoryManager {
 	}
 	private void readState(DataInputStream dis) throws IOException, TeamException {
 		int repoSize = dis.readInt();
+		boolean version1 = false;
+		if (repoSize == STATE_FILE_VERSION_1) {
+			version1 = true;
+			repoSize = dis.readInt();
+		}
 		for (int i = 0; i < repoSize; i++) {
 			ICVSRepositoryLocation root = CVSProviderPlugin.getProvider().getRepository(dis.readUTF());
 			
@@ -491,23 +501,25 @@ public class RepositoryManager {
 				}
 			}
 			// read the auto refresh filenames for this project
-			try {
-				projSize = dis.readInt();
-				if (projSize > 0) {
-					Hashtable autoRefreshTable = new Hashtable();
-					autoRefreshFiles.put(root, autoRefreshTable);
-					for (int j = 0; j < projSize; j++) {
-						String name = dis.readUTF();
-						Set filenames = new HashSet();
-						autoRefreshTable.put(name, filenames);
-						int numFilenames = dis.readInt();
-						for (int k = 0; k < numFilenames; k++) {
-							filenames.add(dis.readUTF());
+			if (version1) {
+				try {
+					projSize = dis.readInt();
+					if (projSize > 0) {
+						Hashtable autoRefreshTable = new Hashtable();
+						autoRefreshFiles.put(root, autoRefreshTable);
+						for (int j = 0; j < projSize; j++) {
+							String name = dis.readUTF();
+							Set filenames = new HashSet();
+							autoRefreshTable.put(name, filenames);
+							int numFilenames = dis.readInt();
+							for (int k = 0; k < numFilenames; k++) {
+								filenames.add(dis.readUTF());
+							}
 						}
 					}
+				} catch (EOFException e) {
+					// auto refresh files are not persisted, continue and save them next time.
 				}
-			}catch(EOFException e) {
-				// auto refresh files are not persisted, continue and save them next time.
 			}
 		}
 	}
