@@ -50,6 +50,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$
 			throw new BuildException(RemoteAntMessages.getString("SWTInputHandler.0")); //$NON-NLS-1$
 		}
+		fFirstValidation= true;
 		fRequest= request;
 		BuildException[] problem= new BuildException[1];
 		Runnable runnable= getHandleInputRunnable(problem);
