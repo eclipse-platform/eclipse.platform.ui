@@ -345,8 +345,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     /**
-     * If you use this method, I will break your legs.
-     * 
      * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
      * 
      * @param force
