@@ -212,13 +212,14 @@
             class="org.eclipse.team.internal.ui.sync.views.SyncViewer"
             id="org.eclipse.team.sync.views.SyncViewer">
       </view>
-      <view
+<!--      <view
             name="Jobs"
             fastViewWidthRatio="0.25"
             category="org.eclipse.team.ui"
             class="org.eclipse.team.internal.ui.jobs.JobsView"
             id="org.eclipse.team.sync.views.JobsView">
       </view>
+ -->
    </extension>
 <!-- ****************** Import Wizards ********************* -->
    <extension
