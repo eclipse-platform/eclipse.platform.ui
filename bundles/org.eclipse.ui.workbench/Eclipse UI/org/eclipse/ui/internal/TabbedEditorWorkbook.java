@@ -23,12 +23,10 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.custom.CTabFolderAdapter;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderListListener;
-import org.eclipse.swt.custom.CTabFolderMinMaxAdapter;
-import org.eclipse.swt.custom.CTabItem2;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -67,7 +65,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
-	CTabFolderMinMaxAdapter expandListener = new CTabFolderMinMaxAdapter() {
+	CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
 		
 		public void minimize(CTabFolderEvent event) {
 			/*
@@ -115,7 +113,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	private int tabLocation = -1; // Initialized in constructor.
-	private CTabFolder2 tabFolder = null;
+	private CTabFolder tabFolder = null;
 	private Map mapTabToEditor = new HashMap();
 	private ToolBar pullDownBar;
 	private ToolItem pullDownButton;
@@ -138,15 +136,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	/**
 	 * Create a new tab for an item.
 	 */
-	private CTabItem2 createTab(EditorPane editorPane) {
+	private CTabItem createTab(EditorPane editorPane) {
 		return createTab(editorPane, tabFolder.getItemCount());
 	}
 
 	/**
 	 * Create a new tab for an item at a particular index.
 	 */
-	private CTabItem2 createTab(EditorPane editorPane, int index) {
-		CTabItem2 tab = new CTabItem2(tabFolder, SWT.NONE, index);
+	private CTabItem createTab(EditorPane editorPane, int index) {
+		CTabItem tab = new CTabItem(tabFolder, SWT.NONE, index);
 		mapTabToEditor.put(tab, editorPane);
 		updateEditorTab((IEditorReference) editorPane.getPartReference());
 		if (tabFolder.getItemCount() == 1) {
@@ -171,8 +169,8 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
 				boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
-				int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
-				tabFolder.setStyle(style);				
+				tabFolder.setTabPosition(tabLocation);				
+				tabFolder.setSingleTab(!multi);
 				Iterator iterator = getEditorList().iterator();
 				
 				while (iterator.hasNext())
@@ -189,7 +187,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
 	    int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 		
-		tabFolder = new CTabFolder2(parent, style);
+		tabFolder = new CTabFolder(parent, style);
 		//tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 
@@ -200,15 +198,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		tabFolder.setData(this);
 
 		// listener to close the editor
-		tabFolder.addCTabFolderCloseListener(new CTabFolderAdapter() {
-			public void itemClosed(CTabFolderEvent e) {
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			public void close(CTabFolderEvent e) {
 				e.doit = false; // otherwise tab is auto disposed on return
 				EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
 				pane.doHide();
 			}
 		});
 
-		tabFolder.addCTabFolderMinMaxListener(expandListener);				
+		tabFolder.addCTabFolder2Listener(expandListener);				
 		tabFolder.setMaximizeVisible(true);
 		//tabFolder.setMinimizeVisible(true);
 		
@@ -217,13 +215,14 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		final EditorsInformationControl info =
 			new EditorsInformationControl(tabFolder.getShell(), shellStyle, tableStyle);
 
-		tabFolder.addCTabFolderListListener(new CTabFolderListListener() {
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 
 			public void showList(CTabFolderEvent event) {
-				Point p = tabFolder.toDisplay(event.rect.x, event.rect.y);
-				p.y += +event.rect.height;
+				Point p = tabFolder.toDisplay(event.x, event.y);
+				p.y += +event.height;
 				//showList(event.widget.getDisplay(), p.x, p.y);
 				showList(tabFolder.getShell(), p.x, p.y);
+				event.doit = false;
 			}
 
 			void showList(Shell parentShell, int x, int y) {
@@ -275,10 +274,10 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 				final Text text = new Text(shell, SWT.SINGLE);
 				final Table table = new Table(shell, SWT.NONE); //SWT.BORDER);
-				CTabItem2[] items = tabFolder.getItems();
+				CTabItem[] items = tabFolder.getItems();
 				final String[] stringItems = new String[items.length];
 				for (int i = 0; i < items.length; i++) {
-					CTabItem2 tab = items[i];
+					CTabItem tab = items[i];
 					stringItems[i] = tab.getText();
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(tab.getText());
@@ -373,7 +372,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			    EditorPane visibleEditor = getVisibleEditor();
 				
 				if (visibleEditor != null) {
-					CTabItem2 item = getTab(visibleEditor);
+					CTabItem item = getTab(visibleEditor);
 					visibleEditor.setFocus();
 					Rectangle bounds = item.getBounds();
 
@@ -390,7 +389,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				EditorPane visibleEditor = getVisibleEditor();
 				
 				if (visibleEditor != null) {
-				    CTabItem2 item = getTab(visibleEditor);
+				    CTabItem item = getTab(visibleEditor);
 					visibleEditor.setFocus();					
 					Rectangle bounds = item.getBounds();					
 					Point point = tabFolder.toControl(event.x, event.y);
@@ -444,7 +443,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 			public Object getDraggedItem(Point position) {
 				Point localPos = tabFolder.toControl(position);
-				CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 				
 				if (tabUnderPointer == null) {
 					return null;
@@ -472,7 +471,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				final EditorPane pane = (EditorPane)draggedObject;
 				
 				Point localPos = tabFolder.toControl(position);
-				final CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 				
 				// This drop target only handles the tab area -- if we're not on the tab area
 				// or we're still on the original tab, we can't drop here.
@@ -552,10 +551,10 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	/**
 	 * Returns the tab for a part.
 	 */
-	private CTabItem2 getTab(LayoutPart child) {
+	private CTabItem getTab(LayoutPart child) {
 		Iterator tabs = mapTabToEditor.keySet().iterator();
 		while (tabs.hasNext()) {
-			CTabItem2 tab = (CTabItem2) tabs.next();
+			CTabItem tab = (CTabItem) tabs.next();
 			if (mapTabToEditor.get(tab) == child)
 				return tab;
 		}
@@ -564,14 +563,14 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	}
 
 	public boolean isDragAllowed(EditorPane pane, Point p) {
-		CTabItem2 tab = getTab(pane);
+		CTabItem tab = getTab(pane);
 		return tab != null && overImage(tab, p.x);
 	}
 
 	/**
 	 * Returns true if <code>x</code> is over the label image.
 	 */
-	private boolean overImage(CTabItem2 item, int x) {
+	private boolean overImage(CTabItem item, int x) {
 		if (item.getImage() == null) {
 			return false;
 		} else {
@@ -662,7 +661,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	public void showPaneMenu() {
 		EditorPane visibleEditor = getVisibleEditor();
 		if (visibleEditor != null) {
-			CTabItem2 item = getTab(visibleEditor);
+			CTabItem item = getTab(visibleEditor);
 			Rectangle bounds = item.getBounds();							
 			visibleEditor.showPaneMenu(
 				tabFolder,
@@ -673,7 +672,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	protected void disposePresentation() {
 		// dispose of disabled images
 		for (int i = 0; i < tabFolder.getItemCount(); i++) {
-			CTabItem2 tab = tabFolder.getItem(i);
+			CTabItem tab = tabFolder.getItem(i);
 			if (tab.getDisabledImage() != null)
 				tab.getDisabledImage().dispose();
 		}
@@ -744,7 +743,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	/**
 	 * Remove the tab item from the tab folder
 	 */
-	private void removeTab(CTabItem2 tab) {
+	private void removeTab(CTabItem tab) {
 		if (tabFolder != null) {
 			if (tab != null) {
 				mapTabToEditor.remove(tab);
@@ -771,7 +770,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	}
 
 	protected void setVisibleItem(EditorPane editorPane) {
-		CTabItem2 key = getTab(editorPane);
+		CTabItem key = getTab(editorPane);
 		if (key != null) {
 			int index = tabFolder.indexOf(key);
 			tabFolder.setSelection(index);			
@@ -790,7 +789,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	protected void updateItem(EditorPane editorPane) {
 		// Get tab.
-		CTabItem2 tab = getTab(editorPane);
+		CTabItem tab = getTab(editorPane);
 		if (tab == null)
 			return;
 
@@ -859,7 +858,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 		Iterator tabs = mapTabToEditor.keySet().iterator();
 		while (tabs.hasNext()) {
-			CTabItem2 tab = (CTabItem2) tabs.next();
+			CTabItem tab = (CTabItem) tabs.next();
 			if (tab.getDisabledImage() != null)
 				tab.getDisabledImage().dispose();
 			tab.dispose();
@@ -873,7 +872,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	}
 
 	public void reorderTab(EditorPane pane, int x, int y) {
-		CTabItem2 sourceTab = getTab(pane);
+		CTabItem sourceTab = getTab(pane);
 		if (sourceTab == null)
 			return;
 
@@ -887,7 +886,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			location.x = x;
 
 		// find the tab under the adjusted location.
-		CTabItem2 targetTab = tabFolder.getItem(location);
+		CTabItem targetTab = tabFolder.getItem(location);
 
 		// no tab under location so move editor's tab to end
 		if (targetTab == null) {
@@ -927,7 +926,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	/**
 	 * Reorder the tab representing the specified pane.
 	 */
-	private void reorderTab(EditorPane pane, CTabItem2 sourceTab, int newIndex) {
+	private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
 		int oldIndex = tabFolder.indexOf(sourceTab);
 		if (newIndex < 0)
 			if (oldIndex == tabFolder.getItemCount() - 1)
@@ -942,7 +941,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		removeTab(sourceTab);
 
 		// Create the new tab at the specified index
-		CTabItem2 newTab;
+		CTabItem newTab;
 		if (newIndex < 0)
 			newTab = createTab(pane);
 		else

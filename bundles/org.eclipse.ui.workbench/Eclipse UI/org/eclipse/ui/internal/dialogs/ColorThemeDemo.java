@@ -11,8 +11,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.custom.CTabItem2;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchColors;
 public class ColorThemeDemo {
 
 	Composite sampleComposite;
-	CTabFolder2 sampleTabFolder; 
+	CTabFolder sampleTabFolder; 
 
 	/**
 	 * Creates an instance of the <code>ColorThemeDemo</code> class.  
@@ -63,15 +63,15 @@ public class ColorThemeDemo {
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		sampleComposite.setData(gridData);
 			
-		sampleTabFolder = new CTabFolder2(sampleComposite, SWT.BORDER);
+		sampleTabFolder = new CTabFolder(sampleComposite, SWT.BORDER);
 		sampleTabFolder.setData(new GridData(GridData.FILL_BOTH));
-		CTabItem2 temp = new CTabItem2(sampleTabFolder, SWT.NONE);
+		CTabItem temp = new CTabItem(sampleTabFolder, SWT.NONE);
 		temp.setText("Console");
 		Text text = new Text(sampleTabFolder, SWT.MULTI);
 		text.setText("Lorem ipsum dolor sit amet\n"); //$NON-NLS-1$
 		temp.setControl(text);
 		sampleTabFolder.setSelection(0);
-		temp = new CTabItem2(sampleTabFolder, SWT.NONE);
+		temp = new CTabItem(sampleTabFolder, SWT.NONE);
 		temp.setText("Search");
 		
 		resetColors();

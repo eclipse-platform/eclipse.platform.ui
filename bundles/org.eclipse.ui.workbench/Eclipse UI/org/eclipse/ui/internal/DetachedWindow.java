@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -102,7 +102,7 @@ public class DetachedWindow extends Window   {
 				Control[] children = shell.getChildren();
 				if (children != null) {
 					for (int i = 0, length = children.length; i < length; i++) {
-						if (children[i] instanceof CTabFolder2) {
+						if (children[i] instanceof CTabFolder) {
 							children[i].setBounds(shell.getClientArea());
 							break;
 						}

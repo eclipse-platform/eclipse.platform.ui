@@ -21,8 +21,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem2;
-import org.eclipse.swt.custom.ViewForm2;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -61,7 +61,7 @@ public abstract class PartPane extends LayoutPart
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
-	protected ViewForm2 control;
+	protected ViewForm control;
 	
 	public static class Sashes {
 		public Sash left;
@@ -215,7 +215,7 @@ public void createControl(Composite parent) {
 		return;
 
 	// Create view form.	
-	control = new ViewForm2(parent, getStyle());
+	control = new ViewForm(parent, getStyle());
 	control.marginWidth = 0;
 	control.marginHeight = 0;
 
@@ -310,7 +310,7 @@ public int getMinimumHeight() {
 /**
  * Returns the top level SWT Canvas of this Pane. 
  */
-protected ViewForm2 getPane() {
+protected ViewForm getPane() {
 	return control;
 }
 /**
@@ -331,7 +331,7 @@ int getStyle() {
 /**
  * Get the view form.
  */
-protected ViewForm2 getViewForm() {
+protected ViewForm getViewForm() {
 	return control;
 }
 /**
@@ -583,7 +583,7 @@ IJobChangeListener getJobChangeListener(){
 	 * @param item
 	 * @param image
 	 */
-	void setImage(CTabItem2 item, Image image){
+	void setImage(CTabItem item, Image image){
 		//Do nothing by default
 	}
 }

@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 import java.util.List;
 
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,8 +30,8 @@ public class ColorSchemeService {
 
 	public static void setSchemeColors(Control control) {
 
-		if (control instanceof CTabFolder2) {
-			setTabColors((CTabFolder2) control);
+		if (control instanceof CTabFolder) {
+			setTabColors((CTabFolder) control);
 			setCompositeColors((Composite) control);
 			return;
 		}
@@ -83,7 +83,7 @@ public class ColorSchemeService {
 //		
 //	}
 
-	public static void setTabColors(CTabFolder2 control) {
+	public static void setTabColors(CTabFolder control) {
 		control.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents(), true); 
 		control.setForeground(WorkbenchColors.getActiveViewForeground());
 		control.setSelectionBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents(), true); 

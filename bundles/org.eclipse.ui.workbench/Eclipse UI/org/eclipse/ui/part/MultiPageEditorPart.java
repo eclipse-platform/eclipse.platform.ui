@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.custom.CTabItem2;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -59,7 +59,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	/**
 	 * The container widget.
 	 */
-	private CTabFolder2 container;
+	private CTabFolder container;
 
 	/**
 	 * List of nested editors. Element type: IEditorPart.
@@ -125,11 +125,11 @@ public int addPage(IEditorPart editor, IEditorInput input) throws PartInitExcept
  * 
  * @return a new container
  */
-private CTabFolder2 createContainer(Composite parent) {
-	final CTabFolder2 container = new CTabFolder2(parent, SWT.BOTTOM);
+private CTabFolder createContainer(Composite parent) {
+	final CTabFolder container = new CTabFolder(parent, SWT.BOTTOM);
 	container.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			int newPageIndex = container.indexOf((CTabItem2) e.item);
+			int newPageIndex = container.indexOf((CTabItem) e.item);
 			pageChange(newPageIndex);
 		}
 	});
@@ -142,8 +142,8 @@ private CTabFolder2 createContainer(Composite parent) {
  * @param control is the control to be placed in an item
  * @return a new item
  */
-private CTabItem2 createItem(Control control) {
-	CTabItem2 item = new CTabItem2(getTabFolder(), SWT.NONE);
+private CTabItem createItem(Control control) {
+	CTabItem item = new CTabItem(getTabFolder(), SWT.NONE);
 	item.setControl(control);
 	return item;
 }
@@ -216,7 +216,7 @@ protected IEditorPart getActiveEditor() {
  * @return the index of the active page, or -1 if there is no active page
  */
 protected int getActivePage() {
-	CTabFolder2 tabFolder = getTabFolder();
+	CTabFolder tabFolder = getTabFolder();
 	if (tabFolder != null && !tabFolder.isDisposed())
 		return tabFolder.getSelectionIndex();
 	return -1;
@@ -281,7 +281,7 @@ protected IEditorPart getEditor(int pageIndex) {
  * @param pageIndex the index of the page
  * @return the tab item for the given page index
  */
-private CTabItem2 getItem(int pageIndex) {
+private CTabItem getItem(int pageIndex) {
 	return getTabFolder().getItem(pageIndex);
 }
 /**
@@ -290,7 +290,7 @@ private CTabItem2 getItem(int pageIndex) {
  * @return the number of pages
  */
 protected int getPageCount() {
-	CTabFolder2 folder = getTabFolder();
+	CTabFolder folder = getTabFolder();
 	// May not have been created yet, or may have been disposed.
 	if (folder != null && !folder.isDisposed())
 		return folder.getItemCount();
@@ -324,7 +324,7 @@ protected String getPageText(int pageIndex) {
  * @return the tab folder, or <code>null</code> if <code>createPartControl</code>
  *   has not been called yet
  */
-private CTabFolder2 getTabFolder() {
+private CTabFolder getTabFolder() {
 	return container;
 }
 /**
