@@ -5,14 +5,9 @@
 package org.eclipse.search.ui;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.internal.workingsets.WorkingSet;
-import org.eclipse.search.internal.workingsets.WorkingSetSelectionDialog;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -98,66 +93,6 @@ public final class SearchUI {
 	}
 
 	/**
-	 * Creates a selection dialog that lists all working sets and allows to
-	 * add and edit working sets.
-	 * The caller is responsible for opening the dialog with <code>Window.open</code>,
-	 * and subsequently extracting the selected working sets (of type
-	 * <code>IWorkingSet</code>) via <code>SelectionDialog.getResult</code>.
-	 * <p>
-	 * This method is for internal use only due to issue below. Once
-	 * the issues is solved there will be an official API.
-	 * </p>
-	 * <p>
-	 * [Issue: Working set must be provided by platform.]
-	 * </p>
-	 * 
-	 * @param parent the parent shell of the dialog to be created
-	 * @return a new selection dialog or <code>null</code> if none available
-	 * @since 2.0
-	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
-	 */
-	public static SelectionDialog createWorkingSetDialog(Shell parent) {
-		return new WorkingSetSelectionDialog(parent);
-	}
-
-	/**
-	 * Returns all working sets for the workspace.
-	 *
-	 * This method is for internal use only due to issue below. Once
-	 * the issues is solved there will be an official API.
-	 * </p>
-	 * <p>
-	 * [Issue: Working set must be provided by platform.]
-	 * </p>
-	 * 
-	 * @return an array of IWorkingSet
-	 * @since 2.0
-	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
-	 */
-	public static IWorkingSet[] getWorkingSets() {
-		return WorkingSet.getWorkingSets();
-	}
-
-	/**
-	 * Returns a working set by name.
-	 *
-	 * This method is for internal use only due to issue below. Once
-	 * the issues is solved there will be an official API.
-	 * </p>
-	 * <p>
-	 * [Issue: Working set must be provided by platform.]
-	 * </p>
-	 * 
-	 * @param name the name the working set
-	 * @return the working set with the given name or <code>null</code> if not found
-	 * @since 2.0
-	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
-	 */
-	public static IWorkingSet findWorkingSet(String name) {
-		return WorkingSet.find(name);
-	}
-
-	/**
 	 * Returns the preference whether editors should be reused
 	 * when showing search results.
 	 * 
@@ -170,7 +105,7 @@ public final class SearchUI {
 	 * [Issue: Always returns <code>true</code> yet due to bug 6784.]
 	 * </p>
 	 * <p>
-	 * [Issue: Bug is now fixed and method. But because it is not yet clear if
+	 * [Issue: Bug is now fixed. But because it is not yet clear if
 	 *         old style should be supported. Therefore returning <code>false</code>]
 	 * </p>
 	 * 
