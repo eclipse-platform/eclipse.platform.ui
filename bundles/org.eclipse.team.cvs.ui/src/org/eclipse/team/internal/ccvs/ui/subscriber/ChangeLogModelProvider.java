@@ -162,7 +162,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
                 	            CommitSetManager.getInstance().add(set);
                             } catch (CVSException e) {
                                 CVSUIPlugin.openError(getConfiguration().getSite().getShell(),
-                                        Policy.bind("ChangeLogModelProvider.4"), Policy.bind("ChangeLogModelProvider.5"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                                        Policy.bind("ChangeLogModelProvider.4a"), Policy.bind("ChangeLogModelProvider.5a"), e); //$NON-NLS-1$ //$NON-NLS-2$
                             }
                         }
                     });
@@ -276,7 +276,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
         private MakeDefaultCommitSetAction makeDefault;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
+			sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0a"));	 //$NON-NLS-1$
 			addToCommitSet = new MenuManager(Policy.bind("ChangeLogModelProvider.12")); //$NON-NLS-1$
 			addToCommitSet.setRemoveAllWhenShown(true);
 			addToCommitSet.addMenuListener(new IMenuListener() {
@@ -309,9 +309,9 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 			
 			ChangeLogModelProvider.this.initialize(configuration);
 			
-			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT)); //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE)); //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER)); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1a"), ChangeLogModelSorter.COMMENT)); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2a"), ChangeLogModelSorter.DATE)); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.3a"), ChangeLogModelSorter.USER)); //$NON-NLS-1$
 		}
 		
         protected void addCommitSets(IMenuManager manager) {
