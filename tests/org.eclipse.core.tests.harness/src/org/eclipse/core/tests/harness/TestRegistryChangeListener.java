@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.tests.runtime;
+package org.eclipse.core.tests.harness;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
  * Allows test cases to wait for event notification so they can make assertions on the event.  
  */
 public class TestRegistryChangeListener implements IRegistryChangeListener {
-	private List events = new LinkedList();;
+	private List events = new LinkedList();
 	private String xpNamespace;
 	private String xpId;
 	private String extNamespace;
@@ -26,7 +26,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 
 	/**
 	 * Creates a new listener. The parameters allow filtering events based on extension point/extension's 
-	 * namespaces/ids.	 * 
+	 * namespaces/ids.	
 	 */
 	public TestRegistryChangeListener(String xpNamespace, String xpId, String extNamespace, String extId) {
 		if (xpId != null && xpNamespace == null)
@@ -38,7 +38,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 		this.xpNamespace = xpNamespace;
 		this.xpId = xpId;
 		this.extNamespace = extNamespace;
-		this.extId = extId;		
+		this.extId = extId;
 	}
 
 	/**
@@ -82,5 +82,8 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	public void unregister() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 	}
-
+	
+	public synchronized void reset() {
+		events.clear();
+	}
 }

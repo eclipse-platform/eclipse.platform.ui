@@ -27,24 +27,20 @@ public class PluginCompatibilityTests extends TestCase {
 
 	// see bug 59013
 	public void testPluginWithNoRuntimeLibrary() throws BundleException, IOException {
-		Bundle installed = null;
 		assertNull("0.0", BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0"));
-		installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "compatibility/bundle01");
-		assertEquals("0.5", Bundle.INSTALLED, installed.getState());
-		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
-		try {
-			assertEquals("1.0", "bundle01", installed.getSymbolicName());
-			assertEquals("1.1", "1.0", installed.getHeaders().get(Constants.BUNDLE_VERSION));
-			assertEquals("1.2", Bundle.RESOLVED, installed.getState());
-			IPluginDescriptor descriptor = InternalPlatform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
-			assertNotNull("2.0", descriptor);
-			assertNotNull("2.1", descriptor.getRuntimeLibraries());
-			assertEquals("2.2", 0, descriptor.getRuntimeLibraries().length);
-		} finally {
-			// clean-up
-			installed.uninstall();
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
-		}
+		BundleTestingHelper.runWithBundles("0.1", new Runnable() {
+			public void run() {
+				Bundle[] installed = BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0");
+				assertEquals("1.0", 1, installed.length);
+				assertEquals("1.0", "bundle01", installed[0].getSymbolicName());
+				assertEquals("1.1", "1.0", installed[0].getHeaders().get(Constants.BUNDLE_VERSION));
+				assertEquals("1.2", Bundle.RESOLVED, installed[0].getState());
+				IPluginDescriptor descriptor = InternalPlatform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
+				assertNotNull("2.0", descriptor);
+				assertNotNull("2.1", descriptor.getRuntimeLibraries());
+				assertEquals("2.2", 0, descriptor.getRuntimeLibraries().length);
+			}
+		}, RuntimeTestsPlugin.getContext(), new String[] {RuntimeTestsPlugin.TEST_FILES_ROOT + "compatibility/bundle01"}, null);
 	}
 
 	public static Test suite() {

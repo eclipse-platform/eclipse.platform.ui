@@ -13,13 +13,35 @@ package org.eclipse.core.tests.harness;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import junit.framework.Assert;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class BundleTestingHelper {
+
+	public static Bundle[] getBundles(BundleContext context, String symbolicName, String version) {
+		ServiceReference packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
+		if (packageAdminReference == null)
+			throw new IllegalStateException("No package admin service found");
+		PackageAdmin packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
+		Bundle[] result = packageAdmin.getBundles(symbolicName, version);
+		context.ungetService(packageAdminReference);
+		return result;
+	}
+
+	/**
+	 * @deprecated
+	 */
 	public static Bundle installBundle(BundleContext context, String location) throws BundleException, MalformedURLException, IOException {
+		return installBundle("", context, location);
+	}
+
+	public static Bundle installBundle(String tag, BundleContext context, String location) throws BundleException, MalformedURLException, IOException {
 		URL entry = context.getBundle().getEntry(location);
+		if (entry == null)
+			Assert.fail(tag + " entry " + location + " could not be found in " + context.getBundle().getSymbolicName());
 		Bundle installed = context.installBundle(Platform.asLocalURL(entry).toExternalForm());
 		return installed;
 	}
@@ -68,15 +90,51 @@ public class BundleTestingHelper {
 		context.removeFrameworkListener(listener);
 		context.ungetService(packageAdminRef);
 	}
-
-	public static Bundle[] getBundles(BundleContext context, String symbolicName, String version) {
-		ServiceReference packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
-		if (packageAdminReference == null)
-			throw new IllegalStateException("No package admin service found");
-		PackageAdmin packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
-		Bundle[] result = packageAdmin.getBundles(symbolicName, version);
-		context.ungetService(packageAdminReference);
-		return result;
+	public static void runWithBundles(String tag, Runnable runnable, BundleContext context, String[] locations, TestRegistryChangeListener listener) {
+		if (listener != null)
+			listener.register();
+		try {
+			Bundle[] installed = new Bundle[locations.length];
+			for (int i = 0; i < locations.length; i++)
+				try {
+					installed[i] = installBundle(tag + ".setup.0", context, locations[i]);
+					Assert.assertEquals(tag + ".setup.1." + locations[i], Bundle.INSTALLED, installed[i].getState());
+				} catch (BundleException e) {
+					CoreTest.fail(tag + ".setup.2" + locations[i], e);
+				} catch (IOException e) {
+					CoreTest.fail(tag + ".setup.3" + locations[i], e);
+				}
+			if (listener != null)
+				listener.reset();
+			BundleTestingHelper.refreshPackages(context, installed);
+			if (listener != null) {
+				IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
+				// ensure the contributions were properly added
+				Assert.assertNotNull(tag + ".setup.4", event);
+			}
+			try {
+				runnable.run();
+			} finally {
+				if (listener != null)
+					listener.reset();
+				// remove installed bundles
+				for (int i = 0; i < installed.length; i++)
+					try {
+						installed[i].uninstall();
+					} catch (BundleException e) {
+						CoreTest.fail(tag + ".tearDown.1." + locations[i], e);
+					}
+				BundleTestingHelper.refreshPackages(context, installed);
+				if (listener != null) {
+					IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
+					// ensure the contributions were properly added
+					Assert.assertNotNull(tag + ".tearDown.2", event);
+				}
+			}
+		} finally {
+			if (listener != null)
+				listener.unregister();
+		}
 	}
 
 }

@@ -15,8 +15,8 @@ import junit.framework.*;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.harness.TestRegistryChangeListener;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
-import org.eclipse.core.tests.runtime.TestRegistryChangeListener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -34,10 +34,9 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 		Bundle bundle01 = null;
 		Bundle bundle02 = null;
 		TestRegistryChangeListener listener = new TestRegistryChangeListener("bundle01", "xp1", "bundle02", "ext1");
-		listener.register();
 		try {
-			bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
-			bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
+			bundle01 = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
+			bundle02 = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01, bundle02});
 			IRegistryChangeEvent event = listener.getEvent(5000);
 			assertNotNull("1.0", event);
@@ -45,7 +44,6 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 			assertNotNull("1.1", change);
 			assertEquals("1.2", IExtensionDelta.ADDED, change.getKind());
 		} finally {
-			listener.unregister();
 			if (bundle01 != null)
 				bundle01.uninstall();
 			if (bundle02 != null)
@@ -61,8 +59,8 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 		Bundle bundle02 = null;
 		TestRegistryChangeListener listener = new TestRegistryChangeListener("bundle01", "xp1", "bundle02", "ext1");
 		try {
-			bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
-			bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
+			bundle01 = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
+			bundle02 = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01, bundle02});
 			listener.register();
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
