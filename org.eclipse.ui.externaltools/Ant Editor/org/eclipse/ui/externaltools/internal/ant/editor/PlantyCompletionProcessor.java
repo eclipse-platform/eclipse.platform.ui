@@ -518,11 +518,8 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     tempReplacementLength += 1;
                 }
                  
-                String tempReplacementString = "${"+tempPropertyName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
-                Image tempImage = null;
-                if(ExternalToolsPlugin.getDefault() != null) { //not running test suite
-	                tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
-                }
+                String tempReplacementString = new StringBuffer("${").append(tempPropertyName).append(')').toString();  //$NON-NLS-1$
+                Image tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
                 
                 ICompletionProposal tempProposal = 
                     new CompletionProposal(
@@ -1127,7 +1124,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         return tempProject.getProperties();
     }
 
-    private File getEditedFile() {
+    protected File getEditedFile() {
     	IWorkbenchPage page= ExternalToolsPlugin.getActivePage();
     	if (page == null) {
     		return null;
