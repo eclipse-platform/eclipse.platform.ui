@@ -6,7 +6,12 @@
          <meta.schema plugin="org.eclipse.ui" id="acceleratorConfigurations" name="Accelerator Configurations"/>
       </appInfo>
       <documentation>
-         This extension point is used to register accelerator configuration extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may be active at a time. 
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br/&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to register accelerator configuration extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may be active at a time. 
 &lt;p&gt;
 An accelerator configuration represents a general style or theme of accelerators for Workbench actions. For example, the Workbench provides the &quot;Emacs&quot; accelerator configuration. When the &quot;Emacs&quot; accelerator configuration is active, accelerators belonging to accelerator sets registered to the &quot;Emacs&quot; configuration are active. These accelerators are defined to mimic the accelerators in Emacs (a popular text editor amongst developers). 
 &lt;p&gt;

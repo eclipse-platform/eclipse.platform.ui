@@ -6,7 +6,12 @@
          <meta.schema plugin="org.eclipse.ui" id="actionDefinitions" name="Action Definitions"/>
       </appInfo>
       <documentation>
-         This extension point is used to register action definitions. Accelerators (see the Accelerator Sets extension point) use action definitions to reference actions. An action associates itself with a given accelerator by registering with that accelerator&apos;s associated action definition. An action registers itself with an action definition by calling the setActionDefinitionId(String id) method and supplying the action definition&apos;s id as an argument.
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br/&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to register action definitions. Accelerators (see the Accelerator Sets extension point) use action definitions to reference actions. An action associates itself with a given accelerator by registering with that accelerator&apos;s associated action definition. An action registers itself with an action definition by calling the setActionDefinitionId(String id) method and supplying the action definition&apos;s id as an argument.
       </documentation>
    </annotation>
 

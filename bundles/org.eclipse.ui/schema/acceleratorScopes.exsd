@@ -2,15 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="acceleratorScopes" name="Accelerator Scopes"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register accelerator scope extensions. Accelerator scopes are scopes for which accelerator sets may be applicable. For example, if an accelerator set is applicable for the scope entitled "Text Editor Scope", the accelerators of that accelerator set will only operate if the "Text Editor Scope" or one of its children is active (in other words, if the active part is a participating text editor). 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="acceleratorScopes" name="Accelerator Scopes"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br/&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to register accelerator scope extensions. Accelerator scopes are scopes for which accelerator sets may be applicable. For example, if an accelerator set is applicable for the scope entitled &quot;Text Editor Scope&quot;, the accelerators of that accelerator set will only operate if the &quot;Text Editor Scope&quot; or one of its children is active (in other words, if the active part is a participating text editor). 
 &lt;p&gt;
-An accelerator set declares what scope it is applicable for by listing the scope's id as the value of its "scopeId" attribute (see the Accelerator Sets extension point). Many accelerator sets can be applicable for the same accelerator scope.
-   </documentation>
-</annotation>
+An accelerator set declares what scope it is applicable for by listing the scope&apos;s id as the value of its &quot;scopeId&quot; attribute (see the Accelerator Sets extension point). Many accelerator sets can be applicable for the same accelerator scope.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -91,17 +96,17 @@ An accelerator set declares what scope it is applicable for by listing the scope
          Following is an example of an accelerator scope extension: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.acceleratorScopes"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.acceleratorScopes&quot;&gt; 
       &lt;acceleratorScope 
-        id="org.eclipse.ui.globalScope" 
-        name="Global" 
-        description="Action accelerator key applicable to all views and editors unless explicitly overridden."&gt; 
+        id=&quot;org.eclipse.ui.globalScope&quot; 
+        name=&quot;Global&quot; 
+        description=&quot;Action accelerator key applicable to all views and editors unless explicitly overridden.&quot;&gt; 
       &lt;/acceleratorScope&gt; 
       &lt;acceleratorScope 
-        id="org.eclipse.ui.javaEditorScope" 
-        name="Java Editor" 
-        description="Action accelerator key applicable only when java editor active." 
-        parentScope="org.eclipse.ui.globalScope"&gt; 
+        id=&quot;org.eclipse.ui.javaEditorScope&quot; 
+        name=&quot;Java Editor&quot; 
+        description=&quot;Action accelerator key applicable only when java editor active.&quot; 
+        parentScope=&quot;org.eclipse.ui.globalScope&quot;&gt; 
       &lt;/acceleratorScope&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
