@@ -616,11 +616,13 @@ private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
 	else
 		editors.add(newIndex, pane);
 
-	// update the new tab's visibility	
+	// update the new tab's visibility but do
+	// not set focus...caller's responsibility.
+	// Note, if the pane already had focus, it
+	// will still have it after the tab order change.
 	if (wasVisible) {
 		tabFolder.setSelection(newTab);
 		setVisibleEditor(pane);
-		pane.setFocus();
 	}
 }
 /**
