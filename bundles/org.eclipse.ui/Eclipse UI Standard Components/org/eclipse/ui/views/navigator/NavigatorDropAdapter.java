@@ -303,6 +303,7 @@ public class NavigatorDropAdapter
 		// while the operation executes. Fixes bug 16478.
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
+				getShell().forceActive();
 				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
 				operation.copyFiles(names, target);
 			}
