@@ -5,7 +5,6 @@
 package org.eclipse.help.internal.standalone;
 
 import java.net.*;
-import java.util.Iterator;
 
 /**
  * This program is used to start or stop Eclipse
@@ -167,13 +166,13 @@ public class EclipseController {
 		}
 		eclipse = new Eclipse();
 		eclipse.start();
-		while(eclipse.getStatus()==Eclipse.STATUS_INTIT){
-			try{
+		while (eclipse.getStatus() == Eclipse.STATUS_INTIT) {
+			try {
 				Thread.sleep(50);
-			}catch(InterruptedException ie){
+			} catch (InterruptedException ie) {
 			}
 		}
-		if(eclipse.getStatus()==Eclipse.STATUS_ERROR){
+		if (eclipse.getStatus() == Eclipse.STATUS_ERROR) {
 			throw eclipse.getException();
 		}
 		if (Options.isDebug()) {
