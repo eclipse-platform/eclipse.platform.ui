@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -143,6 +144,9 @@ public final class Team {
 	 * Returns the list of global ignores.
 	 */
 	public synchronized static IIgnoreInfo[] getAllIgnores() {
+		// The ignores are cached and when the preferences change the
+		// cache is cleared. This makes it faster to lookup without having
+		// to re-parse the preferences.
 		if (globalIgnore == null) {
 			globalIgnore = new TreeMap();
 			pluginIgnore = new TreeMap();
@@ -195,6 +199,9 @@ public final class Team {
 	}
 	
 	private synchronized static SortedMap getFileTypeTable() {
+		// The types are cached and when the preferences change the
+		// cache is cleared. This makes it faster to lookup without having
+		// to re-parse the preferences.
 		if (globalTypes == null) loadTextState();
 		return globalTypes;
 	}
@@ -341,6 +348,14 @@ public final class Team {
 	private static void loadTextPreferences() {
 		Preferences pref = TeamPlugin.getPlugin().getPluginPreferences();
 		if (!pref.contains(PREF_TEAM_TYPES)) return;
+		pref.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				// when a property is changed, invalidate our cache so that
+				// properties will be recalculated.
+				if(event.getProperty().equals(PREF_TEAM_TYPES))
+					globalTypes = null;
+			}
+		});
 		String prefTypes = pref.getString(PREF_TEAM_TYPES);
 		StringTokenizer tok = new StringTokenizer(prefTypes, PREF_TEAM_SEPARATOR);
 		String extension, integer;
@@ -423,6 +438,14 @@ public final class Team {
 		if (readBackwardCompatibleIgnoreState()) return;
 		Preferences pref = TeamPlugin.getPlugin().getPluginPreferences();
 		if (!pref.contains(PREF_TEAM_IGNORES)) return;
+		pref.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				// when a property is changed, invalidate our cache so that
+				// properties will be recalculated.
+				if(event.getProperty().equals(PREF_TEAM_IGNORES))
+					globalIgnore = null;
+			}
+		});
 		String prefIgnores = pref.getString(PREF_TEAM_IGNORES);
 		StringTokenizer tok = new StringTokenizer(prefIgnores, PREF_TEAM_SEPARATOR);
 		String pattern, enabled;
