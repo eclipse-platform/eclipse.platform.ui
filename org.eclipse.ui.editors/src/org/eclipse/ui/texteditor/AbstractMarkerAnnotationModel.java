@@ -120,7 +120,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	/**
 	 * Adds the given marker updater to this annotation model.
-	 * It is the client's responsibility to ensure the consitency
+	 * It is the client's responsibility to ensure the consistency
 	 * of the set of registered marker updaters.
 	 *
 	 * @param markerUpdater the marker updater to be added
@@ -475,6 +475,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @param position the current position of the marker inside the given document
 	 * @exception CoreException if there is a problem updating the marker  
 	 * @since 2.0
+	 * @deprecated use <code>updateMarker(IDocument, IMarker, Position)</code> instead. This method will be changed to protected.
 	 */
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
 		
@@ -504,6 +505,28 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 	
 	/**
+	 * Updates the given marker according to the given position in the given
+	 * document. If the given position is <code>null</code>, the marker is 
+	 * assumed to carry the correct positional information. If it is detected 
+	 * that the marker is invalid and should thus be deleted, this method 
+	 * returns <code>false</code>.
+	 *
+	 * @param marker the marker to be updated
+	 * @param document the document into which the given position points
+	 * @param position the current position of the marker inside the given document
+	 * @exception CoreException if there is a problem updating the marker  
+	 * @since 3.0
+	 */
+	public boolean updateMarker(IDocument document, IMarker marker, Position position) throws CoreException {
+		listenToMarkerChanges(false);
+		try {
+			return updateMarker(marker, document, position);
+		} finally {
+			listenToMarkerChanges(true);
+		}
+	}
+	
+	/**
 	 * Updates the markers managed by this annotation model by calling 
 	 * all registered marker updaters (<code>IMarkerUpdater</code>).
 	 *
@@ -523,27 +546,33 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			installMarkerUpdaters();
 			
 		listenToMarkerChanges(false);
-				
-		// update all markers with the positions known by the annotation model
-		for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
-			Object o= e.next();
-			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation) o;
-				IMarker marker= a.getMarker();
-				Position position= (Position) annotationMap.get(a);
-				if ( !updateMarker(marker, document, position)) {
-					if ( !fDeletedAnnotations.contains(a))
-						fDeletedAnnotations.add(a);
+		
+		try {
+			
+			// update all markers with the positions known by the annotation model
+			for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
+				Object o= e.next();
+				if (o instanceof MarkerAnnotation) {
+					MarkerAnnotation a= (MarkerAnnotation) o;
+					IMarker marker= a.getMarker();
+					Position position= (Position) annotationMap.get(a);
+					if ( !updateMarker(marker, document, position)) {
+						if ( !fDeletedAnnotations.contains(a))
+							fDeletedAnnotations.add(a);
+					}
 				}
 			}
-		}
+			
+			if (!fDeletedAnnotations.isEmpty()) {
+				removeAnnotations(fDeletedAnnotations, true, true);
+				fDeletedAnnotations.clear();
+			}
+			
+		} finally {
+			
+			listenToMarkerChanges(true);
 		
-		if (!fDeletedAnnotations.isEmpty()) {
-			removeAnnotations(fDeletedAnnotations, true, true);
-			fDeletedAnnotations.clear();
 		}
-
-		listenToMarkerChanges(true);
 	}
 	
 	/**
