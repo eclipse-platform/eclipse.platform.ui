@@ -388,6 +388,53 @@ public void testInvalidProjectDescription3() throws Throwable {
 	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 	assertNull("3.7", projDesc.getLinks());
 }
+/**
+ * Test multiple elements where they shouldn't be
+ */
+public void testLongProjectDescription() throws Throwable {
+	String linkName = "newLink";
+	String longLocation = "d:/abc/deftlkshlfkjhaslkjfhiutyw/liehftlieasuiwuehslkjdhflsi" +
+	"uh/astihtlkstksljdhtlks/kjashlkshflkjdsf/askjhfslkdhfslkd/foo.txt";
+	String longProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<name>abc</name>\n" +
+		"	<comment></comment>\n" +
+		"	<projects>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"		<buildCommand>\n" +
+		"			<name>org.eclipse.jdt.core.javabuilder</name>\n" +
+		"			<arguments>\n" +
+		"			</arguments>\n" +
+		"		</buildCommand>\n" +
+		"	</buildSpec>\n" +
+		"	<natures>\n" +
+		"	<nature>org.eclipse.jdt.core.javanature</nature>\n" +
+		"	</natures>\n" +
+		"	<linkedResources>\n" +
+		"		<link>\n" +
+		"			<name>" + linkName + "</name>\n" +
+		"			<type>2</type>\n" +
+		"			<location>" + longLocation + "</location>\n" +
+		"		</link>\n" +
+		"	</linkedResources>\n" +
+		"</projectDescription>";
+
+	IPath location = getRandomLocation();
+	try {
+		ProjectDescriptionReader reader = new ProjectDescriptionReader();
+		// Write out the project description file
+		ensureDoesNotExistInFileSystem(location.toFile());
+		InputStream stream = new ByteArrayInputStream(longProjectDescription.getBytes());
+		createFileInFileSystem(location, stream);
+		ProjectDescription projDesc = reader.read(location);
+		ensureDoesNotExistInFileSystem(location.toFile());
+		assertEquals("1.0", longLocation, projDesc.getLinkLocation(linkName));
+	} finally {
+		Workspace.clear(location.toFile());
+	}
+}
 public void testMultipleProjectDescriptions() throws Throwable {
 	URL whereToLook = null;
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.resources");
