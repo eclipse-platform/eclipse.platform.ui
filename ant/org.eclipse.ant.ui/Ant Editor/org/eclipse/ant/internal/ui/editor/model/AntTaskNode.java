@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.editor.model;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -80,5 +82,27 @@ public class AntTaskNode extends AntElementNode {
 	 */
 	public void setId(String id) {
 		fId= id;
+	}
+	
+	/**
+	 * Configures the associated task if required.
+	 * Allows subclasses to do specific configuration (such as executing the task) by
+	 * calling <code>nodeSpecificConfigure</code>
+	 */
+	public void configure() {
+		if (((UnknownElement)getTask()).getRealThing() != null) {
+			return;
+		}
+		try {
+			getTask().maybeConfigure();
+			nodeSpecificConfigure();
+		} catch (BuildException be) {
+			getAntModel().handleBuildException(be, this);
+		}
+	}
+
+	protected void nodeSpecificConfigure() {
+		//by default do nothing
+		
 	}
 }

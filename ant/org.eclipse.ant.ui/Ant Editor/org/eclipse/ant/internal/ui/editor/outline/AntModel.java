@@ -30,6 +30,14 @@ import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -39,9 +47,6 @@ import org.eclipse.jface.text.IRegion;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
-/**
- * Experimental ant model using new parsing
- */
 public class AntModel {
 
 	private XMLCore fCore;
@@ -66,10 +71,14 @@ public class AntModel {
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
 	
+	private boolean fResolveFully= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.RESOLVE_BUILDFILES);
+	
 	/**
      * The find replace adapter for the document
      */
     private FindReplaceDocumentAdapter fFindReplaceAdapter;
+    
+	private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
 
 	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, ILocationProvider locationProvider) {
 		fCore= core;
@@ -134,6 +143,7 @@ public class AntModel {
 		fStillOpenElements= new Stack();
 		fTaskToNode= new HashMap();
 		fProjectNode= null;
+		//removeProblems();
 	}
 
 	public synchronized AntElementNode[] getRootElements() {
@@ -178,14 +188,30 @@ public class AntModel {
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
-    		configureProperties();
+    		resolveBuildfile();
     		endReporting();
     		fTaskToNode= new HashMap();
     	}
 	}
 
+	private void resolveBuildfile() {	
+		Collection nodes= fTaskToNode.values();
+		Iterator iter= nodes.iterator();
+		while (iter.hasNext()) {
+			AntTaskNode node = (AntTaskNode) iter.next();
+			if (fResolveFully) {
+				node.configure();
+			} else if (node instanceof AntPropertyNode) {
+				((AntPropertyNode)node).configure();
+			}
+		}
+	}
+
 	public void handleBuildException(BuildException e, AntElementNode node) {
 		try {
+			if (node != null) {
+				generateExceptionOutline(node);
+			}
 			Location location= e.getLocation();
 			int line= 0;
 			int originalOffset= 0;
@@ -207,17 +233,6 @@ public class AntModel {
 			
 			notifyProblemRequestor(e, nonWhitespaceOffset, length, XMLProblem.SEVERTITY_ERROR);
 		} catch (BadLocationException e1) {
-		}
-	}
-
-	private void configureProperties() throws BuildException {
-		Collection nodes= fTaskToNode.values();
-		Iterator iter= nodes.iterator();
-		while (iter.hasNext()) {
-			AntTaskNode node = (AntTaskNode) iter.next();
-			if (node instanceof AntPropertyNode) {
-				((AntPropertyNode)node).configure();
-			}
 		}
 	}
 
@@ -473,6 +488,60 @@ public class AntModel {
 		if (fProblemRequestor != null) {
 			fProblemRequestor.acceptProblem(problem);
 		}
+		
+		//createMarker(problem);
+	}
+
+	private void createMarker(IProblem problem) {
+		IFile file = getResource();
+		int lineNumber= 1;
+		try {
+			lineNumber = getLine(problem.getOffset());
+		} catch (BadLocationException e1) {
+		}
+	
+		try {
+			IMarker marker = file.createMarker(AntModel.BUILDFILE_PROBLEM_MARKER);
+		
+			marker.setAttributes(
+					new String[] { 
+							IMarker.MESSAGE, 
+							IMarker.SEVERITY, 
+							IMarker.LOCATION,
+							IMarker.CHAR_START, 
+							IMarker.CHAR_END, 
+							IMarker.LINE_NUMBER
+					},
+					new Object[] {
+							problem.getMessage(),
+							new Integer(IMarker.SEVERITY_ERROR), 
+							problem.getMessage(),
+							new Integer(problem.getOffset()),
+							new Integer(problem.getOffset() + problem.getLength()),
+							new Integer(lineNumber)
+					}
+			);
+		} catch (CoreException e) {
+			
+		} 
+		
+	}
+	
+	private IFile getResource() {
+		IPath location= fLocationProvider.getLocation();
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		return files[0];
+	}
+
+	private void removeProblems() {
+		IFile file= getResource();
+		
+		try {
+			if (file != null && file.exists())
+				file.deleteMarkers(AntModel.BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			// assume there were no problems
+		}
 	}
 
 	private void beginReporting() {
@@ -678,5 +747,13 @@ public class AntModel {
 			handleBuildException(be, null);
 		}
 		return null;
+	}
+
+	/**
+	 * @param resolveFully
+	 */
+	public void setResolveFully(boolean resolveFully) {
+		fResolveFully= resolveFully;
+		resolveBuildfile();
 	}
 }

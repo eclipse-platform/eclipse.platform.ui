@@ -16,15 +16,16 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -253,6 +254,11 @@ public class AntEditor extends TextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		if (event.getProperty() == AntEditorPreferenceConstants.RESOLVE_BUILDFILES) {
+			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
+			return;
+		}
+		
 		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
 		if (affectsTextPresentation(event)) {
 			sourceViewerConfiguration.updateScanners();
@@ -327,5 +333,10 @@ public class AntEditor extends TextEditor {
 		IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
 		if (statusLine != null)
 			statusLine.setMessage(true, msg, null);	
+	}
+
+	private void setResolveFully(boolean resolveFully) {
+		getAntModel().setResolveFully(resolveFully);
+		
 	}
 }

@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -27,12 +28,11 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 /**
  * Contributes interesting Java actions to the desktop's Edit menu and the toolbar.
  * 
- * @author Alf Schiefelbein
  */
 public class AntEditorActionContributor extends TextEditorActionContributor {
 
 	protected RetargetTextEditorAction fContentAssistProposal;
-//    protected RetargetTextEditorAction fContentAssistTip;
+	private ResolveBuildfileAction fResolveAction;
 
 	/**
 	 * Default constructor.
@@ -40,22 +40,22 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	public AntEditorActionContributor() {
 		super();
 		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
-//        fContentAssistTip= new RetargetTextEditor(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistTip."); //$NON-NLS-1$
+		fResolveAction= new ResolveBuildfileAction();
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 
 		ITextEditor editor= null;
-		if (part instanceof ITextEditor)
+		if (part instanceof ITextEditor) {
 			editor= (ITextEditor) part;
+		}
 
 		fContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
-//        fContentAssistTip.setAction(getAction(editor, "ContentAssistTip")); //$NON-NLS-1$
 	}
 	
-    /*
-     * @see IEditorActionBarContributor#init(IActionBars)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
      */
     public void init(IActionBars bars) {
         super.init(bars);
@@ -65,20 +65,27 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         if (editMenu != null) {
             editMenu.add(new org.eclipse.jface.action.Separator());
             editMenu.add(fContentAssistProposal);
-//            editMenu.add(fContentAssistTip);
         }   
         
     }
     
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
+     */
+	public void contributeToToolBar(IToolBarManager toolBarManager) {
+		toolBarManager.add(fResolveAction);
+		toolBarManager.update(false);
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
 	}
 	
-	/*
-	 * @see IEditorActionBarContributor#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 */
 	public void dispose() {
 		doSetActiveEditor(null);

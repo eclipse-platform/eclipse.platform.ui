@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 /**
- * Preference constants used in the default text editor preference store.
+ * Preference constants used for the Ant Editor
  */
 public class AntEditorPreferenceConstants {
 
@@ -81,6 +81,12 @@ public class AntEditorPreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant editor should
+	 * fully resolve the current Ant build file to check for errors.
+	 */
+	public static final String RESOLVE_BUILDFILES = "resolveBuildFiles"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -91,5 +97,7 @@ public class AntEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
 		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
+		
+		store.setDefault(AntEditorPreferenceConstants.RESOLVE_BUILDFILES, false);
 	}
 }
