@@ -670,23 +670,25 @@ private XMLMemento recordWorkbenchState() {
  * @see IPersistable
  */
 public void restoreState(IMemento memento) {
+	// Read perspective history.
+	// This must be done before we recreate the windows, because it is
+	// consulted during the recreation.
+	IMemento childMem = memento.getChild("perspHistory");
+	if (childMem != null)
+		getPerspectiveHistory().restoreState(childMem);
+		
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 	
 	// Read the workbench windows.
 	for (int x = 0; x < children.length; x ++) {
-		IMemento childMem = children[x];
+		childMem = children[x];
 		WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 		newWindow.create();
 		newWindow.restoreState(childMem);
 		windowManager.add(newWindow);
 		newWindow.open();
 	}
-	
-	// Read perspective history.
-	IMemento childMem = memento.getChild("perspHistory");
-	if (childMem != null)
-		getPerspectiveHistory().restoreState(childMem);
 }
 /**
  * Runs the workbench.

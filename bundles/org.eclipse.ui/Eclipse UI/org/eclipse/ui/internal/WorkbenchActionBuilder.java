@@ -313,9 +313,10 @@ private void createToolBar() {
 		toolbar.add(new Separator());
 		toolbar.add(buildAction);
 	}
+	toolbar.add(pinEditorAction);
+	toolbar.add(new PerspectiveComboBox(window));
 	toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 	toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	toolbar.add(pinEditorAction);
 }
 /**
  * Remove the property change listener

@@ -30,6 +30,7 @@ public class WorkbenchPreferencePage
 	private Button replaceButton;
 	private Button switchOnNewProjectButton;
 	private Button reusePerspectivesButton;
+	private Button openPerspectiveMruButton;
 	private Text openInNewWindowText;
 	private Text openInNewPageText;
 	private Text replaceText;
@@ -229,6 +230,11 @@ private void createPerspectiveGroup(Composite composite) {
 	reusePerspectivesButton.setSelection(
 		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
 
+	openPerspectiveMruButton = new Button(composite, SWT.CHECK);
+	openPerspectiveMruButton.setText(WorkbenchMessages.getString("WorkbenchPreference.openPerspectiveMru")); //$NON-NLS-1$
+	openPerspectiveMruButton.setSelection(
+		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
+
 	setTextValuesForPerspective();
 }
 /**
@@ -408,6 +414,9 @@ protected void performDefaults() {
 	reusePerspectivesButton.setSelection(
 		store.getDefaultBoolean(
 			IPreferenceConstants.REUSE_PERSPECTIVES));
+	openPerspectiveMruButton.setSelection(
+		store.getDefaultBoolean(
+			IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
 
 	//Project perspective preferences
 	String projectPreference =
@@ -480,6 +489,11 @@ public boolean performOk() {
 	store.setValue(
 		IPreferenceConstants.REUSE_PERSPECTIVES,
 		reusePerspectivesButton.getSelection());
+		
+	// store open perspctive mru setting
+	store.setValue(
+		IPreferenceConstants.OPEN_PERSPECTIVE_MRU,
+		openPerspectiveMruButton.getSelection());
 		
 	// store the open in new window settings
 	store.setValue(

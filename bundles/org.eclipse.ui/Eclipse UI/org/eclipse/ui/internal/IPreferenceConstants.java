@@ -42,4 +42,8 @@ public interface IPreferenceConstants {
 	public static final int OVM_EMBED = 0;
 	public static final int OVM_FAST = 1;
 	public static final int OVM_FLOAT = 2;
+	
+	// (boolean) Do we use MRU for perspective list?
+	public static final String OPEN_PERSPECTIVE_MRU = "OPEN_PERSPECTIVE_MRU"; //$NON-NLS-1$
+	
 }

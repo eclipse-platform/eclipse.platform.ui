@@ -139,9 +139,9 @@ private ArrayList getShortcuts()
 {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	boolean smart = 
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU);
 	if (smart)
-		return getGlobalShortcuts();
+		return getMruShortcuts();
 	else
 		return getLocalShortcuts();
 }
@@ -180,12 +180,12 @@ private ArrayList getLocalShortcuts()
 }
 
 /* (non-Javadoc)
- * Returns the global shortcut perspectives.
+ * Returns the MRU shortcut perspectives.
  *
  * The shortcut list is formed from the global perspective history
  * in the workbench.
  */
-private ArrayList getGlobalShortcuts() 
+private ArrayList getMruShortcuts() 
 {
 	Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
 	return wb.getPerspectiveHistory().getItems();
