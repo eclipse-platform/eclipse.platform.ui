@@ -186,7 +186,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
-		fStackFrameInput = (IStackFrame) newInput;
+		if (newInput instanceof IStackFrame) {
+			fStackFrameInput = (IStackFrame) newInput;
+		} else {
+			fStackFrameInput = null;
+		}
 	}
 	
 	/**
