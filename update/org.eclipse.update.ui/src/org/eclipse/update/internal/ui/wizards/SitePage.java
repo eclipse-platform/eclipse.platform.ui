@@ -124,6 +124,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private Button addLocalZippedButton;
 	private Button editButton;
 	private Button removeButton;
+	private Button exportButton;
+	private Button importButton;
 	private Button envFilterCheck;
 	private SearchRunner searchRunner;
 	private EnvironmentFilter envFilter;
@@ -249,6 +251,32 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleRemove();
 			}
 		});
+		
+		// separator
+		new Label(buttonContainer, SWT.None);
+		
+		importButton = new Button(buttonContainer, SWT.PUSH);
+		importButton.setText(UpdateUI.getString("SitePage.import")); //$NON-NLS-1$
+		importButton.setLayoutData(
+			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		SWTUtil.setButtonDimensionHint(importButton);
+		importButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleImport();
+			}
+		});
+		
+		exportButton = new Button(buttonContainer, SWT.PUSH);
+		exportButton.setText(UpdateUI.getString("SitePage.export")); //$NON-NLS-1$
+		exportButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		SWTUtil.setButtonDimensionHint(exportButton);
+		exportButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleExport();
+			}
+		});
+
+
 		
 		descLabel = new ScrolledFormText(client, true);
 		descLabel.setText("");
@@ -418,6 +446,29 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 	}
 
+	private void handleImport() {
+		SiteBookmark[] siteBookmarks = SitesImportExport.getImportedBookmarks(getShell());
+		if (siteBookmarks != null && siteBookmarks.length > 0) {
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+			SiteBookmark[] currentBookmarks = getAllSiteBookmarks();
+			for (int i=0; i<siteBookmarks.length; i++) {
+				boolean siteExists = false;
+				for (int j=0; !siteExists && j<currentBookmarks.length; j++)
+					if (currentBookmarks[j].getURL().equals(siteBookmarks[i].getURL()))
+						siteExists = true;
+				if (!siteExists)
+					model.addBookmark(siteBookmarks[i]);
+			}
+			model.saveBookmarks();
+			updateSearchRequest();
+		}
+		return;
+	}
+	
+	private void handleExport() {
+		SitesImportExport.exportBookmarks(getShell(), getAllSiteBookmarks());
+	}
+	
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		if (bookmark.isUnavailable()) {
 			bookmark.setSelected(false);
