@@ -261,4 +261,8 @@ public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
 	return this;
 }
 
+public int getType() {
+	return EDITOR;
+}
+
 }
