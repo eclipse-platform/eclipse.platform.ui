@@ -6,7 +6,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IInstallInfo;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
@@ -46,8 +46,8 @@ public abstract class ConfigurationInfo {
 	 */
 	public void readINIFile() throws CoreException {
 		// determine the identifier of the "dominant" application 
-		IInstallInfo ii = BootLoader.getInstallationInfo();
-		String configName = ii.getApplicationConfigurationIdentifier();
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String configName = conf.getPrimaryFeatureIdentifier();
 		if (configName == null) {
 			reportINIFailure(null, "Unknown configuration identifier"); //$NON-NLS-1$
 			return;
