@@ -95,13 +95,10 @@ public class UserValidationDialog extends Dialog {
 	protected void createPasswordFields(Composite parent) {
 		new Label(parent, SWT.NONE).setText(UpdateUI.getString("UserVerificationDialog.Password")); //$NON-NLS-1$
 
-		passwordField = new Text(parent, SWT.BORDER);
+		passwordField = new Text(parent, SWT.BORDER|SWT.PASSWORD);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		passwordField.setLayoutData(data);
-		// TODO Need to use SWT.PASSWORD style for the fied
-		// instead of setting the echo char.
-		passwordField.setEchoChar('*');
 
 		new Label(parent, SWT.NONE); //spacer
 	}
