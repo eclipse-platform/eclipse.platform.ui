@@ -126,4 +126,10 @@ public class ReplaceOperation extends UpdateOperation {
 		return Command.REPLACE;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("ReplaceOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+	}
 }
