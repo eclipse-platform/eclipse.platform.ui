@@ -164,7 +164,10 @@ public class AntModel {
 	}
 
 	private void reset(DirtyRegion region) {
+		//TODO this could be better for incremental parsing
+		//cleaning up the task to node map (do when a target is reset)
 		fCurrentTargetNode= null;
+		
 		if (region == null ) {
 			fStillOpenElements= new Stack();
 			fTaskToNode= new HashMap();
@@ -950,10 +953,6 @@ public class AntModel {
 			return;
 		}
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
-		if (fIncrementalTarget != null) { //update the targets length for the edit
-			fIncrementalTarget.setLength(fIncrementalTarget.getLength() + determineEditAdjustment(fDirtyRegion));
-		}
-		
 		markHierarchy(node, true);
 		
 		if (exception instanceof SAXParseException) {
@@ -988,6 +987,22 @@ public class AntModel {
 				parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
 			}
 			node= parentNode;
+		}
+		
+		if (fIncrementalTarget != null) { //update the targets length for the edit
+			int editAdjustment= determineEditAdjustment(fDirtyRegion);
+			fIncrementalTarget.setLength(fIncrementalTarget.getLength() + editAdjustment);
+			AntElementNode startingNode= null;	
+			while(fStillOpenElements.peek() != fIncrementalTarget) {
+				startingNode= (AntElementNode)fStillOpenElements.pop();
+				startingNode.setLength(startingNode.getLength() + editAdjustment);
+			}
+			fStillOpenElements.pop(); //get rid of the incremental target
+			if (startingNode != null && fIncrementalTarget.hasChildren()) {
+				List children= fIncrementalTarget.getChildNodes();
+				int index= children.indexOf(startingNode);
+				updateNodesForIncrementalParse(editAdjustment, children, index);
+			}
 		}
 	}
 	
