@@ -127,11 +127,23 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			}
 			
 			final IStatus[] result = new IStatus[] { null };
-			EclipseSynchronizer.getInstance().run(getSchedulingRule(targetProjects), new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					result[0] = performCheckout(session, resource, targetProjects, project != null, Policy.subMonitorFor(monitor, 90));
+			ISchedulingRule schedulingRule = getSchedulingRule(targetProjects);
+			if (schedulingRule instanceof IResource && ((IResource)schedulingRule).getType() == IResource.ROOT) {
+				// One of the projects is mapped to a provider that locks the workspace.
+				// Just return the workspace root rule
+				try {
+					Platform.getJobManager().beginRule(schedulingRule, pm);
+					result[0] = performCheckout(session, resource, targetProjects, project != null, Policy.subMonitorFor(pm, 90));
+				} finally {
+					Platform.getJobManager().endRule(schedulingRule);
 				}
-			}, Policy.subMonitorFor(pm, 90));
+			} else {
+				EclipseSynchronizer.getInstance().run(schedulingRule, new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						result[0] = performCheckout(session, resource, targetProjects, project != null, monitor);
+					}
+				}, Policy.subMonitorFor(pm, 90));
+			}
 			return result[0];
 		} catch (CVSException e) {
 			// An exception occurred either during the module-expansion or checkout
@@ -150,7 +162,13 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		} else {
 			Set rules = new HashSet();
 			for (int i = 0; i < projects.length; i++) {
-				rules.add(ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[i]));
+				ISchedulingRule modifyRule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[i]);
+				if (modifyRule instanceof IResource && ((IResource)modifyRule).getType() == IResource.ROOT) {
+					// One of the projects is mapped to a provider that locks the workspace.
+					// Just return the workspace root rule
+					return modifyRule;
+				}
+				rules.add(modifyRule);
 			}
 			return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
 		}
