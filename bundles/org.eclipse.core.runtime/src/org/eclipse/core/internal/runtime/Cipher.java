@@ -20,11 +20,11 @@ import java.security.SecureRandom;
  *
  *     // Encrypt
  *     Cipher cipher = new Cipher(ENCRYPT_MODE, password);
- *     byte[] encrypted = cipher.update(data);
+ *     byte[] encrypted = cipher.cipher(data);
  *
  *     // Decrypt
  *     cipher = new Cipher(DECRYPT_MODE, password);
- *     byte[] decrypted = cipher.update(encrypted);
+ *     byte[] decrypted = cipher.cipher(encrypted);
  * </pre>
  */
 public class Cipher {
