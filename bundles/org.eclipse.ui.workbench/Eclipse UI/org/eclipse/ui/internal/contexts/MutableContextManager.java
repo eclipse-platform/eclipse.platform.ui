@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextManager extends AbstractContextManager
@@ -77,6 +79,54 @@ public final class MutableContextManager extends AbstractContextManager
                 });
 
         readRegistry();
+    }
+    
+    /**
+     * Calculates the set containing all of the contexts provided plus their
+     * ancestors. If any of the contexts in the parameter are not defined, then
+     * their ancest orswill not be added.
+     * 
+     * @param contextIds
+     *            The context identifiers whose ancestors should be added; must
+     *            not be <code>null</code>, but may be empty. This set should
+     *            contain strings representing the identifiers of all of the
+     *            contexts.
+     * @return The contents of <code>contextIds</code> plus the string
+     *         identifiers of all of the ancestors of those contexts. This is
+     *         never <code>null</code>, but will be empty if the parameter is
+     *         empty.
+     */
+    private final Set addAncestorContexts(Set contextIds) {
+        final Set ancestorSet = new HashSet(contextIds);
+
+        /*
+         * Cycle through the list of context identifiers, and add any ancestor
+         * contexts of the given contexts.
+         */
+        final Iterator contextIdItr = contextIds.iterator();
+        while (contextIdItr.hasNext()) {
+            final String contextId = (String) contextIdItr.next();
+            final IContext context = (IContext) contextsById.get(contextId);
+            if (context != null) {
+                try {
+                    String parentId = context.getParentId();
+                    while (parentId != null) {
+                        IContext parentContext = (IContext) contextsById
+                                .get(parentId);
+                        if (parentContext != null) {
+                            ancestorSet.add(parentContext.getId());
+                            parentId = parentContext.getParentId();
+                        } else {
+                            parentId = null;
+                        }
+                    }
+                } catch (final NotDefinedException e) {
+                    // I guess that's as high in the ancestor list as we can go.
+                }
+            }
+        }
+
+        return ancestorSet;
     }
 
     public IContext getContext(String contextId) {
@@ -159,6 +209,8 @@ public final class MutableContextManager extends AbstractContextManager
         boolean contextManagerChanged = false;
         Map contextEventsByContextId = null;
         Set previouslyEnabledContextIds = null;
+        
+        enabledContextIds = addAncestorContexts(enabledContextIds);
 
         if (!this.enabledContextIds.equals(enabledContextIds)) {
             previouslyEnabledContextIds = this.enabledContextIds;
