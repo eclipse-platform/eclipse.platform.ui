@@ -558,6 +558,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 	try {
 		String message = Policy.bind("resources.creatingLink", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		Policy.checkCanceled(monitor);
 		checkValidPath(path, FOLDER, true);
 		ISchedulingRule rule = getProject();
 		try {
@@ -1097,6 +1098,7 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
 	try {
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		Policy.checkCanceled(monitor);
 		destination = makePathAbsolute(destination);
 		checkValidPath(destination, getType(), false);
 		Resource destResource = workspace.newResource(destination, getType());

@@ -687,10 +687,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { interestingResources, interestingLocations, monitors };
 		new TestPerformer("LinkedResourceTest.testLinkFile") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				//This resource already exists in the workspace
 				if (resource.exists())
 					return true;
@@ -725,17 +728,18 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 				try {
 					file.createLink(location, IResource.NONE, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IFile resource = (IFile) args[0];
 				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				IPath resolvedLocation = resolvePath(location);
 				if (!resource.exists() || !resolvedLocation.toFile().exists())
 					return false;
@@ -771,10 +775,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { interestingResources, interestingLocations, monitors };
 		new TestPerformer("LinkedResourceTest.testLinkFolder") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				//This resource already exists in the workspace
 				if (resource.exists())
 					return true;
@@ -808,17 +815,18 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 				try {
 					folder.createLink(location, IResource.NONE, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IFolder resource = (IFolder) args[0];
 				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				IPath resolvedLocation = resolvePath(location);
 				if (!resource.exists() || !resolvedLocation.toFile().exists())
 					return false;
@@ -848,10 +856,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
 		new TestPerformer("LinkedResourceTest.testMoveFile") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				IResource parent = destination.getParent();
 				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
 					return true;
@@ -872,17 +883,18 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					source.createLink(localFile, IResource.NONE, null);
 					source.move(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
 					return false;
 				//destination should only be linked for a shallow move
@@ -920,9 +932,12 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { sourceResources, destinationResources, monitors };
 		new TestPerformer("LinkedResourceTest.testMoveFolder") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				IResource parent = destination.getParent();
 				if (parent == null || parent.getType() != IResource.PROJECT)
 					return true;
@@ -943,16 +958,17 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					source.createLink(existingLocation, IResource.NONE, null);
 					source.move(destination.getFullPath(), IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IResource destination = (IResource) args[1];
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
 					return false;
 				if (!destination.isLinked())
