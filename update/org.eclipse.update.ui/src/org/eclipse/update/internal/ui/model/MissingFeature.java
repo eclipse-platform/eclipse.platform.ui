@@ -301,5 +301,13 @@ public class MissingFeature implements IFeature {
 	public IInstallHandlerEntry getInstallHandlerEntry() {
 		return null;
 	}
+	/*
+	 * @see IFeature#getIncludedFeatureReferences()
+	 */
+	public IFeatureReference[] getIncludedFeatureReferences()
+		throws CoreException {
+		return new IFeatureReference[0];
+	}
+
 }
 

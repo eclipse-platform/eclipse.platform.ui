@@ -5,6 +5,7 @@ package org.eclipse.update.configuration;
  */
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.IFeature;
 
 /**
  * Local Site.
@@ -140,4 +141,17 @@ public interface ILocalSite extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public IInstallConfiguration[] getPreservedConfigurations();
+	
+	/**
+	 * Indicates if the specified feature is "broken". A feature is considered
+	 * to be broken in the context of this site, if some of the plug-ins
+	 * referenced by the feature are not installed on this site.
+	 * 
+	 * @param feature the feature
+	 * @return <code>true</code> if the feature is broken on this
+	 * site, <code>false</code> otherwise
+	 * @since 2.0
+	 */
+	// FIXME javadoc
+	public int getStatus(IFeature feature);	
 }
