@@ -78,8 +78,8 @@ if(request.getParameter("searchWord")!=null || request.getParameter("searchWordJ
 <TABLE BORDER='0'>
 	<TR><TD><%=WebappResources.getString("Indexing", request)%></TD></TR>
 	<TR><TD ALIGN='LEFT'>
-		<DIV STYLE='width:100px;height:16px;border:1px solid black;'>
-			<DIV ID='divProgress' STYLE='width:<%=percentage%>px;height:14;background-color:#08246B'></DIV>
+		<DIV STYLE='width:100px;height:14px;border:1px solid black;'>
+			<IMG src="../images/progress.gif" height="14" width="<%=percentage%>">
 		</DIV>
 	</TD></TR>
 	<TR><TD><%=percentage%>% <%=WebappResources.getString("complete", request)%></TD></TR>
