@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import org.eclipse.jface.action.Action;
-
-import org.eclipse.search.ui.ISearchResult;
-
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 class SearchAgainAction extends Action {
 	private SearchView fView;
@@ -29,8 +31,16 @@ class SearchAgainAction extends Action {
 	public void run() {
 		final ISearchResult search= fView.getCurrentSearchResult();
 		if (search != null) {
-			InternalSearchUI.getInstance().cancelSearch(search.getQuery());
-			InternalSearchUI.getInstance().runAgain(search.getQuery());
+			ISearchQuery query= search.getQuery();
+			NewSearchUI.cancelQuery(query);
+			if (query.canRerun()) {
+				if (query.canRunInBackground())
+					NewSearchUI.runQueryInBackground(query);
+				else {
+					ProgressMonitorDialog pmd= new ProgressMonitorDialog(fView.getSite().getShell());
+					NewSearchUI.runQueryInForeground(pmd, query);
+				}
+			}
 		}
 	}
 }
