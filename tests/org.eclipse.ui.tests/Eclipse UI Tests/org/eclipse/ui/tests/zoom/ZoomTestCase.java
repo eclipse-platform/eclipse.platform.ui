@@ -85,8 +85,9 @@ public class ZoomTestCase extends UITestCase {
 	protected IViewPart showRegularView(String id) {
 		try {
 			IViewPart view = page.showView(id);
-			if(page.isFastView(view))
-				page.removeFastView(view);
+			IViewReference ref = (IViewReference)page.getReference(view);
+			if(page.isFastView(ref))
+				page.removeFastView(ref);
 			return view;
 		} catch(PartInitException e) {
 		}	;	
@@ -96,7 +97,8 @@ public class ZoomTestCase extends UITestCase {
 	protected IViewPart showFastView(String id) {
 		try {
 			IViewPart view = page.showView(id);
-			Assert.assertTrue(page.isFastView(view));
+			IViewReference ref = (IViewReference)page.getReference(view);
+			Assert.assertTrue(page.isFastView(ref));
 			return view;
 		} catch(PartInitException e) {
 		}	;	
