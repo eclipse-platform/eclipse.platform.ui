@@ -185,10 +185,7 @@ public class DragUtil {
     static IDropTarget dragToTarget(final Object draggedItem, final Rectangle sourceBounds, 
     		final Point initialLocation, final boolean allowSnapping) {
 		final Display display = Display.getDefault();
-		// Create a tracker.  This is just an XOR rect on the screen.
-		// As it moves we notify the drag listeners.
-		final Tracker tracker = new Tracker(display, SWT.NULL);
-				
+
 		if (forcedDropTarget != null) {
 			
 			Point location = forcedDropTarget.getLocation();
@@ -196,6 +193,10 @@ public class DragUtil {
 
 			return getDropTarget(currentControl, draggedItem, location, sourceBounds); 
 		}
+
+		// Create a tracker.  This is just an XOR rect on the screen.
+		// As it moves we notify the drag listeners.
+		final Tracker tracker = new Tracker(display, SWT.NULL);
 		
 		tracker.setStippled(true);
 		
