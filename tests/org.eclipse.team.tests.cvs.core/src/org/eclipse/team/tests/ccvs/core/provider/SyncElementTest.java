@@ -20,7 +20,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -50,7 +50,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testGetBase"));
+		//return new CVSTestSetup(new SyncElementTest("testGranularityContents"));
 	}
 	
 	/*
@@ -691,7 +691,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Base is incorrect", (ICVSResource)tree.getBase(), Client.getManagedResource(copy), false, false);
+		assertEquals("Base is incorrect", (ICVSResource)tree.getBase(), Session.getManagedResource(copy), false, false);
 
 	 }
 }

@@ -11,6 +11,7 @@ import java.io.PrintStream;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -93,7 +94,7 @@ public class CVSTestSetup extends TestSetup {
 		// Validate that we can connect
 		CVSRepositoryLocation repository = CVSRepositoryLocation.fromString(location);
 		try {
-			repository.validateConnection();
+			repository.validateConnection(new NullProgressMonitor());
 		} catch (CVSException e) {
 			System.out.println("Unable to connect to remote repository: " + repository.getLocation());
 			throw e;

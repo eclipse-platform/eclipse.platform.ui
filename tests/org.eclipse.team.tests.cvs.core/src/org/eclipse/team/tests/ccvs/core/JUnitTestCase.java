@@ -11,24 +11,31 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import junit.awtui.TestRunner;
 import junit.framework.TestCase;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
- * Base-class to the low level-testcases for the Client.
+ * Base-class to the low level-testcases for the Session.
  * Supplies convinience-methods and default attributes for the testcases.
  * Especally data for a default-connection to the server is stored.
  */
@@ -49,9 +56,24 @@ public abstract class JUnitTestCase extends TestCase {
 
 	static boolean propertiesSet = false;
 
+	private static final HashMap commandPool = new HashMap();
+	static {
+		commandPool.put("update", Command.UPDATE);
+		commandPool.put("co", Command.CHECKOUT);
+		commandPool.put("ci", Command.COMMIT);
+		commandPool.put("import", Command.IMPORT);
+		commandPool.put("add", Command.ADD);
+		commandPool.put("remove", Command.REMOVE);
+		commandPool.put("status", Command.STATUS);
+		commandPool.put("log", Command.LOG);
+		commandPool.put("tag", Command.TAG);
+		commandPool.put("admin", Command.ADMIN);
+		commandPool.put("diff", Command.DIFF);
+	}
+	
 	/**
 	 * Convinience method for:<br>
-	 * Client.execute(request,globalOptions,localOptions,arguments,Client.getManagedFolder(root),monitor,messageOut)
+	 * Session.execute(request,globalOptions,localOptions,arguments,Session.getManagedFolder(root),monitor,messageOut)
 	 */	
 	public static void execute(String request, 
 						String[] globalOptions, 
@@ -63,13 +85,79 @@ public abstract class JUnitTestCase extends TestCase {
 						throws CVSException {
 		if (!CVSTestSetup.DEBUG)
 			messageOut = new PrintStream(new NullOutputStream());
-		Client.execute(request,
-				globalOptions,
-				localOptions,
+		
+		List globals = new ArrayList();
+		for (int i=0;i<globalOptions.length;i++) {
+			if (globalOptions[i].equals("-d")) {
+				i++;
+				continue;
+			}
+			globals.add(new CustomGlobalOption(globalOptions[i]));
+		}
+		List locals = new ArrayList();
+		for (int i=0;i<localOptions.length;i++) {
+			if ((i < localOptions.length - 1) && (localOptions[i + 1].charAt(0) != '-')) {
+				locals.add(new CustomLocalOption(localOptions[i], localOptions[i + 1]));
+				i++;
+			} else {
+				locals.add(new CustomLocalOption(localOptions[i], null));
+			}
+		}
+		Session s = new Session(getRepository(globalOptions, Session.getManagedFolder(root)), Session.getManagedFolder(root));
+		s.open(monitor);
+		try {
+			IStatus status = ((Command)commandPool.get(request)).execute(s,
+				(GlobalOption[]) globals.toArray(new GlobalOption[globals.size()]),
+				(LocalOption[]) locals.toArray(new LocalOption[locals.size()]),
 				arguments,
-				Client.getManagedFolder(root),
-				monitor,
-				messageOut);
+				null,
+				monitor);
+			if (status.getCode() == CVSException.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
+		} finally {
+			s.close();
+		}
+	}
+	
+	public static class CustomGlobalOption extends GlobalOption {
+		public CustomGlobalOption(String option) {
+			super(option);
+		}
+	}
+	public static class CustomLocalOption extends LocalOption {
+		public CustomLocalOption(String option, String arg) {
+			super(option, arg);
+		}
+	}
+	/**
+	 * This give you a new repo either from the global "-d" option
+	 * or form the root-property in the folder.
+	 * 
+	 * This has to be rewritten in a nicer style.
+	 */
+	private static CVSRepositoryLocation getRepository(String[] globalOptions, 
+										ICVSFolder mFolder) 
+										throws CVSException {
+		
+		String repoName = null;
+		
+		// look if the repo is specified in the global Options
+		// this delets the option as well which is not so beatyful, but
+		// we have got a copy and we do not want this option to appear
+		// any more
+		repoName = Util.getOption(globalOptions, "-d", true);
+		
+		// look if we have got an root-entrie in the root-folder
+		if (repoName == null && mFolder.exists() && mFolder.isCVSFolder()) {
+			repoName = mFolder.getFolderSyncInfo().getRoot();
+		}
+		
+		if (repoName == null) {
+			throw new CVSException("CVSROOT is not specified");
+		}
+		
+		return CVSRepositoryLocation.fromString(repoName);
 	}
 	
 	/**
@@ -97,7 +185,7 @@ public abstract class JUnitTestCase extends TestCase {
 	 */
 	protected static ICVSFolder getManagedFolder(String relativePath) {
 		try {
-			return Client.getManagedFolder(getFile(relativePath));
+			return Session.getManagedFolder(getFile(relativePath));
 		} catch (CVSException e) {
 			fail(e.getMessage());
 			return null;

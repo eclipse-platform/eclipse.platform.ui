@@ -12,7 +12,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
@@ -359,7 +359,7 @@ public class CommandsTest extends JUnitTestCase {
 		// check that the resource has acctually a new timestamp
 		waitMsec(4000);
 		writeToFile(file2,fileContent2);
-		assertEquals(true, Client.getManagedFolder(ioFolder4).getFile("c.txt").isModified());
+		assertEquals(true, Session.getManagedFolder(ioFolder4).getFile("c.txt").isModified());
 		
 		// Should be able to set globalOptions to new String[0]
 		execute("ci",new String[0], 
@@ -460,7 +460,7 @@ public class CommandsTest extends JUnitTestCase {
 	
 	public void testImport() throws Exception {
 		File ioFolder = ioFolder1;
-		ICVSFolder mFolder = Client.getManagedFolder(ioFolder);
+		ICVSFolder mFolder = Session.getManagedFolder(ioFolder);
 		
 		String[] fileStructure = new String[]{"im/a.txt","im/f1/a.txt","im/f1/b.txt"};
 		createRandomFile(ioFolder,fileStructure);

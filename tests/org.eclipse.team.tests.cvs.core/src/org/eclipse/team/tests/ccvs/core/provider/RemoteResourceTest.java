@@ -5,8 +5,8 @@ package org.eclipse.team.tests.ccvs.core.provider;
  */
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import java.io.InputStream;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IContainer;
@@ -24,7 +24,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
@@ -45,11 +45,11 @@ public class RemoteResourceTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RemoteResourceTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testVersionTag"));
+		//return new CVSTestSetup(new RemoteResourceTest("testFolderAddition"));
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
-		assertEquals(message, (ICVSResource)remote, Client.getManagedFolder(container.getLocation().toFile()), false, false);
+		assertEquals(message, (ICVSResource)remote, Session.getManagedFolder(container.getLocation().toFile()), false, false);
 	}
 	
 	protected void getMembers(ICVSRemoteFolder folder, boolean deep) throws TeamException {
@@ -105,7 +105,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 */
 	public void testGetBase() throws TeamException, CoreException, IOException {
 		IProject project = createProject("testGetBase", new String[] { "file1.txt", "file2.txt", "folder1/a.txt", "folder2/folder3/b.txt"});
-		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildBaseTree(getRepository(), Client.getManagedFolder(project.getLocation().toFile()), CVSTag.DEFAULT, DEFAULT_MONITOR);
+		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildBaseTree(getRepository(), Session.getManagedFolder(project.getLocation().toFile()), CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertRemoteMatchesLocal("testGetBase", tree, project);
 	}
 	
@@ -162,7 +162,7 @@ public class RemoteResourceTest extends EclipseTest {
 		IProject project = createProject("testGetRemoteResource", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteResource file = getProvider(project).getRemoteResource(project.getFile("folder1/a.txt"));
 		assertTrue("File should exist remotely", file.exists());
-		assertEquals("Remote file should match local file", (ICVSResource)file, (ICVSResource)Client.getManagedFile(project.getFile("folder1/a.txt").getLocation().toFile()), false, false);
+		assertEquals("Remote file should match local file", (ICVSResource)file, (ICVSResource)Session.getManagedFile(project.getFile("folder1/a.txt").getLocation().toFile()), false, false);
 		ICVSRemoteResource folder = getProvider(project).getRemoteResource(project.getFolder("folder2/folder3/"));
 		getMembers((ICVSRemoteFolder)folder, true);
 		assertTrue("Folder should exist remotely", folder.exists());
@@ -193,7 +193,7 @@ public class RemoteResourceTest extends EclipseTest {
 		project = checkoutCopy(project, v1Tag);
 		
 		// Compare the two
-		assertEquals("testVersionTag", (ICVSResource)tree.getRemote(), (ICVSResource)Client.getManagedResource(project), false, false);
+		assertEquals("testVersionTag", (ICVSResource)tree.getRemote(), (ICVSResource)Session.getManagedResource(project), false, false);
 	}
 	
 	/*

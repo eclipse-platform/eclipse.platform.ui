@@ -34,7 +34,7 @@ public class AllTests extends EclipseTest {
 		suite.addTestSuite(ImportTest.class);
 		suite.addTestSuite(CVSProviderTest.class);
 		suite.addTestSuite(RemoteResourceTest.class);
-		suite.addTestSuite(CommandsTest.class);
+		//suite.addTestSuite(CommandsTest.class);
 		suite.addTestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
 	}

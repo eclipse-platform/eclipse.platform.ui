@@ -30,7 +30,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
@@ -139,7 +139,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	public void unmanageResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
 		for (int i=0;i<resources.length;i++) {
-			Client.getManagedResource(resources[i]).unmanage();
+			Session.getManagedResource(resources[i]).unmanage();
 		}
 		Synchronizer.getInstance().save(DEFAULT_MONITOR);
 	}
@@ -195,22 +195,20 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 protected IProject checkoutCopy(IProject project, String postfix) throws TeamException {
 	 	// Get the provider and remote module so we can get the proper path for the module
 		CVSTeamProvider provider = getProvider(project);
-		RemoteFolder remote = (RemoteFolder)provider.getRemoteResource(project);
 		
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + postfix);
-		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, remote.getRemotePath(), null, DEFAULT_MONITOR);
+		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, ((ICVSFolder)Session.getManagedResource(project)).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
 		return copy;
 	 }
 	 
 	 protected IProject checkoutCopy(IProject project, CVSTag tag) throws TeamException {
 	 	// Get the provider and remote module so we can get the proper path for the module
 		CVSTeamProvider provider = getProvider(project);
-		RemoteFolder remote = (RemoteFolder)provider.getRemoteResource(project);
 		
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + tag.getName());
-		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, remote.getRemotePath(), tag, DEFAULT_MONITOR);
+		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, ((ICVSFolder)Session.getManagedResource(project)).getFolderSyncInfo().getRepository(), tag, DEFAULT_MONITOR);
 		return copy;
 	 }
 	 
@@ -241,7 +239,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * Compare CVS team providers by comparing the cvs resource corresponding to the provider's project
 	 */
 	protected void assertEquals(String message, CVSTeamProvider provider1, CVSTeamProvider provider2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
-		assertEquals(message, (ICVSFolder)Client.getManagedFolder(provider1.getProject().getLocation().toFile()), (ICVSFolder)Client.getManagedFolder(provider2.getProject().getLocation().toFile()), includeTimestamps, includeTags);
+		assertEquals(message, (ICVSFolder)Session.getManagedFolder(provider1.getProject().getLocation().toFile()), (ICVSFolder)Session.getManagedFolder(provider2.getProject().getLocation().toFile()), includeTimestamps, includeTags);
 	}
 	
 	/*
@@ -381,9 +379,9 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	protected ICVSResource getCVSResource(IResource resource) throws CVSException {
 		if (resource.getType() == IResource.FILE)
-			return Client.getManagedFile(resource.getLocation().toFile());
+			return Session.getManagedFile(resource.getLocation().toFile());
 		else
-			return Client.getManagedFolder(resource.getLocation().toFile());
+			return Session.getManagedFolder(resource.getLocation().toFile());
 	}
 	/*
 	 * Get the IO File for the given CVS resource

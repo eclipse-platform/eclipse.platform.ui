@@ -11,10 +11,9 @@ import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
-import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 /**
  * This class is responsible for executing cvs commands using
@@ -70,7 +69,7 @@ public class ReferenceClient {
 		String commandLine;
 
 		globalOptions = (String[]) globalOptions.clone();
-		mRoot = Client.getManagedFolder(ioRoot);
+		mRoot = Session.getManagedFolder(ioRoot);
 		
 		runtime = Runtime.getRuntime();
 		global = flatenOptions(globalOptions);
