@@ -455,6 +455,12 @@
       </command>
       <command
 			category="org.eclipse.ui.category.window"
+            name="%command.maximizePart.name"
+            description="%command.maximizePart.description"
+            id="org.eclipse.ui.window.maximizePart">
+      </command>
+      <command
+			category="org.eclipse.ui.category.window"
             name="%command.nextEditor.name"
             description="%command.nextEditor.description"
             id="org.eclipse.ui.window.nextEditor">
@@ -977,6 +983,12 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            string="Ctrl+M"
+            context="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.window.maximizePart"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             string="Ctrl+F6"
             context="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.window.nextEditor"
@@ -1279,6 +1291,13 @@
             string="F12"
             context="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.window.activateEditor"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            string="Ctrl+M"
+            context="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.window.maximizePart"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
@@ -1843,6 +1862,12 @@
             string="F12"
             context="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.window.activateEditor"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+M"
+            context="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.window.maximizePart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding

@@ -68,6 +68,7 @@ public class WorkbenchActionBuilder {
 	private static final String nextPerspectiveActionDefId = "org.eclipse.ui.window.nextPerspective"; //$NON-NLS-1$
 	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
+	private static final String maximizePartActionDefId = "org.eclipse.ui.window.maximizePart"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor"; //$NON-NLS-1$
 	private static final String buildAllActionDefId = "org.eclipse.ui.project.buildAll"; //$NON-NLS-1$
 	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll"; //$NON-NLS-1$
@@ -123,6 +124,7 @@ public class WorkbenchActionBuilder {
 	private CyclePerspectiveAction nextPerspectiveAction;
 	private CyclePerspectiveAction prevPerspectiveAction;
 	private ActivateEditorAction activateEditorAction;
+	private MaximizePartAction maximizePartAction;
 
 	private WorkbenchEditorsAction workbenchEditorsAction;
 
@@ -513,6 +515,8 @@ public class WorkbenchActionBuilder {
 		menu.add(subMenu);
 		subMenu.add(showPartPaneMenuAction);
 		subMenu.add(showViewMenuAction);
+		subMenu.add(new Separator());
+		subMenu.add(maximizePartAction);
 		subMenu.add(new Separator());
 		subMenu.add(activateEditorAction);
 		subMenu.add(nextEditorAction);
@@ -932,6 +936,10 @@ public class WorkbenchActionBuilder {
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
 		getWindow().registerGlobalAction(activateEditorAction);
 
+		maximizePartAction = new MaximizePartAction(window);
+		maximizePartAction.setActionDefinitionId(maximizePartActionDefId);
+		getWindow().registerGlobalAction(maximizePartAction);
+		
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(
 			workbenchEditorsActionDefId);
