@@ -79,8 +79,10 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	/**
 	 * Preference key to save
 	 */
-	private static final String KEY_LAST_ACTIVE_PARTICIPANT = "lastactiveparticipant"; //$NON-NLS-1$
+	private static final String KEY_LAST_ACTIVE_PARTICIPANT_ID = "lastactiveparticipant_id"; //$NON-NLS-1$
+    private static final String KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID = "lastactiveparticipant_sec_id"; //$NON-NLS-1$
 	private static final String KEY_SETTINGS_SECTION= "SynchronizeViewSettings"; //$NON-NLS-1$
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
@@ -204,7 +206,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		// Remember the last active participant
 		if(activeParticipantRef != null) {
 			IDialogSettings section = getDialogSettings();
-			section.put(KEY_LAST_ACTIVE_PARTICIPANT, activeParticipantRef.getId());
+			section.put(KEY_LAST_ACTIVE_PARTICIPANT_ID, activeParticipantRef.getId());
+            section.put(KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID, activeParticipantRef.getSecondaryId());
 		}			
 		fParticipantToPart = null;
 		fPartToParticipant = null;	
@@ -402,9 +405,10 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			if (participants.size() > 0) {
 				ISynchronizeParticipantReference participantToSelect = (ISynchronizeParticipantReference)participants.get(0);
 				IDialogSettings section = getDialogSettings();
-				String selectedParticipantId = section.get(KEY_LAST_ACTIVE_PARTICIPANT);
+				String selectedParticipantId = section.get(KEY_LAST_ACTIVE_PARTICIPANT_ID);
+				String selectedParticipantSecId = section.get(KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID);
 				if(selectedParticipantId != null) {
-					ISynchronizeParticipantReference selectedParticipant = manager.get(selectedParticipantId, null);
+					ISynchronizeParticipantReference selectedParticipant = manager.get(selectedParticipantId, selectedParticipantSecId);
 					if(selectedParticipant != null) {
 						participantToSelect = selectedParticipant;
 					}
