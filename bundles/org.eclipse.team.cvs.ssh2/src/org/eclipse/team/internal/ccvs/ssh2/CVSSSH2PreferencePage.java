@@ -909,9 +909,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	addHostKeyButton.setText(Policy.bind("CVSSSH2PreferencePage.137"));  //$NON-NLS-1$
 	gd = new GridData();
 	gd.horizontalAlignment = GridData.FILL;
-	gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	gd.widthHint = Math.max(widthHint, addHostKeyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addHostKeyButton.setLayoutData(gd);
 	addHostKeyButton.setEnabled(false);
 	addHostKeyButton.addListener(SWT.Selection, new Listener() {
@@ -923,9 +920,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	removeHostKeyButton.setText(Policy.bind("CVSSSH2PreferencePage.138"));  //$NON-NLS-1$
 	gd = new GridData();
 	gd.horizontalAlignment = GridData.FILL;
-	gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	gd.widthHint = Math.max(widthHint, addHostKeyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	removeHostKeyButton.setLayoutData(gd);
 	removeHostKeyButton.setEnabled(false);
 	removeHostKeyButton.addListener(SWT.Selection, new Listener() {
