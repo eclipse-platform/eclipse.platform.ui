@@ -16,7 +16,7 @@
     <import plugin="org.apache.xerces" version="4.0.7" match="equivalent"/>
   </requires>
 
-  <extension-point name="%applicationsName" id="applications"/>
-  <extension-point name="%handlersName" id="urlHandlers"/>
+  <extension-point name="%applicationsName" id="applications" schema="schema/applications.mxsd"/>
+  <extension-point name="%handlersName" id="urlHandlers" schema="schema/urlHandlers.mxsd"/>
 
 </plugin>
