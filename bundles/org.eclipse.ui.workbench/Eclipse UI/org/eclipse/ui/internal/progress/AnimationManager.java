@@ -386,7 +386,6 @@ public class AnimationManager {
 				public boolean shouldSchedule() {
 					return PlatformUI.isWorkbenchRunning();
 				}
-				
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 				 */
@@ -508,13 +507,17 @@ public class AnimationManager {
 	 */
 	public void toggleFloatingWindow() {
 		boolean detailsShowing = showingDetails();
-		AnimationItem[] animationItems = getAnimationItems();
-		for (int i = 0; i < animationItems.length; i++) {
-			AnimationItem item = animationItems[i];
-			if (detailsShowing)
-				item.closeFloatingWindow();
-			else
-				item.openFloatingWindow();
+		
+		//Only both with windows if there are any
+		if (animated) {
+			AnimationItem[] animationItems = getAnimationItems();
+			for (int i = 0; i < animationItems.length; i++) {
+				AnimationItem item = animationItems[i];
+				if (detailsShowing)
+					item.closeFloatingWindow();
+				else
+					item.openFloatingWindow();
+			}
 		}
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
 				IPreferenceConstants.SHOW_FLOATING_PROGRESS, !detailsShowing);
