@@ -730,7 +730,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			subMonitor = new SubProgressMonitor(monitor, 100);
 		} else {
 			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
-			while (build.length > 0) {
+			if (build.length == 1) {
 				boolean join= waitForBuild(build[0].getState(), buildBeforeLaunch);
 				if (join) {
 					try {
@@ -740,10 +740,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					} catch (InterruptedException e) {
 						throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIMessages.getString("DebugUIPlugin.15"), e)); //$NON-NLS-1$
 					}
+				}else {
+					subMonitor = monitor;
+					subMonitor.beginTask(message, 100);
 				}
-				build= Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD);
 			}
-			subMonitor.beginTask(message, 100);
 		}
 		return configuration.launch(mode, subMonitor);
 	}
