@@ -15,7 +15,7 @@ import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * <p>
- * This class allows clients to broker instances of <code>IRoleManager</code>. 
+ * This class allows clients to broker instances of <code>IRoleManager</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -32,9 +32,9 @@ public final class RoleManagerFactory {
 	/**
 	 * Creates a new instance of IRoleManager.
 	 * 
-	 * @return a new instance of IRoleManager. Clients should not make 
-	 *         assumptions about the concrete implementation outside the 
-	 *         contract of <code>IRoleManager</code>. Guaranteed not to be 
+	 * @return a new instance of IRoleManager. Clients should not make
+	 *         assumptions about the concrete implementation outside the
+	 *         contract of <code>IRoleManager</code>. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
 	public static IRoleManager getRoleManager() {
@@ -43,8 +43,8 @@ public final class RoleManagerFactory {
 
 	/**
 	 * Private constructor to ensure that <code>RoleManagerFactory</code> can
-	 * not be instantiated. 
-	 */	
-	private RoleManagerFactory() {		
+	 * not be instantiated.
+	 */
+	private RoleManagerFactory() {
 	}
 }

@@ -18,9 +18,9 @@ import java.util.Set;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleEvent;
 import org.eclipse.ui.roles.IRoleListener;
 import org.eclipse.ui.roles.NotDefinedException;
+import org.eclipse.ui.roles.RoleEvent;
 
 final class Role implements IRole {
 
@@ -170,7 +170,7 @@ final class Role implements IRole {
 		return string;		
 	}
 	
-	void fireRoleChanged(IRoleEvent roleEvent) {
+	void fireRoleChanged(RoleEvent roleEvent) {
 		if (roleEvent == null)
 			throw new NullPointerException();
 		

@@ -9,28 +9,56 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.roles;
 
-import org.eclipse.ui.roles.IRoleManager;
-import org.eclipse.ui.roles.IRoleManagerEvent;
-
-final class RoleManagerEvent implements IRoleManagerEvent {
+/**
+ * <p>
+ * An instance of <code>RoleManagerEvent</code> describes changes to an
+ * instance of <code>IRoleManager</code>.
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see IRoleManager
+ * @see IRoleManagerListener#roleManagerChanged
+ */
+public final class RoleManagerEvent {
 
 	private boolean definedRoleIdsChanged;
 	private IRoleManager roleManager;
-	
-	RoleManagerEvent(IRoleManager roleManager, boolean definedRoleIdsChanged) {
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param roleManager
+	 * @param definedRoleIdsChanged
+	 */
+	public RoleManagerEvent(IRoleManager roleManager, boolean definedRoleIdsChanged) {
 		if (roleManager == null)
 			throw new NullPointerException();
-		
+
 		this.roleManager = roleManager;
 		this.definedRoleIdsChanged = definedRoleIdsChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>IRoleManager</code> that has changed.
+	 * 
+	 * @return the instance of <code>IRoleManager</code> that has changed.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	public IRoleManager getRoleManager() {
 		return roleManager;
 	}
-	
+
+	/**
+	 * TODO javadoc
+	 */
 	public boolean haveDefinedRoleIdsChanged() {
 		return definedRoleIdsChanged;
 	}

@@ -13,9 +13,8 @@ package org.eclipse.ui.roles;
 
 /**
  * <p>
- * An instance of <code>IRoleManagerListener</code> can be used by clients 
- * to receive notification of changes to one or more instances of 
- * <code>IRoleManager</code>.
+ * An instance of <code>IRoleManagerListener</code> can be used by clients to
+ * receive notification of changes to one or more instances of <code>IRoleManager</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -27,17 +26,16 @@ package org.eclipse.ui.roles;
  * @since 3.0
  * @see IRoleManager#addRoleManagerListener
  * @see IRoleManager#removeRoleManagerListener
- * @see IRoleManagerEvent
+ * @see RoleManagerEvent
  */
 public interface IRoleManagerListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of 
-	 * <code>IRoleManager</code> have changed. Specific details are described in 
-	 * the <code>IRoleManagerEvent</code>.
-	 *
-	 * @param roleManagerEvent the role manager event. Guaranteed not to be 
-	 *                         <code>null</code>.
+	 * Notifies that one or more attributes of an instance of <code>IRoleManager</code>
+	 * have changed. Specific details are described in the <code>RoleManagerEvent</code>.
+	 * 
+	 * @param roleManagerEvent
+	 *            the role manager event. Guaranteed not to be <code>null</code>.
 	 */
-	void roleManagerChanged(IRoleManagerEvent roleManagerEvent);
+	void roleManagerChanged(RoleManagerEvent roleManagerEvent);
 }

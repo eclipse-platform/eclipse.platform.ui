@@ -13,5 +13,5 @@ package org.eclipse.ui.internal.roles;
 
 public interface IRoleRegistryListener {
 
-	void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent);
+	void roleRegistryChanged(RoleRegistryEvent roleRegistryEvent);
 }

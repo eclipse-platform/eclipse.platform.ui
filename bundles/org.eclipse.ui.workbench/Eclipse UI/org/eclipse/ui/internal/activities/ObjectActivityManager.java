@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,8 +22,10 @@ import java.util.Map.Entry;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
@@ -34,11 +37,25 @@ import org.eclipse.ui.roles.IRoleManager;
  * object registry based on the currently enabled activities.
  * 
  * This functionality is currently implemented by calculating the filtered set
- * only when activity changes dictate that the cache is invalid.  In a stable
- * system (one in which activities of interest are not enabling and disabling 
- * themselves with any great rate and in which new objects and bindings are not 
- * being added often) then this calculation should need to be performed 
- * infrequently. 
+ * only when activity changes dictate that the cache is invalid. In a stable
+ * system (one in which activities of interest are not enabling and disabling
+ * themselves with any great rate and in which new objects and bindings are not
+ * being added often) then this calculation should need to be performed
+ * infrequently.
+ * 
+ * Some behaviour of this class assumes that when an object is added to the
+ * cache the bindings will be added either immediately or shortly (after a
+ * batch of objects is added, for instance). It is not possible to reliably use
+ * this class with only a subset of activity bindings - the full set of
+ * bindings may be applied at any time based on certain activity changes.
+ * 
+ * This object will respond to changes in defined activities (required by
+ * dynamic plugin support). When a change event is provided by the activity
+ * manager this object will call <code>applyPatternBindings</code> to remove
+ * bindings to stale activities. This will <strong>NOT</strong> remove stale
+ * objects from the collection managed by this manager. Anyone who makes use of
+ * this system should monitor for plugin changes and update the objects in this
+ * manager as required.
  * 
  * @since 3.0
  */
@@ -55,7 +72,6 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 * 
 	 * @param id the unique ID of the manager that is being sought.
 	 * @param create force creation if the manager does not yet exist.
-	 * @return @since 3.0
 	 */
     public static ObjectActivityManager getManager(String id, boolean create) {
         ObjectActivityManager manager = (ObjectActivityManager) managersMap.get(id);
@@ -74,21 +90,37 @@ public class ObjectActivityManager implements IObjectActivityManager {
     private Collection activeObjects = new HashSet(17);
 
     /**
-     * Listener that is responsible for invalidating the cache on messages from 
-     * IActivity objects.
-     */
+	 * Listener that is responsible for invalidating the cache on messages from
+	 * <code>IActivity</code> objects.
+	 */
     private IActivityListener activityListener = new IActivityListener() {
-
         public void activityChanged(ActivityEvent activityEvent) {
             invalidateCache();
         }
-
     };
 
     /**
-     * The <code>IActivityManager</code> to which this manager is bound.
-     */
+	 * The <code>IMutableActivityManager</code> to which this manager is bound.
+	 */
     private IMutableActivityManager activityManager;
+
+    /**
+	 * The <code>IActivityManagerListener</code> that monitors for defined
+	 * activities entering/leaving the system. Any change will result in
+	 * recalculating the pattern bindings. It would be possible to selectivly
+	 * clear and re-apply bindings but it's probably more effort than it's
+	 * worth. Just clear and re-create them all.
+	 */
+    private IActivityManagerListener activityManagerListener = new IActivityManagerListener() {
+        public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+            if (activityManagerEvent.haveDefinedActivityIdsChanged()) {
+                // if the defined set has changed, then reapply all patterns
+				// and dirty the cache.
+                removePatternBindings();
+                applyPatternBindings();
+            }
+        }
+    };
 
     /**
 	 * Map of id-&gt;list&lt;activity&gt;.
@@ -112,21 +144,19 @@ public class ObjectActivityManager implements IObjectActivityManager {
     private Map objectMap = new HashMap();
 
     /**
-     * The <code>IRoleManager</code> to which this manager is bound.
-     */
+	 * The <code>IRoleManager</code> to which this manager is bound.
+	 */
     private IRoleManager roleManager;
 
     /**
-     * Create an instance with the given id that is bound to the provided 
-     * managers.
-     * 
-     * @param id the unique identifier for this  manager.
-     * @param activityManager the <code>IActivityManager</code> to bind to.
-     * @param roleManager the <code>IRoleManager</code> to bind to.
-     * @since 3.0
-     */
+	 * Create an instance with the given id that is bound to the provided
+	 * managers.
+	 * 
+	 * @param id the unique identifier for this manager.
+	 * @param activityManager the <code>IMutableActivityManager</code> to bind to.
+	 * @param roleManager the <code>IRoleManager</code> to bind to.
+	 */
     public ObjectActivityManager(String id, IMutableActivityManager activityManager, IRoleManager roleManager) {
-        super();
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -135,6 +165,8 @@ public class ObjectActivityManager implements IObjectActivityManager {
 
         this.activityManager = activityManager;
         this.roleManager = roleManager;
+
+        activityManager.addActivityManagerListener(activityManagerListener);
     }
 
     /*
@@ -156,8 +188,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
         Collection bindings = getActivityIdsFor(record, true);
         if (bindings.add(activityId)) {
             // if we havn't already bound this activity do so and invalidate
-			// the
-            // cache
+            // the cache
             activity.addActivityListener(activityListener);
             invalidateCache();
         }
@@ -194,22 +225,23 @@ public class ObjectActivityManager implements IObjectActivityManager {
     }
 
     /**
-     * Apply pattern bindings to a collection of objects within this manager.
-     * @param objectIds a collection containing 
-     * <code>IObjectContributionRecords</code>
-     * @since 3.0
-     */
+	 * Apply pattern bindings to a collection of objects within this manager.
+	 * 
+	 * @param objectIds a collection containing <code>IObjectContributionRecords</code>
+	 * @since 3.0
+	 */
     void applyPatternBindings(Collection objectIds) {
         Collection activities = activityManager.getDefinedActivityIds();
-        
+
         for (Iterator actItr = activities.iterator(); actItr.hasNext();) {
             IActivity activity = activityManager.getActivity((String) actItr.next());
-            
+
             for (Iterator objItr = objectIds.iterator(); objItr.hasNext();) {
                 IObjectContributionRecord objectId = (IObjectContributionRecord) objItr.next();
-            
-                if (activity.match(objectId.toString()))
+
+                if (activity.match(objectId.toString())) {
                     addActivityBinding(objectId, activity.getId());
+                }
             }
         }
     }
@@ -223,21 +255,20 @@ public class ObjectActivityManager implements IObjectActivityManager {
         applyPatternBindings(Collections.singleton(record));
     }
 
-    /**
-	 * Find the (first) ObjectContributionRecord that maps to the given object,
-	 * or null.
+    /*
+	 * (non-Javadoc)
 	 * 
-	 * @param objectOfInterest
-	 * @return ObjectContributionRecord or <code>null</code>
+	 * @see org.eclipse.ui.activities.IObjectActivityManager#findObjectContributionRecords(java.lang.Object)
 	 */
-    private IObjectContributionRecord findObjectContributionRecord(Object objectOfInterest) {
+    public Collection findObjectContributionRecords(Object objectOfInterest) {
+        ArrayList collection = new ArrayList();
         for (Iterator i = objectMap.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Entry) i.next();
             if (entry.getValue().equals(objectOfInterest)) {
-                return (IObjectContributionRecord) entry.getKey();
+                collection.add(entry.getKey());
             }
         }
-        return null;
+        return collection;
     }
 
     /*
@@ -281,9 +312,9 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 * Return the activity set for the given record, creating and inserting one
 	 * if requested.
 	 * 
-	 * @param record
-	 * @param create
-	 * @return Set
+	 * @param record the record to search for.
+	 * @param create create the activity set if none is found.
+	 * @return the set of activities bound to the given record.
 	 */
     private Set getActivityIdsFor(IObjectContributionRecord record, boolean create) {
         Set set = (Set) activityMap.get(record);
@@ -298,28 +329,49 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 * Get the unique identifier for this manager.
 	 * 
 	 * @return the unique identifier for this manager.
-	 * @since 3.0
 	 */
     public String getId() {
         return managerId;
     }
 
-    /**
-	 * Get the Set of ObjectContributionRecord keys from the object store. This
-	 * Set is read only.
+    /*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.eclipse.ui.activities.IObjectActivityManager#getObjectIds()
 	 */
-    Set getObjectIds() {
+    public Set getObjectIds() {
         return Collections.unmodifiableSet(objectMap.keySet());
     }
 
     /**
 	 * Mark the cache for recalculation.
 	 */
-    void invalidateCache() {
+    protected void invalidateCache() {
         synchronized (activeObjects) {
             dirty = true;
+        }
+    }
+
+    /**
+	 * Remove all activity bindings.
+	 */
+    protected void removePatternBindings() {
+        for (Iterator i = activityMap.values().iterator(); i.hasNext();) {
+            i.remove();
+        }
+        invalidateCache();
+    }
+
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.activities.IObjectActivityManager#removeObject(org.eclipse.ui.activities.IObjectContributionRecord)
+	 */
+    public void removeObject(IObjectContributionRecord record) {
+        synchronized (activeObjects) {
+            objectMap.remove(record);
+            activityMap.remove(record);
+            invalidateCache();
         }
     }
 
@@ -330,8 +382,9 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 *      boolean)
 	 */
     public void setEnablementFor(Object objectOfInterest, boolean enablement) {
-        IObjectContributionRecord record = findObjectContributionRecord(objectOfInterest);
-        if (record != null) {
+        Collection records = findObjectContributionRecords(objectOfInterest);
+        for (Iterator i = records.iterator(); i.hasNext();) {
+            IObjectContributionRecord record = (IObjectContributionRecord) i.next();
             Set activities = getActivityIdsFor(record, false);
             if (activities != null && activities.size() > 0) {
                 Set oldActivities = activityManager.getEnabledActivityIds();

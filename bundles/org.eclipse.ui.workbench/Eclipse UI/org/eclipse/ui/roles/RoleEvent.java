@@ -9,12 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.roles;
 
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleEvent;
-
-final class RoleEvent implements IRoleEvent {
+/**
+ * <p>
+ * An instance of <code>RoleEvent</code> describes changes to an instance of
+ * <code>IRole</code>. 
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see IRole
+ * @see IRoleListener#roleChanged
+ */
+public final class RoleEvent {
 
 	private boolean activityBindingsChanged;
 	private boolean definedChanged;
@@ -22,7 +35,16 @@ final class RoleEvent implements IRoleEvent {
 	private boolean nameChanged;
 	private IRole role;
 
-	RoleEvent(IRole role, boolean activityBindingsChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param role
+	 * @param activityBindingsChanged
+	 * @param definedChanged
+	 * @param descriptionChanged
+	 * @param nameChanged
+	 */
+	public RoleEvent(IRole role, boolean activityBindingsChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
 		if (role == null)
 			throw new NullPointerException();
 		
@@ -32,23 +54,41 @@ final class RoleEvent implements IRoleEvent {
 		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
 	}
-
+	
+	/**
+	 * Returns the instance of <code>IRole</code> that has changed.
+	 *
+	 * @return the instance of <code>IRole</code> that has changed. Guaranteed 
+	 *         not to be <code>null</code>.
+	 */
 	public IRole getRole() {
 		return role;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}	
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean haveActivityBindingsChanged() {
 		return activityBindingsChanged;
 	}

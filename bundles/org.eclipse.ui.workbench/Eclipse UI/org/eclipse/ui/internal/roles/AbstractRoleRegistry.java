@@ -17,7 +17,7 @@ import java.util.List;
 
 abstract class AbstractRoleRegistry implements IRoleRegistry {
 
-	private IRoleRegistryEvent roleRegistryEvent;
+	private RoleRegistryEvent roleRegistryEvent;
 	private List roleRegistryListeners;
 	
 	protected List activityBindingDefinitions = Collections.EMPTY_LIST;

@@ -26,10 +26,10 @@ import java.util.WeakHashMap;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleEvent;
 import org.eclipse.ui.roles.IRoleManager;
-import org.eclipse.ui.roles.IRoleManagerEvent;
 import org.eclipse.ui.roles.IRoleManagerListener;
+import org.eclipse.ui.roles.RoleEvent;
+import org.eclipse.ui.roles.RoleManagerEvent;
 
 public final class RoleManager implements IRoleManager {
 
@@ -52,7 +52,7 @@ public final class RoleManager implements IRoleManager {
 		this.roleRegistry = roleRegistry;	
 		
 		this.roleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
-			public void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent) {
+			public void roleRegistryChanged(RoleRegistryEvent roleRegistryEvent) {
 				readRegistry();
 			}
 		});
@@ -102,7 +102,7 @@ public final class RoleManager implements IRoleManager {
 		return rolesWithListeners;
 	}	
 
-	private void fireRoleManagerChanged(IRoleManagerEvent roleManagerEvent) {
+	private void fireRoleManagerChanged(RoleManagerEvent roleManagerEvent) {
 		if (roleManagerEvent == null)
 			throw new NullPointerException();
 		
@@ -115,7 +115,7 @@ public final class RoleManager implements IRoleManager {
 		for (Iterator iterator = roleEventsByRoleId.entrySet().iterator(); iterator.hasNext();) {	
 			Map.Entry entry = (Map.Entry) iterator.next();			
 			String roleId = (String) entry.getKey();
-			IRoleEvent roleEvent = (IRoleEvent) entry.getValue();
+			RoleEvent roleEvent = (RoleEvent) entry.getValue();
 			Role role = (Role) rolesById.get(roleId);
 			
 			if (role != null)
@@ -185,7 +185,7 @@ public final class RoleManager implements IRoleManager {
 			notifyRoles(roleEventsByRoleId);		
 	}
 
-	private IRoleEvent updateRole(Role role) {
+	private RoleEvent updateRole(Role role) {
 		Set activityBindings = (Set) activityBindingsByRoleId.get(role.getId());
 		boolean activityBindingsChanged = role.setActivityBindings(activityBindings != null ? activityBindings : Collections.EMPTY_SET);		
 		IRoleDefinition roleDefinition = (IRoleDefinition) roleDefinitionsById.get(role.getId());
@@ -207,7 +207,7 @@ public final class RoleManager implements IRoleManager {
 			Role role = (Role) rolesById.get(roleId);
 			
 			if (role != null) {
-				IRoleEvent roleEvent = updateRole(role);
+				RoleEvent roleEvent = updateRole(role);
 				
 				if (roleEvent != null)
 					roleEventsByRoleId.put(roleId, roleEvent);
