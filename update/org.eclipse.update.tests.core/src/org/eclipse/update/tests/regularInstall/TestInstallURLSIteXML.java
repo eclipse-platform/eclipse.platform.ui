@@ -65,6 +65,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
 		IFeature remoteFeature = getFeature1(remoteSite);
 		ISite localSite = SiteManager.getSite(new URL(TARGET_FILE_SITE, Site.SITE_XML));
+		remove(remoteFeature,localSite);
 		localSite.install(remoteFeature, null, null);
 
 		// verify
