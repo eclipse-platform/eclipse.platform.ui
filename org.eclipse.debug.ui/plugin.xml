@@ -1352,5 +1352,22 @@
             variableName="working_set">
       </component>
    </extension>
+   
+   <extension
+	     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
+	     <specification
+	      		annotationType="org.eclipse.debug.core.breakpoint"
+	            label="%BreakpointMarkerPreference.label"
+	            markerSeverity="0"
+	            markerType="org.eclipse.debug.core.breakpointMarker"
+	            textPreferenceKey="breakpointIndication"
+	            textPreferenceValue="false"
+	            overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
+	            overviewRulerPreferenceValue="true"
+	            colorPreferenceKey="breakpointIndicationColor"
+	            colorPreferenceValue="0,0,255"
+	            presentationLayer="3">
+	     </specification>
+	</extension>
 
 </plugin>
