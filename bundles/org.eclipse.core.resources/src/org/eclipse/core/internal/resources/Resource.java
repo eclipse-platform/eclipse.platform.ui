@@ -1084,11 +1084,15 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			switch (getType()) {
 				case IResource.FILE:
 					destination = workspace.getRoot().getFile(path);
+					if (isLinked())
+						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 					if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 						tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
 				case IResource.FOLDER:
 					destination = workspace.getRoot().getFolder(path);
+					if (isLinked())
+						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 					if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 						tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
