@@ -285,7 +285,7 @@ public class SubscriberResourceMappingContext extends ResourceMappingContext {
     private IResourceVariant validateRemote(IResource resource, SyncInfo syncInfo) throws CoreException {
         if (syncInfo == null) return null;
         IResourceVariant remote = syncInfo.getRemote();
-        if (syncInfo == null) return null;
+        if (remote == null) return null;
         boolean containerExpected = resource.getType() != IResource.FILE;
         if (remote.isContainer() && !containerExpected) {
             throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.RESOURCE_WRONG_TYPE, "Remote conterpart of {0} is a container" + resource.getFullPath().toString(), null));
