@@ -102,11 +102,15 @@ protected void firePropertyChange(final int propertyId) {
 	}
 }
 /**
- * The <code>WorkbenchPart</code> implementation of this <code>IAdaptable</code>
- * method returns <code>null</code>. Subclasses may reimplement.
+ * This implementation of the method declared by <code>IAdaptable</code>
+ * passes the request along to the platform's adapter manager; roughly
+ * <code>Platform.getAdapterManager().getAdapter(this, adapter)</code>.
+ * Subclasses may override this method (however, if they do so, they
+ * should invoke the method on their superclass to ensure that the
+ * Platform's adapter manager is consulted).
  */
-public Object getAdapter(Class key) {
-	return null;
+public Object getAdapter(Class adapter) {
+	return Platform.getAdapterManager().getAdapter(this, adapter);
 }
 /**
  * Returns the configuration element for this part. The configuration element
