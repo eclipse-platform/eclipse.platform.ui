@@ -91,6 +91,8 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	pathValueText.setText(resource.getFullPath().toString());
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+	gd.grabExcessHorizontalSpace = true;
+	gd.horizontalAlignment = gd.FILL;
 	pathValueText.setLayoutData(gd);
 	pathValueText.setFont(font);
 	
@@ -116,6 +118,8 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	locationValue.setText(getLocationText(resource));
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+	gd.grabExcessHorizontalSpace = true;
+	gd.horizontalAlignment = gd.FILL;
 	locationValue.setLayoutData(gd);
 	locationValue.setFont(font);
 	
