@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fragment
    id="org.eclipse.update.core.linux"
-   name="Install/Update Manager for Linux fragment"
+   name="%fragmentName"
    version="1.9.0"
    provider-name="International Busness Machine Corp."
    plugin-id="org.eclipse.update.core"
-   plugin-version="1.9.0"
-   match="perfect">
-
-   <runtime>
-   </runtime>
-
+   plugin-version="1.9.0">
 
 </fragment>
