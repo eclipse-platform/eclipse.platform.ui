@@ -142,7 +142,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * The provider for all task and attribute descriptions.
      */
-	private TaskDescriptionProvider descriptionProvider = new TaskDescriptionProvider();
+	private TaskDescriptionProvider descriptionProvider = TaskDescriptionProvider.getDefault();
 	private AntEditorSaxDefaultHandler lastDefaultHandler;
 	
 	private String errorMessage;
