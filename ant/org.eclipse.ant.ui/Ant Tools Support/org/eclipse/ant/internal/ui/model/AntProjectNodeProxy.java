@@ -62,7 +62,7 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		}
 		nodes = AntUtil.getTargets(buildFilePath.toString());
 		
-		if (nodes.length < 1) {
+		if (nodes == null || nodes.length < 1) {
 			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
 			setProblemMessage(AntModelMessages.getString("AntProjectNodeProxy.1")); //$NON-NLS-1$
 			return;

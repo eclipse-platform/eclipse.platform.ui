@@ -188,44 +188,41 @@ public final class AntUtil {
 	
 	public static AntTargetNode[] getTargets(String path, ILaunchConfiguration config) throws CoreException {
 		File buildfile= getBuildFile(path);
+		if (buildfile == null) {
+		    return null;
+		}
 		URL[] urls= getCustomClasspath(config);
 		//no lexical, no position, no task
 		IAntModel model= getAntModel(buildfile, urls, false, false, false);
-		AntProjectNode project= model.getProjectNode();
-		List targets= new ArrayList();
-		if (project.hasChildren()) {
-			Iterator possibleTargets= project.getChildNodes().iterator();
-			while (possibleTargets.hasNext()) {
-				AntElementNode node= (AntElementNode)possibleTargets.next();
-				if (node instanceof AntTargetNode) {
-					targets.add(node);
-				}
-			}
-		}
+		AntProjectNode project= model.getProjectNode(); //forces a reconcile
 		model.dispose();
-		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
+		return getTargets(project);
 	}
 	
-	public static AntTargetNode[] getTargets(String path) {
+	private static AntTargetNode[] getTargets(AntProjectNode project) {
+        if (project == null || !project.hasChildren()) {
+		    return null;
+		}
+		List targets= new ArrayList();
+		Iterator possibleTargets= project.getChildNodes().iterator();
+		while (possibleTargets.hasNext()) {
+			AntElementNode node= (AntElementNode)possibleTargets.next();
+			if (node instanceof AntTargetNode) {
+				targets.add(node);
+			}
+		}
+		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
+    }
+
+    public static AntTargetNode[] getTargets(String path) {
 		File buildfile= getBuildFile(path);
 		if (buildfile == null) {
-		    return new AntTargetNode[0];
+		    return null;
 		}
 		//tasks and position info but no lexical info
 		IAntModel model= getAntModel(buildfile, null, false, true, true);
 		AntProjectNode project= model.getProjectNode();
-		List targets= new ArrayList();
-		if (project != null && project.hasChildren()) {
-			Iterator possibleTargets= project.getChildNodes().iterator();
-			while (possibleTargets.hasNext()) {
-				AntElementNode node= (AntElementNode)possibleTargets.next();
-				if (node instanceof AntTargetNode) {
-					targets.add(node);
-				}
-			}
-		}
-		
-		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
+		return getTargets(project);
 	}
 	
 	public static IAntModel getAntModel(String buildFilePath, boolean needsLexicalResolution, boolean needsPositionResolution, boolean needsTaskResolution) {
