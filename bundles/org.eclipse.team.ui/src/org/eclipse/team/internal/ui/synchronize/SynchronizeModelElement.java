@@ -38,10 +38,15 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 	private int flags;
 	private ListenerList listeners;
 	
+	// Parent is required to ensure that busy (and other) state is cleared.
+	// This is needed as DiffContainer#remove() will null the parent
+	private SynchronizeModelElement parent;
+	
 	public SynchronizeModelElement(IDiffContainer parent) {
 		super(parent, SyncInfo.IN_SYNC);
+		internalSetParent(parent);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
@@ -63,6 +68,14 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 				listeners = null;
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.IDiffElement#setParent(org.eclipse.compare.structuremergeviewer.IDiffContainer)
+	 */
+	public void setParent(IDiffContainer parent) {
+		super.setParent(parent);
+		internalSetParent(parent);
 	}
 	
 	/**
@@ -119,7 +132,6 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 
 	private void addToRoot(String flag) {
 		setProperty(flag, true);
-		SynchronizeModelElement parent = (SynchronizeModelElement)getParent();
 		if (parent != null) {
 			if (parent.getProperty(flag)) return;
 			parent.addToRoot(flag);
@@ -182,7 +194,6 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 		boolean hasProperty = getProperty(flag);
 		if(hasProperty) {
 			setProperty(flag, false);
-			SynchronizeModelElement parent = (SynchronizeModelElement)getParent();
 			if (parent != null) {
 				// If the parent doesn't have the tag, no recalculation is required
 				// Also, if the parent still has a child with the tag, no recalculation is needed
@@ -191,6 +202,12 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 					parent.removeToRoot(flag);
 				}
 			}
+		}
+	}
+	
+	private void internalSetParent(IDiffContainer parent) {
+		if (parent != null && parent instanceof SynchronizeModelElement) {
+			this.parent = (SynchronizeModelElement)parent;
 		}
 	}
 }
