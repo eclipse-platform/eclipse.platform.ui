@@ -11,11 +11,9 @@
 
 package org.eclipse.ui.tests.api;
 
-import java.util.Arrays;
-
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.tests.util.ImageTests;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -43,7 +41,7 @@ public class EditorIconTest extends UITestCase {
 	                "foo.icontest1").getImageDescriptor().createImage();
 	        i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
 	                "icons/full/obj16/font.gif").createImage();
-	        compareImages(i1, i2);
+	        ImageTests.assertEquals(i1, i2);
         }
         finally {
         	if (i1 != null) {
@@ -64,7 +62,7 @@ public class EditorIconTest extends UITestCase {
 	        i2 = AbstractUIPlugin.imageDescriptorFromPlugin(
 	                "org.eclipse.jdt.ui", "icons/full/obj16/class_obj.gif")
 	                .createImage();
-	        compareImages(i1, i2);
+	        ImageTests.assertEquals(i1, i2);
         }
         finally {
         	if (i1 != null) {
@@ -85,7 +83,7 @@ public class EditorIconTest extends UITestCase {
 	                "foo.icontest3").getImageDescriptor().createImage();
 	        i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
 	                "icons/full/obj16/file_obj.gif").createImage();
-	        compareImages(i1, i2);
+	        ImageTests.assertEquals(i1, i2);
         }
         finally {
         	if (i1 != null) {
@@ -95,11 +93,5 @@ public class EditorIconTest extends UITestCase {
         		i2.dispose();
         	}
         }	        
-    }
-
-    private void compareImages(Image i1, Image i2) {
-        ImageData data1 = i1.getImageData();
-        ImageData data2 = i2.getImageData();
-        assertTrue(Arrays.equals(data1.data, data2.data));
     }
 }

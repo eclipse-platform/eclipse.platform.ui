@@ -1493,6 +1493,12 @@
             requiredActivityId="org.eclipse.activity7"
             activityId="org.eclipse.activity1">
       </activityRequirementBinding>
+      <activityImageBinding
+            icon="icons/anything.gif"
+            id="org.eclipse.activity1"/>
+      <categoryImageBinding
+            icon="icons/anything.gif"
+            id="org.eclipse.category1"/>
    </extension>
 
   <extension
