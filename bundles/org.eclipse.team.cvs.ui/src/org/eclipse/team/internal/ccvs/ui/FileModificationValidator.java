@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -142,6 +141,8 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			return OK;
 		} catch (InvocationTargetException e) {
 			return getStatus(e);
+		} catch (InterruptedException e) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
 		}
 	}
 
@@ -162,21 +163,9 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		return result[0];
 	}
 	
-	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException {
+	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		final InvocationTargetException[] exception = new InvocationTargetException[] { null };
-		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
-			public void open(Shell shell) {
-				try {
-					new ProgressMonitorDialog(shell).run(true /* fork */, true /* cancellable */, runnable);
-				} catch (InvocationTargetException e) {
-					exception[0] = e;
-				} catch (InterruptedException e) {
-					// do nothing
-				}
-			}
-		}, 0);
-		if (exception[0] != null)
-			throw exception[0];
+		CVSUIPlugin.runWithProgress(shell, false, runnable);
 	}
 	
 	private void edit(IFile[] files, IProgressMonitor monitor) throws CVSException {
