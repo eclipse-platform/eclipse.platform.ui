@@ -49,9 +49,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
-import org.eclipse.ui.externaltools.internal.ui.*;
 import org.eclipse.ui.externaltools.internal.ui.StatusDialog;
 import org.eclipse.ui.externaltools.internal.ui.StatusInfo;
+import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -61,6 +61,7 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class AddCustomDialog extends StatusDialog {
+	
 	private ZipFileStructureProvider providerCache;
 	private IImportStructureProvider currentProvider;
 	
@@ -68,12 +69,6 @@ public class AddCustomDialog extends StatusDialog {
 	private boolean entryChanged = false;
 
 	protected Combo sourceNameField;
-	
-	// dialog store id constants
-	private final static String STORE_SOURCE_NAMES_ID = "WizardZipFileImportPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$
-	private final static String STORE_IMPORT_ALL_RESOURCES_ID = "WizardZipFileImportPage1.STORE_IMPORT_ALL_ENTRIES_ID"; //$NON-NLS-1$
-	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
-	private final static String STORE_SELECTED_TYPES_ID = "WizardZipFileImportPage1.STORE_SELECTED_TYPES_ID"; //$NON-NLS-1$
 
 	private String title;
 	private String description;
@@ -457,9 +452,9 @@ public class AddCustomDialog extends StatusDialog {
 	 * Returns a structure provider for the specified zip file.
 	 */
 	protected ZipFileStructureProvider getStructureProvider(ZipFile targetZip) {
-		if (providerCache == null)
+		if (providerCache == null) {
 			providerCache = new ZipFileStructureProvider(targetZip);
-		else if (!providerCache.getZipFile().getName().equals(targetZip.getName())) {
+		} else if (!providerCache.getZipFile().getName().equals(targetZip.getName())) {
 			clearProviderCache();
 			// ie.- new value, so finalize & remove old value
 			providerCache = new ZipFileStructureProvider(targetZip);
