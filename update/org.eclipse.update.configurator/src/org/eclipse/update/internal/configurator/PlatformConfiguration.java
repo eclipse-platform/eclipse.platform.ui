@@ -21,7 +21,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
-import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.update.configurator.*;
@@ -747,7 +746,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 		URL siteURL = null;
 		try {
-			siteURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
+			siteURL = new URL("platform:/base/"); //$NON-NLS-1$  // try using platform-relative URL
 		} catch (MalformedURLException e) {
 			siteURL = getInstallURL(); // ensure we come up ... use absolute file URL
 		}
@@ -1066,7 +1065,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		String protocol = url.getProtocol();
 		if (protocol.equals("file")) //$NON-NLS-1$
 			return true;
-		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
+		else if (protocol.equals("platform")) {
 			URL resolved = null;
 			try {
 				resolved = resolvePlatformURL(url); // 19536
@@ -1083,7 +1082,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		String path = null;
 		if (protocol.equals("file")) //$NON-NLS-1$
 			path = url.getFile();
-		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
+		else if (protocol.equals("platform")) { // $NON-NLS-1$
 			URL resolved = null;
 			try {
 				resolved = resolvePlatformURL(url); // 19536
@@ -1103,23 +1102,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	public static URL resolvePlatformURL(URL url) throws IOException {
 		// 19536
-		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
-			URLConnection connection = url.openConnection();
-			if (connection instanceof PlatformURLConnection) {
-				url = ((PlatformURLConnection) connection).getResolvedURL();
-				// TODO URL resolution by platform returns url file:d:/path as opposed to file:/d:/path
-				File f = new File(url.getFile());
-				url = f.toURL();
-			} else {
-				//				connection = new PlatformURLBaseConnection(url);
-				//				url = ((PlatformURLConnection)connection).getResolvedURL();
-				url = getInstallURL();
-			}
+		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$;
+			url = Platform.asLocalURL(url);
+			// TODO URL resolution by platform returns url file:d:/path as opposed to file:/d:/path
+			File f = new File(url.getFile());
+			url = f.toURL();
 		}
 		return url;
 	}
-
-
+	
 	public static URL getInstallURL() {
 		return installURL;
 	}

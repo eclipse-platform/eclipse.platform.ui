@@ -15,7 +15,6 @@ import java.net.*;
 import java.util.*;
 import javax.xml.parsers.*;
 
-import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -316,7 +315,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	
 	private boolean isValidSite(URL url) {
 		URL resolvedURL=  url;
-		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
+		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$
 			try {
 				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
 			} catch (IOException e) {

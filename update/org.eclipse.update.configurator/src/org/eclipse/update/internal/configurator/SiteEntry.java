@@ -15,7 +15,6 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
-import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.configurator.IPlatformConfiguration.*;
@@ -47,7 +46,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	public SiteEntry(URL url, ISitePolicy policy) {
 		if (url == null)
 			try {
-				url = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
+				url = new URL("platform:/base/"); //$NON-NLS-1$ try using platform-relative URL
 			} catch (MalformedURLException e) {
 				url = PlatformConfiguration.getInstallURL(); // ensure we come up ... use absolute file URL
 			}
@@ -67,7 +66,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		this.policy = policy;
 		this.resolvedURL = this.url;
-		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
+		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$
 			try {
 				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
 			} catch (IOException e) {

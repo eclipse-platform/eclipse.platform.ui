@@ -92,7 +92,7 @@ public class Utils {
 	 */
 	public static URL asPlatformURL(URL url) {
 		try {
-			URL platformURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
+			URL platformURL = new URL("platform:/base/"); //$NON-NLS-1$  // try using platform-relative URL
 			URL resolvedPlatformURL = Platform.asLocalURL(platformURL);
 			// TODO workaround bug in platform url resolution
 			if (resolvedPlatformURL.getProtocol().equals("file")) //$NON-NLS-1$
