@@ -78,16 +78,28 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public class EditionSelectionDialog extends Dialog {
 	
+	/**
+	 * An item in an underlying edition.
+	 */
 	private static class Pair {
 		
 		private ITypedElement fEdition;
 		private ITypedElement fItem;
 		private String fContent;
+		private IStructureCreator fStructureCreator;
 				
-		Pair(ITypedElement edition, ITypedElement item, String content) {
+		Pair(ITypedElement edition, ITypedElement item, IStructureCreator structureCreator) {
 			fEdition= edition;
 			fItem= item;
-			fContent= content;
+			fStructureCreator= structureCreator;
+		}
+		
+		Pair(ITypedElement edition, ITypedElement item) {
+			this(edition, item, null);
+		}
+		
+		Pair(ITypedElement edition) {
+			this(edition, edition, null);
 		}
 		
 		ITypedElement getEdition() {
@@ -97,11 +109,37 @@ public class EditionSelectionDialog extends Dialog {
 		ITypedElement getItem() {
 			return fItem;
 		}
-						
+		
+		/**
+		 * The content is lazily loaded
+		 */
+		private String getContent() {
+			if (fContent == null) {
+				if (fStructureCreator != null)
+					fContent= fStructureCreator.getContents(fItem, false);
+				else {
+					if (fItem instanceof IStreamContentAccessor) {
+						IStreamContentAccessor sca= (IStreamContentAccessor) fItem;
+						try {
+							InputStream is= sca.getContents();
+							if (is != null)
+								fContent= Utilities.readString(is);
+						} catch (CoreException ex) {
+						}
+					}
+				}
+				if (fContent == null)
+					fContent= "";
+			}
+			return fContent;
+		}
+		
+		/**
+		 * Compares content of item.
+		 */
 		public boolean equals(Object other) {
 			if (other != null && other.getClass() == getClass()) {
-				String otherContent= ((Pair)other).fContent;
-				if (otherContent != null && fContent != null && fContent.equals(otherContent))
+				if (getContent().equals(((Pair)other).getContent()))
 					return true;
 			}
 			return super.equals(other);
@@ -188,23 +226,7 @@ public class EditionSelectionDialog extends Dialog {
 		if (id != null)
 			fTimeImage= id.createImage();
 	}
-	
-	private String getContent(ITypedElement e) {
-		String content= null;
-		if (e instanceof IStreamContentAccessor) {
-			IStreamContentAccessor sca= (IStreamContentAccessor) e;
-			try {
-				InputStream is= sca.getContents();
-				if (is != null)
-					content= Utilities.readString(is);
-			} catch (CoreException ex) {
-			}
-		}
-		if (content == null)
-			content= "";
-		return content;
-	}
-	
+		
 	/**
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
@@ -219,7 +241,7 @@ public class EditionSelectionDialog extends Dialog {
 	public ITypedElement selectEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		
 		Assert.isNotNull(target);
-		fTargetPair= new Pair(target, target, getContent(target));
+		fTargetPair= new Pair(target);
 
 		// sort input editions
 		final int count= inputEditions.length;
@@ -242,11 +264,10 @@ public class EditionSelectionDialog extends Dialog {
 			
 			if (structureCreator != null) {
 				Object item= structureCreator.locate(ppath, target);
-				if (item instanceof ITypedElement) {
-					ITypedElement targetItem= (ITypedElement) item;
-					fTargetPair= new Pair(target, targetItem, structureCreator.getContents(targetItem, false));
-				} else
-					ppath= null;	// couldn't extract item
+				if (item instanceof ITypedElement)
+					fTargetPair= new Pair(target, (ITypedElement) item, structureCreator);
+				else
+					ppath= null;	// couldn't extract item because of error
 			}
 			
 			// set the left and right labels for the compare viewer
@@ -274,11 +295,9 @@ public class EditionSelectionDialog extends Dialog {
 							ITypedElement edition= (ITypedElement) editions[i];
 							
 							// extract sub element from edition
-							Object r= sc.locate(path, edition);
-							if (r instanceof ITypedElement) {	// if not empty
-								ITypedElement item= (ITypedElement) r;
-								sendPair(new Pair(edition, item, sc.getContents(item, false)));
-							}
+							Object item= sc.locate(path, edition);
+							if (item instanceof ITypedElement)	// if not empty
+								sendPair(new Pair(edition, (ITypedElement) item, sc));
 						}
 						sendPair(null);
 					}
@@ -288,10 +307,8 @@ public class EditionSelectionDialog extends Dialog {
 				create();
 				
 				// from front (newest) to back (oldest)
-				for (int i= 0; i < count; i++) {
-					ITypedElement te= (ITypedElement) editions[i];
-					addMemberEdition(new Pair(te, te, getContent(te)));
-				}
+				for (int i= 0; i < count; i++)
+					addMemberEdition(new Pair((ITypedElement) editions[i]));
 			}
 			
 		} else {
@@ -334,7 +351,7 @@ public class EditionSelectionDialog extends Dialog {
 								for (int i2= 0; i2 < children.length; i2++) {
 									ITypedElement child= (ITypedElement) children[i2];
 									if (!current.contains(child))
-										sendPair(new Pair(edition, child, sc.getContents(child, false)));
+										sendPair(new Pair(edition, child, sc));
 								}
 							}
 						}
@@ -573,7 +590,7 @@ public class EditionSelectionDialog extends Dialog {
 	}
 	
 	/**
-	 * Adds the given Pair to 
+	 * Adds the given Pair to the member editions.
 	 * If HIDE_IDENTICAL is true the new Pair is only added if its contents
 	 * is different from the preceeding Pair.
 	 * If the argument is <code>null</code> the message "No Editions found" is shown
@@ -683,7 +700,7 @@ public class EditionSelectionDialog extends Dialog {
 		TreeItem ti= new TreeItem(lastDay, SWT.NONE);
 		ti.setImage(fTimeImage);
 		ti.setText(DateFormat.getTimeInstance().format(date));
-		ti.setData(new Pair(edition, item, null));
+		ti.setData(new Pair(edition, item));
 		if (first) {
 			fEditionTree.setSelection(new TreeItem[] {ti});
 			if (fReplaceMode)
