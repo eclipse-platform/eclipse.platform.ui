@@ -51,7 +51,7 @@
 
 		<action id="gotoLastEditPosition"
 			definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-			toolbarPath="org.eclipse.ui.workbench.navigate/history.group/Navigate"	
+			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"	
 			menubarPath="navigate/"
 			label="%goToLastEditPosition.label"
 			tooltip="%goToLastEditPosition.tooltip"
