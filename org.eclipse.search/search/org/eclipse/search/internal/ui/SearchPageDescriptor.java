@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -255,15 +256,18 @@ class SearchPageDescriptor implements Comparable {
 	 * Returns the score for this page with the given input element.
 	 */
 	public int computeScore(Object element) {
-		if (element instanceof IFile) {
-			String extension= ((IFile)element).getFileExtension();
-			if (extension != null)
-				return getScoreForFileExtension(extension);
-		} else if (element instanceof IAdaptable) {
-			ISearchPageScoreComputer tester= 
-				(ISearchPageScoreComputer)((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
-			if (tester != null)
-				return tester.computeScore(getId(), element);	
+		if (element instanceof IAdaptable) {
+			IResource resource= (IResource)((IAdaptable)element).getAdapter(IResource.class);
+			if (resource != null && resource.getType() == IResource.FILE) {
+				String extension= ((IFile)resource).getFileExtension();
+				if (extension != null)
+					return getScoreForFileExtension(extension);
+			} else {
+				ISearchPageScoreComputer tester= 
+					(ISearchPageScoreComputer)((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
+				if (tester != null)
+					return tester.computeScore(getId(), element);	
+			}
 		} else if (element instanceof ISearchResultViewEntry) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)element;
 			return computeScore(entry.getSelectedMarker());
