@@ -5,9 +5,20 @@ package org.eclipse.debug.core.model;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
  * Abstract implementation of a breakpoint. This class is
@@ -51,7 +62,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled != isEnabled()) {
-			getMarker().setAttribute(ENABLED, enabled);
+			setAttribute(ENABLED, enabled);
 		}
 	}
 	
@@ -74,7 +85,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public void setRegistered(boolean registered) throws CoreException {
 		if (isRegistered() != registered) {
-			getMarker().setAttribute(REGISTERED, registered);
+			setAttribute(REGISTERED, registered);
 		}
 	}	
 
@@ -111,9 +122,72 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public void setPersisted(boolean persisted) throws CoreException {
 		if (isPersisted() != persisted) {
-			getMarker().setAttribute(PERSISTED, persisted);
+			setAttribute(PERSISTED, persisted);
 		}
 	}
+	
+	protected void setAttribute(final String attributeName, final boolean value) throws CoreException {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ensureMarker().setAttribute(attributeName, value);
+				}
+			};
+			
+		workspace.run(runnable, null);
+	}
+	
+	protected void setAttribute(final String attributeName, final int value) throws CoreException {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ensureMarker().setAttribute(attributeName, value);
+				}
+			};
+			
+		workspace.run(runnable, null);
+	}
 
+	protected void setAttribute(final String attributeName, final Object value) throws CoreException {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ensureMarker().setAttribute(attributeName, value);
+				}
+			};
+			
+		workspace.run(runnable, null);
+	}
+
+	protected void setAttributes(final String[] attributeNames, final Object[] values) throws CoreException {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ensureMarker().setAttributes(attributeNames, values);
+				}
+			};
+			
+		workspace.run(runnable, null);
+	}
+
+	protected void setAttributes(final Map attributes) throws CoreException{
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ensureMarker().setAttributes(attributes);
+				}
+			};
+			
+		workspace.run(runnable, null);
+	}
+
+	protected IMarker ensureMarker() throws DebugException {
+		IMarker m = getMarker();
+		if (m == null || !m.exists()) {
+			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED,
+				DebugCoreMessages.getString("Breakpoint.no_associated_marker"), null)); //$NON-NLS-1$
+		}
+		return m;
+	}
 }
 
