@@ -186,9 +186,16 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			public void modifyText(ModifyEvent e) {
 				// Parse the timeout value
 				try {
-					Integer.parseInt(timeoutValue.getText());
-					setValid(true);
+					int x = Integer.parseInt(timeoutValue.getText());
+					if (x >= 0) {
+						setErrorMessage(null);
+						setValid(true);
+					} else {
+						setErrorMessage(Policy.bind("CVSPreferencesPage.Timeout_must_not_be_negative_1")); //$NON-NLS-1$
+						setValid(false);
+					}
 				} catch (NumberFormatException ex) {
+					setErrorMessage(Policy.bind("CVSPreferencesPage.Timeout_must_be_a_number_2")); //$NON-NLS-1$
 					setValid(false);
 				}
 			}
