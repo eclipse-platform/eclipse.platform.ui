@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.model.SiteLocalModel;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
@@ -137,6 +138,10 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(adapterFactory, UIModelObject.class);
 		database = new AuthorizationDatabase();
 		Authenticator.setDefault(database);
+		int historyPref = getPluginPreferences().getInt(MainPreferencePage.P_HISTORY_SIZE);
+		if(historyPref>0){
+			SiteLocalModel.DEFAULT_HISTORY= historyPref;
+		}
 	}
 
 	public void shutdown() throws CoreException {
@@ -313,7 +318,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	 * @param store the preference store to fill
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(MainPreferencePage.P_HISTORY_SIZE, 10);
+		store.setDefault(MainPreferencePage.P_HISTORY_SIZE, 50);
 		store.setDefault(
 			MainPreferencePage.P_BROWSER,
 			MainPreferencePage.EMBEDDED_VALUE);

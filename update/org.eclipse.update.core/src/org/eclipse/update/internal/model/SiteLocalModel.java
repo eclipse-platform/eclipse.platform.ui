@@ -27,7 +27,7 @@ public class SiteLocalModel extends ModelObject {
 	public static final String SITE_LOCAL_FILE = "LocalSite.xml"; //$NON-NLS-1$
 	public static final String DEFAULT_CONFIG_FILE = "Config.xml"; //$NON-NLS-1$
 	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml"; //$NON-NLS-1$
-	public static final int DEFAULT_HISTORY = 5;	
+	public static int DEFAULT_HISTORY = Integer.MAX_VALUE;	
 
 
 	private long stamp;
@@ -141,7 +141,7 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	public void setMaximumHistoryCount(int history) {
 		assertIsWriteable();
-		this.history = history;
+		// this.history = history;
 	}
 
 	
