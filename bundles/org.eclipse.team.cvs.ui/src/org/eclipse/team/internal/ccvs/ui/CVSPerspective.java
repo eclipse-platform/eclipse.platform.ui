@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 
 import org.eclipse.team.internal.ccvs.ui.repo.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
 
 public class CVSPerspective implements IPerspectiveFactory {
@@ -27,7 +28,6 @@ public class CVSPerspective implements IPerspectiveFactory {
 	/**
 	 * Defines the initial actions for a page.  
 	 */
-
 	public void defineActions(IPageLayout layout) {
 
 		// Add "new wizards".
@@ -41,6 +41,11 @@ public class CVSPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(HistoryView.VIEW_ID);
 		layout.addShowViewShortcut(RepositoriesView.VIEW_ID);
+		layout.addShowViewShortcut(ISynchronizeView.VIEW_ID);
+		
+		// Add  "perspective short cut"
+		layout.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
+		layout.addPerspectiveShortcut("org.eclipse.team.ui.TeamSynchronizingPerspective"); //$NON-NLS-1$
 	}
 
 	/**

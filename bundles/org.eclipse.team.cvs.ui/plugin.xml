@@ -810,6 +810,30 @@
                relationship="stack">
          </view>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.team.cvs.ui.cvsPerspective">
+         </perspectiveShortcut>
+         <view
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false"
+               id="org.eclipse.team.ccvs.ui.console"
+               relationship="stack">
+         </view>
+         <view
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false"
+               id="org.eclipse.team.ccvs.ui.HistoryView"
+               relationship="stack">
+         </view>
+         <view
+               relative="org.eclipse.ui.views.ResourceNavigator"
+               visible="false"
+               id="org.eclipse.team.ccvs.ui.RepositoriesView"
+               relationship="stack">
+         </view>
+       </perspectiveExtension>
    </extension>
 <!-- ********** Action Sets ************** -->
    <extension
