@@ -394,8 +394,8 @@ public IEditorDescriptor[] getSortedEditorsFromPlugins() {
  * this type. Null if none can be found.
  */
 public ImageDescriptor getSystemEditorImageDescriptor(String filename) {
-	int extensionIndex = filename.indexOf('.');
 	Program externalProgram = null;
+	int extensionIndex = filename.lastIndexOf('.');
 	if (extensionIndex >= 0)
 		externalProgram = Program.findProgram(filename.substring(extensionIndex));
 	if (externalProgram == null)
