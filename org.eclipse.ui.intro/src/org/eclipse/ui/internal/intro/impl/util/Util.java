@@ -169,7 +169,7 @@ public class Util {
     }
 
     public static void highlight(Control control, int color) {
-        //control.setBackground(control.getDisplay().getSystemColor(color));
+        control.setBackground(control.getDisplay().getSystemColor(color));
     }
 
     /**

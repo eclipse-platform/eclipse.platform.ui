@@ -113,12 +113,13 @@ public abstract class AbstractIntroElement {
      * Type constant which identifies the AbstractCommonIntroElement element.
      */
     public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
-            | CONTAINER_EXTENSION | PAGE_TITLE | IMAGE | PRESENTATION | TEXT;
+            | CONTAINER_EXTENSION | IMAGE | TEXT | PAGE_TITLE;
 
     /**
      * Type constant which identifies any element in the Intro Model.
      */
-    public static final int ELEMENT = BASE_ELEMENT | HEAD | INCLUDE;
+    public static final int ELEMENT = BASE_ELEMENT | HEAD | INCLUDE
+            | PRESENTATION;
 
 
     private AbstractIntroElement parent;
@@ -255,7 +256,7 @@ public abstract class AbstractIntroElement {
      * <p>
      * <code>
      *  	int elementMask = IntroElement.ABSTRACT_CONTAINER;
-     * 		int elementMask = IntroElement.DIV | IntroElement.LINK;
+     * 		int elementMask = IntroElement.DIV | IntroElement.DEFAULT_LINK;
      * </code>
      * 
      * @param elementMask
@@ -274,7 +275,7 @@ public abstract class AbstractIntroElement {
      * An example of an element mask is as follows:
      * <p>
      * <code>
-     * int elementMask = IntroElement.DIV | IntroElement.LINK;
+     * int elementMask = IntroElement.DIV | IntroElement.DEFAULT_LINK;
      * </code>
      * 
      * @return <code>true</code> if all elements are of the right type, and

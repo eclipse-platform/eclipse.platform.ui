@@ -77,190 +77,96 @@ public class CategoryForm implements IIntroConstants {
             FormStyleManager sharedStyleManager) {
         this.categoryPageBook = categoryPageBook;
         // first, create a page style manager from shared style manager
-        // because we only need it for the UI navigation composite.
-        this.styleManager = new FormStyleManager(model.getCurrentPage(),
-                sharedStyleManager.getProperties());
+        // because we need it for the UI navigation composite.
+        AbstractIntroPage page = model.getCurrentPage();
+        styleManager = new FormStyleManager(page, sharedStyleManager
+                .getProperties());
         String pageId = model.getCurrentPageId();
-        AbstractIntroPage currentPage = model.getCurrentPage();
+
+        // categoriesComposite has Table Layout with one col. Holds page
+        // description and composite with all otehr children.
         Composite categoriesComposite = categoryPageBook.createPage(pageId);
-        // this is where we set the Table Layout.
-        Util.highlight(categoriesComposite, SWT.COLOR_GREEN);
+        //Util.highlight(categoriesComposite, SWT.COLOR_GREEN);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 15;
-        layout.verticalSpacing = 15;
         layout.leftMargin = 15;
         layout.rightMargin = 15;
         layout.bottomMargin = 15;
+        layout.verticalSpacing = 15;
         categoriesComposite.setLayout(layout);
-        if (currentPage.getText() != null) {
-            Label label = toolkit.createLabel(categoriesComposite, currentPage
+        if (page.getText() != null) {
+            Label label = toolkit.createLabel(categoriesComposite, page
                     .getText(), SWT.WRAP);
             label.setFont(DEFAULT_FONT);
             TableWrapData td = new TableWrapData();
             td.align = TableWrapData.FILL;
             label.setLayoutData(td);
         }
-        // DONOW: revisit.for now, just make code work.
-        AbstractIntroElement[] children = currentPage.getChildren();
-        boolean hasDivs = currentPage
-                .getChildrenOfType(AbstractIntroElement.DIV).length != 0 ? true
-                : false;
-        boolean hasLinks = currentPage
-                .getChildrenOfType(AbstractIntroElement.LINK).length != 0 ? true
-                : false;
-        if (hasDivs) {
-            String layoutStyle = getLayoutStyle(currentPage);
-            if (layoutStyle.equals("columns")) { //$NON-NLS-1$
-                createCategoryColumns(categoriesComposite, currentPage,
-                        getShowLinkDescription(currentPage),
-                        getVerticalLinkSpacing(currentPage));
-            } else if (layoutStyle.equals("table")) { //$NON-NLS-1$
-                createCategoryTable(categoriesComposite, currentPage,
-                        getNumberOfColumns(currentPage),
-                        getShowLinkDescription(currentPage),
-                        getVerticalLinkSpacing(currentPage));
-            }
-        }
-        if (hasLinks) {
-            Control c = createCategory(categoriesComposite, null, null,
-                    currentPage.getLinks(), getNumberOfColumns(currentPage),
-                    getShowLinkDescription(currentPage),
-                    getVerticalLinkSpacing(currentPage));
-            TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                    TableWrapData.TOP);
-            td.grabHorizontal = true;
-            c.setLayoutData(td);
-        }
+
+        createPageChildren(page, categoriesComposite);
 
         // Clear memory. No need for style manager any more.
         sharedStyleManager = null;
     }
 
-    private String getLayoutStyle(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout"; //$NON-NLS-1$ //$NON-NLS-2$
-        String value = styleManager.getProperty(key);
-        if (value == null)
-            value = "table"; //$NON-NLS-1$
-        return value;
+    private void createPageChildren(AbstractIntroPage page, Composite parent) {
+        // setup page composite/layout
+        Composite pageComposite = createPageTableComposite(page, parent);
+        // now add all children
+        AbstractIntroElement[] children = page.getChildren();
+        for (int i = 0; i < children.length; i++)
+            createIntroElement(children[i], pageComposite);
     }
 
-    private int getNumberOfColumns(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
-        int ncolumns = 0;
-        String value = styleManager.getProperty(key);
-        try {
-            ncolumns = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
+    private void createIntroElement(AbstractIntroElement element,
+            Composite parent) {
+        switch (element.getType()) {
+        case AbstractIntroElement.DIV:
+            // DONOW:
+            IntroDiv group = (IntroDiv) element;
+            if (AbstractIntroPage.isFilteredDiv(group))
+                break;
+            Control c = createGroup(group, parent);
+            updateLayoutData(c);
+            // c must be a composite.
+            Composite newParent = (Composite) c;
+            if (c instanceof Section)
+                // client is a composite also.
+                newParent = (Composite) ((Section) newParent).getClient();
+            AbstractIntroElement[] children = group.getChildren();
+            for (int i = 0; i < children.length; i++)
+                createIntroElement(children[i], newParent);
+            break;
+        case AbstractIntroElement.LINK:
+            IntroLink link = (IntroLink) element;
+            c = createImageHyperlink(parent, link);
+            updateLayoutData(c);
+            break;
+        case AbstractIntroElement.TEXT:
+
+            break;
+
+        default:
+            break;
         }
-        return ncolumns;
     }
 
-    private int getNumberOfColumns(AbstractIntroPage page, IntroDiv category) {
-        String key = "page." + page.getId() + "." + category.getId() //$NON-NLS-1$ //$NON-NLS-2$
-                + ".layout.ncolumns"; //$NON-NLS-1$
-        int ncolumns = 1;
-        String value = styleManager.getProperty(key);
-        try {
-            ncolumns = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-        }
-        return ncolumns;
-    }
-
-    private boolean getShowLinkDescription(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.link-description"; //$NON-NLS-1$ //$NON-NLS-2$
-        String value = styleManager.getProperty(key);
-        if (value == null)
-            value = "false"; //$NON-NLS-1$
-        return value.toLowerCase().equals("true"); //$NON-NLS-1$
-    }
-
-    private int getVerticalLinkSpacing(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.link-vspacing"; //$NON-NLS-1$ //$NON-NLS-2$
-        int vspacing = 5;
-        String value = styleManager.getProperty(key);
-        try {
-            vspacing = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-        }
-        return vspacing;
-    }
-
-    private void createCategoryColumns(Composite parent,
-            AbstractIntroPage page, boolean showLinkDescription, int vspacing) {
-        Composite client = toolkit.createComposite(parent);
-        ColumnLayout layout = new ColumnLayout();
-        layout.topMargin = 0;
-        layout.bottomMargin = 0;
-        layout.leftMargin = 0;
-        layout.rightMargin = 0;
-        client.setLayout(layout);
-        TableWrapData td = new TableWrapData();
-        td.align = TableWrapData.FILL;
+    private void updateLayoutData(Control c) {
+        if (c instanceof Hyperlink)
+            return;
+        TableWrapData td = new TableWrapData(TableWrapData.FILL,
+                TableWrapData.TOP);
         td.grabHorizontal = true;
-        client.setLayoutData(td);
-        // DONOW: revisit.
-        IntroDiv[] divs = (IntroDiv[]) page.getDivs();
-        for (int i = 0; i < divs.length; i++) {
-            IntroDiv div = divs[i];
-            Control ccontrol = createCategory(client, div.getLabel(), div
-                    .getText(), div.getLinks(), 1, showLinkDescription,
-                    vspacing);
-        }
-
+        c.setLayoutData(td);
     }
 
-    private void createCategoryTable(Composite parent, AbstractIntroPage page,
-            int ncolumns, boolean showLinkDescription, int vspacing) {
-        Composite client = toolkit.createComposite(parent);
-        TableWrapLayout layout = new TableWrapLayout();
-        layout.topMargin = 0;
-        layout.bottomMargin = 0;
-        layout.leftMargin = 0;
-        layout.rightMargin = 0;
-        // DONOW: revisit:
-        IntroDiv[] divs = (IntroDiv[]) page.getDivs();
-        layout.numColumns = ncolumns == 0 ? divs.length : ncolumns;
-        client.setLayout(layout);
-        TableWrapData td = new TableWrapData();
-        td.align = TableWrapData.FILL;
-        td.grabHorizontal = true;
-        client.setLayoutData(td);
-        for (int i = 0; i < divs.length; i++) {
-            IntroDiv div = divs[i];
-            createCategory(parent, page, div, showLinkDescription, vspacing);
-        }
-    }
-
-    private void createCategory(Composite parent, AbstractIntroPage page,
-            IntroDiv div, boolean showLinkDescription, int vspacing) {
-
-        // show all links first.
-        Composite ccontrol = createCategory(parent, div.getLabel(), div
-                .getText(), div.getLinks(), getNumberOfColumns(page, div),
-                showLinkDescription, vspacing);
-        if (ccontrol != null) {
-            TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                    TableWrapData.TOP);
-            td.grabHorizontal = true;
-            ccontrol.setLayoutData(td);
-        }
-
-        // now show all child divs.
-        IntroDiv[] childDivs = (IntroDiv[]) div
-                .getChildrenOfType(AbstractIntroElement.DIV);
-
-        for (int i = 0; i < childDivs.length; i++) {
-            IntroDiv aDiv = childDivs[i];
-            createCategory(ccontrol, page, aDiv, showLinkDescription, vspacing);
-        }
-
-    }
-
-    private Composite createCategory(Composite parent, String label,
-            String description, IntroLink[] links, int ncolumns,
-            boolean showLinkDescription, int vspacing) {
-
+    private Composite createGroup(IntroDiv group, Composite parent) {
+        String label = group.getLabel();
+        String description = group.getText();
+        int numColumns = styleManager.getNumberOfColumns(group);
+        numColumns = numColumns < 1 ? 1 : numColumns;
+        int vspacing = styleManager.getVerticalLinkSpacing();
+        boolean showLinkDescription = styleManager.getShowLinkDescription();
         int style = description != null ? Section.DESCRIPTION : SWT.NULL;
         Composite client = null;
         Composite control = null;
@@ -278,22 +184,13 @@ public class CategoryForm implements IIntroConstants {
             control = client;
         }
         TableWrapLayout layout = new TableWrapLayout();
-        layout.numColumns = ncolumns > 0 ? ncolumns : links.length;
+        layout.numColumns = numColumns;
         layout.verticalSpacing = vspacing;
         client.setLayout(layout);
-        Util.highlight(client, SWT.COLOR_YELLOW);
-        for (int i = 0; i < links.length; i++) {
-            Control lc = createImageHyperlink(client, links[i],
-                    showLinkDescription);
-            if (!(lc instanceof Hyperlink)) {
-                TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                        TableWrapData.TOP);
-                td.grabHorizontal = true;
-                lc.setLayoutData(td);
-            }
-        }
+        //Util.highlight(client, SWT.COLOR_YELLOW);
         return control;
     }
+
 
     /**
      * Creates an Image Hyperlink from an IntroLink. Model object is cached.
@@ -301,12 +198,13 @@ public class CategoryForm implements IIntroConstants {
      * @param body
      * @param link
      */
-    private Control createImageHyperlink(Composite body, IntroLink link,
-            boolean showDescription) {
+    private Control createImageHyperlink(Composite body, IntroLink link) {
         Control control;
         Hyperlink linkControl;
-        Image linkImage = styleManager.getImage(link, "icon"); //$NON-NLS-1$
-        if (showDescription && link.getText() != null) {
+        boolean showLinkDescription = styleManager.getShowLinkDescription();
+        Image linkImage = styleManager.getImage(link, "link-icon", //$NON-NLS-1$
+                ImageUtil.DEFAULT_LINK);
+        if (showLinkDescription && link.getText() != null) {
             Composite container = toolkit.createComposite(body);
             TableWrapLayout layout = new TableWrapLayout();
             layout.leftMargin = layout.rightMargin = 0;
@@ -324,8 +222,8 @@ public class CategoryForm implements IIntroConstants {
             td = new TableWrapData(TableWrapData.LEFT, TableWrapData.BOTTOM);
             td.grabVertical = true;
             linkControl.setLayoutData(td);
-            Util.highlight(linkControl, SWT.COLOR_RED);
-            Util.highlight(container, SWT.COLOR_DARK_YELLOW);
+            //Util.highlight(linkControl, SWT.COLOR_RED);
+            //Util.highlight(container, SWT.COLOR_DARK_YELLOW);
             Label desc = toolkit.createLabel(container, link.getText(),
                     SWT.WRAP);
             td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
@@ -346,6 +244,35 @@ public class CategoryForm implements IIntroConstants {
         linkControl.setData(INTRO_LINK, link);
         linkControl.addHyperlinkListener(hyperlinkAdapter);
         return control;
+    }
+
+    /**
+     * Creates a composite with TableWrapLayout to hold all page children. If
+     * number of columns is zero, the number of child groups is used.
+     * 
+     * @param page
+     * @param parent
+     * @return
+     */
+    private Composite createPageTableComposite(AbstractIntroPage page,
+            Composite parent) {
+        int childDivCount = page.getChildrenOfType(AbstractIntroElement.DIV).length;
+        Composite client = toolkit.createComposite(parent);
+        TableWrapLayout layout = new TableWrapLayout();
+        layout.topMargin = 0;
+        layout.bottomMargin = 0;
+        layout.leftMargin = 0;
+        layout.rightMargin = 0;
+        int numColumns = styleManager.getPageNumberOfColumns();
+        layout.numColumns = numColumns == 0 ? childDivCount : numColumns;
+        client.setLayout(layout);
+
+        // parent has TableWrapLayout, and so update layout of this child.
+        TableWrapData td = new TableWrapData();
+        td.align = TableWrapData.FILL;
+        td.grabHorizontal = true;
+        client.setLayoutData(td);
+        return client;
     }
 
 

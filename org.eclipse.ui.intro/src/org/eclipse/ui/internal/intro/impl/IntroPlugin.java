@@ -70,7 +70,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      * the given substitutions. <br>
      */
     public static String getFormattedString(String key, Object[] args) {
-        return MessageFormat.format(key, args);
+        return MessageFormat.format(getString(key), args);
     }
 
     /**

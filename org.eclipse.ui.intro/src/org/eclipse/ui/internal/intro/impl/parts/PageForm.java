@@ -30,15 +30,10 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 public class PageForm implements IIntroConstants, IPropertyListener {
 
     private FormToolkit toolkit = null;
-
     private ScrolledPageBook mainPageBook = null;
-
     private ScrolledPageBook categoryPageBook = null;
-
     private FormStyleManager styleManager;
-
     private IntroModelRoot model = null;
-
     private Form formContent;
 
     // Id to this page. There is only a single instance of this page in the
@@ -106,7 +101,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         formContent.getBody().setLayout(layout);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        Util.highlight(formContent.getBody(), SWT.COLOR_RED);
+       // Util.highlight(formContent.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
@@ -150,10 +145,21 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     private Control createImageHyperlink(Composite body, IntroLink link) {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
 
-        Image image = styleManager.getImage("rootPage.small-icon." //$NON-NLS-1$
-                + link.getId(), "rootPage.small-icon", //$NON-NLS-1$
-                ImageUtil.ROOT_LINK_SMALL);
+        // set link image
+        String key = StringUtil.concat(link.getParentPage().getId(), ".", link //$NON-NLS-1$
+                .getId(), ".small-link-icon"); //$NON-NLS-1$
+        String defaultPageKey = link.getParentPage().getId()
+                + ".small-link-icon"; //$NON-NLS-1$
+        Image image = styleManager.getImage(key, defaultPageKey,
+                ImageUtil.DEFAULT_SMALL_ROOT_LINK);
         imageLink.setImage(image);
+
+        // set link hover image.
+        key = StringUtil.concat(link.getParentPage().getId(), ".", //$NON-NLS-1$
+                link.getId(), ".small-hover-icon"); //$NON-NLS-1$
+        defaultPageKey = link.getParentPage().getId() + ".small-hover-icon"; //$NON-NLS-1$
+        image = styleManager.getImage(key, defaultPageKey, null);
+        imageLink.setHoverImage(image);
         imageLink.setToolTipText(link.getLabel());
         // each link is centered in cell.
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);

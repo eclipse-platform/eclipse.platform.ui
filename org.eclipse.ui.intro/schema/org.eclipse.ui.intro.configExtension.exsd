@@ -43,12 +43,10 @@
    <element name="configExtension">
       <annotation>
          <documentation>
-            Defines an extension to an intro configuration. Any page or div in an intro part configuration can be extended, if that page has declared extensability through the expandable-by flag. (todo - what happened to place holders, I thought we removed the extendable attribute)
+            Defines an extension to an intro configuration. Any page or div in an intro part configuration can be extended, if that page has declared extensability through defining place holders.
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-         </sequence>
          <attribute name="configId" type="string" use="required">
             <annotation>
                <documentation>
@@ -70,14 +68,17 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="standbyPart">
       <annotation>
          <documentation>
-            standby part registration. (todo - seems out of place) (todo - say something about the intro command and the id to reference this standbypart)
+            standby part registration. Once registered, standby parts can be launched through an introURL action of the following format:
+&lt;pre&gt; 
+http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp
+&lt;/pre&gt;
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  (todo - say something about the intro command and the id to reference this standbypart)
+                  a unique id that identifies this standbyPart.
                </documentation>
             </annotation>
          </attribute>
@@ -91,8 +92,35 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet. The class must be public, and have a public 1-argument constructor that accepts the attribute name
-(a &lt;code&gt;String&lt;/code&gt;).
+                  The fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.config.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="command">
+      <annotation>
+         <documentation>
+            Command registration. This can be used to create new Intro URL commands. It can be used to create a shortCut commands or create custom commands.
+For example: 
+a short cut command is: 
+
+a custom command is:
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="resolvedValue" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

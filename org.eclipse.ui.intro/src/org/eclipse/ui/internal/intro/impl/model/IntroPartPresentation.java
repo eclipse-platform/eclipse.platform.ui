@@ -42,19 +42,28 @@ import org.eclipse.ui.intro.*;
  * implmenetation.</li>
  * <ul>
  */
-public class IntroPartPresentation extends AbstractBaseIntroElement {
+public class IntroPartPresentation extends AbstractIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
     private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
 
+    /*
+     * type attribute can only be org.eclipse.platform.intro.FormsPresentation
+     * or org.eclipse.platform.intro.BrowserPresentation
+     */
+    private static final String ATT_TYPE = "type"; //$NON-NLS-1$
     private static final String ATT_TITLE = "title"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_OS = "os"; //$NON-NLS-1$
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
 
+    private static final String BROWSER_IMPL_TYPE = "org.eclipse.platform.intro.BrowserPresentation"; //$NON-NLS-1$
+    private static final String FORMS_IMPL_TYPE = "org.eclipse.platform.intro.FormsPresentation"; //$NON-NLS-1$
+
     private String title;
-    private String style;
+    private String implementationStyle;
+    private String implementationType;
     private String homePageId;
 
     // The Head contributions to this preentation (inherited from child
@@ -77,17 +86,39 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
 
     private void updatePresentationAttributes(IConfigurationElement element) {
         if (element != null) {
-            // reset (ie: inherit) id and style to be implementation id and
-            // style. Then handle HEAD content in the case of HTML Browser.
-            style = element.getAttribute(ATT_STYLE);
-            id = element.getAttribute(ATT_ID);
+            // reset (ie: inherit) type and style to be implementation type and
+            // style. Then handle HEAD content for the case of HTML Browser.
+            implementationStyle = element.getAttribute(ATT_STYLE);
+            implementationType = element.getAttribute(ATT_TYPE);
             // get Head contribution, regardless of implementation class.
             // Implementation class is created lazily by UI.
             head = getHead(element);
             // Resolve.
-            style = IntroModelRoot.resolveURL(style, element);
+            implementationStyle = IntroModelRoot.resolveURL(
+                    implementationStyle, element);
         }
     }
+
+    /**
+     * Returns the style associated with the Presentation. May be null if no
+     * shared presentation style is needed, or in the case of static HTML OOBE.
+     * 
+     * @return Returns the style.
+     */
+    public String getImplementationStyle() {
+        return implementationStyle;
+    }
+
+    /**
+     * Returns the type attribute of the implementation picked by this
+     * presentation.
+     * 
+     * @return Returns the implementationType.
+     */
+    public String getImplementationType() {
+        return implementationType;
+    }
+
 
     /**
      * Returns the model class for the Head element under an implementation.
@@ -120,19 +151,9 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
      */
     public void init(IIntroPart introPart) throws PartInitException {
         // REVISIT: Called when the actual UI needs to be created. Incomplete
-        // separation of model / UI. Will change later.
-        // should not get here if there is no valid implementation.
+        // separation of model / UI. Will change later. should not get here if
+        // there is no valid implementation.
         this.introPart = introPart;
-    }
-
-    /**
-     * Returns the style associated with the Presentation. May be null if no
-     * shared presentation style is needed, or in the case of static HTML OOBE.
-     * 
-     * @return Returns the style.
-     */
-    public String getStyle() {
-        return style;
     }
 
     /**
@@ -160,7 +181,7 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
             // you want to pass primed model.
             updatePresentationAttributes(implementationElement);
             try {
-                implementation = createIntroPartImplementation(implementationElement);
+                implementation = createIntroPartImplementation(getImplementationType());
                 if (implementation == null)
                     // failed to create executable.
                     continue;
@@ -290,10 +311,10 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
     }
 
     /**
-     * Creates the actual implementation class. Returns null on failure.
-     * 
-     * @return Returns the partConfigElement representing the single Intro
-     *         config.
+     * Creates the actual implementation class. Returns null on failure. NOTE:
+     * this method if not actually used now, but will be when we need to expose
+     * class attribute on implmentation.
+     *  
      */
     private AbstractIntroPartImplementation createIntroPartImplementation(
             IConfigurationElement configElement) {
@@ -306,6 +327,32 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
         } catch (Exception e) {
             Util.handleException("Could not instantiate implementation class " //$NON-NLS-1$
                     + configElement.getAttribute("class"), e); //$NON-NLS-1$
+        }
+        return implementation;
+    }
+
+    /**
+     * Creates the actual implementation class. Returns null on failure.
+     *  
+     */
+    private AbstractIntroPartImplementation createIntroPartImplementation(
+            String implementationType) {
+        // quick exits
+        if (implementationType == null)
+            return null;
+        if (!implementationType.equals(BROWSER_IMPL_TYPE)
+                && !implementationType.equals(FORMS_IMPL_TYPE))
+            return null;
+
+        AbstractIntroPartImplementation implementation = null;
+        try {
+            if (implementationType.equals(BROWSER_IMPL_TYPE))
+                implementation = new BrowserIntroPartImplementation();
+            else
+                implementation = new FormIntroPartImplementation();
+        } catch (Exception e) {
+            Util.handleException("Could not instantiate implementation " //$NON-NLS-1$
+                    + implementationType, e);
         }
         return implementation;
     }
@@ -365,6 +412,5 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
     public IntroHead getHead() {
         return head;
     }
-
 
 }

@@ -28,9 +28,7 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 public class RootPageForm implements IIntroConstants {
 
     private FormToolkit toolkit = null;
-
     private IntroHomePage rootPage = null;
-
     private Label descriptionLabel = null;
 
     class PageComposite extends Composite {
@@ -159,8 +157,7 @@ public class RootPageForm implements IIntroConstants {
 
     /**
      * Create the form for the root page. Number of columns there is equal to
-     * the number of links. Every image link does not cache a model object for
-     * data retrieval..
+     * the number of links.
      * 
      * @param pageBook
      */
@@ -177,7 +174,7 @@ public class RootPageForm implements IIntroConstants {
         toolkit.adapt(pageComposite);
         mainPageBook.registerPage(rootPage.getId(), pageComposite);
         pageComposite.setLayout(new RootPageLayout());
-        Util.highlight(pageComposite, SWT.COLOR_DARK_CYAN);
+        // Util.highlight(pageComposite, SWT.COLOR_DARK_CYAN);
 
         // create the links composite in the center of the root page.
         createRootPageLinks(rootPageStyleManager, pageComposite);
@@ -224,7 +221,7 @@ public class RootPageForm implements IIntroConstants {
         layout.horizontalSpacing = 20;
         layout.numColumns = numberOfLinks;
         linkComposite.setLayout(layout);
-        Util.highlight(linkComposite, SWT.COLOR_CYAN);
+        // Util.highlight(linkComposite, SWT.COLOR_CYAN);
         // add image hyperlinks for all links.
         for (int i = 0; i < numberOfLinks; i++)
             createImageHyperlink(linkComposite, links[i], rootPageStyleManager);
@@ -235,7 +232,8 @@ public class RootPageForm implements IIntroConstants {
     }
 
     /**
-     * Creates an Image Hyperlink from an IntroLink. Model object is cached.
+     * Creates an Image Hyperlink from an IntroLink. Model object is cached in
+     * link.
      * 
      * @param body
      * @param link
@@ -243,7 +241,10 @@ public class RootPageForm implements IIntroConstants {
     private void createImageHyperlink(Composite body, IntroLink link,
             FormStyleManager styleManager) {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
-        imageLink.setImage(styleManager.getImage(link, "icon")); //$NON-NLS-1$
+        imageLink.setImage(styleManager.getImage(link, "link-icon", //$NON-NLS-1$
+                ImageUtil.DEFAULT_ROOT_LINK));
+        imageLink
+                .setHoverImage(styleManager.getImage(link, "hover-icon", null)); //$NON-NLS-1$
         // each link is centered in cell.
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         imageLink.setLayoutData(gd);
@@ -267,7 +268,7 @@ public class RootPageForm implements IIntroConstants {
      */
     private Label createHoverLabel(FormStyleManager styleManager, Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
-        Color fg = styleManager.getColor(toolkit, "rootPage.hover-text.fg"); //$NON-NLS-1$
+        Color fg = styleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
         if (fg == null)
             fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);

@@ -98,19 +98,14 @@ public class IntroURL implements IIntroURL {
     }
 
     private void doExecute() {
-        // check to see if we have a custom action
-        // if (action.indexOf("/") != -1)
-        //   handleCustomAction();
 
-        // check for all Intro actions.
+        // check for all supported Intro actions first.
         if (action.equals(CLOSE))
             closeIntro();
 
-        /**
-         * Sets the state of the intro part. Does not care about passing input
-         * to the part.
-         */
         else if (action.equals(SET_STANDBY_MODE))
+            // Sets the state of the intro part. Does not care about passing
+            // input to the part.
             setStandbyState(getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_STANDBY))
@@ -139,7 +134,13 @@ public class IntroURL implements IIntroURL {
 
         else if (action.equals(SHOW_MESSAGE))
             showMessage(getParameter(KEY_MESSAGE));
+
+        else
+            handleCustomAction();
+
+
     }
+
 
     private void closeIntro() {
         // Relies on Workbench.
@@ -161,9 +162,9 @@ public class IntroURL implements IIntroURL {
                 true);
         StandbyPart standbyPart = introPart.getStandbyPart();
 
-        // Get the StandbyPartContent that maps to the given partId.
-        StandbyPartContent standbyPartContent = ExtensionPointManager.getInst()
-                .getStandbyPart(partId);
+        // Get the IntroStandbyPart that maps to the given partId.
+        IntroStandbyPart standbyPartContent = ExtensionPointManager.getInst()
+                .getSharedConfigExtensionsManager().getStandbyPart(partId);
 
         if (standbyPartContent != null) {
             String standbyContentClassName = standbyPartContent.getClassName();
@@ -173,15 +174,18 @@ public class IntroURL implements IIntroURL {
                     standbyContentClassName);
             if (standbyContentObject instanceof IStandbyContentPart) {
                 IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
-                standbyPart.addStandbyContentPart(partId, contentPart);
-                standbyPart.setTopControl(partId);
-                standbyPart.setInput(input);
-                return;
+                Control c = standbyPart.addStandbyContentPart(partId,
+                        contentPart);
+                if (c != null) {
+                    standbyPart.setTopControl(partId);
+                    standbyPart.setInput(input);
+                    return;
+                }
             }
         }
 
-        // we do not have a valid partId or we failed to instantiate part, show
-        // Context help part.
+        // we do not have a valid partId or we failed to instantiate part or
+        // create the part content, show Context help part.
         standbyPart.setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
     }
 
@@ -308,12 +312,13 @@ public class IntroURL implements IIntroURL {
         else {
             try {
                 message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
+                DialogUtil.displayInfoMessage(null, message);
             } catch (UnsupportedEncodingException e) {
-                message = "Failed to decode message"; //$NON-NLS-1$
+                DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode",
+                        new Object[] { message});
+                return;
             }
         }
-
-        DialogUtil.displayInfoMessage(null, message);
     }
 
     /**
@@ -324,10 +329,6 @@ public class IntroURL implements IIntroURL {
         // event to the UI.
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
         modelRoot.setCurrentPageId(pageId);
-    }
-
-    private void handleCustomAction() {
-        // REVISIT:
     }
 
     /**
@@ -348,4 +349,50 @@ public class IntroURL implements IIntroURL {
         return parameters.getProperty(parameterId);
     }
 
+    private void handleCustomAction() {
+        IntroURLCommand command = ExtensionPointManager.getInst()
+                .getSharedConfigExtensionsManager().getCommand(action);
+        if (command == null) {
+            DialogUtil.displayInfoMessage(null, "IntroURL.badCommand",
+                    new Object[] { action});
+            return;
+        }
+
+        // custom command. execute it.
+        StringBuffer url = new StringBuffer();
+        url.append("http://org.eclipse.ui.intro/");
+        url.append(command.getResolvedValue().trim());
+        if (command.getResolvedValue().indexOf("?") == -1)
+            // command does not have parameters.
+            url.append("?");
+        else
+            // command already has parameters.
+            url.append("&");
+        url.append(retrieveInitialQuery());
+        IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+        if (introURL != null)
+            introURL.execute();
+    }
+
+
+    /**
+     * Recreate the initial query passed to this URL.
+     * 
+     * @return
+     */
+    private String retrieveInitialQuery() {
+        StringBuffer query = new StringBuffer();
+        Enumeration keys = parameters.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            query.append(key);
+            query.append("=");
+            query.append(parameters.get(key));
+            if (keys.hasMoreElements())
+                query.append("&");
+        }
+        return query.toString();
+    }
+
 }
+

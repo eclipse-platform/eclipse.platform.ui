@@ -218,36 +218,27 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         return (IntroHead[]) getChildrenOfType(AbstractIntroElement.HEAD);
     }
 
+
     // THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
     public IntroLink[] getLinks() {
         return (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
     }
 
     /**
-     * Returns the divs in this page. HTML presentation divs and Navigation
-     * include divs are filtered out, for now.
+     * HTML presentation divs and Navigation divs that are filtered out, for
+     * now. Hack.
      */
-    public IntroDiv[] getDivs() {
-        // get real page divs.
-        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
+    public static boolean isFilteredDiv(IntroDiv aDiv) {
 
-        // filter bad stuff for now.
-        Vector vectorDivs = new Vector(Arrays.asList(divs));
-        for (int i = 0; i < vectorDivs.size(); i++) {
-            IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
-            if (aDiv.getId().equals("navigation-links") //$NON-NLS-1$
-                    || aDiv.getId().equals("background-image") //$NON-NLS-1$
-                    || aDiv.getId().equals("root-background")) { //$NON-NLS-1$
-                vectorDivs.remove(aDiv);
-                i--;
-            }
-        }
+        if (aDiv.getId().equals("navigation-links") //$NON-NLS-1$
+                || aDiv.getId().equals("background-image") //$NON-NLS-1$
+                || aDiv.getId().equals("root-background")) //$NON-NLS-1$
+            return true;
 
-        // return proper object type.
-        IntroDiv[] filteredDivs = new IntroDiv[vectorDivs.size()];
-        vectorDivs.copyInto(filteredDivs);
-        return filteredDivs;
+        return false;
     }
+
+
 
     /**
      * Returns the first child with the given class-id.

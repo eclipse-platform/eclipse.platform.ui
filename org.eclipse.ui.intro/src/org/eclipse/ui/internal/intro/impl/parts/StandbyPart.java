@@ -30,7 +30,7 @@ public class StandbyPart {
     private ImageHyperlink returnLink;
     private Composite container;
     private Composite content;
-    private ContextHelpPart helpPart;
+    private ContextHelpStandbyPart helpPart;
     private IIntroPart introPart;
 
     // hastable has partIds as keys, and ControlKeys are values.
@@ -135,7 +135,7 @@ public class StandbyPart {
     }
 
     private void addContextHelpPart() {
-        helpPart = new ContextHelpPart();
+        helpPart = new ContextHelpStandbyPart();
         addStandbyContentPart(IIntroConstants.HELP_CONTEXT_STANDBY_PART,
                 helpPart);
         setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
@@ -159,8 +159,7 @@ public class StandbyPart {
 
     private void updateReturnLinkLabel() {
         AbstractIntroPage page = model.getCurrentPage();
-        String linkText = IntroPlugin
-                .getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
+        String linkText = IntroPlugin.getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
         if (page instanceof IntroPage) {
             linkText = IntroPlugin.getString("StandbyPart.returnTo") //$NON-NLS-1$
                     + " " + page.getTitle(); //$NON-NLS-1$
@@ -214,7 +213,12 @@ public class StandbyPart {
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
             standbyContent.init(introPart);
-            standbyContent.createPartControl(content, toolkit);
+            try {
+                standbyContent.createPartControl(content, toolkit);
+            } catch (Exception e) {
+                Log.error("Failed to create standby part: " + partId, e); //$NON-NLS-1$
+                return null;
+            }
             Control control = standbyContent.getControl();
             controlKey = new ControlKey(control, standbyContent);
             cachedContentParts.put(partId, controlKey);

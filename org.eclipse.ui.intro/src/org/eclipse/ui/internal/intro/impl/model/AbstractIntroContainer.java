@@ -69,7 +69,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * An example of an element mask is as follows:
      * <p>
      * <code>
-     * 		int elementMask = IntroElement.IMAGE | IntroElement.LINK;
+     * 		int elementMask = IntroElement.IMAGE | IntroElement.DEFAULT_LINK;
      * 		int elementMask = IntroElement.ABSTRACT_CONTAINER; 
      * </code>
      * The return type is determined depending on the mask. If the mask is a
@@ -89,7 +89,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * in the same order they appear in the plugin.xml markup:
      * <p>
      * <code>
-     * 		int elementMask = IntroElement.IMAGE | IntroElement.LINK;
+     * 		int elementMask = IntroElement.IMAGE | IntroElement.DEFAULT_LINK;
      * 		IntroElement[] imagesAndLinks  = 
      * 			(IntroElement[])page.getChildrenOfType(elementMask);
      * </code>

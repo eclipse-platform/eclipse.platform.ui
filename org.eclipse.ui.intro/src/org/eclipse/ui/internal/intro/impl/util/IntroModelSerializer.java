@@ -45,8 +45,8 @@ public class IntroModelSerializer {
         text.append("\nPresentation Title = " //$NON-NLS-1$
                 + model.getPresentation().getTitle());
         text.append("\nPresentation Shared Style = " //$NON-NLS-1$
-                + model.getPresentation().getStyle());
-        text.append("\nPresentation id = " + model.getPresentation().getId()); //$NON-NLS-1$
+                + model.getPresentation().getImplementationStyle());
+        text.append("\nPresentation type = " + model.getPresentation().getType()); //$NON-NLS-1$
         text.append("\nHome page id = " //$NON-NLS-1$
                 + model.getPresentation().getHomePageId());
         IntroHead headContent = model.getPresentation().getHead();
@@ -161,7 +161,7 @@ public class IntroModelSerializer {
     }
 
     private void printLink(StringBuffer text, IntroLink link, String indent) {
-        text.append(indent + "LINK: id = " + link.getId()); //$NON-NLS-1$
+        text.append(indent + "DEFAULT_LINK: id = " + link.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "label = " + link.getLabel()); //$NON-NLS-1$
         text.append(indent + "text = " + link.getText()); //$NON-NLS-1$

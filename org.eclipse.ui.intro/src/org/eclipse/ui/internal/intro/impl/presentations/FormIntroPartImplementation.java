@@ -26,8 +26,8 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.
  */
-public class FormIntroPartImplementation extends AbstractIntroPartImplementation implements
-        IPropertyListener {
+public class FormIntroPartImplementation extends
+        AbstractIntroPartImplementation implements IPropertyListener {
 
     private FormToolkit toolkit = null;
 
@@ -43,17 +43,16 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
         // REVISIT: register all common images here. Even if this part
         // implementation is created again, the images will remain in plugin
         // registry.
-        ImageUtil.registerImage(ImageUtil.ROOT_LINK, "overview_96.gif"); //$NON-NLS-1$
-        ImageUtil.registerImage(ImageUtil.ROOT_LINK_SMALL, "overview_64.gif"); //$NON-NLS-1$
-        ImageUtil.registerImage(ImageUtil.FORM_BG, "form_banner.gif"); //$NON-NLS-1$
-        ImageUtil.registerImage(ImageUtil.LINK, "bpel_16.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_ROOT_LINK, "overview_96.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_SMALL_ROOT_LINK, "overview_64.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_FORM_BG, "form_banner.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "bpel_16.gif"); //$NON-NLS-1$
     }
 
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
         }
 
@@ -70,7 +69,10 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
     }
 
     public void createPartControl(Composite container) {
+        // Create single toolkit instance, which is disposed of on dispose of intro part. 
+        // also define bacjgrounf of all presentation.
         toolkit = new FormToolkit(container.getDisplay());
+        // Define presentation title color
         Color bg = sharedStyleManager.getColor(toolkit, "bg"); //$NON-NLS-1$
         if (bg != null) {
             toolkit.setBackground(bg);
@@ -78,6 +80,7 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
                 HyperlinkGroup.UNDERLINE_HOVER);
 
+        // Define presentation title color and image.
         Form mainForm = toolkit.createForm(container);
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
@@ -134,9 +137,9 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
     }
 
     /**
-     * Handle model property changes. The UI is notified here of a change to
-     * the current page in the model. This happens if an intro URL showPage
-     * method is executed.
+     * Handle model property changes. The UI is notified here of a change to the
+     * current page in the model. This happens if an intro URL showPage method
+     * is executed.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)

@@ -69,7 +69,7 @@ public class IntroModelLabelProvider extends LabelProvider {
             label = "DIV: " + ((IntroDiv) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.LINK:
-            label = "LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
+            label = "DEFAULT_LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.TEXT:
             label = "TEXT: " + ((IntroText) introElement).getText(); //$NON-NLS-1$

@@ -42,9 +42,8 @@ public class BaseExtensionPointManager {
 
     protected IExtensionRegistry registry;
 
-    // holds all standbyPart extensions. Key is id, value is
-    // IntroStandbyPartContent.
-    protected Hashtable standbyParts = new Hashtable();
+    protected SharedConfigExtensionsManager sharedConfigExtensionsManager;
+
 
     /*
      * Prevent creation.
@@ -84,8 +83,9 @@ public class BaseExtensionPointManager {
             // config that defined this model.
             addCachedModel(model.getId(), model);
 
-            // now load all generic standbyPart contributions.
-            loadSharedExtensions();
+            // now load all generic config extension. ie: standbyPart and
+            // command contributions.
+            loadSharedConfigExtensions();
             return model;
         }
         return null;
@@ -205,35 +205,18 @@ public class BaseExtensionPointManager {
     }
 
     /**
-     * Loads all shared config extennsions (ie: standby parts).
+     * Loads all shared config extennsions (ie: standby parts and commands).
      */
-    protected void loadSharedExtensions() {
-        // simply create model classes for all standbyPart elements under a
-        // configExtension.
-        IConfigurationElement[] configExtensionElements = registry
-                .getConfigurationElementsFor(CONFIG_EXTENSION);
-        for (int i = 0; i < configExtensionElements.length; i++) {
-            IConfigurationElement element = configExtensionElements[i];
-            if (!ModelLoaderUtil.isValidElementName(element,
-                    StandbyPartContent.STANDBY_PART_ELEMENT))
-                continue;
-            StandbyPartContent standbyPartContent = new StandbyPartContent(
-                    element);
-            if (standbyPartContent.getId() == null)
-                continue;
-            standbyParts.put(standbyPartContent.getId(), standbyPartContent);
-        }
+    protected void loadSharedConfigExtensions() {
+        sharedConfigExtensionsManager = new SharedConfigExtensionsManager(registry);
+        sharedConfigExtensionsManager.loadSharedConfigExtensions();
     }
+
 
     /**
-     * @return Returns a standbyPart basd on its registred id.
+     * @return Returns the sharedConfigExtensionsManager.
      */
-    public StandbyPartContent getStandbyPart(String partId) {
-        if (partId == null)
-            return null;
-        return (StandbyPartContent) standbyParts.get(partId);
+    public SharedConfigExtensionsManager getSharedConfigExtensionsManager() {
+        return sharedConfigExtensionsManager;
     }
-
-
-
 }

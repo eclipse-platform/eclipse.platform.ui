@@ -18,26 +18,26 @@ import org.eclipse.core.runtime.*;
  * child under any of the other model classes. It is returned by the
  * ExtensionPointManager when asked for registration parts.
  */
-public class StandbyPartContent extends AbstractBaseIntroElement {
+public class IntroStandbyPart extends AbstractBaseIntroElement {
 
-    public static final String STANDBY_PART_ELEMENT = "standbyPart"; //$NON-NLS-1$
+    public static final String TAG_STANDBY_PART = "standbyPart"; //$NON-NLS-1$
 
-    private static final String PLUGIN_ID_ATTRIBUTE = "pluginId"; //$NON-NLS-1$
-    private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+    private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
     private String pluginId;
     private String className;
 
     /**
-     * Note: the only model class with public constructor because it is not
-     * instantiated by the model root.
+     * Note: model class with public constructor because it is not instantiated
+     * by the model root.
      * 
      * @param element
      */
-    public StandbyPartContent(IConfigurationElement element) {
+    public IntroStandbyPart(IConfigurationElement element) {
         super(element);
-        pluginId = element.getAttribute(PLUGIN_ID_ATTRIBUTE);
-        className = element.getAttribute(CLASS_ATTRIBUTE);
+        pluginId = element.getAttribute(ATT_PLUGIN_ID);
+        className = element.getAttribute(ATT_CLASS);
     }
 
 

@@ -21,21 +21,24 @@ import org.osgi.framework.*;
 
 public class FormStyleManager {
 
+    protected static final String LAYOUT_TABLE = "table"; //$NON-NLS-1$
+    protected static final String LAYOUT_COLUMNS = "columns"; //$NON-NLS-1$
+
     private Properties pageProperties;
     private Hashtable altStyleProperties = new Hashtable();
     private AbstractIntroPage page;
     private Bundle bundle;
 
     /**
-     * Constructor used when shared styles need to be loaded. The plugin
-     * descriptor is retrieved from the model root.
+     * Constructor used when shared styles need to be loaded. The bundle is
+     * retrieved from the model root.
      * 
      * @param modelRoot
      */
     public FormStyleManager(IntroModelRoot modelRoot) {
         bundle = modelRoot.getBundle();
         pageProperties = new Properties();
-        String sharedStyle = modelRoot.getPresentation().getStyle();
+        String sharedStyle = modelRoot.getPresentation().getImplementationStyle();
         if (sharedStyle != null)
             load(pageProperties, sharedStyle);
     }
@@ -93,7 +96,7 @@ public class FormStyleManager {
      * @param key
      * @return
      */
-    private Bundle getAltStylePd(String key) {
+    private Bundle getAltStyleBundle(String key) {
         Properties aProperties = findProperty(key);
         return (Bundle) altStyleProperties.get(aProperties);
     }
@@ -118,24 +121,6 @@ public class FormStyleManager {
         return pageProperties;
     }
 
-    private String createImageKey(AbstractIntroPage page, IntroLink link,
-            String qualifier) {
-        StringBuffer buff = new StringBuffer();
-        if (page instanceof IntroHomePage)
-            buff.append("rootPage."); //$NON-NLS-1$
-        else {
-            buff.append("page."); //$NON-NLS-1$
-            buff.append(page.getId());
-            buff.append("."); //$NON-NLS-1$
-        }
-        buff.append(qualifier);
-        if (link != null) {
-            buff.append("."); //$NON-NLS-1$
-            buff.append(link.getId());
-        }
-        return buff.toString();
-    }
-
     private RGB getRGB(String key) {
         String value = getProperty(key);
         if (value == null)
@@ -154,14 +139,15 @@ public class FormStyleManager {
     }
 
     /**
-     * May return null.
+     * 
      * 
      * @param toolkit
      * @param key
-     * @return
+     * @return color. May return null.
      */
-    public Color getColor(FormToolkit toolkit, String key) {
+    public Color getColor(FormToolkit toolkit, String qualifier) {
         FormColors colors = toolkit.getColors();
+        String key = createColorKey(page, qualifier);
         Color color = colors.getColor(key);
         if (color == null) {
             RGB rgb = getRGB(key);
@@ -171,14 +157,47 @@ public class FormStyleManager {
         return color;
     }
 
-    public Image getImage(IntroLink link, String qualifier) {
+    private String createColorKey(AbstractIntroPage page, String qualifier) {
+        if (page != null)
+            return StringUtil.concat(page.getId(), ".", qualifier); //$NON-NLS-1$
+        return qualifier;
+    }
+
+    /**
+     * Retrieves an image for a link in a page. If not found, uses the page's
+     * default link image. If still not found, uses the passed default.
+     * 
+     * @param link
+     * @param qualifier
+     * @return
+     */
+    public Image getImage(IntroLink link, String qualifier, String defaultKey) {
         String key = createImageKey(page, link, qualifier);
         String pageKey = createImageKey(page, null, qualifier);
-        String defaultKey = (page instanceof IntroHomePage) ? ImageUtil.ROOT_LINK
-                : ImageUtil.LINK;
         return getImage(key, pageKey, defaultKey);
     }
 
+    private String createImageKey(AbstractIntroPage page, IntroLink link,
+            String qualifier) {
+        StringBuffer buff = new StringBuffer();
+        buff.append(page.getId());
+        if (link != null) {
+            buff.append("."); //$NON-NLS-1$
+            buff.append(link.getId());
+        }
+        buff.append("."); //$NON-NLS-1$
+        buff.append(qualifier);
+        return buff.toString();
+    }
+
+    /**
+     * Retrieve an image from this page's properties, given a key.
+     * 
+     * @param key
+     * @param defaultPageKey
+     * @param defaultKey
+     * @return
+     */
     public Image getImage(String key, String defaultPageKey, String defaultKey) {
         String currentKey = key;
         String value = getProperty(currentKey);
@@ -190,7 +209,7 @@ public class FormStyleManager {
             if (ImageUtil.hasImage(currentKey))
                 return ImageUtil.getImage(currentKey);
             // try to register the image.
-            Bundle bundle = getAltStylePd(currentKey);
+            Bundle bundle = getAltStyleBundle(currentKey);
             if (bundle == null)
                 // it means that we are getting a key defined in this page's
                 // styles. (ie: not an inherited style).
@@ -212,4 +231,52 @@ public class FormStyleManager {
     protected Properties getProperties() {
         return pageProperties;
     }
+
+    public int getPageNumberOfColumns() {
+        String key = page.getId() + ".layout.ncolumns"; //$NON-NLS-1$
+        int ncolumns = 0;
+        String value = getProperty(key);
+        try {
+            ncolumns = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+        }
+        return ncolumns;
+    }
+
+
+    public int getNumberOfColumns(IntroDiv category) {
+        String key = page.getId() + "." + category.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
+        return getIntProperty(key);
+    }
+
+    private int getIntProperty(String key) {
+        int ncolumns = 0;
+        String value = getProperty(key);
+        try {
+            ncolumns = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+        }
+        return ncolumns;
+    }
+
+    public boolean getShowLinkDescription() {
+        String key = page.getId() + ".layout.link-description"; //$NON-NLS-1$
+        String value = getProperty(key);
+        if (value == null)
+            value = "false"; //$NON-NLS-1$
+        return value.toLowerCase().equals("true"); //$NON-NLS-1$
+    }
+
+    public int getVerticalLinkSpacing() {
+        String key = page.getId() + ".layout.link-vspacing"; //$NON-NLS-1$
+        int vspacing = 5;
+        String value = getProperty(key);
+        try {
+            vspacing = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+        }
+        return vspacing;
+    }
+
+
 }

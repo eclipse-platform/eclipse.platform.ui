@@ -27,10 +27,10 @@ public final class ImageUtil {
      * Image keys, to be used by plugin (intro) registry.
      */
     // Default images
-    public static final String ROOT_LINK = "rootLink"; //$NON-NLS-1$
-    public static final String ROOT_LINK_SMALL = "rootLinkSmall"; //$NON-NLS-1$
-    public static final String FORM_BG = "formBg"; //$NON-NLS-1$
-    public static final String LINK = "link"; //$NON-NLS-1$
+    public static final String DEFAULT_ROOT_LINK = "rootLink"; //$NON-NLS-1$
+    public static final String DEFAULT_SMALL_ROOT_LINK = "rootLinkSmall"; //$NON-NLS-1$
+    public static final String DEFAULT_FORM_BG = "formBg"; //$NON-NLS-1$
+    public static final String DEFAULT_LINK = "link"; //$NON-NLS-1$
 
     // Standby images
     public static final String BACK = "back"; //$NON-NLS-1$

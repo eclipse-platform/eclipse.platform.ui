@@ -46,7 +46,7 @@ todo - add other APIs here such as IStandbyPart
    <element name="config">
       <annotation>
          <documentation>
-            A config element is put into the config extension point if there is a cheat sheet to be contributed to the workbench.  A config element must specify an id, an introId, and a content file.
+            A config element can be used to configure a customizable Intro Part. A config element must specify an id, an introId, and a content file.
 The intro content file is an XML file that describes the pages, groups and links that the intro has.
          </documentation>
       </annotation>
@@ -57,7 +57,7 @@ The intro content file is an XML file that describes the pages, groups and links
          <attribute name="introId" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of an intro part contribution that this configuration will be associated with
+                  the id of an intro part contribution that this configuration will be associated with.
                </documentation>
             </annotation>
          </attribute>
@@ -82,7 +82,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="presentation">
       <annotation>
          <documentation>
-            Presentation element that defines all the possible implementations of an intro part. It can have one or more implementation defined in it. Only one implementation will be chosen at startup, based the os/ws attributes of the implementations. Otherwise, the first one with no os/ws attributes defined will be chosen.
+            Presentation element that defines all the possible implementations of an intro part&apos;s presentation. It can have one or more implementation defined in it. Only one implementation will be chosen at startup, based the os/ws attributes of the implementations. Otherwise, the first one with no os/ws attributes defined will be chosen.
          </documentation>
       </annotation>
       <complexType>
@@ -99,7 +99,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <attribute name="home-page-id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of the home (root) page. This value can be overriden by either plugin_customization.ini or by user preference. (todo - is this overriding currently possible? will it ever be a user preference?)
+                  the id of the home (root) page.
                </documentation>
             </annotation>
          </attribute>
@@ -109,27 +109,27 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="implementation">
       <annotation>
          <documentation>
-            Implementation defines the presentation class that will be used for the matching os/ws attributes.
+            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentation based on the current OS and WS. The type of the implementation can be either org.eclipse.platform.intro.BrowserPresentation or org.eclipse.platform.intro.FormsPresentation
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="id" type="string">
+         <sequence>
+            <element ref="head" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  an optional unique name that can be used to identify this implementation (todo - is this still needed?)
+                  
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.ui.config.XXX&lt;/samp&gt;. 
-(todo - do we really wanna expose this implementation detail? If we go with kind=&quot;swt|html&quot; will this attribute be required? Currently the classes referenced are internal which is an API no-no, more reason for the kind attribute.)
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.XXX"/>
-               </appInfo>
-            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="org.eclipse.platform.intro.BrowserPresentation">
+                  </enumeration>
+                  <enumeration value="org.eclipse.platform.intro.FormsPresentation">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="style" type="string">
             <annotation>
@@ -149,6 +149,23 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <annotation>
                <documentation>
                   ws string used when choosing the presentation&apos;s implementation based on current WS. eg: win32,gtk (todo - where are the valid WS strings used by Eclipse defined? Should we expand WS to windowing system?)
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="head">
+      <annotation>
+         <documentation>
+            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  relative or absolute URL to a file containing HTML
                </documentation>
             </annotation>
          </attribute>

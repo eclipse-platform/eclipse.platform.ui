@@ -32,7 +32,7 @@ import org.eclipse.ui.intro.config.*;
 /**
  *  
  */
-public class ContextHelpPart implements IStandbyContentPart {
+public class ContextHelpStandbyPart implements IStandbyContentPart {
 
     private ScrolledForm form;
     private IPartListener2 partListener;
@@ -122,7 +122,7 @@ public class ContextHelpPart implements IStandbyContentPart {
      */
     public void init(IIntroPart introPart) {
         partListener = new PartListener();
-        defaultText = IntroPlugin.getString("ContextHelpPart.defaultText"); //$NON-NLS-1$
+        defaultText = IntroPlugin.getString("ContextHelpStandbyPart.defaultText"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
     }
 
@@ -131,7 +131,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         form = toolkit.createScrolledForm(parent);
         TableWrapLayout layout = new TableWrapLayout();
         form.getBody().setLayout(layout);
-        Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
+        //Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
 
         // help container. Has three colums (search, text, go)
         Composite helpContainer = toolkit.createComposite(form.getBody());
@@ -143,12 +143,12 @@ public class ContextHelpPart implements IStandbyContentPart {
         toolkit.paintBordersFor(helpContainer);
 
         Label label = toolkit.createLabel(helpContainer, IntroPlugin
-                .getString("ContextHelpPart.search")); //$NON-NLS-1$
+                .getString("ContextHelpStandbyPart.search")); //$NON-NLS-1$
         label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
         phraseText = toolkit.createText(helpContainer, ""); //$NON-NLS-1$
         phraseText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         final Button button = toolkit.createButton(helpContainer, IntroPlugin
-                .getString("ContextHelpPart.button.go"), SWT.PUSH); //$NON-NLS-1$
+                .getString("ContextHelpStandbyPart.button.go"), SWT.PUSH); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -174,7 +174,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         });
         title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
         title.setText(IntroPlugin
-                .getString("ContextHelpPart.contextHelpArea.Title")); //$NON-NLS-1$
+                .getString("ContextHelpStandbyPart.contextHelpArea.Title")); //$NON-NLS-1$
         title.setFont(JFaceResources.getHeaderFont());
         title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
         text = toolkit.createFormText(form.getBody(), true);
@@ -224,14 +224,14 @@ public class ContextHelpPart implements IStandbyContentPart {
             return;
         if (activated) {
             title.setText(IntroPlugin
-                    .getString("ContextHelpPart.whatIsArea.Title") //$NON-NLS-1$
+                    .getString("ContextHelpStandbyPart.whatIsArea.Title") //$NON-NLS-1$
                     + " \"" + part.getSite().getRegisteredName() + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
             String helpText = createContextHelp(part);
             text.setText(helpText != null ? helpText : "", helpText != null, //$NON-NLS-1$
                     false);
         } else {
             title.setText(IntroPlugin
-                    .getString("ContextHelpPart.contextHelpArea.Title")); //$NON-NLS-1$
+                    .getString("ContextHelpStandbyPart.contextHelpArea.Title")); //$NON-NLS-1$
             text.setText(defaultText, false, false);
         }
         form.getBody().layout();
