@@ -95,6 +95,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (p != null) {
 			process = DebugPlugin.newProcess(launch, p, location.toOSString());
 		}
+		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			// refresh resources after process finishes
@@ -121,5 +122,16 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 	
 	}
+	
+	protected static String renderCommandLine(String[] commandLine) {
+		if (commandLine.length < 1)
+			return ""; //$NON-NLS-1$
+		StringBuffer buf= new StringBuffer(commandLine[0]);
+		for (int i= 1; i < commandLine.length; i++) {
+			buf.append(' ');
+			buf.append(commandLine[i]);
+		}	
+		return buf.toString();
+	}	
 	
 }

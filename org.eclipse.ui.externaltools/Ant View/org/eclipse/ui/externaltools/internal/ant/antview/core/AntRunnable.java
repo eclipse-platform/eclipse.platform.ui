@@ -10,7 +10,6 @@
 package org.eclipse.ui.externaltools.internal.ant.antview.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Vector;
 

@@ -1,12 +1,15 @@
 package org.eclipse.debug.core.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -23,6 +26,14 @@ import org.eclipse.debug.core.ILaunch;
  * @see org.eclipse.debug.core.DebugPlugin#newProcess(ILaunch, Process, String)
  */
 public interface IProcess extends IAdaptable, ITerminate {
+	
+	/**
+	 * Attribute key for a common, optional, process property. The value of this
+	 * attribute is the command line a process was launched with.
+	 * 
+	 * @since 2.1
+	 */
+	public final static String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$	
 
 	/**
 	 * Returns a human-readable label for this process.

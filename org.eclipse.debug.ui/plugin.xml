@@ -759,4 +759,19 @@
 	</launchGroup>	
 </extension>
 
+<extension point="org.eclipse.ui.propertyPages">
+	<page
+		id="org.eclipse.debug.ui.properties.process" 
+		name="%processPropertyPageName"
+		objectClass="org.eclipse.debug.core.model.IProcess"
+		class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"> 
+    </page>
+	<page
+		id="org.eclipse.debug.ui.properties.process" 
+		name="%processPropertyPageName"
+		objectClass="org.eclipse.debug.core.model.IDebugTarget"
+		class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"> 
+    </page>    
+</extension>
+
 </plugin>
