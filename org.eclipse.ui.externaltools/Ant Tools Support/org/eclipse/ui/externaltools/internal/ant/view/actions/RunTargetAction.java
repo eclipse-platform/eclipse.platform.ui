@@ -45,11 +45,19 @@ public class RunTargetAction extends Action implements IUpdate {
 		if (target == null) {
 			return;
 		}
+		run(target);
+	}
+	
+	/**
+	 * Executes the given target
+	 * @param target
+	 */
+	public void run(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
 		shortcut.launch(file, ILaunchManager.RUN_MODE, target.getName());
 	}
-	
+
 	/**
 	 * Updates the enablement of this action based on the user's selection
 	 */

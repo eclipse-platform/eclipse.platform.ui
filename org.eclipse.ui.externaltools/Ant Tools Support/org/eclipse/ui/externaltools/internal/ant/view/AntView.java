@@ -35,6 +35,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -53,10 +56,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
@@ -460,6 +466,19 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				updateActions();
 			}
 		});
+		
+		targetViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection s= event.getSelection();
+				if (!(s instanceof IStructuredSelection)) {
+					return;
+				}
+				Object selection= ((IStructuredSelection)s).getFirstElement();
+				if (selection instanceof TargetNode) {
+					runTargetAction.run((TargetNode)selection);
+				}
+			}
+		});
 		createContextMenu(targetViewer);
 	}
 
@@ -533,6 +552,37 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 			}
 		});
+		
+		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection s= event.getSelection();
+				if (!(s instanceof IStructuredSelection)) {
+					return;
+				}
+				Object selection= ((IStructuredSelection)s).getFirstElement();
+				if (selection instanceof ProjectNode) {
+					ProjectNode project = (ProjectNode) selection;
+					IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
+					IFile file= AntUtil.getFile(project.getBuildFileName());
+					IEditorDescriptor editor = registry.getDefaultEditor(file);
+					if (editor == null) {
+						editor= registry.getDefaultEditor();
+					}
+					try {
+						if (editor == null) {
+							getViewSite().getPage().openSystemEditor(file);
+						} else {
+							getViewSite().getPage().openEditor(file, editor.getId());
+						}
+					} catch (PartInitException e) {
+						ExternalToolsPlugin.getDefault().log(e);
+					}
+				} else if (selection instanceof TargetNode){
+					runTargetAction.run();
+				}
+			}
+		});
+		
 		createContextMenu(projectViewer);
 	}
 
