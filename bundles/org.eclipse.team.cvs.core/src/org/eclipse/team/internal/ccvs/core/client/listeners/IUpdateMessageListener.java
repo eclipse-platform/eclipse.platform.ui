@@ -1,13 +1,11 @@
-package org.eclipse.team.internal.ccvs.core.response.custom;
+package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.*;
 
 /**
  * This listener is used by RemoteFolder to listener for E and M messages
@@ -25,7 +23,7 @@ public interface IUpdateMessageListener {
 	/**
 	 * file information
 	 */
-	public void fileInformation(char type, String filename) throws CVSException;
+	public void fileInformation(char type, String filename);
 	
 	public void fileDoesNotExist(String filename);
 }

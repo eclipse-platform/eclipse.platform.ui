@@ -1,7 +1,7 @@
-package org.eclipse.team.internal.ccvs.core.commands;
+package org.eclipse.team.internal.ccvs.core.util;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.StringMatcher;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 
 /**
  * A FileNameMatcher associates a String with a String pattern
