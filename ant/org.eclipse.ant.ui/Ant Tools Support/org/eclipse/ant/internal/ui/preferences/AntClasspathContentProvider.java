@@ -17,16 +17,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 /**
  * Content provider that maintains a list of URLs which are shown in a table
  * viewer.
  */
-public class AntClasspathContentProvider extends ExternalToolsContentProvider {
+public class AntClasspathContentProvider extends AntContentProvider {
 	
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider#add(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AntContentProvider#add(java.lang.Object)
 	 */
 	public void add(Object o) {
 		if (o instanceof URL) {
@@ -54,8 +53,8 @@ public class AntClasspathContentProvider extends ExternalToolsContentProvider {
 		}
 		elements = new ArrayList(5);
 	}
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider#getSorter()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AntContentProvider#getSorter()
 	 */
 	protected ViewerSorter getSorter() {
 		return null;

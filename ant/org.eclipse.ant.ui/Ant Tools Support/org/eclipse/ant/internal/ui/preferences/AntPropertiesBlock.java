@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -73,7 +72,7 @@ public class AntPropertiesBlock {
 	private TableViewer propertyTableViewer;
 	private TableViewer fileTableViewer;
 
-	private final AntPropertiesLabelProvider labelProvider = new AntPropertiesLabelProvider();
+	private final AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
 
 	private IDialogSettings dialogSettings;
 	
@@ -139,7 +138,7 @@ public class AntPropertiesBlock {
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
 				String varExpression= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString());
-				((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).add(varExpression);
+				((AntContentProvider)fileTableViewer.getContentProvider()).add(varExpression);
 			}
 			container.update();
 		}
@@ -210,7 +209,7 @@ public class AntPropertiesBlock {
 		table.setFont(parent.getFont());
 		
 		TableViewer tableViewer= new TableViewer(table);
-		tableViewer.setContentProvider(new ExternalToolsContentProvider());
+		tableViewer.setContentProvider(new AntContentProvider());
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.addSelectionChangedListener(tableListener);
 		return tableViewer;
@@ -274,7 +273,7 @@ public class AntPropertiesBlock {
 		for (int i = 0; i < results.length; i++) {
 			String fileName = results[i];	
 			IPath path= filterPath.append(fileName).makeAbsolute();	
-			((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).add(path.toOSString());
+			((AntContentProvider)fileTableViewer.getContentProvider()).add(path.toOSString());
 		}
 	
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTFILE, filterPath.toOSString());
@@ -282,7 +281,7 @@ public class AntPropertiesBlock {
 	}
 	
 	private void remove(TableViewer viewer) {
-		ExternalToolsContentProvider antContentProvider= (ExternalToolsContentProvider)viewer.getContentProvider();
+		AntContentProvider antContentProvider= (AntContentProvider)viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		antContentProvider.remove(sel);
 		container.update();
@@ -306,7 +305,7 @@ public class AntPropertiesBlock {
 		Property prop = new Property();
 		prop.setName(name);
 		prop.setValue(pair[1]);
-		((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).add(prop);
+		((AntContentProvider)propertyTableViewer.getContentProvider()).add(prop);
 		container.update();
 	}
 
@@ -351,7 +350,7 @@ public class AntPropertiesBlock {
 						return false;
 					}
 				}
-				((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).remove(property);
+				((AntContentProvider)propertyTableViewer.getContentProvider()).remove(property);
 				break;
 			}					
 		}
@@ -421,11 +420,11 @@ public class AntPropertiesBlock {
 	}
 	
 	public Object[] getProperties() {
-		return ((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).getElements(null);
+		return ((AntContentProvider)propertyTableViewer.getContentProvider()).getElements(null);
 	}
 	
 	public Object[] getPropertyFiles() {
-		return ((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).getElements(null);
+		return ((AntContentProvider)fileTableViewer.getContentProvider()).getElements(null);
 	}
 	
 	public void setEnabled(boolean enable) {

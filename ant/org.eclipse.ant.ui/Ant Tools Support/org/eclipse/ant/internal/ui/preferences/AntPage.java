@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,7 +37,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -51,7 +51,7 @@ public abstract class AntPage {
 	};
 	private AntRuntimePreferencePage preferencePage;
 	private TableViewer tableViewer;
-	private ExternalToolsContentProvider contentProvider;
+	private AntContentProvider contentProvider;
 	
 	protected Button editButton;
 	protected Button removeButton;
@@ -168,8 +168,8 @@ public abstract class AntPage {
 	 * 
 	 * @return AntPageContentProvider
 	 */
-	protected ExternalToolsContentProvider getContentProvider() {
-		return new ExternalToolsContentProvider();
+	protected AntContentProvider getContentProvider() {
+		return new AntContentProvider();
 	}
 
 	/**
@@ -236,7 +236,7 @@ public abstract class AntPage {
 	}
 	
 	protected void remove(TableViewer viewer) {
-		ExternalToolsContentProvider antContentProvider= (ExternalToolsContentProvider)viewer.getContentProvider();
+		AntContentProvider antContentProvider= (AntContentProvider)viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		Iterator itr = sel.iterator();
 		while (itr.hasNext()) {

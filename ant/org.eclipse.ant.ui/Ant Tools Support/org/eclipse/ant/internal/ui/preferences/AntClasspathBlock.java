@@ -59,8 +59,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
-import org.eclipse.ui.externaltools.internal.ui.MessageDialogWithToggle;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -71,9 +69,9 @@ public class AntClasspathBlock {
 	private static final String[] TOOLS= new String[] {"tools.jar"}; //$NON-NLS-1$
 
 	private TableViewer antTableViewer;
-	private ExternalToolsContentProvider antContentProvider;
+	private AntContentProvider antContentProvider;
 	private TableViewer userTableViewer;
-	private ExternalToolsContentProvider userContentProvider;
+	private AntContentProvider userContentProvider;
 
 	private Button upButton;
 	private Button downButton;
@@ -222,7 +220,7 @@ public class AntClasspathBlock {
 	private void handleMove(int direction, TableViewer viewer) {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		List selList = sel.toList();
-		Object[] elements = ((ExternalToolsContentProvider) viewer.getContentProvider()).getElements(viewer.getInput());
+		Object[] elements = ((AntContentProvider) viewer.getContentProvider()).getElements(viewer.getInput());
 		List contents = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			contents.add(elements[i]);
@@ -249,7 +247,7 @@ public class AntClasspathBlock {
 	}
 
 	private void remove(TableViewer viewer) {
-		ExternalToolsContentProvider viewerContentProvider = (ExternalToolsContentProvider) viewer.getContentProvider();
+		AntContentProvider viewerContentProvider = (AntContentProvider) viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		Iterator itr = sel.iterator();
 		while (itr.hasNext()) {
@@ -273,7 +271,7 @@ public class AntClasspathBlock {
 		if (result != null) {
 			try {
 				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
-				((ExternalToolsContentProvider)viewer.getContentProvider()).add(url);
+				((AntContentProvider)viewer.getContentProvider()).add(url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -302,7 +300,7 @@ public class AntClasspathBlock {
 			try {
 				IPath path = filterPath.append(jarName).makeAbsolute();
 				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
-				((ExternalToolsContentProvider)viewer.getContentProvider()).add(url);
+				((AntContentProvider)viewer.getContentProvider()).add(url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -333,7 +331,7 @@ public class AntClasspathBlock {
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
 				String varExpression= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString());
-				((ExternalToolsContentProvider)viewer.getContentProvider()).add(varExpression);
+				((AntContentProvider)viewer.getContentProvider()).add(varExpression);
 			}
 			updateContainer();
 		}
@@ -376,7 +374,7 @@ public class AntClasspathBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (tablesEnabled) {
 					tableSelectionChanged((IStructuredSelection) event.getSelection(),
-						(ExternalToolsContentProvider) antTableViewer.getContentProvider(), false);
+						(AntContentProvider) antTableViewer.getContentProvider(), false);
 				}
 			}
 		});
@@ -425,7 +423,7 @@ public class AntClasspathBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (tablesEnabled) {
 					tableSelectionChanged((IStructuredSelection) event.getSelection(),
-						(ExternalToolsContentProvider) userTableViewer.getContentProvider(), true);
+						(AntContentProvider) userTableViewer.getContentProvider(), true);
 				}
 			}
 		});
@@ -502,7 +500,7 @@ public class AntClasspathBlock {
 	/* (non-Javadoc)
 	 * Method declared on AntPage.
 	 */
-	private void tableSelectionChanged(IStructuredSelection selection, ExternalToolsContentProvider contentProvider, boolean user) {
+	private void tableSelectionChanged(IStructuredSelection selection, AntContentProvider contentProvider, boolean user) {
 		Object[] elements = contentProvider.getElements(null);
 		List urls = Arrays.asList(elements);
 		boolean notEmpty = !selection.isEmpty();
