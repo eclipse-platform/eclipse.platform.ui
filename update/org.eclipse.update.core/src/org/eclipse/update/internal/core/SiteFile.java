@@ -198,7 +198,8 @@ public class SiteFile extends Site {
 				} catch (CoreException e) {
 					UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]); //$NON-NLS-1$
 				}
-				if (childFeature != null)
+                // do not remove nested feature if configured (i.e. used by another configured feature)
+				if (childFeature != null && !getCurrentConfiguredSite().isConfigured(childFeature))
 					remove(childrenRef[i].getFeature(null), monitor);
 			}
 
